@@ -84,8 +84,7 @@ public class EnvMonSampleAPI extends HttpServlet {
         private EnvMonSampleAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
-            this.arguments=argums;
-            
+            this.arguments=argums;            
         } 
 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex, Integer auditReasonPosic){  

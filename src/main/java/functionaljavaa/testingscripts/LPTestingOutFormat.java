@@ -8,6 +8,7 @@ package functionaljavaa.testingscripts;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import databases.Rdbms;
+import static databases.Rdbms.dbGetIndexLastNumberInUse;
 import databases.TblsTesting;
 import lbplanet.utilities.LPHashMap;
 import lbplanet.utilities.LPNulls;
@@ -19,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -31,6 +33,7 @@ import lbplanet.utilities.LPJson;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /*
  *
@@ -787,7 +790,7 @@ public class LPTestingOutFormat {
             int stepNumber = jsonObject.get("step").getAsInt();        
             String stepObjectType = jsonObject.get("object_type").getAsString(); 
             int stepObjectPosic=getStepObjectPosic(jsonObject); 
-            Integer stepPosic=LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length-3), stepNumber);
+            Integer stepPosic=LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length-5), stepNumber);
             if (stepPosic==-1) return "";
 
             JsonArray jsonArr=LPJson.convertToJsonArrayStringedObject(scriptSteps[stepPosic][scriptSteps[0].length-1].toString());
@@ -862,14 +865,48 @@ public class LPTestingOutFormat {
         return numEvaluationArguments;
     }
                 
-    public static void cleanLastRun(String schemaPrefix, Integer scriptId){
+    public static void cleanLastRun(String schemaPrefix, Integer scriptId){   
+        String[] ScriptFieldName=new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(), TblsTesting.Script.FLD_EVAL_CODE_MATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNDEFINED.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()};
+        Object[] ScriptFieldValue=new Object[]{"NULL>>>STRING","NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER","NULL>>>DATETIME"};
+        
         Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
-            new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(), TblsTesting.Script.FLD_EVAL_CODE_MATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNDEFINED.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()}, 
-            new Object[]{"NULL>>>STRING","NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER","NULL>>>DATETIME"},
+            ScriptFieldName, ScriptFieldValue,
             new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});        
         Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(), 
             new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.FLD_EVAL_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EVAL_CODE.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()}, 
             new Object[]{"NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING","NULL>>>DATETIME"},
             new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});        
+    }    
+    public static void setAuditIndexValues(String schemaPrefix, Integer scriptId, String scriptAuditIds, String moment){
+        JSONArray auditIndexInfo=getScriptAuditIncrements(schemaPrefix, scriptId, scriptAuditIds, moment);
+        if (auditIndexInfo!=null){
+            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+                new String[]{TblsTesting.Script.FLD_AUDIT_IDS_VALUES.getName()},
+                new Object[]{auditIndexInfo.toJSONString()},            
+                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});        
+        }
     }
+    private static JSONArray getScriptAuditIncrements(String schemaPrefix, Integer scriptId, String scriptAuditIds, String moment){
+        if (scriptAuditIds==null) return null;
+        if (moment==null) return null;        
+        String[] auditIds=scriptAuditIds.split("\\|");
+        JSONArray indxInfo=new JSONArray();
+        for (String curAuditId: auditIds){
+            String[] auditIdInfo=curAuditId.split("\\*");
+            if (auditIdInfo.length==2 && auditIdInfo[0].length()>0 && auditIdInfo[1].length()>0){
+                Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(schemaPrefix, auditIdInfo[0], auditIdInfo[1], null);
+                JSONObject currIndxInfo=new JSONObject();
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbGetIndexLastNumberInUse[0].toString()))
+                    currIndxInfo.put(Arrays.toString(auditIdInfo).replace("\\*", "_")+"_"+moment, "error getting the value");
+                else
+                    currIndxInfo.put(Arrays.toString(auditIdInfo).replace("\\*", "_")+"_"+moment, dbGetIndexLastNumberInUse[dbGetIndexLastNumberInUse.length-1]);
+                indxInfo.add(currIndxInfo);            
+            }
+        }        
+//        currIndxInfo=new JSONObject();
+//        currIndxInfo.put("sample_audit", 456);
+//        indxInfo.add(currIndxInfo);
+        return indxInfo;
+    }
+    
 }

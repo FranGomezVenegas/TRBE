@@ -66,14 +66,16 @@ public class TestingRegressionUAT extends HttpServlet {
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
         Object[][] scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
                 new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
-                new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName()},
+                new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName(), TblsTesting.Script.FLD_AUDIT_IDS_TO_GET.getName()},
                 new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
             Logger.getLogger("Script "+scriptId.toString()+" Not found"); 
             return;
-        }
-        
+        }        
         LPTestingOutFormat.cleanLastRun(schemaPrefix, scriptId);
+        
+        if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
+            LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[0][2].toString(), "before");
         
         String testerName = scriptTblInfo[0][0].toString();
         Integer numEvalArgs = 0;

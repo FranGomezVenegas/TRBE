@@ -228,8 +228,6 @@ public class DataBatchIncubatorStructured {
         Object[] moveDiagn=batchRemoveSampleStructured(schemaPrefix, token, batchName, sampleId, pendingIncubationStage, true);       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moveDiagn[0].toString())) return moveDiagn;
         return batchAddSampleStructured(schemaPrefix, token, batchName, sampleId, pendingIncubationStage, newRow, newCol, override, true);
-        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "batchMoveSampleStructured notImplentedYet", null);
-        
     }
     
     static Object[] batchRemoveSampleStructured(String schemaPrefix, Token token, String batchName, Integer sampleId, Integer pendingIncubationStage) {
@@ -286,12 +284,13 @@ public class DataBatchIncubatorStructured {
             SampleAudit smpAudit = new SampleAudit();       
             if (byMovement!=null && !byMovement) 
                 smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), token, null);
-            else
+            else{
                 updFieldName=LPArray.addValueToArray1D(updFieldName, "row");
                 updFieldName=LPArray.addValueToArray1D(updFieldName, "col");                
                 updFieldValue=LPArray.addValueToArray1D(updFieldValue, (valuePosition/batchNumCols)+1);
                 updFieldValue=LPArray.addValueToArray1D(updFieldValue, (valuePosition%batchNumCols)+1);                
                 smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.BATCH_SAMPLE_MOVED_FROM.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), token, null);
+            }
         }
         return updateSampleInfo;
     }

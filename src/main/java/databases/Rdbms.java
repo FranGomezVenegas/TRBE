@@ -1415,6 +1415,35 @@ if (1==1)return;
         }          
     }
     
+    public static Object[] dbGetIndexLastNumberInUse(String procName, String schemaName, String tableName, String indexName){
+        String schema=schemaName;
+        String buildSchemaName = LPPlatform.buildSchemaName(procName, schemaName);
+        String query="SELECT last_value FROM "+buildSchemaName+".";
+        if (tableName!=null && tableName.length()>0)
+            query=query+tableName+"_audit_id_seq";
+        else
+            query=query+indexName;
+        try{
+            String[] filter=new String[]{query, schema};
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res==null){
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{ERROR_TRAPPING_ARG_VALUE_RES_NULL, query + ERROR_TRAPPING_ARG_VALUE_LBL_VALUES+ Arrays.toString(filter)});
+            }            
+            res.first();
+            Integer numRows=res.getRow();
+            if (numRows>0){
+                Object[] diagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rbdms_existsRecord_RecordFound", filter);                
+                diagn=LPArray.addValueToArray1D(diagn, res.getObject(1));
+                return diagn;
+            }else{
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, filter);                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+        }  
+    }
+
     public static Object[] dbViewExists(String schemaName, String viewCategory, String viewName){
         String schema=schemaName;
         if (viewCategory.length()>0){
@@ -1439,7 +1468,6 @@ if (1==1)return;
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
-    
     }
 /*
 private static final int CLIENT_CODE_STACK_INDEX;

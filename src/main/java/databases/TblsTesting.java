@@ -138,6 +138,7 @@ public class TblsTesting {
         TBL("script_steps", LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT app_session_pkey PRIMARY KEY (#FLD_SCRIPT_ID, #FLD_STEP_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
+        FLD_TESTER_NOTES("tester_notes", LPDatabase.string()),   
         FLD_EXPECTED_SYNTAXIS("expected_syntaxis", LPDatabase.string()),
         FLD_EXPECTED_CODE("expected_code", LPDatabase.string()),
         FLD_ARGUMENT_01("argument_01", LPDatabase.string()),
