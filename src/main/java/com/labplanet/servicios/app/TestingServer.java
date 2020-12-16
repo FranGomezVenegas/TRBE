@@ -29,6 +29,7 @@ import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
 import functionaljavaa.samplestructure.DataSampleUtilities;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
+import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -188,6 +189,11 @@ schemaPrefix="genoma-1";
         tblCreateScript2=TblsData.ViewUserAndMetaDataSopView.createTableScript(schemaPrefix, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 */
+Rdbms.stablishDBConectionTester();
+Object[] createAppUser = UserAndRolesViews.createAppUser("obustos", null, null);
+out.println(Arrays.toString(createAppUser));         
+if (1==1) return;
+
 String batchContentStr="";     
 Integer batchNumRows=5;
 Integer batchNumCols=3;

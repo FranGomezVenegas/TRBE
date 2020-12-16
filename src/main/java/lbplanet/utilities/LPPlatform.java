@@ -217,7 +217,7 @@ public class LPPlatform {
         userProceduresList=userProceduresList.replace("[", "");
         userProceduresList=userProceduresList.replace("]", "");        
         if (!LPArray.valueInArray(userProceduresList.split(", "), schemaPrefix))
-            return trapMessage(LAB_FALSE, "The user is not declared for the procedure <*1*>. The user procedures are: <*2*>", new String[]{schemaPrefix, userProceduresList});
+            return trapMessage(LAB_FALSE, "userNotAssignedToProcedure", new String[]{token.getUserName(), schemaPrefix, userProceduresList});
         
         actionName = actionName.toUpperCase();
         String[] procedureActions = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, "procedureActions").split("\\|");
@@ -349,7 +349,7 @@ public class LPPlatform {
         }    
     }    
     private static String auditReasonType(String schemaPrefix, String actionName){
-        String auditReasonType = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhase");        
+        String auditReasonType = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
         if (auditReasonType.length()==0)return "TEXT";
         if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("DISABLE"))return "";
         if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("NO"))return "";

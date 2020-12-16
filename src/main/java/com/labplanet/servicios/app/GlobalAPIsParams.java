@@ -378,6 +378,7 @@ public class GlobalAPIsParams extends HttpServlet {
      */
     public static final String REQUEST_PARAM_USER_ROLE = "userRole";
     public static final String REQUEST_PARAM_USER_SESSION_ID = "userSessionId";
+    public static final String REQUEST_PARAM_PERSON= "person";
 
     /**
      *

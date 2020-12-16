@@ -9,6 +9,7 @@ import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsApp.Users;
+import databases.TblsAppConfig;
 import databases.Token;
 import functionaljavaa.parameter.Parameter;
 import java.util.ResourceBundle;
@@ -39,7 +40,7 @@ public class UserAndRolesViews {
     }
 
     /**
-     *
+     *  Returns LABPLANET_FALSE when the person not found.
      * @param userName
      * @return
      */
@@ -88,6 +89,25 @@ public class UserAndRolesViews {
         return Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), 
                 new String[]{TblsApp.Users.FLD_TABS_ON_LOGIN.getName()}, new Object[]{tabs}, 
                 new String[]{TblsApp.Users.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()});
+    }
+    
+    public static final Object[] createAppUser(String uName, String[] fldNames, Object[] fldValues){
+        String personByUser = getPersonByUser(uName);        
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserAlreadyExists", new Object[]{uName});        
+        Object[] personIdDiagn = getNextAppPersonId();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personIdDiagn[0].toString())) return personIdDiagn;
+        String personId=personIdDiagn[1].toString();
+        Object[] personCreatedDiagn = Rdbms.insertRecordInTable(LPPlatform.SCHEMA_CONFIG, TblsAppConfig.Person.TBL.getName(), 
+                new String[]{TblsAppConfig.Person.TBL.FLD_PERSON_ID.getName(), TblsAppConfig.Person.TBL.FLD_FIRST_NAME.getName()}, new Object[]{personId, uName});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personCreatedDiagn[0].toString())) return personCreatedDiagn;
+        Object[] userCreatedDiagn = Rdbms.insertRecordInTable(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), 
+                new String[]{TblsApp.Users.TBL.FLD_USER_NAME.getName(), TblsApp.Users.TBL.FLD_PASSWORD.getName(), TblsApp.Users.TBL.FLD_PERSON_NAME.getName()}, new Object[]{uName, "trazit123", personId.toString()});        
+        return userCreatedDiagn;
+        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet", null);        
+    }
+    private static Object[] getNextAppPersonId(){
+        return new Object[]{LPPlatform.LAB_TRUE, "14"};
+        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet", null);
     }
     
 }

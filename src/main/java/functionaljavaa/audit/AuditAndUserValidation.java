@@ -8,6 +8,7 @@ package functionaljavaa.audit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Token;
 import functionaljavaa.parameter.Parameter;
+import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
@@ -122,9 +123,9 @@ public class AuditAndUserValidation {
     }
     private Boolean isValidAuditPhrase(String schemaPrefix, String actionName, String auditReasonPhrase){
         
-        String[] actionAuditReasonInfo = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhase").split("\\|");
+        String[] actionAuditReasonInfo = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase").split("\\|");
         if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (!LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase)) ){
-            this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "wrongAuditReasonPhrase", null);
+            this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "wrongAuditReasonPhrase", new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
             return false;
         }
         return true;

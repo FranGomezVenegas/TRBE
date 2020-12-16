@@ -24,7 +24,7 @@ public class AuditUtilities {
             String usSessProcs=LPNulls.replaceNull(fldVls[LPArray.valuePosicInArray(tblFlds, TblsApp.AppSession.FLD_PROCEDURES.getName())]).toString();
             if (usSessProcs.length()>0){
                 usSessProcs=usSessProcs.replace(String.valueOf(procsSeparator), "");
-                return usSessProcs.split("\\|");
+                return LPArray.getUniquesArray(usSessProcs.split("\\|"));
             }
         }
         return new String[]{};
@@ -34,6 +34,21 @@ public class AuditUtilities {
             return dbSchemaTablesList(schemaPrefix);
         return new Object[]{};
     }
+    public static String[] getAuditTableAllFields(String repository, String tableName){
+        switch (repository.toLowerCase()){
+            case LPPlatform.SCHEMA_DATA:   
+                switch (tableName.toLowerCase()){
+                    case "sample":
+                        return TblsDataAudit.Sample.getAllFieldNames();
+                    default:
+                        return new String[]{TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_APP_SESSION_ID.getName(), TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName()};                    
+                }
+                    
+            default:
+                return new String[]{TblsDataAudit.Sample.FLD_APP_SESSION_ID.getName(), TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName()};
+        }
+    }
+    
     
     public static Boolean userSessionExistAtProcLevel(String schemaPrefix, Integer sessionId){
         Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Session.TBL.getName(),

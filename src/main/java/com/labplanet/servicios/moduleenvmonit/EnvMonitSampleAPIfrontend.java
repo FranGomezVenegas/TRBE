@@ -51,8 +51,6 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
         response=LPHttp.responsePreparation(response);
 
         String language = LPFrontEnd.setLanguage(request); 
-
-
         try (PrintWriter out = response.getWriter()) {
             String[] mandatoryParams = new String[]{""};
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       

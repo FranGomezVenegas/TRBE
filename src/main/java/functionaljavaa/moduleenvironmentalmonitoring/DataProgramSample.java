@@ -41,7 +41,7 @@ public class DataProgramSample{
         try {
             DataProgramSampleAnalysis dsProgramAna = new DataProgramSampleAnalysis();
             DataSample ds = new DataSample(dsProgramAna);
-            Integer programNamePosic = (LPArray.valuePosicInArray(fieldName, TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName()));
+            Integer programNamePosic = LPArray.valuePosicInArray(fieldName, TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName());
             if (programNamePosic==-1){
                 fieldName = LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName());
                 fieldValue = LPArray.addValueToArray1D(fieldValue, programName);
@@ -53,13 +53,24 @@ public class DataProgramSample{
                 fieldValue = LPArray.addValueToArray1D(fieldValue, programLocation);
             }else
                 fieldValue[programLocationPosic] = programLocation;
-
-            Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
-                    new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
-                    new Object[]{programName, programLocation});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
+            String[] specFldNames=new String[]{TblsEnvMonitData.ProgramLocation.FLD_SPEC_CODE.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_ANALYSIS_VARIATION.getName(), TblsEnvMonitData.ProgramLocation.FLD_AREA.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_VARIATION_NAME.getName()};
+            Object[][] diagnosis = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(),
+                new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
+                new Object[]{programName, programLocation}, 
+                specFldNames);            
+//            Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
+//                    new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
+//                    new Object[]{programName, programLocation});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0][0].toString()))
                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Program <*1*> or location <*2*> not found for procedure <*3*>", new Object[]{programName, programLocation, schemaPrefix});    
-            
+            for (int i=0;i<specFldNames.length;i++){
+                Integer fieldPosic=LPArray.valuePosicInArray(fieldName, specFldNames[i]);
+                if (fieldPosic==-1){
+                    fieldName = LPArray.addValueToArray1D(fieldName, specFldNames[i]);
+                    fieldValue = LPArray.addValueToArray1D(fieldValue, diagnosis[0][i]);                
+                }else
+                    fieldValue[fieldPosic] = diagnosis[0][i];
+            }
             newProjSample = ds.logSample(schemaPrefix, token, programTemplate, programTemplateVersion, fieldName, fieldValue);
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataProgram.class.getName()).log(Level.SEVERE, null, ex);

@@ -13,6 +13,7 @@ import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
+import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysisResult;
@@ -83,15 +84,19 @@ public class ClassEnvMonSample {
                 case LOGSAMPLE:
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
+                    String smpTmp=LPNulls.replaceNull(argValues[0]).toString();
+                    if (smpTmp==null || smpTmp.length()==0)smpTmp=Parameter.getParameterBundle("config", schemaPrefix, "procedure", "SampleTemplate", null);  
+                    Object smpTmpV=LPNulls.replaceNull(argValues[1]);
+                    if (smpTmpV==null || smpTmpV.toString().length()==0)smpTmpV=1;
                     if (LPNulls.replaceNull(argValues[2]).toString().length()>0){
                         fieldNames=(String[]) argValues[2].toString().split("\\|");
                         fieldValues=(Object[]) LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|"));
                     }
                     if (argValues[5]==null){
-                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], 
+                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, smpTmp, (Integer) smpTmpV, 
                             fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
                     }else{
-                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], 
+                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, smpTmp, (Integer) smpTmpV,  
                             fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
                     }
                     //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);

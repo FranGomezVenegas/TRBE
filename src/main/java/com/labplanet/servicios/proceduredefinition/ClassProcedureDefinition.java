@@ -39,13 +39,29 @@ public class ClassProcedureDefinition {
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
             switch (endPoint){
-                case ADD_ROLE_TO_USER:
+                case ADD_USER:
                     String procedureName=argValues[0].toString();
                     Integer procedureVersion = (Integer) argValues[1];   
                     String schemaPrefix=argValues[2].toString();
-                    String roleName=argValues[3].toString();
-                    String userName=argValues[4].toString();
+                    String userName=argValues[3].toString();
                     String personByUser = getPersonByUser(userName);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser)){
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The user <*1*> does not exist", new Object[]{userName});                         
+                        break;
+                    }
+                    actionDiagnoses=Rdbms.insertRecordInTable(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureUsers.TBL.getName(), 
+                            new String[]{TblsReqs.ProcedureUsers.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.FLD_PROCEDURE_VERSION.getName(),
+                                TblsReqs.ProcedureUsers.FLD_SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUsers.FLD_USER_NAME.getName()}, 
+                            new Object[]{procedureName, procedureVersion, schemaPrefix, userName});
+                    JSONObject createDBProcedureUsers = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, schemaPrefix);
+                    break;
+                case ADD_ROLE_TO_USER:
+                    procedureName=argValues[0].toString();
+                    procedureVersion = (Integer) argValues[1];   
+                    schemaPrefix=argValues[2].toString();
+                    String roleName=argValues[3].toString();
+                    userName=argValues[4].toString();
+                    personByUser = getPersonByUser(userName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser)){
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The user <*1*> does not exist", new Object[]{userName});                         
                         break;
