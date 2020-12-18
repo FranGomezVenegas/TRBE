@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -17,7 +19,18 @@ import lbplanet.utilities.LPPlatform;
  * @author Administrator
  */
 public class Parameter {
-
+    public enum PropertyFilesType{TRANSLATION_DIR_PATH("translationDirPath", "="),
+        PROCEDURE_BUSINESS_RULES_DIR_PATH("procedureBusinessRulesDirPath", ":")
+        ;
+        private PropertyFilesType(String appConfigParamName, String appConfigSeparator){
+            this.appConfigParamName=appConfigParamName;
+            this.appConfigSeparator=appConfigSeparator;
+        }
+        public String getAppConfigParamName(){            return this.appConfigParamName;        }        
+        public String getAppConfigSeparator(){            return this.appConfigSeparator;        }        
+        private final String appConfigParamName;
+        private final String appConfigSeparator;
+    }
     /**
      *
      */
@@ -26,7 +39,8 @@ public class Parameter {
     /**
      *
      */
-    public static final String BUNDLE_TAG_TRANSLATION_DIR_PATH="translationDirPath";
+    //public static final String BUNDLE_TAG_TRANSLATION_DIR_PATH="translationDirPath";
+    //public static final String BUNDLE_TAG_PROCEDURE_BUSINESS_RULES_DIR_PATH="procedureBusinessRulesDirPath";
     
 
     /**
@@ -119,6 +133,7 @@ public class Parameter {
             return "";
         }
     }
+    
 
     /**
      * Not in use
@@ -126,22 +141,37 @@ public class Parameter {
      * @param entryName
      * @param entryValue
      * @return
-     * @throws java.io.IOException
      */
-    public String _addTagInPropertiesFile(String fileName, String entryName, String entryValue) throws IOException{
-
+    public String addTagInPropertiesFile(String type, String fileName, String entryName, String entryValue){
         StringBuilder newEntryBuilder = new StringBuilder(0);
-
-        ResourceBundle propConfig = ResourceBundle.getBundle(BUNDLE_TAG_PARAMETER_CONFIG_CONF);        
-        String translationsDir = propConfig.getString(BUNDLE_TAG_TRANSLATION_DIR_PATH);
-        translationsDir = translationsDir.replace("/", "\\");
-
-        File[] transFiles = propertiesFiles(fileName);
+        String fileDir=getFileDirByPropertyFileType(type);
+        if (fileDir.contains(LPPlatform.LAB_FALSE)) return fileDir;
+        PropertyFilesType propFileType = PropertyFilesType.valueOf(type.toUpperCase());
+        File[] transFiles = propertiesFiles(fileDir, fileName);
         for (File f: transFiles)
         {
-            String fileidt = translationsDir + "\\" + f.getName();
+            String fileidt = fileDir + "\\" + f.getName();
             try{    
-                return " Exists the tag in " + f.getName() + " for the entry " + entryName + " and value " + entryValue;
+                String paramExists=getParameterBundle(fileName, entryName);
+                if (paramExists.length()>0 && paramExists.equalsIgnoreCase(entryValue) )
+                    return "the parameter "+entryName+" already exists in properties file "+fileName+" . (Path:"+fileDir+")";
+                String newLogEntry = " created tag in " + f.getName() + " for the entry " + entryName + " and value " + entryValue;
+//                if (fileName.equalsIgnoreCase("USERNAV")){ newEntryBuilder.append(entryName).append(":").append(entryValue);}
+//                else { newEntryBuilder.append(entryName).append("=").append(entryValue);}
+                newEntryBuilder.append(entryName).append(propFileType.appConfigSeparator).append(entryValue);
+
+                try (FileWriter fw = new FileWriter(fileidt, true)){
+                    if (newEntryBuilder.length()>=0){
+                        newEntryBuilder.append("\n");
+                        fw.append(newEntryBuilder.toString());
+                        }
+                } catch (IOException ex1) {
+                    Logger.getLogger(Parameter.class.getName()).log(Level.SEVERE, null, ex1);
+                    return ex1.getMessage();
+                }
+                return newLogEntry;
+
+//                return " Exists the tag in " + f.getName() + " for the entry " + entryName + " and value " + entryValue;
             }catch(MissingResourceException ex)
             {
                 String newLogEntry = " created tag in " + f.getName() + " for the entry " + entryName + " and value " + entryValue;
@@ -154,13 +184,58 @@ public class Parameter {
                         newEntryBuilder.append("\n");
                         fw.append(newEntryBuilder.toString());
                         }
+                } catch (IOException ex1) {
+                    Logger.getLogger(Parameter.class.getName()).log(Level.SEVERE, null, ex1);
+                    return ex1.getMessage();
                 }
                 return newLogEntry;
             }
         }    
         return "Nothing done";
     }
+    
+    public String createPropertiesFile(String type, String fileName){
+        try {
+            String fileDir=getFileDirByPropertyFileType(type);
+            if (fileDir.contains(LPPlatform.LAB_FALSE)) return fileDir;
+            File[] transFiles = propertiesFiles(fileDir, fileName);
+            if (transFiles.length>0) return "file "+fileName+" already exists";
+            File newFile = new File(fileDir+fileName+".properties");
+            boolean createNewFile = newFile.createNewFile();
+            if (createNewFile) return "New properties file created, "+fileName;
+                
+            return "Nothing done";
+        } catch (IOException ex) {
+            Logger.getLogger(Parameter.class.getName()).log(Level.SEVERE, null, ex);
+            return ex.getMessage();
+        }
+    }
+            
+    public String getFileDirByPropertyFileType(String type){
+        PropertyFilesType endPoint = null;
+        try{
+            endPoint = PropertyFilesType.valueOf(type.toUpperCase());
+        }catch(Exception e){
+            return "argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE";
+            //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+            //return;                   
+        }
 
+        StringBuilder newEntryBuilder = new StringBuilder(0);
+        String fileDir = "";
+        ResourceBundle propConfig = ResourceBundle.getBundle(BUNDLE_TAG_PARAMETER_CONFIG_CONF);  
+        switch(endPoint){
+            case TRANSLATION_DIR_PATH:
+                fileDir = propConfig.getString(PropertyFilesType.TRANSLATION_DIR_PATH.getAppConfigParamName());
+                break;
+            case PROCEDURE_BUSINESS_RULES_DIR_PATH:
+                fileDir = propConfig.getString(PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.getAppConfigParamName());
+                break;
+            default:
+                return LPPlatform.LAB_FALSE+"argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE";
+        }
+        return fileDir = fileDir.replace("/", "\\");        
+    }    
     /**
      *
      * @param fileName
@@ -169,11 +244,20 @@ public class Parameter {
     public File[] propertiesFiles(String fileName){
 
         ResourceBundle propConfig = ResourceBundle.getBundle(BUNDLE_TAG_PARAMETER_CONFIG_CONF);        
-        String translationsDir = propConfig.getString(BUNDLE_TAG_TRANSLATION_DIR_PATH);
+        String translationsDir = propConfig.getString(PropertyFilesType.TRANSLATION_DIR_PATH.getAppConfigParamName());
         translationsDir = translationsDir.replace("/", "\\");
 
         File dir = new File(translationsDir);
         return dir.listFiles((File dir1, String name) -> name.contains(fileName));       
     }    
+    
+    public File[] propertiesFiles(String propFilesDir, String fileName){
+        //ResourceBundle propConfig = ResourceBundle.getBundle(BUNDLE_TAG_PARAMETER_CONFIG_CONF);        
+        //String translationsDir = propConfig.getString(BUNDLE_TAG_TRANSLATION_DIR_PATH);
+        //translationsDir = translationsDir.replace("/", "\\");
+
+        File dir = new File(propFilesDir);
+        return dir.listFiles((File dir1, String name) -> name.contains(fileName));       
+    }     
      
 }

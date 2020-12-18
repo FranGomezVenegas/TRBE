@@ -21,8 +21,11 @@ import databases.TblsDataAudit;
 import databases.TblsProcedure;
 import databases.TblsReqs;
 import databases.TblsTesting;
+import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
+import java.security.Policy.Parameters;
 import java.util.Arrays;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -158,7 +161,7 @@ public class ProcedureDefinitionToInstance {
                 new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName(), TblsProcedure.ProcedureInfo.FLD_VERSION.getName(),FLD_NAME_PROCEDURE_SCHEMA_PREFIX}, new Object[]{procedure, procVersion, schemaPrefix}, 
                 FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"), null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString())){
-          jsonObj.put(JSON_LABEL_FOR_ERROR, LPJson.convertToJSON(procInfoRecordsSource));
+          jsonObj.put(JSON_LABEL_FOR_ERROR, LPJson.convertToJSON(procInfoRecordsSource[0]));
         }else{
             jsonObj.put(JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION, procInfoRecordsSource.length);
             for (Object[] curRow: procInfoRecordsSource){
@@ -216,7 +219,7 @@ public class ProcedureDefinitionToInstance {
                 new String[]{TblsReqs.ProcedureUserRole.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureUserRole.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, schemaPrefix}, 
                 FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SOURCE.split("\\|"), FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SORT.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserRolesRecordsSource[0][0].toString())){
-          jsonObj.put(JSON_LABEL_FOR_ERROR, LPJson.convertToJSON(procUserRolesRecordsSource));
+          jsonObj.put(JSON_LABEL_FOR_ERROR, LPJson.convertToJSON(procUserRolesRecordsSource[0]));
           return jsonObj;
         }
         jsonObj.put(JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION, procUserRolesRecordsSource.length);    
@@ -581,4 +584,55 @@ public class ProcedureDefinitionToInstance {
 */        
         return jsonObj;
      }        
+    
+    public static final  JSONArray createPropBusinessRules(String procedure,  Integer procVersion, String instanceName){
+        String[] fieldsRequired=new String[]{TblsProcedure.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()};
+        String diagnObjName="diagnostic";
+        String[] fildsToGet=TblsProcedure.ProcedureBusinessRules.getAllFieldNames();
+        for (String curFldReq: fieldsRequired){
+            if (!LPArray.valueInArray(fildsToGet, curFldReq)) LPArray.addValueToArray1D(fildsToGet, curFldReq);
+        }
+        JSONArray jsonArr = new JSONArray();
+        JSONObject jsonObj = new JSONObject();
+        Object[][] procBusRules = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_PROCEDURE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_PROCEDURE_VERSION.getName(), TblsProcedure.ProcedureBusinessRules.FLD_INSTANCE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_ACTIVE.getName()}, 
+                new Object[]{procedure, procVersion, instanceName, true}, 
+                fildsToGet, new String[]{});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procBusRules[0][0].toString())){
+          jsonObj.put(JSON_LABEL_FOR_ERROR, LPJson.convertToJSON(procBusRules[0]));
+          jsonArr.add(jsonObj);
+          return jsonArr;
+        }
+        
+        jsonObj.put(JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION, procBusRules.length); 
+        jsonArr.add(jsonObj);
+        Parameter parm=new Parameter();
+        Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName()));
+        //String diagn=parm.addTagInPropertiesFile("PROCEDURE_BUSINESS_RULE",  "oil-pl1-config",  "hola",  "adios");
+        String[] filesNames=LPArray.getUniquesArray(procBusRulesFiles);
+        for (String curFile: filesNames){
+            String diagn=parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
+                    instanceName+"-"+curFile);  
+        }        
+//        if (1==1) return jsonArr;
+        
+        
+        
+        String[] existingSopRole = new String[0];
+        for (Object[] curProcEventSops: procBusRules){
+            String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName())]).toString(),  
+                    LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName())]).toString(),  
+                    LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName())]).toString());
+            if (!LPArray.valueInArray(fildsToGet, diagnObjName))//{
+                fildsToGet=LPArray.addValueToArray1D(fildsToGet, diagnObjName);
+//                curProcEventSops=LPArray.addValueToArray1D(curProcEventSops, diagn);
+//            }else
+//                curProcEventSops[LPArray.valuePosicInArray(fildsToGet, diagnObjName)]=diagn;
+            curProcEventSops=LPArray.addValueToArray1D(curProcEventSops, diagn);
+            JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curProcEventSops);
+            //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_NAME.getName())];
+            jsonArr.add(convertArrayRowToJSONObject);
+        }
+        return jsonArr;
+    }
 }

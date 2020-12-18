@@ -121,7 +121,34 @@ public class ClassEnvMonSample {
                         dynamicDataObjects=new Object[]{resultInfo[0][0].toString()};
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), resultInfo[0][0]);
                     }
-                    break;             
+                    break; 
+                case PLATE_READING_NUMBER:
+                    sampleId = (Integer) argValues[0];
+                    rawValueResult = argValues[1].toString();
+                    Object[][] sampleAnaResultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysisResult.TBL.getName(),
+                        new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.FLD_PARAM_NAME.getName()}, 
+                        new Object[]{sampleId, "Recuento"}, 
+                        new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()});
+                    actionDiagnoses=null;
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAnaResultInfo[0][0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "No encontrado el parámetro 'Recuento' en la muestra "+sampleId.toString(), null);
+                    if (sampleAnaResultInfo.length!=1)    
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Encontrado varios parámetros 'Recuento' en la muestra "+sampleId.toString()+", en este caso se debe entrar resultado por su Id y la acción ENTERRESULT.", null);
+                    if (actionDiagnoses==null){    
+                        resultId=Integer.valueOf(sampleAnaResultInfo[0][0].toString());
+                        actionDiagnoses = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), resultId);
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                        Object[][] resultInfo=new Object[0][0];
+                            actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, schemaPrefix});                    
+                            resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysisResult.TBL.getName(), 
+                                    new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()});
+                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) sampleId=Integer.valueOf(resultInfo[0][0].toString());
+                            dynamicDataObjects=new Object[]{resultInfo[0][0].toString()};
+                            rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), resultInfo[0][0]);
+                        }
+                    }
+                    break;
                 case ADD_SAMPLE_MICROORGANISM: 
                     sampleId=(Integer) argValues[0];
                     for (String orgName: (String[]) argValues[1].toString().split("\\|")){

@@ -362,6 +362,90 @@ public class TblsProcedure {
         private final String dbObjName;             
         private final String dbObjTypePostgres;           
     } 
+    public enum ProcedureBusinessRules{
+
+        /**
+         *
+         */
+        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_#FLD_ID_seq'::regclass)"),        
+        TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        ,
+        FLD_PROCEDURE_NAME("procedure_name", LPDatabase.stringNotNull()),
+        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.integerNotNull()),
+        FLD_INSTANCE_NAME("instance_name", LPDatabase.stringNotNull()),
+        FLD_MODULE_NAME("module_name", LPDatabase.stringNotNull()),
+        FLD_MODULE_VERSION("module_version", LPDatabase.integerNotNull()),
+        FLD_FILE_SUFFIX("file_suffix", LPDatabase.string()),
+        FLD_RULE_NAME("rule_name", LPDatabase.string()),
+        FLD_RULE_VALUE("rule_value", LPDatabase.string()),
+        FLD_ACTIVE("active", LPDatabase.booleanFld())
+        ;
+        private ProcedureBusinessRules(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param schemaNamePrefix
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = ProcedureBusinessRules.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_PROCEDURE));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ProcedureBusinessRules obj: ProcedureBusinessRules.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        fieldsScript.append(currField[0]).append(" ").append(currField[1]);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ProcedureBusinessRules obj: ProcedureBusinessRules.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;           
+    } 
+
     public enum ViewProcUserAndRoles{
 
         /**

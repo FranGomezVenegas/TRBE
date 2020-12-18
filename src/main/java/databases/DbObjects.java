@@ -42,15 +42,15 @@ public class DbObjects {
         String[] schemaNames = new String[]{LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), 
             LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), 
             LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG_AUDIT), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), 
-            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE)};        
+            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING)};        
         JSONObject jsonObj=createSchemas(schemaNames);
 
         tblCreateScript=TblsProcedure.PersonProfile.createTableScript(schemaPrefix, new String[]{""});
-        //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsProcedure.PersonProfile", tblCreateScript);
 
         tblCreateScript=TblsProcedure.ProcedureInfo.createTableScript(schemaPrefix, new String[]{""});
-        //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTblsProcedureReqs.ProcedureInfo", tblCreateScript);
 
         tblCreateScript=TblsProcedure.ProcedureEvents.createTableScript(schemaPrefix, new String[]{""});
@@ -69,7 +69,14 @@ public class DbObjects {
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsData.ViewUserAndMetaDataSopView", tblCreateScript);
         
+        tblCreateScript=TblsTesting.Script.createTableScript(schemaPrefix, new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        jsonObj.put("TblsTesting.Script", tblCreateScript);
         
+        tblCreateScript=TblsTesting.ScriptSteps.createTableScript(schemaPrefix, new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        jsonObj.put("TblsTesting.ScriptSteps", tblCreateScript);
+
         return jsonObj;
      }    
 
