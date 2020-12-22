@@ -35,6 +35,8 @@ public class LPDatabase {
     
     public static final String createView(){return "CREATE OR REPLACE VIEW #SCHEMA.#TBL AS ";}
     public static final String createTable(){return "CREATE TABLE #SCHEMA.#TBL";}
+    public static final String alterTable(){return "ALTER TABLE";}
+    public static final String addColumn(){return "ADD COLUMN";}
     public static final String createTableSpace(){return "TABLESPACE #TABLESPACE;";}
     public static final String createSequence(String fieldName){return "CREATE SEQUENCE #SCHEMA.#TBL_"+fieldName+"_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1; ";}
     

@@ -18,7 +18,6 @@ import lbplanet.utilities.LPArray;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.ClassEnvMon;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI;
-import static com.labplanet.servicios.moduleenvmonit.EnvMonAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
@@ -35,9 +34,12 @@ import org.json.simple.JSONObject;
  */
 public class InspLotRMAPI extends HttpServlet {
     public enum InspLotRMAPIEndpoints{
-        EM_LOGSAMPLE_SCHEDULER("EM_LOGSAMPLE_SCHEDULER", "programScheduler_logScheduledSamples", 
-                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7)}),
+        NEW_LOT("NEW_LOT", "createNewLot", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_CONTAINERS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9)
+            }),
         ;
         private InspLotRMAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;

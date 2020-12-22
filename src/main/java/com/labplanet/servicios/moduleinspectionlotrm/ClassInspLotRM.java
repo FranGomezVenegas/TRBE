@@ -37,14 +37,12 @@ public class ClassInspLotRM {
         RelatedObjects rObj=RelatedObjects.getInstance();
 
         DataProgramSample prgSmp = new DataProgramSample();     
-        String batchName = "";
-        String incubationName = "";
         
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
             switch (endPoint){
-                case EM_LOGSAMPLE_SCHEDULER:
+                case NEW_LOT:
                     LocalDateTime dateStart=(LocalDateTime) argValues[0];
                     LocalDateTime dateEnd=(LocalDateTime) argValues[1];
                     String programName = argValues[2].toString();

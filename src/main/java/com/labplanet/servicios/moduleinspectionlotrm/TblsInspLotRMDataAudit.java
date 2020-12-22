@@ -20,9 +20,9 @@ import static databases.TblsCnfg.FIELDSTAG;
  * @author User
  */
 public class TblsInspLotRMDataAudit {
-    public static final String getTableCreationScriptFromDataAuditTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+    public static final String getTableCreationScriptFromDataAuditTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
-            case "INCUB_BATCH": return zIncubBatch.createTableScript(schemaNamePrefix, fields);
+            case "INCUB_BATCH": return lot.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN INSPLOT_RM_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }    
@@ -30,13 +30,13 @@ public class TblsInspLotRMDataAudit {
     /**
      *
      */
-    public enum zIncubBatch{
+    public enum lot{
 
         /**
          *
          */
         FLD_AUDIT_ID("audit_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
-        ,        TBL("incub_batch", LPDatabase.createSequence(FLD_AUDIT_ID.getName())
+        ,        TBL("lot", LPDatabase.createSequence(FLD_AUDIT_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT app_session_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
@@ -92,7 +92,7 @@ public class TblsInspLotRMDataAudit {
         /**
          *
          */
-        FLD_BATCH_NAME("batch", LPDatabase.string())
+        FLD_BATCH_NAME("lot_name", LPDatabase.string())
         ,
 
         /**
@@ -162,7 +162,7 @@ public class TblsInspLotRMDataAudit {
         FLD_REASON("reason", LPDatabase.string()),
         
         ;
-        private zIncubBatch(String dbObjName, String dbObjType){
+        private lot(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
@@ -187,14 +187,14 @@ public class TblsInspLotRMDataAudit {
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = zIncubBatch.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = lot.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA_AUDIT));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (zIncubBatch obj: zIncubBatch.values()){
+            for (lot obj: lot.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){

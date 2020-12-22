@@ -22,23 +22,23 @@ import static databases.TblsCnfg.FIELDSTAG;
  * @author Administrator
  */
 public class TblsInspLotRMData {
-    public static final String getTableCreationScriptFromDataTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+    public static final String getTableCreationScriptFromDataTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
-            case "PROGRAM": return Program.createTableScript(schemaNamePrefix, fields);
-            case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
+            case "LOT": return Lot.createTableScript(schemaNamePrefix, fields);
+            case "LOT_DECISION": return LotDecision.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
-            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
+            default: return "TABLE "+tableName+" NOT IN INSPLOT_RM_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }    
     /**
      *
      */
-    public enum Program{
+    public enum Lot{
 
         /**
          *
          */
-        TBL("program",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+        TBL("lot",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
@@ -51,13 +51,13 @@ public class TblsInspLotRMData {
         /**
          *
          */
-        FLD_PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull())
+        FLD_PROGRAM_CONFIG_ID("lot_config_id", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull())
+        FLD_PROGRAM_CONFIG_VERSION("lot_config_version", LPDatabase.integerNotNull())
         ,
 
         /**
@@ -74,21 +74,22 @@ public class TblsInspLotRMData {
          *
          */
         FLD_SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.string()),        
-        FLD_MAP_IMAGE("map_image", LPDatabase.string()),        
-        
-        /**
-         *
-         */
         FLD_SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer()),        
         FLD_DESCRIPTION_EN("description_en", LPDatabase.string()),        
         FLD_DESCRIPTION_ES("description_es", LPDatabase.string()),        
+        FLD_QUANTITY("quantity", LPDatabase.integer()),        
+        FLD_QUANTITY_UOM("quantity_uom", LPDatabase.string()),        
+        FLD_NUM_CONTAINERS("num_containers", LPDatabase.integer()),        
+        FLD_VENDOR("vendor", LPDatabase.string()),        
+        FLD_VENDOR_TRUST_LEVEL("vendor_trust_level", LPDatabase.string()),        
+        FLD_SAMPLING_PLAN("sampling_plan", LPDatabase.string()),        
 
                 
         FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())
         // ...
         ;
         
-        private Program(String dbObjName, String dbObjType){
+        private Lot(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
@@ -115,14 +116,14 @@ public class TblsInspLotRMData {
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Program.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = Lot.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (Program obj: Program.values()){
+            for (Lot obj: Lot.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
@@ -144,19 +145,19 @@ public class TblsInspLotRMData {
     /**
      *
      */
-    public enum ProgramLocation{
+    public enum LotDecision{
 
         /**
          *
          */
-        TBL("program_location",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_PROGRAM_NAME, #FLD_LOCATION_NAME, #FLD_AREA) )" +
+        TBL("lot_decision",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_LOT_NAME, #FLD_LOCATION_NAME, #FLD_AREA) )" +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, LPDatabase.stringNotNull(100))
+        FLD_LOT_NAME(FIELDS_NAMES_LOT_NAME, LPDatabase.stringNotNull(100))
         ,
 
         /**
@@ -187,10 +188,10 @@ public class TblsInspLotRMData {
         FLD_MAP_ICON_TOP("map_icon_top",  LPDatabase.string()),
         FLD_MAP_ICON_LEFT("map_icon_left",  LPDatabase.string()),
         
-//        , FLD_PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.String())
+//        , FLD_PROGRAM_CONFIG_VERSION("lot_config_version", LPDatabase.String())
         // ...
         ;        
-        private ProgramLocation(String dbObjName, String dbObjType){
+        private LotDecision(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
@@ -217,14 +218,14 @@ public class TblsInspLotRMData {
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = ProgramLocation.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = LotDecision.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (ProgramLocation obj: ProgramLocation.values()){
+            for (LotDecision obj: LotDecision.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
@@ -241,7 +242,7 @@ public class TblsInspLotRMData {
         }   
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
-            for (ProgramLocation obj: ProgramLocation.values()){
+            for (LotDecision obj: LotDecision.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
@@ -256,7 +257,7 @@ public class TblsInspLotRMData {
     
     
     private static final String FIELDS_NAMES_LOCATION_NAME = "location_name";
-    private static final String FIELDS_NAMES_PROGRAM_NAME = "program_name";
+    private static final String FIELDS_NAMES_LOT_NAME = "lot_name";
 
     /**
      *
@@ -398,156 +399,15 @@ public class TblsInspLotRMData {
         FLD_CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.string(2))
         ,
 
-        /**
-         *
-         */
         FLD_COC_REQUESTED_ON("coc_requested_on", LPDatabase.date())
         ,
-
-        /**
-         *
-         */
         FLD_COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.date())
         ,
-
-        /**
-         *
-         */
-        FLD_PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME,  LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_PRODUCTION_LOT("production_lot",  LPDatabase.string()),
-        /**
-         *
-         */
-        FLD_SAMPLER_AREA("sampler_area",LPDatabase.string()),
-        FLD_SAMPLER("sampler",LPDatabase.string()),
-        FLD_SAMPLE_ID_RELATED("sample_id_related",LPDatabase.integer()),        
-        FLD_SAMPLING_DATE("sampling_date", dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string())
-        ,
-
-        FLD_INCUBATION_BATCH("incubation_batch", LPDatabase.string())
-        ,
-        /**
-         *
-         */
-        FLD_INCUBATION_START(FIELDS_NAMES_INCUBATION_START, dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_START_TEMPERATURE("incubation_start_temperature", LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_START_TEMP_EVENT_ID("incubation_start_temp_event_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_END(FIELDS_NAMES_INCUBATION_END, dateTime())
-        ,        
-
-        /**
-         *
-         */
-        FLD_INCUBATION_END_TEMPERATURE("incubation_end_temperature", LPDatabase.real())        
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_END_TEMP_EVENT_ID("incubation_end_temp_event_id", LPDatabase.integer())
-        ,        
-
-        /**
-         *
-         */
-        FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.booleanFld(false))        
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.string())
-        ,
-        FLD_INCUBATION2_BATCH("incubation2_batch", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_START(FIELDS_NAMES_INCUBATION2_START, dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_START_TEMPERATURE("incubation2_start_temperature", LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_START_TEMP_EVENT_ID("incubation2_start_temp_event_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_END(FIELDS_NAMES_INCUBATION2_END, dateTime())
-        ,        
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_END_TEMPERATURE("incubation2_end_temperature", LPDatabase.real())        
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_END_TEMP_EVENT_ID("incubation2_end_temp_event_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_PASSED("incubation2_passed", LPDatabase.booleanFld())        
+        FLD_LOT_NAME(FIELDS_NAMES_LOT_NAME,  LPDatabase.stringNotNull())
         ,
         FLD_CURRENT_STAGE("current_stage",LPDatabase.string())
         ,
-
-        /**
-         *
-         */
         FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.string())
-        
         ;
         private Sample(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

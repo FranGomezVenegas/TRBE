@@ -9,10 +9,15 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
+import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMConfig;
+import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
+import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMDataAudit;
+import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMProcedure;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
+import static databases.Rdbms.dbTableExists;
 import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
@@ -307,6 +312,7 @@ public class ProcedureDefinitionToInstance {
      * @param procedure
      * @param procVersion
      * @param schemaPrefix
+     * @param moduleName
      * @return
      */
     public static final  JSONObject createDBModuleTablesAndFields(String procedure,  Integer procVersion, String schemaPrefix, String moduleName){
@@ -314,7 +320,8 @@ public class ProcedureDefinitionToInstance {
         String schemaNameDestination=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
         
          Object[][] procModuleTablesAndFieldsSource = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureModuleTablesAndFields.TBL.getName(), 
-                new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, schemaPrefix}, 
+                new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_ACTIVE.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_PREFIX.getName()}, 
+                new Object[]{true, procedure, procVersion, schemaPrefix}, 
                 TblsReqs.ProcedureModuleTablesAndFields.getAllFieldNames(), new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_NAME.getName()});        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procModuleTablesAndFieldsSource[0][0].toString())){
           jsonObj.put(JSON_LABEL_FOR_ERROR, LPJson.convertToJSON(procModuleTablesAndFieldsSource));
@@ -339,6 +346,23 @@ public class ProcedureDefinitionToInstance {
                         tableCreationScriptTable = TblsEnvMonitDataAudit.getTableCreationScriptFromDataAuditTableEnvMonit(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
                     if (LPPlatform.SCHEMA_PROCEDURE.equalsIgnoreCase(curSchemaName.toString()))
                         tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    break;
+                case "INSPECTION_LOT_RAW_MATERIAL":
+                    if (LPPlatform.SCHEMA_CONFIG.equalsIgnoreCase(curSchemaName.toString())){
+                        Object[] tableExists=dbTableExists(schemaPrefix+"-"+LPPlatform.SCHEMA_CONFIG, curTableName.toString());
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tableExists[0].toString()))
+                            tableCreationScriptTable=TblsInspLotRMConfig.getTableUpdateScriptFromConfigTableInspLotRM(curTableName.toString(), schemaPrefix+"-"+LPPlatform.SCHEMA_CONFIG, curFieldName.toString().split("\\|"));
+                        else
+                            tableCreationScriptTable = TblsInspLotRMConfig.getTableCreationScriptFromConfigTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    }
+//                    if (LPPlatform.SCHEMA_CONFIG_AUDIT.equalsIgnoreCase(curSchemaName.toString()))
+//                        tableCreationScriptFromCnfgTable = TblsInspLotRMCnfgAduit.getTableCreationScriptFromCnfgTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    if (LPPlatform.SCHEMA_DATA.equalsIgnoreCase(curSchemaName.toString()))
+                        tableCreationScriptTable = TblsInspLotRMData.getTableCreationScriptFromDataTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    if (LPPlatform.SCHEMA_DATA_AUDIT.equalsIgnoreCase(curSchemaName.toString()))
+                        tableCreationScriptTable = TblsInspLotRMDataAudit.getTableCreationScriptFromDataAuditTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    if (LPPlatform.SCHEMA_PROCEDURE.equalsIgnoreCase(curSchemaName.toString()))
+                        tableCreationScriptTable = TblsInspLotRMProcedure.getTableCreationScriptFromDataProcedureTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));                  
                     break;
                 case "GENOME":
                     break;

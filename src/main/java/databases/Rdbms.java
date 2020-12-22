@@ -1444,6 +1444,80 @@ if (1==1)return;
         }  
     }
 
+    public static Object[] dbTableExists(String schemaName, String tableName){
+        String schema=schemaName.replace("\"", "");
+        String query="select table_schema from INFORMATION_SCHEMA.TABLES " +
+                     " where table_name=? " + " and table_schema=?";
+        try{
+            String[] filter=new String[]{tableName, schema};
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res==null){
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{ERROR_TRAPPING_ARG_VALUE_RES_NULL, query + ERROR_TRAPPING_ARG_VALUE_LBL_VALUES+ Arrays.toString(filter)});
+            }            
+            res.first();
+            Integer numRows=res.getRow();
+            if (numRows>0){
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rbdms_existsRecord_RecordFound", new Object[]{"", tableName, schemaName});                
+            }else{
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{"",tableName, schemaName});                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+        }  
+    }
+    
+    public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName){
+        HashMap<String[], Object[][]> hm = new HashMap<>();          
+        String[] fieldsToRetrieve=new String[]{"table_schema", "table_name", "column_name", "data_type"};
+        String[] keyFieldValueNew=new String[]{schemaName, tableName};
+        
+        String query= " SELECT table_schema, table_name, column_name, data_type" 
+                    + "   FROM information_schema.columns"
+                    + "  WHERE table_schema = ? "
+                    + "    AND table_name   = ? ";
+        try{
+            ResultSet res = null;            
+            res = Rdbms.prepRdQuery(query, keyFieldValueNew);
+            if (res==null){
+                Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{ERROR_TRAPPING_ARG_VALUE_RES_NULL, query + ERROR_TRAPPING_ARG_VALUE_LBL_VALUES+ Arrays.toString(keyFieldValueNew)});
+                hm.put(fieldsToRetrieve, LPArray.array1dTo2d(errorLog, 1));
+                return hm;
+                //return LPArray.array1dTo2d(errorLog, 1);
+            }              
+            res.last();
+        if (res.getRow()>0){
+         Integer totalLines = res.getRow();
+         res.first();
+         Integer icurrLine = 0;                
+             Object[][] diagnoses2 = new Object[totalLines][fieldsToRetrieve.length];
+             while(icurrLine<=totalLines-1) {
+                for (Integer icurrCol=0;icurrCol<fieldsToRetrieve.length;icurrCol++){
+                    Object currValue = res.getObject(icurrCol+1);
+                    diagnoses2[icurrLine][icurrCol] =  LPNulls.replaceNull(currValue);
+                }        
+                res.next();
+                icurrLine++;
+             }         
+             diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+             hm.put(fieldsToRetrieve, diagnoses2);
+             return hm; //diagnoses2;
+            }else{
+                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(keyFieldValueNew), schemaName});                         
+                hm.put(fieldsToRetrieve, LPArray.array1dTo2d(diagnosesError, diagnosesError.length));
+                return hm;
+//                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            hm.put(fieldsToRetrieve, LPArray.array1dTo2d(diagnosesError, diagnosesError.length));
+            return hm;
+//            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }                    
+        
+    }
+    
     public static Object[] dbViewExists(String schemaName, String viewCategory, String viewName){
         String schema=schemaName;
         if (viewCategory.length()>0){

@@ -780,6 +780,7 @@ public class TblsReqs {
         FLD_SCHEMA_NAME("schema_name", LPDatabase.stringNotNull()),
         FLD_TABLE_NAME("table_name", LPDatabase.stringNotNull()),
         FLD_FIELD_NAME("field_name", LPDatabase.string()),
+        FLD_ACTIVE("active", LPDatabase.booleanFld()),
         ;
         private ProcedureModuleTablesAndFields(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

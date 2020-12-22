@@ -24,7 +24,7 @@ import databases.TblsProcedure;
  * @author User
  */
 public class TblsInspLotRMProcedure {
-    public static final String getTableCreationScriptFromDataProcedureTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+    public static final String getTableCreationScriptFromDataProcedureTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "PROGRAM_CORRECTIVE_ACTIONS": return TblsProcedure.ProgramCorrectiveAction.createTableScript(schemaNamePrefix, fields);
             case "INVESTIGATION": return TblsProcedure.Investigation.createTableScript(schemaNamePrefix, fields);
