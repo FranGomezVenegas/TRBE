@@ -22,7 +22,7 @@ import static databases.TblsCnfg.FIELDSTAG;
 public class TblsInspLotRMDataAudit {
     public static final String getTableCreationScriptFromDataAuditTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
-            case "INCUB_BATCH": return lot.createTableScript(schemaNamePrefix, fields);
+            case "LOT": return Lot.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN INSPLOT_RM_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }    
@@ -30,7 +30,7 @@ public class TblsInspLotRMDataAudit {
     /**
      *
      */
-    public enum lot{
+    public enum Lot{
 
         /**
          *
@@ -92,7 +92,7 @@ public class TblsInspLotRMDataAudit {
         /**
          *
          */
-        FLD_BATCH_NAME("lot_name", LPDatabase.string())
+        FLD_LOT_NAME("lot_name", LPDatabase.string())
         ,
 
         /**
@@ -162,7 +162,7 @@ public class TblsInspLotRMDataAudit {
         FLD_REASON("reason", LPDatabase.string()),
         
         ;
-        private lot(String dbObjName, String dbObjType){
+        private Lot(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
@@ -187,14 +187,14 @@ public class TblsInspLotRMDataAudit {
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = lot.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = Lot.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA_AUDIT));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (lot obj: lot.values()){
+            for (Lot obj: Lot.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){

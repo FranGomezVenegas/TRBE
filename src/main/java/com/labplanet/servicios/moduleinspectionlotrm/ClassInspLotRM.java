@@ -7,19 +7,12 @@ package com.labplanet.servicios.moduleinspectionlotrm;
 
 //import com.labplanet.servicios.moduleenvmonit.*;
 import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEndpoints;
-import databases.Rdbms;
-import databases.TblsProcedure;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
-import functionaljavaa.batch.incubator.DataBatchIncubator;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
+import functionaljavaa.moduleinspectionlot.DataInspectionLot;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -36,19 +29,22 @@ public class ClassInspLotRM {
     public ClassInspLotRM(HttpServletRequest request, Token token, String schemaPrefix, InspLotRMAPIEndpoints endPoint, AuditAndUserValidation auditAndUsrValid){
         RelatedObjects rObj=RelatedObjects.getInstance();
 
-        DataProgramSample prgSmp = new DataProgramSample();     
+        DataInspectionLot insplot = new DataInspectionLot();     
         
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
             switch (endPoint){
                 case NEW_LOT:
-                    LocalDateTime dateStart=(LocalDateTime) argValues[0];
-                    LocalDateTime dateEnd=(LocalDateTime) argValues[1];
-                    String programName = argValues[2].toString();
-                    actionDiagnoses=prgSmp.logProgramSampleScheduled(schemaPrefix, token, programName, dateStart, dateEnd);
+                    String lotName= argValues[0].toString();
+                    String template= argValues[1].toString();
+                    Integer templateVersion = (Integer) argValues[2];
+                    String[] fieldName=new String[]{};
+                    Object[] fieldValue=new Object[]{};
+                    Integer numLotsToCreate=1;
+                    actionDiagnoses=insplot.createLot(schemaPrefix, token, lotName, template, templateVersion, fieldName, fieldValue, numLotsToCreate);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{dateStart, dateEnd, programName, schemaPrefix});                                        
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, template, templateVersion, schemaPrefix});                                        
                     this.messageDynamicData=new Object[]{};
                     break;
             }    

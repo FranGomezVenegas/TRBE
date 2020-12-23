@@ -232,10 +232,6 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_SAMPLE_FIELD_NAME = "fieldName";
-
-    /**
-     *
-     */
     public static final String REQUEST_PARAM_SAMPLE_FIELD_VALUE = "fieldValue";
 
     /**
@@ -284,7 +280,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY = "prodLotFieldsToDisplay";
 
     public static final String REQUEST_PARAM_QUANTITY = "quantity";  
-    public static final String REQUEST_PARAM_QUANTITY_UOM = "quantity_uom";  
+    public static final String REQUEST_PARAM_QUANTITY_UOM = "quantityUom";  
     public static final String REQUEST_PARAM_NUM_CONTAINERS = "numContainers";  
 
     public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
@@ -321,12 +317,10 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_SAMPLE_TEMPLATE = "sampleTemplate";
-
-    /**
-     *
-     */
     public static final String REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION = "sampleTemplateVersion";
 
+    public static final String REQUEST_PARAM_LOT_TEMPLATE = "lotTemplate";
+    public static final String REQUEST_PARAM_LOT_TEMPLATE_VERSION = "lotTemplateVersion";
     /**
      *
      */
