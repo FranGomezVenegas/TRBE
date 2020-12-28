@@ -223,7 +223,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
         Integer fieldIndexSpecCode = Arrays.asList(sampleFieldName).indexOf(TblsData.Sample.FLD_SPEC_CODE.getName());
         Integer fieldIndexSpecCodeVersion = Arrays.asList(sampleFieldName).indexOf(TblsData.Sample.FLD_SPEC_CODE_VERSION.getName());
         Integer fieldIndexSpecVariationName = Arrays.asList(sampleFieldName).indexOf(TblsData.Sample.FLD_SPEC_VARIATION_NAME.getName());
-        if ((fieldIndexSpecCode!=-1) || (fieldIndexSpecCodeVersion!=-1) || (fieldIndexSpecVariationName!=-1)){
+        if ((fieldIndexSpecCode!=-1) && (fieldIndexSpecCodeVersion!=-1)){
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsData.Sample.FLD_SPEC_CODE.getName());
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsData.Sample.FLD_SPEC_CODE_VERSION.getName());
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsData.Sample.FLD_SPEC_VARIATION_NAME.getName());
@@ -232,6 +232,11 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
                     new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion]});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_SPEC_CONFIG_CODE.getErrorCode(), new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion], schemaPrefix});    
+        }else{
+            if (fieldIndexSpecCode==-1)
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleFieldNotFound", new Object[]{TblsData.Sample.FLD_SPEC_CODE.getName()});    
+            else
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleFieldNotFound", new Object[]{TblsData.Sample.FLD_SPEC_CODE_VERSION.getName()});    
         }
 
         mandatoryFieldsValue = new Object[mandatoryFields.length];

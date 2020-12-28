@@ -13,6 +13,8 @@ import functionaljavaa.moduleinspectionlot.DataInspectionLot;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -39,10 +41,33 @@ public class ClassInspLotRM {
                     String lotName= argValues[0].toString();
                     String template= argValues[1].toString();
                     Integer templateVersion = (Integer) argValues[2];
-                    String[] fieldName=new String[]{};
-                    Object[] fieldValue=new Object[]{};
+                    
+                    String q= argValues[3].toString();
+                    String qUomStr = argValues[4].toString();
+                    String nContStr = LPNulls.replaceNull(argValues[5]).toString();
+                    
+                    String fieldName=LPNulls.replaceNull(argValues[6]).toString();
+                    String fieldValue=LPNulls.replaceNull(argValues[7]).toString();
+                    String[] fieldNameArr=new String[]{};
+                    Object[] fieldValueArr=new Object[]{};
+                    if (fieldName.length()>0){
+                        fieldNameArr=fieldName.split("\\|");
+                        fieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                    }
+                    if (q.length()>0){
+                        fieldNameArr=LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.FLD_QUANTITY.getName());
+                        fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(q));
+                    }
+                    if (qUomStr.toString().length()>0){
+                        fieldNameArr=LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.FLD_QUANTITY_UOM.getName());
+                        fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, qUomStr);
+                    }
+                    if (nContStr.toString().length()>0){
+                        fieldNameArr=LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.FLD_NUM_CONTAINERS.getName());
+                        fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(nContStr));
+                    }
                     Integer numLotsToCreate=1;
-                    actionDiagnoses=insplot.createLot(schemaPrefix, token, lotName, template, templateVersion, fieldName, fieldValue, numLotsToCreate);
+                    actionDiagnoses=insplot.createLot(schemaPrefix, token, lotName, template, templateVersion, fieldNameArr, fieldValueArr, numLotsToCreate);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, template, templateVersion, schemaPrefix});                                        
                     this.messageDynamicData=new Object[]{};

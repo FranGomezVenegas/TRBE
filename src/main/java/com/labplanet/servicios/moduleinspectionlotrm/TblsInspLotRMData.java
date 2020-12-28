@@ -51,7 +51,7 @@ public class TblsInspLotRMData {
         /**
          *
          */
-        FLD_PROGRAM_CONFIG_ID("lot_config_id", LPDatabase.integerNotNull())
+        FLD_PROGRAM_CONFIG_ID("lot_config_name", LPDatabase.string())
         ,
 
         /**
@@ -68,13 +68,13 @@ public class TblsInspLotRMData {
         /**
          *
          */
-        FLD_SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integer()),
+        FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer()),
 
         /**
          *
          */
-        FLD_SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.string()),        
-        FLD_SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer()),        
+//        FLD_CONFIG_CODE("config_code", LPDatabase.string()),        
+//        FLD_CONFIG_CODE_VERSION("config_code_version", LPDatabase.integer()),        
         FLD_DESCRIPTION_EN("description_en", LPDatabase.string()),        
         FLD_DESCRIPTION_ES("description_es", LPDatabase.string()),        
         FLD_QUANTITY("quantity", LPDatabase.integer()),        
@@ -83,9 +83,12 @@ public class TblsInspLotRMData {
         FLD_VENDOR("vendor", LPDatabase.string()),        
         FLD_VENDOR_TRUST_LEVEL("vendor_trust_level", LPDatabase.string()),        
         FLD_SAMPLING_PLAN("sampling_plan", LPDatabase.string()),        
-
+        FLD_ANALYSIS_STATUS("analysis_status", LPDatabase.string()),        
+        FLD_CREATED_ON("created_on", LPDatabase.dateTime()),
+        FLD_CREATED_BY("created_by", LPDatabase.string()),
                 
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
+        FLD_CUSTODIAN("custodian", LPDatabase.string()),
         // ...
         ;
         
@@ -384,7 +387,7 @@ public class TblsInspLotRMData {
         /**
          *
          */
-        FLD_SPEC_EVAL("spec_eval",  LPDatabase.stringNotNull(2))
+        FLD_SPEC_EVAL("spec_eval",  LPDatabase.string(2))
         ,
 
         /**

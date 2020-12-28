@@ -66,7 +66,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_CONFIG_CODE("sample_config_code", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_sample_id_seq'::regclass)")
+        FLD_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull())
         ,
 
         /**

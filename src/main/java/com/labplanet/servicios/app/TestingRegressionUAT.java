@@ -96,6 +96,7 @@ public class TestingRegressionUAT extends HttpServlet {
         case NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK:
         case DB_SCHEMACONFIG_SPEC_RESULTCHECK:
         case DB_SCHEMADATA_ENVMONIT_SAMPLES:
+        case DB_SCHEMADATA_INSPECTION_LOT_RM:
             RequestDispatcher rd = request.getRequestDispatcher(endPoints.getServletUrl());
             rd.forward(request,response);   
             return;                       

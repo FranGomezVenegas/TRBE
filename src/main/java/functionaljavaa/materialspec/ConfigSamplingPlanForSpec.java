@@ -29,7 +29,7 @@ public class ConfigSamplingPlanForSpec {
 
         
     String mandatoryFieldsMissing = ""; 
-
+    
     /**
      *
      * @param schemaPrefix
@@ -156,7 +156,7 @@ public class ConfigSamplingPlanForSpec {
     }      
         return diagnoses;
     }
-
+    
     public Integer samplingAlgorithmFix(Integer val){
         return val;
     }

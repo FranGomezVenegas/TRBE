@@ -197,7 +197,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
 //                    if (specRule.getMinControl()==null){
-                    Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][testingContent[0].length-2]).toString());
+                    Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
 
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());

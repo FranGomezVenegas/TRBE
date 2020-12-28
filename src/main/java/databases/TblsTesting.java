@@ -135,7 +135,7 @@ public class TblsTesting {
          */
         FLD_SCRIPT_ID("script_id", LPDatabase.integerNotNull()),
         FLD_STEP_ID("step_id", LPDatabase.integerNotNull()),
-        TBL("script_steps", LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT app_session_pkey PRIMARY KEY (#FLD_SCRIPT_ID, #FLD_STEP_ID) ) " +
+        TBL("script_steps", LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_STEP_ID_pkey PRIMARY KEY (#FLD_SCRIPT_ID, #FLD_STEP_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
         FLD_TESTER_NOTES("tester_notes", LPDatabase.string()),   

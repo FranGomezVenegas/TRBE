@@ -198,14 +198,14 @@ public class LPFrontEnd {
     public static JSONObject responseJSONError(String errorPropertyName, Object[] errorPropertyValue){
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.MESSAGE.getLabelName(), errorPropertyName);
-        String errorTextEn = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_ERRORTRAPING, null, errorPropertyName, null);
+        String errorTextEn = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName+"_detail", null);
         if (errorPropertyValue!=null){
             for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){
                 errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", errorPropertyValue[iVarValue-1].toString());
             }        
         }
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
-        String errorTextEs = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_ERRORTRAPING, null, errorPropertyName, "es");
+        String errorTextEs = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName+"_detail", "es");
         if (errorPropertyValue!=null){
             for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){
                 errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", errorPropertyValue[iVarValue-1].toString());

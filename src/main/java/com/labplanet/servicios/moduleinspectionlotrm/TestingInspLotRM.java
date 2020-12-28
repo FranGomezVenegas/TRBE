@@ -10,7 +10,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
 import databases.Rdbms;
-import databases.TblsTesting;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
@@ -38,7 +37,7 @@ import org.json.simple.JSONArray;
  *
  * @author User
  */
-public class TestingEnvMonitSamples extends HttpServlet {
+public class TestingInspLotRM extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -50,7 +49,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String table1Header = TestingServletsConfig.DB_SCHEMADATA_ENVMONIT_SAMPLES.getTablesHeaders();
+        String table1Header = TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTablesHeaders();
         Integer table1NumArgs=13;
         
         Object[] functionEvaluation=new Object[0];
@@ -63,7 +62,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
-        String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_ENVMONIT_SAMPLES.getTesterFileName();                         
+        String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTesterFileName();                         
         LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
         HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
@@ -71,6 +70,12 @@ public class TestingEnvMonitSamples extends HttpServlet {
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());
         Object[][]  testingContent =tstOut.getTestingContent();
         testingContent=LPArray.addColumnToArray2D(testingContent, new JSONArray());
+
+        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, null);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
+            return;          
+        }             
         
         String stopPhrase=null;
         
@@ -98,7 +103,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
 
-                ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
+/*                ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
                 if (clssEnvMonSampleController.getFunctionFound()){
                     functionRelatedObjects=clssEnvMonSampleController.getFunctionRelatedObjects();
                     functionEvaluation=(Object[]) clssEnvMonSampleController.getFunctionDiagn();
@@ -125,13 +130,14 @@ public class TestingEnvMonitSamples extends HttpServlet {
                                 functionEvaluation=(Object[]) clssEnvMonIncubController.getFunctionDiagn();
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                 fileContentTable1Builder.append(clssEnvMonIncubController.getRowArgsRows());                
-                            }else{                            
-                                ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
-                                if (clssEnvMonQueriesController.getFunctionFound()){
-                                    functionRelatedObjects=clssEnvMonQueriesController.getFunctionRelatedObjects();
-                                    functionEvaluation=(Object[]) clssEnvMonQueriesController.getFunctionDiagn();
+                            }else{   
+*/                        
+                                ClassInspLotRMController clssInspLotRMController=new ClassInspLotRMController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs, auditAndUsrValid);
+                                if (clssInspLotRMController.getFunctionFound()){
+                                    functionRelatedObjects=clssInspLotRMController.getFunctionRelatedObjects();
+                                    functionEvaluation=(Object[]) clssInspLotRMController.getFunctionDiagn();
                                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                    fileContentTable1Builder.append(clssEnvMonQueriesController.getRowArgsRows());                
+                                    fileContentTable1Builder.append(clssInspLotRMController.getRowArgsRows());                
                                 }else{
                                     ClassSampleController clssSampleController=new ClassSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
                                     if (clssSampleController.getFunctionFound()){
@@ -145,10 +151,10 @@ public class TestingEnvMonitSamples extends HttpServlet {
                                         fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
                                     }
                                 }
-                            }
+/*                            }
                         }
                     }
-                }
+                }*/
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
                                     

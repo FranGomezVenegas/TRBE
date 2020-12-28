@@ -27,7 +27,7 @@ public class TblsAppAudit {
         FLD_AUDIT_ID("audit_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
         ,        TBL("incident", LPDatabase.createSequence(FLD_AUDIT_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT app_session_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_AUDIT_ID_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
 
@@ -226,7 +226,7 @@ public class TblsAppAudit {
         ,
         TBL("session", LPDatabase.createSequence(FLD_SESSION_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SESSION_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT app_session_pkey1 PRIMARY KEY (#FLD_SESSION_ID) ) " +
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_SESSION_ID_pkey PRIMARY KEY (#FLD_SESSION_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
 

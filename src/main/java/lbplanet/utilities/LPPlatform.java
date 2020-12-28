@@ -226,7 +226,7 @@ public class LPPlatform {
             return trapMessage(LAB_TRUE, "ACTION_ENABLED_BY_ALL", new String[]{schemaPrefix, actionName});
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return trapMessage(LAB_FALSE, "userRoleActionEnabled_denied_ruleNotFound", new String[]{schemaPrefix, Arrays.toString(procedureActions)});
+            return trapMessage(LAB_FALSE, "userRoleActionEnabled_denied_rulesNotFound", new String[]{schemaPrefix, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
             return trapMessage(LAB_FALSE, "userRoleActionEnabled_denied", new String[]{actionName, schemaPrefix, Arrays.toString(procedureActions)});            
         }else{

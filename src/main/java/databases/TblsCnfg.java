@@ -857,7 +857,7 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.booleanFld())
+        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string())
         ,
 
         /**
