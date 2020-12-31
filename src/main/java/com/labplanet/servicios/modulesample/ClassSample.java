@@ -197,7 +197,7 @@ public class ClassSample {
                 String rawValueResult = argValues[1].toString();
                 diagn = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
-                this.messageDynamicData=new Object[]{sampleId};
+                this.messageDynamicData=new Object[]{resultId};
                 break;
             case REVIEWSAMPLE:
                 sampleId = (Integer) argValues[0];

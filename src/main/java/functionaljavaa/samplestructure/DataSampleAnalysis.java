@@ -183,7 +183,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 new String[] {TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, sampleAnalysisFieldName);
         if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "readyForRevision", new Object[]{testId, sampleId, schemaPrefix});
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", new Object[]{testId, sampleId, schemaPrefix});
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", new Object[]{testId, sampleId, schemaPrefix});
         //return diagnoses;
     }
         

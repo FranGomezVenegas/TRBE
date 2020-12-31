@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
@@ -38,6 +39,42 @@ import org.json.simple.JSONArray;
  */
 public class DbTestingLimitAndResult extends HttpServlet {
 
+    public enum TestingLimitAndResult{
+        DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT("DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT", "productionLot_newLotCreated_success",
+                new LPAPIArguments[]{new LPAPIArguments("schemaName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments("specCode", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                new LPAPIArguments("specCodeVersion", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments("variation", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                new LPAPIArguments("analysis", LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
+                new LPAPIArguments("methodName", LPAPIArguments.ArgumentType.STRING.toString(), true, 11),
+                new LPAPIArguments("methodVersion", LPAPIArguments.ArgumentType.STRING.toString(), true, 12),
+                new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 13),
+                new LPAPIArguments("resultUomName", LPAPIArguments.ArgumentType.STRING.toString(), false, 14),
+        } ),                
+        ;
+        private TestingLimitAndResult(String name, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums; 
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
+        private final String name;
+        private final String successMessageCode;       
+        private  LPAPIArguments[] arguments;
+    }    
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *

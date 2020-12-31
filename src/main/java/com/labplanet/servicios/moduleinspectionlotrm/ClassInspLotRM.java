@@ -10,6 +10,7 @@ import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEn
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.moduleinspectionlot.DataInspectionLot;
+import functionaljavaa.moduleinspectionlot.DataInspectionLotDecision;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
@@ -30,9 +31,11 @@ public class ClassInspLotRM {
 
     public ClassInspLotRM(HttpServletRequest request, Token token, String schemaPrefix, InspLotRMAPIEndpoints endPoint, AuditAndUserValidation auditAndUsrValid){
         RelatedObjects rObj=RelatedObjects.getInstance();
-
+    //try () {
         DataInspectionLot insplot = new DataInspectionLot();     
+        DataInspectionLotDecision insplotDecision = new DataInspectionLotDecision();   
         
+    
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
@@ -68,14 +71,38 @@ public class ClassInspLotRM {
                     }
                     Integer numLotsToCreate=1;
                     actionDiagnoses=insplot.createLot(schemaPrefix, token, lotName, template, templateVersion, fieldNameArr, fieldValueArr, numLotsToCreate);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, template, templateVersion, schemaPrefix});                                        
+                        rObj.addSimpleNode(schemaPrefix, TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);
+                    }
                     this.messageDynamicData=new Object[]{};
                     break;
+            case LOT_TAKE_DECISION:                 
+                lotName= argValues[0].toString();
+                String decision= argValues[1].toString();
+                fieldName=LPNulls.replaceNull(argValues[2]).toString();
+                fieldValue=LPNulls.replaceNull(argValues[3]).toString();
+                fieldNameArr=new String[]{};
+                fieldValueArr=new Object[]{};
+                if (fieldName.length()>0){
+                    fieldNameArr=fieldName.split("\\|");
+                    fieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                }
+                actionDiagnoses=insplotDecision.lotTakeDecision(schemaPrefix, token, lotName, decision, fieldNameArr, fieldValueArr);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, decision, fieldNameArr, fieldValueArr, schemaPrefix});                                        
+                    rObj.addSimpleNode(schemaPrefix, TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);
+                }
+                this.messageDynamicData=new Object[]{};
+                break;
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
         rObj.killInstance();
+/*    catch(Exception e){   
+    }finally{
+        insplot.killInstance();
+        inspLotDecision.killInstance();    */
     }
     
     /**

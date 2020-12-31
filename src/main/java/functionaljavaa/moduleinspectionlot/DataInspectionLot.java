@@ -186,9 +186,9 @@ public class DataInspectionLot {
                         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR.getErrorCode(), new Object[]{currField, aMethod, LPNulls.replaceNull(specialFunctionReturn)});                            
             }
         }        
-        lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_PROGRAM_CONFIG_ID.getName());    
+        lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_LOT_CONFIG_NAME.getName());    
         lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, template);
-        lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_PROGRAM_CONFIG_VERSION.getName());    
+        lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_LOT_CONFIG_VERSION.getName());    
         lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, templateVersion); 
         
         lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_CREATED_ON.getName());    
@@ -233,15 +233,19 @@ public class DataInspectionLot {
 //            smpStages.dataLotStagesTimingCapture(procPrefix, sampleId, firstStage[firstStage.length-1][1].toString(), DataLotStages.SampleStageTimingCapturePhases.START.toString());
             
             LotAudit lotAudit = new LotAudit();            
-            Object[] sampleAuditAdd = lotAudit.lotAuditAdd(procPrefix, 
+            Object[] lotAuditAdd = lotAudit.lotAuditAdd(procPrefix, 
                     LotAudit.LotAuditEvents.LOT_CREATED.toString(), 
                     TblsInspLotRMData.Lot.TBL.getName(), lotName, 
                                         lotName, null, null, fieldsOnLogLot, token, null);
             Integer transactionId = null;
-            Integer preAuditId=Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString());
+            Integer preAuditId=Integer.valueOf(lotAuditAdd[lotAuditAdd.length-1].toString());
             
+            DataInspectionLotDecision lotDec=new DataInspectionLotDecision();
+            lotDec.lotDecisionRecordCreateOrUpdate(procPrefix, token, lotName, null);
+            lotDec=null;
             Object[] applySamplingPoint = applySamplingPoint(procPrefix, token, lotName, lotFieldName, lotFieldValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(applySamplingPoint[0].toString())) return applySamplingPoint;
+            
 //Area for event triggers (ex: apply sampling plan)
             /*
             this.smpAna.autoSampleAnalysisAdd(procPrefix, token, sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), preAuditId);
@@ -270,7 +274,7 @@ public class DataInspectionLot {
                     "smpTemplate", 1, fieldName, fieldValue, spEntry.getQuantity());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString())) return newProjSample;
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet", null);
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
     }
     
 }

@@ -16,8 +16,9 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.moduleenvmonit.ClassEnvMon;
-import com.labplanet.servicios.moduleenvmonit.EnvMonAPI;
+import com.labplanet.servicios.modulesample.ClassSample;
+import com.labplanet.servicios.modulesample.SampleAPI;
+import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
@@ -31,7 +32,7 @@ import org.json.simple.JSONObject;
 /**
  *
  * @author User
- */
+ */ 
 public class InspLotRMAPI extends HttpServlet {
     public enum InspLotRMAPIEndpoints{
         NEW_LOT("NEW_LOT", "createNewLot", 
@@ -43,6 +44,15 @@ public class InspLotRMAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_CONTAINERS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 13),
+            }),
+        ZZENTERRESULT("ZZZZENTERRESULT", "enterResult_success",   
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )} ),        
+        LOT_TAKE_DECISION("LOT_TAKE_DECISION", "createNewLot", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_DECISION, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
             }),
         ;
         private InspLotRMAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
@@ -82,13 +92,12 @@ public class InspLotRMAPI extends HttpServlet {
         /**
          *
          */
-        GET_SAMPLE_INFO("GET_SAMPLE_INFO", "get_sample_info_success", 
-            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
+        GET_LOT_INFO("GET_LOT_INFO", "get_lot_info_success", 
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)}),
-        GET_SAMPLE_RESULTS("GET_SAMPLE_RESULTS", "get_sample_results_success", 
-            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8)}),
+        GET_LOT_SAMPLES_INFO("GET_LOT_SAMPLES_INFO", "get_lot_samples_info_success", 
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)}),
         ;
         private InspLotRMQueriesAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
@@ -174,8 +183,27 @@ public class InspLotRMAPI extends HttpServlet {
         try{
             endPoint = InspLotRMAPIEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
-            return;                   
+                SampleAPIParams.SampleAPIEndpoints endPointSmp = null;
+                try{
+                    endPointSmp = SampleAPIParams.SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+                }catch(Exception er){
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                    return;                   
+                }                
+                ClassSample clssSmp=new ClassSample(request, token, schemaPrefix, endPointSmp);
+                if (clssSmp.getEndpointExists()){
+                    Object[] diagnostic=clssSmp.getDiagnostic();
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+        /*                Rdbms.rollbackWithSavePoint();
+                        if (!con.getAutoCommit()){
+                            con.rollback();
+                            con.setAutoCommit(true);}                */                        
+                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
+                    }else{
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(SampleAPI.class.getSimpleName(), endPointSmp.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
+                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
+                    } 
+                }                
         }
         areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -213,15 +241,15 @@ public class InspLotRMAPI extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
-*/            
+*/                        
             auditAndUsrValid.killInstance();
             Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
-        } finally {
+        } finally {            
             // release database resources
-            try {
+            try {                
                 //con.close();
                 auditAndUsrValid.killInstance();
                 Rdbms.closeRdbms();   

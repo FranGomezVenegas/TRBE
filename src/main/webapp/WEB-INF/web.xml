@@ -274,6 +274,10 @@
         <servlet-name>InspLotRMAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>InspLotRMAPIfrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPIfrontend</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DownloadFileServlet</servlet-name>
         <url-pattern>/DownloadFileServlet</url-pattern>
@@ -548,6 +552,10 @@
     <servlet-mapping>
         <servlet-name>InspLotRMAPI</servlet-name>
         <url-pattern>/moduleinsplotrm/InspLotRMAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InspLotRMAPIfrontend</servlet-name>
+        <url-pattern>/moduleinsplotrm/InspLotRMAPIfrontend</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

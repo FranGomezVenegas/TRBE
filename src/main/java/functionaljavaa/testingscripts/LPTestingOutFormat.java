@@ -784,7 +784,7 @@ public class LPTestingOutFormat {
     
     public static String getAttributeValue(Object value, Object[][] scriptSteps){            
         try{
-            if (!value.toString().contains("step")) return LPNulls.replaceNull(value.toString());
+            if (!value.toString().contains("step")) return specialTagFilter(LPNulls.replaceNull(value.toString()));
 
             JsonObject jsonObject = LPJson.convertToJsonObjectStringedObject(value.toString());
             int stepNumber = jsonObject.get("step").getAsInt();        
@@ -805,6 +805,11 @@ public class LPTestingOutFormat {
             }
             return "";
         }catch(Exception ex){ return "";}
+    }
+    private static String specialTagFilter(String value){
+        String tagName="{TZ_DATE}";
+        if (value.contains(tagName)) value=value.replace(tagName, LPDate.getCurrentTimeStamp().toString());
+        return value;
     }
 
     

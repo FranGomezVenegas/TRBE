@@ -407,7 +407,7 @@ public class LPFrontEnd {
     }    
     public static final void servletReturnResponseErrorLPFalseDiagnosticBilingue(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] msgVariables){       
         JSONObject errJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(errorCode, msgVariables);
-        request.setAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME, errJSONMsg.toString());        
+        request.setAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME, errJSONMsg.toString());          
         servetInvokeResponseErrorServlet(request, response);
     }    
     /**

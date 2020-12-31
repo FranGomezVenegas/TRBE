@@ -381,7 +381,11 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                 return diagnoses;
         }
         if (specRule.getRuleIsQuantitative()){
-                resultValue= new BigDecimal(resultValue.toString());
+                try{
+                    resultValue= new BigDecimal(resultValue.toString());
+                }catch(Exception e){
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSampleAnalysisResult_ValueNotNumericForQuantitativeParam", new Object[]{resultValue, specRule.getRuleRepresentation(), limitId.toString(), schemaDataName});            
+                }
                 if (specRule.getQuantitativeHasControl()){
                     if (requiresUnitsConversion) {
                         resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict());

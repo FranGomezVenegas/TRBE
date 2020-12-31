@@ -40,9 +40,9 @@ public class TblsData {
             default: return "TABLE "+tableName+" NOT IN TBLDATA "+LPPlatform.LAB_FALSE;
         }        
     }
-    private static final java.lang.String FIELDS_NAMES_STATUS_PREVIOUS = "status_previous";
-    private static final java.lang.String FIELDS_NAMES_STATUS = "status";
-    private static final java.lang.String FIELDS_NAMES_SPEC_EVAL = "spec_eval";
+    public static final java.lang.String FIELDS_NAMES_STATUS_PREVIOUS = "status_previous";
+    public static final java.lang.String FIELDS_NAMES_STATUS = "status";
+    public static final java.lang.String FIELDS_NAMES_SPEC_EVAL = "spec_eval";
     private static final java.lang.String FIELDS_NAMES_CUSTODIAN_CANDIDATE = "custodian_candidate";
     private static final java.lang.String FIELDS_NAMES_CUSTODIAN = "custodian";
     private static final java.lang.String FIELDS_NAMES_COC_CONFIRMED_ON = "coc_confirmed_on";
@@ -653,11 +653,11 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }            
-    private static final java.lang.String FIELDS_NAMES_TEST_ID = "test_id";
-    private static final java.lang.String FIELDS_NAMES_ANALYSIS = "analysis";
-    private static final java.lang.String FIELDS_NAMES_REPLICA = "replica";
-    private static final java.lang.String FIELDS_NAMES_SUBALIQUOT_ID = "subaliquot_id";
-    private static final java.lang.String FIELDS_NAMES_ALIQUOT_ID = "aliquot_id";
+    public static final java.lang.String FIELDS_NAMES_TEST_ID = "test_id";
+    public static final java.lang.String FIELDS_NAMES_ANALYSIS = "analysis";
+    public static final java.lang.String FIELDS_NAMES_REPLICA = "replica";
+    public static final java.lang.String FIELDS_NAMES_SUBALIQUOT_ID = "subaliquot_id";
+    public static final java.lang.String FIELDS_NAMES_ALIQUOT_ID = "aliquot_id";
 
     /**
      *
@@ -1891,8 +1891,8 @@ public class TblsData {
          */
         TBL("sample_analysis_result_with_spec_limits",  LPDatabase.createView() +
                 " SELECT #FLDS from #SCHEMA.sample_analysis_result sar " +
-                "   INNER JOIN \"em-demo-a-data\".sample_analysis sa on sa.test_id = sar.test_id "+
-                "   INNER JOIN \"em-demo-a-data\".sample s on s.sample_id = sar.sample_id "+
+                "   INNER JOIN #SCHEMA.sample_analysis sa on sa.test_id = sar.test_id "+
+                "   INNER JOIN #SCHEMA.sample s on s.sample_id = sar.sample_id "+
                 "    left outer join #SCHEMA_CONFIG.spec_limits spcLim on sar.limit_id=spcLim.limit_id " +
                 "    left outer join #SCHEMA_PROCEDURE.program_corrective_action pca on pca.result_id=rsl.result_id " +
                 "    left outer join #SCHEMA_PROCEDURE.invest_objects io on io.object_id=rsl.result_id and io.object_type='sample_analysis_result' ;" +
@@ -1982,7 +1982,7 @@ public class TblsData {
          *
          */
         FLD_RAW_VALUE("raw_value", "sar.raw_value"),
-        FLD_RAW_VALUE_NUM("raw_value_num", "TO_NUMBER(sar.raw_value, '9999')"),         
+        FLD_RAW_VALUE_NUM("raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end AS raw_value_num"),         
 
         /**
          *
