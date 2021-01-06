@@ -14,6 +14,7 @@ import databases.Token;
 import functionaljavaa.audit.LotAudit;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
 import functionaljavaa.materialspec.SamplingPlanEntry;
+import functionaljavaa.materialspec.SamplingPlanEntryItem;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSample;
 import java.lang.reflect.InvocationTargetException;
@@ -86,15 +87,19 @@ public class DataInspectionLot {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     
-    public Object[] createLot(String procPrefix, Token token, String lotName, String template, Integer templateVersion, String[] fieldName, Object[] fieldValue, Integer numLotsToCreate) {
+    public Object[] createLot(String procPrefix, Token token, String lotName, String materialName, String template, Integer templateVersion, String[] fieldName, Object[] fieldValue, Integer numLotsToCreate) {
+        String schemaDataName = LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_DATA);    
+        String schemaConfigName = LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_CONFIG); 
+        
+        Object[] lotExists = Rdbms.existsRecord(schemaDataName, TblsInspLotRMData.Lot.TBL.getName(), 
+                new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()}, new Object[]{lotName});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(lotExists[0].toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lotAlreadyExists", new Object[]{lotName, procPrefix});
         DataDataIntegrity labIntChecker = new DataDataIntegrity();
         Object[] errorDetailVariables= new Object[0];
         
         Object[] diagnoses = new Object[7];
         String actionName = "Insert";
-        
-        String schemaDataName = LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_DATA);    
-        String schemaConfigName = LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_CONFIG); 
         
         String lotLevel = TblsInspLotRMData.Lot.TBL.getName();
 
@@ -108,28 +113,40 @@ public class DataInspectionLot {
         lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_ANALYSIS_STATUS.getName());
         lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, lotStatusFirst);
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(lotFieldName, lotFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())){return fieldNameValueArrayChecker;}        
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())) return fieldNameValueArrayChecker;
         // spec is not mandatory but when any of the fields involved is added to the parameters 
         //  then it turns mandatory all the fields required for linking this entity.
-        Integer fieldIndexSpecCode = Arrays.asList(lotFieldName).indexOf(TblsInspLotRMData.Lot.FLD_SPEC_CODE.getName());
+/*        Integer fieldIndexSpecCode = Arrays.asList(lotFieldName).indexOf(TblsInspLotRMData.Lot.FLD_SPEC_CODE.getName());
         Integer fieldIndexSpecCodeVersion = Arrays.asList(lotFieldName).indexOf(TblsInspLotRMData.Lot.FLD_SPEC_CODE_VERSION.getName());
         //Integer fieldIndexSpecVariationName = Arrays.asList(lotFieldName).indexOf(TblsInspLotRMData.Lot.FLD_SPEC_VARIATION_NAME.getName());
         if ((fieldIndexSpecCode!=-1) && (fieldIndexSpecCodeVersion!=-1)){ // || (fieldIndexSpecVariationName!=-1)){
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsInspLotRMData.Lot.FLD_SPEC_CODE.getName());
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsInspLotRMData.Lot.FLD_SPEC_CODE_VERSION.getName());
         //    mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsInspLotRMData.Lot.FLD_SPEC_VARIATION_NAME.getName());
-            Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.Spec.TBL.getName(), 
-                    new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
-                    new Object[]{lotFieldValue[fieldIndexSpecCode], lotFieldValue[fieldIndexSpecCodeVersion]});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
-               return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.MISSING_SPEC_CONFIG_CODE.getErrorCode(), new Object[]{lotFieldValue[fieldIndexSpecCode], lotFieldValue[fieldIndexSpecCodeVersion], procPrefix});    
-        }else{
+*/        
+        Object[][] materialInfo=Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsInspLotRMConfig.Material.TBL.getName(), 
+            new String[]{TblsInspLotRMConfig.Material.FLD_NAME.getName()}, new Object[]{materialName}, 
+            new String[]{TblsInspLotRMConfig.Material.FLD_SPEC_CODE.getName(), TblsInspLotRMConfig.Material.FLD_SPEC_CODE_VERSION.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return materialInfo;
+        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.Spec.TBL.getName(), 
+                new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
+                new Object[]{materialInfo[0][0], materialInfo[0][1]});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.MISSING_SPEC_CONFIG_CODE.getErrorCode(), new Object[]{materialInfo[0][0], materialInfo[0][1], procPrefix});    
+        lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName());    
+        lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, materialName);
+        lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_SPEC_CODE.getName());    
+        lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, materialInfo[0][0]);
+        lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_SPEC_CODE_VERSION.getName());    
+        lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, materialInfo[0][1]);
+            
+/*        }else{
             if (fieldIndexSpecCode==-1)
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "LotFieldNotFound", new Object[]{TblsInspLotRMData.Lot.FLD_SPEC_CODE.getName()});    
             else
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "LotFieldNotFound", new Object[]{TblsInspLotRMData.Lot.FLD_SPEC_CODE_VERSION.getName()});    
         }
-
+*/
         Object[] mandatoryFieldsValue = new Object[mandatoryFields.length];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
@@ -149,7 +166,7 @@ public class DataInspectionLot {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);    
         }               
         
-        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsInspLotRMConfig.Lot.TBL.getName(), 
+        Rdbms.existsRecord(schemaConfigName, TblsInspLotRMConfig.Lot.TBL.getName(), 
                 new String[]{TblsInspLotRMConfig.Lot.FLD_CODE.getName(), TblsInspLotRMConfig.Lot.FLD_CODE_VERSION.getName()}, new Object[]{template, templateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.MISSING_CONFIG_CODE.getErrorCode(), new Object[]{template, templateVersion, schemaConfigName, diagnosis[5]});    
@@ -212,6 +229,18 @@ public class DataInspectionLot {
                 lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, curFld[1]);                         
           }
         }*/
+        Integer quant=null;
+        String specCode=materialInfo[0][0].toString();
+        Integer specCodeVersion=Integer.valueOf(materialInfo[0][1].toString());
+        if (LPArray.valueInArray(fieldName, TblsInspLotRMData.Lot.FLD_QUANTITY.getName()))
+            quant=Integer.valueOf(fieldValue[LPArray.valuePosicInArray(fieldName, TblsInspLotRMData.Lot.FLD_QUANTITY.getName())].toString());
+        Integer numCont=null;
+        if (LPArray.valueInArray(fieldName, TblsInspLotRMData.Lot.FLD_NUM_CONTAINERS.getName()))
+            numCont=Integer.valueOf(fieldValue[LPArray.valuePosicInArray(fieldName, TblsInspLotRMData.Lot.FLD_NUM_CONTAINERS.getName())].toString());
+        SamplingPlanEntry spEntry=new SamplingPlanEntry(procPrefix, materialName, specCode, specCodeVersion, quant, numCont);
+        if (spEntry.getHasErrors()){
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SamplePlanCheckerReturnedErrors "+Arrays.toString(spEntry.getErrorsArr()), null);
+        }
         if (numLotsToCreate==null){numLotsToCreate=1;}
         
         for (int iNumLotsToLog=0; iNumLotsToLog<numLotsToCreate; iNumLotsToLog++ ){   
@@ -243,7 +272,7 @@ public class DataInspectionLot {
             DataInspectionLotDecision lotDec=new DataInspectionLotDecision();
             lotDec.lotDecisionRecordCreateOrUpdate(procPrefix, token, lotName, null);
             lotDec=null;
-            Object[] applySamplingPoint = applySamplingPoint(procPrefix, token, lotName, lotFieldName, lotFieldValue);
+            Object[] applySamplingPoint = applySamplingPoint(procPrefix, token, lotName, materialName, specCode, specCodeVersion, quant, numCont, lotFieldName, lotFieldValue, spEntry);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(applySamplingPoint[0].toString())) return applySamplingPoint;
             
 //Area for event triggers (ex: apply sampling plan)
@@ -254,16 +283,16 @@ public class DataInspectionLot {
         }
         return diagnoses;          
     }
-    public Object[] applySamplingPoint(String procPrefix, Token token, String lotName, String[] lotFldName, Object[] lotFldValue){
+    public Object[] applySamplingPoint(String procPrefix, Token token, String lotName, String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont, String[] lotFldName, Object[] lotFldValue, SamplingPlanEntry spEntry){
         String[] lotFieldsForSamples = new String[]{TblsInspLotRMData.Sample.FLD_SPEC_CODE.getName(), TblsInspLotRMData.Sample.FLD_SPEC_CODE_VERSION.getName()};
         DataInspLotRMSampleAnalysis dsInspLotRM = new DataInspLotRMSampleAnalysis();
         DataSample ds = new DataSample(dsInspLotRM);
-
-        List<SamplingPlanEntry> samplingPlanInfoList = SamplingPlanEntry.getSamplingPlanInfo();
+        
+        List<SamplingPlanEntryItem> samplingPlanInfoList = spEntry.getSpEntries();// SamplingPlanEntry.getSamplingPlanInfo(procPrefix, materialName, specCode, specCodeVersion, quant, numCont);
         for (int i=0;i<samplingPlanInfoList.size();i++){
-            SamplingPlanEntry spEntry = samplingPlanInfoList.get(i);
+            SamplingPlanEntryItem spEntryItem = samplingPlanInfoList.get(i);
             String[] fieldName=new String[]{TblsInspLotRMData.Sample.FLD_LOT_NAME.getName(), TblsInspLotRMData.Sample.FLD_SPEC_VARIATION_NAME.getName()};
-            Object[] fieldValue=new Object[]{lotName, spEntry.getAnaVariation()};
+            Object[] fieldValue=new Object[]{lotName, spEntryItem.getAnaVariation()};
             for (String curFld: lotFieldsForSamples){
                 if (LPArray.valueInArray(lotFldName, curFld)){
                     fieldName=LPArray.addValueToArray1D(fieldName, lotFldName[LPArray.valuePosicInArray(lotFldName, curFld)]);
@@ -271,7 +300,7 @@ public class DataInspectionLot {
                 }
             }
             Object[] newProjSample = ds.logSample(procPrefix, token, 
-                    "smpTemplate", 1, fieldName, fieldValue, spEntry.getQuantity());
+                    "smpTemplate", 1, fieldName, fieldValue, spEntryItem.getQuantity());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString())) return newProjSample;
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);

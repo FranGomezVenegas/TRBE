@@ -52,6 +52,7 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE = "addSampleAnalysisResultFieldToRetrieve";    
+    public static final String REQUEST_PARAM_ANALYSIS_NAME = "analysisName";
 
     /**
      *
@@ -139,6 +140,8 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
+    public static final String REQUEST_PARAM_MATERIAL_NAME = "materialName";    
+    
     public static final String REQUEST_PARAM_MY_TOKEN = "myToken";
 
     /**

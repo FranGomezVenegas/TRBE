@@ -42,15 +42,16 @@ public class ClassInspLotRM {
             switch (endPoint){
                 case NEW_LOT:
                     String lotName= argValues[0].toString();
-                    String template= argValues[1].toString();
-                    Integer templateVersion = (Integer) argValues[2];
+                    String materialName= argValues[1].toString();
+                    String template= argValues[2].toString();
+                    Integer templateVersion = (Integer) argValues[3];
                     
-                    String q= argValues[3].toString();
-                    String qUomStr = argValues[4].toString();
-                    String nContStr = LPNulls.replaceNull(argValues[5]).toString();
+                    String q= argValues[4].toString();
+                    String qUomStr = argValues[5].toString();
+                    String nContStr = LPNulls.replaceNull(argValues[6]).toString();
                     
-                    String fieldName=LPNulls.replaceNull(argValues[6]).toString();
-                    String fieldValue=LPNulls.replaceNull(argValues[7]).toString();
+                    String fieldName=LPNulls.replaceNull(argValues[7]).toString();
+                    String fieldValue=LPNulls.replaceNull(argValues[8]).toString();
                     String[] fieldNameArr=new String[]{};
                     Object[] fieldValueArr=new Object[]{};
                     if (fieldName.length()>0){
@@ -70,7 +71,7 @@ public class ClassInspLotRM {
                         fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(nContStr));
                     }
                     Integer numLotsToCreate=1;
-                    actionDiagnoses=insplot.createLot(schemaPrefix, token, lotName, template, templateVersion, fieldNameArr, fieldValueArr, numLotsToCreate);
+                    actionDiagnoses=insplot.createLot(schemaPrefix, token, lotName, materialName, template, templateVersion, fieldNameArr, fieldValueArr, numLotsToCreate);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, template, templateVersion, schemaPrefix});                                        
                         rObj.addSimpleNode(schemaPrefix, TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);

@@ -124,7 +124,7 @@ public class DataInspectionLotDecision {
         diagnoses = LPArray.addValueToArray1D(diagnoses, diagnoses[diagnoses.length-1]);
 
 //        if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){return diagnoses;}
-        if (decision.length()>0){
+        if (decision!=null && decision.length()>0){
             LotAudit lotAudit = new LotAudit();            
             Object[] lotAuditAdd = lotAudit.lotAuditAdd(procPrefix, 
                     LotAudit.LotAuditEvents.LOT_DECISION_TAKEN.toString(), 

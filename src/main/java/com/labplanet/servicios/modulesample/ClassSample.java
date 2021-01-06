@@ -199,6 +199,14 @@ public class ClassSample {
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{resultId};
                 break;
+            case ENTERRESULT_BY_ANALYSIS_NAME:
+                sampleId = (Integer) argValues[0];
+                String analysisName = argValues[1].toString();
+                rawValueResult = argValues[2].toString();
+                diagn = smpAnaRes.sampleAnalysisResultEntryByAnalysisName(schemaPrefix, token, sampleId, analysisName, rawValueResult, smp);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId, analysisName};
+                break;
             case REVIEWSAMPLE:
                 sampleId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleResultReview(schemaPrefix, token, sampleId, null, null);
@@ -217,6 +225,13 @@ public class ClassSample {
                 diagn = smpAnaRes.sampleResultReview(schemaPrefix, token, null, testId, null);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{testId};
+                break;
+            case REVIEWTEST_BY_SAMPLE_ID_AND_ANALYSIS_NAME:
+                sampleId = (Integer) argValues[0];
+                analysisName = argValues[1].toString();
+                diagn = smpAnaRes.sampleResultReviewBySampleAndAnalysis(schemaPrefix, token, sampleId, analysisName);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId, analysisName};
                 break;
             case REVIEWRESULT:
                 Integer objectId = (Integer) argValues[0];

@@ -19,7 +19,6 @@ import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStages;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -148,7 +147,6 @@ public class ClassEnvMonSampleFrontend {
     public ClassEnvMonSampleFrontend(HttpServletRequest request, String finalToken, String schemaPrefix, EnvMonSampleAPIFrontendEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstance();
 
-        DataProgramSample prgSmp = new DataProgramSample();     
         String batchName = "";
         String incubationName = "";
         String language="";

@@ -5,10 +5,10 @@
  */
 package com.labplanet.servicios.moduleinspectionlotrm;
 
-import com.labplanet.servicios.moduleenvmonit.*;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
+import com.labplanet.servicios.modulesample.ClassSampleQueriesController;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
@@ -125,9 +125,17 @@ public class TestingInspLotRM extends HttpServlet {
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                             fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
                         }else{
-                            functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
-                            testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                            fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                            ClassSampleQueriesController clssSampleQueriesController=new ClassSampleQueriesController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                            if (clssSampleQueriesController.getFunctionFound()){
+                                functionRelatedObjects=clssSampleQueriesController.getFunctionRelatedObjects();
+                                functionEvaluation=(Object[]) clssSampleQueriesController.getFunctionDiagn();
+                                testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                fileContentTable1Builder.append(clssSampleQueriesController.getRowArgsRows());                
+                            }else{
+                                functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
+                                testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                            }
                         }
                     }
                 }

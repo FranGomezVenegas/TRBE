@@ -178,7 +178,24 @@ public class DataSampleAnalysisResult {
         }
         return diagnoses;
     }
-
+    public Object[] sampleAnalysisResultEntryByAnalysisName(String schemaPrefix, Token token, Integer sampleId, String analysisName, Object resultValue, DataSample dataSample) {        
+        String[] analysisNameArr=analysisName.split("\\|");
+        Object[] resultValueArr=resultValue.toString().split("\\|");
+        Object[] diagn=new Object[]{};
+        for (int i=0;i<analysisNameArr.length;i++){
+            Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysisResult.TBL.getName(), 
+                new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.FLD_ANALYSIS.getName()}, 
+                new Object[]{sampleId, analysisNameArr[i]}, 
+                new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) return LPArray.array2dTo1d(resultInfo);
+            if (resultInfo.length>1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "This analysis has more than one parameter to enter result", null);
+            diagn=sampleAnalysisResultEntry(schemaPrefix, token, Integer.valueOf(resultInfo[0][0].toString()), resultValueArr[i],dataSample);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
+        }
+        return diagn;
+    }
+    
+    
     /**
      *
      * @param schemaPrefix
@@ -743,10 +760,21 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
      * @param schemaPrefix
      * @param token
      * @param sampleId
-     * @param testId
-     * @param resultId
+     * @param analysisName
      * @return
      */
+    public Object[] sampleResultReviewBySampleAndAnalysis(String schemaPrefix, Token token, Integer sampleId, String analysisName) {
+        String[] analysisNameArr=analysisName.split("\\|");
+        Object[] diagn=new Object[]{};
+        for (String analysisNameArr1 : analysisNameArr) {
+            Object[][] testInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysis.TBL.getName(), new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysis.FLD_ANALYSIS.getName()}, new Object[]{sampleId, analysisNameArr1}, new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testInfo[0][0].toString())) return LPArray.array2dTo1d(testInfo);
+            if (testInfo.length>1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "This analysis has more than one parameter to enter result", null);
+            diagn=sampleResultReview(schemaPrefix, token, null, Integer.valueOf(testInfo[0][0].toString()), null);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;            
+        }
+        return diagn;
+    }
     public Object[] sampleResultReview(String schemaPrefix, Token token, Integer sampleId, Integer testId, Integer resultId) {
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);

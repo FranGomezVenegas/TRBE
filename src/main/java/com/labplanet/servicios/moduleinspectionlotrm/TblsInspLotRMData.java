@@ -57,22 +57,11 @@ public class TblsInspLotRMData {
         /**
          *
          */
-        FLD_LOT_CONFIG_VERSION("lot_config_version", LPDatabase.integerNotNull())
-        ,
-
-        /**
-         *
-         */
+        FLD_LOT_CONFIG_VERSION("lot_config_version", LPDatabase.integerNotNull())        ,
+        FLD_MATERIAL_NAME("material_name", LPDatabase.string()),        
         FLD_SPEC_CODE("spec_code", LPDatabase.string()),        
-
-        /**
-         *
-         */
         FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer()),
-
-        /**
-         *
-         */
+        FLD_SAMPLING_PLAN("sampling_plan", LPDatabase.string()),        
 //        FLD_CONFIG_CODE("config_code", LPDatabase.string()),        
 //        FLD_CONFIG_CODE_VERSION("config_code_version", LPDatabase.integer()),        
         FLD_DESCRIPTION_EN("description_en", LPDatabase.string()),        
@@ -82,7 +71,6 @@ public class TblsInspLotRMData {
         FLD_NUM_CONTAINERS("num_containers", LPDatabase.integer()),        
         FLD_VENDOR("vendor", LPDatabase.string()),        
         FLD_VENDOR_TRUST_LEVEL("vendor_trust_level", LPDatabase.string()),        
-        FLD_SAMPLING_PLAN("sampling_plan", LPDatabase.string()),        
         FLD_ANALYSIS_STATUS("analysis_status", LPDatabase.string()),        
         FLD_CREATED_ON("created_on", LPDatabase.dateTime()),
         FLD_CREATED_BY("created_by", LPDatabase.string()),
