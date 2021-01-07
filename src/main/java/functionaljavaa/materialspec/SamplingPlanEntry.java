@@ -51,7 +51,8 @@ public class SamplingPlanEntry {
         return spEntries;
     }
     
-    public enum SamplingPlanAlgorithms{FIX_NUM_SAMPLES, BY_QUANTITY, BY_NUM_CONTAINERS,
+    public enum SamplingPlanAlgorithms{FIX_NUM_SAMPLES, ONE_PER_EACH_QUANTITY, ONE_PER_EACH_CONTAINER, 
+        Q_N_ROOT_PLUS_ONE_TRUNC, Q_N_ROOT_PLUS_ONE_UP, NUMCONT_N_ROOT_PLUS_ONE_TRUNC, NUMCONT_N_ROOT_PLUS_ONE_UP
     
     }
     private Boolean hasErrors;
@@ -93,15 +94,35 @@ public class SamplingPlanEntry {
                             }
                         }
                         break;
-                    case BY_QUANTITY:
+                    case ONE_PER_EACH_QUANTITY:
+                    case Q_N_ROOT_PLUS_ONE_TRUNC:
+                    case Q_N_ROOT_PLUS_ONE_UP:
                         if (quant==null || quant.toString().length()==0)
                             errorMsg="For the algorithm"+algEntry+" and entry "+curMatSampPlan[0].toString()+" the lot quantity is required but not specified";
-                        numSamples=quant;  
+                        else{
+                            if (algorithm.equalsIgnoreCase(SamplingPlanAlgorithms.ONE_PER_EACH_QUANTITY.toString())) numSamples=quant;  
+                            else{
+                                int nth = (int)Math.round(Math.pow(quant, 1.0 / 2.0));                                    
+                                numSamples=Integer.valueOf(nth);
+                                if (algorithm.equalsIgnoreCase(SamplingPlanAlgorithms.Q_N_ROOT_PLUS_ONE_UP.toString()))
+                                    numSamples++;
+                            }
+                        }
                         break;
-                    case BY_NUM_CONTAINERS:
+                    case ONE_PER_EACH_CONTAINER:
+                    case NUMCONT_N_ROOT_PLUS_ONE_TRUNC:
+                    case NUMCONT_N_ROOT_PLUS_ONE_UP:
                         if (numCont==null || numCont.toString().length()==0)
-                            errorMsg="For the algorithm"+algEntry+" and entry "+curMatSampPlan[0].toString()+" the lot number of Containers is required but not specified";
-                        numSamples=numCont;  
+                            errorMsg="For the algorithm"+algEntry+" and entry "+curMatSampPlan[0].toString()+" the lot number of Containers is required but not specified";                            
+                        else{
+                            if (algorithm.equalsIgnoreCase(SamplingPlanAlgorithms.ONE_PER_EACH_CONTAINER.toString())) numSamples=numCont;  
+                            else{
+                                int nth = (int)Math.round(Math.pow(numCont, 1.0 / 2.0));                                    
+                                numSamples=Integer.valueOf(nth);
+                                if (algorithm.equalsIgnoreCase(SamplingPlanAlgorithms.NUMCONT_N_ROOT_PLUS_ONE_UP.toString()))
+                                    numSamples++;
+                            }
+                        }
                         break;
                 }
                 if (errorMsg.length()>0){
