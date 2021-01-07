@@ -232,7 +232,7 @@ public class EnvMonAPI extends HttpServlet {
             return;          
         }             
         
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
       
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
 

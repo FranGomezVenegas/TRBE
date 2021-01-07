@@ -44,7 +44,7 @@ public class Deployment extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
         
-        if (Rdbms.getRdbms().startRdbms()==null){out.println("Connection to the database not established");return;}
+        if (Rdbms.getRdbms().startRdbms(true)==null){out.println("Connection to the database not established");return;}
 
             RequirementDeployment reqDep = new RequirementDeployment();
             String procedure = "sampleA"; 

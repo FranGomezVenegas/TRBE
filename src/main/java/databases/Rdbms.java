@@ -46,6 +46,7 @@ public class Rdbms {
     private static Boolean isStarted = false;
     private static Integer timeout;
     private static Integer transactionId = 0;
+    private static Boolean isTesting=false;
     String savepointName;
     Savepoint savepoint=null;      
     
@@ -154,7 +155,12 @@ public class Rdbms {
      */
     public static final Boolean stablishDBConection(){
         boolean isConnected = false;                               
-        isConnected = Rdbms.getRdbms().startRdbms();      
+        isConnected = Rdbms.getRdbms().startRdbms(false);      
+        return isConnected;
+    }    
+    public static final Boolean stablishDBConection(Boolean isTesting){
+        boolean isConnected = false;                               
+        isConnected = Rdbms.getRdbms().startRdbms(isTesting);      
         return isConnected;
     }    
 
@@ -168,10 +174,11 @@ public class Rdbms {
      *
      * @return
      */
-    public Boolean startRdbms(){
-        return startRdbmsInternal();
+    public Boolean startRdbms(Boolean isTesting){
+        return startRdbmsInternal(isTesting);
     }
-    public Boolean startRdbmsInternal(){
+    public Boolean startRdbmsInternal(Boolean isTesting){
+        this.isTesting=isTesting;
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String dbDriver = prop.getString(BUNDLE_PARAMETER_DBMANAGER);
         switch (dbDriver.toUpperCase()){
@@ -500,6 +507,9 @@ if (1==1)return;
      * @return
      */
     public static Connection getConnection(){ return conn; }
+
+    public static Boolean getIsTesting(){ 
+        return isTesting; }
 
     /**
      *
@@ -897,6 +907,7 @@ if (1==1)return;
      * @return
      */
     public static Object[] removeRecordInTable(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues){
+        schemaName=addSuffixForTesting(schemaName);
         SqlStatement sql = new SqlStatement(); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("DELETE", schemaName, tableName,
                 whereFieldNames, whereFieldValues, null, null, null,
@@ -922,6 +933,7 @@ if (1==1)return;
         }*/
     }
     public static Object[] insertRecordInTable(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
+        schemaName=addSuffixForTesting(schemaName);
         if (fieldNames.length==0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
         }
@@ -1002,6 +1014,7 @@ if (1==1)return;
      * @return
      */
     public static Object[] updateRecordFieldsByFilter(String schemaName, String tableName, String[] updateFieldNames, Object[] updateFieldValues, String[] whereFieldNames, Object[] whereFieldValues) {
+        schemaName=addSuffixForTesting(schemaName);
         updateFieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues);        
         if (whereFieldNames.length==0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
@@ -1543,6 +1556,16 @@ if (1==1)return;
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
+    public static String addSuffixForTesting(String schemaName){
+        if (Rdbms.getIsTesting()){
+           if (schemaName.contains(LPPlatform.SCHEMA_DATA)){
+                if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
+                else schemaName=schemaName+"_testing";
+            }           
+        }
+        return schemaName;
+    }
+    
 /*
 private static final int CLIENT_CODE_STACK_INDEX;
     

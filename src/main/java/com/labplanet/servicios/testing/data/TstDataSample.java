@@ -122,7 +122,7 @@ public class TstDataSample extends HttpServlet {
                 out.println(fileContentBuilder.toString()); 
                 return;
             }            
-            if (Rdbms.getRdbms().startRdbms()==null){fileContentBuilder.append("Connection to the database not established");return;}
+            if (Rdbms.getRdbms().startRdbms(true)==null){fileContentBuilder.append("Connection to the database not established");return;}
                 
             Integer numEvaluationArguments = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());   
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   

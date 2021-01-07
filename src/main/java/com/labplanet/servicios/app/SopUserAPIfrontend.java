@@ -205,7 +205,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 return;                   
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+            if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
              
             switch (endPoint){
             case ALL_MY_SOPS:    
@@ -270,7 +270,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, mySopsListArr);
                 return;
             case MY_PENDING_SOPS:    
-                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+                if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
                 usProf = new UserProfile();
                 allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
@@ -328,7 +328,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, myPendingSopsByProc);
                 return;
             case PROCEDURE_SOPS:    
-              if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+              if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
                 usProf = new UserProfile();
                 allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
@@ -376,7 +376,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, myPendingSopsByProc);
                 return;
             case SOP_TREE_LIST_ELEMENT:
-                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+                if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
                 usProf = new UserProfile();
                 allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){

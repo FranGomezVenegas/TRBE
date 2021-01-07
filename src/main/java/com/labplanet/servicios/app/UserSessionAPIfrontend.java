@@ -119,7 +119,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
             return;                   
         }
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}          
 
         switch (endPoint){
             case USER_SESSIONS:              

@@ -140,7 +140,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
              (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}        
 */
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
       
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
 

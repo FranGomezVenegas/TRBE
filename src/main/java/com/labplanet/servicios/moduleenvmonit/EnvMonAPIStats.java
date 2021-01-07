@@ -217,7 +217,7 @@ public class EnvMonAPIStats extends HttpServlet {
             String[] filterFieldName=new String[]{};
             Object[] filterFieldValue=new Object[]{};
             String prodLotName="";
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+            if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
             String smpTemplate=Parameter.getParameterBundle("config", schemaPrefix, "procedure", "SampleTemplate", null);  
             String samplerSmpTemplate=Parameter.getParameterBundle("config", schemaPrefix, "procedure", "samplerSampleTemplate", null);  
             Boolean getSampleInfo=false;

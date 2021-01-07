@@ -62,7 +62,7 @@ public class ProjectAPIFrontend extends HttpServlet {
 
        // Token token = new Token(finalToken);
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response))return;
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false))return;
 
         switch (actionName.toUpperCase()){
         case "API_ENDPOINT_ACTIVE_BATCH_LIST": 

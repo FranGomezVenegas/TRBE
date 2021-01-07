@@ -162,7 +162,7 @@ public class BatchAPI extends HttpServlet {
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
             
 
-           if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
+           if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}      
             Rdbms.setTransactionId(schemaPrefix);
             try (PrintWriter out = response.getWriter()) {
                 Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);

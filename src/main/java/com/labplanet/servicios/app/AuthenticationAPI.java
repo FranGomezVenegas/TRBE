@@ -60,7 +60,7 @@ public class AuthenticationAPI extends HttpServlet {
         
         try (PrintWriter out = response.getWriter()) {            
             
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+            if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
             
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);                                    
@@ -128,7 +128,7 @@ public class AuthenticationAPI extends HttpServlet {
                     return;                                
                 case FINALTOKEN:   
                   Rdbms.stablishDBConection();
-                  if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+                  if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
                     firstToken = argValues[0].toString();
                     String userRole = argValues[1].toString();
 

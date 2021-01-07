@@ -47,7 +47,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response=LPTestingOutFormat.responsePreparation(response);
         String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File");
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
         //String procName = "em-demo-a"; 
         //Integer procVersion = 1; 
         //String schemaPrefix = "em-demo-a";

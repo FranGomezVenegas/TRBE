@@ -68,11 +68,9 @@ public class LPPlatform {
      *
      */
     public static final String SCHEMA_DATA = "data";
-
-    /**
-     *
-     */
     public static final String SCHEMA_DATA_AUDIT = "data-audit";
+    public static final String SCHEMA_DATA_TESTING = "data_testing";
+    public static final String SCHEMA_DATA_AUDIT_TESTING = "data-audit_testing";
 
     /**
      *

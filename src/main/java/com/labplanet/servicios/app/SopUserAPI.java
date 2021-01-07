@@ -126,7 +126,7 @@ public class SopUserAPI extends HttpServlet {
 
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
              (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}     
 
             SopUserAPIEndpoints endPoint = null;
             try{

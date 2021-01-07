@@ -43,7 +43,7 @@ public class TestingConfigSamplingPlanStructure extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ConfigSamplingPlanForSpec smpPlan = new ConfigSamplingPlanForSpec();
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}           
+        if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}           
             
         Object[] exRec =  Rdbms.existsRecord(LPPlatform.SCHEMA_APP, "users", new String[]{"user_name"}, new Object[]{"labplanet"});
         out.println("Exists record? " + Arrays.toString(exRec));

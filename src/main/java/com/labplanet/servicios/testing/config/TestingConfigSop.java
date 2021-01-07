@@ -93,7 +93,7 @@ public class TestingConfigSop extends HttpServlet {
             String schemaConfigName = processName;
             String schemaDataName = processName;
             
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+            if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}   
         
             String currentUser = "labplanet";
             Integer sopId = 1;

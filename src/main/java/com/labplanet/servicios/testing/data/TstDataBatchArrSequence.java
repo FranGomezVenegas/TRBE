@@ -39,7 +39,7 @@ public class TstDataBatchArrSequence extends HttpServlet {
         String csvPathName = LPTestingOutFormat.TESTING_FILES_PATH+csvFileName; 
 //        String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
 
-        if (Rdbms.getRdbms().startRdbms()==null){
+        if (Rdbms.getRdbms().startRdbms(true)==null){
             fileContent = fileContent + LPTestingOutFormat.MSG_DB_CON_ERROR;
             LPTestingOutFormat.createLogFile(csvPathName, fileContent);
             return;

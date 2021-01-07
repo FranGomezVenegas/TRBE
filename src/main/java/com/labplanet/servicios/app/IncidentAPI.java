@@ -180,7 +180,7 @@ public class IncidentAPI extends HttpServlet {
                return;                   
             }     
         }
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;} 
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;} 
         try (PrintWriter out = response.getWriter()) {
 
             IncidentAPIEndpoints endPoint = null;

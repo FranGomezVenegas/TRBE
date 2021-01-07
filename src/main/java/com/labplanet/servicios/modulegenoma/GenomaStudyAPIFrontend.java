@@ -57,7 +57,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
         
         switch (actionName.toUpperCase()){
             case API_ENDPOINT_ALL_ACTIVE_PROJECTS:

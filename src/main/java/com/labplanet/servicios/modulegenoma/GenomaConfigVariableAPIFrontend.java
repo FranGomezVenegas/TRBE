@@ -76,7 +76,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
             return;                   
         }        
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response))return;
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false))return;
 
         switch (endPoint){
         case GET_ACTIVE_CONFIG_VARIABLE_SET:

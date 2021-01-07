@@ -107,7 +107,7 @@ public class InspLotRMAPIfrontend extends HttpServlet {
         }
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response))return;
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false))return;
 
         switch (endPoint){
             

@@ -207,7 +207,7 @@ public class EnvMonSampleAPI extends HttpServlet {
         Integer resultId=0;
         if (resultIdStr!=null && resultIdStr.length()>0) sampleId=Integer.valueOf(resultIdStr);
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
         
         Object[] sampleAuditRevision=sampleAuditRevisionPassByAction(schemaPrefix, actionName, sampleId, testId, resultId);     
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())){   

@@ -102,7 +102,7 @@ public class ProcedureDeployment extends HttpServlet {
 
         Object[][] dataIntegrityInstanceTable = new Object[][]{{"Data Integrity Item", "Matching Evaluation"}};
         try (PrintWriter out = response.getWriter()) {
-             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}           
+             if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}           
             
             if (PROC_DISPLAY_PROC_DEF_REQUIREMENTS){
                 Requirement.getProcedureBySchemaPrefix(procName);

@@ -47,7 +47,7 @@ public class TestingUOMConversionTable extends HttpServlet {
         StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+        if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}   
         
         try (PrintWriter out = response.getWriter()) {
             HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));

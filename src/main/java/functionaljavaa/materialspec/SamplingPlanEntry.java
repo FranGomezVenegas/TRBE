@@ -134,7 +134,7 @@ public class SamplingPlanEntry {
                         curMatSampPlan[1].toString(), numSamples);
                     myList.add(ent);                    
                 }
-            } catch (NumberFormatException ex) {
+            } catch (Exception ex) {
                 this.hasErrors=true;
                 errorMsg="Algorithm "+algorithm+" not recognized, should be one of "+Arrays.toString(SamplingPlanAlgorithms.values());
                 this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(),errorMsg);

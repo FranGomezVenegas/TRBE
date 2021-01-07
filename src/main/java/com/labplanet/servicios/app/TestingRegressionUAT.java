@@ -63,7 +63,7 @@ public class TestingRegressionUAT extends HttpServlet {
         Integer scriptId=2;
         schemaPrefix=request.getParameter("schemaPrefix");
         scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
+        if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}     
         Object[][] scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
                 new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
                 new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName(), TblsTesting.Script.FLD_AUDIT_IDS_TO_GET.getName()},

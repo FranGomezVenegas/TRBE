@@ -189,6 +189,15 @@ schemaPrefix="genoma-1";
         tblCreateScript2=TblsData.ViewUserAndMetaDataSopView.createTableScript(schemaPrefix, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 */
+String sch="\"em-demo-a-data_audit";
+String schManip=sch;
+if (sch.contains("data")){
+    if (schManip.endsWith("\"")) schManip=schManip.substring(0, schManip.length()-1)+"_testing\"";
+    else schManip=sch+"_testing";
+}
+out.println(sch);
+out.println(schManip);
+if (1==1) return;
 Rdbms.stablishDBConectionTester();
 Object[] createAppUser = UserAndRolesViews.createAppUser("obustos", null, null);
 out.println(Arrays.toString(createAppUser));         

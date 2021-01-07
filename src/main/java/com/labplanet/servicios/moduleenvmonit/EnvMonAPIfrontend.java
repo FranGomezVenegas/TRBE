@@ -301,7 +301,7 @@ GlobalAPIsParams.
         }
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
             
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
         
         switch (endPoint){
             case PROGRAMS_LIST: 
@@ -379,7 +379,7 @@ GlobalAPIsParams.
                 Object[] statusListEn = DataSampleUtilities.getSchemaSampleStatusList(schemaPrefix, LPPlatform.REQUEST_PARAM_LANGUAGE_ENGLISH);
                 Object[] statusListEs = DataSampleUtilities.getSchemaSampleStatusList(schemaPrefix, LPPlatform.REQUEST_PARAM_LANGUAGE_SPANISH);
 
-                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}                    
+                if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}                    
                 Object[][] programInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.Program.TBL.getName(), 
                     new String[]{TblsEnvMonitData.Program.FLD_ACTIVE.getName()}, new Object[]{true}, programFldNameArray, programFldSortArray);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())){
@@ -420,7 +420,7 @@ GlobalAPIsParams.
                             new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new String[]{currProgram}, 
                             programLocationFldNameArray, programLocationFldSortArray);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString())){
-                        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}                           
+                        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}                           
                         programLocations = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.ProgramLocation.TBL.getName(), 
                                                        new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new String[]{currProgram}, 
                                                        programLocationFldNameArray, programLocationFldSortArray);                            
