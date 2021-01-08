@@ -39,9 +39,10 @@ public class DbObjects {
 
     public static JSONObject createModuleSchemas(String schemaPrefix){
         String tblCreateScript="";
-        String[] schemaNames = new String[]{LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), 
-            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), 
-            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG_AUDIT), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), 
+        String[] schemaNames = new String[]{
+            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG_AUDIT), 
+            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), 
+            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_TESTING), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT_TESTING), 
             LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING)};        
         JSONObject jsonObj=createSchemas(schemaNames);
 
@@ -82,7 +83,7 @@ public class DbObjects {
 
     private static JSONObject createSchemas(String[] schemasNames){
     
-        Rdbms.stablishDBConection();
+        Rdbms.stablishDBConection(false);
         JSONObject jsonObj = new JSONObject();
         
         String methodName = "createDataBaseSchemas";       

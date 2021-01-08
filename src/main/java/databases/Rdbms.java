@@ -30,7 +30,6 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Types;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Properties;
@@ -153,11 +152,11 @@ public class Rdbms {
      *
      * @return
      */
-    public static final Boolean stablishDBConection(){
+/*    public static final Boolean stablishDBConection(){
         boolean isConnected = false;                               
         isConnected = Rdbms.getRdbms().startRdbms(false);      
         return isConnected;
-    }    
+    }    */
     public static final Boolean stablishDBConection(Boolean isTesting){
         boolean isConnected = false;                               
         isConnected = Rdbms.getRdbms().startRdbms(isTesting);      
@@ -560,6 +559,7 @@ if (1==1)return;
      * @return
      */
     public static Object[] existsRecord(String schemaName, String tableName, String[] keyFieldNames, Object[] keyFieldValues){
+        schemaName=addSuffixIfItIsForTesting(schemaName);           
         String[] errorDetailVariables = new String[0];
         Object[] filteredValues = new Object[0];
         
@@ -604,6 +604,7 @@ if (1==1)return;
      */
     public static String getRecordFieldsByFilterJSON(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] fieldsSortBy){
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
+        schemaName=addSuffixIfItIsForTesting(schemaName);           
         
         if (whereFieldNames.length==0){
            LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
@@ -652,7 +653,8 @@ if (1==1)return;
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }          
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
-        
+        schemaName=addSuffixIfItIsForTesting(schemaName);           
+
         if ( (whereFieldNames==null) || (whereFieldNames.length==0) ){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -708,6 +710,7 @@ if (1==1)return;
      * @return
      */
     public static Object[][] getRecordFieldsByFilter(String schemaName, String[] tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve){
+        schemaName=addSuffixIfItIsForTesting(schemaName);           
         if (whereFieldNames.length==0){
            String[] errorDetailVariables = new String[]{Arrays.toString(tableName), schemaName};
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, errorDetailVariables);                         
@@ -797,6 +800,7 @@ if (1==1)return;
      * @return
      */
     public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct){
+        schemaName=addSuffixIfItIsForTesting(schemaName);           
         if (whereFieldNames.length==0){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
@@ -907,7 +911,7 @@ if (1==1)return;
      * @return
      */
     public static Object[] removeRecordInTable(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues){
-        schemaName=addSuffixForTesting(schemaName);
+        schemaName=addSuffixIfItIsForTesting(schemaName);
         SqlStatement sql = new SqlStatement(); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("DELETE", schemaName, tableName,
                 whereFieldNames, whereFieldValues, null, null, null,
@@ -933,7 +937,7 @@ if (1==1)return;
         }*/
     }
     public static Object[] insertRecordInTable(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
-        schemaName=addSuffixForTesting(schemaName);
+        schemaName=addSuffixIfItIsForTesting(schemaName);
         if (fieldNames.length==0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
         }
@@ -1014,7 +1018,7 @@ if (1==1)return;
      * @return
      */
     public static Object[] updateRecordFieldsByFilter(String schemaName, String tableName, String[] updateFieldNames, Object[] updateFieldValues, String[] whereFieldNames, Object[] whereFieldValues) {
-        schemaName=addSuffixForTesting(schemaName);
+        schemaName=addSuffixIfItIsForTesting(schemaName);
         updateFieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues);        
         if (whereFieldNames.length==0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
@@ -1137,6 +1141,7 @@ if (1==1)return;
      * @return
      */
     public static String [] getTableFieldsArrayEj(String schema, String table) {
+        schema=addSuffixIfItIsForTesting(schema);                   
         String query = "select array(SELECT column_name || ''  FROM information_schema.columns WHERE table_schema = ? AND table_name   = ?) fields";
         CachedRowSet res;
         try {
@@ -1163,6 +1168,7 @@ if (1==1)return;
      * @return
      */
     public static String getTableFieldsArrayEj(String schema, String table, String separator, Boolean addTableName) {
+        schema=addSuffixIfItIsForTesting(schema);                           
         try {
             String query = "select array(SELECT column_name || ''  FROM information_schema.columns WHERE table_schema = ? AND table_name   = ?) fields";
             CachedRowSet res;
@@ -1459,6 +1465,7 @@ if (1==1)return;
 
     public static Object[] dbTableExists(String schemaName, String tableName){
         String schema=schemaName.replace("\"", "");
+        schemaName=addSuffixIfItIsForTesting(schemaName);                   
         String query="select table_schema from INFORMATION_SCHEMA.TABLES " +
                      " where table_name=? " + " and table_schema=?";
         try{
@@ -1481,6 +1488,7 @@ if (1==1)return;
     }
     
     public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName){
+        schemaName=addSuffixIfItIsForTesting(schemaName);           
         HashMap<String[], Object[][]> hm = new HashMap<>();          
         String[] fieldsToRetrieve=new String[]{"table_schema", "table_name", "column_name", "data_type"};
         String[] keyFieldValueNew=new String[]{schemaName, tableName};
@@ -1533,6 +1541,7 @@ if (1==1)return;
     
     public static Object[] dbViewExists(String schemaName, String viewCategory, String viewName){
         String schema=schemaName;
+        schemaName=addSuffixIfItIsForTesting(schemaName);                   
         if (viewCategory.length()>0){
             schema=schema+"-"+viewCategory;
         }
@@ -1556,13 +1565,17 @@ if (1==1)return;
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
-    public static String addSuffixForTesting(String schemaName){
+    public static String addSuffixIfItIsForTesting(String schemaName){
         if (Rdbms.getIsTesting()){
+            return suffixForTesting(schemaName);
+        }
+        return schemaName;
+    }
+    public static String suffixForTesting(String schemaName){
            if (schemaName.contains(LPPlatform.SCHEMA_DATA)){
                 if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
                 else schemaName=schemaName+"_testing";
             }           
-        }
         return schemaName;
     }
     

@@ -114,7 +114,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
         switch (endPoint){
             
         case ACTIVE_BATCH_LIST: 
-            Rdbms.stablishDBConection();
+            Rdbms.stablishDBConection(false);
             String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_TYPE.getName()
                 , TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_VERSION.getName()
                 , TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()

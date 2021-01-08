@@ -178,7 +178,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
                 String schemaConfigName=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG);
                 String schemaDataName=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_DATA);
 
-                Rdbms.stablishDBConection();                                
+                Rdbms.stablishDBConection(true);                                
                 Object[] resSpecEvaluation = null;                
                 Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
                     new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), 

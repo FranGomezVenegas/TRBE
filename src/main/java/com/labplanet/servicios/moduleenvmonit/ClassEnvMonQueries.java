@@ -27,7 +27,7 @@ public class ClassEnvMonQueries {
 
     public ClassEnvMonQueries(HttpServletRequest request, String schemaPrefix, EnvMonAPI.EnvMonQueriesAPIEndpoints endPoint){
         try{
-            Rdbms.stablishDBConection();
+            //Rdbms.stablishDBConection(false);
             RelatedObjects rObj=RelatedObjects.getInstance();
             Object[] actionDiagnoses = null;
             Integer sampleId = null;

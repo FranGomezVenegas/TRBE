@@ -961,13 +961,13 @@ public class LPPlatform {
      */
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables) {          
     String schemaPrefix = "";
-    if (Rdbms.stablishDBConection()){
+    //if (Rdbms.stablishDBConection(false)){
       Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, SCHEMA_CONFIG) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
         new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
           TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()}, 
         new Object[]{LPDate.getCurrentTimeStamp(), query, Arrays.toString(queryParams), msgCode, Arrays.toString(callerInfo), false}                
         );
-    }
+    //}
   }    
   
     /**
@@ -979,13 +979,13 @@ public class LPPlatform {
     public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, String paramName) {          
         if (1==1) return;
         String schemaPrefix = LPNulls.replaceNull(schemaName);
-        if (Rdbms.stablishDBConection()){
+        //if (Rdbms.stablishDBConection(false)){
             Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, SCHEMA_CONFIG) , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
               new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(), 
                 TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName()}, 
               new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName}                
               );
-        }
+        //}
     }      
     public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){
         String[] enableRuleValues=new String[]{"ENABLE", "YES", "ACTIVE", "ACTIVADO", "SI", "ACTIVO"};

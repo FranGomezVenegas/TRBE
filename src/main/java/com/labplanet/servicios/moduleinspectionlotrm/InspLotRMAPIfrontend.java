@@ -112,7 +112,7 @@ public class InspLotRMAPIfrontend extends HttpServlet {
         switch (endPoint){
             
         case GET_LOT_SAMPLES_INFO: 
-            Rdbms.stablishDBConection();
+            Rdbms.stablishDBConection(false);
             String lotName=LPNulls.replaceNull(argValues[0]).toString();
             String[] fieldsToRetrieve=TblsInspLotRMData.Sample.getAllFieldNames();
             if (argValues.length>1 && argValues[1]!=null && argValues[1].toString().length()>0){

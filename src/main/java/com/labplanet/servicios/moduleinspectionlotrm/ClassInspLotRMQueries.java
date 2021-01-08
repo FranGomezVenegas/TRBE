@@ -26,7 +26,7 @@ public class ClassInspLotRMQueries {
 
     public ClassInspLotRMQueries(HttpServletRequest request, String schemaPrefix, InspLotRMAPI.InspLotRMQueriesAPIEndpoints endPoint){
         try{
-            Rdbms.stablishDBConection();
+            //Rdbms.stablishDBConection();
             RelatedObjects rObj=RelatedObjects.getInstance();
             Object[] actionDiagnoses = null;
             String lotName = null;

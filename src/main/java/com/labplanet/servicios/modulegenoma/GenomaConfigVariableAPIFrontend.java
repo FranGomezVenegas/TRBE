@@ -80,7 +80,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
 
         switch (endPoint){
         case GET_ACTIVE_CONFIG_VARIABLE_SET:
-            Rdbms.stablishDBConection();
+            Rdbms.stablishDBConection(false);
             break;
         case GET_VARIABLE_SET_VARIABLES_ID: 
             areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaConfigVariableAPIFrontend.GenomaVariableAPIFrontEndEndPoints.GET_VARIABLE_SET_VARIABLES_ID.getMandatoryFields().split("\\|"));
@@ -89,7 +89,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                 return;                  
             }                                 
-            Rdbms.stablishDBConection();
+            Rdbms.stablishDBConection(false);
             String variableSetName=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());  
             Object[] varSetVariables=GenomaConfigVariablesQueries.getVariableSetVariablesId(schemaPrefix, variableSetName);            
             Rdbms.closeRdbms();  

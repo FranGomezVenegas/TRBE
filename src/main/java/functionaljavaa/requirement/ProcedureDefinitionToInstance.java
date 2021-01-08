@@ -357,8 +357,9 @@ public class ProcedureDefinitionToInstance {
                     }
 //                    if (LPPlatform.SCHEMA_CONFIG_AUDIT.equalsIgnoreCase(curSchemaName.toString()))
 //                        tableCreationScriptFromCnfgTable = TblsInspLotRMCnfgAduit.getTableCreationScriptFromCnfgTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
-                    if (LPPlatform.SCHEMA_DATA.equalsIgnoreCase(curSchemaName.toString()))
+                    if (LPPlatform.SCHEMA_DATA.equalsIgnoreCase(curSchemaName.toString())){
                         tableCreationScriptTable = TblsInspLotRMData.getTableCreationScriptFromDataTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    }
                     if (LPPlatform.SCHEMA_DATA_AUDIT.equalsIgnoreCase(curSchemaName.toString()))
                         tableCreationScriptTable = TblsInspLotRMDataAudit.getTableCreationScriptFromDataAuditTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
                     if (LPPlatform.SCHEMA_PROCEDURE.equalsIgnoreCase(curSchemaName.toString()))
@@ -385,6 +386,12 @@ public class ProcedureDefinitionToInstance {
             if (tableCreationScriptTable.length()>0){
                 Rdbms.prepRdQuery(tableCreationScriptTable, new Object[]{});
                 jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);
+                if (curSchemaName.toString().contains(LPPlatform.SCHEMA_DATA)){                    
+                    String newSchemaName=Rdbms.suffixForTesting(curSchemaName.toString()); 
+                    tableCreationScriptTable=tableCreationScriptTable.replace(LPPlatform.buildSchemaName(schemaPrefix, curSchemaName.toString()), LPPlatform.buildSchemaName(schemaPrefix, newSchemaName));
+                    Rdbms.prepRdQuery(tableCreationScriptTable, new Object[]{});
+                    jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);                    
+                }
             }
         }
         return jsonObj;

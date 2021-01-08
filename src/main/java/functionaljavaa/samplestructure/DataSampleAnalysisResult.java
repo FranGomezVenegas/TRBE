@@ -771,7 +771,8 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testInfo[0][0].toString())) return LPArray.array2dTo1d(testInfo);
             if (testInfo.length>1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "This analysis has more than one parameter to enter result", null);
             diagn=sampleResultReview(schemaPrefix, token, null, Integer.valueOf(testInfo[0][0].toString()), null);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
+                return diagn;            
         }
         return diagn;
     }
@@ -807,49 +808,53 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
             reviewScopeTable = TblsData.SampleAnalysisResult.TBL.getName();
             reviewScopeId = resultId;
         }
+reviewScopeTable = TblsData.SampleAnalysisResult.TBL.getName();
         Object[][] objectInfoForRevisionCheck = Rdbms.getRecordFieldsByFilter(schemaDataName, reviewScopeTable, 
                 new String[]{reviewScope}, new Object[]{reviewScopeId}, fieldsToRetrieve);
-        if (objectInfoForRevisionCheck.length == 0)             
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfoForRevisionCheck[0][0].toString()) || objectInfoForRevisionCheck.length == 0)             
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotFound", new Object[]{resultId.toString(), schemaDataName});
+if (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName())){
         if (sampleAnalysisResultStatusReviewed.equalsIgnoreCase(objectInfoForRevisionCheck[0][0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_AlreadyReviewed", new Object[]{reviewScope, reviewScopeId, schemaDataName});
-
+}
         Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
                 new String[]{reviewScope}, new Object[]{reviewScopeId}, fieldsToRetrieve);
-        if (objectInfo.length == 0)             
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfo[0][0].toString()) || objectInfo.length == 0)             
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotFound", new Object[]{resultId.toString(), schemaDataName});            
         Object[] isSampleAnalysisAuthorCanReviewEnable = LPPlatform.isProcedureBusinessRuleEnable(schemaPrefix, "procedure", PROCEDURE_SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleAnalysisAuthorCanReviewEnable[0].toString())){
             if (LPArray.valueInArray(LPArray.getColumnFromArray2D(objectInfo, 4), token.getPersonName()))
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleAnalysisAuthorCannotBeReviewer", null);
-        }            
-        for (Integer iResToCancel = 0; iResToCancel < objectInfo.length; iResToCancel++) {
-            String currStatus = (String) objectInfo[iResToCancel][0];
-            if (!(sampleAnalysisResultStatusCanceled.equalsIgnoreCase(currStatus))) {
-                resultId = Integer.valueOf(objectInfo[iResToCancel][1].toString());
-                testId = Integer.valueOf(objectInfo[iResToCancel][2].toString());
-                sampleId = Integer.valueOf(objectInfo[iResToCancel][3].toString());
-                if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
-                    diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
-                            new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName()}, 
-                            new Object[]{sampleAnalysisResultStatusReviewed, currStatus}, 
-                            new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName()+" not in-"}, new Object[]{resultId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                        String[] fieldsForAudit = new String[0];
-                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusReviewed);
-                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
-                        SampleAudit smpAudit = new SampleAudit();
-                        smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, token, null);
-                    }
-// Parece que no tiene sentido ¿Si no hay nada pendiente entonces no sigue?
-//                         else 
-//                            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNothingPending", 
-//                                    new Object[]{resultId.toString(), schemaDataName});
-                } 
-// Si ya está revisado entonces no volver a revisarlo ... pero ... ¿debe hacer return o continuar?
-//                        else 
-//                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotReviable", new Object[]{resultId.toString(), schemaDataName, sampleAnalysisResultStatusReviewed});
+        }     
+            for (Integer iResToCancel = 0; iResToCancel < objectInfo.length; iResToCancel++) {
+                String currStatus = (String) objectInfo[iResToCancel][0];
+                if (!(sampleAnalysisResultStatusCanceled.equalsIgnoreCase(currStatus))) {
+                    resultId = Integer.valueOf(objectInfo[iResToCancel][1].toString());
+                    testId = Integer.valueOf(objectInfo[iResToCancel][2].toString());
+                    sampleId = Integer.valueOf(objectInfo[iResToCancel][3].toString());
+                    if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
+                        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
+                                new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName()}, 
+                                new Object[]{sampleAnalysisResultStatusReviewed, currStatus}, 
+                                new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName()+" not in-"}, new Object[]{resultId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+                            String[] fieldsForAudit = new String[0];
+                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusReviewed);
+                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
+                            SampleAudit smpAudit = new SampleAudit();
+                            smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, token, null);
+                        }
+    // Parece que no tiene sentido ¿Si no hay nada pendiente entonces no sigue?
+    //                         else 
+    //                            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNothingPending", 
+    //                                    new Object[]{resultId.toString(), schemaDataName});
+                    } 
+    // Si ya está revisado entonces no volver a revisarlo ... pero ... ¿debe hacer return o continuar?
+    //                        else 
+    //                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotReviable", new Object[]{resultId.toString(), schemaDataName, sampleAnalysisResultStatusReviewed});
+                }
             }
+ 
             if ((reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName())) && (!LPArray.valueInArray(samplesToReview, sampleId))) {
                 samplesToReview = LPArray.addValueToArray1D(samplesToReview, sampleId);
             }
@@ -857,63 +862,67 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                 testsToReview = LPArray.addValueToArray1D(testsToReview, testId);
                 testsSampleToReview = LPArray.addValueToArray1D(testsSampleToReview, sampleId);
             }
-        }
-        for (Integer itestsToReview = 0; itestsToReview < testsToReview.length; itestsToReview++) {
-            testId = Integer.valueOf(testsToReview[itestsToReview].toString());
-            Object[][] testInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
-                    new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
-                    new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName()});
-            if (testInfo.length == 0) {            
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisNotFound", new Object[]{testId.toString(), schemaDataName});
-            } else {
-                String currStatus=testInfo[0][0].toString();                
-                if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
-                    diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
-                            new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName(), TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName(), TblsData.SampleAnalysis.FLD_READY_FOR_REVISION.getName()}, 
-                            new Object[]{sampleAnalysisResultStatusReviewed, currStatus, false}, 
-                            new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName(), TblsData.SampleAnalysis.FLD_STATUS.getName()+" not in-"}, new Object[]{testId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                        String[] fieldsForAudit = new String[0];
-                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusReviewed);
-                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
-                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_READY_FOR_REVISION.getName() + ":" + "false");                     
-                        SampleAudit smpAudit = new SampleAudit();
-                        smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysis.TBL.getName(), testId, sampleId, testId, null, fieldsForAudit, token, null);
-                        sampleAnalysisEvaluateStatus_automatismForReview(schemaPrefix, token, sampleId, testId);
+        //}
+//        if ((reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName())) || (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_TEST_ID.getName()))){
+            for (Integer itestsToReview = 0; itestsToReview < testsToReview.length; itestsToReview++) {
+                testId = Integer.valueOf(testsToReview[itestsToReview].toString());
+                Object[][] testInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
+                        new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
+                        new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName()});
+                if (testInfo.length == 0) {            
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisNotFound", new Object[]{testId.toString(), schemaDataName});
+                } else {
+                    String currStatus=testInfo[0][0].toString();                
+                    if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
+                        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
+                                new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName(), TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName(), TblsData.SampleAnalysis.FLD_READY_FOR_REVISION.getName()}, 
+                                new Object[]{sampleAnalysisResultStatusReviewed, currStatus, false}, 
+                                new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName(), TblsData.SampleAnalysis.FLD_STATUS.getName()+" not in-"}, new Object[]{testId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+                            String[] fieldsForAudit = new String[0];
+                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusReviewed);
+                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
+                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_READY_FOR_REVISION.getName() + ":" + "false");                     
+                            SampleAudit smpAudit = new SampleAudit();
+                            smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysis.TBL.getName(), testId, sampleId, testId, null, fieldsForAudit, token, null);
+                            sampleAnalysisEvaluateStatus_automatismForReview(schemaPrefix, token, sampleId, testId);
+                        }
                     }
                 }
             }
-        }            
-        for (Integer isamplesToReview = 0; isamplesToReview < samplesToReview.length; isamplesToReview++) {
-            sampleId = Integer.valueOf(samplesToReview[isamplesToReview].toString());
-            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
-                    new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                    new String[]{TblsData.Sample.FLD_STATUS.getName()});
-            if (sampleInfo.length == 0) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleNotFound", new Object[]{sampleId.toString(), schemaDataName});
+//        }            
+//        if (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName())){
+            for (Integer isamplesToReview = 0; isamplesToReview < samplesToReview.length; isamplesToReview++) {
+                sampleId = Integer.valueOf(samplesToReview[isamplesToReview].toString());
+                Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+                        new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                        new String[]{TblsData.Sample.FLD_STATUS.getName()});
+                if (sampleInfo.length == 0) 
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleNotFound", new Object[]{sampleId.toString(), schemaDataName});
 
-            Object[] isRevisionSampleAnalysisRequired=LPPlatform.isProcedureBusinessRuleEnable(schemaPrefix, "procedure", PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED);
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisRequired[0].toString())){            
-                Object[] isallsampleAnalysisReviewed = DataSampleAnalysis.isAllsampleAnalysisReviewed(schemaPrefix, token, sampleId, new String[]{}, new Object[]{});
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isallsampleAnalysisReviewed[0].toString())) return isallsampleAnalysisReviewed;
-            }
-
-            String currStatus=sampleInfo[0][0].toString();                
-            if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
-                diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
-                        new String[]{TblsData.Sample.FLD_STATUS.getName(), TblsData.Sample.FLD_STATUS_PREVIOUS.getName(), TblsData.Sample.FLD_READY_FOR_REVISION.getName()}, 
-                        new Object[]{sampleAnalysisResultStatusReviewed, currStatus, false}, 
-                        new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName()+" not in-"}, new Object[]{sampleId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                    String[] fieldsForAudit = new String[0];
-                    fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusReviewed);
-                    fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
-                    fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_READY_FOR_REVISION.getName() + ":" + "false");
-                    SampleAudit smpAudit = new SampleAudit();
-                    smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
+                Object[] isRevisionSampleAnalysisRequired=LPPlatform.isProcedureBusinessRuleEnable(schemaPrefix, "procedure", PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisRequired[0].toString())){            
+                    Object[] isallsampleAnalysisReviewed = DataSampleAnalysis.isAllsampleAnalysisReviewed(schemaPrefix, token, sampleId, new String[]{}, new Object[]{});
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isallsampleAnalysisReviewed[0].toString())) return isallsampleAnalysisReviewed;
                 }
-            }
-        }                        
+
+                String currStatus=sampleInfo[0][0].toString();                
+                if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
+                    diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+                            new String[]{TblsData.Sample.FLD_STATUS.getName(), TblsData.Sample.FLD_STATUS_PREVIOUS.getName(), TblsData.Sample.FLD_READY_FOR_REVISION.getName()}, 
+                            new Object[]{sampleAnalysisResultStatusReviewed, currStatus, false}, 
+                            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName()+" not in-"}, new Object[]{sampleId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+                        String[] fieldsForAudit = new String[0];
+                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusReviewed);
+                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
+                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_READY_FOR_REVISION.getName() + ":" + "false");
+                        SampleAudit smpAudit = new SampleAudit();
+                        smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
+                    }
+                }
+            }                        
+//        }
         return diagnoses;
     }    
 }

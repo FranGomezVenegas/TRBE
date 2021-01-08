@@ -26,7 +26,7 @@ public class EnvMonitSchemaDefinition {
      */
     public static JSONObject createPlatformSchemas(){
     
-        Rdbms.stablishDBConection();
+        Rdbms.stablishDBConection(false);
         JSONObject jsonObj = new JSONObject();
         
         String methodName = "createDataBaseSchemas";       

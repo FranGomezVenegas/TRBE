@@ -127,7 +127,7 @@ public class AuthenticationAPI extends HttpServlet {
                     Rdbms.closeRdbms();    
                     return;                                
                 case FINALTOKEN:   
-                  Rdbms.stablishDBConection();
+                  Rdbms.stablishDBConection(false);
                   if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
                     firstToken = argValues[0].toString();
                     String userRole = argValues[1].toString();
