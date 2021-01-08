@@ -234,6 +234,84 @@ public class TblsInspLotRMData {
         private final String dbObjTypePostgres;                     
     }
 
+    public enum LotCertificate{
+
+        /**
+         *
+         */
+        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
+        ,        
+        TBL("lot_certificate", LPDatabase.createSequence(FLD_ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        ,
+        FLD_LOT_NAME("lot_name", LPDatabase.string())        ,
+        FLD_CERTIFICATE_VERSION("certificate_version", LPDatabase.integer())        ,
+        FLD_STATUS("status",LPDatabase.stringNotNull())        ,
+        FLD_STATUS_PREVIOUS("status_previous",LPDatabase.string())        ,
+        FLD_CREATED_ON("created_on", LPDatabase.date())        ,
+        FLD_CREATED_BY("created_by", LPDatabase.string())        ,       
+        FLD_CERTIFICATE_FORMAT("certificate_format", LPDatabase.string())        ,
+        ;
+        private LotCertificate(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return entry name
+         */
+        public String getName(){return this.dbObjName;}
+        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
+
+        /**
+         *
+         * @param schemaNamePrefix procedure prefix
+         * @param fields fields , ALL when this is null
+         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = Sample.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (Sample obj: Sample.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }        
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (Sample obj: Sample.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }            
     
     
     private static final String FIELDS_NAMES_LOCATION_NAME = "location_name";
@@ -258,7 +336,7 @@ public class TblsInspLotRMData {
         /**
          *
          */
-        FLD_CONFIG_CODE("sample_config_code", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_sample_id_seq'::regclass)")
+        FLD_CONFIG_CODE("sample_config_code", LPDatabase.string())
         ,
 
         /**
@@ -387,7 +465,9 @@ public class TblsInspLotRMData {
         ,
         FLD_CURRENT_STAGE("current_stage",LPDatabase.string())
         ,
-        FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.string())
+        FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.string()),
+        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),        
+        
         ;
         private Sample(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

@@ -640,6 +640,92 @@ public class TblsInspLotRMConfig {
         private final String dbObjTypePostgres;                     
     }        
     
+    public enum LotCertificateRules{
+
+        TBL("lot_certificate_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE, #FLD_CODE_VERSION) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
+        FLD_CODE("code", LPDatabase.stringNotNull())        ,
+        FLD_CODE_VERSION("code_version", LPDatabase.integer())        ,
+        FLD_DECISIONS_LIST("decisions_list", LPDatabase.string())        ,        
+        FLD_MINIMUM_ANALYSIS_REQUIRED_LIST("minimum_analysis_required_list", LPDatabase.string())        ,        
+        FLD_SAMPLE_ANALYSIS_REVISION_REQUIRED("sample_analysis_revision_required", LPDatabase.booleanFld(true))        ,        
+        FLD_SAMPLE_REVISION_REQUIRED("sample_revision_required", LPDatabase.booleanFld(true))        ,        
+        FLD_ALLOW_AUTO_DECISION("allow_auto_decision", LPDatabase.booleanFld(false))        ,
+        FLD_ALLOW_DECISION_PARTIAL_RESULTS("allow_decision_partial_results", LPDatabase.booleanFld(false))        ,
+        FLD_ALLOW_GENERATE_COA_PARTIAL_RESULTS("allow__generate_coa_partial_results", LPDatabase.booleanFld(false))        ,
+
+
+/*        FLD_TEST_ANALYST_REQUIRED("test_analyst_required", LPDatabase.booleanFld())
+        ,
+
+        FLD_ANALYST_ASSIGNMENT_MODE("analyst_assignment_mode", LPDatabase.string())
+        ,
+
+        FLD_FIELD_DEFAULT_VALUES("field_default_values", LPDatabase.string())
+        ,        
+
+        FLD_AUTO_ADD_SAMPLE_ANALYSIS_LEVEL("auto_add_sample_analysis_lvl", LPDatabase.string())        */
+        ;
+        private LotCertificateRules(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param schemaNamePrefix
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = LotDecisionRules.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (TblsInspLotRMConfig.LotDecisionRules obj: TblsInspLotRMConfig.LotDecisionRules.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        fieldsScript.append(currField[0]).append(" ").append(currField[1]);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (TblsInspLotRMConfig.LotDecisionRules obj: TblsInspLotRMConfig.LotDecisionRules.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }        
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }        
+
     public enum zProgramCalendarRecursiveEntries{
 
         /**
