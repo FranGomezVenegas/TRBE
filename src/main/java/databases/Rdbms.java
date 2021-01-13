@@ -1572,10 +1572,12 @@ if (1==1)return;
         return schemaName;
     }
     public static String suffixForTesting(String schemaName){
+        //if (1!=1){
            if (schemaName.contains(LPPlatform.SCHEMA_DATA)){
                 if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
                 else schemaName=schemaName+"_testing";
-            }           
+            }     
+        //}
         return schemaName;
     }
     

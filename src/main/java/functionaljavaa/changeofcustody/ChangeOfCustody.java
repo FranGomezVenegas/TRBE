@@ -13,6 +13,7 @@ import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
+import trazit.session.ProcedureRequestSession;
     
 /**
  *
@@ -31,31 +32,30 @@ public class ChangeOfCustody {
     
     /**
      *
-     * @param schemaPrefix
      * @param objectTable
      * @param objectFieldName
      * @param objectId
      * @param custodianCandidate
-     * @param token
      * @return
      */
-    public Object[] cocStartChange(String schemaPrefix, String objectTable, String objectFieldName, Object objectId, String custodianCandidate, Token token) {        
-        String cocTableName = objectTable.toLowerCase()+"_coc";        
+    public Object[] cocStartChange(String objectTable, String objectFieldName, Object objectId, String custodianCandidate) {        
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();        String cocTableName = objectTable.toLowerCase()+"_coc";        
         String currCustodian=token.getPersonName();
         if ((custodianCandidate==null) || (custodianCandidate.length()==0) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noCustodian", new Object[]{objectId, objectTable, schemaPrefix});                                      
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noCustodian", new Object[]{objectId, objectTable, procInstanceName});                                      
         if (currCustodian.equalsIgnoreCase(custodianCandidate))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_sameCustodian", new Object[]{currCustodian, objectId, objectTable, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_sameCustodian", new Object[]{currCustodian, objectId, objectTable, procInstanceName});
 
-        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), objectTable);
+        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), objectTable);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())) return changeOfCustodyEnable;
         
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), cocTableName, 
+        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), cocTableName, 
                 new String[]{objectFieldName, TblsData.SampleCoc.FLD_STATUS.getName()}, 
                 new Object[]{objectId, cocStartChangeStatus});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_requestAlreadyInCourse", new Object[]{objectId, objectTable, schemaPrefix});
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), objectTable.toLowerCase(), 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_requestAlreadyInCourse", new Object[]{objectId, objectTable, procInstanceName});
+        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), objectTable.toLowerCase(), 
                 new String[]{TblsData.SampleCoc.FLD_STARTED_ON.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()},                 
                 new Object[]{LPDate.getCurrentTimeStamp(), custodianCandidate}, 
                 new String[]{objectFieldName}, new Object[]{objectId});
@@ -64,7 +64,7 @@ public class ChangeOfCustody {
         String[] sampleFieldName = new String[]{objectFieldName, TblsData.SampleCoc.FLD_CUSTODIAN.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName(), TblsData.SampleCoc.FLD_STARTED_ON.getName(), TblsData.SampleCoc.FLD_STATUS.getName()};
         Object[] sampleFieldValue = new Object[]{objectId, currCustodian, custodianCandidate, LPDate.getCurrentTimeStamp(), cocStartChangeStatus};
         
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), cocTableName, 
+        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), cocTableName, 
                 sampleFieldName, sampleFieldValue);        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString()))return insertRecordInTable;
         
@@ -72,57 +72,54 @@ public class ChangeOfCustody {
             case "sample":
                 Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ":");
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.CHAIN_OF_CUSTODY_STARTED.toString(), objectTable, Integer.valueOf(objectId.toString()), 
-                        Integer.valueOf(objectId.toString()), null, null, 
-                        fieldsOnLogSample, token, null);                
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.CHAIN_OF_CUSTODY_STARTED.toString(), objectTable, Integer.valueOf(objectId.toString()), 
+                        Integer.valueOf(objectId.toString()), null, null, fieldsOnLogSample, null);                
                 break;
             default:
                 break;
         }        
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ChainOfCustody_requestStarted", new Object[]{objectId, objectTable, schemaPrefix});
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ChainOfCustody_requestStarted", new Object[]{objectId, objectTable, procInstanceName});
     }
 
     /**
      *
-     * @param schemaName
      * @param objectTable
      * @param objectFieldName
      * @param objectId
-     * @param token
      * @param comment
      * @return
      */
-    public Object[] cocConfirmedChange( String schemaName, String objectTable, String objectFieldName, Object objectId, Token token, String comment) {
-        return cocCompleteChange( schemaName, objectTable, objectFieldName, objectId, token, comment, cocConfirmedChangeStatus);
+    public Object[] cocConfirmedChange(String objectTable, String objectFieldName, Object objectId, String comment) {
+        return cocCompleteChange(objectTable, objectFieldName, objectId, comment, cocConfirmedChangeStatus);
     }
     
     /**
      *
-     * @param schemaName
      * @param objectTable
      * @param objectFieldName
      * @param objectId
-     * @param token
      * @param comment
      * @return
      */
-    public Object[] cocAbortedChange( String schemaName, String objectTable, String objectFieldName, Object objectId, Token token, String comment) {
-        return cocCompleteChange( schemaName, objectTable, objectFieldName, objectId, token, comment, cocAbortedChangeStatus);
+    public Object[] cocAbortedChange(String objectTable, String objectFieldName, Object objectId, String comment) {
+        return cocCompleteChange(objectTable, objectFieldName, objectId, comment, cocAbortedChangeStatus);
     }
     
-    private Object[] cocCompleteChange( String schemaPrefix, String objectTable, String objectFieldName, Object objectId, Token token, String comment, String actionName) {
+    private Object[] cocCompleteChange(String objectTable, String objectFieldName, Object objectId, String comment, String actionName) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         String cocTableName = objectTable.toLowerCase()+"_coc";
 
-        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), objectTable);
+        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), objectTable);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())){
             return changeOfCustodyEnable;}
 
-        Object[][] startedProcessData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), cocTableName, 
+        Object[][] startedProcessData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), cocTableName, 
                 new String[]{objectFieldName, TblsData.SampleCoc.FLD_STATUS.getName()},
                 new Object[]{objectId, cocStartChangeStatus},
                 new String[]{"id", TblsData.SampleCoc.FLD_STATUS.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(startedProcessData[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noChangeInProgress", new Object[]{objectId, objectTable, schemaPrefix});            
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noChangeInProgress", new Object[]{objectId, objectTable, procInstanceName});            
         
         String custodianCandidate = "";
         Integer recordId=null;
@@ -131,7 +128,7 @@ public class ChangeOfCustody {
             custodianCandidate = startedProcessData[0][2].toString();}
 
         if ( (startedProcessData[0][2]==null) || (!token.getUserName().equalsIgnoreCase(custodianCandidate)) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noCustodianCandidate", new Object[]{objectId, objectTable, schemaPrefix});            
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noCustodianCandidate", new Object[]{objectId, objectTable, procInstanceName});            
         
         
         String[] sampleFieldName=new String[]{TblsData.SampleCoc.FLD_STATUS.getName(), TblsData.SampleCoc.FLD_CONFIRMED_ON.getName() };
@@ -140,7 +137,7 @@ public class ChangeOfCustody {
             sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.SampleCoc.FLD_NEW_CUSTODIAN_NOTES.getName());
             sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, comment);
         }
-        Object[] updateRecordInTable = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), cocTableName, 
+        Object[] updateRecordInTable = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), cocTableName, 
                 sampleFieldName, sampleFieldValue,
                 new String[]{TblsData.SampleCoc.FLD_ID.getName()}, new Object[]{recordId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateRecordInTable[0].toString())){
@@ -152,7 +149,7 @@ public class ChangeOfCustody {
             updSampleTblFlds = LPArray.addValueToArray1D(updSampleTblFlds, TblsData.SampleCoc.FLD_CUSTODIAN.getName());
             updSampleTblVls = LPArray.addValueToArray1D(updSampleTblVls, token.getUserName());
          }
-         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), objectTable.toLowerCase(), 
+         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), objectTable.toLowerCase(), 
                 updSampleTblFlds, updSampleTblVls,                
                 new String[]{objectFieldName}, new Object[]{objectId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString())){
@@ -162,14 +159,13 @@ public class ChangeOfCustody {
             case "sample":
                 Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ":");
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd( schemaPrefix, SampleAudit.SampleAuditEvents.CHAIN_OF_CUSTODY_COMPLETED.toString(), objectTable, Integer.valueOf(objectId.toString()), 
-                        Integer.valueOf(objectId.toString()), null, null, 
-                        fieldsOnLogSample, token, null);                
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.CHAIN_OF_CUSTODY_COMPLETED.toString(), objectTable, Integer.valueOf(objectId.toString()), 
+                        Integer.valueOf(objectId.toString()), null, null, fieldsOnLogSample, null);                
                 break;
             default:
                 break;
         }      
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ChainOfCustody_requestCompleted", new Object[]{schemaPrefix, objectTable, objectId, actionName.toLowerCase()});            
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ChainOfCustody_requestCompleted", new Object[]{procInstanceName, objectTable, objectId, actionName.toLowerCase()});            
     }
     
     /**

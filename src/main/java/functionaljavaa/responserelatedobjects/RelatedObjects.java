@@ -48,6 +48,7 @@ public class RelatedObjects {
     public JSONArray getRelatedObject(){
         return jArrMainObject;
     }   
+
     public void addSimpleNode(String schema, String table, String objectType, Object object){
         addSimpleNode(schema, table, objectType, object, null, null);
     }

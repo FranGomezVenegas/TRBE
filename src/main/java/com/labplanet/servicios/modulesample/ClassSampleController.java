@@ -55,7 +55,7 @@ public class ClassSampleController {
                     }
                     this.functionFound=true;
                     this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-                    ClassSample clss=new ClassSample(request, token, schemaPrefix, endPoint);
+                    ClassSample clss=new ClassSample(request, endPoint);
                     this.functionDiagn=clss.getDiagnostic();
                     this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
                 }catch(Exception e){

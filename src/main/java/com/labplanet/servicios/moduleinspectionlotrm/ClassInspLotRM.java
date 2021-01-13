@@ -17,6 +17,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -29,7 +30,7 @@ public class ClassInspLotRM {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassInspLotRM(HttpServletRequest request, Token token, String schemaPrefix, InspLotRMAPIEndpoints endPoint, AuditAndUserValidation auditAndUsrValid){
+    public ClassInspLotRM(HttpServletRequest request, InspLotRMAPIEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstance();
     //try () {
         DataInspectionLot insplot = new DataInspectionLot();     
@@ -71,10 +72,10 @@ public class ClassInspLotRM {
                         fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(nContStr));
                     }
                     Integer numLotsToCreate=1;
-                    actionDiagnoses=insplot.createLot(schemaPrefix, token, lotName, materialName, template, templateVersion, fieldNameArr, fieldValueArr, numLotsToCreate);
+                    actionDiagnoses=insplot.createLot(lotName, materialName, template, templateVersion, fieldNameArr, fieldValueArr, numLotsToCreate);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, template, templateVersion, schemaPrefix});                                        
-                        rObj.addSimpleNode(schemaPrefix, TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, template, templateVersion, ProcedureRequestSession.getInstance(null).getProcedureInstance()});                                        
+                        rObj.addSimpleNode(ProcedureRequestSession.getInstance(null).getProcedureInstance(), TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);
                     }
                     this.messageDynamicData=new Object[]{};
                     break;
@@ -89,10 +90,10 @@ public class ClassInspLotRM {
                     fieldNameArr=fieldName.split("\\|");
                     fieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 }
-                actionDiagnoses=insplotDecision.lotTakeDecision(schemaPrefix, token, lotName, decision, fieldNameArr, fieldValueArr);
+                actionDiagnoses=insplotDecision.lotTakeDecision(lotName, decision, fieldNameArr, fieldValueArr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, decision, fieldNameArr, fieldValueArr, schemaPrefix});                                        
-                    rObj.addSimpleNode(schemaPrefix, TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);
+                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, decision, fieldNameArr, fieldValueArr, ProcedureRequestSession.getInstance(null).getProcedureInstance()});                                        
+                    rObj.addSimpleNode(ProcedureRequestSession.getInstance(null).getProcedureInstance(), TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);
                 }
                 this.messageDynamicData=new Object[]{};
                 break;

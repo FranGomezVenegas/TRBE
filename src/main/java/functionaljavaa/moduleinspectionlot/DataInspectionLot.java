@@ -30,64 +30,19 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import static lbplanet.utilities.LPPlatform.trapMessage;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
  * @author User
  */
 public class DataInspectionLot {
-    public enum DataLotProperties{ 
-        SUFFIX_STATUS_FIRST ("_statusFirst", "First status, to be concatenated to the entity name, example: sample_statusFirst, program_statusFirst etc...", "One of the given statuses"),
-        SUFFIX_LOTSTRUCTURE ("_lotStructure", "TBD", "TBD"),
-/*        SAMPLE_STATUS_FIRST ("sample_statusFirst","", "One of the given statuses"),
-        SAMPLE_STATUS_RECEIVED ("sample_statusReceived", "", "One of the given statuses"),
-        SAMPLE_STATUS_INCOMPLETE ("sample_statusIncomplete", "", "One of the given statuses"),
-        SAMPLE_STATUS_COMPLETE ("sample_statusComplete", "", "One of the given statuses"),
-        SAMPLEALIQUOTING_VOLUME_REQUIRED ("sampleAliquot_volumeRequired", "TBD", "TBD"),
-        SAMPLEASUBLIQUOTING_VOLUME_REQUIRED ("sampleSubAliquot_volumeRequired", "TBD", "TBD"), */       
-        ;
-        private DataLotProperties(String pName, String descr, String possValues){
-            this.propertyName=pName;
-            this.description=descr;
-            this.possibleValues=possValues;
-        }
-        public String getPropertyName(){return this.propertyName;}
-        public String getDescription(){return this.description;}
-        public String getPossibleValues(){return this.possibleValues;}
-    
-        private final String propertyName;
-        private final String description;
-        private final String possibleValues;
-    }
 
     
-    public enum DataInspLotErrorTrapping{ 
-        SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
-        ERROR_INSERTING_INSPLOT_RECORD("errorInsertingInspLotRecord", "", ""),
-        MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "", ""),
-        MISSING_CONFIG_CODE("MissingConfigCode", "", ""),        
-        MISSING_SPEC_CONFIG_CODE("MissingSpecConfigCode", "Spec Config code <*1*> version <*2*> Not found for the procedure <*3*>", ""),        
-        SAMPLE_ALREADY_RECEIVED("SampleAlreadyReceived", "", ""),
-        SAMPLE_NOT_REVIEWABLE("SampleNotReviewable", "", ""),
-        VOLUME_SHOULD_BE_GREATER_THAN_ZERO("sampleAliquoting_volumeCannotBeNegativeorZero", "", ""),
-        ALIQUOT_CREATED_BUT_ID_NOT_GOT("AliquotCreatedButIdNotGotToContinueApplyingAutomatisms", "Object created but aliquot id cannot be get back to continue with the logic", ""),
-        SAMPLEASUBLIQUOTING_VOLUME_AND_UOM_REQUIRED ("sampleSubAliquoting_volumeAndUomMandatory", "", ""),        
-        ;
-        private DataInspLotErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
-            this.errorCode=errCode;
-            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
-            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
-        }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
-        private final String errorCode;
-        private final String defaultTextWhenNotInPropertiesFileEn;
-        private final String defaultTextWhenNotInPropertiesFileEs;
-    }
-    
-    public Object[] createLot(String procPrefix, Token token, String lotName, String materialName, String template, Integer templateVersion, String[] fieldName, Object[] fieldValue, Integer numLotsToCreate) {
+    public Object[] createLot(String lotName, String materialName, String template, Integer templateVersion, String[] fieldName, Object[] fieldValue, Integer numLotsToCreate) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procPrefix=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_DATA);    
         String schemaConfigName = LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_CONFIG); 
         
@@ -105,7 +60,7 @@ public class DataInspectionLot {
 
         String[] mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, lotLevel, actionName);
         
-        String lotStatusFirst = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), lotLevel+DataLotProperties.SUFFIX_STATUS_FIRST.getPropertyName());     
+        String lotStatusFirst = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_STATUS_FIRST.getPropertyName());     
 
         String[] lotFieldName =fieldName; //new String[]{};
         Object[] lotFieldValue =fieldValue; //new Object[]{};
@@ -132,7 +87,7 @@ public class DataInspectionLot {
                 new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
                 new Object[]{materialInfo[0][0], materialInfo[0][1]});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.MISSING_SPEC_CONFIG_CODE.getErrorCode(), new Object[]{materialInfo[0][0], materialInfo[0][1], procPrefix});    
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.MISSING_SPEC_CONFIG_CODE.getErrorCode(), new Object[]{materialInfo[0][0], materialInfo[0][1], procPrefix});    
         lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName());    
         lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, materialName);
         lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.FLD_SPEC_CODE.getName());    
@@ -163,15 +118,15 @@ public class DataInspectionLot {
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, mandatoryFieldsMissingBuilder.toString());
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);    
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);    
         }               
         
         Rdbms.existsRecord(schemaConfigName, TblsInspLotRMConfig.Lot.TBL.getName(), 
                 new String[]{TblsInspLotRMConfig.Lot.FLD_CODE.getName(), TblsInspLotRMConfig.Lot.FLD_CODE_VERSION.getName()}, new Object[]{template, templateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.MISSING_CONFIG_CODE.getErrorCode(), new Object[]{template, templateVersion, schemaConfigName, diagnosis[5]});    
-        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, lotLevel+DataLotProperties.SUFFIX_LOTSTRUCTURE.getPropertyName());
-        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, lotLevel+DataLotProperties.SUFFIX_LOTSTRUCTURE.getPropertyName());
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.MISSING_CONFIG_CODE.getErrorCode(), new Object[]{template, templateVersion, schemaConfigName, diagnosis[5]});    
+        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_LOTSTRUCTURE.getPropertyName());
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_LOTSTRUCTURE.getPropertyName());
         Integer specialFieldIndex = -1;
         
         for (Integer inumLines=0;inumLines<lotFieldName.length;inumLines++){
@@ -250,7 +205,7 @@ public class DataInspectionLot {
             diagnoses = Rdbms.insertRecordInTable(schemaDataName, TblsInspLotRMData.Lot.TBL.getName(), lotFieldName, lotFieldValue);
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD.getErrorCode(), errorDetailVariables);
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD.getErrorCode(), errorDetailVariables);
             }                                
 
             Object[] fieldsOnLogLot = LPArray.joinTwo1DArraysInOneOf1DString(lotFieldName, lotFieldValue, ":");
@@ -262,10 +217,8 @@ public class DataInspectionLot {
 //            smpStages.dataLotStagesTimingCapture(procPrefix, sampleId, firstStage[firstStage.length-1][1].toString(), DataLotStages.SampleStageTimingCapturePhases.START.toString());
             
             LotAudit lotAudit = new LotAudit();            
-            Object[] lotAuditAdd = lotAudit.lotAuditAdd(procPrefix, 
-                    LotAudit.LotAuditEvents.LOT_CREATED.toString(), 
-                    TblsInspLotRMData.Lot.TBL.getName(), lotName, 
-                                        lotName, null, null, fieldsOnLogLot, token, null);
+            Object[] lotAuditAdd = lotAudit.lotAuditAdd(LotAudit.LotAuditEvents.LOT_CREATED.toString(), 
+                    TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, null, null, fieldsOnLogLot, null);
             Integer transactionId = null;
             Integer preAuditId=Integer.valueOf(lotAuditAdd[lotAuditAdd.length-1].toString());
             
@@ -299,8 +252,7 @@ public class DataInspectionLot {
                     fieldValue=LPArray.addValueToArray1D(fieldValue, lotFldValue[LPArray.valuePosicInArray(lotFldName, curFld)]);
                 }
             }
-            Object[] newProjSample = ds.logSample(procPrefix, token, 
-                    "smpTemplate", 1, fieldName, fieldValue, spEntryItem.getQuantity());
+            Object[] newProjSample = ds.logSample("smpTemplate", 1, fieldName, fieldValue, spEntryItem.getQuantity());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString())) return newProjSample;
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);

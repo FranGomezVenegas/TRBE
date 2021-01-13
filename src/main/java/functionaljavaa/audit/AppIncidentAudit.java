@@ -5,7 +5,6 @@
  */
 package functionaljavaa.audit;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsAppAudit;
@@ -16,21 +15,24 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPSession;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
  * @author User
  */
 public class AppIncidentAudit {
-    public static Object[] incidentAuditAdd(String schemaPrefix, Token token, String action, String tableName, Integer incidentId, String tableId,
+    public static Object[] incidentAuditAdd(String action, String tableName, Integer incidentId, String tableId,
                         Object[] auditlog, Integer parentAuditId, String note, String status) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};
 
         String[] fieldNames = new String[]{TblsAppAudit.Incident.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
-        if (schemaPrefix!=null){
-            Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        if (procInstanceName!=null){
+            Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
             if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_PROCEDURE.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);

@@ -136,7 +136,7 @@ public class SampleAPI extends HttpServlet {
                 return;
             }    
 
-            ClassSample clss=new ClassSample(request, token, schemaPrefix, endPoint);
+            ClassSample clss=new ClassSample(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();

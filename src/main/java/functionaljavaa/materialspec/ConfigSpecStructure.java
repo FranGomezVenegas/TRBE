@@ -390,7 +390,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
             whereFieldValues = LPArray.addValueToArray1D(whereFieldValues, specCodeVersion);            
             diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, TblsCnfg.Spec.TBL.getName(), specFieldName, specFieldValue, whereFieldNames, whereFieldValues);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                ConfigTablesAudit.specAuditAdd(schemaPrefix, token, SpecAuditEvents.SPEC_UPDATE.toString(), TblsCnfg.Spec.TBL.getName(), specCode, 
+                ConfigTablesAudit.specAuditAdd(SpecAuditEvents.SPEC_UPDATE.toString(), TblsCnfg.Spec.TBL.getName(), specCode, 
                     specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, ":"), null);              
                 String[] specRulesFldNames=new String[]{TblsCnfg.SpecRules.FLD_CODE.getName(), TblsCnfg.SpecRules.FLD_CONFIG_VERSION.getName(),
                             TblsCnfg.SpecRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.FLD_ALLOW_MULTI_SPEC.getName()};
@@ -398,7 +398,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
                 Object[] insertRecordInSpecRules = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.SpecRules.TBL.getName(), 
                         specRulesFldNames,specRulesFldValues);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordInSpecRules[0].toString()))
-                    ConfigTablesAudit.specAuditAdd(schemaPrefix, token, SpecAuditEvents.SPEC_UPDATE.toString(), TblsCnfg.SpecRules.TBL.getName(), specCode, 
+                    ConfigTablesAudit.specAuditAdd(SpecAuditEvents.SPEC_UPDATE.toString(), TblsCnfg.SpecRules.TBL.getName(), specCode, 
                         specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specRulesFldNames, specRulesFldValues, ":"), null);
            }
            return diagnoses;
@@ -516,7 +516,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
 //                        TblsCnfg.SpecRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.FLD_ALLOW_MULTI_SPEC.getName()}, 
 //                    new Object[]{specCode, specCodeVersion, false, false});       
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                Object[] specAuditAddDiagn = ConfigTablesAudit.specAuditAdd(schemaPrefix, token, SpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.Spec.TBL.getName(), specCode, 
+                Object[] specAuditAddDiagn = ConfigTablesAudit.specAuditAdd(SpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.Spec.TBL.getName(), specCode, 
                         specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, ":"), null);
                 String[] specRulesFldNames=new String[]{TblsCnfg.SpecRules.FLD_CODE.getName(), TblsCnfg.SpecRules.FLD_CONFIG_VERSION.getName(),
                             TblsCnfg.SpecRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.FLD_ALLOW_MULTI_SPEC.getName()};
@@ -524,7 +524,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
                 Object[] insertRecordInSpecRules = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.SpecRules.TBL.getName(), 
                         specRulesFldNames,specRulesFldValues);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordInSpecRules[0].toString()))
-                    specAuditAddDiagn = ConfigTablesAudit.specAuditAdd(schemaPrefix, token, SpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.SpecRules.TBL.getName(), specCode, 
+                    specAuditAddDiagn = ConfigTablesAudit.specAuditAdd(SpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.SpecRules.TBL.getName(), specCode, 
                         specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specRulesFldNames, specRulesFldValues, ":"), null);
                 errorCode = "specRecord_createdSuccessfully";
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specCode);
@@ -711,7 +711,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
             specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCodeVersion);            
             diagnoses = Rdbms.insertRecordInTable(schemaName, TblsCnfg.SpecLimits.TBL.getName(), specFieldName, specFieldValue); 
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                Object[] specAuditAddDiagn = ConfigTablesAudit.specAuditAdd(schemaPrefix, token, SpecAuditEvents.SPEC_LIMIT_NEW.toString(), TblsCnfg.SpecLimits.TBL.getName(), specCode, 
+                Object[] specAuditAddDiagn = ConfigTablesAudit.specAuditAdd(SpecAuditEvents.SPEC_LIMIT_NEW.toString(), TblsCnfg.SpecLimits.TBL.getName(), specCode, 
                         specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, ":"), null);
             }
             return diagnoses;

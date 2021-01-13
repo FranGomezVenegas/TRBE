@@ -8,13 +8,13 @@ package functionaljavaa.moduleinspectionlot;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsData;
-import databases.Token;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.samplestructure.DataSampleAnalysisStrategy;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -23,8 +23,8 @@ import lbplanet.utilities.LPPlatform;
 public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
 
     @Override
-    public Object[] autoSampleAnalysisAdd(String schemaPrefix, Token token, Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId) {
-        
+    public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId) {
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();        
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())) return fieldNameValueArrayChecker;
 
@@ -43,7 +43,7 @@ public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
                     }else{curValue[1] = sampleFieldValue[posicField];}                
                 }
                 if (specMissingFields.length>0){
-                    Object[][] sampleSpecInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+                    Object[][] sampleSpecInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, specMissingFields);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecInfo[0][0].toString())){return LPArray.array2dTo1d(sampleSpecInfo);}
 //                      for (String specMissingField : specMissingFields) {
@@ -64,7 +64,7 @@ public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
                         specWhereFieldValue=LPArray.addValueToArray1D(specWhereFieldValue, analysisVariationArr[1]);                    
                     }
                 }                 
-                anaName=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
+                anaName=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
                         specWhereFieldName, specWhereFieldValue, 
                         new String[]{TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(), TblsCnfg.SpecLimits.FLD_TESTING_GROUP.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(anaName[0][0].toString())){return LPArray.array2dTo1d(anaName);}
@@ -79,14 +79,14 @@ public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
         for (Object[] anaName1 : anaName) {
             String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName(), TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()};
             Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2], (String) anaName1[3]};
-            DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldsName, fieldsValue, preAuditId);
+            DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue, preAuditId);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded.toString()+" to the sample "+sampleId.toString()+" for schema "+schemaPrefix});        
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded.toString()+" to the sample "+sampleId.toString()+" for schema "+procInstanceName});        
     }
 
     @Override
-    public String specialFieldCheckSampleAnalysisAnalyst(String schemaPrefix, String template, Integer templateVersion, DataSample dataSample, Integer preAuditId) {
+    public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample, Integer preAuditId) {
         return "";
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

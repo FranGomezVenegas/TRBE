@@ -15,8 +15,6 @@ public interface DataSampleAnalysisStrategy {
 
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param sampleId
      * @param sampleFieldName
      * @param sampleFieldValue
@@ -24,17 +22,16 @@ public interface DataSampleAnalysisStrategy {
      * @param preAuditId
      * @return
      */
-    public abstract Object[] autoSampleAnalysisAdd(String schemaPrefix, Token token, Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId);
+    public abstract Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId);
 
     /**
      *
-     * @param schemaPrefix
      * @param template
      * @param templateVersion
      * @param dataSample
      * @param preAuditId
      * @return
      */
-    public abstract String specialFieldCheckSampleAnalysisAnalyst(String schemaPrefix, String template, Integer templateVersion, DataSample dataSample, Integer preAuditId);
+    public abstract String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample, Integer preAuditId);
   
 }

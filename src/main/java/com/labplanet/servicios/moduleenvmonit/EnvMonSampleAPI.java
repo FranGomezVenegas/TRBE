@@ -267,7 +267,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     return;                   
                 }                
-                ClassSample clssSmp=new ClassSample(request, token, schemaPrefix, endPointSmp);
+                ClassSample clssSmp=new ClassSample(request, endPointSmp);
                 if (clssSmp.getEndpointExists()){
                     Object[] diagnostic=clssSmp.getDiagnostic();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  

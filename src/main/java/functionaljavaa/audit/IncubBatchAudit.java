@@ -15,6 +15,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPSession;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -24,23 +25,23 @@ public class IncubBatchAudit {
 
 /**
  * Add one record in the audit table when altering any of the levels belonging to the sample structure when not linked to any other statement.
- * @param schemaPrefix String - Procedure Name
-     * @param token
- * @param action String - Action being performed
- * @param tableName String - table where the action was performed into the Sample structure
+     * @param action String - Action being performed
+     * @param tableName String - table where the action was performed into the Sample structure
      * @param batchName given batch
      * @param auditlog audit event log
      * @param parentAuditId when sub-record then the parent audit id
      * @return  
  */    
-    public static Object[] incubBatchAuditAdd(String schemaPrefix, Token token, String action, String tableName, String batchName, Object[] auditlog, Integer parentAuditId) {
+    public static Object[] incubBatchAuditAdd(String action, String tableName, String batchName, Object[] auditlog, Integer parentAuditId) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};
 
         String[] fieldNames = new String[]{TblsEnvMonitDataAudit.IncubBatch.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -64,7 +65,7 @@ public class IncubBatchAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
        
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
                 return appSession;
@@ -86,7 +87,7 @@ public class IncubBatchAudit {
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
         
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsEnvMonitDataAudit.IncubBatch.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsEnvMonitDataAudit.IncubBatch.TBL.getName(), 
                 fieldNames, fieldValues);
     }    
 }

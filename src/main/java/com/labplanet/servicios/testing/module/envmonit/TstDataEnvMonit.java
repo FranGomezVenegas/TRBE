@@ -172,9 +172,9 @@ public class TstDataEnvMonit extends HttpServlet {
                     if (numSamplesToLogStr!=null){numSamplesToLog = Integer.parseInt(numSamplesToLogStr);}
 
                     if (numSamplesToLogStr==null){
-                        dataSample = ds.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues);
+                        dataSample = ds.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues);
                     }else{
-                        dataSample = ds.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
+                        dataSample = ds.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
                     }
                     break;
                 default:      

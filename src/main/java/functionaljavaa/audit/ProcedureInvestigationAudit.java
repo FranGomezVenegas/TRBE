@@ -5,7 +5,6 @@
  */
 package functionaljavaa.audit;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsProcedureAudit;
@@ -16,6 +15,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPSession;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -31,15 +31,17 @@ public class ProcedureInvestigationAudit {
 
 
 
-    public static Object[] investigationAuditAdd(String schemaPrefix, Token token, String action, String tableName, Integer investigationId, String tableId,
+    public static Object[] investigationAuditAdd(String action, String tableName, Integer investigationId, String tableId,
                         Object[] auditlog, Integer parentAuditId, String note) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};
 
         String[] fieldNames = new String[]{TblsProcedureAudit.Investigation.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
-        if (schemaPrefix!=null){
-            Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        if (procInstanceName!=null){
+            Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
             if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.FLD_PROCEDURE.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -89,7 +91,7 @@ public class ProcedureInvestigationAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE_AUDIT), TblsProcedureAudit.Investigation.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE_AUDIT), TblsProcedureAudit.Investigation.TBL.getName(), 
                 fieldNames, fieldValues);
     }    
     

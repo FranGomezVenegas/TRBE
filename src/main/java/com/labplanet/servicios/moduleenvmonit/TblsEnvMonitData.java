@@ -16,6 +16,7 @@ import static databases.TblsCnfg.TABLETAG;
 import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
+import databases.TblsData;
 
 /**
  *
@@ -32,9 +33,11 @@ public class TblsEnvMonitData {
             case "PROGRAM_DAY": return ProgramDay.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
+            case "SAVED_QUERIES": return TblsData.SavedQueries.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_MICROORGANISM": return SampleMicroorganism.createTableScript(schemaNamePrefix, fields);
             case "PR_SCHEDULED_LOCATIONS_VIEW": return ViewProgramScheduledLocations.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_MICROORGANISM_LIST_VIEW": return ViewSampleMicroorganismList.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_REVISION_TESTING_GROUP": return TblsData.SampleRevisionTestingGroup.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }    
@@ -373,7 +376,7 @@ public class TblsEnvMonitData {
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProgramCalendarDate.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
@@ -384,7 +387,7 @@ public class TblsEnvMonitData {
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
                         if (fieldsScript.length()>0)fieldsScript.append(", ");
                         StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
                         currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
                         fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
                         tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
@@ -505,7 +508,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_CONFIG_CODE("sample_config_code", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_sample_id_seq'::regclass)")
+        FLD_CONFIG_CODE("sample_config_code", LPDatabase.string())
         ,
 
         /**
@@ -607,11 +610,11 @@ public class TblsEnvMonitData {
          */
         FLD_SPEC_VARIATION_NAME("spec_variation_name",LPDatabase.stringNotNull())
         ,
-
+        FLD_SPEC_ANALYSIS_VARIATION("spec_analysis_variation", LPDatabase.stringNotNull()),
         /**
          *
          */
-        FLD_SPEC_EVAL("spec_eval",  LPDatabase.stringNotNull(2))
+        FLD_SPEC_EVAL("spec_eval",  LPDatabase.string())
         ,
 
         /**
@@ -774,7 +777,8 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.string())
+        FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.string()),
+        FLD_AREA("area",LPDatabase.string())
         
         ;
         private Sample(String dbObjName, String dbObjType){
@@ -1384,9 +1388,9 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         FLD_STRUCT_NUM_COLS("struct_num_cols", LPDatabase.integer()),
         FLD_STRUCT_TOTAL_POSITIONS("struct_total_positions", LPDatabase.integer()),
         FLD_STRUCT_TOTAL_OBJECTS("struct_total_objects", LPDatabase.integer()),
-        FLD_STRUCT_CONTENT("struct_content", "character varying[] COLLATE pg_catalog.\"default\""),
-        FLD_STRUCT_ROWS_NAME("struct_rows_name", "character varying[] COLLATE pg_catalog.\"default\""),
-        FLD_STRUCT_COLS_NAME("struct_cols_name", "character varying[] COLLATE pg_catalog.\"default\""),        
+        FLD_STRUCT_CONTENT("struct_content", LPDatabase.string()),
+        FLD_STRUCT_ROWS_NAME("struct_rows_name", LPDatabase.string()),
+        FLD_STRUCT_COLS_NAME("struct_cols_name", LPDatabase.string()),        
         // ...
         ;
         

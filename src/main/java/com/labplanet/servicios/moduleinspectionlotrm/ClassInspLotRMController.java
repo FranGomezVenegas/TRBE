@@ -39,7 +39,7 @@ public class ClassInspLotRMController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));            
-            ClassInspLotRM clss=new ClassInspLotRM(request, token, schemaPrefix, endPoint, auditAndUsrValid);
+            ClassInspLotRM clss=new ClassInspLotRM(request, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
         } catch (Exception ex) {

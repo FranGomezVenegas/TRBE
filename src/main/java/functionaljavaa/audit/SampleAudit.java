@@ -20,6 +20,7 @@ import java.util.Arrays;
 import functionaljavaa.requirement.Requirement;
 import functionaljavaa.samplestructure.DataSampleStages;
 import lbplanet.utilities.LPDate;
+import trazit.session.ProcedureRequestSession;
 
 /**
  * 
@@ -114,7 +115,6 @@ public class SampleAudit {
 
 /**
  * Add one record in the audit table when altering any of the levels belonging to the sample structure when not linked to any other statement.
- * @param schemaPrefix String - Procedure Name
  * @param action String - Action being performed
  * @param tableName String - table where the action was performed into the Sample structure
  * @param tableId Integer - Id for the object where the action was performed.
@@ -122,16 +122,18 @@ public class SampleAudit {
  * @param testId Integer - testId
  * @param resultId Integer - resultId
  * @param auditlog Object[] - All data that should be stored in the audit as part of the action being performed
-     * @param token
 @param parentAuditId paranet audit id when creating a child-record
      * @return  
  */    
-    public Object[] sampleAuditAdd(String schemaPrefix, String action, String tableName, Integer tableId, 
-                        Integer sampleId, Integer testId, Integer resultId, Object[] auditlog, Token token, Integer parentAuditId) {
+    public Object[] sampleAuditAdd(String action, String tableName, Integer tableId, 
+                        Integer sampleId, Integer testId, Integer resultId, Object[] auditlog, Integer parentAuditId) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        
         String[] fieldNames = new String[]{TblsDataAudit.Sample.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -165,7 +167,7 @@ public class SampleAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
        
     //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
@@ -187,14 +189,14 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
                 fieldNames, fieldValues);
         
     }
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param action
      * @param tableName
      * @param tableId
@@ -207,12 +209,12 @@ public class SampleAudit {
      * @param userRole
      * @param sessionId
      */
-    public void sampleAuditAddObsolete(String schemaPrefix, String action, String tableName, Integer tableId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog, String userName, String userRole, Integer sessionId) {
+    public void sampleAuditAddObsolete(String procInstanceName, String action, String tableName, Integer tableId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog, String userName, String userRole, Integer sessionId) {
         
         String[] fieldNames = new String[0];
         Object[] fieldValues = new Object[0];
         
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -258,7 +260,7 @@ public class SampleAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());            
                 
 /*        String jsonString = null;
-        jsonString = sampleJsonString(schemaPrefix+"-data", sampleId);
+        jsonString = sampleJsonString(procInstanceName+"-data", sampleId);
         if ((jsonString!=null)){
         //if (!jsonString.isEmpty()){
             fieldNames = LPArray.addValueToArray1D(fieldNames, "picture_after");
@@ -267,13 +269,13 @@ public class SampleAudit {
 */        
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
 //        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
-           Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(),
+           Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(),
                    fieldNames, fieldValues);
     }
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param token
      * @param action
      * @param tableName
@@ -285,14 +287,14 @@ public class SampleAudit {
      * @param resultId
      * @param auditlog
      */
-    public void sampleAliquotingAuditAdd( String schemaPrefix, Token token, String action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
+    public void sampleAliquotingAuditAdd( String procInstanceName, Token token, String action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
         
         String[] fieldNames = new String[]{TblsDataAudit.Sample.FLD_DATE.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_TABLE_NAME.getName(),
           TblsDataAudit.Sample.FLD_TABLE_ID.getName(), TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName(), TblsDataAudit.Sample.FLD_USER_ROLE.getName(),
           TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_TRANSACTION_ID.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp(), action, tableName, tableId, Arrays.toString(auditlog), token.getUserRole(), token.getPersonName(), Rdbms.getTransactionId()};
 
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -328,20 +330,20 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(),
+        Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(),
             fieldNames, fieldValues);
     }
     
     
-/*    public void sampleAuditAdd( String schemaPrefix, String action, String tableName, Integer tableId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog, String userName, String userRole) {
+/*    public void sampleAuditAdd( String procInstanceName, String action, String tableName, Integer tableId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog, String userName, String userRole) {
         String auditTableName = TABLE_NAME_DATA_AUDIT_SAMPLE;
         String schemaName = LPPlatform.SCHEMA_DATA_AUDIT;                
-        schemaName = LPPlatform.buildSchemaName(schemaPrefix, schemaName);                
+        schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);                
         
         String[] fieldNames = new String[0];
         Object[] fieldValues = new Object[0];
         
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, FIELD_NAME_DATA_AUDIT_SAMPLE_PROCEDURE);
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -379,7 +381,7 @@ public class SampleAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());            
                 
 //        String jsonString = null;
-//        jsonString = sampleJsonString(schemaPrefix+"-data", sampleId);
+//        jsonString = sampleJsonString(procInstanceName+"-data", sampleId);
 //        if ((jsonString!=null)){
 //        //if (!jsonString.isEmpty()){
 //            fieldNames = LPArray.addValueToArray1D(fieldNames, "picture_after");
@@ -393,14 +395,14 @@ public class SampleAudit {
 */
  /**
  * Not recommended. reduced version of
- * @param schemaPrefix String - Procedure Name
+ * @param procInstanceName String - Procedure Name
  * @param action String - Action being performed
  * @param tableName String - table where the action was performed into the Sample structure
  * @param tableId Integer - Id for the object where the action was performed.
  * @param auditlog Object[] - All data that should be stored in the audit as part of the action being performed
  * @param userName String - User who performed the action.
  */    
-    public void sampleAuditAddObsolete( String schemaPrefix, String action, String tableName, Integer tableId, Object[] auditlog, String userName){
+    public void sampleAuditAddObsolete( String procInstanceName, String action, String tableName, Integer tableId, Object[] auditlog, String userName){
         
         String[] fieldNames = new String[]{TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_TABLE_NAME.getName(),
           TblsDataAudit.Sample.FLD_TABLE_ID.getName(), TblsDataAudit.Sample.FLD_SAMPLE_ID.getName()};
@@ -410,20 +412,20 @@ public class SampleAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());            
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
 //        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
-           Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(),
+           Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(),
                    fieldNames, fieldValues);
     }
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param auditId
      * @param personName
      * @return
      */
-    public static Object[] sampleAuditSetAuditRecordAsReviewed(String schemaPrefix, Integer auditId, String personName){
-        String auditAuthorCanBeReviewerMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_AUTHOR_CAN_REVIEW_TOO, null);  
-        Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+    public static Object[] sampleAuditSetAuditRecordAsReviewed(String procInstanceName, Integer auditId, String personName){
+        String auditAuthorCanBeReviewerMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_AUTHOR_CAN_REVIEW_TOO, null);  
+        Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
             new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()}, new Object[]{auditId}, 
             new String[]{TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()}, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
         if (!"TRUE".equalsIgnoreCase(auditAuthorCanBeReviewerMode)){
@@ -433,7 +435,7 @@ public class SampleAudit {
         if (Boolean.valueOf(auditInfo[0][1].toString())){
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED.getErrorCode(), new Object[]{auditId});              
         }
-        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
             new String[]{TblsDataAudit.Sample.FLD_REVIEWED.getName(), TblsDataAudit.Sample.FLD_REVIEWED_BY.getName(), TblsDataAudit.Sample.FLD_REVIEWED_ON.getName()}, 
             new Object[]{true, personName, LPDate.getCurrentTimeStamp()}, 
             new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()}, new Object[]{auditId});
@@ -441,37 +443,37 @@ public class SampleAudit {
     
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param sampleId
      * @param actionName
      * @return
      */
-    public static Object[] sampleAuditRevisionPass(String schemaPrefix, Integer sampleId){
+    public static Object[] sampleAuditRevisionPass(String procInstanceName, Integer sampleId){
         String[] auditRevisionModesRequired=new String[]{"ENABLE", "DISABLE"};
-        String auditRevisionMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, null);  
-        String auditRevisionChildRequired = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_CHILD_REVISION_REQUIRED, null);   
+        String auditRevisionMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, null);  
+        String auditRevisionChildRequired = Parameter.getParameterBundle("config", procInstanceName, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_CHILD_REVISION_REQUIRED, null);   
         if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
-                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, procInstanceName});
         String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
         Boolean auditRevisionModeRecognized=false;
         for (String curModeRequired: auditRevisionModesRequired){
           if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
         }
         if (!auditRevisionModeRecognized)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
-                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, procInstanceName});
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLE")>-1)return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleAuditRevisionMode_Disable", 
-                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, procInstanceName});
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "STAGES")>-1){
-          DataSampleStages smpStages = new DataSampleStages(schemaPrefix);
+          DataSampleStages smpStages = new DataSampleStages(procInstanceName);
           if (!smpStages.isSampleStagesEnable())return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_StagesDetectedButSampleStagesNotEnable", 
-                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
-          Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, procInstanceName});
+          Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                   new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                   new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
           String sampleCurrentStage=sampleInfo[0][0].toString();
           if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleCurrentStage)) return LPArray.array2dTo1d(sampleInfo);
           if (LPArray.valuePosicInArray(auditRevisionModeArr, sampleInfo[0][0].toString())==-1) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "currentSampleStageNotRequiresSampleAuditRevision", 
-                  new Object[]{sampleCurrentStage, sampleId, PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+                  new Object[]{sampleCurrentStage, sampleId, PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, procInstanceName});
         }
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS")>-1){
 
@@ -481,13 +483,13 @@ public class SampleAudit {
 
         if ("FALSE".equalsIgnoreCase(auditRevisionChildRequired))
             whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
-        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
                 whereFieldName, whereFieldValue, 
                 new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()});
         for (Object[] curSampleInfo: sampleInfo){
           if (!"true".equalsIgnoreCase(curSampleInfo[1].toString())) {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
-            new Object[]{sampleId, schemaPrefix});
+            new Object[]{sampleId, procInstanceName});
           }
         }      
     //      Object[] sampleAuditReviewedValues=LPArray.getUniquesArray(sampleInfoReviewed1D);
@@ -497,14 +499,14 @@ public class SampleAudit {
     
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param sampleId
      * @param actionName
      * @param testId
      * @param resultId
      * @return
      */
-    public static Object[] sampleAuditRevisionPassByAction(String schemaPrefix, String actionName, Integer sampleId, Integer testId, Integer resultId){
+    public static Object[] sampleAuditRevisionPassByAction(String procInstanceName, String actionName, Integer sampleId, Integer testId, Integer resultId){
         
         
 //if (1==1) return new Object[]{LPPlatform.LAB_TRUE, "All reviewed"};        
@@ -512,19 +514,19 @@ public class SampleAudit {
         if ( (sampleId==null || sampleId==0) && (testId==null || testId==0) && (resultId==null || resultId==0) )
                 return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "The action "+actionName+" has no sampleId, testId or resultId linked with so this method returns true doing nothing", null);
         String[] auditRevisionModesRequired=new String[]{"ENABLE", "DISABLE"};
-        String auditRevisionMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, null);  
-        String auditRevisionChildRequired = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_CHILD_REVISION_REQUIRED, null);   
+        String auditRevisionMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, null);  
+        String auditRevisionChildRequired = Parameter.getParameterBundle("config", procInstanceName, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_CHILD_REVISION_REQUIRED, null);   
         if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
-                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, procInstanceName});
         String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
         Boolean auditRevisionModeRecognized=false;
         for (String curModeRequired: auditRevisionModesRequired){
           if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
         }
         if (!auditRevisionModeRecognized)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
-                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, procInstanceName});
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS")==-1){
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), new Object[]{sampleId, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
 
         }
         String[] whereFieldName=new String[]{TblsDataAudit.Sample.FLD_REVIEWED.getName()};
@@ -543,13 +545,13 @@ public class SampleAudit {
         }
 //        if ("FALSE".equalsIgnoreCase(auditRevisionChildRequired))
 //            whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
-        Object[][] sampleAuditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+        Object[][] sampleAuditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
                 whereFieldName, whereFieldValue, 
                 new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()});
         for (Object[] curSampleInfo: sampleAuditInfo){
           if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(curSampleInfo[0].toString())) {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
-            new Object[]{sampleId, schemaPrefix});
+            new Object[]{sampleId, procInstanceName});
           }
         }      
     //      Object[] sampleAuditReviewedValues=LPArray.getUniquesArray(sampleInfoReviewed1D);

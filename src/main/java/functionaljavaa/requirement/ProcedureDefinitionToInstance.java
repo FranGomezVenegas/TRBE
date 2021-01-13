@@ -382,17 +382,20 @@ public class ProcedureDefinitionToInstance {
                     tableCreationScriptTable = TblsDataAudit.getTableCreationScriptFromDataAuditTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
                 if (LPPlatform.SCHEMA_TESTING.equalsIgnoreCase(curSchemaName.toString()))
                     tableCreationScriptTable = TblsTesting.getTableCreationScriptFromTestingTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
-            }
-            if (tableCreationScriptTable.length()>0){
-                Rdbms.prepRdQuery(tableCreationScriptTable, new Object[]{});
-                jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);
-                if (curSchemaName.toString().contains(LPPlatform.SCHEMA_DATA)){                    
-                    String newSchemaName=Rdbms.suffixForTesting(curSchemaName.toString()); 
-                    tableCreationScriptTable=tableCreationScriptTable.replace(LPPlatform.buildSchemaName(schemaPrefix, curSchemaName.toString()), LPPlatform.buildSchemaName(schemaPrefix, newSchemaName));
+            } 
+            if (tableCreationScriptTable.contains(LPPlatform.LAB_FALSE))
+                LPPlatform.saveMessageInDbErrorLog(tableCreationScriptTable, null, new Object[]{"ProcedureDefinitionToInstance >> createDBModuleTablesAndFields"}, "table not declared in switch", new Object[]{tableCreationScriptTable});
+            else     
+                if (tableCreationScriptTable.length()>0){
                     Rdbms.prepRdQuery(tableCreationScriptTable, new Object[]{});
-                    jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);                    
+                    jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);
+                    if (curSchemaName.toString().contains(LPPlatform.SCHEMA_DATA)){                    
+                        String newSchemaName=Rdbms.suffixForTesting(curSchemaName.toString()); 
+                        tableCreationScriptTable=tableCreationScriptTable.replace(LPPlatform.buildSchemaName(schemaPrefix, curSchemaName.toString()), LPPlatform.buildSchemaName(schemaPrefix, newSchemaName));
+                        Rdbms.prepRdQuery(tableCreationScriptTable, new Object[]{});
+                        jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);                    
+                    }
                 }
-            }
         }
         return jsonObj;
     }

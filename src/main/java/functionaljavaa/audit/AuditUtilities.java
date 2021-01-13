@@ -12,6 +12,7 @@ import databases.TblsDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -29,9 +30,9 @@ public class AuditUtilities {
         }
         return new String[]{};
     }
-    public static Object[] getProcAuditTablesList(String schemaPrefix){
-        if (schemaPrefix.length()>0)
-            return dbSchemaTablesList(schemaPrefix);
+    public static Object[] getProcAuditTablesList(String procInstanceName){
+        if (procInstanceName.length()>0)
+            return dbSchemaTablesList(procInstanceName);
         return new Object[]{};
     }
     public static String[] getAuditTableAllFields(String repository, String tableName){
@@ -50,8 +51,9 @@ public class AuditUtilities {
     }
     
     
-    public static Boolean userSessionExistAtProcLevel(String schemaPrefix, Integer sessionId){
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Session.TBL.getName(),
+    public static Boolean userSessionExistAtProcLevel(String procInstanceName, Integer sessionId){
+        
+        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Session.TBL.getName(),
                 new String[]{TblsDataAudit.Session.FLD_SESSION_ID.getName()}, new Object[]{sessionId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) return true;
         return false;

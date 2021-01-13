@@ -10,7 +10,7 @@ import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.LotAudit;
-import functionaljavaa.moduleinspectionlot.DataInspectionLot.DataInspLotErrorTrapping;
+import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotErrorTrapping;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
@@ -18,13 +18,17 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
  * @author User 
  */
 public class DataInspectionLotDecision {
-    public Object[] lotTakeDecision(String procPrefix, Token token, String lotName, String decision, String[] fieldName, Object[] fieldValue) {
+    public Object[] lotTakeDecision(String lotName, String decision, String[] fieldName, Object[] fieldValue) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procPrefix=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        
         String[] dataLotFlds=new String[]{TblsInspLotRMData.Lot.FLD_LOT_CONFIG_NAME.getName(), TblsInspLotRMData.Lot.FLD_LOT_CONFIG_VERSION.getName()};
         String[] configLotDecisionFlds=TblsInspLotRMConfig.LotDecisionRules.getAllFieldNames();
         
@@ -126,10 +130,8 @@ public class DataInspectionLotDecision {
 //        if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){return diagnoses;}
         if (decision!=null && decision.length()>0){
             LotAudit lotAudit = new LotAudit();            
-            Object[] lotAuditAdd = lotAudit.lotAuditAdd(procPrefix, 
-                    LotAudit.LotAuditEvents.LOT_DECISION_TAKEN.toString(), 
-                    TblsInspLotRMData.Lot.TBL.getName(), lotName, 
-                    lotName, null, null, fieldsOnLogLot, token, null);
+            Object[] lotAuditAdd = lotAudit.lotAuditAdd(LotAudit.LotAuditEvents.LOT_DECISION_TAKEN.toString(), 
+                    TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, null, null, fieldsOnLogLot, null);
             Integer transactionId = null;
             Integer preAuditId=Integer.valueOf(lotAuditAdd[lotAuditAdd.length-1].toString());            
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "LotDecisionTaken", new Object[]{lotName, decision, procPrefix});

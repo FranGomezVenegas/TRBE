@@ -10,6 +10,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPSession;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -30,7 +31,6 @@ public class ConfigTablesAudit {
      * Add one record in the audit table when altering any of the levels
      * belonging to the sample structure when not linked to any other statement.
      *
-     * @param schemaPrefix String - Procedure Name
      * @param action String - Action being performed
      * @param tableName String - table where the action was performed into the
      * Sample structure
@@ -40,16 +40,18 @@ public class ConfigTablesAudit {
      * part of the action being performed
      * @param specCode
      * @param specConfigVersion
-     * @param token
      * @param parentAuditId
      * @return
      */
-    public static Object[] analysisAuditAdd(String schemaPrefix, Token token, String action, String tableName, String tableId,
+    public static Object[] analysisAuditAdd(String action, String tableName, String tableId,
             String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        
         String[] fieldNames = new String[]{TblsCnfgAudit.Analysis.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
 
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -79,7 +81,7 @@ public class ConfigTablesAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId() != null) {
-            Object[] appSession = LPSession.addProcessSession(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addProcessSession(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
 
             //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())) {
@@ -101,7 +103,7 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG_AUDIT), TblsCnfgAudit.Analysis.TBL.getName(),
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG_AUDIT), TblsCnfgAudit.Analysis.TBL.getName(),
                 fieldNames, fieldValues);
     }
 
@@ -109,7 +111,6 @@ public class ConfigTablesAudit {
      * Add one record in the audit table when altering any of the levels
      * belonging to the sample structure when not linked to any other statement.
      *
-     * @param schemaPrefix String - Procedure Name
      * @param action String - Action being performed
      * @param tableName String - table where the action was performed into the
      * Sample structure
@@ -119,16 +120,18 @@ public class ConfigTablesAudit {
      * part of the action being performed
      * @param specCode
      * @param specConfigVersion
-     * @param token
      * @param parentAuditId
      * @return
      */
-    public static Object[] specAuditAdd(String schemaPrefix, Token token, String action, String tableName, String tableId,
+    public static Object[] specAuditAdd(String action, String tableName, String tableId,
             String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        
         String[] fieldNames = new String[]{TblsCnfgAudit.Spec.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
 
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -158,7 +161,7 @@ public class ConfigTablesAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId() != null) {
-            Object[] appSession = LPSession.addProcessSession(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addProcessSession(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
 
             //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())) {
@@ -180,7 +183,7 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG_AUDIT), TblsCnfgAudit.Spec.TBL.getName(),
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG_AUDIT), TblsCnfgAudit.Spec.TBL.getName(),
                 fieldNames, fieldValues);
     }
 

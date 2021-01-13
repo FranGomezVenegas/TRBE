@@ -217,7 +217,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 specFieldValueArr=new Object[]{};
                 if (specFieldName!=null && specFieldName.length()>0) specFieldNameArr=specFieldName.split("\\|");
                 if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
-                diagnostic = anaStr.analysisNew(token, schemaPrefix, specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
+                diagnostic = anaStr.analysisNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{
@@ -231,7 +231,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 specCodeVersion = (Integer) argValues[1];
                 specFieldName = argValues[2].toString();
                 specFieldValue = argValues[3].toString();
-                diagnostic = anaStr.analysisUpdate(token, schemaPrefix, specCode, specCodeVersion, specFieldName.split("\\|"), LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|")));
+                diagnostic = anaStr.analysisUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|")));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{

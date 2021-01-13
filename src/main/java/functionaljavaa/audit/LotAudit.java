@@ -5,22 +5,18 @@
  */
 package functionaljavaa.audit;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMDataAudit;
 import databases.Rdbms;
-import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp;
-import databases.TblsData;
 import databases.TblsDataAudit;
 import databases.Token;
-import functionaljavaa.parameter.Parameter;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPSession;
 import java.util.Arrays;
 import functionaljavaa.requirement.Requirement;
-import functionaljavaa.samplestructure.DataSampleStages;
 import lbplanet.utilities.LPDate;
+import trazit.session.ProcedureRequestSession;
 
 /**
  * 
@@ -91,7 +87,6 @@ public class LotAudit {
 
 /**
  * Add one record in the audit table when altering any of the levels belonging to the sample structure when not linked to any other statement.
- * @param schemaPrefix String - Procedure Name
  * @param action String - Action being performed
  * @param tableName String - table where the action was performed into the Sample structure
  * @param tableId Integer - Id for the object where the action was performed.
@@ -99,16 +94,18 @@ public class LotAudit {
  * @param testId Integer - testId
  * @param resultId Integer - resultId
  * @param auditlog Object[] - All data that should be stored in the audit as part of the action being performed
-     * @param token
 @param parentAuditId paranet audit id when creating a child-record
      * @return  
  */    
-    public Object[] lotAuditAdd(String schemaPrefix, String action, String tableName, String tableId, 
-                        String lotName, Integer testId, Integer resultId, Object[] auditlog, Token token, Integer parentAuditId) {
+    public Object[] lotAuditAdd(String action, String tableName, String tableId, 
+                        String lotName, Integer testId, Integer resultId, Object[] auditlog, Integer parentAuditId) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+
         String[] fieldNames = new String[]{TblsDataAudit.Sample.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(schemaPrefix);
+        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInspLotRMDataAudit.Lot.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -134,7 +131,7 @@ public class LotAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
        
     //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
@@ -156,7 +153,7 @@ public class LotAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT),  TblsInspLotRMDataAudit.Lot.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT),  TblsInspLotRMDataAudit.Lot.TBL.getName(), 
                 fieldNames, fieldValues);
         
     }

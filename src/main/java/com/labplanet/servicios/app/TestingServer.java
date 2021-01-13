@@ -8,48 +8,25 @@ package com.labplanet.servicios.app;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
-import lbplanet.utilities.LPMath;
 import databases.Rdbms;
-import static databases.Rdbms.insertRecordInTableFromTable;
-import databases.TblsApp;
-import databases.TblsAppAudit;
-import databases.TblsCnfg;
-import databases.TblsCnfgAudit;
 import databases.Token;
-import databases.TblsData;
-import databases.TblsProcedure;
-import databases.TblsProcedureAudit;
-import databases.TblsReqs;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
-import functionaljavaa.moduleenvironmentalmonitoring.ConfigProgramCalendar;
-import functionaljavaa.modulesample.DataModuleSampleAnalysis;
-import functionaljavaa.parameter.Parameter;
-import functionaljavaa.platform.doc.EndPointsToRequirements;
-import functionaljavaa.samplestructure.DataSample;
-import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
-import functionaljavaa.samplestructure.DataSampleUtilities;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lbplanet.labelling.ZPL;
 import lbplanet.utilities.LPDate;
-import lbplanet.utilities.LPFilesTools;
-import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONObject;
 
 
 /**
@@ -166,11 +143,11 @@ if (1==1) return;
 if (1==1) return;
 */
 
-String schemaPrefix="em-demo-a";
+String procInstanceName="em-demo-a";
 /*
-        String tblCreateScript=TblsTesting.Script.createTableScript(schemaPrefix, new String[]{""});
+        String tblCreateScript=TblsTesting.Script.createTableScript(procInstanceName, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
-        tblCreateScript=TblsTesting.ScriptSteps.createTableScript(schemaPrefix, new String[]{""});
+        tblCreateScript=TblsTesting.ScriptSteps.createTableScript(procInstanceName, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
         
         String tblCreateScript2=TblsApp.Incident.createTableScript(new String[]{""});
@@ -179,14 +156,14 @@ String schemaPrefix="em-demo-a";
         tblCreateScript2=TblsAppAudit.Session.createTableScript("", new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
-schemaPrefix="genoma-1";
-        tblCreateScript2=TblsCnfg.SopMetaData.createTableScript(schemaPrefix, new String[]{""});
+procInstanceName="genoma-1";
+        tblCreateScript2=TblsCnfg.SopMetaData.createTableScript(procInstanceName, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
         
-        tblCreateScript2=TblsData.UserSop.createTableScript(schemaPrefix, new String[]{""});
+        tblCreateScript2=TblsData.UserSop.createTableScript(procInstanceName, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
-        tblCreateScript2=TblsData.ViewUserAndMetaDataSopView.createTableScript(schemaPrefix, new String[]{""});
+        tblCreateScript2=TblsData.ViewUserAndMetaDataSopView.createTableScript(procInstanceName, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 */
 String sch="\"em-demo-a-data_audit";
@@ -279,7 +256,7 @@ out.println("Bye");
             
             DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();   
             DataSample smp = new DataSample(smpAna);   
-            Object[] dataSample = smp.setSamplingDate(schemaPrefix, token, sampleId);
+            Object[] dataSample = smp.setSamplingDate(sampleId);
             out.println("log for setSamplingDate: "+Arrays.toString(dataSample));
             
             out.println("Testing Files Path: "+LPTestingOutFormat.TESTING_FILES_PATH);
@@ -325,19 +302,19 @@ out.println("Bye");
             out.println("The table name WITH valueOf() is "+myTableName);
             
             
-            String schemaPrefixSampleInfo="oil-pl1";
+            String procInstanceNameSampleInfo="oil-pl1";
             Integer selSample=134;
-            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefixSampleInfo, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceNameSampleInfo, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{selSample}, 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName()});
-            out.println("Info from "+schemaPrefixSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
+            out.println("Info from "+procInstanceNameSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
 
-            schemaPrefixSampleInfo="em-demo-a";
+            procInstanceNameSampleInfo="em-demo-a";
             selSample=160;
-            sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefixSampleInfo, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+            sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceNameSampleInfo, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{selSample}, 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName(), TblsData.Sample.FLD_STATUS_PREVIOUS.getName()});
-            out.println("Info from "+schemaPrefixSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
+            out.println("Info from "+procInstanceNameSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
         
         JSONObject jsonObj = new JSONObject();
 */
@@ -416,53 +393,53 @@ String holidaysCalendar="España Comunidad X 2019";
 //Structured Batches. Begin
     Object[] diagn=new Object[0];
     out.println("Start testing for Structured Batches");
-    schemaPrefix="em-demo-a";
+    procInstanceName="em-demo-a";
     String previousBatchName="Testeo Estructurada10";
     String batchName="Testeo Estructurada12";
     Integer batchTemplate=2;
     Integer batchTemplateVersion=1;
     Integer[] smpls = new Integer[]{1000, 1001,1002, 1003, 1009, 1011, 1012, 1013, 1014};
 /*
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, previousBatchName, batchTemplate, 1, smpls[8]);
+    diagn=DataBatchIncubator.batchRemoveSample(previousBatchName, batchTemplate, 1, smpls[8]);
     out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);    
     
     for (Integer curSmp: smpls){
-        diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, previousBatchName, batchTemplate, 1, curSmp);
+        diagn=DataBatchIncubator.batchRemoveSample(previousBatchName, batchTemplate, 1, curSmp);
         out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
     }
 */    
-//    diagn=DataBatchIncubator.removeBatch(schemaPrefix, token, batchName);
+//    diagn=DataBatchIncubator.removeBatch(batchName);
 //    out.println("removeBatch"+diagn[0]+diagn[diagn.length-1]);
     
-    diagn=DataBatchIncubator.createBatch(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, null, null);
+    diagn=DataBatchIncubator.createBatch(batchName, batchTemplate, batchTemplateVersion, null, null);
     out.println("createBatch"+diagn[0]+diagn[diagn.length-1]);
 
 /*    
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[0]);
+    diagn=DataBatchIncubator.batchRemoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[0]);
     out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[1]);
+    diagn=DataBatchIncubator.batchRemoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[1]);
     out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[2]);
+    diagn=DataBatchIncubator.batchRemoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[2]);
     out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[3]);
+    diagn=DataBatchIncubator.batchRemoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[3]);
     out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
 */
 
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[4], 2, 1, true);
+    diagn=DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[4], 2, 1, true);
     out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[5], 1, 2, false);
+    diagn=DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[5], 1, 2, false);
     out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[6], 5, 5, false);
+    diagn=DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[6], 5, 5, false);
     out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[5]);
+    diagn=DataBatchIncubator.batchRemoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[5]);
     out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[5], 5, 5, false);
+    diagn=DataBatchIncubator.batchMoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[5], 5, 5, false);
     out.println("batchMoveSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[7], 3, 3, true);
+    diagn=DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[7], 3, 3, true);
     out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[8], 2, 3, true);
+    diagn=DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[8], 2, 3, true);
     out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
-    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[8], 3, 3, true);
+    diagn=DataBatchIncubator.batchMoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[8], 3, 3, true);
     out.println("batchMoveSample"+diagn[0]+diagn[diagn.length-1]);
 
 //Structured Batches. End

@@ -11,6 +11,7 @@ import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
+import trazit.session.ProcedureRequestSession;
 
 /**
  * Class for anything related to analysis user method
@@ -88,17 +89,17 @@ public class UserMethod {
  *  userMethodCertificate_notAssigned, userMethodCertificate_inactive, userMethodCertificate_certified.
  * Parameter Bundle: 
  *      config-userMethodCertificate_notAssigned, userMethodCertificate_inactive, userMethodCertificate_certified
- * @param schemaPrefix String - Procedure name
+ * @param procInstanceName String - Procedure name
  * @param analysis String - Analysis name
  * @param methodName String - Method Name
  * @param methodVersion Integer - Method version
  * @param userName String User name
  * @return String - The certification level
  */    
-    public String userMethodCertificationLevel( String schemaPrefix, String analysis, String methodName, Integer methodVersion, String userName){
+    public String userMethodCertificationLevel( String procInstanceName, String analysis, String methodName, Integer methodVersion, String userName){
                 
-        String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);  
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);   
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);  
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);   
         
         String userMethodNotAssigned = Parameter.getParameterBundle(schemaConfigName, "userMethodCertificate_notAssigned");
         String userMethodInactive = Parameter.getParameterBundle(schemaConfigName, "userMethodCertificate_inactive");
@@ -120,8 +121,6 @@ public class UserMethod {
 
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param analysis
      * @param methodName
      * @param methodVersion
@@ -130,8 +129,10 @@ public class UserMethod {
      * @param preAuditId
      * @return
      */
-    public static Object[] newUserMethodEntry(String schemaPrefix, Token token, String analysis, String methodName, Integer methodVersion, Integer sampleId, Integer testId, Integer preAuditId){
-        String schemaDataName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
+    public static Object[] newUserMethodEntry(String analysis, String methodName, Integer methodVersion, Integer sampleId, Integer testId, Integer preAuditId){
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String schemaDataName=LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
         Object[] diagnoses = new Object[]{LPPlatform.LAB_FALSE};
         String[] whereFields = new String[]{UserMethod.FIELDNAME_DATA_USER_METHOD_USER_ID, FIELDNAME_DATA_USER_METHOD_ANALYSIS, 
             FIELDNAME_DATA_USER_METHOD_METHOD_NAME, FIELDNAME_DATA_USER_METHOD_METHOD_VERSION};
@@ -149,7 +150,7 @@ public class UserMethod {
                 updFieldsValue = LPArray.addValueToArray1D(updFieldsValue, whereFieldsValue);
                 String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(updFields, updFieldsValue, ":");
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.UPDATE_LAST_ANALYSIS_USER_METHOD.toString(), UserMethod.TABLENAME_DATA_USER_METHOD, testId, sampleId, testId, null, fieldsForAudit, token, preAuditId);
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.UPDATE_LAST_ANALYSIS_USER_METHOD.toString(), UserMethod.TABLENAME_DATA_USER_METHOD, testId, sampleId, testId, null, fieldsForAudit, preAuditId);
             }
         }
         return diagnoses;        

@@ -8,12 +8,12 @@ package functionaljavaa.modulesample;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsData;
-import databases.Token;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysisStrategy;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -23,8 +23,6 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
 
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param sampleId
      * @param sampleFieldName
      * @param sampleFieldValue
@@ -33,7 +31,8 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
      * @return
      */
     @Override
-  public Object[] autoSampleAnalysisAdd(String schemaPrefix, Token token, Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId) {
+  public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId) {
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         Object[][] anaName =new Object[2][3];
                 anaName[0][0] = "pH";
                 anaName[0][1] = "pH method";
@@ -45,15 +44,14 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
         for (Object[] anaName1 : anaName) {
             String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName()};
             Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2]};
-            functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldsName, fieldsValue, preAuditId);
+            functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue, preAuditId);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded.toString()+" to the sample "+sampleId.toString()+" for schema "+schemaPrefix});        
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded.toString()+" to the sample "+sampleId.toString()+" for schema "+procInstanceName});        
   }
 
     /**
      *
-     * @param schemaPrefix
      * @param template
      * @param templateVersion
      * @param dataSample
@@ -61,9 +59,11 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
      * @return
      */
   @Override
-    public String specialFieldCheckSampleAnalysisAnalyst(String schemaPrefix, String template, Integer templateVersion, DataSample dataSample, Integer preAuditId) {
+    public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample, Integer preAuditId) {
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
-        schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName);
+        schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);
 if (1 == 1) 
             return"ERROR: specialFieldCheckSampleAnalysisAnalyst not implemented yet.";
         

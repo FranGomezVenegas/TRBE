@@ -30,6 +30,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.trapMessage;
+import trazit.session.ProcedureRequestSession;
 
 
 /**
@@ -61,8 +62,8 @@ Object[][] firstStageData=new Object[0][0];
      */
     
     public enum SampleStagesTypes{JAVA, JAVASCRIPT}
-    public static final String LOD_JAVASCRIPT_FORMULA="schemaPrefix-sample-stage.js"; // "WEB-INF/classes/JavaScript/"+"schemaPrefix-sample-stage.js";
-    public static final String LOD_JAVASCRIPT_LOCAL_FORMULA="D:\\LP\\LabPLANETAPI_20200113_beforeRefactoring\\src\\main\\resources\\JavaScript\\"+"schemaPrefix-sample-stage.js";
+    public static final String LOD_JAVASCRIPT_FORMULA="procInstanceName-sample-stage.js"; // "WEB-INF/classes/JavaScript/"+"procInstanceName-sample-stage.js";
+    public static final String LOD_JAVASCRIPT_LOCAL_FORMULA="D:\\LP\\LabPLANETAPI_20200113_beforeRefactoring\\src\\main\\resources\\JavaScript\\"+"procInstanceName-sample-stage.js";
     
     public static final String BUSINESS_RULE_SAMPLE_STAGE_MODE="sampleStagesMode";
     public static final String BUSINESS_RULE_SAMPLE_STAGE_TYPE="sampleStagesLogicType";    
@@ -71,19 +72,19 @@ Object[][] firstStageData=new Object[0][0];
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      */
-    public DataSampleStages(String schemaPrefix) {
-    String sampleStagesMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", BUSINESS_RULE_SAMPLE_STAGE_MODE, null);
+    public DataSampleStages(String procInstanceName) {
+    String sampleStagesMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_MODE, null);
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesMode)>-1)
         this.isSampleStagesEnable=true;  
-    String sampleStagesTimingCaptureMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, null);
+    String sampleStagesTimingCaptureMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, null);
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
         this.isSampleStagesTimingCaptureEnable=true;  
-    String sampleStagesTimingCaptureStages = Parameter.getParameterBundle("config", schemaPrefix, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_STAGES, null);
+    String sampleStagesTimingCaptureStages = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_STAGES, null);
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
         this.isSampleStagesTimingCaptureStages=sampleStagesTimingCaptureStages;  
-    String statusFirst=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "sampleStagesFirst");
+    String statusFirst=Parameter.getParameterBundle(procInstanceName+"-"+LPPlatform.SCHEMA_DATA, "sampleStagesFirst");
     this.firstStageData=new Object[][]{{TblsData.Sample.FLD_CURRENT_STAGE.getName(), statusFirst}};
   }
 
@@ -105,16 +106,17 @@ Object[][] firstStageData=new Object[0][0];
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param sampleId
      * @param currStage
      * @param nextStageFromPull
      * @return
      */
-    public Object[] moveToNextStage(String schemaPrefix, Integer sampleId, String currStage, String nextStageFromPull){    
-        Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(schemaPrefix, sampleId);
+    public Object[] moveToNextStage(Integer sampleId, String currStage, String nextStageFromPull){    
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(procInstanceName, sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) return sampleAuditRevision;
-        Object[] javaScriptDiagnostic = moveStagetChecker(schemaPrefix, sampleId, currStage, "Next");
+        Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Next");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic; 
         if (!javaScriptDiagnostic[0].toString().contains(LPPlatform.LAB_TRUE)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, javaScriptDiagnostic[0].toString(), null);
         
@@ -124,7 +126,7 @@ Object[][] firstStageData=new Object[0][0];
             return new Object[]{LPPlatform.LAB_TRUE, newStageProposedByChecker};
         }
         
-        String sampleStageNextStage = Parameter.getParameterBundle("config", schemaPrefix, "data", "sampleStage"+currStage+"Next", null);
+        String sampleStageNextStage = Parameter.getParameterBundle("config", procInstanceName, "data", "sampleStage"+currStage+"Next", null);
         if (sampleStageNextStage.length()==0) return new Object[]{LPPlatform.LAB_FALSE, "Next Stage is blank for "+currStage};
 
         String[] nextStageArr=sampleStageNextStage.split("\\|");
@@ -136,17 +138,17 @@ Object[][] firstStageData=new Object[0][0];
   
     /**
      *
-     * @param schemaPrefix
      * @param sampleId
      * @param currStage
      * @param previousStageFromPull
      * @return
      */
-    public Object[] moveToPreviousStage(String schemaPrefix, Integer sampleId, String currStage, String previousStageFromPull){  
-        Object[] javaScriptDiagnostic = moveStagetChecker(schemaPrefix, sampleId, currStage, "Previous");
+    public Object[] moveToPreviousStage(Integer sampleId, String currStage, String previousStageFromPull){  
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Previous");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic;
 
-        String sampleStagePreviousStage = Parameter.getParameterBundle("config", schemaPrefix, "data", "sampleStage"+currStage+"Previous", null);
+        String sampleStagePreviousStage = Parameter.getParameterBundle("config", procInstanceName, "data", "sampleStage"+currStage+"Previous", null);
         if (sampleStagePreviousStage.length()==0) return new Object[]{LPPlatform.LAB_FALSE, "Previous Stage is blank for "+currStage};
 
         String[] previousStageArr=sampleStagePreviousStage.split("\\|");
@@ -156,45 +158,50 @@ Object[][] firstStageData=new Object[0][0];
         return new Object[]{LPPlatform.LAB_TRUE, previousStageFromPull};
     }
 
-    public Object[] dataSampleActionAutoMoveToNext(String schemaPrefix, Token token, String actionName, Integer sampleId) {
-        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+    public Object[] dataSampleActionAutoMoveToNext(String actionName, Integer sampleId) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) return sampleInfo;
         String sampleCurrStage=sampleInfo[0][0].toString();
-        String sampleStagesActionAutoMoveToNext = Parameter.getParameterBundle("config", schemaPrefix, "procedure", "sampleStagesActionAutoMoveToNext", null);
+        String sampleStagesActionAutoMoveToNext = Parameter.getParameterBundle("config", procInstanceName, "procedure", "sampleStagesActionAutoMoveToNext", null);
         if (LPArray.valuePosicInArray(sampleStagesActionAutoMoveToNext.split("\\|"), actionName)==-1)
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The action <*1*> is not declared as to perform auto move to next in procedure <*2*>", new Object[]{actionName, schemaPrefix});        
-        Object[] moveDiagn=moveToNextStage(schemaPrefix, sampleId, sampleCurrStage,null);
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The action <*1*> is not declared as to perform auto move to next in procedure <*2*>", new Object[]{actionName, procInstanceName});        
+        Object[] moveDiagn=moveToNextStage(sampleId, sampleCurrStage,null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
-            dataSampleStagesTimingCapture(schemaPrefix, sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 
+            dataSampleStagesTimingCapture(sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 
             String[] sampleFieldName=new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_PREVIOUS_STAGE.getName()};
             Object[] sampleFieldValue=new Object[]{moveDiagn[moveDiagn.length-1], sampleCurrStage};
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
-                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                     sampleFieldName, 
                     sampleFieldValue,
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
                     String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getUserName());               
-                dataSampleStagesTimingCapture(schemaPrefix, sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());                         
+                dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());                         
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(schemaPrefix, actionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);        
+                smpAudit.sampleAuditAdd(actionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);        
             }
         }
         return moveDiagn;
     }
         
-    private Object[] moveStagetChecker(String  schemaPrefix, Integer sampleId, String currStage, String moveDirection){
-        String sampleStagesType = Parameter.getParameterBundle("config", schemaPrefix, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TYPE, null);
-        if (SampleStagesTypes.JAVA.toString().equalsIgnoreCase(sampleStagesType)) return moveStageCheckerJava(schemaPrefix, sampleId, currStage, moveDirection);
-        else return moveStageCheckerJavaScript(schemaPrefix, sampleId, currStage, moveDirection);
+    private Object[] moveStagetChecker(Integer sampleId, String currStage, String moveDirection){
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String sampleStagesType = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TYPE, null);
+        if (SampleStagesTypes.JAVA.toString().equalsIgnoreCase(sampleStagesType)) return moveStageCheckerJava(sampleId, currStage, moveDirection);
+        else return moveStageCheckerJavaScript(sampleId, currStage, moveDirection);
     }
-    private Object[] moveStageCheckerJava(String  schemaPrefix, Integer sampleId, String currStage, String moveDirection){
+    private Object[] moveStageCheckerJava(Integer sampleId, String currStage, String moveDirection){
       //try {
-        String jsonarrayf=DataSample.sampleEntireStructureData(schemaPrefix, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
-//        String sampleStageClassName=schemaPrefix+"SampleStage"; 
+//        String sampleStageClassName=procInstanceName+"SampleStage"; 
         String functionName="sampleStage"+currStage+moveDirection+"Checker";        
         ProcedureSampleStage procSampleStage=new ProcedureSampleStage();        
         Method method = null;
@@ -208,7 +215,7 @@ Object[][] firstStageData=new Object[0][0];
         }
         Object specialFunctionReturn=null;      
         try { //
-            if (method!=null){ specialFunctionReturn = method.invoke(procSampleStage, schemaPrefix, sampleId, jsonarrayf);}
+            if (method!=null){ specialFunctionReturn = method.invoke(procSampleStage, procInstanceName, sampleId, jsonarrayf);}
         } catch (IllegalAccessException | NullPointerException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -221,13 +228,14 @@ Object[][] firstStageData=new Object[0][0];
         }
 
 
-    private Object[] moveStageCheckerJavaScript(String  schemaPrefix, Integer sampleId, String currStage, String moveDirection){
+    private Object[] moveStageCheckerJavaScript(Integer sampleId, String currStage, String moveDirection){
       try {
-        String jsonarrayf=DataSample.sampleEntireStructureData(schemaPrefix, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();          
+        String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
-        String fileName = LOD_JAVASCRIPT_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, schemaPrefix);
-        fileName=schemaPrefix+"-sample-stage.js"; //"/procedure/"+
+        String fileName = LOD_JAVASCRIPT_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, procInstanceName);
+        fileName=procInstanceName+"-sample-stage.js"; //"/procedure/"+
         String functionName="sampleStage"+currStage+moveDirection+"Checker";
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
         try {
@@ -239,14 +247,14 @@ Object[][] firstStageData=new Object[0][0];
           }
         } catch (FileNotFoundException ex) {
           try{
-             fileName = LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, schemaPrefix);
+             fileName = LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, procInstanceName);
              functionName="sampleStage"+currStage+moveDirection+"Checker";
              engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.eval(new FileReader(fileName));              
           } catch (FileNotFoundException ex2) {              
           Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex2);
           return new Object[]{LPPlatform.LAB_TRUE, "FileNotFoundException", labelMsgError+ex2.getMessage()
-                  +"(tried two paths: "+"/app/" + schemaPrefix + "-sample-stage.js"+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, schemaPrefix)+") "};          
+                  +"(tried two paths: "+"/app/" + procInstanceName + "-sample-stage.js"+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, procInstanceName)+") "};          
           }
         }
         Invocable invocable = (Invocable) engine;
@@ -260,17 +268,18 @@ Object[][] firstStageData=new Object[0][0];
       }
     }
 
-    public Object[] dataSampleStagesTimingCapture(String schemaPrefix, Integer sampleId, String currStage, String phase) {
+    public Object[] dataSampleStagesTimingCapture(Integer sampleId, String currStage, String phase) {
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         if (!this.isSampleStagesTimingCaptureEnable)
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, schemaPrefix});
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, procInstanceName});
         if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, schemaPrefix});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, procInstanceName});
         if (SampleStageTimingCapturePhases.START.toString().equalsIgnoreCase(phase)){
-            return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
+            return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
                     new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()}, 
                     new Object[]{sampleId, currStage, LPDate.getCurrentTimeStamp()});            
         }else if (SampleStageTimingCapturePhases.END.toString().equalsIgnoreCase(phase)){            
-           return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
+           return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
                 new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()}, new Object[]{LPDate.getCurrentTimeStamp()}, 
                 new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new Object[]{sampleId, currStage });            

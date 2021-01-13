@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -26,7 +27,7 @@ import lbplanet.utilities.LPPlatform;
 public class DataProgramSample{
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param token
      * @param programTemplate
      * @param programTemplateVersion
@@ -36,7 +37,8 @@ public class DataProgramSample{
      * @param programLocation
      * @return
      */
-    public Object[] logProgramSample(String schemaPrefix, Token token, String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation) {
+    public Object[] logProgramSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation) {
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         Object[] newProjSample = new Object[0];
         try {
             DataProgramSampleAnalysis dsProgramAna = new DataProgramSampleAnalysis();
@@ -54,15 +56,15 @@ public class DataProgramSample{
             }else
                 fieldValue[programLocationPosic] = programLocation;
             String[] specFldNames=new String[]{TblsEnvMonitData.ProgramLocation.FLD_SPEC_CODE.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_ANALYSIS_VARIATION.getName(), TblsEnvMonitData.ProgramLocation.FLD_AREA.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_VARIATION_NAME.getName()};
-            Object[][] diagnosis = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(),
+            Object[][] diagnosis = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(),
                 new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
                 new Object[]{programName, programLocation}, 
                 specFldNames);            
-//            Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
+//            Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
 //                    new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
 //                    new Object[]{programName, programLocation});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0][0].toString()))
-               return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Program <*1*> or location <*2*> not found for procedure <*3*>", new Object[]{programName, programLocation, schemaPrefix});    
+               return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Program <*1*> or location <*2*> not found for procedure <*3*>", new Object[]{programName, programLocation, procInstanceName});    
             for (int i=0;i<specFldNames.length;i++){
                 Integer fieldPosic=LPArray.valuePosicInArray(fieldName, specFldNames[i]);
                 if (fieldPosic==-1){
@@ -71,19 +73,22 @@ public class DataProgramSample{
                 }else
                     fieldValue[fieldPosic] = diagnosis[0][i];
             }
-            newProjSample = ds.logSample(schemaPrefix, token, programTemplate, programTemplateVersion, fieldName, fieldValue);
+            newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue);
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataProgram.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
-            logProgramSamplerSample(schemaPrefix, token, programTemplate, programTemplateVersion, fieldName, fieldValue, programName, programLocation, Integer.valueOf(newProjSample[newProjSample.length-1].toString()));
+            logProgramSamplerSample(programTemplate, programTemplateVersion, fieldName, fieldValue, programName, programLocation, Integer.valueOf(newProjSample[newProjSample.length-1].toString()));
         return newProjSample;
     }
 
-    public static Object[] logProgramSamplerSample(String schemaPrefix, Token token, String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer programSampleId){        
-        String samplerSmpTemplate=Parameter.getParameterBundle("config", schemaPrefix, "procedure", "samplerSampleTemplate", null);  
+    public static Object[] logProgramSamplerSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer programSampleId){        
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         
-        Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
+        String samplerSmpTemplate=Parameter.getParameterBundle("config", procInstanceName, "procedure", "samplerSampleTemplate", null);  
+        
+        Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
                 new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
                 new Object[]{programName, programLocation}, 
                 new String[]{TblsEnvMonitData.ProgramLocation.FLD_REQUIRES_PERSON_ANA.getName(), TblsEnvMonitData.ProgramLocation.FLD_PERSON_ANA_DEFINITION.getName()});
@@ -114,32 +119,34 @@ public class DataProgramSample{
                 fieldValue = LPArray.addValueToArray1D(fieldValue, programSampleId);           
             }else
                 fieldValue[sampleIdRelatedPosic] = programSampleId;            
-            newProjSample = ds.logSample(schemaPrefix, token, samplerSmpTemplate, programTemplateVersion, fieldName, fieldValue);
+            newProjSample = ds.logSample(samplerSmpTemplate, programTemplateVersion, fieldName, fieldValue);
         }
         return newProjSample;        
     }
     
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param sampleId
      * @param microorganismName
      * @return
      */
-    public static Object[] addSampleMicroorganism(String schemaPrefix, Token token, Integer sampleId, String microorganismName){
-      Object[] diagnostic= Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
+    public static Object[] addSampleMicroorganism(Integer sampleId, String microorganismName){
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+      Object[] diagnostic= Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
               new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName(), 
                 TblsEnvMonitData.SampleMicroorganism.FLD_CREATED_BY.getName(), TblsEnvMonitData.SampleMicroorganism.FLD_CREATED_ON.getName()}, 
               new Object[]{sampleId, microorganismName, token.getPersonName(), LPDate.getCurrentTimeStamp()});
       if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
         SampleAudit smpAudit = new SampleAudit();
         String[] fieldsForAudit=new String[]{"Added microorganism "+microorganismName};
-        smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.MICROORGANISM_ADDED.toString() , TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
+        smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.MICROORGANISM_ADDED.toString() , TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
       }
       return diagnostic;
     }
-    public  Object[] logProgramSampleScheduled(String schemaPrefix, Token token, String programName, LocalDateTime dateStart, LocalDateTime dateEnd) {
+    public  Object[] logProgramSampleScheduled(String programName, LocalDateTime dateStart, LocalDateTime dateEnd) {
+        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
         String[] fieldsToRetrieve = new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName(),
             TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_ID.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_DATE.getName(),
             TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SAMPLE_CONFIG_CODE.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SAMPLE_CONFIG_CODE_VERSION.getName(),
@@ -166,11 +173,11 @@ public class DataProgramSample{
             whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_NAME.getName());
             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);
         }
-        Object[][] programCalendarDatePending=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewProgramScheduledLocations.TBL.getName(), 
+        Object[][] programCalendarDatePending=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewProgramScheduledLocations.TBL.getName(), 
                 whereFieldNames, whereFieldValues, 
                 fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Nothing pending in procedure "+schemaPrefix+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
         StringBuilder newSamplesLogged=new StringBuilder();
         Integer newSamplesCounter=0;
         for (Object[] curRecord: programCalendarDatePending){
@@ -178,7 +185,7 @@ public class DataProgramSample{
             for (String curFld: fieldName){
                 fieldValue=LPArray.addValueToArray1D(fieldValue, curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, curFld)]);
             }
-            Object[] diagn=logProgramSample(schemaPrefix, token, 
+            Object[] diagn=logProgramSample(
                     curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SAMPLE_CONFIG_CODE.getName())].toString(), 
                     (Integer) curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SAMPLE_CONFIG_CODE_VERSION.getName())], 
                     fieldName, fieldValue, 
