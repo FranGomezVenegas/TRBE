@@ -204,67 +204,67 @@ public class LPPlatform {
     public static final String BUSINESS_RULES_VALUE_ENABLED="ENABLE";    
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param token
      * @param actionName
      * @return
      */
-    public static Object[] procActionEnabled(String schemaPrefix, Token token, String actionName){
+    public static Object[] procActionEnabled(String procInstanceName, Token token, String actionName){
         
         String userProceduresList=token.getUserProcedures();
         userProceduresList=userProceduresList.replace("[", "");
         userProceduresList=userProceduresList.replace("]", "");        
-        if (!LPArray.valueInArray(userProceduresList.split(", "), schemaPrefix))
-            return trapMessage(LAB_FALSE, "userNotAssignedToProcedure", new String[]{token.getUserName(), schemaPrefix, userProceduresList});
+        if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName))
+            return trapMessage(LAB_FALSE, "userNotAssignedToProcedure", new String[]{token.getUserName(), procInstanceName, userProceduresList});
         
         actionName = actionName.toUpperCase();
-        String[] procedureActions = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, "procedureActions").split("\\|");
+        String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "procedureActions").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
-            return trapMessage(LAB_TRUE, "ACTION_ENABLED_BY_ALL", new String[]{schemaPrefix, actionName});
+            return trapMessage(LAB_TRUE, "ACTION_ENABLED_BY_ALL", new String[]{procInstanceName, actionName});
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return trapMessage(LAB_FALSE, "userRoleActionEnabled_denied_rulesNotFound", new String[]{schemaPrefix, Arrays.toString(procedureActions)});
+            return trapMessage(LAB_FALSE, "userRoleActionEnabled_denied_rulesNotFound", new String[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            return trapMessage(LAB_FALSE, "userRoleActionEnabled_denied", new String[]{actionName, schemaPrefix, Arrays.toString(procedureActions)});            
+            return trapMessage(LAB_FALSE, "userRoleActionEnabled_denied", new String[]{actionName, procInstanceName, Arrays.toString(procedureActions)});            
         }else{
-            return trapMessage(LAB_TRUE, "userRoleActionEnabled_enabled", new String[]{schemaPrefix, actionName});               
+            return trapMessage(LAB_TRUE, "userRoleActionEnabled_enabled", new String[]{procInstanceName, actionName});               
         }    
     }    
     
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param userRole
      * @param actionName
      * @return
      */
-    public static Object[] procUserRoleActionEnabled(String schemaPrefix, String userRole, String actionName){
+    public static Object[] procUserRoleActionEnabled(String procInstanceName, String userRole, String actionName){
         String errorCode = ""; 
         Object[] errorDetailVariables = new Object[0];            
-        String[] procedureActionsUserRoles = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
+        String[] procedureActionsUserRoles = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
         
         if (LPArray.valueInArray(procedureActionsUserRoles, "ALL")){
             errorCode = "userRoleActionEnabled_ALL";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);            
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);            
             return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);                    
         }
         if ( (procedureActionsUserRoles.length==1 && "".equals(procedureActionsUserRoles[0])) ){
             errorCode = "userRoleActionEnabled_missedParameter";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);            
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procedureActionsUserRoles);                        
             return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);        
         }else if(!LPArray.valueInArray(procedureActionsUserRoles, userRole)){    
             errorCode = "userRoleActionEnabled_roleNotIncluded";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, userRole);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActionsUserRoles));            
             return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);      
         }else{
             errorCode = "userRoleActionEnabled_enabled";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
             return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);        
         }            
@@ -272,82 +272,82 @@ public class LPPlatform {
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param actionName
      * @return
      */
-    public static Object[] procActionRequiresUserConfirmation(String schemaPrefix, String actionName){
+    public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName){
         
         actionName = actionName.toUpperCase();
         String errorCode = ""; 
         Object[] errorDetailVariables = new Object[0];
-        String[] procedureActions = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");
+        String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
             errorCode = "VERIFY_USER_REQUIRED_BY_ALL";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
             return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
             errorCode = "verifyUserRequired_denied_ruleNotFound";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActions));
             return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
             errorCode = "verifyUserRequired_denied";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActions));
             return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);            
         }else{
             errorCode = "verifyUserRequired_enabled";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            return trapMessage(LAB_TRUE+auditReasonType(schemaPrefix, actionName), errorCode, errorDetailVariables);               
+            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), errorCode, errorDetailVariables);               
         }    
     }    
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param actionName
      * @return
      */
-    public static Object[] procActionRequiresEsignConfirmation(String schemaPrefix, String actionName){
+    public static Object[] procActionRequiresEsignConfirmation(String procInstanceName, String actionName){
         
         actionName = actionName.toUpperCase();
         String errorCode = ""; 
         Object[] errorDetailVariables = new Object[0];
-        String[] procedureActions = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
+        String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
             errorCode = "ESIGN_REQUIRED_BY_ALL";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
             return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
             errorCode = "eSignRequired_denied_ruleNotFound";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActions));
             return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
             errorCode = "eSignRequired_denied";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActions));
             return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);            
         }else{
             errorCode = "eSignRequired_enabled";
             
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            return trapMessage(LAB_TRUE+auditReasonType(schemaPrefix, actionName), errorCode, errorDetailVariables);               
+            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), errorCode, errorDetailVariables);               
         }    
     }    
-    private static String auditReasonType(String schemaPrefix, String actionName){
-        String auditReasonType = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
+    private static String auditReasonType(String procInstanceName, String actionName){
+        String auditReasonType = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
         if (auditReasonType.length()==0)return "TEXT";
         if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("DISABLE"))return "";
         if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("NO"))return "";
@@ -565,23 +565,23 @@ public class LPPlatform {
  * The schema names are instances per procedure + nature of the data (config/data/requirements...)
  * This method has as a purpose on helping on build the concatenation
  * At the same time it solves the problem on using some symbols like "-" in the name that requires quoted the name
- * If the schemaName is already contained in the schemaPrefix it won't be concatenated again.
- * @param schemaPrefix String - Basically the Procedure Name
+ * If the schemaName is already contained in the procInstanceName it won't be concatenated again.
+ * @param procInstanceName String - Basically the Procedure Name
  * @param schemaName String - Which is the nature of the data (config/data/requirements)
  * @return String
  */    
-    public static String buildSchemaName(String schemaPrefix, String schemaName){
-        if (schemaPrefix.length()>0){
+    public static String buildSchemaName(String procInstanceName, String schemaName){
+        if (procInstanceName.length()>0){
             //Remove this to re-create the schemaName when not called for the first time.
-            schemaPrefix = schemaPrefix.replace("\"", "");
+            procInstanceName = procInstanceName.replace("\"", "");
             schemaName = schemaName.replace("\"", "");
-            schemaName = schemaName.replace(schemaPrefix+"-", "");
+            schemaName = schemaName.replace(procInstanceName+"-", "");
 
-            if (!schemaPrefix.contains(schemaName)){            
-                schemaName = schemaPrefix + "-" + schemaName;
+            if (!procInstanceName.contains(schemaName)){            
+                schemaName = procInstanceName + "-" + schemaName;
                 return "\""+schemaName+"\"";
             }else{
-                return "\""+schemaPrefix+"\"";}
+                return "\""+procInstanceName+"\"";}
         }
         schemaName = schemaName.replace("\"", "");
         return "\""+schemaName+"\"";                  
@@ -960,9 +960,9 @@ public class LPPlatform {
      * @param msgVariables
      */
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables) {          
-    String schemaPrefix = "";
+    String procInstanceName = "";
     //if (Rdbms.stablishDBConection(false)){
-      Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, SCHEMA_CONFIG) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
+      Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, SCHEMA_CONFIG) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
         new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
           TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()}, 
         new Object[]{LPDate.getCurrentTimeStamp(), query, Arrays.toString(queryParams), msgCode, Arrays.toString(callerInfo), false}                
@@ -978,9 +978,9 @@ public class LPPlatform {
      */
     public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, String paramName) {          
         if (1==1) return;
-        String schemaPrefix = LPNulls.replaceNull(schemaName);
+        String procInstanceName = LPNulls.replaceNull(schemaName);
         //if (Rdbms.stablishDBConection(false)){
-            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, SCHEMA_CONFIG) , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
+            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, SCHEMA_CONFIG) , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
               new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(), 
                 TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName()}, 
               new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName}                

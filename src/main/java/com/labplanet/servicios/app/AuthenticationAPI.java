@@ -57,6 +57,7 @@ public class AuthenticationAPI extends HttpServlet {
         response=LPHttp.responsePreparation(response);
 
         String language = LPFrontEnd.setLanguage(request); 
+        Rdbms.stablishDBConection();
         
         try (PrintWriter out = response.getWriter()) {            
             
@@ -127,7 +128,6 @@ public class AuthenticationAPI extends HttpServlet {
                     Rdbms.closeRdbms();    
                     return;                                
                 case FINALTOKEN:   
-                  Rdbms.stablishDBConection();
                   if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
                     firstToken = argValues[0].toString();
                     String userRole = argValues[1].toString();

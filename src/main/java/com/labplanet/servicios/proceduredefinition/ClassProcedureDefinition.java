@@ -3,7 +3,6 @@ package com.labplanet.servicios.proceduredefinition;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsReqs;
-import databases.Token;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.ProcedureRolesList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.user.UserAndRolesViews.getPersonByUser;
@@ -32,7 +31,7 @@ public class ClassProcedureDefinition {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassProcedureDefinition(HttpServletRequest request, HttpServletResponse response, Token token, ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint){
+    public ClassProcedureDefinition(HttpServletRequest request, HttpServletResponse response, ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         
         Object[] actionDiagnoses = null;

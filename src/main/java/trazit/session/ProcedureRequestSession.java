@@ -124,6 +124,7 @@ public class ProcedureRequestSession {
         return this.procedureInstance;
     }
     public Boolean getIsForTesting(){
+        if (this.isForTesting==null)return false;
         return this.isForTesting;
     }    
     public Boolean getHasErrors(){

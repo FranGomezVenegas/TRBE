@@ -1,7 +1,6 @@
 package com.labplanet.servicios.moduledefinition;
 
 import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIEndpoints;
-import databases.Token;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +18,7 @@ public class ClassModuleDefinition {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassModuleDefinition(HttpServletRequest request, HttpServletResponse response, Token token, ModuleDefinitionAPIEndpoints endPoint){
+    public ClassModuleDefinition(HttpServletRequest request, HttpServletResponse response, ModuleDefinitionAPIEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         
         Object[] actionDiagnoses = null;

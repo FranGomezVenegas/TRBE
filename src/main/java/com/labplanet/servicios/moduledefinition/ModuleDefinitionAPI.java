@@ -171,7 +171,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
                 return ;                           
             }                        
 */
-            ClassModuleDefinition clss=new ClassModuleDefinition(request, response, token, endPoint);
+            ClassModuleDefinition clss=new ClassModuleDefinition(request, response, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();

@@ -202,7 +202,7 @@ new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_MODULE_TABLES_
                 return ;                           
             }                        
 */
-            ClassProcedureDefinition clss=new ClassProcedureDefinition(request, response, token, endPoint);
+            ClassProcedureDefinition clss=new ClassProcedureDefinition(request, response, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();

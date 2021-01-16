@@ -806,7 +806,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(smpAliqFieldName, smpAliqFieldValue, ":");
         SampleAudit smpAudit = new SampleAudit();
 
-        smpAudit.sampleAliquotingAuditAdd(procInstanceName, token, SampleAudit.SampleAuditEvents.LOG_SAMPLE_ALIQUOT.toString(), TblsData.SampleAliq.TBL.getName(), aliquotId, null, aliquotId,
+        smpAudit.sampleAliquotingAuditAdd(SampleAudit.SampleAuditEvents.LOG_SAMPLE_ALIQUOT.toString(), TblsData.SampleAliq.TBL.getName(), aliquotId, null, aliquotId,
                 sampleId, null, null, 
                 fieldsOnLogSample);
 
@@ -865,7 +865,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleVolume[0].toString())){
                 return updateSampleVolume;}    
             SampleAudit smpAudit = new SampleAudit();
-            smpAudit.sampleAliquotingAuditAdd(procInstanceName, token, SampleAudit.SampleAuditEvents.LOG_SAMPLE_SUBALIQUOT.toString(), TblsData.SampleAliq.TBL.getName(), aliquotId, null, aliquotId, 
+            smpAudit.sampleAliquotingAuditAdd(SampleAudit.SampleAuditEvents.LOG_SAMPLE_SUBALIQUOT.toString(), TblsData.SampleAliq.TBL.getName(), aliquotId, null, aliquotId, 
                     sampleId, null, null, 
                     LPArray.joinTwo1DArraysInOneOf1DString(smpVolFldName, smpVolFldValue, ":"));        
         }
@@ -890,7 +890,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Integer subaliquotId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
         Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(smpSubAliqFieldName, smpSubAliqFieldValue, ":");
         SampleAudit smpAudit = new SampleAudit();
-        smpAudit.sampleAliquotingAuditAdd(procInstanceName, token, SampleAudit.SampleAuditEvents.LOG_SAMPLE_SUBALIQUOT.toString(), TblsData.SampleAliqSub.TBL.getName(), subaliquotId, subaliquotId, aliquotId,
+        smpAudit.sampleAliquotingAuditAdd(SampleAudit.SampleAuditEvents.LOG_SAMPLE_SUBALIQUOT.toString(), TblsData.SampleAliqSub.TBL.getName(), subaliquotId, subaliquotId, aliquotId,
                 sampleId, null, null, 
                 fieldsOnLogSample);
 

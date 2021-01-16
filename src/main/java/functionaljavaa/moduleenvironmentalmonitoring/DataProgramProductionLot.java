@@ -7,6 +7,7 @@ package functionaljavaa.moduleenvironmentalmonitoring;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
+import databases.Token;
 import lbplanet.utilities.LPArray;
 import java.util.Arrays;
 import lbplanet.utilities.LPDate;
@@ -42,13 +43,13 @@ public class DataProgramProductionLot{
      * @param lotName
      * @param fieldName
      * @param fieldValue
-     * @param personName
-     * @param userRole
      * @param appSessionId
      * @return
      */    
-    public static Object[] newProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, String personName, String userRole, Integer appSessionId) {
+    public static Object[] newProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, Integer appSessionId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+
         String[] tblFlds=new String[0];
         Object[] batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
                 new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});
@@ -70,8 +71,8 @@ public class DataProgramProductionLot{
         Integer posicInArr=LPArray.valuePosicInArray(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_BY.getName());
         if (posicInArr==-1){
           fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_BY.getName());
-          fieldValue=LPArray.addValueToArray1D(fieldValue, personName);
-        }else{fieldValue[posicInArr]=personName;}
+          fieldValue=LPArray.addValueToArray1D(fieldValue, token.getPersonName());
+        }else{fieldValue[posicInArr]=token.getPersonName();}
         posicInArr=LPArray.valuePosicInArray(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName());
         if (posicInArr==-1){
           fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName());
@@ -83,31 +84,29 @@ public class DataProgramProductionLot{
     /**
      *
      * @param lotName
-     * @param personName
-     * @param userRole
      * @param appSessionId
      * @return
      */
-    public static Object[] activateProgramProductionLot(String lotName, String personName, String userRole, Integer appSessionId) {
+    public static Object[] activateProgramProductionLot(String lotName, Integer appSessionId) {
       String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()};
       Object[] fieldValue=new Object[]{true};
-      return updateProgramProductionLot(lotName, fieldName, fieldValue, personName, userRole, appSessionId);
+      return updateProgramProductionLot(lotName, fieldName, fieldValue, appSessionId);
     }    
 
     /**
      *
      * @param lotName
-     * @param personName
-     * @param userRole
      * @param appSessionId
      * @return
      */
-    public static Object[] deactivateProgramProductionLot(String lotName, String personName, String userRole, Integer appSessionId) {
+    public static Object[] deactivateProgramProductionLot(String lotName, Integer appSessionId) {
       String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()};
       Object[] fieldValue=new Object[]{false};
-      return updateProgramProductionLot(lotName, fieldName, fieldValue, personName, userRole, appSessionId);
+      return updateProgramProductionLot(lotName, fieldName, fieldValue, appSessionId);
     }        
-    private static Object[] updateProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, String personName, String userRole, Integer appSessionId) {
+    private static Object[] updateProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, Integer appSessionId) {
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
               fieldName, fieldValue, new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});                 
