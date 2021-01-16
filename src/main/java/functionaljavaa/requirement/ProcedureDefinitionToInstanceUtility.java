@@ -24,9 +24,9 @@ public class ProcedureDefinitionToInstanceUtility {
 
 
     
-    public static final Object[] ProcedureRolesList(String procName, Integer procVersion){
+    public static final Object[] ProcedureRolesList(String procInstanceName, Integer procVersion){
         Object[][] ProcedureRolesListArr = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureRoles.TBL.getName(), 
-                new String[]{TblsReqs.ProcedureRoles.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.FLD_PROCEDURE_VERSION.getName()}, new Object[]{procName, procVersion}, 
+                new String[]{TblsReqs.ProcedureRoles.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.FLD_PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
                 new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()}, new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ProcedureRolesListArr[0].toString()))
             return new Object[]{};
@@ -34,7 +34,7 @@ public class ProcedureDefinitionToInstanceUtility {
     }
     /**
      *
-     * @param procName
+     * @param procInstanceName
      * @param procVersion
      * @param schemaName
      * @param roleName
@@ -43,7 +43,7 @@ public class ProcedureDefinitionToInstanceUtility {
      * @param sopRevision
      * @return
      */    
-    public static final Object[][] procedureAddSopToUsersByRole( String procName, Integer procVersion, String schemaName, String roleName, String sopName, Integer sopVersion, Integer sopRevision){
+    public static final Object[][] procedureAddSopToUsersByRole( String procInstanceName, Integer procVersion, String schemaName, String roleName, String sopName, Integer sopVersion, Integer sopRevision){
         String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_PROCEDURE);
         UserSop usSop = new UserSop();
         Object[][] diagnoses = new Object[0][0];
@@ -74,11 +74,11 @@ public class ProcedureDefinitionToInstanceUtility {
 
     /**
      *
-     * @param procName
+     * @param procInstanceName
      * @param procVersion
      * @param schemaName
      */
-    public static final void procedureAddUserSops( String procName, Integer procVersion, String schemaName){
+    public static final void procedureAddUserSops( String procInstanceName, Integer procVersion, String schemaName){
         String tableName = "procedure";  
         String methodName = "addUserSop";
         String newEntry = "";
@@ -86,7 +86,7 @@ public class ProcedureDefinitionToInstanceUtility {
         
         Object[][] procUserReqInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
                         new String[]{"procedure", "version", "code is not null", "active", "in_scope", "in_system"}, 
-                        new Object[]{procName, procVersion, "", true, true, true}, 
+                        new Object[]{procInstanceName, procVersion, "", true, true, true}, 
                         new String[]{"code", "name", "sop_name", "sop_section", "roles", "schema_name schema_name"}, 
                         new String[]{"order_number", "id"});
 
@@ -115,12 +115,12 @@ public class ProcedureDefinitionToInstanceUtility {
                         for (String r: roles){         
                             Object[][] userProfileInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
                                             new String[]{"role_id"}, 
-                                            new Object[]{procName+"_"+r}, 
+                                            new Object[]{procInstanceName+"_"+r}, 
                                             new String[]{"user_info_id"});
 
                             Integer contUser = userProfileInfo.length;     
 
-                            newEntry = "Found " + contUser + " users having assigned the role "+procName+"_"+r;
+                            newEntry = "Found " + contUser + " users having assigned the role "+procInstanceName+"_"+r;
                             requirementsLogEntry("", methodName, newEntry,3);
 
                             for (Integer icontUser=0;icontUser<contUser;icontUser++){

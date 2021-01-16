@@ -14,6 +14,7 @@ import static functionaljavaa.parameter.Parameter.getParameterBundleAppFile;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -53,7 +54,8 @@ public class AppIncident {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dbInfo[0][0].toString())) this.fieldValuesCorrect=true;
     }
     
-    public static Object[] newIncident(Token token, String incTitle, String incDetail, String sessionInfo){ 
+    public static Object[] newIncident(String incTitle, String incDetail, String sessionInfo){ 
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String[] updFieldName=new String[]{TblsApp.Incident.FLD_DATE_CREATION.getName(), TblsApp.Incident.FLD_PERSON_CREATION.getName(), TblsApp.Incident.FLD_TITLE.getName(), TblsApp.Incident.FLD_DETAIL.getName(),
                 TblsApp.Incident.FLD_USER_NAME.getName(), TblsApp.Incident.FLD_USER_ROLE.getName(), TblsApp.Incident.FLD_PERSON_NAME.getName(),
                 TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_SESSION_INFO.getName()};
@@ -70,7 +72,8 @@ public class AppIncident {
         return diagnostic;        
     }
     
-    public Object[] confirmIncident(Token token, Integer incidentId, String note){ 
+    public Object[] confirmIncident(Integer incidentId, String note){ 
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] isActive=isIncidentActive(incidentId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isActive[0].toString())) return isActive;
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
@@ -90,7 +93,8 @@ public class AppIncident {
         return diagnostic;    
     }
     
-    public Object[] closeIncident(Token token, Integer incidentId, String note){  
+    public Object[] closeIncident(Integer incidentId, String note){  
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] isActive=isIncidentActive(incidentId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isActive[0].toString())) return isActive;
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
@@ -110,7 +114,8 @@ public class AppIncident {
         return diagnostic;    
     }    
 
-    public Object[] reopenIncident(Token token, Integer incidentId, String note){  
+    public Object[] reopenIncident(Integer incidentId, String note){  
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] isActive=isIncidentActive(incidentId);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isActive[0].toString())){
             isActive[0]=LPPlatform.LAB_FALSE;
@@ -134,7 +139,8 @@ public class AppIncident {
         return diagnostic;    
     }    
 
-    public Object[] addNoteIncident(Token token, Integer incidentId, String note, String newStatus){  
+    public Object[] addNoteIncident(Integer incidentId, String note, String newStatus){  
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();        
         Object[] isActive=isIncidentActive(incidentId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isActive[0].toString())) return isActive;
         

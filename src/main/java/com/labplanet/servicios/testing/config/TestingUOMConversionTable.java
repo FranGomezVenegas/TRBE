@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import trazit.session.ProcedureRequestSession;
 
 
 /**
@@ -47,8 +48,12 @@ public class TestingUOMConversionTable extends HttpServlet {
         StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}   
-        
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true);        
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            return;
+        }
+                
         try (PrintWriter out = response.getWriter()) {
             HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
@@ -68,26 +73,26 @@ public class TestingUOMConversionTable extends HttpServlet {
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments);
 
-                String schemaPrefix = null;
+                String procInstanceName = null;
                 String familyName = null;
                 String[] fieldsToRetrieve = null;
                 BigDecimal baseValue = null;
                 Integer lineNumCols = csvFileContent[0].length-1;
                 if (lineNumCols>=numEvaluationArguments)                
-                    schemaPrefix = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments]);
+                    procInstanceName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments]);
                 if (lineNumCols>=numEvaluationArguments+1)                
                     familyName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+1]);
                 if (lineNumCols>=numEvaluationArguments+2)                
                     fieldsToRetrieve = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+2]);
                 if (lineNumCols>=numEvaluationArguments+3)                
                     baseValue = LPTestingOutFormat.csvExtractFieldValueBigDecimal(csvFileContent[iLines][numEvaluationArguments+3]);
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, schemaPrefix, familyName, fieldsToRetrieve, baseValue}));
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, procInstanceName, familyName, fieldsToRetrieve, baseValue}));
                 UnitsOfMeasurement uom = new UnitsOfMeasurement();
-                String baseUnitName = uom.getFamilyBaseUnitName(schemaPrefix, familyName);
+                String baseUnitName = uom.getFamilyBaseUnitName(procInstanceName, familyName);
                 if (baseUnitName.length()==0){
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf("Nothing to convert with no base unit defined")));
                 }else{                    
-                Object[][] tableGet = uom.getAllUnitsPerFamily(schemaPrefix, familyName, fieldsToRetrieve);
+                Object[][] tableGet = uom.getAllUnitsPerFamily(procInstanceName, familyName, fieldsToRetrieve);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tableGet[0][0].toString())) {
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(tableGet[0][3].toString()))
                             .append(tableGet[0][5].toString());
@@ -95,7 +100,7 @@ public class TestingUOMConversionTable extends HttpServlet {
                     StringBuilder tableConversionsBuilder = new StringBuilder(0);
                     for (Object[] tableGet1 : tableGet) {
                         tableConversionsBuilder.append(LPTestingOutFormat.rowStart());
-                        Object[] newValue = uom.convertValue(schemaPrefix, baseValue, baseUnitName, (String) tableGet1[0]);
+                        Object[] newValue = uom.convertValue(procInstanceName, baseValue, baseUnitName, (String) tableGet1[0]);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newValue[0].toString())) {
                             tableConversionsBuilder.append(LPTestingOutFormat.rowAddField("Not Converted"));
                         }else{
@@ -116,20 +121,20 @@ public class TestingUOMConversionTable extends HttpServlet {
             fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
             }      
             tstAssertSummary.notifyResults();
-            Rdbms.closeRdbms();
+            procReqInstance.killIt();
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
             fileContentBuilder.append(fileContentTable1Builder.toString()).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());            
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());
         }
         catch(IOException error){
-            Rdbms.closeRdbms();
+            procReqInstance.killIt();
             String exceptionMessage = error.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }       }          

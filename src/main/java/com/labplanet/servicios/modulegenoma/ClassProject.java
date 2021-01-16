@@ -6,7 +6,6 @@
 package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIEndPoints;
-import databases.Token;
 import functionaljavaa.modulegenoma.GenomaDataProject;
 import functionaljavaa.modulegenoma.GenomaDataStudy;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -14,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -21,13 +21,14 @@ import lbplanet.utilities.LPPlatform;
  */
 public class ClassProject {
     private Object[] messageDynamicData=new Object[]{};
-    private RelatedObjects relatedObj=RelatedObjects.getInstance();
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassProject(HttpServletRequest request, Token token, String schemaPrefix, GenomaProjectAPIEndPoints endPoint){
-        RelatedObjects rObj=RelatedObjects.getInstance();
+    public ClassProject(HttpServletRequest request, GenomaProjectAPIEndPoints endPoint){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         GenomaDataProject prj = new GenomaDataProject();
         GenomaDataStudy prjStudy = new GenomaDataStudy();
@@ -47,21 +48,21 @@ public class ClassProject {
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                     if ("PROJECT_NEW".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses= prj.createProject(schemaPrefix, token, projectName, fieldNames, fieldValues,  false);
+                        actionDiagnoses= prj.createProject(projectName, fieldNames, fieldValues,  false);
                     if ("PROJECT_UPDATE".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses= prj.projectUpdate(schemaPrefix, token, projectName, fieldNames, fieldValues);
+                        actionDiagnoses= prj.projectUpdate(projectName, fieldNames, fieldValues);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                
                     if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{projectName, schemaPrefix});                    
-                    this.messageDynamicData=new Object[]{projectName, schemaPrefix};
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{projectName, procInstanceName});                    
+                    this.messageDynamicData=new Object[]{projectName, procInstanceName};
                     break;
                 case PROJECT_ACTIVATE:
                 case PROJECT_DEACTIVATE:
                     projectName = argValues[0].toString();
                     if ("PROJECT_ACTIVATE".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses =prj.projectActivate(schemaPrefix, token, projectName);
+                        actionDiagnoses =prj.projectActivate(projectName);
                     else if ("PROJECT_DEACTIVATE".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses =prj.projectDeActivate(schemaPrefix, token, projectName);                    
+                        actionDiagnoses =prj.projectDeActivate(projectName);                    
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                
                     break;
                 case PROJECT_ADD_USER:
@@ -72,8 +73,8 @@ public class ClassProject {
                     projectName = argValues[0].toString();
                     String userName=argValues[1].toString();
                     String userRole=argValues[2].toString();
-                    actionDiagnoses =prj.projectUserManagement(schemaPrefix, token, endPoint.getName(), projectName, userName, userRole);
-                    this.messageDynamicData=new Object[]{projectName, userName, userRole, schemaPrefix};
+                    actionDiagnoses =prj.projectUserManagement(endPoint.getName(), projectName, userName, userRole);
+                    this.messageDynamicData=new Object[]{projectName, userName, userRole, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                                    
                     break;
                 case STUDY_NEW:
@@ -87,11 +88,11 @@ public class ClassProject {
                     
                     if (fieldValue!=null && fieldValue.length()>0) 
                         fieldValues=TblsGenomaData.Study.convertStringWithDataTypeToObjectArray(fieldNames, fieldValue.split("\\|"));
-                    actionDiagnoses= prjStudy.createStudy(schemaPrefix, token, studyName, projectName, fieldNames, fieldValues,  false);
+                    actionDiagnoses= prjStudy.createStudy(studyName, projectName, fieldNames, fieldValues,  false);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{studyName, schemaPrefix});                    
-                    this.messageDynamicData=new Object[]{projectName, studyName, schemaPrefix};
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{studyName, procInstanceName});                    
+                    this.messageDynamicData=new Object[]{projectName, studyName, procInstanceName};
                     break;
                 default:
                     break;

@@ -213,7 +213,7 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                 return;                   
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
-            if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
+            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
              
             switch (endPoint){
             case ALL_ACTIVE_VIDEO_TUTORIALS:

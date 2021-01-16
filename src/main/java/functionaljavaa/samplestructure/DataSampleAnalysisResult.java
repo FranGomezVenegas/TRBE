@@ -61,8 +61,6 @@ public class DataSampleAnalysisResult {
     }    
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @param testId
      * @param resultId
@@ -70,7 +68,9 @@ public class DataSampleAnalysisResult {
      * @return
      */
     
-    public Object[] sampleAnalysisResultCancelBack(String procInstanceName, Token token, Integer sampleId, Integer testId, Integer resultId, DataSample dataSample) {
+    public Object[] sampleAnalysisResultCancelBack(Integer sampleId, Integer testId, Integer resultId, DataSample dataSample) {
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
         String[] diagnoses = new String[6];
         String sampleAnalysisResultStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSCANCELED);
@@ -180,7 +180,7 @@ public class DataSampleAnalysisResult {
         return diagnoses;
     }
     public Object[] sampleAnalysisResultEntryByAnalysisName(Integer sampleId, String analysisName, Object resultValue, DataSample dataSample) {        
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] analysisNameArr=analysisName.split("\\|");
         Object[] resultValueArr=resultValue.toString().split("\\|");
@@ -208,8 +208,8 @@ public class DataSampleAnalysisResult {
      * @throws IllegalArgumentException
      */
     public Object[] sampleAnalysisResultEntry(Integer resultId, Object resultValue, DataSample dataSample) {   
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String[] sampleFieldName=new String[0];
         Object[] sampleFieldValue=new Object[0];
@@ -322,10 +322,10 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                 sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, null);
             }
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                DataSampleAnalysis.sampleAnalysisEvaluateStatus(procInstanceName, token, sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
+                DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
             }
         }
-        Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(procInstanceName, sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, analysis, methodName, methodVersion, paramName, 
+        Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, analysis, methodName, methodVersion, paramName, 
                 new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(), TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), 
                     TblsCnfg.SpecLimits.FLD_UOM.getName(), TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName()});
         if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && (!"Rdbms_NoRecordsFound".equalsIgnoreCase(specLimits[0][4].toString()))) {
@@ -345,7 +345,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                 sampleAuditAdd=smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, null);
             }
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                DataSampleAnalysis.sampleAnalysisEvaluateStatus(procInstanceName, token, sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
+                DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
             }
             return diagnoses;
         }
@@ -369,7 +369,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         DataSpec resChkSpec = new DataSpec();
         Object[] resSpecEvaluation = null;
         ConfigSpecRule specRule = new ConfigSpecRule();
-        specRule.specLimitsRule(procInstanceName, limitId, null);
+        specRule.specLimitsRule(limitId, null);
         if (specRule.getRuleIsQualitative()){        
                 resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
                         specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
@@ -391,13 +391,13 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                     sampleAuditAdd=smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, null);
                 }
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(procInstanceName, token, sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
+                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
                 }
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                   if ((resSpecEvaluation[resSpecEvaluation.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL))
-                    this.sar.sarControlAction(procInstanceName, token, resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                    this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                   if ((resSpecEvaluation[resSpecEvaluation.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS))
-                    this.sar.sarOOSAction(procInstanceName, token, resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                    this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                 }                    
                 return diagnoses;
         }
@@ -441,12 +441,12 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                     sampleAuditAdd=smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, null);
                 }
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) 
-                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(procInstanceName, token, sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
+                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                   if ((resSpecEvaluation[resSpecEvaluation.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL))
-                    this.sar.sarControlAction(procInstanceName, token, resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                    this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                   if ((resSpecEvaluation[resSpecEvaluation.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS))
-                    this.sar.sarOOSAction(procInstanceName, token, resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                    this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                 }                    
 //                UserMethod.newUserMethodEntry(procInstanceName, userName, userRole, analysis, methodName, methodVersion, sampleId, testId, appSessionId);
                 return diagnoses;
@@ -462,8 +462,8 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
      * @return
      */
     public Object[] sarChangeUom(Integer resultId, String newuom, DataSample dataSample) {       
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
         Object[][] resultInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
@@ -514,8 +514,8 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
      * @return
      */
     public Object[] sampleAnalysisResultUnCancel(Integer sampleId, Integer testId, Integer resultId) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
@@ -643,8 +643,8 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
      * @return
      */
     public Object[] sampleAnalysisResultCancel(Integer sampleId, Integer testId, Integer resultId) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
@@ -771,7 +771,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
      * @return
      */
     public Object[] sampleResultReviewBySampleAndAnalysis(Integer sampleId, String analysisName) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String[] analysisNameArr=analysisName.split("\\|");
         Object[] diagn=new Object[]{};
         for (String analysisNameArr1 : analysisNameArr) {
@@ -785,8 +785,8 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         return diagn;
     }
     public Object[] sampleResultReview(Integer sampleId, Integer testId, Integer resultId) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
@@ -804,14 +804,14 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
             reviewScope = TblsData.Sample.FLD_SAMPLE_ID.getName();
             reviewScopeTable = TblsData.Sample.TBL.getName();
             reviewScopeId = sampleId;
-            Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(procInstanceName, token, sampleId);
+            Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(sampleId);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;            
         }
         if (testId != null) {
             reviewScope = TblsData.SampleAnalysisResult.FLD_TEST_ID.getName();
             reviewScopeTable = TblsData.SampleAnalysis.TBL.getName();
             reviewScopeId = testId;
-            Object[] readyForRevision = isReadyForRevision( procInstanceName, token, testId);
+            Object[] readyForRevision = isReadyForRevision(testId);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(readyForRevision[0].toString())) return readyForRevision;
         }
         if (resultId != null) {
@@ -896,7 +896,7 @@ if (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_RESULT_ID.get
                             fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_READY_FOR_REVISION.getName() + ":" + "false");                     
                             SampleAudit smpAudit = new SampleAudit();
                             smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysis.TBL.getName(), testId, sampleId, testId, null, fieldsForAudit, null);
-                            sampleAnalysisEvaluateStatus_automatismForReview(procInstanceName, token, sampleId, testId);
+                            sampleAnalysisEvaluateStatus_automatismForReview(sampleId, testId);
                         }
                     }
                 }
@@ -913,7 +913,7 @@ if (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_RESULT_ID.get
 
                 Object[] isRevisionSampleAnalysisRequired=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisRequired[0].toString())){            
-                    Object[] isallsampleAnalysisReviewed = DataSampleAnalysis.isAllsampleAnalysisReviewed(procInstanceName, token, sampleId, new String[]{}, new Object[]{});
+                    Object[] isallsampleAnalysisReviewed = DataSampleAnalysis.isAllsampleAnalysisReviewed(sampleId, new String[]{}, new Object[]{});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isallsampleAnalysisReviewed[0].toString())) return isallsampleAnalysisReviewed;
                 }
 

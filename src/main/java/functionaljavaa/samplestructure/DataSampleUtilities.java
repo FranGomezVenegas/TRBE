@@ -8,6 +8,7 @@ package functionaljavaa.samplestructure;
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -18,22 +19,21 @@ public class DataSampleUtilities {
     
     /**
      *
-     * @param schemaPrefix
      * @return
      */
-    public static Object[] getSchemaSampleStatusList(String schemaPrefix){      
-        return getSchemaSampleStatusList(schemaPrefix, "en");
+    public static Object[] getSchemaSampleStatusList(){      
+        return getSchemaSampleStatusList("en");
     }
 
     /**
      *
-     * @param schemaPrefix
      * @param language
      * @return
      */
-    public static Object[] getSchemaSampleStatusList(String schemaPrefix, String language){      
+    public static Object[] getSchemaSampleStatusList(String language){      
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String stList = "";
-        String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
         if (language==null){language="en";}
        switch (language){
            case "en":

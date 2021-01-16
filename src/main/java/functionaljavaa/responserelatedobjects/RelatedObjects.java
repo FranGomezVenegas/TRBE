@@ -34,7 +34,7 @@ public class RelatedObjects {
         this.jArrMainObject=new JSONArray();
     }
     
-    public static RelatedObjects getInstance() {
+    public static RelatedObjects getInstanceForActions() {
         if (mainStructureObject == null) {
             mainStructureObject = new RelatedObjects();
             return mainStructureObject;

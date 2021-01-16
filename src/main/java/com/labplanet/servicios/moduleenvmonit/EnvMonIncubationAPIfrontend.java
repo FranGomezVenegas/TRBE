@@ -26,6 +26,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -89,75 +90,73 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
     request=LPHttp.requestPreparation(request);
     response=LPHttp.responsePreparation(response);
 
-    String language = LPFrontEnd.setLanguage(request); 
+    ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+    if (procReqInstance.getHasErrors()) return;
+    String actionName=procReqInstance.getActionName();
+    String language=procReqInstance.getLanguage();
+    String procInstanceName = procReqInstance.getProcedureInstance();
+    
 
     try (PrintWriter out = response.getWriter()) {
 
-    Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-        LPFrontEnd.servletReturnResponseError(request, response, 
-            LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-        return;          
-    }             
-    String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-    String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-    EnvMonIncubationAPIfrontendEndpoints endPoint = null;
-    try{
-        endPoint = EnvMonIncubationAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
-    }catch(Exception e){
-        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
-        return;                   
-    }
-    Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                   
-    if (!LPFrontEnd.servletStablishDBConection(request, response, false))return;
-        
-    switch (endPoint){
-        case INCUBATORS_LIST: 
-            String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()};
-            String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                        TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
-                        TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};     
-            Rdbms.stablishDBConection(false);
-            Object[][] incubatorsList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
-                    new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, new Object[]{true}, 
-                    fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()});
-            JSONArray jArr = new JSONArray();
-            for (Object[] currInstrument: incubatorsList){
-                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrument);
-                Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, currInstrument[0].toString(), 5);                    
-                JSONArray jReadingsArr = new JSONArray();
-                for (Object[] curReading: instrReadings){
-                    JSONObject jReadingsObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveReadings, curReading);
-                    jReadingsArr.add(jReadingsObj);
+        EnvMonIncubationAPIfrontendEndpoints endPoint = null;
+        try{
+            endPoint = EnvMonIncubationAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+        }catch(Exception e){
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+            return;                   
+        }
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                   
+        if (!LPFrontEnd.servletStablishDBConection(request, response))return;
+
+        switch (endPoint){
+            case INCUBATORS_LIST: 
+                String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()};
+                String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};     
+//                Rdbms.stablishDBConection(false);
+                Object[][] incubatorsList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
+                        new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, new Object[]{true}, 
+                        fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()});
+                JSONArray jArr = new JSONArray();
+                for (Object[] currInstrument: incubatorsList){
+                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrument);
+                    Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading( currInstrument[0].toString(), 5);                    
+                    JSONArray jReadingsArr = new JSONArray();
+                    for (Object[] curReading: instrReadings){
+                        JSONObject jReadingsObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveReadings, curReading);
+                        jReadingsArr.add(jReadingsObj);
+                    }
+                    jObj.put("LAST_READINGS", jReadingsArr);
+                    jArr.add(jObj);
                 }
-                jObj.put("LAST_READINGS", jReadingsArr);
-                jArr.add(jObj);
-            }
-            Rdbms.closeRdbms();  
-            LPFrontEnd.servletReturnSuccess(request, response, jArr);
-            break;
-        case INCUBATOR_TEMP_READINGS:
-            String instrName=argValues[0].toString();
-            String numPoints=argValues[1].toString();
-            Integer numPointsInt=null;
-            fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                        TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
-                        TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};            
-            if (numPoints!=null && numPoints.length()>0) numPointsInt=Integer.valueOf(numPoints);                    
-            Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, instrName, numPointsInt);                    
-            Rdbms.closeRdbms();  
-            jArr = new JSONArray();
-            for (Object[] currReading: instrReadings){
-                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
-                jArr.add(jObj);
-            }
-            LPFrontEnd.servletReturnSuccess(request, response, jArr);
-            break;
-        default:      
-            Rdbms.closeRdbms(); 
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                break;
+            case INCUBATOR_TEMP_READINGS:
+                String instrName=argValues[0].toString();
+                String numPoints=argValues[1].toString();
+                Integer numPointsInt=null;
+                fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};            
+                if (numPoints!=null && numPoints.length()>0) numPointsInt=Integer.valueOf(numPoints);                    
+                Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading(instrName, numPointsInt);                    
+                Rdbms.closeRdbms();  
+                jArr = new JSONArray();
+                for (Object[] currReading: instrReadings){
+                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
+                    jArr.add(jObj);
+                }
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                break;
+            default:      
+                procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);                                                                  
-    }
+        }
     }catch(Exception e){      
+        procReqInstance.killIt();
         String exceptionMessage =e.getMessage();
         if (exceptionMessage==null){exceptionMessage="null exception";}
         response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
@@ -165,7 +164,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
     } finally {
         // release database resources
         try {
-            Rdbms.closeRdbms();   
+            procReqInstance.killIt();
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }                

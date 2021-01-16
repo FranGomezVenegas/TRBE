@@ -10,6 +10,7 @@ import static functionaljavaa.modulegenoma.GenomaUtilities.addObjectToUnstructur
 import static functionaljavaa.modulegenoma.GenomaUtilities.removeObjectToUnstructuredField;
 import databases.Token;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -17,24 +18,26 @@ import lbplanet.utilities.LPPlatform;
  */
 public class GenomaConfigVariables {
     
-public static Object[] variableSetAddVariable(String schemaPrefix, Token token, String variableSetName, String variableName) {
+public static Object[] variableSetAddVariable(String variableSetName, String variableName) {
     
-    Object[] updateFamilyIndividuals=addObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_CONFIG, TblsGenomaConfig.VariablesSet.TBL.getName(), 
+    Object[] updateFamilyIndividuals=addObjectToUnstructuredField(LPPlatform.SCHEMA_CONFIG, TblsGenomaConfig.VariablesSet.TBL.getName(), 
             new String[]{TblsGenomaConfig.VariablesSet.FLD_NAME.getName()}, new Object[]{variableSetName}, 
             TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName(), variableName, variableName);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
         return updateFamilyIndividuals;
     }
 /*    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
-        GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.STUDY_FAMILY_ADDED_INDIVIDUAL.toString(), TblsGenomaConfig.VariablesSet.TBL.getName(), familyName, 
+        GenomaDataAudit.studyAuditAdd(procInstanceName, token, GenomaDataAudit.StudyAuditEvents.STUDY_FAMILY_ADDED_INDIVIDUAL.toString(), TblsGenomaConfig.VariablesSet.TBL.getName(), familyName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName()}, new Object[]{updateFamilyIndividuals[updateFamilyIndividuals.length-1]}, ":"), null);
     }*/
     return updateFamilyIndividuals;
 }
 
-public static Object[] variableSetRemoveVariable(String schemaPrefix, Token token, String variableSetName, String variableName) {
+public static Object[] variableSetRemoveVariable(String variableSetName, String variableName) {
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
     
-    Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_CONFIG, TblsGenomaConfig.VariablesSet.TBL.getName(), 
+    Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(LPPlatform.SCHEMA_CONFIG, TblsGenomaConfig.VariablesSet.TBL.getName(), 
             new String[]{TblsGenomaConfig.VariablesSet.FLD_NAME.getName()}, new Object[]{variableSetName}, 
             TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName(), TblsGenomaConfig.Variables.TBL.getName(), variableName, variableName);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
@@ -42,7 +45,7 @@ public static Object[] variableSetRemoveVariable(String schemaPrefix, Token toke
     }
     
 /*    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
-        GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.STUDY_FAMILY_REMOVED_INDIVIDUAL.toString(), TblsGenomaConfig.VariablesSet.TBL.getName(), familyName, 
+        GenomaDataAudit.studyAuditAdd(procInstanceName, token, GenomaDataAudit.StudyAuditEvents.STUDY_FAMILY_REMOVED_INDIVIDUAL.toString(), TblsGenomaConfig.VariablesSet.TBL.getName(), familyName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName()}, new Object[]{updateFamilyIndividuals[updateFamilyIndividuals.length-1]}, ":"), null);
     }*/
     return updateFamilyIndividuals;

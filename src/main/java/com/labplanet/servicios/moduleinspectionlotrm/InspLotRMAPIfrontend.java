@@ -27,6 +27,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -86,18 +87,15 @@ public class InspLotRMAPIfrontend extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+        String procInstanceName = procReqInstance.getProcedureInstance();
+        
 
         try (PrintWriter out = response.getWriter()) {
 
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         InspLotRMQueriesAPIEndpoints endPoint = null;
         try{
             endPoint = InspLotRMQueriesAPIEndpoints.valueOf(actionName.toUpperCase());
@@ -107,19 +105,18 @@ public class InspLotRMAPIfrontend extends HttpServlet {
         }
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false))return;
+        if (!LPFrontEnd.servletStablishDBConection(request, response))return;
 
         switch (endPoint){
             
         case GET_LOT_SAMPLES_INFO: 
-            Rdbms.stablishDBConection(false);
             String lotName=LPNulls.replaceNull(argValues[0]).toString();
             String[] fieldsToRetrieve=TblsInspLotRMData.Sample.getAllFieldNames();
             if (argValues.length>1 && argValues[1]!=null && argValues[1].toString().length()>0){
                 if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=TblsInspLotRMData.Sample.getAllFieldNames();
                 else fieldsToRetrieve=argValues[1].toString().split("\\|");
             }
-            Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.Sample.TBL.getName(), 
+            Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.Sample.TBL.getName(), 
                     new String[]{TblsInspLotRMData.Sample.FLD_LOT_NAME.getName()}, new Object[]{lotName}, 
                     fieldsToRetrieve, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()});
 
@@ -139,11 +136,12 @@ public class InspLotRMAPIfrontend extends HttpServlet {
         String exceptionMessage =e.getMessage();
         if (exceptionMessage==null){exceptionMessage="null exception";}
         response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
+        procReqInstance.killIt();
         LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);      
     } finally {
        // release database resources
        try {
-           Rdbms.closeRdbms();   
+           procReqInstance.killIt();
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
        }
     }              

@@ -26,6 +26,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -184,41 +185,13 @@ public class GenomaStudyAPI extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+        
         String[] errObject = new String[]{"Servlet Genoma ProjectAPI at " + request.getServletPath()};   
 
-        String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-        
-        Token token = new Token(finalToken);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
-                return;                             
-        }
-        mandatoryParams = null;                        
-
-        if (mandatoryParams!=null){
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                       LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-               return;                   
-            }     
-        }
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, language);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
-            return;          
-        }             
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
  /*       if (con==null){
              response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
@@ -245,28 +218,16 @@ public class GenomaStudyAPI extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }
-        areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+        Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response,
                     LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
             return;
         }                
-        //Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
-        Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
-            Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;               
-            }            
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(schemaPrefix, token.getUserRole(), actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){       
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;                           
-            }            
-
-            ClassStudy clss=new ClassStudy(request, token, schemaPrefix, endPoint);
+            String schemaConfigName = LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), LPPlatform.SCHEMA_CONFIG);    
+            Rdbms.setTransactionId(schemaConfigName);
+            ClassStudy clss=new ClassStudy(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
@@ -300,16 +261,14 @@ public class GenomaStudyAPI extends HttpServlet {
             }
 */            
             response.setStatus(401);
-            Rdbms.closeRdbms();  
-            auditAndUsrValid.killInstance();
+            procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
-                auditAndUsrValid.killInstance();
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                

@@ -26,6 +26,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -91,42 +92,14 @@ public class EnvMonIncubationAPI extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+        String procInstanceName = procReqInstance.getProcedureInstance();
+
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
-        String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-        
-        Token token = new Token(finalToken);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
-                return;                             
-        }
-        mandatoryParams = null;                        
-
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, language);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
-            return;          
-        }           
-        if (mandatoryParams!=null){
-            areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, mandatoryParams);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                       LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-               return;                   
-            }     
-        }
-       
 /*        Connection con = Rdbms.createTransactionWithSavePoint();        
       
         try {
@@ -144,16 +117,6 @@ public class EnvMonIncubationAPI extends HttpServlet {
 */
         try (PrintWriter out = response.getWriter()) {
 
-            Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;               
-            }            
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(schemaPrefix, token.getUserRole(), actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){       
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;                           
-            }     
             EnvMonIncubationAPIEndpoints endPoint = null;
             try{
                 endPoint = EnvMonIncubationAPIEndpoints.valueOf(actionName.toUpperCase());
@@ -161,13 +124,13 @@ public class EnvMonIncubationAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+            Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
             }                
-            ClassEnvMonIncubator clss=new ClassEnvMonIncubator(request, token, schemaPrefix, endPoint);
+            ClassEnvMonIncubator clss=new ClassEnvMonIncubator(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
@@ -182,7 +145,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
 /*            
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             Object[] messageDynamicData=new Object[]{};
-            RelatedObjects rObj=RelatedObjects.getInstance();
+            RelatedObjects rObj=RelatedObjects.getInstanceForActions();
             
             String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
             Rdbms.setTransactionId(schemaConfigName);        
@@ -226,8 +189,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
             } 
 */            
         }catch(Exception e){  
-            auditAndUsrValid.killInstance();
-            Rdbms.closeRdbms();                   
+            procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
@@ -235,8 +197,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
             // release database resources
             try {                
                 //con.close();
-                auditAndUsrValid.killInstance();
-                Rdbms.closeRdbms();   
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                

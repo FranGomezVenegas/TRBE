@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.modulegenoma;
 
-import databases.Token;
 import functionaljavaa.modulegenoma.GenomaDataStudy;
 import functionaljavaa.modulegenoma.GenomaDataStudyFamily;
 import functionaljavaa.modulegenoma.GenomaDataStudyIndividualSamples;
@@ -16,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -23,13 +23,15 @@ import lbplanet.utilities.LPPlatform;
  */
 public class ClassStudy {
     private Object[] messageDynamicData=new Object[]{};
-    private RelatedObjects relatedObj=RelatedObjects.getInstance();
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassStudy(HttpServletRequest request, Token token, String schemaPrefix, GenomaStudyAPI.GenomaStudyAPIEndPoints endPoint){
-        RelatedObjects rObj=RelatedObjects.getInstance();
+    public ClassStudy(HttpServletRequest request, GenomaStudyAPI.GenomaStudyAPIEndPoints endPoint){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         GenomaDataStudy prjStudy = new GenomaDataStudy();
         GenomaDataStudyIndividuals prjStudyIndividual = new GenomaDataStudyIndividuals();
@@ -56,22 +58,22 @@ public class ClassStudy {
                     if (fieldValue!=null && fieldValue.length()>0) 
                         fieldValues=TblsGenomaData.Study.convertStringWithDataTypeToObjectArray(fieldNames, fieldValue.split("\\|"));
                     if ("STUDY_NEW".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses= prjStudy.createStudy(schemaPrefix, token, studyName, projectName, fieldNames, fieldValues,  false);
+                        actionDiagnoses= prjStudy.createStudy(studyName, projectName, fieldNames, fieldValues,  false);
                     if ("STUDY_UPDATE".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses= prjStudy.studyUpdate(schemaPrefix, token, studyName, fieldNames, fieldValues);
+                        actionDiagnoses= prjStudy.studyUpdate(studyName, fieldNames, fieldValues);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                
                     if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{studyName, schemaPrefix});                    
-                    this.messageDynamicData=new Object[]{projectName, studyName, schemaPrefix};
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{studyName, procInstanceName});                    
+                    this.messageDynamicData=new Object[]{projectName, studyName, procInstanceName};
                     break;
                 case STUDY_ACTIVATE:
                 case STUDY_DEACTIVATE:
                     studyName = argValues[0].toString();
                     if ("STUDY_ACTIVATE".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses =prjStudy.studyActivate(schemaPrefix, token, studyName);
+                        actionDiagnoses =prjStudy.studyActivate(studyName);
                     else if ("STUDY_DEACTIVATE".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses =prjStudy.studyDeActivate(schemaPrefix, token, studyName);                    
-                    this.messageDynamicData=new Object[]{studyName, schemaPrefix};
+                        actionDiagnoses =prjStudy.studyDeActivate(studyName);                    
+                    this.messageDynamicData=new Object[]{studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     break;
                 case STUDY_ADD_USER:
@@ -82,8 +84,8 @@ public class ClassStudy {
                     studyName = argValues[0].toString();
                     String userName=argValues[1].toString();
                     String userRole=argValues[2].toString();
-                    actionDiagnoses =prjStudy.studyUserManagement(schemaPrefix, token, endPoint.getName(), studyName, userName, userRole);
-                    this.messageDynamicData=new Object[]{userName, studyName, userRole, schemaPrefix};
+                    actionDiagnoses =prjStudy.studyUserManagement(endPoint.getName(), studyName, userName, userRole);
+                    this.messageDynamicData=new Object[]{userName, studyName, userRole, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
                     break;
                 case STUDY_CREATE_INDIVIDUAL:
@@ -96,39 +98,39 @@ public class ClassStudy {
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                     
-                    actionDiagnoses =prjStudyIndividual.createStudyIndividual(schemaPrefix, token, studyName, indvidualName, fieldNames, fieldValues, false);
-                    this.messageDynamicData=new Object[]{indvidualName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyIndividual.createStudyIndividual(studyName, indvidualName, fieldNames, fieldValues, false);
+                    this.messageDynamicData=new Object[]{indvidualName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
                     break;
                 case STUDY_INDIVIDUAL_ACTIVATE:
                     studyName = argValues[0].toString();
                     String indvidualId=argValues[1].toString();
-                    actionDiagnoses =prjStudyIndividual.studyIndividualActivate(schemaPrefix, token, studyName, Integer.valueOf(indvidualId));
-                    this.messageDynamicData=new Object[]{indvidualId, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyIndividual.studyIndividualActivate(studyName, Integer.valueOf(indvidualId));
+                    this.messageDynamicData=new Object[]{indvidualId, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyIndividual.TBL.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), indvidualId);                                    
                     break;
                 case STUDY_INDIVIDUAL_DEACTIVATE:
                     studyName = argValues[0].toString();
                     indvidualId=argValues[1].toString();
-                    actionDiagnoses =prjStudyIndividual.studyIndividualDeActivate(schemaPrefix, token, studyName, Integer.valueOf(indvidualId));
-                    this.messageDynamicData=new Object[]{indvidualId, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyIndividual.studyIndividualDeActivate(studyName, Integer.valueOf(indvidualId));
+                    this.messageDynamicData=new Object[]{indvidualId, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyIndividual.TBL.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), indvidualId);                                    
                     break;
                 case STUDY_CREATE_INDIVIDUAL_SAMPLE:
                     studyName = argValues[0].toString();
                     indvidualId=argValues[1].toString();
-                    actionDiagnoses =prjStudyIndividualSmp.createStudyIndividualSample(schemaPrefix, token, studyName, Integer.valueOf(indvidualId), new String[0], new Object[0], false);
-                    this.messageDynamicData=new Object[]{indvidualId, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyIndividualSmp.createStudyIndividualSample(studyName, Integer.valueOf(indvidualId), new String[0], new Object[0], false);
+                    this.messageDynamicData=new Object[]{indvidualId, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
                     break;
                 case STUDY_INDIVIDUAL_SAMPLE_ACTIVATE:
                     studyName = argValues[0].toString();
                     indvidualId=argValues[1].toString();
                     String sampleIdStr=argValues[2].toString();
-                    actionDiagnoses =prjStudyIndividualSmp.studyIndividualSampleActivate(schemaPrefix, token, studyName, Integer.valueOf(indvidualId), Integer.valueOf(sampleIdStr));
-                    this.messageDynamicData=new Object[]{sampleIdStr, indvidualId, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyIndividualSmp.studyIndividualSampleActivate(studyName, Integer.valueOf(indvidualId), Integer.valueOf(sampleIdStr));
+                    this.messageDynamicData=new Object[]{sampleIdStr, indvidualId, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyIndividual.TBL.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), indvidualId);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyIndividualSample.TBL.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleIdStr);
@@ -137,8 +139,8 @@ public class ClassStudy {
                     studyName = argValues[0].toString();
                     indvidualId=argValues[1].toString();
                     sampleIdStr=argValues[2].toString();
-                    actionDiagnoses =prjStudyIndividualSmp.studyIndividualSampleDeActivate(schemaPrefix, token, studyName, Integer.valueOf(indvidualId), Integer.valueOf(sampleIdStr));
-                    this.messageDynamicData=new Object[]{sampleIdStr, indvidualId, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyIndividualSmp.studyIndividualSampleDeActivate(studyName, Integer.valueOf(indvidualId), Integer.valueOf(sampleIdStr));
+                    this.messageDynamicData=new Object[]{sampleIdStr, indvidualId, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyIndividual.TBL.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), indvidualId);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyIndividualSample.TBL.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleIdStr);
@@ -155,24 +157,24 @@ public class ClassStudy {
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                                    
                     if (individualsListStr!=null && individualsListStr.length()>0) individualsList = individualsListStr.split("\\|");                    
-                    actionDiagnoses =prjStudyFamily.createStudyFamily(schemaPrefix, token, studyName, familyName, individualsList, fieldNames, fieldValues, false);
-                    this.messageDynamicData=new Object[]{familyName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyFamily.createStudyFamily(studyName, familyName, individualsList, fieldNames, fieldValues, false);
+                    this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyFamily.TBL.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
                     break;
                 case STUDY_FAMILY_ACTIVATE:
                     studyName = argValues[0].toString();
                     familyName=argValues[1].toString();
-                    actionDiagnoses =prjStudyFamily.studyFamilyActivate(schemaPrefix, token, studyName, familyName);
-                    this.messageDynamicData=new Object[]{familyName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyFamily.studyFamilyActivate(studyName, familyName);
+                    this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyFamily.TBL.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
                     break;
                 case STUDY_FAMILY_DEACTIVATE:
                     studyName = argValues[0].toString();
                     familyName=argValues[1].toString();
-                    actionDiagnoses =prjStudyFamily.studyFamilyDeActivate(schemaPrefix, token, studyName, familyName);
-                    this.messageDynamicData=new Object[]{familyName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyFamily.studyFamilyDeActivate(studyName, familyName);
+                    this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyFamily.TBL.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
                     break;
@@ -180,8 +182,8 @@ public class ClassStudy {
                     studyName = argValues[0].toString();
                     familyName=argValues[1].toString();
                     String individualIdStr = argValues[2].toString();
-                    actionDiagnoses =prjStudyFamily.studyFamilyAddIndividual(schemaPrefix, token, studyName, familyName, individualIdStr);
-                    this.messageDynamicData=new Object[]{familyName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyFamily.studyFamilyAddIndividual(studyName, familyName, individualIdStr);
+                    this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyFamily.TBL.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
                     break;
@@ -189,8 +191,8 @@ public class ClassStudy {
                     studyName = argValues[0].toString();
                     familyName=argValues[1].toString();
                     individualIdStr = argValues[2].toString();
-                    actionDiagnoses =prjStudyFamily.studyFamilyRemoveIndividual(schemaPrefix, token, studyName, familyName, individualIdStr);
-                    this.messageDynamicData=new Object[]{familyName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudyFamily.studyFamilyRemoveIndividual(studyName, familyName, individualIdStr);
+                    this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudyFamily.TBL.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
                     break;
@@ -206,24 +208,24 @@ public class ClassStudy {
                     if (samplesStr!=null && samplesStr.length()>0) samples = samplesStr.split("\\|");
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                                    
-                    actionDiagnoses =prjStudySampleSet.createStudySamplesSet(schemaPrefix, token, studyName, samplesSetName, samples, fieldNames, fieldValues, false);
-                    this.messageDynamicData=new Object[]{samplesSetName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudySampleSet.createStudySamplesSet(studyName, samplesSetName, samples, fieldNames, fieldValues, false);
+                    this.messageDynamicData=new Object[]{samplesSetName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudySamplesSet.TBL.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
                     break;
                 case STUDY_SAMPLES_SET_ACTIVATE:
                     studyName = argValues[0].toString();
                     samplesSetName=argValues[1].toString();
-                    actionDiagnoses =prjStudySampleSet.studySamplesSetActivate(schemaPrefix, token, studyName, samplesSetName);
-                    this.messageDynamicData=new Object[]{samplesSetName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudySampleSet.studySamplesSetActivate(studyName, samplesSetName);
+                    this.messageDynamicData=new Object[]{samplesSetName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudySamplesSet.TBL.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
                     break;
                 case STUDY_SAMPLES_SET_DEACTIVATE:
                     studyName = argValues[0].toString();
                     samplesSetName=argValues[1].toString();
-                    actionDiagnoses =prjStudySampleSet.studySamplesSetDeActivate(schemaPrefix, token, studyName, samplesSetName);
-                    this.messageDynamicData=new Object[]{samplesSetName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudySampleSet.studySamplesSetDeActivate(studyName, samplesSetName);
+                    this.messageDynamicData=new Object[]{samplesSetName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudySamplesSet.TBL.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
                     break;
@@ -231,8 +233,8 @@ public class ClassStudy {
                     studyName = argValues[0].toString();
                     samplesSetName=argValues[1].toString();
                     sampleIdStr = argValues[2].toString();
-                    actionDiagnoses =prjStudySampleSet.studySamplesSetAddSample(schemaPrefix, token, studyName, samplesSetName, sampleIdStr);
-                    this.messageDynamicData=new Object[]{sampleIdStr, samplesSetName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudySampleSet.studySamplesSetAddSample(studyName, samplesSetName, sampleIdStr);
+                    this.messageDynamicData=new Object[]{sampleIdStr, samplesSetName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudySamplesSet.TBL.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
                     break;
@@ -240,8 +242,8 @@ public class ClassStudy {
                     studyName = argValues[0].toString();
                     samplesSetName=argValues[1].toString();
                     sampleIdStr = argValues[2].toString();
-                    actionDiagnoses =prjStudySampleSet.studySamplesSetRemoveSample(schemaPrefix, token, studyName, samplesSetName, sampleIdStr);
-                    this.messageDynamicData=new Object[]{sampleIdStr, samplesSetName, studyName, schemaPrefix};
+                    actionDiagnoses =prjStudySampleSet.studySamplesSetRemoveSample(studyName, samplesSetName, sampleIdStr);
+                    this.messageDynamicData=new Object[]{sampleIdStr, samplesSetName, studyName, procInstanceName};
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudySamplesSet.TBL.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
                     break;

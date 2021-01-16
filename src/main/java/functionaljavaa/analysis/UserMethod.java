@@ -130,8 +130,8 @@ public class UserMethod {
      * @return
      */
     public static Object[] newUserMethodEntry(String analysis, String methodName, Integer methodVersion, Integer sampleId, Integer testId, Integer preAuditId){
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaDataName=LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
         Object[] diagnoses = new Object[]{LPPlatform.LAB_FALSE};
         String[] whereFields = new String[]{UserMethod.FIELDNAME_DATA_USER_METHOD_USER_ID, FIELDNAME_DATA_USER_METHOD_ANALYSIS, 

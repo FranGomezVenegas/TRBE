@@ -72,7 +72,7 @@ public class IncidentAPIfrontend extends HttpServlet {
             return;                   
         }
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}          
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
         switch (endPoint){
             case USER_OPEN_INCIDENTS:              

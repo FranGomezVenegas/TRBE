@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -61,12 +62,13 @@ public class SamplingPlanEntry {
     private List<SamplingPlanEntryItem> spEntries ;
     
     
-    public SamplingPlanEntry(String procPrefix, String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont) {        
+    public SamplingPlanEntry(String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont) {        
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         this.errorsArr=new String[]{};
         this.errorsjArr=new JSONArray();
         this.hasErrors=false;
         List<SamplingPlanEntryItem> myList = new ArrayList<>();
-        Object[][] materialSampPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_CONFIG), TblsInspLotRMConfig.MaterialSamplingPlan.TBL.getName(), 
+        Object[][] materialSampPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsInspLotRMConfig.MaterialSamplingPlan.TBL.getName(), 
             new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.FLD_MATERIAL.getName()}, new Object[]{materialName}, 
             new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.FLD_ENTRY_NAME.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FLD_ANALYSIS_VARIATION.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FLD_ALGORITHM.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FLD_FIX_SAMPLES_NUM.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialSampPlanInfo[0][0].toString())){

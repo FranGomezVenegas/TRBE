@@ -102,10 +102,10 @@ public class ProcedureDeployment extends HttpServlet {
 
         Object[][] dataIntegrityInstanceTable = new Object[][]{{"Data Integrity Item", "Matching Evaluation"}};
         try (PrintWriter out = response.getWriter()) {
-             if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}           
+             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}           
             
             if (PROC_DISPLAY_PROC_DEF_REQUIREMENTS){
-                Requirement.getProcedureBySchemaPrefix(procName);
+                Requirement.getProcedureByProcInstanceName(procName);
             }
             Object[][] procEvent = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.ProcedureEvents.TBL.getName(),
                     new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_FLD_NAME.split("\\|"),

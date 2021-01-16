@@ -15,15 +15,18 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
  * @author User
  */
 public class GenomaDataStudySamplesSet {
-public Object[] createStudySamplesSet( String schemaPrefix, Token token, String studyName, String sampleSetName, String[] samples, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+public Object[] createStudySamplesSet( String studyName, String sampleSetName, String[] samples, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
     
-    Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(schemaPrefix, token, studyName);    
+    Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
    
     String classVersionProj = "0.1";
@@ -49,7 +52,7 @@ public Object[] createStudySamplesSet( String schemaPrefix, Token token, String 
         
         String schemaDataName = LPPlatform.SCHEMA_DATA;
         
-        schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, schemaDataName);    
+        schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
         
         mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.StudySamplesSet.TBL.getName(), actionName);
         
@@ -106,7 +109,7 @@ public Object[] createStudySamplesSet( String schemaPrefix, Token token, String 
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, GenomaDataProject.GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS.getErrorCode(), new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, GenomaDataProject.GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS.getErrorCode(), new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
         }        
 /*        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{LPPlatform.SCHEMA_CONFIG,"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){	
@@ -142,7 +145,7 @@ public Object[] createStudySamplesSet( String schemaPrefix, Token token, String 
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, ex.getMessage());
                         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                        
                     }
-                    Object specialFunctionReturn = method.invoke(this, null, schemaPrefix, projectTemplate, projectTemplateVersion);      
+                    Object specialFunctionReturn = method.invoke(this, null, procInstanceName, projectTemplate, projectTemplateVersion);      
                     if (specialFunctionReturn.toString().contains("ERROR")){
                         StackTraceElement[] elements = Thread.currentThread().getStackTrace();
                         diagnosesProj[0]= elements[1].getClassName() + "." + elements[1].getMethodName();
@@ -179,9 +182,9 @@ public Object[] createStudySamplesSet( String schemaPrefix, Token token, String 
            fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudySamplesSet.FLD_CREATED_BY.getName())] = token.getPersonName();
         if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudySamplesSet.FLD_ACTIVE.getName())==-1){
            fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudySamplesSet.FLD_ACTIVE.getName());
-           fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName()));
+           fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName()));
         }else
-           fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudySamplesSet.FLD_ACTIVE.getName())] = GenomaBusinessRules.activateOnCreation(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName());        
+           fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudySamplesSet.FLD_ACTIVE.getName())] = GenomaBusinessRules.activateOnCreation(LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName());        
 /*        fieldsName = LPArray.addValueToArray1D(fieldsName, LPPlatform.SCHEMA_CONFIG);    
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplate);
         fieldsName = LPArray.addValueToArray1D(fieldsName, "config_version");    
@@ -191,9 +194,9 @@ public Object[] createStudySamplesSet( String schemaPrefix, Token token, String 
         diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.StudySamplesSet.TBL.getName(), fieldsName, fieldsValue);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
             for (String currSample: samples)
-                studySamplesSetAddSample(schemaPrefix, token, studyName, sampleSetName, currSample);
+                studySamplesSetAddSample(studyName, sampleSetName, currSample);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.NEW_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.NEW_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
         return diagnosesProj;  
     }    
@@ -211,74 +214,82 @@ public Object[] createStudySamplesSet( String schemaPrefix, Token token, String 
     return diagnosesProj; 
 }    
 
-public Object[] studySamplesSetActivate( String schemaPrefix, Token token, String studyName, String sampleSetName){
+public Object[] studySamplesSetActivate( String studyName, String sampleSetName){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     String[] fieldsName=new String[]{TblsGenomaData.StudySamplesSet.FLD_ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
     
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudySamplesSet.TBL.getName(), 
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudySamplesSet.TBL.getName(), 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{sampleSetName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.ACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.ACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
     return diagnosesProj;      
 }    
 
-public Object[] studySamplesSetDeActivate(String schemaPrefix, Token token, String studyName, String sampleSetName){
-    Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(schemaPrefix, token, studyName);    
+public Object[] studySamplesSetDeActivate(String studyName, String sampleSetName){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+    Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
     
     String[] fieldsName=new String[]{TblsGenomaData.StudySamplesSet.FLD_ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{false};
     
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudySamplesSet.TBL.getName(), 
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudySamplesSet.TBL.getName(), 
             fieldsName, fieldsValue, 
             new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName(), TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{studyName, sampleSetName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.DEACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.DEACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
     return diagnosesProj;      
 }   
 
-public Object[] studySamplesSetUpdate( String schemaPrefix, Token token, String studyName, String sampleSetName, String[] fieldsName, Object[] fieldsValue){
-    Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(schemaPrefix, token, studyName);    
+public Object[] studySamplesSetUpdate( String studyName, String sampleSetName, String[] fieldsName, Object[] fieldsValue){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+    Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
-    Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName(), fieldsName);
+    Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName(), fieldsName);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString()))
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudySamplesSet.TBL.getName(), 
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudySamplesSet.TBL.getName(), 
             fieldsName, fieldsValue, 
             new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName(), TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{studyName, sampleSetName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.UPDATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.UPDATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
     return diagnosesProj;      
 } 
 
-public Object[] studySamplesSetAddSample(String schemaPrefix, Token token, String studyName, String sampleSetName, String sampleId) {
-    Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(schemaPrefix, token, studyName, sampleSetName);
+public Object[] studySamplesSetAddSample(String studyName, String sampleSetName, String sampleId) {
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+    Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;
     
-    Object[] updateSamplesSetSamples=addObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName(), 
+    Object[] updateSamplesSetSamples=addObjectToUnstructuredField(LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName(), 
             new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName(), TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{studyName, sampleSetName}, 
             TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName(), sampleId, sampleId);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
         return updateSamplesSetSamples;
     }
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
-        GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.STUDY_SAMPLES_SET_ADDED_SAMPLE.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.STUDY_SAMPLES_SET_ADDED_SAMPLE.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]}, ":"), null);
     }
     return updateSamplesSetSamples;
 }
 
-public Object[] studySamplesSetRemoveSample(String schemaPrefix, Token token, String studyName, String sampleSetName, String sampleId) {
+public Object[] studySamplesSetRemoveSample(String studyName, String sampleSetName, String sampleId) {
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     
-    Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(schemaPrefix, token, studyName, sampleSetName);
+    Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;
 
-    Object[] updateSamplesSetSamples=removeObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName(), 
+    Object[] updateSamplesSetSamples=removeObjectToUnstructuredField(LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName(), 
             new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName(), TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{studyName, sampleSetName}, 
             TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId, sampleId);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
@@ -286,20 +297,22 @@ public Object[] studySamplesSetRemoveSample(String schemaPrefix, Token token, St
     }
     
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
-        GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.STUDY_SAMPLES_SET_REMOVED_SAMPLE.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.STUDY_SAMPLES_SET_REMOVED_SAMPLE.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]}, ":"), null);
     }
     return updateSamplesSetSamples;
 }
 
-public static Object[] isStudySamplesSetOpenToChanges(String schemaPrefix, Token token, String studyName, String familyName){
-        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudySamplesSet.TBL.getName(),
+public static Object[] isStudySamplesSetOpenToChanges(String studyName, String familyName){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+    Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudySamplesSet.TBL.getName(),
             new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName(), TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{studyName, familyName}, new String[]{TblsGenomaData.StudySamplesSet.FLD_ACTIVE.getName()});
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The study family <*1*> does not exist in procedure <*2*>", new Object[]{studyName, schemaPrefix});
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The study family <*1*> does not exist in procedure <*2*>", new Object[]{studyName, procInstanceName});
     if (!Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][0]).toString()))
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The study family <*1*> is already inactive in procedure <*2*>", new Object[]{studyName, schemaPrefix});
-    return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{studyName, schemaPrefix});
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The study family <*1*> is already inactive in procedure <*2*>", new Object[]{studyName, procInstanceName});
+    return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{studyName, procInstanceName});
 }
     
 }

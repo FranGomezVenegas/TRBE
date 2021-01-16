@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -44,6 +45,11 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);        
         DataSpec resChkSpec = new DataSpec();   
 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true);        
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            return;
+        }
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
         String csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);

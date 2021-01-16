@@ -73,7 +73,7 @@ public class PoolC3P0 {
   * crea una nueva y la regresa
   * @return
   */
- public static PoolC3P0 getInstance() {
+ public static PoolC3P0 getInstanceForActions() {
  
   if (datasource == null) {
       datasource = new PoolC3P0();
@@ -91,7 +91,7 @@ public class PoolC3P0 {
  public Connection getConnection() {
      try {
          Logger.getLogger(PoolC3P0.class.getName()).log(Level.INFO, null, "getConnection called");
-         datasource = getInstance();
+         datasource = getInstanceForActions();
          //this.cpds.setConnectionPoolDataSource(this.cpds);
          //this.cpds.setConnectionPoolDataSource(this.cpds);
          //return this.datasource.cpds.setConnectionPoolDataSource(this.cpds);

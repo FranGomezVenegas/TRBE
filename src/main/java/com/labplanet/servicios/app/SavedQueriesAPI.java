@@ -199,7 +199,7 @@ public class SavedQueriesAPI extends HttpServlet {
                return;                   
             }     
         }
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;} 
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;} 
         try (PrintWriter out = response.getWriter()) {
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
@@ -229,7 +229,7 @@ public class SavedQueriesAPI extends HttpServlet {
             Integer svqQryId=null;
             switch (endPoint){
                 case CREATE_SAVED_QUERY:                    
-                    actionDiagnoses = SaveQueries.newSavedQuery(token, schemaPrefix, argValues[0].toString(), argValues[1].toString(), argValues[2].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split(("\\|"))));
+                    actionDiagnoses = SaveQueries.newSavedQuery(argValues[0].toString(), argValues[1].toString(), argValues[2].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split(("\\|"))));
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                         String savedQueryIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
                         if (savedQueryIdStr!=null && savedQueryIdStr.length()>0) svqQryId=Integer.valueOf(savedQueryIdStr);
@@ -246,7 +246,7 @@ public class SavedQueriesAPI extends HttpServlet {
             if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
-                RelatedObjects rObj=RelatedObjects.getInstance();
+                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SavedQueries.TBL.getName(), TblsData.SavedQueries.TBL.getName(), svqQryId);                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{svqQryId}, rObj.getRelatedObject());
                 rObj.killInstance();

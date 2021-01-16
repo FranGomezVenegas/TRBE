@@ -7,12 +7,9 @@ package com.labplanet.servicios.moduleenvmonit;
 
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
-import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.ClassEnvMonSampleFrontend.EnvMonSampleAPIFrontendEndpoints;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
-import databases.Rdbms;
-import databases.Token;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -24,6 +21,7 @@ import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -39,37 +37,21 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
-     * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */                
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
-        try (PrintWriter out = response.getWriter()) {
-            String[] mandatoryParams = new String[]{""};
-            Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                return;          
-            }             
-            String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
 
-            Token token = new Token(finalToken);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                    LPFrontEnd.servletReturnResponseError(request, response, 
-                            LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
-                    return;                             
-            }
-            mandatoryParams = null;                        
+        try (PrintWriter out = response.getWriter()) {
             EnvMonSampleAPIFrontendEndpoints endPoint = null;
             try{
                 endPoint = EnvMonSampleAPIFrontendEndpoints.valueOf(actionName.toUpperCase());
@@ -79,14 +61,14 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
 //                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
-            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, finalToken, schemaPrefix, endPoint);
-            if (clss.getIsSuccess())
+            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, endPoint);
+            if (clss.getIsSuccess()){
                 if (clss.getResponseContentJArr()!=null)
                     LPFrontEnd.servletReturnSuccess(request, response, (JSONArray) clss.getResponseContentJArr());
                 if (clss.getResponseContentJObj()!=null)
                     LPFrontEnd.servletReturnSuccess(request, response, (JSONObject) clss.getResponseContentJObj());
-            else
+            }else
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, (Object[]) clss.getResponseError());              
         }catch(Exception e){      
             String exceptionMessage =e.getMessage();
@@ -96,7 +78,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                

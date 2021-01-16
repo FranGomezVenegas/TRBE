@@ -200,7 +200,7 @@ public class InvestigationAPI extends HttpServlet {
                return;                   
             }     
         }
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;} 
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;} 
         try (PrintWriter out = response.getWriter()) {
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
@@ -230,17 +230,17 @@ public class InvestigationAPI extends HttpServlet {
             Integer incId=null;
             switch (endPoint){
                 case NEW_INVESTIGATION:                    
-                    actionDiagnoses = Investigation.newInvestigation(token, schemaPrefix, argValues[0].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|"))), argValues[2].toString());
+                    actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|"))), argValues[2].toString());
                     String investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
                     break;
                 case ADD_INVEST_OBJECTS:
-                    actionDiagnoses = Investigation.addInvestObjects(token, schemaPrefix, Integer.valueOf(argValues[0].toString()), argValues[1].toString(), null);
+                    actionDiagnoses = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), argValues[1].toString(), null);
                     investigationIdStr=argValues[0].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
                     break;
                 case CLOSE_INVESTIGATION:
-                    actionDiagnoses = Investigation.closeInvestigation(token, schemaPrefix, Integer.valueOf(argValues[0].toString()));
+                    actionDiagnoses = Investigation.closeInvestigation(Integer.valueOf(argValues[0].toString()));
                     investigationIdStr=argValues[0].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
                     break;
@@ -252,7 +252,7 @@ public class InvestigationAPI extends HttpServlet {
                             
                     if (argValues[2]!=null && argValues[2].toString().length()>0) capaFldName=argValues[2].toString().split("\\|");
                     if (argValues[3]!=null && argValues[3].toString().length()>0) capaFldValue=argValues[3].toString().split("\\|");
-                    actionDiagnoses = Investigation.capaDecision(token, schemaPrefix, Integer.valueOf(argValues[0].toString()), 
+                    actionDiagnoses = Investigation.capaDecision(Integer.valueOf(argValues[0].toString()), 
                             Boolean.valueOf(argValues[1].toString()), capaFldName, capaFldValue);
                     investigationIdStr=argValues[0].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
@@ -277,7 +277,7 @@ public class InvestigationAPI extends HttpServlet {
             if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
-                RelatedObjects rObj=RelatedObjects.getInstance();
+                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), "investigation", incId);                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
                 rObj.killInstance();

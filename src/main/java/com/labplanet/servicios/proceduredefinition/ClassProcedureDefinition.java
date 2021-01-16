@@ -27,13 +27,13 @@ import org.json.simple.JSONObject;
 public class ClassProcedureDefinition {
     enum UomImportType{INDIV, FAMIL};
     private Object[] messageDynamicData=new Object[]{};
-    private RelatedObjects relatedObj=RelatedObjects.getInstance();
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
     public ClassProcedureDefinition(HttpServletRequest request, HttpServletResponse response, Token token, ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint){
-        RelatedObjects rObj=RelatedObjects.getInstance();
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        

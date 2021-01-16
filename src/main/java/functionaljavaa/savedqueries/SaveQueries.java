@@ -5,17 +5,15 @@
  */
 package functionaljavaa.savedqueries;
 
-import com.labplanet.servicios.app.SavedQueriesAPIfrontend;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -37,10 +35,12 @@ enum SavedQueriesAPIErrorMessages{
     private final String name;
 }
 
-    public static Object[] newSavedQuery(Token token, String schemaPrefix, String name, String definition, String[] fldNames, Object[] fldValues){ 
+    public static Object[] newSavedQuery(String name, String definition, String[] fldNames, Object[] fldValues){ 
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         try {
             JSONParser parser = new JSONParser(); 
-            JSONObject json = (JSONObject) parser.parse(definition.toString());
+            JSONObject json = (JSONObject) parser.parse(definition);
         } catch (ParseException ex) {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Definition field not recognized as Json object, error: <*1*>. Field value: <*2*>",new Object[]{ex.toString(), definition});
         }
@@ -53,11 +53,11 @@ enum SavedQueriesAPIErrorMessages{
             updFieldValue=LPArray.addValueToArray1D(updFieldValue, fldValues);
         }
         
-        Object[] diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SavedQueries.TBL.getName(), 
+        Object[] diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SavedQueries.TBL.getName(), 
             updFieldName, updFieldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
         String investIdStr=diagnostic[diagnostic.length-1].toString();
-        //Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(schemaPrefix, token, InvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsData.SavedQueries.TBL.getName(), Integer.valueOf(investIdStr), investIdStr,  
+        //Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(procInstanceName, token, InvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsData.SavedQueries.TBL.getName(), Integer.valueOf(investIdStr), investIdStr,  
         //        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, null);
         return diagnostic;               
     }

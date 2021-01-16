@@ -11,6 +11,7 @@ import lbplanet.utilities.LPArray;
 import java.util.Arrays;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -38,8 +39,7 @@ public class DataProgramProductionLot{
     
     /**
      *
-     * @param schemaPrefix
-   * @param lotName
+     * @param lotName
      * @param fieldName
      * @param fieldValue
      * @param personName
@@ -47,13 +47,14 @@ public class DataProgramProductionLot{
      * @param appSessionId
      * @return
      */    
-    public static Object[] newProgramProductionLot(String schemaPrefix, String lotName, String[] fieldName, Object[] fieldValue, String personName, String userRole, Integer appSessionId) {
+    public static Object[] newProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, String personName, String userRole, Integer appSessionId) {
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String[] tblFlds=new String[0];
-        Object[] batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+        Object[] batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
                 new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(batchExists[0].toString())){
-            Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode(), new Object[]{lotName, schemaPrefix});
-            return LPArray.addValueToArray1D(trapMessage, new Object[]{lotName, schemaPrefix});
+            Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode(), new Object[]{lotName, procInstanceName});
+            return LPArray.addValueToArray1D(trapMessage, new Object[]{lotName, procInstanceName});
         }
         
         for (TblsEnvMonitData.ProductionLot obj: TblsEnvMonitData.ProductionLot.values()){
@@ -62,7 +63,7 @@ public class DataProgramProductionLot{
         if (fieldName==null)fieldName=new String[0];
         for (String curFld: fieldName){
           if (curFld.length()>0 && LPArray.valuePosicInArray(tblFlds, curFld)==-1)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, 
-                  ProductionLotErrorTrapping.PRODUCTIONLOT_FIELD_NOT_FOUND.getErrorCode(), new Object[]{curFld, lotName, Arrays.toString(fieldName), Arrays.toString(fieldValue), schemaPrefix});
+                  ProductionLotErrorTrapping.PRODUCTIONLOT_FIELD_NOT_FOUND.getErrorCode(), new Object[]{curFld, lotName, Arrays.toString(fieldName), Arrays.toString(fieldValue), procInstanceName});
         }
         fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName());
         fieldValue=LPArray.addValueToArray1D(fieldValue, lotName);
@@ -76,40 +77,39 @@ public class DataProgramProductionLot{
           fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName());
           fieldValue=LPArray.addValueToArray1D(fieldValue, LPDate.getCurrentTimeStamp());
         }else{fieldValue[posicInArr]=LPDate.getCurrentTimeStamp();}
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), fieldName, fieldValue);
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), fieldName, fieldValue);
     }
 
     /**
      *
-     * @param schemaPrefix
      * @param lotName
      * @param personName
      * @param userRole
      * @param appSessionId
      * @return
      */
-    public static Object[] activateProgramProductionLot(String schemaPrefix, String lotName, String personName, String userRole, Integer appSessionId) {
+    public static Object[] activateProgramProductionLot(String lotName, String personName, String userRole, Integer appSessionId) {
       String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()};
       Object[] fieldValue=new Object[]{true};
-      return updateProgramProductionLot(schemaPrefix, lotName, fieldName, fieldValue, personName, userRole, appSessionId);
+      return updateProgramProductionLot(lotName, fieldName, fieldValue, personName, userRole, appSessionId);
     }    
 
     /**
      *
-     * @param schemaPrefix
      * @param lotName
      * @param personName
      * @param userRole
      * @param appSessionId
      * @return
      */
-    public static Object[] deactivateProgramProductionLot(String schemaPrefix, String lotName, String personName, String userRole, Integer appSessionId) {
+    public static Object[] deactivateProgramProductionLot(String lotName, String personName, String userRole, Integer appSessionId) {
       String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()};
       Object[] fieldValue=new Object[]{false};
-      return updateProgramProductionLot(schemaPrefix, lotName, fieldName, fieldValue, personName, userRole, appSessionId);
+      return updateProgramProductionLot(lotName, fieldName, fieldValue, personName, userRole, appSessionId);
     }        
-    private static Object[] updateProgramProductionLot(String schemaPrefix, String lotName, String[] fieldName, Object[] fieldValue, String personName, String userRole, Integer appSessionId) {
-      return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+    private static Object[] updateProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, String personName, String userRole, Integer appSessionId) {
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
               fieldName, fieldValue, new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});                 
     }
 }

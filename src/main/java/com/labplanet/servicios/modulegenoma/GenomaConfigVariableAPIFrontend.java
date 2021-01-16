@@ -20,6 +20,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -55,18 +56,12 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
-
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+        
         try (PrintWriter out = response.getWriter()) {
-
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaConfigVariableAPI.MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
 
         GenomaVariableAPIFrontEndEndPoints endPoint = null;
         try{
@@ -76,30 +71,26 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
             return;                   
         }        
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false))return;
+        if (!LPFrontEnd.servletStablishDBConection(request, response))return;
 
         switch (endPoint){
         case GET_ACTIVE_CONFIG_VARIABLE_SET:
-            Rdbms.stablishDBConection(false);
             break;
         case GET_VARIABLE_SET_VARIABLES_ID: 
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaConfigVariableAPIFrontend.GenomaVariableAPIFrontEndEndPoints.GET_VARIABLE_SET_VARIABLES_ID.getMandatoryFields().split("\\|"));
+            Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaConfigVariableAPIFrontend.GenomaVariableAPIFrontEndEndPoints.GET_VARIABLE_SET_VARIABLES_ID.getMandatoryFields().split("\\|"));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response, 
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                 return;                  
             }                                 
-            Rdbms.stablishDBConection(false);
             String variableSetName=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());  
-            Object[] varSetVariables=GenomaConfigVariablesQueries.getVariableSetVariablesId(schemaPrefix, variableSetName);            
-            Rdbms.closeRdbms();  
+            Object[] varSetVariables=GenomaConfigVariablesQueries.getVariableSetVariablesId(variableSetName);            
             JSONArray jsonArr=new JSONArray();
             jsonArr.add(LPJson.convertToJSON(varSetVariables, "Variable Name"));
             LPFrontEnd.servletReturnSuccess(request, response, jsonArr);
             break;        
         default:      
-            Rdbms.closeRdbms(); 
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);                                                                  
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);                                                                  
     }
     }catch(Exception e){      
         String exceptionMessage =e.getMessage();
@@ -109,7 +100,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
     } finally {
        // release database resources
        try {
-           Rdbms.closeRdbms();   
+           procReqInstance.killIt();
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
        }
     }              

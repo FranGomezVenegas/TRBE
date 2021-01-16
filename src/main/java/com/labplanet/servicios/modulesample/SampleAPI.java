@@ -6,15 +6,10 @@
 package com.labplanet.servicios.modulesample;
 
 import com.labplanet.servicios.ClassPath;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPHttp;
-import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
-import databases.Rdbms;
-import databases.Token;
-import functionaljavaa.audit.AuditAndUserValidation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -25,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author Administrator
@@ -37,7 +33,7 @@ public class SampleAPI extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        propertyFileName = ClassPath.getInstance().getConfigXmlPath(); //context.getInitParameter("jsfiles");
+        propertyFileName = ClassPath.getInstanceForActions().getConfigXmlPath(); //context.getInitParameter("jsfiles");
     }    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -52,40 +48,11 @@ public class SampleAPI extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
-
-        String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
         
-        Token token = new Token(finalToken);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
-                return;                                
-        }
-        mandatoryParams = null;                        
-
-        if (mandatoryParams!=null){
-            areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, mandatoryParams);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                return;                  
-            }     
-        }
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, language);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
-            return;          
-        }     
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
  /*       if (con==null){
              response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
@@ -109,19 +76,9 @@ public class SampleAPI extends HttpServlet {
             Logger.getLogger(SampleAPI.class.getName()).log(Level.SEVERE, null, ex);
         }*/
 
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
-        Rdbms.setTransactionId(schemaConfigName);
+//        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
+//        Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
-            Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;               
-            }            
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(schemaPrefix, token.getUserRole(), actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){       
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;                           
-            }                        
             SampleAPIEndpoints endPoint = null;
             try{
                 endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
@@ -129,7 +86,7 @@ public class SampleAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+            Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
@@ -151,7 +108,7 @@ public class SampleAPI extends HttpServlet {
             }            
             
         }catch(Exception e){   
-            auditAndUsrValid.killInstance();
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_EXCEPTION_RAISED, new Object[]{e.getMessage(), this.getServletName()}, language);                   
  /*           try {
                 con.rollback();
@@ -163,9 +120,7 @@ public class SampleAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
-//                con.close();
-                Rdbms.closeRdbms();   
-                auditAndUsrValid.killInstance();
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       

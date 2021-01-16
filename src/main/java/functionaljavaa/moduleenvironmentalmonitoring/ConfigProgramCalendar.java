@@ -14,6 +14,7 @@ import java.util.Date;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -179,33 +180,33 @@ public class ConfigProgramCalendar {
 
         /**
      *
-     * @param schemaName
      * @param pName
      * @param programCalendarId
    * @param fieldsToRetrieve
      * @return
      */
-public static Object[][] getConfigProgramCalendar( String schemaName, String pName, int programCalendarId, String[] fieldsToRetrieve) {
-  if (fieldsToRetrieve==null) fieldsToRetrieve=new String[]{TblsEnvMonitConfig.ProgramCalendar.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName(), 
-    TblsEnvMonitConfig.ProgramCalendar.FLD_SCHEDULE_SIZE_UNIT.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_SCHEDULE_SIZE.getName(), 
-    TblsEnvMonitConfig.ProgramCalendar.FLD_START_DATE.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_END_DATE.getName()};
-  return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
-              new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_CALENDAR_ID.getName()}, 
-              new Object[]{pName, programCalendarId}, 
-              fieldsToRetrieve);
-}   
+    public static Object[][] getConfigProgramCalendar(String pName, int programCalendarId, String[] fieldsToRetrieve) {
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        if (fieldsToRetrieve==null) fieldsToRetrieve=new String[]{TblsEnvMonitConfig.ProgramCalendar.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName(), 
+        TblsEnvMonitConfig.ProgramCalendar.FLD_SCHEDULE_SIZE_UNIT.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_SCHEDULE_SIZE.getName(), 
+        TblsEnvMonitConfig.ProgramCalendar.FLD_START_DATE.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_END_DATE.getName()};
+        return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
+                new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_CALENDAR_ID.getName()}, 
+                new Object[]{pName, programCalendarId}, 
+                fieldsToRetrieve);
+    }   
 
     /**
      *
-     * @param schemaName
      * @param holidaysCalendarCode
      * @param pName
      * @param programCalendarId
      * @return
      */
     @SuppressWarnings("empty-statement")
-    public static Object[] importHolidaysCalendarSchedule( String schemaName, String pName, Integer programCalendarId, String holidaysCalendarCode) {                
-      Object[] existsRecord = Rdbms.existsRecord(LPPlatform.SCHEMA_APP, TblsApp.HolidaysCalendar.TBL.getName(),  
+    public static Object[] importHolidaysCalendarSchedule(String pName, Integer programCalendarId, String holidaysCalendarCode) {                
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.SCHEMA_APP, TblsApp.HolidaysCalendar.TBL.getName(),  
               new String[]{TblsApp.HolidaysCalendar.FLD_CODE.getName(),TblsApp.HolidaysCalendar.FLD_ACTIVE.getName()}, 
               new Object[]{holidaysCalendarCode, true});
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){ return existsRecord;}     
@@ -217,11 +218,11 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
       if (holidaysCalendarDates.length==0)
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_HOLIDAY_CALENDAR_EMPTY, new Object[]{holidaysCalendarCode});
 
-      existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendar.TBL.getName(), 
+      existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendar.TBL.getName(), 
               new String[]{TblsEnvMonitConfig.ProgramCalendar.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName()}, 
               new Object[]{pName, programCalendarId});
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){ return existsRecord;}
-          Object[] newProjSchedRecursive = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.TBL.getName(), 
+          Object[] newProjSchedRecursive = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.TBL.getName(), 
           new String[]{TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_RULE.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_IS_HOLIDAYS.getName()},
           new Object[]{pName, programCalendarId, holidaysCalendarCode, true});
       int projRecursiveId = Integer.parseInt(newProjSchedRecursive[newProjSchedRecursive.length-1].toString());
@@ -232,19 +233,19 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
           Date calDate = (Date) holidaysCalendarDate[1]; //String s = cal.getTime().toString();
           s = format1.format(calDate.getTime());            
           datesStr.append(s).append("|");
-          Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
+          Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
                   new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName(), 
                     TblsEnvMonitConfig.ProgramCalendarDate.FLD_CALENDAR_ID.getName()
                     , TblsEnvMonitConfig.ProgramCalendarDate.FLD_RECURSIVE_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_DATE.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_IS_HOLIDAYS.getName()},
                   new Object[]{pName, programCalendarId, projRecursiveId, calDate, true});
-          Object[][] itemsSameDay = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
+          Object[][] itemsSameDay = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
                   new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_DATE.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_IS_HOLIDAYS.getName()},
                   new Object[]{pName, programCalendarId, calDate, false}, 
                   new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_RECURSIVE_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_DATE.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_IS_HOLIDAYS.getName()});
           if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(itemsSameDay[0][0].toString())){
               for (Object[] itemsSameDay1 : itemsSameDay) {
                   Long itemId = (Long) itemsSameDay1[0];
-                  Object[] updateResult = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(),
+                  Object[] updateResult = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(),
                           new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_CONFLICT.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_CONFLICT_DETAIL.getName()}, new Object[]{true, ConflictDetail.DAY_CONVERTED_ON_HOLIDAYS.getDescription()},
                           new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_ID.getName()}, new Object[]{itemId.intValue()});
                   if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateResult[0].toString())){return updateResult;}                    
@@ -256,7 +257,6 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
  
     /**
      *
-     * @param schemaName
      * @param pName
      * @param programCalendarId
      * @param locationName
@@ -264,9 +264,10 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
      * @param fieldValue
      * @return
      */
-    public static Object[] addRecursiveScheduleForLocation(String schemaName, String pName, Integer programCalendarId, String locationName, String[] fieldName, Object[] fieldValue){
+    public static Object[] addRecursiveScheduleForLocation(String pName, Integer programCalendarId, String locationName, String[] fieldName, Object[] fieldValue){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-      Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendar.TBL.getName(),  
+      Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendar.TBL.getName(),  
               new String[]{TblsEnvMonitConfig.ProgramCalendar.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName()}, new Object[]{pName, programCalendarId});
       if (LPPlatform.LAB_FALSE.equals(existsRecord[0].toString())){ return existsRecord;}
 
@@ -281,7 +282,7 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
       }      
       Object[][] projectInfo = new Object[0][0];
       if (startDate==null || endDate==null){
-          projectInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendar.TBL.getName(), 
+          projectInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendar.TBL.getName(), 
                   new String[]{TblsEnvMonitConfig.ProgramCalendar.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName()}, new Object[]{pName, programCalendarId}, new String[]{TblsEnvMonitConfig.ProgramCalendar.FLD_PROGRAM_ID.getName(), 
                     TblsEnvMonitConfig.ProgramCalendar.FLD_START_DATE.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_END_DATE.getName()});
           if (startDate==null){
@@ -314,7 +315,7 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_NO_DAYS_IN_RANGE, new Object[]{daysOfWeek, startDate, endDate});
       }
       Object[] newProjSchedRecursive = null;
-      newProjSchedRecursive = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.TBL.getName(), 
+      newProjSchedRecursive = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.TBL.getName(), 
               new String[]{TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_RULE.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_START_DATE.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_END_DATE.getName()},
               new Object[]{pName, programCalendarId, daysOfWeek, (Date) projectInfo[0][1], (Date) projectInfo[0][2]});
       int projRecursiveId = Integer.parseInt(newProjSchedRecursive[newProjSchedRecursive.length-1].toString());
@@ -324,7 +325,7 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
           Date cale = (Date) daysInRange1; //String s = cal.getTime().toString();
           s = format1.format(cale.getTime());            
           datesStr.append(s).append("|");
-          Object[] isHolidays = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
+          Object[] isHolidays = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
                   new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_DATE.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_IS_HOLIDAYS.getName()}, 
                   new Object[]{pName, programCalendarId, daysInRange1, true});             
           String[] fieldNames = new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_RECURSIVE_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_DATE.getName()};
@@ -338,7 +339,7 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
               fieldValues=LPArray.addValueToArray1D(fieldValues, true);
               fieldValues=LPArray.addValueToArray1D(fieldValues, ConflictDetail.DAY_IS_MARKED_AS_HOLIDAYS.getDescription());
           }         
-          Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
+          Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
             fieldNames, fieldValues);            
       }
       return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, HOLIDAY_CALENDAR_ADDED, new Object[]{datesStr});

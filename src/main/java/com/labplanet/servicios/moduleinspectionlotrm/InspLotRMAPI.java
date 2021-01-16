@@ -155,7 +155,8 @@ public class InspLotRMAPI extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstance(request);
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
         

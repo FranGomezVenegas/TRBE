@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import trazit.session.ProcedureRequestSession;
 
 
 /**
@@ -42,8 +43,14 @@ public class TestingUOMFamilyTable extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true);        
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            return;
+        }
+
         String csvFileName = "uom_familyTable.txt"; 
-                             
+                            
         String csvPathName = LPTestingOutFormat.TESTING_FILES_PATH+csvFileName; 
         String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
         Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
@@ -51,7 +58,6 @@ public class TestingUOMFamilyTable extends HttpServlet {
         StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
         
-        if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}   
         
         try (PrintWriter out = response.getWriter()) {
             HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));

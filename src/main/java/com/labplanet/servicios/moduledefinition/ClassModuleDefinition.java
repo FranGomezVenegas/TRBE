@@ -14,13 +14,13 @@ import lbplanet.utilities.LPAPIArguments;
  */
 public class ClassModuleDefinition {
     private Object[] messageDynamicData=new Object[]{};
-    private RelatedObjects relatedObj=RelatedObjects.getInstance();
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
     public ClassModuleDefinition(HttpServletRequest request, HttpServletResponse response, Token token, ModuleDefinitionAPIEndpoints endPoint){
-        RelatedObjects rObj=RelatedObjects.getInstance();
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        

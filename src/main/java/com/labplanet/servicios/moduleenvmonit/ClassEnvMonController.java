@@ -5,16 +5,12 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import databases.Token;
-import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 
 /**
@@ -27,7 +23,7 @@ public class ClassEnvMonController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassEnvMonController(HttpServletRequest request, Token token, String schemaPrefix, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
+    public ClassEnvMonController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
         EnvMonAPI.EnvMonAPIEndpoints endPoint = null;
@@ -39,14 +35,9 @@ public class ClassEnvMonController {
             for (int inumArg=argsForLogFiles.length+4;inumArg<table1NumArgs;inumArg++){
                 argsForLogFiles=LPArray.addValueToArray1D(argsForLogFiles, "");
             }
-            AuditAndUserValidation checkUserVal=AuditAndUserValidation.getInstance(null, null, null);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkUserVal.getCheckUserValidationPassesDiag()[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, checkUserVal.getCheckUserValidationPassesDiag());              
-                return;          
-            }               
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMon clss=new ClassEnvMon(request, token, schemaPrefix, endPoint, checkUserVal);
+            ClassEnvMon clss=new ClassEnvMon(request, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

@@ -32,6 +32,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -87,6 +88,12 @@ public class DbTestingLimitAndResult extends HttpServlet {
         String table1Header = TestingServletsConfig.DB_SCHEMACONFIG_SPEC_RESULTCHECK.getTablesHeaders();
         response = LPTestingOutFormat.responsePreparation(response);        
         DataSpec resChkSpec = new DataSpec();   
+
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true);        
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            return;
+        }
 
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
         
@@ -178,7 +185,6 @@ public class DbTestingLimitAndResult extends HttpServlet {
                 String schemaConfigName=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG);
                 String schemaDataName=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_DATA);
 
-                Rdbms.stablishDBConection(true);                                
                 Object[] resSpecEvaluation = null;                
                 Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
                     new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), 
@@ -192,7 +198,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
                     Integer limitId = (Integer) specLimits[0][0];
                     String specUomName=(String) specLimits[0][4];
                     ConfigSpecRule specRule = new ConfigSpecRule();
-                    specRule.specLimitsRule(schemaName, limitId, null);
+                    specRule.specLimitsRule(limitId, null);
                     if (specRule.getRuleIsQualitative()){        
                       resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
                               specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());

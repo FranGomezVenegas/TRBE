@@ -9,6 +9,7 @@ import databases.Token;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSampleAnalysisResultStrategy;
 import lbplanet.utilities.LPArray;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -18,8 +19,6 @@ public class DataProgramSampleAnalysisResult implements DataSampleAnalysisResult
 
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param resultId
      * @param sampleFieldName
      * @param sampleFieldValue
@@ -28,16 +27,17 @@ public class DataProgramSampleAnalysisResult implements DataSampleAnalysisResult
      * @return
      */
     @Override
-  public Object[] sarControlAction(String schemaPrefix, Token token, Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue) {
-      String sampleActionWhenUponControlMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", "sampleActionWhenUponControlMode", null);
+  public Object[] sarControlAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue) {
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+      String sampleActionWhenUponControlMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", "sampleActionWhenUponControlMode", null);
       if (LPArray.valuePosicInArray(SAMPLEACTIONWHENUPONCONTROLMODEENABLINGSTATUSES.split("\\|"), sampleActionWhenUponControlMode)==-1)
           return new Object[0];
-      return DataProgramCorrectiveAction.createNew(schemaPrefix, token, resultId, sampleFieldName, sampleFieldValue,sarFieldName, sarFieldValue);
+      return DataProgramCorrectiveAction.createNew(resultId, sampleFieldName, sampleFieldValue,sarFieldName, sarFieldValue);
   }
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param token
      * @param resultId
      * @param sampleFieldName
@@ -47,10 +47,12 @@ public class DataProgramSampleAnalysisResult implements DataSampleAnalysisResult
      * @return
      */
     @Override
-  public Object[] sarOOSAction(String schemaPrefix, Token token, Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue) {
-      String sampleActionWhenOOSMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", "sampleActionWhenOOSMode", null);
+  public Object[] sarOOSAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue) {
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+      String sampleActionWhenOOSMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", "sampleActionWhenOOSMode", null);
       if (LPArray.valuePosicInArray(SAMPLEACTIONWHENUPONOOSMODEENABLINGSTATUSES.split("\\|"), sampleActionWhenOOSMode)==-1)
           return new Object[0];
-      return DataProgramCorrectiveAction.createNew(schemaPrefix, token, resultId, sampleFieldName, sampleFieldValue,sarFieldName, sarFieldValue);
+      return DataProgramCorrectiveAction.createNew(resultId, sampleFieldName, sampleFieldValue,sarFieldName, sarFieldValue);
   }
 }

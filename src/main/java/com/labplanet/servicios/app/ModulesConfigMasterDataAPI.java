@@ -160,7 +160,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
 
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
              (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}     
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
 
             ConfigMasterDataAPIEndpoints endPoint = null;
             try{
@@ -171,7 +171,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
             Object[] messageDynamicData=new Object[]{};
-        RelatedObjects rObj=RelatedObjects.getInstance();
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         Object[] diagnostic=new Object[0];
         try (PrintWriter out = response.getWriter()) {        
             switch (endPoint){
@@ -185,7 +185,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 Object[] specFieldValueArr=new Object[]{};
                 if (specFieldName!=null && specFieldName.length()>0) specFieldNameArr=specFieldName.split("\\|");
                 if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
-                diagnostic = spcStr.specNew(token, schemaPrefix, specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
+                diagnostic = spcStr.specNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{
@@ -199,7 +199,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 specCodeVersion = (Integer) argValues[1];
                 specFieldName = argValues[2].toString();
                 specFieldValue = argValues[3].toString();
-                diagnostic = spcStr.specUpdate(token, schemaPrefix, specCode, specCodeVersion, specFieldName.split("\\|"), LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|")));
+                diagnostic = spcStr.specUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|")));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{
@@ -285,7 +285,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     specFieldNameArr=LPArray.addValueToArray1D(specFieldNameArr, "rule_variables");
                     specFieldValueArr=LPArray.addValueToArray1D(specFieldValueArr, ruleVariables);
                 }
-                diagnostic = spcStr.specLimitNew(token, schemaPrefix, specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
+                diagnostic = spcStr.specLimitNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{

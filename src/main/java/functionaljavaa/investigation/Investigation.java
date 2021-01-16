@@ -5,7 +5,6 @@
  */
 package functionaljavaa.investigation;
 
-
 import databases.Rdbms;
 import databases.TblsProcedure;
 import databases.Token;
@@ -16,6 +15,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 
 enum InvestigationAuditEvents{NEW_INVESTIGATION_CREATED, OBJECT_ADDED_TO_INVESTIGATION, CLOSED_INVESTIGATION, CAPA_DECISION
@@ -42,7 +42,10 @@ enum InvestigationAPIErrorMessages{
  */
 public class Investigation {
 
-    public static Object[] newInvestigation(Token token, String procInstanceName, String[] fldNames, Object[] fldValues, String objectsToAdd){ 
+    public static Object[] newInvestigation(String[] fldNames, Object[] fldValues, String objectsToAdd){ 
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+
         String[] updFieldName=new String[]{TblsProcedure.Investigation.FLD_CREATED_ON.getName(), TblsProcedure.Investigation.FLD_CREATED_BY.getName(), TblsProcedure.Investigation.FLD_CLOSED.getName()};
         Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), false};
         
@@ -55,12 +58,14 @@ public class Investigation {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationAuditAdd[0].toString())) return diagnostic; 
             String investAuditIdStr=investigationAuditAdd[investigationAuditAdd.length-1].toString();
         if (objectsToAdd!=null && objectsToAdd.length()>0)
-            addInvestObjects(token, procInstanceName, Integer.valueOf(investIdStr), objectsToAdd, Integer.valueOf(investAuditIdStr));
+            addInvestObjects(Integer.valueOf(investIdStr), objectsToAdd, Integer.valueOf(investAuditIdStr));
         return diagnostic;
                
     }
-    public static Object[] closeInvestigation(Token token, String procInstanceName, Integer investId){ 
-        Object[] investigationClosed = isInvestigationClosed(token, procInstanceName, investId);
+    public static Object[] closeInvestigation(Integer investId){ 
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        Object[] investigationClosed = isInvestigationClosed(investId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
         String[] updFieldName=new String[]{TblsProcedure.Investigation.FLD_CLOSED.getName(), TblsProcedure.Investigation.FLD_CLOSED_ON.getName(), TblsProcedure.Investigation.FLD_CLOSED_BY.getName()};
         Object[] updFieldValue=new Object[]{true, LPDate.getCurrentTimeStamp(), token.getPersonName()};
@@ -76,8 +81,10 @@ public class Investigation {
         return diagnostic;               
     }
 
-    public static Object[] addInvestObjects(Token token, String procInstanceName, Integer investId, String objectsToAdd, Integer parentAuditId){ 
-        Object[] investigationClosed = isInvestigationClosed(token, procInstanceName, investId);
+    public static Object[] addInvestObjects(Integer investId, String objectsToAdd, Integer parentAuditId){ 
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        Object[] investigationClosed = isInvestigationClosed(investId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
         String[] baseFieldName=new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName(), TblsProcedure.InvestObjects.FLD_ADDED_ON.getName(), TblsProcedure.InvestObjects.FLD_ADDED_BY.getName()};
         Object[] baseFieldValue=new Object[]{investId, LPDate.getCurrentTimeStamp(), token.getPersonName()};
@@ -119,21 +126,23 @@ public class Investigation {
                 updFieldName, updFieldValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){                
-                diagnostic=DataProgramCorrectiveAction.markAsAddedToInvestigation(procInstanceName, token, investId, curObjDetail[0], curObjDetail[1]);
+                diagnostic=DataProgramCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
 
                 String incIdStr=diagnostic[diagnostic.length-1].toString();
-                Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(InvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.InvestObjects.TBL.getName(), investId, incIdStr,  
+                ProcedureInvestigationAudit.investigationAuditAdd(InvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.InvestObjects.TBL.getName(), investId, incIdStr,  
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), parentAuditId, null);
             }
         }
         return diagnostic;        
     }
     
-    public static Object[] capaDecision(Token token, String procInstanceName, Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue){
+    public static Object[] capaDecision(Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] areCapaFields = isCapaField(capaFieldName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areCapaFields[0].toString())) return areCapaFields;
-        Object[] investigationClosed = isInvestigationClosed(token, procInstanceName, investId);
+        Object[] investigationClosed = isInvestigationClosed(investId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
         String[] updFieldName=new String[]{TblsProcedure.Investigation.FLD_CAPA_REQUIRED.getName(), TblsProcedure.Investigation.FLD_CAPA_DECISION_ON.getName(), TblsProcedure.Investigation.FLD_CAPA_DECISION_BY.getName()};
         Object[] updFieldValue=new Object[]{capaRequired, LPDate.getCurrentTimeStamp(), token.getPersonName()};
@@ -150,7 +159,8 @@ public class Investigation {
         return diagnostic;               
     }
     
-    private static Object[] isInvestigationClosed(Token token, String procInstanceName, Integer investId){
+    private static Object[] isInvestigationClosed(Integer investId){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] investigationInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
             new String[]{TblsProcedure.Investigation.FLD_ID.getName()}, new Object[]{investId}, new String[]{TblsProcedure.Investigation.FLD_CLOSED.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString()))

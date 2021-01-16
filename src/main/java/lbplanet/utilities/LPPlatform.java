@@ -897,7 +897,7 @@ public class LPPlatform {
         }else{
             errorDetail = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode+"_detail", language);
             if (errorDetail.length()==0){errorDetail = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode+"_detail", language);}
-            if (errorDetail==null || (errorDetail!=null && errorDetail.length()==0) ){
+            if (errorDetail==null || errorDetail.length()==0 ){
                 if (msgVariables.length>0){errorDetail =msgVariables[0].toString();}else{errorDetail="";}
             }else{
                 if (msgVariables!=null){

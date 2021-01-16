@@ -9,9 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
 import databases.Rdbms;
-import databases.TblsTesting;
 import databases.Token;
-import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -97,42 +95,42 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
 
-                ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
+                ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
                 if (clssEnvMonSampleController.getFunctionFound()){
                     functionRelatedObjects=clssEnvMonSampleController.getFunctionRelatedObjects();
                     functionEvaluation=(Object[]) clssEnvMonSampleController.getFunctionDiagn();
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssEnvMonSampleController.getRowArgsRows());
                 }else{
-                    ClassEnvMonSampleFrontendController clssEnvMonSampleFrontendController=new ClassEnvMonSampleFrontendController(request, tokenStr.toString(), schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                    ClassEnvMonSampleFrontendController clssEnvMonSampleFrontendController=new ClassEnvMonSampleFrontendController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                     if (clssEnvMonSampleFrontendController.getFunctionFound()){
                         functionRelatedObjects=clssEnvMonSampleFrontendController.getFunctionRelatedObjects();
                         functionEvaluation=(Object[]) clssEnvMonSampleFrontendController.getFunctionDiagn();
                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                         fileContentTable1Builder.append(clssEnvMonSampleFrontendController.getRowArgsRows());
                     }else{
-                        ClassEnvMonController clssEnvMonController=new ClassEnvMonController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                        ClassEnvMonController clssEnvMonController=new ClassEnvMonController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                         if (clssEnvMonController.getFunctionFound()){
                             functionRelatedObjects=clssEnvMonController.getFunctionRelatedObjects();
                             functionEvaluation=(Object[]) clssEnvMonController.getFunctionDiagn();
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                             fileContentTable1Builder.append(clssEnvMonController.getRowArgsRows());
                         }else{                    
-                            ClassEnvMonIncubatorController clssEnvMonIncubController=new ClassEnvMonIncubatorController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                            ClassEnvMonIncubatorController clssEnvMonIncubController=new ClassEnvMonIncubatorController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                             if (clssEnvMonIncubController.getFunctionFound()){
                                 functionRelatedObjects=clssEnvMonIncubController.getFunctionRelatedObjects();
                                 functionEvaluation=(Object[]) clssEnvMonIncubController.getFunctionDiagn();
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                 fileContentTable1Builder.append(clssEnvMonIncubController.getRowArgsRows());                
                             }else{                            
-                                ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                                ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                                 if (clssEnvMonQueriesController.getFunctionFound()){
                                     functionRelatedObjects=clssEnvMonQueriesController.getFunctionRelatedObjects();
                                     functionEvaluation=(Object[]) clssEnvMonQueriesController.getFunctionDiagn();
                                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                     fileContentTable1Builder.append(clssEnvMonQueriesController.getRowArgsRows());                
                                 }else{
-                                    ClassSampleController clssSampleController=new ClassSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                                    ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                                     if (clssSampleController.getFunctionFound()){
                                         functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
                                         functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();

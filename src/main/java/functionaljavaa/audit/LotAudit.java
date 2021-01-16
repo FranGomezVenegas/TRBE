@@ -99,13 +99,13 @@ public class LotAudit {
  */    
     public Object[] lotAuditAdd(String action, String tableName, String tableId, 
                         String lotName, Integer testId, Integer resultId, Object[] auditlog, Integer parentAuditId) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] fieldNames = new String[]{TblsDataAudit.Sample.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
+        Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInspLotRMDataAudit.Lot.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -148,7 +148,7 @@ public class LotAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(null, null, null);
+        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(null, null, null);
         if (auditAndUsrValid.getAuditReasonPhrase()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());

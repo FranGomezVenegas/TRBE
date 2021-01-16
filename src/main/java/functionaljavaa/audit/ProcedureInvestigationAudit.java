@@ -33,15 +33,15 @@ public class ProcedureInvestigationAudit {
 
     public static Object[] investigationAuditAdd(String action, String tableName, Integer investigationId, String tableId,
                         Object[] auditlog, Integer parentAuditId, String note) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};
 
         String[] fieldNames = new String[]{TblsProcedureAudit.Investigation.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         if (procInstanceName!=null){
-            Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
+            Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
             if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.FLD_PROCEDURE.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -86,7 +86,7 @@ public class ProcedureInvestigationAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(null, null, null);
+        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(null, null, null);
         if (auditAndUsrValid.getAuditReasonPhrase()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());

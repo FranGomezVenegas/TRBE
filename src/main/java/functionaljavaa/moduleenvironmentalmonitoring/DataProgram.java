@@ -9,10 +9,10 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
-import databases.Token;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -93,8 +93,6 @@ public class DataProgram {
     }
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param sampleTemplate
      * @param sampleTemplateVersion
      * @param sampleFieldName
@@ -104,14 +102,12 @@ public class DataProgram {
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
      */
-    public Object[] createProgramDev( String schemaPrefix, Token token, String sampleTemplate, Integer sampleTemplateVersion, String[] sampleFieldName, Object[] sampleFieldValue) throws IllegalAccessException, InvocationTargetException{
-        return DataProgram.this.createProgram(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, sampleFieldName, sampleFieldValue, true);
+    public Object[] createProgramDev(String sampleTemplate, Integer sampleTemplateVersion, String[] sampleFieldName, Object[] sampleFieldValue) throws IllegalAccessException, InvocationTargetException{
+        return DataProgram.this.createProgram(sampleTemplate, sampleTemplateVersion, sampleFieldName, sampleFieldValue, true);
     }
 
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param template
      * @param templateVersion
      * @param fieldName
@@ -121,11 +117,13 @@ public class DataProgram {
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
      */
-    public Object[] createProgram( String schemaPrefix, Token token, String template, Integer templateVersion, String[] fieldName, Object[] fieldValue) throws IllegalAccessException, InvocationTargetException{
-        return DataProgram.this.createProgram(schemaPrefix, token, template, templateVersion, fieldName, fieldValue, false);
+    public Object[] createProgram(String template, Integer templateVersion, String[] fieldName, Object[] fieldValue) throws IllegalAccessException, InvocationTargetException{
+        return DataProgram.this.createProgram(template, templateVersion, fieldName, fieldValue, false);
     }
 
-Object[] createProgram( String schemaPrefix, Token token, String projectTemplate, Integer projectTemplateVersion, String[] sampleFieldName, Object[] sampleFieldValue, Boolean devMode) throws IllegalAccessException, InvocationTargetException{
+Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, String[] sampleFieldName, Object[] sampleFieldValue, Boolean devMode) throws IllegalAccessException, InvocationTargetException{
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
     String classVersionProj = "0.1";
     String[] mandatoryFieldsProj = null;
     Object[] mandatoryFieldsValueProj = null;
@@ -149,8 +147,8 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
         String schemaDataName = LPPlatform.SCHEMA_DATA;
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
-        schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, schemaDataName);    
-        schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 
+        schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
+        schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName); 
         
         mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(schemaDataName, tableName, actionName);
         
@@ -250,7 +248,7 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, ex.getMessage());
                         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                        
                     }
-                    Object specialFunctionReturn = method.invoke(this, null, schemaPrefix, projectTemplate, projectTemplateVersion);      
+                    Object specialFunctionReturn = method.invoke(this, null, procInstanceName, projectTemplate, projectTemplateVersion);      
                     if (specialFunctionReturn.toString().contains("ERROR")){
                         StackTraceElement[] elements = Thread.currentThread().getStackTrace();
                         diagnosesProj[0]= elements[1].getClassName() + "." + elements[1].getMethodName();
@@ -270,7 +268,7 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
 
         diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, tableName, sampleFieldName, sampleFieldValue);
 
-        //smpAudit.sampleAuditAdd(rdbm, schemaPrefix, auditActionName, "sample", Integer.parseInt(diagnosesProj[6]), Integer.parseInt(diagnosesProj[6]), null, null, fieldsOnLogSample, userName, userRole);
+        //smpAudit.sampleAuditAdd(rdbm, procInstanceName, auditActionName, "sample", Integer.parseInt(diagnosesProj[6]), Integer.parseInt(diagnosesProj[6]), null, null, fieldsOnLogSample, userName, userRole);
 
         return diagnosesProj;  
     }    

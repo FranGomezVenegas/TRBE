@@ -29,7 +29,7 @@ import trazit.session.ProcedureRequestSession;
 public class AuditAndUserValidation {
     private static AuditAndUserValidation auditUserVal;
 
-     public static AuditAndUserValidation getInstance(HttpServletRequest request, HttpServletResponse response, String language) { 
+     public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, HttpServletResponse response, String language) { 
         if (auditUserVal == null) {
             if (request==null) return null;
             auditUserVal = new AuditAndUserValidation(request, response, language);
@@ -124,7 +124,7 @@ public class AuditAndUserValidation {
         this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
     }
     private Boolean isValidAuditPhrase(String actionName, String auditReasonPhrase){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();        
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
         String[] actionAuditReasonInfo = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase").split("\\|");
         if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (!LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase)) ){
             this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "wrongAuditReasonPhrase", new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});

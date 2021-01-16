@@ -83,7 +83,7 @@ public class DbObjects {
 
     private static JSONObject createSchemas(String[] schemasNames){
     
-        Rdbms.stablishDBConection(false);
+        Rdbms.stablishDBConection();
         JSONObject jsonObj = new JSONObject();
         
         String methodName = "createDataBaseSchemas";       

@@ -41,8 +41,8 @@ public class DataInspectionLot {
     
     
     public Object[] createLot(String lotName, String materialName, String template, Integer templateVersion, String[] fieldName, Object[] fieldValue, Integer numLotsToCreate) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procPrefix=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procPrefix=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_DATA);    
         String schemaConfigName = LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_CONFIG); 
         
@@ -192,7 +192,7 @@ public class DataInspectionLot {
         Integer numCont=null;
         if (LPArray.valueInArray(fieldName, TblsInspLotRMData.Lot.FLD_NUM_CONTAINERS.getName()))
             numCont=Integer.valueOf(fieldValue[LPArray.valuePosicInArray(fieldName, TblsInspLotRMData.Lot.FLD_NUM_CONTAINERS.getName())].toString());
-        SamplingPlanEntry spEntry=new SamplingPlanEntry(procPrefix, materialName, specCode, specCodeVersion, quant, numCont);
+        SamplingPlanEntry spEntry=new SamplingPlanEntry(materialName, specCode, specCodeVersion, quant, numCont);
         if (spEntry.getHasErrors()){
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SamplePlanCheckerReturnedErrors "+Arrays.toString(spEntry.getErrorsArr()), null);
         }
@@ -223,9 +223,9 @@ public class DataInspectionLot {
             Integer preAuditId=Integer.valueOf(lotAuditAdd[lotAuditAdd.length-1].toString());
             
             DataInspectionLotDecision lotDec=new DataInspectionLotDecision();
-            lotDec.lotDecisionRecordCreateOrUpdate(procPrefix, token, lotName, null);
+            lotDec.lotDecisionRecordCreateOrUpdate(lotName, null);
             lotDec=null;
-            Object[] applySamplingPoint = applySamplingPoint(procPrefix, token, lotName, materialName, specCode, specCodeVersion, quant, numCont, lotFieldName, lotFieldValue, spEntry);
+            Object[] applySamplingPoint = applySamplingPoint(lotName, materialName, specCode, specCodeVersion, quant, numCont, lotFieldName, lotFieldValue, spEntry);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(applySamplingPoint[0].toString())) return applySamplingPoint;
             
 //Area for event triggers (ex: apply sampling plan)
@@ -236,7 +236,7 @@ public class DataInspectionLot {
         }
         return diagnoses;          
     }
-    public Object[] applySamplingPoint(String procPrefix, Token token, String lotName, String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont, String[] lotFldName, Object[] lotFldValue, SamplingPlanEntry spEntry){
+    public Object[] applySamplingPoint(String lotName, String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont, String[] lotFldName, Object[] lotFldValue, SamplingPlanEntry spEntry){
         String[] lotFieldsForSamples = new String[]{TblsInspLotRMData.Sample.FLD_SPEC_CODE.getName(), TblsInspLotRMData.Sample.FLD_SPEC_CODE_VERSION.getName()};
         DataInspLotRMSampleAnalysis dsInspLotRM = new DataInspLotRMSampleAnalysis();
         DataSample ds = new DataSample(dsInspLotRM);

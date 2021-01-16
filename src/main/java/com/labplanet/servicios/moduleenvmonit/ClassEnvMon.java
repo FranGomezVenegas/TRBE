@@ -8,7 +8,6 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
 import databases.Rdbms;
 import databases.TblsProcedure;
-import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
@@ -20,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -27,13 +27,16 @@ import lbplanet.utilities.LPPlatform;
  */
 public class ClassEnvMon {
     private Object[] messageDynamicData=new Object[]{};
-    private RelatedObjects relatedObj=RelatedObjects.getInstance();
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassEnvMon(HttpServletRequest request, Token token, String procInstanceName, EnvMonAPIEndpoints endPoint, AuditAndUserValidation auditAndUsrValid){
-        RelatedObjects rObj=RelatedObjects.getInstance();
+    public ClassEnvMon(HttpServletRequest request, EnvMonAPIEndpoints endPoint){
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        AuditAndUserValidation auditAndUsrValid = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
+
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         DataProgramSample prgSmp = new DataProgramSample();     
         String batchName = "";
@@ -46,7 +49,7 @@ public class ClassEnvMon {
                 case CORRECTIVE_ACTION_COMPLETE:
                     String programName=argValues[0].toString();
                     Integer correctiveActionId = (Integer) argValues[1];                    
-                    actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(procInstanceName, token, correctiveActionId);
+                    actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(correctiveActionId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){                        
                         Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                             new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},

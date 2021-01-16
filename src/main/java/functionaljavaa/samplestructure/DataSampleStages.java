@@ -72,10 +72,11 @@ Object[][] firstStageData=new Object[0][0];
 
     /**
      *
-     * @param procInstanceName
      */
-    public DataSampleStages(String procInstanceName) {
-    String sampleStagesMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_MODE, null);
+    public DataSampleStages() {
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+        String sampleStagesMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_MODE, null);
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesMode)>-1)
         this.isSampleStagesEnable=true;  
     String sampleStagesTimingCaptureMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, null);
@@ -113,8 +114,8 @@ Object[][] firstStageData=new Object[0][0];
      * @return
      */
     public Object[] moveToNextStage(Integer sampleId, String currStage, String nextStageFromPull){    
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
-        Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(procInstanceName, sampleId);
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) return sampleAuditRevision;
         Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Next");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic; 
@@ -144,7 +145,7 @@ Object[][] firstStageData=new Object[0][0];
      * @return
      */
     public Object[] moveToPreviousStage(Integer sampleId, String currStage, String previousStageFromPull){  
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Previous");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic;
 
@@ -159,8 +160,8 @@ Object[][] firstStageData=new Object[0][0];
     }
 
     public Object[] dataSampleActionAutoMoveToNext(String actionName, Integer sampleId) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
@@ -190,14 +191,14 @@ Object[][] firstStageData=new Object[0][0];
     }
         
     private Object[] moveStagetChecker(Integer sampleId, String currStage, String moveDirection){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String sampleStagesType = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TYPE, null);
         if (SampleStagesTypes.JAVA.toString().equalsIgnoreCase(sampleStagesType)) return moveStageCheckerJava(sampleId, currStage, moveDirection);
         else return moveStageCheckerJavaScript(sampleId, currStage, moveDirection);
     }
     private Object[] moveStageCheckerJava(Integer sampleId, String currStage, String moveDirection){
       //try {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
@@ -230,7 +231,7 @@ Object[][] firstStageData=new Object[0][0];
 
     private Object[] moveStageCheckerJavaScript(Integer sampleId, String currStage, String moveDirection){
       try {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();          
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();          
         String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
@@ -269,7 +270,7 @@ Object[][] firstStageData=new Object[0][0];
     }
 
     public Object[] dataSampleStagesTimingCapture(Integer sampleId, String currStage, String phase) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         if (!this.isSampleStagesTimingCaptureEnable)
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, procInstanceName});
         if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )

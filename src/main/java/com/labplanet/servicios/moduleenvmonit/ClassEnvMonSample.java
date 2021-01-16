@@ -8,7 +8,6 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
@@ -28,6 +27,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -63,14 +63,16 @@ public class ClassEnvMonSample {
         return this.diagnostic;
     }
     private Object[] messageDynamicData=new Object[]{};
-    private RelatedObjects relatedObj=RelatedObjects.getInstance();
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     
-    public ClassEnvMonSample(HttpServletRequest request, Token token, String procInstanceName, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint){
+    public ClassEnvMonSample(HttpServletRequest request, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint){
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         Object[] dynamicDataObjects=new Object[]{};        
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
-        RelatedObjects rObj=RelatedObjects.getInstance();
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         try {
             DataProgramSampleAnalysis prgSmpAna = new DataProgramSampleAnalysis();
             DataProgramSampleAnalysisResult prgSmpAnaRes = new DataProgramSampleAnalysisResult();
@@ -224,7 +226,7 @@ public class ClassEnvMonSample {
                     rd.forward(request,null);   
             }             
             if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                DataSampleStages smpStage = new DataSampleStages(procInstanceName);
+                DataSampleStages smpStage = new DataSampleStages();
                 smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
             }           
             this.diagnostic=actionDiagnoses;

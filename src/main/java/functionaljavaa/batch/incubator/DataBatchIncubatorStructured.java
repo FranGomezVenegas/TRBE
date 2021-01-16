@@ -30,14 +30,16 @@ public class DataBatchIncubatorStructured {
     public static final String POSITIONVALUESEPARATORSTRUCTUREDBATCH="*";
     public static final String BATCHCONTENTEMPTYPOSITIONVALUE="-";
     
-    static Boolean batchIsEmptyStructured(String procInstanceName, String batchName){
+    static Boolean batchIsEmptyStructured(String batchName){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_OBJECTS.getName()});
         return (!LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(batchInfo[0][0]).toString())) && ("0".equals(LPNulls.replaceNull(batchInfo[0][0]).toString()));
     }
     
-    public static Object[][] dbGetBatchArray(String procInstanceName, String batchName){
+    public static Object[][] dbGetBatchArray(String batchName){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_VERSION.getName()
@@ -70,7 +72,7 @@ public class DataBatchIncubatorStructured {
     }
     
     static Object[] createBatchStructured(String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         if(fldName==null)fldName=new String[0];
         if(fldValue==null)fldValue=new Object[0];
@@ -127,7 +129,7 @@ public class DataBatchIncubatorStructured {
         return batchAddSampleStructured(batchName, sampleId, pendingIncubationStage, row, col, override, false);
     }
     static Object[] batchAddSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer row, Integer col, Boolean override, Boolean byMovement) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         if ((row==null)||(col==null))return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "In a Structured batch position row and col are mandatory and by pos <*1*> and col <*2*> is a wrong coordinate.", new Object[]{LPNulls.replaceNull(row), LPNulls.replaceNull(col)});
         Object[] batchSampleIsAddable = batchSampleIsAddable(batchName, sampleId, pendingIncubationStage, row, col, override, byMovement);
@@ -194,8 +196,8 @@ public class DataBatchIncubatorStructured {
         return updateSampleInfo;
     }
     private static Object[] batchSampleIsAddable(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer row, Integer col, Boolean override, Boolean byMovement){
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] batchFldsToRetrieve= new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_ROWS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_COLS.getName()
                     , TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_POSITIONS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_OBJECTS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};
@@ -242,7 +244,7 @@ public class DataBatchIncubatorStructured {
         return batchRemoveSampleStructured(batchName, sampleId, pendingIncubationStage, false);   
     }
     static Object[] batchRemoveSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Boolean byMovement) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] batchFldsToRetrieve= new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_COLS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_POSITIONS.getName(), 
             TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_OBJECTS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};
@@ -309,7 +311,7 @@ public class DataBatchIncubatorStructured {
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "batchSampleIncubStartedStructured not implemented yet", null);
     }    
     static Object[] batchSampleIncubStartedStructured(String batchName, String incubName) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, sampleInfoFieldsToRetrieve);
@@ -338,8 +340,8 @@ public class DataBatchIncubatorStructured {
     }
     
     static Object[] batchSampleIncubEndedStructured(String batchName, String incubName) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, sampleInfoFieldsToRetrieve);

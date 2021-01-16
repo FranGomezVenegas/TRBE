@@ -22,6 +22,7 @@ import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.materialspec.ConfigSamplingPlanForSpec;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -43,7 +44,11 @@ public class TestingConfigSamplingPlanStructure extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ConfigSamplingPlanForSpec smpPlan = new ConfigSamplingPlanForSpec();
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}           
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true);        
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            return;
+        }
             
         Object[] exRec =  Rdbms.existsRecord(LPPlatform.SCHEMA_APP, "users", new String[]{"user_name"}, new Object[]{"labplanet"});
         out.println("Exists record? " + Arrays.toString(exRec));
@@ -117,7 +122,7 @@ out.println(Arrays.toString(configSamplingPlanTestingArray));
                         if (configSamplingPlanTestingArray[i][1]!=null){userName = (String) configSamplingPlanTestingArray[i][2];}
                         if (configSamplingPlanTestingArray[i][3]!=null){fieldName = (String[]) configSamplingPlanTestingArray[i][3];}              
                         if (configSamplingPlanTestingArray[i][4]!=null){fieldValue = (Object[]) configSamplingPlanTestingArray[i][4];}                         
-                        dataSample = smpPlan.newSamplingPlanDetailRecord(schemaPrefix, token, fieldName, fieldValue);
+                        dataSample = smpPlan.newSamplingPlanDetailRecord(fieldName, fieldValue);
                         break;
                     default:                
                         break;

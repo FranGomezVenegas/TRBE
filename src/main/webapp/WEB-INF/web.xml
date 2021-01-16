@@ -173,10 +173,6 @@
         <servlet-class>com.labplanet.servicios.modulegenoma.GenomaProjectAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ProjectAPIFrontend</servlet-name>
-        <servlet-class>com.labplanet.servicios.modulegenoma.ProjectAPIFrontend</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>GenomaStudyAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.modulegenoma.GenomaStudyAPI</servlet-class>
     </servlet>
@@ -440,10 +436,6 @@
     <servlet-mapping>
         <servlet-name>ProjectAPI</servlet-name>
         <url-pattern>/modulegenoma/ProjectAPI</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ProjectAPIFrontend</servlet-name>
-        <url-pattern>/modulegenoma/ProjectAPIFrontend</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GenomaStudyAPI</servlet-name>

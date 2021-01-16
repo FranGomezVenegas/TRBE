@@ -11,6 +11,7 @@ import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPMath.nthroot;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -32,42 +33,37 @@ public class ConfigSamplingPlanForSpec {
     
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param fieldsName
      * @param fieldsValue
      * @return
      */
-    public Object[] newSamplingPlanDetailRecord( String schemaPrefix, Token token, String[] fieldsName, Object[] fieldsValue) {
-        diagnoses = newSamplingPlanDetailRecordDev(schemaPrefix, token, fieldsName, fieldsValue, false);
+    public Object[] newSamplingPlanDetailRecord(String[] fieldsName, Object[] fieldsValue) {
+        diagnoses = newSamplingPlanDetailRecordDev(fieldsName, fieldsValue, false);
         return diagnoses;
     }
 
     /**
      *
-     * @param schemaPrefix
-     * @param token
-
-* @param fieldsName
+     * @param fieldsName
      * @param fieldsValue
      * @param devMode
      * @return
      */
-    public Object[] newSamplingPlanDetailRecord( String schemaPrefix, Token token, String[] fieldsName, Object[] fieldsValue, Boolean devMode) {
-        diagnoses = newSamplingPlanDetailRecordDev(schemaPrefix, token, fieldsName, fieldsValue, devMode);
+    public Object[] newSamplingPlanDetailRecord(String[] fieldsName, Object[] fieldsValue, Boolean devMode) {
+        diagnoses = newSamplingPlanDetailRecordDev(fieldsName, fieldsValue, devMode);
         return diagnoses;
     }
         
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param fieldsName
      * @param fieldsValue
      * @param devMode
      * @return
      */
-    public Object[] newSamplingPlanDetailRecordDev( String schemaPrefix, Token token, String[] fieldsName, Object[] fieldsValue, Boolean devMode) {
+    public Object[] newSamplingPlanDetailRecordDev(String[] fieldsName, Object[] fieldsValue, Boolean devMode) {
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "BEGIN";
@@ -96,7 +92,7 @@ public class ConfigSamplingPlanForSpec {
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }  
     if (!devMode){
-        String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);         
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);         
         Object[][] mandatoryFieldsCheck = LPPlatform.mandatoryFieldsCheck(schemaDataName, fieldsName, fieldsValue, tableName, actionName);                
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mandatoryFieldsCheck[0][0].toString())){ return mandatoryFieldsCheck;}
         for (Integer i=0;i<mandatoryFieldsCheck[1].length;i++){

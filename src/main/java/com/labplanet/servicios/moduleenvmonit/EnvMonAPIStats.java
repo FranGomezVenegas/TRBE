@@ -33,6 +33,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -187,16 +188,13 @@ public class EnvMonAPIStats extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
-        String language = LPFrontEnd.setLanguage(request);         
-            
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+        String procInstanceName = procReqInstance.getProcedureInstance();
+
             
         EnvMonAPIstatsEndpoints endPoint = null;
         try{
@@ -205,7 +203,7 @@ public class EnvMonAPIStats extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }
-        areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+        Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response,
                     LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
@@ -217,9 +215,9 @@ public class EnvMonAPIStats extends HttpServlet {
             String[] filterFieldName=new String[]{};
             Object[] filterFieldValue=new Object[]{};
             String prodLotName="";
-            if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
-            String smpTemplate=Parameter.getParameterBundle("config", schemaPrefix, "procedure", "SampleTemplate", null);  
-            String samplerSmpTemplate=Parameter.getParameterBundle("config", schemaPrefix, "procedure", "samplerSampleTemplate", null);  
+            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+            String smpTemplate=Parameter.getParameterBundle("config", procInstanceName, "procedure", "SampleTemplate", null);  
+            String samplerSmpTemplate=Parameter.getParameterBundle("config", procInstanceName, "procedure", "samplerSampleTemplate", null);  
             Boolean getSampleInfo=false;
             Boolean getInvestigationInfo=false;
             switch (endPoint){
@@ -254,7 +252,7 @@ public class EnvMonAPIStats extends HttpServlet {
                         prodLotFieldToRetrieveArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
                     JSONObject jObj=new JSONObject();
                     if (!prodLotName.contains("rutina")){
-                        Object[][] prodLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+                        Object[][] prodLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
                                 new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{prodLotName}
                                 , prodLotFieldToRetrieveArr, new String[]{TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName()+" desc"} ); 
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
@@ -285,7 +283,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     String[] fldToRetrieve=argValues[5].toString().split("\\/");
                     String[] dataGrouped=argValues[6].toString().split("\\/");
 
-                    jObjMainObject=getKPIs(schemaPrefix, objGroupName, tblCategory, tblName, whereFieldsNameArr, whereFieldsValueArr, 
+                    jObjMainObject=getKPIs(procInstanceName, objGroupName, tblCategory, tblName, whereFieldsNameArr, whereFieldsValueArr, 
                         fldToRetrieve, dataGrouped);
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
             }
@@ -393,7 +391,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     }
                 }
 
-                sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                          filterFieldName, filterFieldValue,
                          sampleFieldToRetrieveArr , new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName()+" desc"} ); 
                 jObj=new JSONObject();
@@ -405,7 +403,7 @@ public class EnvMonAPIStats extends HttpServlet {
                         jObj= LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRec);
                         if (Boolean.valueOf(includeMicroOrganisms)){
                             Integer curSampleId = Integer.valueOf(curRec[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName())].toString());
-                            Object[][] sampleMicroOrgInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
+                            Object[][] sampleMicroOrgInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
                                 new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()}, new Object[]{curSampleId},
                                 new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName()} , new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()+" desc"} ); 
                             String microOrgList="";
@@ -469,7 +467,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
                 }            
                         
-                investigationInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+                investigationInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
                          filterFieldName, filterFieldValue,
                          investigationFieldToRetrieveArr , new String[]{TblsProcedure.Investigation.FLD_ID.getName()+" desc"} ); 
                 jObj=new JSONObject();
@@ -491,7 +489,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     JSONArray sampleGrouperJsonArr = new JSONArray();
                     String[] groupInfo = currGroup.split("\\*");
                     String[] smpGroupFldsArr=groupInfo[0].split(",");
-                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                             smpGroupFldsArr, filterFieldName, filterFieldValue, 
                             null);
                     smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "count");
@@ -514,7 +512,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     JSONArray investigationGrouperJsonArr = new JSONArray();
                     String[] groupInfo = currGroup.split("\\*");
                     String[] invGroupFldsArr=groupInfo[0].split(",");
-                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
                             invGroupFldsArr, filterFieldName, filterFieldValue, 
                             null);
                     invGroupFldsArr=LPArray.addValueToArray1D(invGroupFldsArr, "count");
@@ -539,13 +537,13 @@ public class EnvMonAPIStats extends HttpServlet {
                         request.getParameter(LPPlatform.REQUEST_PARAM_FILE_NAME));
             }            
         }catch(NumberFormatException e){   
-            Rdbms.closeRdbms();                   
+            procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             try {
-                Rdbms.closeRdbms();   
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }

@@ -23,6 +23,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -39,71 +40,76 @@ public class TestingRegressionUAT extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {        
-        
-        String actionName=request.getParameter("actionName");
-        if ("GETTESTERSLITS".equalsIgnoreCase(actionName)){
-            TestingServletsConfig[] endPoints = TestingServletsConfig.values();
-            JSONArray jArr=new JSONArray();
-            
-            for (TestingServletsConfig curTstr: endPoints){
-                JSONObject jObj=new JSONObject();
-                jObj.put("name", curTstr.name());
-                jObj.put("servletUrl", curTstr.getServletUrl());
-                jObj.put("testerFileName", curTstr.getTesterFileName());
-                jObj.put("numTables", curTstr.getNumTables());
-                jObj.put("tablesHeaders", curTstr.getTablesHeaders());
-                jArr.add(jObj);
-            }
-            LPFrontEnd.servletReturnSuccess(request, response, jArr);
-            return;
-        }
-        response = LPTestingOutFormat.responsePreparation(response);        
-        String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
-        String schemaPrefix="em-demo-a";
-        Integer scriptId=2;
-        schemaPrefix=request.getParameter("schemaPrefix");
-        scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
-        if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}     
-        Object[][] scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
-                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
-                new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName(), TblsTesting.Script.FLD_AUDIT_IDS_TO_GET.getName()},
-                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
-            Logger.getLogger("Script "+scriptId.toString()+" Not found"); 
-            return;
-        }        
-        LPTestingOutFormat.cleanLastRun(schemaPrefix, scriptId);
-        
-        if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
-            LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[0][2].toString(), "before");
-        
-        String testerName = scriptTblInfo[0][0].toString();
-        Integer numEvalArgs = 0;
-        if (scriptTblInfo[0][1]!=null && scriptTblInfo[0][1].toString().length()>0) numEvalArgs=Integer.valueOf(scriptTblInfo[0][1].toString());
-        
-        request.setAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH, saveDirectory+"\\");
-        request.setAttribute(LPTestingParams.TESTING_SOURCE, "DB");
-        request.setAttribute(LPTestingParams.NUM_EVAL_ARGS, numEvalArgs);
-        request.setAttribute(LPTestingParams.SCRIPT_ID, scriptId);
-        request.setAttribute(LPTestingParams.SCHEMA_PREFIX, schemaPrefix);
-        request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, "eyJ1c2VyREIiOiJsYWJwbGFuZXQiLCJlU2lnbiI6ImhvbGEiLCJ1c2VyREJQYXNzd29yZCI6Imxhc2xlY2h1Z2FzIiwidXNlcl9wcm9jZWR1cmVzIjoiW2VtLWRlbW8tYSwgcHJvY2Vzcy11cywgcHJvY2Vzcy1ldSwgZ2Vub21hLTFdIiwidHlwIjoiSldUIiwiYXBwU2Vzc2lvbklkIjoiMjk4NiIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IlR1ZSBNYXIgMTcgMDI6Mzg6MTkgQ0VUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEifQ.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.xiT6CxNcoFKAiE2moGhMOsxFwYjeyugdvVISjUUFv0Y");         
-        TestingServletsConfig endPoints = TestingServletsConfig.valueOf(testerName);
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);        
+        if (procReqInstance.getHasErrors()) return;
+        try{
+            String actionName=request.getParameter("actionName");
+            if ("GETTESTERSLIST".equalsIgnoreCase(actionName)){
+                TestingServletsConfig[] endPoints = TestingServletsConfig.values();
+                JSONArray jArr=new JSONArray();
 
-        switch (endPoints){
-        case NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT:
-        case NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK:
-        case NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT:
-        case NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK:
-        case DB_SCHEMACONFIG_SPEC_RESULTCHECK:
-        case DB_SCHEMADATA_ENVMONIT_SAMPLES:
-        case DB_SCHEMADATA_INSPECTION_LOT_RM:
-            RequestDispatcher rd = request.getRequestDispatcher(endPoints.getServletUrl());
-            rd.forward(request,response);   
-            return;                       
-        default:
-            Logger.getLogger("Tester name not recognized, "+testerName+". The tester cannot be completed"); 
+                for (TestingServletsConfig curTstr: endPoints){
+                    JSONObject jObj=new JSONObject();
+                    jObj.put("name", curTstr.name());
+                    jObj.put("servletUrl", curTstr.getServletUrl());
+                    jObj.put("testerFileName", curTstr.getTesterFileName());
+                    jObj.put("numTables", curTstr.getNumTables());
+                    jObj.put("tablesHeaders", curTstr.getTablesHeaders());
+                    jArr.add(jObj);
+                }
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                return;
+            }
+            response = LPTestingOutFormat.responsePreparation(response);        
+            String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
+            //String schemaPrefix="em-demo-a";
+            //Integer scriptId=2;
+            String schemaPrefix=request.getParameter("schemaPrefix");
+            Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
+//            if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}     
+            Object[][] scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+                    new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
+                    new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName(), TblsTesting.Script.FLD_AUDIT_IDS_TO_GET.getName()},
+                    new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
+                Logger.getLogger("Script "+scriptId.toString()+" Not found"); 
+                return;
+            }        
+            LPTestingOutFormat.cleanLastRun(schemaPrefix, scriptId);
+
+            if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
+                LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[0][2].toString(), "before");
+
+            String testerName = scriptTblInfo[0][0].toString();
+            Integer numEvalArgs = 0;
+            if (scriptTblInfo[0][1]!=null && scriptTblInfo[0][1].toString().length()>0) numEvalArgs=Integer.valueOf(scriptTblInfo[0][1].toString());
+
+            request.setAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH, saveDirectory+"\\");
+            request.setAttribute(LPTestingParams.TESTING_SOURCE, "DB");
+            request.setAttribute(LPTestingParams.NUM_EVAL_ARGS, numEvalArgs);
+            request.setAttribute(LPTestingParams.SCRIPT_ID, scriptId);
+            request.setAttribute(LPTestingParams.SCHEMA_PREFIX, schemaPrefix);
+            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, "eyJ1c2VyREIiOiJsYWJwbGFuZXQiLCJlU2lnbiI6ImhvbGEiLCJ1c2VyREJQYXNzd29yZCI6Imxhc2xlY2h1Z2FzIiwidXNlcl9wcm9jZWR1cmVzIjoiW2VtLWRlbW8tYSwgcHJvY2Vzcy11cywgcHJvY2Vzcy1ldSwgZ2Vub21hLTFdIiwidHlwIjoiSldUIiwiYXBwU2Vzc2lvbklkIjoiMjk4NiIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IlR1ZSBNYXIgMTcgMDI6Mzg6MTkgQ0VUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEifQ.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.xiT6CxNcoFKAiE2moGhMOsxFwYjeyugdvVISjUUFv0Y");         
+            TestingServletsConfig endPoints = TestingServletsConfig.valueOf(testerName);
+
+            switch (endPoints){
+            case NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT:
+            case NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK:
+            case NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT:
+            case NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK:
+            case DB_SCHEMACONFIG_SPEC_RESULTCHECK:
+            case DB_SCHEMADATA_ENVMONIT_SAMPLES:
+            case DB_SCHEMADATA_INSPECTION_LOT_RM:
+                RequestDispatcher rd = request.getRequestDispatcher(endPoints.getServletUrl());
+                rd.forward(request,response);   
+                return;                       
+            default:
+                Logger.getLogger("Tester name not recognized, "+testerName+". The tester cannot be completed"); 
+            }
         }
-        
+        finally{
+            procReqInstance.killIt();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -6,7 +6,6 @@
 package functionaljavaa.moduleenvironmentalmonitoring;
 
 import databases.Rdbms;
-import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsData;
 import databases.TblsProcedure;
@@ -20,6 +19,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -47,8 +47,6 @@ public class DataProgramCorrectiveAction {
     }
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param resultId
      * @param sampleFieldNames
      * @param sampleFieldValues
@@ -56,113 +54,117 @@ public class DataProgramCorrectiveAction {
      * @param sarFieldValues
      * @return
      */
-    public static Object[] createNew(String schemaPrefix, Token token, Integer resultId, String[] sampleFieldNames, Object[] sampleFieldValues, String[] sarFieldNames, Object[] sarFieldValues){    
-    String statusFirst=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusFirst");
-    String[] sampleFldsToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), 
-      TblsProcedure.ProgramCorrectiveAction.FLD_LOCATION_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_AREA.getName()};
-    String[] sampleAnalysisResultToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(),
+    public static Object[] createNew(Integer resultId, String[] sampleFieldNames, Object[] sampleFieldValues, String[] sarFieldNames, Object[] sarFieldValues){    
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+
+        String statusFirst=Parameter.getParameterBundle(procInstanceName+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusFirst");
+        String[] sampleFldsToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), 
+        TblsProcedure.ProgramCorrectiveAction.FLD_LOCATION_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_AREA.getName()};
+        String[] sampleAnalysisResultToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(),
       TblsProcedure.ProgramCorrectiveAction.FLD_TEST_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_SPEC_EVAL.getName(),
       TblsProcedure.ProgramCorrectiveAction.FLD_SPEC_EVAL_DETAIL.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_LIMIT_ID.getName(),
       TblsProcedure.ProgramCorrectiveAction.FLD_ANALYSIS.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_METHOD_NAME.getName(),
       TblsProcedure.ProgramCorrectiveAction.FLD_METHOD_VERSION.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_PARAM_NAME.getName()};
-    String[] myFldName=new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()};    
-    Object[] myFldValue=new Object[]{""};        
-    for (TblsProcedure.ProgramCorrectiveAction obj: TblsProcedure.ProgramCorrectiveAction.values()){
-      if (!"TBL".equalsIgnoreCase(obj.name())){
-        Integer posicInArray=LPArray.valuePosicInArray(sarFieldNames, obj.getName());
+        String[] myFldName=new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()};    
+        Object[] myFldValue=new Object[]{""};        
+        for (TblsProcedure.ProgramCorrectiveAction obj: TblsProcedure.ProgramCorrectiveAction.values()){
+            if (!"TBL".equalsIgnoreCase(obj.name())){
+              Integer posicInArray=LPArray.valuePosicInArray(sarFieldNames, obj.getName());
+              if (posicInArray==-1){
+                posicInArray=LPArray.valuePosicInArray(sampleFieldNames, obj.getName());
+                if (posicInArray>-1){
+                  myFldName=LPArray.addValueToArray1D(myFldName, obj.getName());
+                  myFldValue=LPArray.addValueToArray1D(myFldValue, sampleFieldValues[posicInArray]);            
+                }
+              }else{
+                myFldName=LPArray.addValueToArray1D(myFldName, obj.getName());
+                myFldValue=LPArray.addValueToArray1D(myFldValue, sarFieldValues[posicInArray]);
+              }
+            } 
+        }  
+        Integer sampleId=-999;
+        String programName="";
+        Integer posicInArray=LPArray.valuePosicInArray(sampleFieldNames, TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName());
         if (posicInArray==-1){
-          posicInArray=LPArray.valuePosicInArray(sampleFieldNames, obj.getName());
-          if (posicInArray>-1){
-            myFldName=LPArray.addValueToArray1D(myFldName, obj.getName());
-            myFldValue=LPArray.addValueToArray1D(myFldValue, sampleFieldValues[posicInArray]);            
-          }
-        }else{
-          myFldName=LPArray.addValueToArray1D(myFldName, obj.getName());
-          myFldValue=LPArray.addValueToArray1D(myFldValue, sarFieldValues[posicInArray]);
+          posicInArray=LPArray.valuePosicInArray(sampleFieldNames, TblsProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName());
+          if (posicInArray==-1) return new Object[]{LPPlatform.LAB_FALSE};
+          sampleId=Integer.valueOf(LPNulls.replaceNull(sampleFieldValues[posicInArray].toString()));
+          Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+                  new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                  new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()});
+          if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){return LPArray.array2dTo1d(sampleInfo);}
+          programName=sampleInfo[0][0].toString();
+        }else{programName=sampleFieldValues[posicInArray].toString();}
+
+        myFldValue[0]=programName;
+        posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName());
+        if (posicInArray==-1){
+          myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName());
+          myFldValue=LPArray.addValueToArray1D(myFldValue, resultId);
         }
-      } 
-    }  
-    Integer sampleId=-999;
-    String programName="";
-    Integer posicInArray=LPArray.valuePosicInArray(sampleFieldNames, TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName());
-    if (posicInArray==-1){
-      posicInArray=LPArray.valuePosicInArray(sampleFieldNames, TblsProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName());
-      if (posicInArray==-1) return new Object[]{LPPlatform.LAB_FALSE};
-      sampleId=Integer.valueOf(LPNulls.replaceNull(sampleFieldValues[posicInArray].toString()));
-      Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
-              new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-              new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()});
-      if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){return LPArray.array2dTo1d(sampleInfo);}
-      programName=sampleInfo[0][0].toString();
-    }else{programName=sampleFieldValues[posicInArray].toString();}
-    
-    myFldValue[0]=programName;
-    posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName());
-    if (posicInArray==-1){
-      myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName());
-      myFldValue=LPArray.addValueToArray1D(myFldValue, resultId);
-    }
-    Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
-            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFldsToGet);
-    for (int iFld=0;iFld<sampleFldsToGet.length;iFld++){
-      String currFld=sampleFldsToGet[iFld];
-      posicInArray=LPArray.valuePosicInArray(myFldName, currFld);
-      if (posicInArray==-1){
-        myFldName=LPArray.addValueToArray1D(myFldName, currFld);
-        myFldValue=LPArray.addValueToArray1D(myFldValue, sampleInfo[0][iFld]);      
-      }else{myFldValue[posicInArray]=sampleInfo[0][iFld];}      
-    }
-    Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysisResult.TBL.getName(), 
-            new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, sampleAnalysisResultToGet);
-    for (int iFld=0;iFld<sampleAnalysisResultToGet.length;iFld++){
-      String currFld=sampleAnalysisResultToGet[iFld];
-      posicInArray=LPArray.valuePosicInArray(myFldName, currFld);
-      if (posicInArray==-1){
-        myFldName=LPArray.addValueToArray1D(myFldName, currFld);
-        myFldValue=LPArray.addValueToArray1D(myFldValue, resultInfo[0][iFld]);      
-      }else{myFldValue[posicInArray]=resultInfo[0][iFld];}      
-    }
-    
-    posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_LIMIT_ID.getName());
-    if (posicInArray>-1){
-      Integer limitId =Integer.valueOf(myFldValue[posicInArray].toString()); 
-      ConfigSpecRule specRule = new ConfigSpecRule();
-      specRule.specLimitsRule(schemaPrefix, limitId, "");
-      myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_SPEC_RULE_WITH_DETAIL.getName());
-      myFldValue=LPArray.addValueToArray1D(myFldValue, specRule.getRuleRepresentation());      
-    }
-    posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName());
-    if (posicInArray==-1){
-      myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName());
-      myFldValue=LPArray.addValueToArray1D(myFldValue, statusFirst);      
-    }else{myFldValue[posicInArray]=statusFirst;}
-    posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_CREATED_BY.getName());
-    if (posicInArray==-1){
-      myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_CREATED_BY.getName());
-      myFldValue=LPArray.addValueToArray1D(myFldValue, token.getPersonName());      
-    }else{myFldValue[posicInArray]=token.getPersonName();}
-    posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_CREATED_ON.getName());
-    if (posicInArray==-1){
-      myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_CREATED_ON.getName());
-      myFldValue=LPArray.addValueToArray1D(myFldValue, LPDate.getCurrentTimeStamp());      
-    }else{myFldValue[posicInArray]=LPDate.getCurrentTimeStamp();}
-    return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
-            myFldName, myFldValue);
-  }
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFldsToGet);
+        for (int iFld=0;iFld<sampleFldsToGet.length;iFld++){
+          String currFld=sampleFldsToGet[iFld];
+          posicInArray=LPArray.valuePosicInArray(myFldName, currFld);
+          if (posicInArray==-1){
+            myFldName=LPArray.addValueToArray1D(myFldName, currFld);
+            myFldValue=LPArray.addValueToArray1D(myFldValue, sampleInfo[0][iFld]);      
+          }else{myFldValue[posicInArray]=sampleInfo[0][iFld];}      
+        }
+        Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysisResult.TBL.getName(), 
+                new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, sampleAnalysisResultToGet);
+        for (int iFld=0;iFld<sampleAnalysisResultToGet.length;iFld++){
+          String currFld=sampleAnalysisResultToGet[iFld];
+          posicInArray=LPArray.valuePosicInArray(myFldName, currFld);
+          if (posicInArray==-1){
+            myFldName=LPArray.addValueToArray1D(myFldName, currFld);
+            myFldValue=LPArray.addValueToArray1D(myFldValue, resultInfo[0][iFld]);      
+          }else{myFldValue[posicInArray]=resultInfo[0][iFld];}      
+        }
+
+        posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_LIMIT_ID.getName());
+        if (posicInArray>-1){
+          Integer limitId =Integer.valueOf(myFldValue[posicInArray].toString()); 
+          ConfigSpecRule specRule = new ConfigSpecRule();
+          specRule.specLimitsRule(limitId, "");
+          myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_SPEC_RULE_WITH_DETAIL.getName());
+          myFldValue=LPArray.addValueToArray1D(myFldValue, specRule.getRuleRepresentation());      
+        }
+        posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName());
+        if (posicInArray==-1){
+          myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName());
+          myFldValue=LPArray.addValueToArray1D(myFldValue, statusFirst);      
+        }else{myFldValue[posicInArray]=statusFirst;}
+        posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_CREATED_BY.getName());
+        if (posicInArray==-1){
+          myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_CREATED_BY.getName());
+          myFldValue=LPArray.addValueToArray1D(myFldValue, token.getPersonName());      
+        }else{myFldValue[posicInArray]=token.getPersonName();}
+        posicInArray=LPArray.valuePosicInArray(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_CREATED_ON.getName());
+        if (posicInArray==-1){
+          myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_CREATED_ON.getName());
+          myFldValue=LPArray.addValueToArray1D(myFldValue, LPDate.getCurrentTimeStamp());      
+        }else{myFldValue[posicInArray]=LPDate.getCurrentTimeStamp();}
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                myFldName, myFldValue);
+      }
   
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param correctiveActionId
      * @return
      */
-    public static Object[] markAsCompleted(String schemaPrefix, Token token, Integer correctiveActionId){    
-        return markAsCompleted(schemaPrefix, token, correctiveActionId, null);
+    public static Object[] markAsCompleted(Integer correctiveActionId){    
+        return markAsCompleted(correctiveActionId, null);
     }
-    public static Object[] markAsCompleted(String schemaPrefix, Token token, Integer correctiveActionId, Integer investId){    
-        String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
-        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+    public static Object[] markAsCompleted(Integer correctiveActionId, Integer investId){    
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+
+        String statusClosed=Parameter.getParameterBundle(procInstanceName+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
+        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
         new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
         new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(correctiveActionInfo[0][0].toString())){
@@ -177,15 +179,18 @@ public class DataProgramCorrectiveAction {
             updFldName=LPArray.addValueToArray1D(updFldName, TblsProcedure.ProgramCorrectiveAction.FLD_INVEST_ID.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, investId);
         }
-        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                 updFldName, updFldValue, 
                 new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId});
     }  
-    public static Boolean isProgramCorrectiveActionEnable(String schemaPrefix){
-        return "ENABLE".equalsIgnoreCase(Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, "programCorrectiveActionMode"));
+    public static Boolean isProgramCorrectiveActionEnable(String procInstanceName){
+        return "ENABLE".equalsIgnoreCase(Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "programCorrectiveActionMode"));
     }
-    public static Object[] markAsAddedToInvestigation(String schemaPrefix, Token token, Integer investId, String objectType, Object objectId){    
-        String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
+    public static Object[] markAsAddedToInvestigation(Integer investId, String objectType, Object objectId){    
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+
+        String statusClosed=Parameter.getParameterBundle(procInstanceName+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
         String objectIdClass=null;
         String fieldToFindRecord=null;
         if (TblsData.Sample.TBL.getName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName();
@@ -197,11 +202,11 @@ public class DataProgramCorrectiveAction {
             objectIdClass=LPDatabase.integer().toString();
         Object[][] programCorrectiveActionsToMarkAsCompleted=null;
         if (LPDatabase.integer().toString().equalsIgnoreCase(objectIdClass))
-            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                     new String[]{fieldToFindRecord, TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, new Object[]{Integer.valueOf(objectId.toString()), statusClosed}, 
                     new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_INVEST_ID.getName()});
         else
-            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                     new String[]{fieldToFindRecord, TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, new Object[]{objectId.toString(), statusClosed}, 
                     new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_INVEST_ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCorrectiveActionsToMarkAsCompleted[0][0].toString()))
@@ -210,9 +215,9 @@ public class DataProgramCorrectiveAction {
         for (Object[] curObj: programCorrectiveActionsToMarkAsCompleted){
             if (statusClosed.equalsIgnoreCase(curObj[1].toString()))
                 diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> is closed, cannot be added to the investigation", new Object[]{investId});
-            Object[] diagn=markAsCompleted(schemaPrefix, token, Integer.valueOf(curObj[0].toString()), investId);
+            Object[] diagn=markAsCompleted(Integer.valueOf(curObj[0].toString()), investId);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))diagnostic=diagn;
-            diagn = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+            diagn = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                     new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_INVEST_ID.getName()},
                     new Object[]{investId},
                     new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{Integer.valueOf(curObj[0].toString())});        

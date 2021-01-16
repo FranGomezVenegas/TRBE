@@ -26,6 +26,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.util.Arrays;
+import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author Administrator
@@ -75,6 +76,12 @@ public class TestingConfigSop extends HttpServlet {
             throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             response = LPTestingOutFormat.responsePreparation(response);        
+
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true);        
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            return;
+        }
             
             String processName="oil-pl1";
             
@@ -93,7 +100,6 @@ public class TestingConfigSop extends HttpServlet {
             String schemaConfigName = processName;
             String schemaDataName = processName;
             
-            if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}   
         
             String currentUser = "labplanet";
             Integer sopId = 1;

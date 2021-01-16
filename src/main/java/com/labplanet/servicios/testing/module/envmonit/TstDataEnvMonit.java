@@ -109,7 +109,7 @@ public class TstDataEnvMonit extends HttpServlet {
                 
         boolean isConnected = false;
         
-        isConnected = Rdbms.getRdbms().startRdbms(true);
+        isConnected = Rdbms.getRdbms().startRdbms();
         if (!isConnected){
             errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
@@ -140,7 +140,7 @@ public class TstDataEnvMonit extends HttpServlet {
 
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
              (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}     
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
             
             DataProgramSampleAnalysis dsProgramAna = new DataProgramSampleAnalysis();
             DataSample ds = new DataSample(dsProgramAna);

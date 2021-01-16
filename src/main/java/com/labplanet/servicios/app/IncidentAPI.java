@@ -180,7 +180,7 @@ public class IncidentAPI extends HttpServlet {
                return;                   
             }     
         }
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;} 
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;} 
         try (PrintWriter out = response.getWriter()) {
 
             IncidentAPIEndpoints endPoint = null;
@@ -201,36 +201,36 @@ public class IncidentAPI extends HttpServlet {
             Integer incId=null;
             switch (endPoint){
                 case NEW_INCIDENT:
-                    actionDiagnoses = AppIncident.newIncident(token, argValues[0].toString(), argValues[1].toString(), "");
+                    actionDiagnoses = AppIncident.newIncident(argValues[0].toString(), argValues[1].toString(), "");
                     String incIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
                     if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
                     break;
                 case CONFIRM_INCIDENT:
                     incId=(Integer) argValues[0];
                     AppIncident inc=new AppIncident(incId);
-                    actionDiagnoses = inc.confirmIncident(token, incId, argValues[1].toString());
+                    actionDiagnoses = inc.confirmIncident(incId, argValues[1].toString());
                     break;
                 case ADD_NOTE_INCIDENT:
                     incId=(Integer) argValues[0];
                     inc=new AppIncident(incId);
                     String newNote=argValues[2].toString();
-                    actionDiagnoses = inc.addNoteIncident(token, incId, argValues[1].toString(), newNote);
+                    actionDiagnoses = inc.addNoteIncident(incId, argValues[1].toString(), newNote);
                     break;                    
                 case CLOSE_INCIDENT:
                     incId=(Integer) argValues[0];
                     inc=new AppIncident(incId);
-                    actionDiagnoses = inc.closeIncident(token, incId, argValues[1].toString());
+                    actionDiagnoses = inc.closeIncident(incId, argValues[1].toString());
                     break;                    
                 case REOPEN_INCIDENT:
                     incId=(Integer) argValues[0];
                     inc=new AppIncident(incId);
-                    actionDiagnoses = inc.reopenIncident(token, incId, argValues[1].toString());
+                    actionDiagnoses = inc.reopenIncident(incId, argValues[1].toString());
                     break;                    
             }    
             if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
-                RelatedObjects rObj=RelatedObjects.getInstance();
+                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), "incident", incId);                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
                 rObj.killInstance();

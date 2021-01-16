@@ -33,6 +33,7 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Properties;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -45,7 +46,6 @@ public class Rdbms {
     private static Boolean isStarted = false;
     private static Integer timeout;
     private static Integer transactionId = 0;
-    private static Boolean isTesting=false;
     String savepointName;
     Savepoint savepoint=null;      
     
@@ -157,9 +157,9 @@ public class Rdbms {
         isConnected = Rdbms.getRdbms().startRdbms(false);      
         return isConnected;
     }    */
-    public static final Boolean stablishDBConection(Boolean isTesting){
+    public static final Boolean stablishDBConection(){
         boolean isConnected = false;                               
-        isConnected = Rdbms.getRdbms().startRdbms(isTesting);      
+        isConnected = Rdbms.getRdbms().startRdbms();      
         return isConnected;
     }    
 
@@ -173,11 +173,10 @@ public class Rdbms {
      *
      * @return
      */
-    public Boolean startRdbms(Boolean isTesting){
-        return startRdbmsInternal(isTesting);
+    public Boolean startRdbms(){
+        return startRdbmsInternal();
     }
-    public Boolean startRdbmsInternal(Boolean isTesting){
-        this.isTesting=isTesting;
+    public Boolean startRdbmsInternal(){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String dbDriver = prop.getString(BUNDLE_PARAMETER_DBMANAGER);
         switch (dbDriver.toUpperCase()){
@@ -228,16 +227,16 @@ public class Rdbms {
     public Boolean startRdbmsTomcatWithPool() {        
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         Integer conTimeOut = Integer.valueOf(prop.getString(BUNDLE_PARAMETER_DBTIMEOUT));
-        PoolC3P0 pool = PoolC3P0.getInstance();
+        PoolC3P0 pool = PoolC3P0.getInstanceForActions();
         //ConnectionPoolDataSource cpds = assertCpds();
-//        pool = PoolC3P0.getInstance();
+//        pool = PoolC3P0.getInstanceForActions();
         if (pool==null){
             setIsStarted(Boolean.FALSE);
             return Boolean.FALSE;            
         }
         Connection cx = pool.getConnection();
         if (cx==null){        
-            pool = PoolC3P0.getInstance();
+            pool = PoolC3P0.getInstanceForActions();
             //pool.killConnection();
             cx = pool.getConnection();
             if (cx==null){
@@ -467,7 +466,7 @@ if (1==1)return;
         if(getConnection()!=null){
             try {
                 if (DB_CONNECTIVITY_POOLING_MODE){
-                    PoolC3P0 pool = PoolC3P0.getInstance();
+                    PoolC3P0 pool = PoolC3P0.getInstanceForActions();
                     if (pool==null){
                         setIsStarted(Boolean.FALSE);
                         return;
@@ -507,8 +506,6 @@ if (1==1)return;
      */
     public static Connection getConnection(){ return conn; }
 
-    public static Boolean getIsTesting(){ 
-        return isTesting; }
 
     /**
      *
@@ -1566,9 +1563,9 @@ if (1==1)return;
         }  
     }
     public static String addSuffixIfItIsForTesting(String schemaName){
-        if (Rdbms.getIsTesting()){
-            return suffixForTesting(schemaName);
-        }
+        //if (Rdbms.getIsTesting()){
+        if (ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting())
+            return suffixForTesting(schemaName);        
         return schemaName;
     }
     public static String suffixForTesting(String schemaName){

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author Administrator
@@ -304,16 +305,16 @@ public class ConfigSpecRule {
     
     /**
      *
-     * @param schemaPrefix
      * @param limitId
      * @param language
      * @return
      */
-    public Object[] specLimitsRule(String schemaPrefix, Integer limitId, String language){
-      Object[] errorDetailVariables= new Object[0];
+    public Object[] specLimitsRule(Integer limitId, String language){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Object[] errorDetailVariables= new Object[0];
       String specArgumentsSeparator = "\\*";
       StringBuilder ruleBuilder = new StringBuilder(0);
-      Object[][] specDef=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
+      Object[][] specDef=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
               new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()}, new Object[]{limitId}, 
               new String[]{TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(), TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName()});
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specDef[0][0].toString())) return LPArray.array2dTo1d(specDef);
@@ -411,7 +412,7 @@ public class ConfigSpecRule {
           this.ruleRepresentation=this.quantitativeRuleRepresentation;
           break;
         default:
-          errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{limitId.toString(), LPPlatform.buildSchemaName(LPPlatform.SCHEMA_CONFIG, schemaPrefix), ruleType});
+          errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{limitId.toString(), LPPlatform.buildSchemaName(LPPlatform.SCHEMA_CONFIG, procInstanceName), ruleType});
           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_SpecRuleNotImplemented", errorDetailVariables);        
       }
       return new Object[]{LPPlatform.LAB_TRUE, ruleBuilder.toString()};
@@ -419,7 +420,6 @@ public class ConfigSpecRule {
 
     /**
      *
-     * @param schemaPrefix
      * @param sampleSpecCode
      * @param sampleSpecCodeVersion
      * @param sampleSpecVariationName
@@ -430,9 +430,11 @@ public class ConfigSpecRule {
      * @param fieldsToRetrieve
      * @return
      */
-    public static Object[][] getSpecLimitLimitIdFromSpecVariables(String schemaPrefix, String sampleSpecCode, Integer sampleSpecCodeVersion,
-            String sampleSpecVariationName, String analysis, String methodName, Integer methodVersion, String paramName, String[] fieldsToRetrieve){
-        return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
+    public static Object[][] getSpecLimitLimitIdFromSpecVariables(String sampleSpecCode, Integer sampleSpecCodeVersion,
+                String sampleSpecVariationName, String analysis, String methodName, Integer methodVersion, String paramName, String[] fieldsToRetrieve){
+
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
                 new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), 
                     TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(), 
                     TblsCnfg.SpecLimits.FLD_PARAMETER.getName()}, new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, 

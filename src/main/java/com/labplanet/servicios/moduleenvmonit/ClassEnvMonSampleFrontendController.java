@@ -25,7 +25,7 @@ public class ClassEnvMonSampleFrontendController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;    
     
-    public ClassEnvMonSampleFrontendController(HttpServletRequest request, String tokenStr, String schemaPrefix, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
+    public ClassEnvMonSampleFrontendController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
         ClassEnvMonSampleFrontend.EnvMonSampleAPIFrontendEndpoints endPoint = null;
@@ -39,7 +39,7 @@ public class ClassEnvMonSampleFrontendController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, tokenStr, schemaPrefix, endPoint);
+            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, endPoint);
             if (clss.getIsSuccess())
                 this.functionDiagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Frontend is not an action", null);
             else

@@ -221,8 +221,8 @@ if (1==1){return "ERROR";}
      * @return
      */
     public Object[] analysisUpdate(String code, Integer configVersion, String[] specFieldName, Object[] specFieldValue) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);        
         Object[] errorDetailVariables = new Object[0];
             
@@ -297,8 +297,8 @@ if (1==1){return "ERROR";}
      * @return
      */
     public Object[] analysisNew(String code, Integer configVersion, String[] specFieldName, Object[] specFieldValue ){                          
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
 
@@ -453,8 +453,8 @@ if (1==1){return "ERROR";}
      * @throws InvocationTargetException
      */
     public Object[] analysisMethodParamsNew(String specCode, Integer specCodeVersion, String[] specFieldName, Object[] specFieldValue ) throws IllegalAccessException, InvocationTargetException{
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
                           

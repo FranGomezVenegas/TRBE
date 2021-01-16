@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -88,61 +89,56 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);        
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();        
+        String language=procReqInstance.getLanguage();
+        String procInstanceName = procReqInstance.getProcedureInstance();
 
         try (PrintWriter out = response.getWriter()) {
 
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        EnvMonIncubBatchAPIfrontendEndpoints endPoint = null;
-        try{
-            endPoint = EnvMonIncubBatchAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
-        }catch(Exception e){
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
-            return;                   
-        }
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
-
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false))return;
-
-        switch (endPoint){
-            
-        case ACTIVE_BATCH_LIST: 
-            Rdbms.stablishDBConection(false);
-            String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_TYPE.getName()
-                , TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_VERSION.getName()
-                , TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()
-                , TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_END.getName()
-                , TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_ROWS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_COLS.getName()
-                , TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_POSITIONS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_OBJECTS.getName()
-                , TblsEnvMonitData.IncubBatch.FLD_STRUCT_ROWS_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_COLS_NAME.getName() 
-                , TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};
-            Object[][] activeBatchesList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
-                    new String[]{TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName()}, new Object[]{true}, 
-                    fieldsToRetrieve, new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()});
-            JSONArray jArr = new JSONArray();
-            for (Object[] currBatch: activeBatchesList){
-                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
-                
-                Object[] incubBatchContentInfo=incubBatchContentJson(fieldsToRetrieve, currBatch);
-                jObj.put("SAMPLES_ARRAY", incubBatchContentInfo[0]);
-                jObj.put("NUM_SAMPLES", incubBatchContentInfo[1]);                 
-                jArr.add(jObj);
+            EnvMonIncubBatchAPIfrontendEndpoints endPoint = null;
+            try{
+                endPoint = EnvMonIncubBatchAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
             }
-            Rdbms.closeRdbms();  
-            LPFrontEnd.servletReturnSuccess(request, response, jArr);
-            break;        
-        default:      
-            Rdbms.closeRdbms(); 
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
+
+//            if (!LPFrontEnd.servletStablishDBConection(request, response))return;
+
+            switch (endPoint){
+            case ACTIVE_BATCH_LIST: 
+                String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_TYPE.getName()
+                    , TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_VERSION.getName()
+                    , TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()
+                    , TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_END.getName()
+                    , TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_ROWS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_COLS.getName()
+                    , TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_POSITIONS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_OBJECTS.getName()
+                    , TblsEnvMonitData.IncubBatch.FLD_STRUCT_ROWS_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_COLS_NAME.getName() 
+                    , TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};
+                Object[][] activeBatchesList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                        new String[]{TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName()}, new Object[]{true}, 
+                        fieldsToRetrieve, new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()});
+                JSONArray jArr = new JSONArray();
+                for (Object[] currBatch: activeBatchesList){
+                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
+
+                    Object[] incubBatchContentInfo=incubBatchContentJson(fieldsToRetrieve, currBatch);
+                    jObj.put("SAMPLES_ARRAY", incubBatchContentInfo[0]);
+                    jObj.put("NUM_SAMPLES", incubBatchContentInfo[1]);                 
+                    jArr.add(jObj);
+                }
+                procReqInstance.killIt();               
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                break;        
+            default:      
+                procReqInstance.killIt();              
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);                                                                  
-    }
+        }
     }catch(Exception e){      
+        procReqInstance.killIt();
         String exceptionMessage =e.getMessage();
         if (exceptionMessage==null){exceptionMessage="null exception";}
         response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
@@ -150,7 +146,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
     } finally {
        // release database resources
        try {
-           Rdbms.closeRdbms();   
+            procReqInstance.killIt();
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
        }
     }              

@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.modulesample;
 
-import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -24,7 +23,7 @@ public class ClassSampleQueriesController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassSampleQueriesController(HttpServletRequest request, Token token, String schemaPrefix, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
+    public ClassSampleQueriesController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
         SampleAPIParams.SampleAPIfrontendEndpoints endPoint = null;
@@ -38,7 +37,7 @@ public class ClassSampleQueriesController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassSampleQueries clss=new ClassSampleQueries(request, token, schemaPrefix, endPoint);
+            ClassSampleQueries clss=new ClassSampleQueries(request, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

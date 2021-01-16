@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -200,40 +201,17 @@ public class EnvMonAPI extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
-        String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-        
-        Token token = new Token(finalToken);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
-                return;                             
-        }
-        
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, language);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
-            return;          
-        }             
-        
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}
-      
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
 
         //Rdbms.setTransactionId(schemaConfigName);
@@ -244,26 +222,14 @@ public class EnvMonAPI extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }
-        areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+        Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response,
                     LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
             return;
         }                
         try (PrintWriter out = response.getWriter()) {
-
-            Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;                           
-            }            
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(schemaPrefix, token.getUserRole(), actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;                           
-            }                        
-
-            ClassEnvMon clss=new ClassEnvMon(request, token, schemaPrefix, endPoint, auditAndUsrValid);
+            ClassEnvMon clss=new ClassEnvMon(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
@@ -284,8 +250,7 @@ public class EnvMonAPI extends HttpServlet {
                 Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
 */            
-            auditAndUsrValid.killInstance();
-            Rdbms.closeRdbms();                   
+            procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
@@ -293,8 +258,7 @@ public class EnvMonAPI extends HttpServlet {
             // release database resources
             try {
                 //con.close();
-                auditAndUsrValid.killInstance();
-                Rdbms.closeRdbms();   
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }      }

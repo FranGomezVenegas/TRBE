@@ -26,7 +26,9 @@ import trazit.session.ProcedureRequestSession;
 public class DataSampleRevisionTestingGroup {
     public enum TestingGroupFileProperties{sampleTestingByGroup_ReviewByTestingGroup};
 
-    public static Object[] addSampleRevisionByTestingGroup(String procInstanceName, Token token, Integer sampleId, Integer testId, String specAnalysisTestingGroup){        
+    public static Object[] addSampleRevisionByTestingGroup(Integer sampleId, Integer testId, String specAnalysisTestingGroup){        
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleTestingByGroup_ReviewByTestingGroup Not active", null);
@@ -46,10 +48,12 @@ public class DataSampleRevisionTestingGroup {
             new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName(), TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName()}, 
             new Object[]{sampleId, specAnalysisTestingGroup, false, false});
     }
-    public static Object[] isSampleRevisionByTestingGroupReviewed(String procInstanceName, Token token, Integer sampleId){
-        return isSampleRevisionByTestingGroupReviewed(procInstanceName, token, sampleId, null);
+    public static Object[] isSampleRevisionByTestingGroupReviewed(Integer sampleId){
+        return isSampleRevisionByTestingGroupReviewed(sampleId, null);
     }
-    public static Object[] isSampleRevisionByTestingGroupReviewed(String procInstanceName, Token token, Integer sampleId, String testingGroup){
+    public static Object[] isSampleRevisionByTestingGroupReviewed(Integer sampleId, String testingGroup){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleTestingByGroup_ReviewByTestingGroup Not active", null);
@@ -69,7 +73,9 @@ public class DataSampleRevisionTestingGroup {
                 new Object[]{pendingTestingGroupStr, sampleId, procInstanceName});
         }
     }
-    public static Object[] isReadyForRevision( String procInstanceName, Token token, Integer sampleId, String testingGroup){
+    public static Object[] isReadyForRevision(Integer sampleId, String testingGroup){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         String[] sampleAnalysisFieldName=new String[]{TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName()};
         Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),  
                 new String[] {TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleAnalysisFieldName);
@@ -80,12 +86,13 @@ public class DataSampleRevisionTestingGroup {
     }  
     
     public static Object[] reviewSampleTestingGroup(Integer sampleId, String testingGroup){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleTestingByGroup_ReviewByTestingGroup Not active", null);
-        Object[] sampleRevisionByTestingGroupReviewed = isSampleRevisionByTestingGroupReviewed(procInstanceName, token, sampleId, testingGroup);
+        Object[] sampleRevisionByTestingGroupReviewed = isSampleRevisionByTestingGroupReviewed(sampleId, testingGroup);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;
         
         Object[] existsPendingAnalysis = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
@@ -95,10 +102,10 @@ public class DataSampleRevisionTestingGroup {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "There are pending results for the testing group <*1*> for the sample <*2*> in procedure <*3*>", null);
         Object[] isRevisionSampleAnalysisRequired=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisRequired[0].toString())){            
-            Object[] isallsampleAnalysisReviewed = DataSampleAnalysis.isAllsampleAnalysisReviewed(procInstanceName, token, sampleId, new String[]{TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()}, new Object[]{testingGroup});
+            Object[] isallsampleAnalysisReviewed = DataSampleAnalysis.isAllsampleAnalysisReviewed(sampleId, new String[]{TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()}, new Object[]{testingGroup});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isallsampleAnalysisReviewed[0].toString())) return isallsampleAnalysisReviewed;
         }
-        Object[] readyForRevision = isReadyForRevision(procInstanceName, token, sampleId, testingGroup);
+        Object[] readyForRevision = isReadyForRevision(sampleId, testingGroup);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(readyForRevision[0].toString())) return readyForRevision;
         
         Object[] updateReviewSampleTestingGroup = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),
@@ -107,7 +114,7 @@ public class DataSampleRevisionTestingGroup {
                 new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()},
                 new Object[]{sampleId, testingGroup});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateReviewSampleTestingGroup[0].toString())){
-            markSampleAsReadyForRevision(procInstanceName, token, sampleId);
+            markSampleAsReadyForRevision(sampleId);
             Object[] fieldsForAudit= new Object[]{TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()+":"+testingGroup};
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
@@ -115,7 +122,9 @@ public class DataSampleRevisionTestingGroup {
         return updateReviewSampleTestingGroup;        
     }
     
-    public static Object[] markSampleAsReadyForRevision(String procInstanceName, Token token, Integer sampleId){
+    public static Object[] markSampleAsReadyForRevision(Integer sampleId){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         Object[][] PendingTestingGroupByRevisionValue= Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),
                 new String[]{TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName()},
                 new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName()}, 
@@ -123,20 +132,21 @@ public class DataSampleRevisionTestingGroup {
         if (PendingTestingGroupByRevisionValue.length==1 && PendingTestingGroupByRevisionValue[0][0].toString().equalsIgnoreCase("TRUE")){
             DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
             DataSample smp=new DataSample(smpAna);
-            smp.setReadyForRevision(procInstanceName, token, sampleId);
+            smp.setReadyForRevision(sampleId);
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "There are pending testing group reviews for the sample <*1*> in procedure <*2*>", new Object[]{sampleId, procInstanceName});
     }
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @param testingGroup
      * @return
      */
-    public static Object[] setReadyForRevision( String procInstanceName, Token token, Integer sampleId, String testingGroup){
+    public static Object[] setReadyForRevision(Integer sampleId, String testingGroup){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+
         String[] sampleFieldName=new String[]{TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName()};
         Object[] sampleFieldValue=new Object[]{true};
         Object[][] sampleRevisionTestingGroupInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),  

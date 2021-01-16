@@ -89,8 +89,8 @@ public class DataSampleIncubation {
      * @return
      */
     public static Object[] setSampleEndIncubationDateTime(Integer sampleId, Integer incubationStage, String incubName, BigDecimal tempReading) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.END.toString(), incubName, tempReading);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleIncubatorModeCheckerInfo[0].toString())) return sampleIncubatorModeCheckerInfo;
@@ -120,8 +120,8 @@ public class DataSampleIncubation {
      * @return
      */
     public static Object[] setSampleStartIncubationDateTime(Integer sampleId, Integer incubationStage, String incubName, BigDecimal tempReading) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.START.toString(), incubName, tempReading);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleIncubatorModeCheckerInfo[0].toString())) return sampleIncubatorModeCheckerInfo;
         if ((incubationStage < 1) || (incubationStage > 2)) {
@@ -142,7 +142,7 @@ public class DataSampleIncubation {
     }
     
     private static Object[] sampleIncubatorModeChecker(Integer incubationStage, String moment, String incubName, BigDecimal tempReading){        
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String sampleIncubationMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", "sampleIncubationMode", null);
         if (sampleIncubationMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorMode Business Rule not defined for "+procInstanceName, null);
@@ -185,7 +185,7 @@ public class DataSampleIncubation {
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker Incubator <*1*> not found for schema <*2*>", new Object[]{incubName, procInstanceName});
             Integer tempReadingEvId=null;
             if (tempReading==null){
-                Object[][] incubLastTempReading=DataIncubatorNoteBook.getLastTemperatureReading(procInstanceName, incubName, 1);
+                Object[][] incubLastTempReading=DataIncubatorNoteBook.getLastTemperatureReading(incubName, 1);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubLastTempReading[0][0].toString())) return LPArray.array2dTo1d(incubLastTempReading);
                 tempReadingEvId= Integer.valueOf(incubLastTempReading[0][0].toString());
                 tempReading= BigDecimal.valueOf(Double.valueOf(incubLastTempReading[0][4].toString()));                
@@ -220,8 +220,8 @@ public class DataSampleIncubation {
     }
     
     private static Object[] tempReadingBusinessRule(String incubName, Object tempReadingDate){   
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String sampleIncubationTempReadingBusinessRulevalue = Parameter.getParameterBundle("config", procInstanceName, "procedure", "sampleIncubationTempReadingBusinessRule", null);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");

@@ -80,7 +80,7 @@ public class DBActions extends HttpServlet {
                 out.println(fileContentBuilder.toString()); 
                 return;
             }            
-            if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
+            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
                         
             Integer numEvaluationArguments = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());   
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   

@@ -86,8 +86,8 @@ public class DataBatchIncubator {
      */
 
     public static Object[] createBatch(String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue){
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{bName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(batchExists[0].toString())){
@@ -103,7 +103,7 @@ public class DataBatchIncubator {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Template <*1*> and version <*2*> is not active", new Object[]{bTemplateId, bTemplateVersion});
 
         String batchType=templateInfo[0][1].toString();
-        Object[] batchTypeCheckerDiagn= createBatchTypeChecker(procInstanceName, batchType, bName, bTemplateId, bTemplateVersion, fldName, fldValue);
+        Object[] batchTypeCheckerDiagn= createBatchTypeChecker(batchType, bName, bTemplateId, bTemplateVersion, fldName, fldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchTypeCheckerDiagn[0].toString())) return batchTypeCheckerDiagn;
         
         if (batchType.equalsIgnoreCase(BatchIncubatorType.UNSTRUCTURED.toString())){ 
@@ -114,7 +114,7 @@ public class DataBatchIncubator {
     }
     
     public static Object[] removeBatch(String bName){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{bName},
@@ -126,9 +126,9 @@ public class DataBatchIncubator {
         String batchType=batchInfo[0][0].toString();
         Boolean isBatchEmpty=false;
         if (batchType.equalsIgnoreCase(BatchIncubatorType.UNSTRUCTURED.toString())){ 
-            isBatchEmpty=DataBatchIncubatorUnstructured.batchIsEmptyUnstructured(procInstanceName, bName);
+            isBatchEmpty=DataBatchIncubatorUnstructured.batchIsEmptyUnstructured(bName);
         }else if (batchType.equalsIgnoreCase(BatchIncubatorType.STRUCTURED.toString())) 
-            isBatchEmpty=DataBatchIncubatorStructured.batchIsEmptyStructured(procInstanceName, bName);
+            isBatchEmpty=DataBatchIncubatorStructured.batchIsEmptyStructured(bName);
         else
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "batchType <*1*> Not recognized", new Object[]{batchType});   
         if (isBatchEmpty){
@@ -138,7 +138,7 @@ public class DataBatchIncubator {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "IncubatorBatchNotEmptyToRemove", new Object[]{bName, procInstanceName});        
         }
     }
-    private static Object[] createBatchTypeChecker(String procInstanceName, String batchType, String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue){
+    private static Object[] createBatchTypeChecker(String batchType, String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue){
         Object[] batchTypeExist=batchTypeExists(batchType);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchTypeExist[0].toString())) return batchTypeExist;
         
@@ -158,7 +158,7 @@ public class DataBatchIncubator {
     }
 
     public static Object[] batchAddSample(String bName, Integer bTemplateId, Integer bTemplateVersion, Integer sampleId, Integer row, Integer col, Boolean override){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] templateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_VERSION.getName()}, 
                 new Object[]{bTemplateId, bTemplateVersion}, new String[]{TblsEnvMonitConfig.IncubBatch.FLD_ACTIVE.getName(), TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()});
@@ -182,7 +182,7 @@ public class DataBatchIncubator {
             return LPArray.array2dTo1d(sampleInfo);
         Integer pendingIncubationStage=samplePendingBatchStage(sampleInfoFieldsToRetrieve, sampleInfo[0]);
         if (pendingIncubationStage==-1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "There is no pending incubation for sample <*1*> in procedure <*2*>", new Object[]{sampleId, procInstanceName});
-        Object[] smpIsBatchable=sampleIncubStageIsBatchable(procInstanceName, sampleId, pendingIncubationStage, sampleInfoFieldsToRetrieve, sampleInfo[0]);
+        Object[] smpIsBatchable=sampleIncubStageIsBatchable(sampleId, pendingIncubationStage, sampleInfoFieldsToRetrieve, sampleInfo[0]);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(smpIsBatchable[0].toString())) return smpIsBatchable;        
         
         if (batchType.equalsIgnoreCase(BatchIncubatorType.UNSTRUCTURED.toString())){ 
@@ -204,7 +204,7 @@ public class DataBatchIncubator {
      * @return
      */
     public static Object[] batchMoveSample(String bName, Integer bTemplateId, Integer bTemplateVersion, Integer sampleId, Integer newRow, Integer newCol, Boolean override){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] templateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_VERSION.getName()}, 
                 new Object[]{bTemplateId, bTemplateVersion}, new String[]{TblsEnvMonitConfig.IncubBatch.FLD_ACTIVE.getName(), TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()});
@@ -243,7 +243,7 @@ public class DataBatchIncubator {
      * @return
      */
     public static Object[] batchRemoveSample(String bName, Integer bTemplateId, Integer bTemplateVersion, Integer sampleId){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] templateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_VERSION.getName()}, 
                 new Object[]{bTemplateId, bTemplateVersion}, new String[]{TblsEnvMonitConfig.IncubBatch.FLD_ACTIVE.getName(), TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()});
@@ -285,7 +285,7 @@ public class DataBatchIncubator {
      * @return
      */
     public static Object[] batchStarted(String bName, Integer bTemplateId, Integer bTemplateVersion){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{bName}, new String[]{TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) return LPArray.array2dTo1d(batchInfo);
@@ -313,7 +313,7 @@ public class DataBatchIncubator {
      * @return
      */
     public static Object[] batchEnded(String bName, Integer bTemplateId, Integer bTemplateVersion){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{bName}, new String[]{TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) return LPArray.array2dTo1d(batchInfo);
@@ -322,7 +322,7 @@ public class DataBatchIncubator {
     }
     
     private static Object[] batchMomentMarked(String bName, Integer bTemplateId, Integer bTemplateVersion, String moment){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] templateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_VERSION.getName()}, 
                 new Object[]{bTemplateId, bTemplateVersion}, new String[]{TblsEnvMonitConfig.IncubBatch.FLD_ACTIVE.getName(), TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()});
@@ -405,7 +405,8 @@ public class DataBatchIncubator {
         return -1;
     }
     
-    private static Object[] sampleIncubStageIsBatchable(String procInstanceName, Integer sampleId, Integer incubStage, String[] fieldsName, Object[] fieldsValue){
+    private static Object[] sampleIncubStageIsBatchable(Integer sampleId, Integer incubStage, String[] fieldsName, Object[] fieldsValue){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String batchFldName="";
         if (null==incubStage)
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.",
@@ -438,7 +439,7 @@ public class DataBatchIncubator {
      * @return
      */
     public static Object[] batchAssignIncubator(String batchName, String incubName){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitConfig.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
                 new String[]{TblsEnvMonitConfig.IncubBatch.FLD_ACTIVE.getName(), TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()});
@@ -465,7 +466,7 @@ public class DataBatchIncubator {
      * @return
      */
     public static Object[] batchUpdateInfo(String batchName, String[] fieldsName, Object[] fieldsValue){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitConfig.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
                 new String[]{TblsEnvMonitConfig.IncubBatch.FLD_ACTIVE.getName(), TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()});
@@ -483,7 +484,7 @@ public class DataBatchIncubator {
     }
     
     public static Object[] batchIsAvailableForChangingContent(String batchName){
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();        
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
         Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName()});

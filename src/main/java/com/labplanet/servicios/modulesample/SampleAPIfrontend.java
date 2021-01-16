@@ -36,6 +36,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -70,22 +71,16 @@ public class SampleAPIfrontend extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
-
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+        String procInstanceName=procReqInstance.getProcedureInstance();
+        
         try (PrintWriter out = response.getWriter()) {
 
-            Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                return;          
-            }             
-            String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-
-            String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
-            String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);  
+            String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);    
+            String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);  
         
             //Token token = new Token(finalToken);
             SampleAPIfrontendEndpoints endPoint = null;
@@ -97,14 +92,14 @@ public class SampleAPIfrontend extends HttpServlet {
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
 
-            if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
+//            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
             
             switch (endPoint){
             case GET_SAMPLETEMPLATES:       
                 String[] filterFieldName = new String[]{TblsCnfg.Sample.FLD_JSON_DEFINITION.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
                 Object[] filterFieldValue = new Object[]{""};
 /*                filterFieldName = LPArray.addValueToArray1D(filterFieldName, "code");
-                if ("process-us".equalsIgnoreCase(schemaPrefix)){
+                if ("process-us".equalsIgnoreCase(procInstanceName)){
                     filterFieldValue = LPArray.addValueToArray1D(filterFieldValue, "specSamples");
                 }else{filterFieldValue = LPArray.addValueToArray1D(filterFieldValue, "sampleTemplate");}    */
                 Object[][] datas = Rdbms.getRecordFieldsByFilter(schemaConfigName,TblsCnfg.Sample.TBL.getName(), 
@@ -122,7 +117,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, jArray);
                 return;
             case UNRECEIVESAMPLES_LIST:   
-                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_UNRECEIVESAMPLES_LIST.split("\\|"));
+                Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_UNRECEIVESAMPLES_LIST.split("\\|"));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                     LPFrontEnd.servletReturnResponseError(request, response, 
                             LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
@@ -164,7 +159,7 @@ public class SampleAPIfrontend extends HttpServlet {
                                 whereFieldsValueArr[iFields]=newWhereFieldValues;
                             }
                         }
-                        String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(), finalToken);
+                        String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(), procReqInstance.getTokenString());
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
                             whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
                     } 
@@ -282,7 +277,7 @@ public class SampleAPIfrontend extends HttpServlet {
                                 whereFieldsValueArr[iFields]=newWhereFieldValues;
                             }
                         }
-                        String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(), finalToken);
+                        String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(), procReqInstance.getTokenString());
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
                             whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
                     }                                    
@@ -513,7 +508,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         String currRowLimitId=curRow[posicLimitIdFld-1].toString();
                         JSONObject row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
                         if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
-                          specRule.specLimitsRule(schemaPrefix, Integer.valueOf(currRowLimitId) , null);                        
+                          specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
                           row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, specRule.getRuleRepresentation());                          
                         }
                         jArr.add(row);
@@ -668,7 +663,7 @@ public class SampleAPIfrontend extends HttpServlet {
                    String sampleAuditResultFieldToSort = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_SORT);
                    
 
-                    String jsonarrayf=DataSample.sampleEntireStructureData(schemaPrefix, Integer.parseInt(sampleIdStr), sampleFieldToRetrieve, 
+                    String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, Integer.parseInt(sampleIdStr), sampleFieldToRetrieve, 
                             sampleAnalysisFieldToRetrieve, sampleAnalysisFieldToSort, sarFieldToRetrieve, sarFieldToSort, 
                             sampleAuditFieldToRetrieve, sampleAuditResultFieldToSort);
                     LPFrontEnd.servletReturnSuccess(request, response, jsonarrayf);
@@ -679,14 +674,14 @@ public class SampleAPIfrontend extends HttpServlet {
                    sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_RETRIEVE);
                    sampleFieldToRetrieveArr=new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName(), TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName()
                     , TblsDataAudit.Sample.FLD_REVIEWED.getName(), TblsDataAudit.Sample.FLD_REVIEWED_ON.getName()};
-                   Object[][] sampleAuditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+                   Object[][] sampleAuditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
                            new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName(), TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{sampleId}, 
                            sampleFieldToRetrieveArr, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
                    JSONArray jArr = new JSONArray();
                    for (Object[] curRow: sampleAuditInfo){
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRow);
                     Integer curAuditId=Integer.valueOf(curRow[1].toString());
-                        Object[][] sampleAuditInfoLvl2=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+                        Object[][] sampleAuditInfoLvl2=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
                                 new String[]{TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()}, new Object[]{curAuditId}, 
                                 sampleFieldToRetrieveArr, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
                         JSONArray jArrLvl2 = new JSONArray();
@@ -715,8 +710,9 @@ public class SampleAPIfrontend extends HttpServlet {
          } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                procReqInstance.killIt();
+            } catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       
     }

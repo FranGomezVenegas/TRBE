@@ -14,13 +14,16 @@ import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotCertif
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
  * @author User
  */
 public class DataInspectionLotCertificate {
-    public Object[] lotCertificateRecordCreateOrUpdate(String procPrefix, Token token, String lotName, Integer certifId, String newStatus){
+    public Object[] lotCertificateRecordCreateOrUpdate(String lotName, Integer certifId, String newStatus){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         String firstStatus=DataInspLotCertificateStatuses.NEW.toString();
         String[] lotFieldName=new String[]{};
         Object[] lotFieldValue=new Object[]{};
@@ -29,23 +32,23 @@ public class DataInspectionLotCertificate {
         if (certifId==null){
             lotFieldName = LPArray.addValueToArray1D(lotFieldName, new String[]{TblsInspLotRMData.LotCertificate.FLD_LOT_NAME.getName(), TblsInspLotRMData.LotCertificate.FLD_STATUS.getName()});    
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, new Object[]{lotName, firstStatus});                         
-            diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificate.TBL.getName(), 
+            diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificate.TBL.getName(), 
                 lotFieldName, lotFieldValue);
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD.getErrorCode(), errorDetailVariables);
             }                                           
         }else{
-            Object[] lotExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificate.TBL.getName(), 
+            Object[] lotExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificate.TBL.getName(), 
                     new String[]{TblsInspLotRMData.LotCertificate.FLD_LOT_NAME.getName(), TblsInspLotRMData.LotCertificate.FLD_CERTIFICATE_ID.getName()}, new Object[]{lotName, certifId});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(lotExists[0].toString())){      
-                diagnoses=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificate.TBL.getName(), 
+                diagnoses=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificate.TBL.getName(), 
                     lotFieldName, lotFieldValue, 
                     new String[]{TblsInspLotRMData.LotCertificate.FLD_LOT_NAME.getName()}, new Object[]{lotName});
             }else{
                 lotFieldName = LPArray.addValueToArray1D(lotFieldName, new String[]{TblsInspLotRMData.LotCertificate.FLD_LOT_NAME.getName(), TblsInspLotRMData.LotCertificate.FLD_STATUS.getName()});    
                 lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, new Object[]{lotName, DataInspLotCertificateStatuses.NEW.toString()});                         
-                diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificate.TBL.getName(), 
+                diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificate.TBL.getName(), 
                     lotFieldName, lotFieldValue);
                 if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
@@ -63,29 +66,32 @@ public class DataInspectionLotCertificate {
                     TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, null, null, fieldsOnLogLot, null);
             Integer transactionId = null;
             Integer preAuditId=Integer.valueOf(lotAuditAdd[lotAuditAdd.length-1].toString());            
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "LotCertificateNewStatus", new Object[]{lotName, newStatus, procPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "LotCertificateNewStatus", new Object[]{lotName, newStatus, procInstanceName});
 //        }
 //        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
     }
-    public Object[] lotCertificatePrint(String procPrefix, Token token, String lotName, Integer certifId){
-        return lotCertificateTrackEvent(procPrefix, token, lotName, certifId, DataInspLotCertificateTrackActions.PRINT.toString());
+    public Object[] lotCertificatePrint(String lotName, Integer certifId){
+        return lotCertificateTrackEvent(lotName, certifId, DataInspLotCertificateTrackActions.PRINT.toString());
     }
     
-    private Object[] lotCertificateTrackEvent(String procPrefix, Token token, String lotName, Integer certifId, String eventName){
+    private Object[] lotCertificateTrackEvent(String lotName, Integer certifId, String eventName){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+
         String[] lotFieldName=new String[]{TblsInspLotRMData.LotCertificateTrack.FLD_LOT_NAME.getName(), TblsInspLotRMData.LotCertificateTrack.FLD_ID.getName(), TblsInspLotRMData.LotCertificateTrack.FLD_EVENT.getName(), TblsInspLotRMData.LotCertificateTrack.FLD_CREATED_BY.getName(), TblsInspLotRMData.LotCertificateTrack.FLD_CREATED_ON.getName()};
         Object[] lotFieldValue=new Object[]{lotName, certifId, eventName, token.getPersonName(), LPDate.getCurrentTimeStamp()};
         Object[] errorDetailVariables=new Object[]{};
         try{
             DataInspLotCertificateTrackActions action = DataInspLotCertificateTrackActions.valueOf(eventName);
-            Object[] diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procPrefix, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificateTrack.TBL.getName(), 
+            Object[] diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.LotCertificateTrack.TBL.getName(), 
                 lotFieldName, lotFieldValue);
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD.getErrorCode(), errorDetailVariables);
             }                                        
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "lotCertificateTrackEventRecorded", new Object[]{lotName, certifId, eventName, procPrefix});            
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "lotCertificateTrackEventRecorded", new Object[]{lotName, certifId, eventName, procInstanceName});            
         }catch(Exception e){
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "lotCertificateTrackEventNotRecognized", new Object[]{lotName, certifId, eventName, procPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "lotCertificateTrackEventNotRecognized", new Object[]{lotName, certifId, eventName, procInstanceName});
         }
     }
 }

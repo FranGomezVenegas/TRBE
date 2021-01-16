@@ -45,13 +45,13 @@ public class ConfigTablesAudit {
      */
     public static Object[] analysisAuditAdd(String action, String tableName, String tableId,
             String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String[] fieldNames = new String[]{TblsCnfgAudit.Analysis.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
 
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
+        Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -98,7 +98,7 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }
-        AuditAndUserValidation auditAndUsrValid = AuditAndUserValidation.getInstance(null, null, null);
+        AuditAndUserValidation auditAndUsrValid = AuditAndUserValidation.getInstanceForActions(null, null, null);
         if (auditAndUsrValid.getAuditReasonPhrase() != null) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
@@ -125,13 +125,13 @@ public class ConfigTablesAudit {
      */
     public static Object[] specAuditAdd(String action, String tableName, String tableId,
             String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String[] fieldNames = new String[]{TblsCnfgAudit.Spec.FLD_DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
 
-        Object[][] procedureInfo = Requirement.getProcedureBySchemaPrefix(procInstanceName);
+        Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FLD_PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
@@ -178,7 +178,7 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }
-        AuditAndUserValidation auditAndUsrValid = AuditAndUserValidation.getInstance(null, null, null);
+        AuditAndUserValidation auditAndUsrValid = AuditAndUserValidation.getInstanceForActions(null, null, null);
         if (auditAndUsrValid.getAuditReasonPhrase() != null) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());

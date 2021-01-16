@@ -89,7 +89,7 @@ public class TestingSamples extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
 
-                ClassSampleController clssController=new ClassSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                ClassSampleController clssController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                 if (clssController.getFunctionFound()){
                     functionRelatedObjects=clssController.getFunctionRelatedObjects();
                     functionEvaluation=(Object[]) clssController.getFunctionDiagn();

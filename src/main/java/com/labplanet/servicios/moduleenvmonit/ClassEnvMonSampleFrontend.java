@@ -35,13 +35,14 @@ import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
+import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author User
  */
 public class ClassEnvMonSampleFrontend {
     private Object[] messageDynamicData=new Object[]{};
-    private RelatedObjects relatedObj=RelatedObjects.getInstance();
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
@@ -144,8 +145,10 @@ public class ClassEnvMonSampleFrontend {
         private final LPAPIArguments[] arguments;
     }
     
-    public ClassEnvMonSampleFrontend(HttpServletRequest request, String finalToken, String schemaPrefix, EnvMonSampleAPIFrontendEndpoints endPoint){
-        RelatedObjects rObj=RelatedObjects.getInstance();
+    public ClassEnvMonSampleFrontend(HttpServletRequest request, EnvMonSampleAPIFrontendEndpoints endPoint){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         String batchName = "";
         String incubationName = "";
@@ -157,15 +160,15 @@ public class ClassEnvMonSampleFrontend {
 /*                case CORRECTIVE_ACTION_COMPLETE:
                     String programName=argValues[0].toString();
                     Integer correctiveActionId = (Integer) argValues[1];                    
-                    actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(schemaPrefix, token, correctiveActionId);
+                    actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(procInstanceName, token, correctiveActionId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){                        
-                        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
                             new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
                             new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName()});
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, correctiveActionInfo[0][0], schemaPrefix}); 
-                        this.messageDynamicData=new Object[]{correctiveActionId, correctiveActionInfo[0][0], schemaPrefix};   
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName}); 
+                        this.messageDynamicData=new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName};   
                     }else{
-                        this.messageDynamicData=new Object[]{correctiveActionId, schemaPrefix};                           
+                        this.messageDynamicData=new Object[]{correctiveActionId, procInstanceName};                           
                     }                    
                     break;*/
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
@@ -196,7 +199,7 @@ public class ClassEnvMonSampleFrontend {
                     Integer posicRawValueFld=resultFieldToRetrieveArr.length;
                     resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
                     Integer posicLimitIdFld=resultFieldToRetrieveArr.length;
-                    Object[][] analysisResultList = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
+                    Object[][] analysisResultList = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
                             sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
                             //new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()},new Object[]{sampleId}, 
                             resultFieldToRetrieveArr, sortFieldsNameArr);
@@ -220,14 +223,14 @@ public class ClassEnvMonSampleFrontend {
                         ConfigSpecRule specRule = new ConfigSpecRule();
                         String currRowRawValue=curRow[posicRawValueFld-1].toString();
                         String currRowLimitId=curRow[posicLimitIdFld-1].toString();
-                        Object[] resultLockData=sampleAnalysisResultLockData(schemaPrefix, resultFieldToRetrieveArr, curRow);
+                        Object[] resultLockData=sampleAnalysisResultLockData(procInstanceName, resultFieldToRetrieveArr, curRow);
                         JSONObject row=new JSONObject();
                         if (resultLockData!=null)
                             row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(resultFieldToRetrieveArr, (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
                         else        
                             row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
                         if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
-                          specRule.specLimitsRule(schemaPrefix, Integer.valueOf(currRowLimitId) , null);                        
+                          specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
                           row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, LPNulls.replaceNull(specRule.getRuleRepresentation()).replace(("R"), "R ("+currRowRawValue+")"));
                           Object[][] specRuleDetail=specRule.getRuleData();
                           JSONArray specRuleDetailjArr=new JSONArray();
@@ -247,7 +250,7 @@ public class ClassEnvMonSampleFrontend {
                     return;                  
                 case GET_MICROORGANISM_LIST:
                   String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()};
-                  Object[][] list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
+                  Object[][] list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
                           new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}
                           , fieldsToRetrieve, fieldsToRetrieve);
                   JSONArray jArr=new JSONArray();
@@ -268,7 +271,7 @@ public class ClassEnvMonSampleFrontend {
                         whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
                         whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
                         for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
-                            if (LPPlatform.isEncryptedField(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), whereFieldsNameArr[iFields])){                
+                            if (LPPlatform.isEncryptedField(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), whereFieldsNameArr[iFields])){                
                                 HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                                 whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                                 if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
@@ -276,7 +279,7 @@ public class ClassEnvMonSampleFrontend {
                                     whereFieldsValueArr[iFields]=newWhereFieldValues;
                                 }
                             }
-                            String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(), finalToken);
+                            String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(),  ProcedureRequestSession.getInstanceForActions(null, null, null).getTokenString());
                             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
                                 whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
                         }                                    
@@ -290,7 +293,7 @@ public class ClassEnvMonSampleFrontend {
                         fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fieldsList1.getName());
                       }                  
                     }
-                    list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewSampleMicroorganismList.TBL.getName(), 
+                    list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewSampleMicroorganismList.TBL.getName(), 
                             whereFieldsNameArr, whereFieldsValueArr
                             , fieldsToRetrieve
                             , new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_SAMPLE_ID.getName()} );
@@ -317,14 +320,14 @@ public class ClassEnvMonSampleFrontend {
                         else sampleToDisplayArr=sampleToDisplay.split("\\|");
 
                     String[] sampleTblAllFields=TblsEnvMonitData.Sample.getAllFieldNames();
-                    Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                    Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
                             new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                             sampleTblAllFields);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
                         this.isSuccess=false;
                         this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", 
-                            new Object[]{Arrays.toString(sampleInfo[0]), schemaPrefix});                        
-                        //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(sampleInfo[0]), schemaPrefix}));              
+                            new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName});                        
+                        //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName}));              
                         return;}  
                     JSONObject jObjSampleInfo=new JSONObject();
                     JSONObject jObjMainObject=new JSONObject();
@@ -349,22 +352,22 @@ public class ClassEnvMonSampleFrontend {
                     
                     JSONArray jArrMainObj=new JSONArray();
                     jObjPieceOfInfo=new JSONObject();
-                    DataSampleStages smpStage= new DataSampleStages(schemaPrefix);
+                    DataSampleStages smpStage= new DataSampleStages();
                     String[] sampleStageTimingCaptureAllFlds=TblsEnvMonitProcedure.SampleStageTimingCapture.getAllFieldNames();
                     JSONObject jObjMainObject2=new JSONObject();                    
                     
                     if (smpStage.isSampleStagesEnable()){
-                        Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
+                        Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
                                 new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                                 sampleStageTimingCaptureAllFlds, new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ID.getName()});                    
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleStageInfo[0][0].toString())){
                             this.isSuccess=false;
-                            this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(sampleInfo[0]), schemaPrefix});              
+                            this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName});              
                             return;}  
                         for (Object[] curRec: sampleStageInfo){
                             JSONObject jObj= LPJson.convertArrayRowToJSONObject(sampleStageTimingCaptureAllFlds, curRec);
                             JSONArray jArrMainObj2=new JSONArray();
-                            jArrMainObj2=sampleStageDataJsonArr(schemaPrefix, sampleId, sampleTblAllFields, sampleInfo[0], sampleStageTimingCaptureAllFlds, curRec);
+                            jArrMainObj2=sampleStageDataJsonArr(procInstanceName, sampleId, sampleTblAllFields, sampleInfo[0], sampleStageTimingCaptureAllFlds, curRec);
                             jObj.put("data", jArrMainObj2);
                             jArrMainObj.add(jObj);
                         }
@@ -388,13 +391,13 @@ public class ClassEnvMonSampleFrontend {
                         if ("ALL".equalsIgnoreCase(prodLotfieldsToDisplayStr)) fieldToDisplayArr=TblsEnvMonitData.IncubBatch.getAllFieldNames();                        
                         else fieldToDisplayArr=prodLotfieldsToDisplayStr.split("\\|");
                     String[] batchTblAllFields=TblsEnvMonitData.IncubBatch.getAllFieldNames();
-                    Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                    Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                             new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
                             batchTblAllFields);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())){
                         this.isSuccess=false;
-                        this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(batchInfo[0]), schemaPrefix});
-                        //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(batchInfo[0]), schemaPrefix}));              
+                        this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(batchInfo[0]), procInstanceName});
+                        //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(batchInfo[0]), procInstanceName}));              
                         return;}  
                     JSONObject jObjBatchInfo=new JSONObject();
                     jObjMainObject=new JSONObject();
@@ -431,7 +434,7 @@ public class ClassEnvMonSampleFrontend {
                         fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
                                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};   
-                        Object[][] instrReadings=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
+                        Object[][] instrReadings=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()+" BETWEEN "}, 
                                 new Object[]{incubName, incubStart, incubEnd}, 
                                 fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()});
@@ -466,12 +469,12 @@ public class ClassEnvMonSampleFrontend {
                         else prodLotfieldToDisplayArr=prodLotfieldsToDisplayStr.split("\\|");
                     if (prodLotfieldToDisplayArr==null) prodLotfieldToDisplayArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
                     String[] prodLotTblAllFields=TblsEnvMonitData.ProductionLot.getAllFieldNames();
-                    Object[][] prodLotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+                    Object[][] prodLotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
                             new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName}, 
                             prodLotTblAllFields);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
                         this.isSuccess=false;
-                        this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(prodLotInfo[0]), schemaPrefix});
+                        this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(prodLotInfo[0]), procInstanceName});
                         return;}  
                     JSONObject jObjProdLotInfo=new JSONObject();
                     jObjMainObject=new JSONObject();
@@ -519,7 +522,7 @@ public class ClassEnvMonSampleFrontend {
                         sampleWhereFieldsNameArr=LPArray.addValueToArray1D(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.FLD_PRODUCTION_LOT.getName());
                         sampleWhereFieldsValueArr=LPArray.addValueToArray1D(sampleWhereFieldsValueArr, lotName);
                     }
-/*                    Object[][] prodLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+/*                    Object[][] prodLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
                             new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName}
                             , prodLotFieldToRetrieveArr, new String[]{TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName()+" desc"} ); 
                     JSONObject jObj=new JSONObject();
@@ -532,7 +535,7 @@ public class ClassEnvMonSampleFrontend {
                     }
                     jObjMainObject.put(TblsEnvMonitData.ProductionLot.TBL.getName(), jObj);*/
                     
-                    sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                    sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
                             sampleWhereFieldsNameArr, sampleWhereFieldsValueArr
                             , sampleFieldToRetrieveArr , new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()+" desc"} ); 
                     JSONObject jObj=new JSONObject();
@@ -563,7 +566,7 @@ public class ClassEnvMonSampleFrontend {
                             JSONArray sampleGrouperJsonArr = new JSONArray();
                             String[] groupInfo = currGroup.split("\\*");
                             String[] smpGroupFldsArr=groupInfo[0].split(",");
-                            Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                            Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
                                     smpGroupFldsArr, new String[]{TblsEnvMonitData.Sample.FLD_PRODUCTION_LOT.getName()}, new Object[]{lotName}, 
                                     null);
                             smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "count");
@@ -601,12 +604,12 @@ public class ClassEnvMonSampleFrontend {
                         if ("ALL".equalsIgnoreCase(prodLotfieldsToDisplayStr)) prodLotfieldToDisplayArr=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();                        
                         else prodLotfieldToDisplayArr=prodLotfieldsToDisplayStr.split("\\|");
                     String[] incubTblAllFields=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();
-                    Object[][] incubInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
+                    Object[][] incubInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
                             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{lotName}, 
                             incubTblAllFields);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubInfo[0][0].toString())){
                         this.isSuccess=false;
-                        this.responseError= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(incubInfo[0]), schemaPrefix});
+                        this.responseError= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(incubInfo[0]), procInstanceName});
                         return;}  
                     jObjProdLotInfo=new JSONObject();
                     jObjMainObject=new JSONObject();
@@ -636,16 +639,16 @@ public class ClassEnvMonSampleFrontend {
                     else numPointsInt=20;
                     Object[][] instrReadings =new Object[0][0]; 
                     if (startDateStr==null && endDateStr==null) 
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, lotName, numPointsInt);                    
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(lotName, numPointsInt);                    
                     if (startDateStr!=null && endDateStr==null){ 
                         
                         startDateStr=startDateStr.replace ( " " , "T" );
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, lotName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr));
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(lotName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr));
                     }
                     if (startDateStr!=null && endDateStr!=null){
                         startDateStr=startDateStr.replace ( " " , "T" );
                         endDateStr=endDateStr.replace (" " , "T" );
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, lotName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr), dateStringFormatToLocalDateTime(endDateStr));
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(lotName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr), dateStringFormatToLocalDateTime(endDateStr));
                     }
                     jArrLastTempReadings = new JSONArray();
                     for (Object[] currReading: instrReadings){
@@ -686,7 +689,7 @@ public class ClassEnvMonSampleFrontend {
                         whereFieldNames=new String[]{TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName()+" not in"}; 
                         whereFieldValues=new Object[]{"<<"};                        
                     }
-                    Object[][] samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                    Object[][] samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
                             prodLotfieldToRetrieveArr, 
                             whereFieldNames, whereFieldValues,
                             new String[]{"COUNTER desc"});  
@@ -725,7 +728,7 @@ public class ClassEnvMonSampleFrontend {
                         }
                         whereFieldNames = LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+ WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
 
-                        Object[][] programLastResults=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                        Object[][] programLastResults=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                                 whereFieldNames, whereFieldValues, 
                                 prodLotfieldToRetrieveArr, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_ENTERED_ON.getName()+" desc"});  
                         if (numTotalRecords>programLastResults.length) numTotalRecords=programLastResults.length;
@@ -747,7 +750,7 @@ public class ClassEnvMonSampleFrontend {
                         String[] fieldToRetrieveGroupedArr = new String[0];                        
                         if ((prodLotfieldsToRetrieveStr==null) || ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) ) fieldToRetrieveGroupedArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
                         else fieldToRetrieveGroupedArr=prodLotfieldsToRetrieveStr.split("\\|");
-                        Object[][] specLimits=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
+                        Object[][] specLimits=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
                                 whereLimitsFieldNames, whereLimitsFieldValues, fieldToRetrieveLimitsArr, new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()});
                         jArr=new JSONArray();
                         for (Object[] currLimit: specLimits){
@@ -766,7 +769,7 @@ public class ClassEnvMonSampleFrontend {
                             }
                             whereFieldNames = LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+ WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());                            
                             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, "");                            
-                            Object[][] programLastResults=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                            Object[][] programLastResults=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                                     whereFieldNames, whereFieldValues, 
                                     prodLotfieldToRetrieveArr, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_ENTERED_ON.getName()+" desc"});
                             JSONArray jArrSampleResults=new JSONArray();
@@ -795,7 +798,7 @@ public class ClassEnvMonSampleFrontend {
         rObj.killInstance();
     }
 
-private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
+private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
     if (sampleStageFldValue==null) return null;
     if (!LPArray.valueInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
     String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())].toString();
@@ -845,7 +848,7 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
         case "PLATEREADING":
         case "MICROORGANISMIDENTIFICATION":
             String[] tblAllFlds=TblsEnvMonitData.ViewSampleMicroorganismList.getAllFieldNames();
-            Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewSampleMicroorganismList.TBL.getName(), 
+            Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewSampleMicroorganismList.TBL.getName(), 
                     new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                     tblAllFlds, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_TEST_ID.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.FLD_RESULT_ID.getName()});                    
             jObj= new JSONObject();
@@ -865,14 +868,14 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
     }
 }
     
-    static Object[] sampleAnalysisResultLockData(String schemaPrefix, String[] resultFieldToRetrieveArr, Object[] curRow){
+    static Object[] sampleAnalysisResultLockData(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow){
         String[] fldNameArr=new String[0];
         Object[] fldValueArr=new Object[0];
         Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
         Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
         
-        if (!isProgramCorrectiveActionEnable(schemaPrefix)) return new Object[]{fldNameArr, fldValueArr};
-        Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+        if (!isProgramCorrectiveActionEnable(procInstanceName)) return new Object[]{fldNameArr, fldValueArr};
+        Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                 new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                 new Object[]{resultId,DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()}, 
                 SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION);

@@ -25,7 +25,7 @@ public class ClassEnvMonIncubatorController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassEnvMonIncubatorController(HttpServletRequest request, Token token, String schemaPrefix, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
+    public ClassEnvMonIncubatorController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
         EnvMonIncubationAPIEndpoints endPoint = null;
@@ -39,7 +39,7 @@ public class ClassEnvMonIncubatorController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMonIncubator clss=new ClassEnvMonIncubator(request, token, schemaPrefix, endPoint);
+            ClassEnvMonIncubator clss=new ClassEnvMonIncubator(request, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

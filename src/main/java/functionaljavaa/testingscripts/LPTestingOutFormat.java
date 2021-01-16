@@ -85,7 +85,7 @@ public class LPTestingOutFormat {
         if (testingSource!=null && testingSource=="DB"){
             csvPathName ="";
             csvFileName ="";
-            if (!LPFrontEnd.servletStablishDBConection(request, null, true)){return;}     
+            if (!LPFrontEnd.servletStablishDBConection(request, null)){return;}     
             Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
             String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
             csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(), 
@@ -175,7 +175,7 @@ public class LPTestingOutFormat {
                         }
                     }   
                 }
-                if (!LPFrontEnd.servletStablishDBConection(request, null, true)){return fileContentBuilder;}          
+                if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}          
                 Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
                 String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
                 updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(),

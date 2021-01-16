@@ -126,7 +126,7 @@ public class SopUserAPI extends HttpServlet {
 
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
              (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}
-        if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}     
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
 
             SopUserAPIEndpoints endPoint = null;
             try{
@@ -137,7 +137,7 @@ public class SopUserAPI extends HttpServlet {
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
             Object[] messageDynamicData=new Object[]{};
-        RelatedObjects rObj=RelatedObjects.getInstance();
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         Object[] userSopDiagnostic=new Object[0];
         try (PrintWriter out = response.getWriter()) {        
             switch (endPoint){

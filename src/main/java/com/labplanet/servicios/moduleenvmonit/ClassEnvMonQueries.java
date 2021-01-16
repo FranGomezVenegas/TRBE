@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -20,15 +21,16 @@ import lbplanet.utilities.LPPlatform;
 public class ClassEnvMonQueries {
     
     private Object[] messageDynamicData=new Object[]{};
-    private RelatedObjects relatedObj=RelatedObjects.getInstance();
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassEnvMonQueries(HttpServletRequest request, String schemaPrefix, EnvMonAPI.EnvMonQueriesAPIEndpoints endPoint){
+    public ClassEnvMonQueries(HttpServletRequest request, EnvMonAPI.EnvMonQueriesAPIEndpoints endPoint){
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         try{
             //Rdbms.stablishDBConection(false);
-            RelatedObjects rObj=RelatedObjects.getInstance();
+            RelatedObjects rObj=RelatedObjects.getInstanceForActions();
             Object[] actionDiagnoses = null;
             Integer sampleId = null;
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());    
@@ -41,7 +43,7 @@ public class ClassEnvMonQueries {
                             if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=TblsEnvMonitData.Sample.getAllFieldNames();
                             else fieldsToRetrieve=argValues[1].toString().split("\\|");
                         }
-                        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
                                 new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                                 fieldsToRetrieve, new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) actionDiagnoses=sampleInfo[0];
@@ -69,7 +71,7 @@ public class ClassEnvMonQueries {
                             whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
                             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, resultId);
                         }
-                        Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysisResult.TBL.getName(), 
+                        Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysisResult.TBL.getName(), 
                                 whereFieldNames, whereFieldValues, 
                                 new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) actionDiagnoses=resultInfo[0];

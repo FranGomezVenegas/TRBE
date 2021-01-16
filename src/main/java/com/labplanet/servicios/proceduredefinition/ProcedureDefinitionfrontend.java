@@ -106,7 +106,7 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
             }
             Token token = new Token(finalToken);
             String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);                        
-            if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}   
+            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
             JSONArray mainArr = new JSONArray(); 
             JSONArray mainContentArr = new JSONArray(); 
             switch (endPoint){

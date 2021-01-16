@@ -5,8 +5,6 @@
  */
 package functionaljavaa.samplestructure;
 
-import databases.Token;
-
 /**
  *
  * @author Administrator
@@ -25,8 +23,6 @@ public interface DataSampleAnalysisResultStrategy {
 
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param resultId
      * @param sampleFieldName
      * @param sampleFieldValue
@@ -34,12 +30,10 @@ public interface DataSampleAnalysisResultStrategy {
      * @param sarFieldValue
      * @return
      */
-    public abstract Object[] sarControlAction(String schemaPrefix, Token token, Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue);
+    public abstract Object[] sarControlAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue);
 
     /**
      *
-     * @param schemaPrefix
-     * @param token
      * @param resultId
      * @param sampleFieldName
      * @param sampleFieldValue
@@ -47,5 +41,5 @@ public interface DataSampleAnalysisResultStrategy {
      * @param sarFieldValue
      * @return
      */
-    public abstract Object[] sarOOSAction(String schemaPrefix, Token token, Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue);
+    public abstract Object[] sarOOSAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue);
 }

@@ -13,6 +13,7 @@ import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntr
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -26,7 +27,7 @@ public class EnvMonitSchemaDefinition {
      */
     public static JSONObject createPlatformSchemas(){
     
-        Rdbms.stablishDBConection(false);
+        Rdbms.stablishDBConection();
         JSONObject jsonObj = new JSONObject();
         
         String methodName = "createDataBaseSchemas";       
@@ -52,15 +53,15 @@ public class EnvMonitSchemaDefinition {
 
     /**
      *
-     * @param schemaPrefix
      * @param fieldsName
      * @return
      */
-    public static final  JSONObject createDBTables(String schemaPrefix, String[] fieldsName){
+    public static final  JSONObject createDBTables(String[] fieldsName){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         JSONObject jsonObj = new JSONObject();        
         String tblCreateScript="";
         
-        tblCreateScript=TblsProcedure.ProgramCorrectiveAction.createTableScript(schemaPrefix, new String[]{""});
+        tblCreateScript=TblsProcedure.ProgramCorrectiveAction.createTableScript(procInstanceName, new String[]{""});
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsProcedure.ProgramCorrectiveAction", tblCreateScript);
         

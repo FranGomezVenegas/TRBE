@@ -40,7 +40,7 @@ public final class ClassPath {
      * Singleton structure
      * @return himself
      */
-    public static ClassPath getInstance(){
+    public static ClassPath getInstanceForActions(){
         if(instance == null){
             instance = new ClassPath();
         }

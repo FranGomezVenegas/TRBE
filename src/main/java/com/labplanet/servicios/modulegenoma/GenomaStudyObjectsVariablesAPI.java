@@ -8,8 +8,6 @@ package com.labplanet.servicios.modulegenoma;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIParamsList;
 import databases.Rdbms;
-import databases.Token;
-import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.moduleenvironmentalmonitoring.DataStudyObjectsVariableValues;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -28,6 +26,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -96,41 +95,14 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+        if (procReqInstance.getHasErrors()) return;
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+        String procInstanceName=procReqInstance.getProcedureInstance();
+
         String[] errObject = new String[]{"Servlet Genoma StudyObjectsVariablesAPI at " + request.getServletPath()};   
 
-        String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-        
-        Token token = new Token(finalToken);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
-                return;                             
-        }
-        mandatoryParams = null;                        
-
-        if (mandatoryParams!=null){
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                       LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-               return;                   
-            }     
-        }        
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, language);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
-            return;          
-        }           
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
  /*       if (con==null){
              response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
@@ -150,22 +122,10 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
             Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
         }*/
 
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);    
         Rdbms.setTransactionId(schemaConfigName);
         //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
-
-            Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;               
-            }            
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(schemaPrefix, token.getUserRole(), actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){       
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;                           
-            }            
-            
             Object[] diagnostic = null;
             GenomaStudyObjectsVariablesAPIEndPoints endPoint = null;
     //        Object[] actionDiagnoses = null;
@@ -175,24 +135,24 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+            Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
             }  
             Object[] messageDynamicData=new Object[]{};
-            RelatedObjects relatedObject=RelatedObjects.getInstance();
+            RelatedObjects relatedObject=RelatedObjects.getInstanceForActions();
             switch (endPoint){
                 case ADD_VARIABLE_SET_TO_STUDY_OBJECT:     
                     String variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
                     String studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
                     String ownerTable=request.getParameter(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
                     String ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
-                    diagnostic =DataStudyObjectsVariableValues.addVariableSetToObject(schemaPrefix, token, studyName, variableSetName, ownerTable, ownerId);
+                    diagnostic =DataStudyObjectsVariableValues.addVariableSetToObject(studyName, variableSetName, ownerTable, ownerId);
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{variableSetName, ownerTable, ownerId});
-                    relatedObject.addSimpleNode(schemaPrefix, TblsGenomaConfig.VariablesSet.TBL.getName(),  TblsGenomaConfig.VariablesSet.TBL.getName(), variableSetName);
-                    relatedObject.addSimpleNode(schemaPrefix, ownerTable, ownerTable, ownerId);
+                    relatedObject.addSimpleNode(procInstanceName, TblsGenomaConfig.VariablesSet.TBL.getName(),  TblsGenomaConfig.VariablesSet.TBL.getName(), variableSetName);
+                    relatedObject.addSimpleNode(procInstanceName, ownerTable, ownerTable, ownerId);
                     break;                      
                 case STUDY_OBJECT_SET_VARIABLE_VALUE:     
                     variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
@@ -201,10 +161,10 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                     ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
                     String variableName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName());
                     String newValue=request.getParameter(GenomaProjectAPIParamsList.NEW_VALUE.getParamName());
-                    diagnostic =DataStudyObjectsVariableValues.objectVariableSetValue(schemaPrefix, token, studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
+                    diagnostic =DataStudyObjectsVariableValues.objectVariableSetValue(studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{newValue, variableName});
-                    relatedObject.addSimpleNode(schemaPrefix, TblsGenomaData.StudyVariableValues.TBL.getName(), TblsGenomaData.StudyVariableValues.TBL.getName(), variableName);
-                    relatedObject.addSimpleNode(schemaPrefix, ownerTable, ownerTable, ownerId);
+                    relatedObject.addSimpleNode(procInstanceName, TblsGenomaData.StudyVariableValues.TBL.getName(), TblsGenomaData.StudyVariableValues.TBL.getName(), variableName);
+                    relatedObject.addSimpleNode(procInstanceName, ownerTable, ownerTable, ownerId);
                     break;  
                 default:      
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
@@ -231,9 +191,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                 Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
 */            
-            response.setStatus(401);
-            Rdbms.closeRdbms();     
-            auditAndUsrValid.killInstance();
+            procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
@@ -241,8 +199,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
             
             // release database resources
             try {
-                Rdbms.closeRdbms();
-                auditAndUsrValid.killInstance();
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                

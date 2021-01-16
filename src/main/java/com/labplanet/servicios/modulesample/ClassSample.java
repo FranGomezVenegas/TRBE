@@ -68,15 +68,15 @@ public class ClassSample {
         return functionFound;
     }    
     private Object[] messageDynamicData=new Object[]{};
-    private RelatedObjects relatedObj=RelatedObjects.getInstance();
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
     
     public ClassSample(HttpServletRequest request, SampleAPIEndpoints endPoint){
         
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
-        RelatedObjects rObj=RelatedObjects.getInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         String schemaDataName="";
         String language="";
         DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
@@ -317,7 +317,7 @@ public class ClassSample {
                 this.messageDynamicData=new Object[]{sampleId};
                 return;
             case COC_STARTCHANGE:
-                Token token=ProcedureRequestSession.getInstance(null).getToken();
+                Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
                 objectId = (Integer) argValues[0];
                 String custodianCandidate = argValues[1].toString();
                 ChangeOfCustody coc = new ChangeOfCustody();
@@ -373,7 +373,7 @@ public class ClassSample {
                 break;
             case SAMPLESTAGE_MOVETOPREVIOUS:
             case SAMPLESTAGE_MOVETONEXT:
-                DataSampleStages smpStage=new DataSampleStages(procInstanceName);
+                DataSampleStages smpStage=new DataSampleStages();
                 if (!smpStage.isSampleStagesEnable()){
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null,
                             LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "STAGES_FUNCTIONALITY_NOT_ENABLE", new Object[]{"Samples", procInstanceName}));
@@ -411,7 +411,7 @@ public class ClassSample {
                             sampleFieldName, 
                             sampleFieldValue,
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
-                    String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ProcedureRequestSession.getInstance(null).getToken().getUserName());
+                    String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getUserName());
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
                 }
@@ -427,7 +427,7 @@ public class ClassSample {
                     diagn=LPPlatform.trapMessage(auditInfo[0][0].toString(), SampleAudit.SampleAuditErrorTrapping.AUDIT_RECORD_NOT_FOUND.getErrorCode(), new Object[]{auditId});
                     sampleId=null;
                 }else{
-                    diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(procInstanceName, auditId, ProcedureRequestSession.getInstance(null).getToken().getPersonName());
+                    diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(procInstanceName, auditId, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getPersonName());
                     sampleId=Integer.valueOf(auditInfo[0][0].toString());
                 }
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditId);
@@ -437,7 +437,7 @@ public class ClassSample {
                 break;                
         }
         if (diagn!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
-            DataSampleStages smpStage = new DataSampleStages(procInstanceName);
+            DataSampleStages smpStage = new DataSampleStages();
             if (sampleId!=null)
                 smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
         }

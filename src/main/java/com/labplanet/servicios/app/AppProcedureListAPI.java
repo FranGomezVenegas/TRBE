@@ -157,7 +157,7 @@ public class AppProcedureListAPI extends HttpServlet {
                            
             Token token = new Token(finalToken);
                         
-           if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}               
+           if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}               
          
             String rolName = token.getUserRole();
             UserProfile usProf = new UserProfile();
@@ -176,7 +176,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 JSONObject procedure = new JSONObject();
                 String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), LPPlatform.SCHEMA_PROCEDURE);
 
-                if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}           
+                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}           
 
                 Object[][] procInfo = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.ProcedureInfo.TBL.getName(), 
                         new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_FLD_NAME.split("\\|"));
@@ -187,7 +187,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     procedure.put(attributeName, propValue);
                     procedure.put(LABEL_PROC_SCHEMA, curProc);
 
-                    if (!LPFrontEnd.servletStablishDBConection(request, response, false)){return;}      
+                    if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
                     
                     Object[][] procEvent = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.ProcedureEvents.TBL.getName(), 
                             new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.FLD_TYPE.getName()}, new String[]{rolName,elementType.TREE_LIST.toString().toLowerCase().replace("_","-")}, 

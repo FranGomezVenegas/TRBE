@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -24,7 +23,7 @@ public class ClassEnvMonQueriesController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassEnvMonQueriesController(HttpServletRequest request, Token token, String schemaPrefix, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
+    public ClassEnvMonQueriesController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
         EnvMonAPI.EnvMonQueriesAPIEndpoints endPoint = null;
@@ -38,7 +37,7 @@ public class ClassEnvMonQueriesController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMonQueries clss=new ClassEnvMonQueries(request, schemaPrefix, endPoint);
+            ClassEnvMonQueries clss=new ClassEnvMonQueries(request, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

@@ -32,7 +32,7 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
      */
     @Override
   public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] anaName =new Object[2][3];
                 anaName[0][0] = "pH";
                 anaName[0][1] = "pH method";
@@ -60,7 +60,7 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
      */
   @Override
     public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample, Integer preAuditId) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);

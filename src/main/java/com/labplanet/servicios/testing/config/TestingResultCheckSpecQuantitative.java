@@ -20,6 +20,7 @@ import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author Administrator
@@ -38,6 +39,12 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);        
         DataSpec resChkSpec = new DataSpec();   
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
+
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true);        
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            return;
+        }
 
         String csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
         String csvFileName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME);

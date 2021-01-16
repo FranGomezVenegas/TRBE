@@ -7,9 +7,11 @@ package trazit.session;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET;
+import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
@@ -24,62 +26,86 @@ public class ProcedureRequestSession {
     private String procedureInstance;
     private String actionName;
     private Token token;
+    private String tokenStr;
     private String language;
+    private Boolean isForTesting;
+    private Boolean hasErrors;
     private AuditAndUserValidation auditAndUsrValid;
     
-    private ProcedureRequestSession(HttpServletRequest request){
+    
+    private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, Boolean isForTesting, Boolean isForUAT, Boolean isFrontend){
+        try{
+        if (request==null) return;
         this.language = LPFrontEnd.setLanguage(request); 
+        this.isForTesting=isForTesting;
         
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
         
-        String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, null, 
-                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-        
-        Token token = new Token(finalToken);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, null, 
-                        LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
-                return;                             
+        if (!isForTesting){
+            String[] mandatoryParams = new String[]{""};
+            Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response, 
+                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
+                this.hasErrors=true;
+                return;          
+            }                     
+            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+            this.actionName=actionName;
         }
-        this.token=token;
-        this.procedureInstance=schemaPrefix;
-        this.actionName=actionName;
-        
-        Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, actionEnabled);
-            return ;                           
+        String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
+        if (!isForUAT){
+            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
+            Token token = new Token(finalToken);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
+                    LPFrontEnd.servletReturnResponseError(request, response, 
+                            LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
+                    this.hasErrors=true;
+                    return;                             
+            }
+            this.token=token;
+            this.tokenStr=finalToken;
+            this.procedureInstance=procInstanceName;
+        }
+        if (!isFrontend && !isForUAT){
+            Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
+                this.hasErrors=true;
+                return ;                           
+            }            
+            actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, actionEnabled);
+                this.hasErrors=true;
+                return ;                           
+            }                        
+            AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, language);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
+                this.hasErrors=true;
+                return;          
+            }     
+            this.auditAndUsrValid=auditAndUsrValid;
+            String schemaConfigName=LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);
+            Rdbms.setTransactionId(schemaConfigName);
         }            
-        actionEnabled = LPPlatform.procUserRoleActionEnabled(schemaPrefix, token.getUserRole(), actionName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, actionEnabled);
-            return ;                           
-        }                        
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, null, language);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, auditAndUsrValid.getCheckUserValidationPassesDiag());              
-            return;          
-        }     
-        this.auditAndUsrValid=auditAndUsrValid;
-
-        if (!LPFrontEnd.servletStablishDBConection(request, null, false)){return;}
-        
+        Rdbms.stablishDBConection();
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+        this.hasErrors=false;
+        }catch(Exception e){
+            String errMsg=e.getMessage();
+            this.hasErrors=true;
+        }
     }
     
     public void killIt(){
         this.theSession=null;
         this.actionName=null;
         this.token=null;
+        this.isForTesting=null;
         this.procedureInstance=null;
+        Rdbms.closeRdbms(); 
     }
     
     public String getActionName(){
@@ -91,19 +117,43 @@ public class ProcedureRequestSession {
     public Token getToken(){
         return this.token;
     }
+    public String getTokenString(){
+        return this.tokenStr;
+    }
     public String getProcedureInstance(){
         return this.procedureInstance;
     }
+    public Boolean getIsForTesting(){
+        return this.isForTesting;
+    }    
+    public Boolean getHasErrors(){
+        if (this.hasErrors==null)return true;
+        return this.hasErrors;
+    }    
     public AuditAndUserValidation getAuditAndUsrValid(){
         return this.auditAndUsrValid;
     }
-
+   
     
-    
-    public static ProcedureRequestSession getInstance(HttpServletRequest req){
+    public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
         if (theSession==null){
-            theSession=new ProcedureRequestSession(req);
+            theSession=new ProcedureRequestSession(req, resp, isTesting, false, true);
         }
         return theSession;
     }
+
+    public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
+        if (theSession==null){
+            theSession=new ProcedureRequestSession(req, resp, isTesting, false, false);
+        }
+        return theSession;
+    }
+
+    public static ProcedureRequestSession getInstanceForUAT(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
+        if (theSession==null){
+            theSession=new ProcedureRequestSession(req, resp, isTesting, true, false);
+        }
+        return theSession;
+    }
+
 }

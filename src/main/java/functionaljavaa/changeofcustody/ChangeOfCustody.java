@@ -39,8 +39,8 @@ public class ChangeOfCustody {
      * @return
      */
     public Object[] cocStartChange(String objectTable, String objectFieldName, Object objectId, String custodianCandidate) {        
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();        String cocTableName = objectTable.toLowerCase()+"_coc";        
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        String cocTableName = objectTable.toLowerCase()+"_coc";        
         String currCustodian=token.getPersonName();
         if ((custodianCandidate==null) || (custodianCandidate.length()==0) )
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noCustodian", new Object[]{objectId, objectTable, procInstanceName});                                      
@@ -106,8 +106,8 @@ public class ChangeOfCustody {
     }
     
     private Object[] cocCompleteChange(String objectTable, String objectFieldName, Object objectId, String comment, String actionName) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String cocTableName = objectTable.toLowerCase()+"_coc";
 
         Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), objectTable);

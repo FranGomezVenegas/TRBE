@@ -40,7 +40,7 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
      */
     @Override
     public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())) return fieldNameValueArrayChecker;
 
@@ -110,7 +110,7 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
      */
   @Override
     public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample, Integer preAuditId) {
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);

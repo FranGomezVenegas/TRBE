@@ -197,8 +197,8 @@ public class DataSample {
 
 
 Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[] sampleFieldName, Object[] sampleFieldValue, Boolean devMode, Integer numSamplesToLog) {
-    Token token=ProcedureRequestSession.getInstance(null).getToken();
-    String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+    Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     Object[] diagnoses = new Object[7];
         String actionName = "Insert";
@@ -306,7 +306,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, token.getPersonName());             
             }
         }
-        DataSampleStages smpStages = new DataSampleStages(procInstanceName);
+        DataSampleStages smpStages = new DataSampleStages();
         Object[][] firstStage=smpStages.getFirstStage();
         if (firstStage.length>0){
           for (Object[] curFld: firstStage){
@@ -339,7 +339,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             Integer preAuditId=Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString());
             this.smpAna.autoSampleAnalysisAdd(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), preAuditId);
             
-            autoSampleAliquoting(procInstanceName, token, sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), transactionId, preAuditId);            
+            autoSampleAliquoting(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), transactionId, preAuditId);            
         }
         return diagnoses;  
     }
@@ -350,8 +350,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] sampleReception(Integer sampleId) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String receptionStatus = SampleStatuses.RECEIVED.toString();        
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA); 
     
@@ -386,12 +386,12 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     }
    /**
      *
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @return
      */
-    public static Object[] isReadyForRevision( String procInstanceName, Token token, Integer sampleId){
+    public static Object[] isReadyForRevision(Integer sampleId){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         String[] sampleAnalysisFieldName=new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName()};
         Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysis.TBL.getName(),  
                 new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleAnalysisFieldName);
@@ -402,12 +402,13 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     }    
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @return
      */
-    public static Object[] setReadyForRevision( String procInstanceName, Token token, Integer sampleId){
+    public static Object[] setReadyForRevision(Integer sampleId){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+
         String[] sampleFieldName=new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName()};
         Object[] sampleFieldValue=new Object[]{true};
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(),  
@@ -434,8 +435,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] setSamplingDate(Integer sampleId){
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);         
 
@@ -466,8 +467,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] changeSamplingDate(Integer sampleId, Date newDate){
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA); 
 
@@ -494,8 +495,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] sampleReceptionCommentAdd(Integer sampleId, String comment){
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA); 
 
         String[] sampleFieldName = new String[]{TblsData.Sample.FLD_SAMPLING_COMMENT.getName()};
@@ -520,8 +521,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] sampleReceptionCommentRemove(Integer sampleId) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA); 
 
         String[] sampleFieldName = new String[]{TblsData.Sample.FLD_SAMPLING_COMMENT.getName()};
@@ -543,12 +544,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
 
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param testId
      * @param analyst
      */
-    public void zsampleAssignAnalyst( String procInstanceName, Token token, Integer testId, String analyst){
+    public void zsampleAssignAnalyst(Integer testId, String analyst){
         // Not implemented yet
     }
 
@@ -556,14 +555,14 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
 
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @param preAuditId
      * @param parentAuditAction
      * @return
      */
-    public static Object[] sampleEvaluateStatus( String procInstanceName, Token token, Integer sampleId, String parentAuditAction, Integer preAuditId){ 
+    public static Object[] sampleEvaluateStatus(Integer sampleId, String parentAuditAction, Integer preAuditId){ 
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         String statuses=SampleStatuses.NOT_STARTED.toString()+"|"+SampleStatuses.STARTED.toString()+"|"+SampleStatuses.INCOMPLETE.toString();
         String auditActionName = SampleAudit.SampleAuditEvents.SAMPLE_EVALUATE_STATUS.toString();
         if (parentAuditAction!=null){auditActionName = parentAuditAction + ":"+auditActionName;}
@@ -605,19 +604,19 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     }
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @return 
      */
-    public Object[] sampleReview( String procInstanceName, Token token, Integer sampleId){
+    public Object[] sampleReview(Integer sampleId){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA); 
-        Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(procInstanceName, token, sampleId);
+        Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;
         String sampleStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSCANCELED);
         String sampleStatusReviewed = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSREVIEWED);
-        Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(procInstanceName, sampleId);
+        Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) return sampleAuditRevision;
         Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
                                         new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId},
@@ -727,7 +726,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @param preAuditId
      * @param transactionId
      */
-    public void autoSampleAliquoting( String procInstanceName, Token token, Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer transactionId, Integer preAuditId){
+    public void autoSampleAliquoting(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer transactionId, Integer preAuditId){
         LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
 // This code is commented because the method, at least by now, return void instead of anything else        
     }
@@ -740,8 +739,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] logSampleAliquot(Integer sampleId, String[] smpAliqFieldName, Object[] smpAliqFieldValue) {    
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpAliqFieldName, smpAliqFieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())){return fieldNameValueArrayChecker;}        
@@ -822,8 +821,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] logSampleSubAliquot(Integer aliquotId, String[] smpSubAliqFieldName, Object[] smpSubAliqFieldValue) {
-        Token token=ProcedureRequestSession.getInstance(null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstance(null).getProcedureInstance();
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpSubAliqFieldName, smpSubAliqFieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())){return fieldNameValueArrayChecker;}          
 
