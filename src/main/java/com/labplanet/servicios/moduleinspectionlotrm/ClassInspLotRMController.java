@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
-import trazit.session.ProcedureRequestSession;
 
 /**
  *

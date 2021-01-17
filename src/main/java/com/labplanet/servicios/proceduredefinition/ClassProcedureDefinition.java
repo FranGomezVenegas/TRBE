@@ -3,7 +3,7 @@ package com.labplanet.servicios.proceduredefinition;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsReqs;
-import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.ProcedureRolesList;
+import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.procedureRolesList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.user.UserAndRolesViews.getPersonByUser;
 import java.io.IOException;
@@ -65,8 +65,8 @@ public class ClassProcedureDefinition {
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The user <*1*> does not exist", new Object[]{userName});                         
                         break;
                     }
-                    Object[] ProcedureRolesList = ProcedureRolesList(procedureName, procedureVersion);    
-                    if (!LPArray.valueInArray(ProcedureRolesList, roleName)){
+                    Object[] procedureRolesList = procedureRolesList(procedureName, procedureVersion);    
+                    if (!LPArray.valueInArray(procedureRolesList, roleName)){
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The role <*1*> does not exist in procedure <*2*> and version <*3*>", new Object[]{roleName, procedureName, procedureVersion});
                         break;
                     }

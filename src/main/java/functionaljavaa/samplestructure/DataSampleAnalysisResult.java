@@ -21,7 +21,7 @@ import functionaljavaa.samplestructure.DataSample.DataSampleErrorTrapping;
 import static functionaljavaa.samplestructure.DataSample.PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED;
 import static functionaljavaa.samplestructure.DataSample.PROCEDURE_SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO;
 import static functionaljavaa.samplestructure.DataSampleAnalysis.isReadyForRevision;
-import static functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisEvaluateStatus_automatismForReview;
+import static functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisEvaluateStatusAutomatismForReview;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -891,7 +891,7 @@ if (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_RESULT_ID.get
                             fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_READY_FOR_REVISION.getName() + ":" + "false");                     
                             SampleAudit smpAudit = new SampleAudit();
                             smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysis.TBL.getName(), testId, sampleId, testId, null, fieldsForAudit, null);
-                            sampleAnalysisEvaluateStatus_automatismForReview(sampleId, testId);
+                            sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId);
                         }
                     }
                 }

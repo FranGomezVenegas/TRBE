@@ -24,13 +24,13 @@ public class ProcedureDefinitionToInstanceUtility {
 
 
     
-    public static final Object[] ProcedureRolesList(String procInstanceName, Integer procVersion){
-        Object[][] ProcedureRolesListArr = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureRoles.TBL.getName(), 
+    public static final Object[] procedureRolesList(String procInstanceName, Integer procVersion){
+        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureRoles.TBL.getName(), 
                 new String[]{TblsReqs.ProcedureRoles.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.FLD_PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
                 new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()}, new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ProcedureRolesListArr[0].toString()))
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0].toString()))
             return new Object[]{};
-        return LPArray.getColumnFromArray2D(ProcedureRolesListArr, 0);
+        return LPArray.getColumnFromArray2D(procedureRolesListArr, 0);
     }
     /**
      *

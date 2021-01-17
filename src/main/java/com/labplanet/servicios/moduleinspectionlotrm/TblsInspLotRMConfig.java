@@ -109,10 +109,10 @@ public class TblsInspLotRMConfig {
             StringBuilder tblAlterScript=new StringBuilder(0);
             HashMap<String[], Object[][]> dbTableGetFieldDefinition = dbTableGetFieldDefinition(schemaNamePrefix, Lot.TBL.getName());
 
-            String[] FldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
-            Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(FldDefinitionColName);
+            String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
+            Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
             //if ( dbTableGetFieldDefinition1.get(FldDefinitionColName).length()!=whereFieldsNameArr[iFields].length()){
-            Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(FldDefinitionColName, "column_name"));
+            Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name"));
             if (fields==null || (fields.length==1 && fields[0].length()==0)) fields=getAllFieldNames();
 
             for (String curFld: fields){
@@ -244,10 +244,10 @@ public class TblsInspLotRMConfig {
             StringBuilder tblAlterScript=new StringBuilder(0);
             HashMap<String[], Object[][]> dbTableGetFieldDefinition = dbTableGetFieldDefinition(schemaNamePrefix, Lot.TBL.getName());
 
-            String[] FldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
-            Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(FldDefinitionColName);
+            String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
+            Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
             //if ( dbTableGetFieldDefinition1.get(FldDefinitionColName).length()!=whereFieldsNameArr[iFields].length()){
-            Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(FldDefinitionColName, "column_name"));
+            Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name"));
             if (fields==null || (fields.length==1 && fields[0].length()==0)) fields=getAllFieldNames();
 
             for (String curFld: fields){
@@ -382,10 +382,10 @@ public class TblsInspLotRMConfig {
             StringBuilder tblAlterScript=new StringBuilder(0);
             HashMap<String[], Object[][]> dbTableGetFieldDefinition = dbTableGetFieldDefinition(schemaNamePrefix, Lot.TBL.getName());
 
-            String[] FldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
-            Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(FldDefinitionColName);
+            String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
+            Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
             //if ( dbTableGetFieldDefinition1.get(FldDefinitionColName).length()!=whereFieldsNameArr[iFields].length()){
-            Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(FldDefinitionColName, "column_name"));
+            Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name"));
             if (fields==null || (fields.length==1 && fields[0].length()==0)) fields=getAllFieldNames();
 
             for (String curFld: fields){
@@ -539,10 +539,10 @@ public class TblsInspLotRMConfig {
             StringBuilder tblAlterScript=new StringBuilder(0);
             HashMap<String[], Object[][]> dbTableGetFieldDefinition = dbTableGetFieldDefinition(schemaNamePrefix, Lot.TBL.getName());
 
-            String[] FldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
-            Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(FldDefinitionColName);
+            String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
+            Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
             //if ( dbTableGetFieldDefinition1.get(FldDefinitionColName).length()!=whereFieldsNameArr[iFields].length()){
-            Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(FldDefinitionColName, "column_name"));
+            Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name"));
             if (fields==null || (fields.length==1 && fields[0].length()==0)) fields=getAllFieldNames();
 
             for (String curFld: fields){

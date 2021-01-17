@@ -8,7 +8,6 @@ package functionaljavaa.moduleenvironmentalmonitoring;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsData;
-import databases.Token;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.samplestructure.DataSampleAnalysisStrategy;

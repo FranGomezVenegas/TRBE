@@ -213,8 +213,8 @@ public class ProcedureDefinitionQueries {
     }
     
     public static JSONObject encryption(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        String TOTAL_TABLES="total_tables";
-        String TOTAL_FIELDS="total_fields";
+        String totalTables="total_tables";
+        String totalFields="total_fields";
         JSONArray encrypTableFldsObjArr=new JSONArray();
         JSONArray schemasDataArr=new JSONArray();
         String[] schemasArr=new String[]{CONFIG_PROC_DATA_FILE_NAME, CONFIG_PROC_CONFIG_FILE_NAME};
@@ -223,9 +223,9 @@ public class ProcedureDefinitionQueries {
             JSONObject curSchemaObj=new JSONObject();
             String[] encryptedTables = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+curSchema, "encrypted_tables").split("\\|");
             if (encryptedTables[0].length()==0)
-                curSchemaMainObj.put(TOTAL_TABLES, 0);
+                curSchemaMainObj.put(totalTables, 0);
             else
-                curSchemaMainObj.put(TOTAL_TABLES, encryptedTables.length);
+                curSchemaMainObj.put(totalTables, encryptedTables.length);
             for (String currEncrypTable: encryptedTables){
                 if (currEncrypTable.length()==0){
                     encrypTableFldsObjArr=new JSONArray();
@@ -235,9 +235,9 @@ public class ProcedureDefinitionQueries {
                     String[] encryptedTableFlds = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+curSchema, "encrypted_"+currEncrypTable).split("\\|");
                     JSONObject encrypTableFldsObj = new JSONObject();
                     if (encryptedTables[0].length()==0)
-                        encrypTableFldsObj.put(TOTAL_FIELDS, 0);
+                        encrypTableFldsObj.put(totalFields, 0);
                     else
-                        encrypTableFldsObj.put(TOTAL_FIELDS, encryptedTableFlds.length);
+                        encrypTableFldsObj.put(totalFields, encryptedTableFlds.length);
                     encrypTableFldsObjArr.add(encrypTableFldsObj);
                     for (String curFld: encryptedTableFlds){
                         encrypTableFldsObj = new JSONObject(); 

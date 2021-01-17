@@ -47,7 +47,7 @@ public class LPTestingOutFormat {
     public HashMap<String, Object> getCsvHeaderTags() {
         return csvHeaderTags;
     }
-    
+
     public enum InputModes{FILE, DATABASE}
     private String inputMode="";
     private Object[][] testingContent=new Object[0][0];
@@ -61,7 +61,7 @@ public class LPTestingOutFormat {
     private Integer stepIdPosic = -1;
     private Integer stopSyntaxisUnmatchPosic = -1;
     private Integer stopSyntaxisFalsePosic = -1;
-    
+
     public LPTestingOutFormat(HttpServletRequest request, String testerFileName){
         String csvPathName ="";
         String csvFileName ="";
@@ -70,7 +70,7 @@ public class LPTestingOutFormat {
         Integer numEvalArgs=0;
         numEvalArgs = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.NUM_EVAL_ARGS).toString()));
         StringBuilder htmlStyleHdr = new StringBuilder(0);
-        HashMap<String, Object> headerTags = new HashMap();   
+        HashMap<String, Object> headerTags = new HashMap();
         Integer actionNamePosic=numEvalArgs+1;
         String[] fieldsName=new String[]{TblsTesting.ScriptSteps.FLD_EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.FLD_ESIGN_TO_CHECK.getName(),
             TblsTesting.ScriptSteps.FLD_CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.FLD_CONFIRMUSER_PW_TO_CHECK.getName(),
@@ -85,32 +85,32 @@ public class LPTestingOutFormat {
         if (testingSource!=null && testingSource=="DB"){
             csvPathName ="";
             csvFileName ="";
-            if (!LPFrontEnd.servletStablishDBConection(request, null)){return;}     
+            if (!LPFrontEnd.servletStablishDBConection(request, null)){return;}
             Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
             String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
-            csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(), 
-                    new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_ACTIVE.getName()}, new Object[]{scriptId, true}, 
+            csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),
+                    new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_ACTIVE.getName()}, new Object[]{scriptId, true},
                     fieldsName,
                     new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName()});
-            headerTags.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, 0);   
-            headerTags.put(FILEHEADER_NUM_TABLES_TAG_NAME, "-");  
-            headerTags.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, numEvalArgs);   
+            headerTags.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, 0);
+            headerTags.put(FILEHEADER_NUM_TABLES_TAG_NAME, "-");
+            headerTags.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, numEvalArgs);
             actionNamePosic=5;
         }else{
             csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
             csvFileName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME);
             if ("".equals(csvPathName) || csvPathName==null){
-                csvFileName = testerFileName; 
+                csvFileName = testerFileName;
                 csvPathName = LPTestingOutFormat.TESTING_FILES_PATH; }
-            csvPathName = csvPathName+csvFileName; 
+            csvPathName = csvPathName+csvFileName;
             String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
 
-            csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
+            csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator);
 
             String[][] headerInfo = LPArray.convertCSVinArray(csvPathName, "=");
-            headerTags = LPTestingOutFormat.getCSVHeader(headerInfo);          
-            numEvalArgs = Integer.valueOf(headerTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());               
-        }        
+            headerTags = LPTestingOutFormat.getCSVHeader(headerInfo);
+            numEvalArgs = Integer.valueOf(headerTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());
+        }
         htmlStyleHdr = new StringBuilder(0);
         htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
 
@@ -125,14 +125,14 @@ public class LPTestingOutFormat {
         this.auditReasonPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_AUDIT_REASON.getName());
         this.stepIdPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STEP_ID.getName());
         this.stopSyntaxisUnmatchPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_UNMATCH.getName());
-        this.stopSyntaxisFalsePosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_FALSE.getName());                    
+        this.stopSyntaxisFalsePosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_FALSE.getName());
     }
-    
+
     public StringBuilder publishEvalStep(HttpServletRequest request, Integer stepId, Object[] evaluate, JSONArray functionRelatedObjects, TestingAssert tstAssert){
-        StringBuilder fileContentBuilder = new StringBuilder(0);  
-                
+        StringBuilder fileContentBuilder = new StringBuilder(0);
+
         String[] updFldNames=new String[]{TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()};
-        Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp()};        
+        Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp()};
         if (numEvaluationArguments>0 && ("DB".equals(this.inputMode)) ){
             Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
             String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
@@ -142,26 +142,26 @@ public class LPTestingOutFormat {
                 updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.FLD_EVAL_CODE.getName(),
                     TblsTesting.ScriptSteps.FLD_DYNAMIC_DATA.getName()});
                 updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
-                    functionRelatedObjects.toJSONString()});                    
+                    functionRelatedObjects.toJSONString()});
             }
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),                         
+            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),
                     updFldNames, updFldValues,
-                    new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()}, new Object[]{scriptId, stepId});            
+                    new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()}, new Object[]{scriptId, stepId});
         }
         return fileContentBuilder;
-    }   
-    
+    }
+
     public StringBuilder publishEvalSummary(HttpServletRequest request, TestingAssertSummary tstAssertSummary){
         return publishEvalSummary(request, tstAssertSummary, null);
     }
     public StringBuilder publishEvalSummary(HttpServletRequest request, TestingAssertSummary tstAssertSummary, String summaryPhrase){
-        StringBuilder fileContentBuilder = new StringBuilder(0);  
+        StringBuilder fileContentBuilder = new StringBuilder(0);
         tstAssertSummary.notifyResults();
         String[] updFldNames=new String[]{TblsTesting.Script.FLD_DATE_EXECUTION.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName()};
-        Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp(), tstAssertSummary.getTotalTests()};        
+        Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp(), tstAssertSummary.getTotalTests()};
         if (numEvaluationArguments>0){
             String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
-            fileContentBuilder.append(fileContentSummary);            
+            fileContentBuilder.append(fileContentSummary);
             if ("DB".equals(this.inputMode)){
                 if (summaryPhrase==null){
                     if (numEvaluationArguments==0) summaryPhrase="COMPLETED ALL STEPS";
@@ -173,9 +173,9 @@ public class LPTestingOutFormat {
                             if (tstAssertSummary.getTotalSyntaxisUnMatch()>0) summaryPhrase=summaryPhrase+"Unmatched="+tstAssertSummary.getTotalSyntaxisUnMatch()+". ";
                             if (tstAssertSummary.getTotalSyntaxisUndefined()>0) summaryPhrase=summaryPhrase+"Undefined="+tstAssertSummary.getTotalSyntaxisUndefined()+". ";
                         }
-                    }   
+                    }
                 }
-                if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}          
+                if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}
                 Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
                 String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
                 updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(),
@@ -184,32 +184,32 @@ public class LPTestingOutFormat {
                 if (numEvaluationArguments>1){
                     updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.Script.FLD_EVAL_CODE_MATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNDEFINED.getName(),
                                 TblsTesting.Script.FLD_EVAL_CODE_UNMATCH.getName()});
-                    updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{tstAssertSummary.getTotalCodeMatch(), tstAssertSummary.getTotalCodeUndefined(), tstAssertSummary.getTotalCodeUnMatch()});                    
+                    updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{tstAssertSummary.getTotalCodeMatch(), tstAssertSummary.getTotalCodeUndefined(), tstAssertSummary.getTotalCodeUnMatch()});
                 }
                 updFldNames=LPArray.addValueToArray1D(updFldNames,TblsTesting.Script.FLD_RUN_SUMMARY.getName());
                 updFldValues=LPArray.addValueToArray1D(updFldValues, summaryPhrase);
-                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(),                         
+                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(),
                         updFldNames, updFldValues,
-                        new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});            
+                        new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
             }
         }
         return fileContentBuilder;
-    }   
-    
-    /**
-     *
-     */
-    public static final String TESTING_FILES_PATH = "http://51.75.202.142:8888/testingRepository-20200203/"; 
+    }
 
     /**
      *
      */
-    public static final String TESTING_FILES_PATH_NAS = "\\\\FRANCLOUD\\fran\\LabPlanet\\testingRepository\\"; 
+    public static final String TESTING_FILES_PATH = "http://51.75.202.142:8888/testingRepository-20200203/";
 
     /**
      *
      */
-    public static final String TESTING_FILES_PATH_CHEMOS = "C:\\Chemos\\"; 
+    public static final String TESTING_FILES_PATH_NAS = "\\\\FRANCLOUD\\fran\\LabPlanet\\testingRepository\\";
+
+    /**
+     *
+     */
+    public static final String TESTING_FILES_PATH_CHEMOS = "C:\\Chemos\\";
 
     /**
      *
@@ -229,7 +229,7 @@ public class LPTestingOutFormat {
     /**
      *
      */
-    public static final String MSG_DB_CON_ERROR="<th>Error connecting to the database</th>";       
+    public static final String MSG_DB_CON_ERROR="<th>Error connecting to the database</th>";
 
     /**
      *
@@ -249,10 +249,10 @@ public class LPTestingOutFormat {
     /**
      *
      */
-    public static final String FILEHEADER_NUM_TABLES_TAG_NAME="NUMTABLES"; 
-    public static final String FILEHEADER_TESTER_NAME_TAG_NAME="TESTERNAME"; 
+    public static final String FILEHEADER_NUM_TABLES_TAG_NAME="NUMTABLES";
+    public static final String FILEHEADER_TESTER_NAME_TAG_NAME="TESTERNAME";
 
-    
+
     /**
      *
      */
@@ -273,12 +273,12 @@ public class LPTestingOutFormat {
      *
      */
     public static final String FILEHEADER_EVALUATION_POSITION="EVALUATIONPOSITION";
-    
+
     /**
      *
      */
     public static final String ERROR_TRAPPING_FILEHEADER_MISSING_TAGS="There are missing tags in the file header: ";
-    
+
     /**
      *
      */
@@ -341,11 +341,11 @@ public class LPTestingOutFormat {
         String frontendUrl = prop.getString("frontend_url");
 
         response.setHeader("Access-Control-Allow-Origin", frontendUrl);
-        response.setHeader("Access-Control-Allow-Methods", "GET");          
+        response.setHeader("Access-Control-Allow-Methods", "GET");
         response.setContentType("text/html;charset=UTF-8");
         return response;
-    }      
-    
+    }
+
     /**
      *
      * @return
@@ -426,10 +426,10 @@ public class LPTestingOutFormat {
      */
     public static String headerAddField(String field){
         String content="";
-        content = content+headerStart()+LPNulls.replaceNull((String) field)+headerEnd();           
+        content = content+headerStart()+LPNulls.replaceNull((String) field)+headerEnd();
         return content;
     }
-    
+
     /**
      *
      * @param fields
@@ -438,7 +438,7 @@ public class LPTestingOutFormat {
     public static String headerAddFields(Object[] fields){
         StringBuilder content=new StringBuilder(0);
         for (Object fld: fields){
-            content.append(headerStart()).append(LPNulls.replaceNull(fld).toString()).append(headerEnd());           
+            content.append(headerStart()).append(LPNulls.replaceNull(fld).toString()).append(headerEnd());
         }
         return content.toString();
     }
@@ -451,11 +451,11 @@ public class LPTestingOutFormat {
     public static String headerAddFields(String[] fields){
         StringBuilder content=new StringBuilder(0);
         for (Object fld: fields){
-            content.append(headerStart()).append(LPNulls.replaceNull(fld).toString()).append(headerEnd());           
+            content.append(headerStart()).append(LPNulls.replaceNull(fld).toString()).append(headerEnd());
         }
         return content.toString();
     }
-    
+
     /**
      *
      * @param fields
@@ -480,7 +480,7 @@ public class LPTestingOutFormat {
      */
     public static String rowAddField(String field){
         StringBuilder content=new StringBuilder(0);
-        content.append(headerStart()).append(LPNulls.replaceNull(field)).append(headerEnd());           
+        content.append(headerStart()).append(LPNulls.replaceNull(field)).append(headerEnd());
         return content.toString();
     }
 
@@ -493,9 +493,9 @@ public class LPTestingOutFormat {
         StringBuilder content=new StringBuilder(0);
         for (Object field: fields){
             if (field==null){
-                content.append(fieldStart()).append("").append(fieldEnd());  
+                content.append(fieldStart()).append("").append(fieldEnd());
             }else{
-                content.append(fieldStart()).append(LPNulls.replaceNull(field).toString()).append(fieldEnd());  
+                content.append(fieldStart()).append(LPNulls.replaceNull(field).toString()).append(fieldEnd());
             }
         }
         return content.toString();
@@ -507,7 +507,7 @@ public class LPTestingOutFormat {
      * @param fileContent
      */
     public static void createLogFile(String csvPathName, String fileContent){
-        csvPathName = csvPathName.replace(".txt", ".html");            
+        csvPathName = csvPathName.replace(".txt", ".html");
         File file = new File(csvPathName);
             try (FileWriter fileWriter = new FileWriter(file)) {
                 if (file.exists()) {
@@ -522,9 +522,9 @@ public class LPTestingOutFormat {
                 fileWriter.write(fileContent);
                 fileWriter.flush();
             } catch (IOException ex) {Logger.getLogger(LPTestingOutFormat.class.getName()).log(Level.SEVERE, null, ex);
-            } 
+            }
     }
-    
+
     /**
      *
      * @param servletName
@@ -557,36 +557,36 @@ public class LPTestingOutFormat {
         fileContent = fileContent + "<table id=\"scriptTable\">";
         return fileContent;
     }
-    
+
     /**
      *
      * @param csvContent
      * @return
      */
-    
+
     public static HashMap<String, Object>  getCSVHeaderTester(String[][] csvContent){
-        HashMap<String, Object> fieldsRequired = new HashMap();   
-        fieldsRequired.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, "");   fieldsRequired.put(FILEHEADER_NUM_TABLES_TAG_NAME, ""); 
-        fieldsRequired.put(FILEHEADER_TESTER_NAME_TAG_NAME, ""); 
-        fieldsRequired.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, "");   
+        HashMap<String, Object> fieldsRequired = new HashMap();
+        fieldsRequired.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, "");   fieldsRequired.put(FILEHEADER_NUM_TABLES_TAG_NAME, "");
+        fieldsRequired.put(FILEHEADER_TESTER_NAME_TAG_NAME, "");
+        fieldsRequired.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, "");
         fieldsRequired.put(FILEHEADER_TOKEN, "");
         return getCSVHeaderManager(fieldsRequired, csvContent);
-    }    
-    
+    }
+
     public static HashMap<String, Object>  getCSVHeader(String[][] csvContent){
-        HashMap<String, Object> fieldsRequired = new HashMap();   
-        fieldsRequired.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, "");   fieldsRequired.put(FILEHEADER_NUM_TABLES_TAG_NAME, "");  
-        fieldsRequired.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, "");   
+        HashMap<String, Object> fieldsRequired = new HashMap();
+        fieldsRequired.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, "");   fieldsRequired.put(FILEHEADER_NUM_TABLES_TAG_NAME, "");
+        fieldsRequired.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, "");
         return getCSVHeaderManager(fieldsRequired, csvContent);
     }
-    
+
     private static HashMap<String, Object>  getCSVHeaderManager(HashMap<String, Object> fieldsRequired, String[][] csvContent){
-        HashMap<String, Object> hm = new HashMap();   
-        
+        HashMap<String, Object> hm = new HashMap();
+
         Integer maxHeaderLines=FILEHEADER_MAX_NUM_HEADER_LINES;
         if (csvContent.length<maxHeaderLines){maxHeaderLines=csvContent.length-1;}
         Integer iLineParsed = 0;
-        Boolean continueParsing=true;        
+        Boolean continueParsing=true;
         while (continueParsing){
             String getLineKey = LPNulls.replaceNull(csvContent[iLineParsed][0]).toUpperCase();
             String getLineValue = LPNulls.replaceNull(csvContent[iLineParsed][1]);
@@ -602,18 +602,18 @@ public class LPTestingOutFormat {
                         }
                         break;
                     default:
-                        break;                        
+                        break;
                 }
                 hm.put(getLineKey, getLineValue);
                 fieldsRequired.remove(getLineKey);
-            }                
+            }
             if (iLineParsed>=maxHeaderLines){continueParsing=false;}
             iLineParsed++;
         }
         if (!fieldsRequired.isEmpty()){
-            hm.clear();                 
+            hm.clear();
             hm.put(LPPlatform.LAB_FALSE, LPHashMap.hashMapToStringKeys(fieldsRequired, ", "));
-        }        
+        }
         return hm;
     }
 
@@ -628,27 +628,27 @@ public class LPTestingOutFormat {
         String fileContentSummary =rowStart();
         if (numArguments>0){
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total Tests");
-            fileContentSummary = fileContentSummary +rowAddField(tstAssert.getTotalTests().toString()); 
-            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Match "+LPTestingOutFormat.TST_ICON_MATCH);                
+            fileContentSummary = fileContentSummary +rowAddField(tstAssert.getTotalTests().toString());
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Match "+LPTestingOutFormat.TST_ICON_MATCH);
             fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalSyntaxisMatch().toString());
-            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);                
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalSyntaxisUndefined().toString()); 
-            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);                
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalSyntaxisUnMatch().toString()); 
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalSyntaxisUndefined().toString());
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalSyntaxisUnMatch().toString());
         }
         if (numArguments>1){
-            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Match "+LPTestingOutFormat.TST_ICON_MATCH);                
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeMatch().toString()); 
-            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);                
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeUndefined().toString()); 
-            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total ErrorCode Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);       
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeUnMatch().toString()); 
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Match "+LPTestingOutFormat.TST_ICON_MATCH);
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeMatch().toString());
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeUndefined().toString());
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total ErrorCode Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeUnMatch().toString());
         }
-        fileContentSummary = fileContentHeaderSummary+fileContentSummary +rowEnd();            
-        fileContentSummary = fileContentSummary +tableEnd();        
-        return fileContentSummary;        
+        fileContentSummary = fileContentHeaderSummary+fileContentSummary +rowEnd();
+        fileContentSummary = fileContentSummary +tableEnd();
+        return fileContentSummary;
     }
-    
+
     /**
      *
      * @param content
@@ -656,15 +656,15 @@ public class LPTestingOutFormat {
      */
     public static String convertArrayInHtmlTable(Object[][] content){
         StringBuilder fileContentTable = new StringBuilder(0);
-        fileContentTable.append(LPTestingOutFormat.tableStart(""));    
+        fileContentTable.append(LPTestingOutFormat.tableStart(""));
         fileContentTable.append(headerAddFields(content[0])).append(headerEnd());
         for (int iRows=1; iRows< content.length; iRows++){
             fileContentTable.append(rowStart()).append(rowAddFields(content[iRows])).append(rowEnd());
         }
-        fileContentTable.append(LPTestingOutFormat.tableEnd());    
+        fileContentTable.append(LPTestingOutFormat.tableEnd());
         return fileContentTable.toString();
     }
-    
+
     /**
      *
      * @param table1Header
@@ -672,12 +672,12 @@ public class LPTestingOutFormat {
      * @return
      */
     public static String createTableWithHeader(String table1Header, Integer numEvaluationArguments){
-        String fileContentTable = LPTestingOutFormat.tableStart("");            
+        String fileContentTable = LPTestingOutFormat.tableStart("");
         fileContentTable=fileContentTable+headerAddFields(addUATColumns(table1Header.split(TESTING_FILES_FIELD_SEPARATOR), numEvaluationArguments));
-        fileContentTable=fileContentTable+rowStart();        
+        fileContentTable=fileContentTable+rowStart();
         return fileContentTable;
     }
-    
+
     /**
      *
      * @param value
@@ -686,8 +686,8 @@ public class LPTestingOutFormat {
     public static BigDecimal csvExtractFieldValueBigDecimal(Object value){
         if (value==null) return null;
         try{
-            return new BigDecimal(value.toString());        
-        }catch(Exception e){return null;}        
+            return new BigDecimal(value.toString());
+        }catch(Exception e){return null;}
     }
 
     /**
@@ -695,12 +695,12 @@ public class LPTestingOutFormat {
      * @param value
      * @return
      */
-    public static Boolean csvExtractFieldValueBoolean(Object value){        
+    public static Boolean csvExtractFieldValueBoolean(Object value){
         if (value==null) return false;
         if (value.toString().length()==0){return false;}
         try{
             return Boolean.valueOf(value.toString());
-        }catch(Exception e){return false;}                    
+        }catch(Exception e){return false;}
     }
 
     /**
@@ -711,10 +711,10 @@ public class LPTestingOutFormat {
     public static String csvExtractFieldValueString(Object value){
         if (value==null) return null;
         try{
-            return value.toString();        
-        }catch(Exception e){return null;}        
+            return value.toString();
+        }catch(Exception e){return null;}
     }
-    
+
     /**
      *
      * @param value
@@ -724,7 +724,7 @@ public class LPTestingOutFormat {
         if (value==null) return new String[0];
         try{
             return value.toString().split("\\|");
-        }catch(Exception e){return new String[0];}        
+        }catch(Exception e){return new String[0];}
     }
 
     /**
@@ -736,7 +736,7 @@ public class LPTestingOutFormat {
         if (value==null) return null;
         try{
             return Float.valueOf(value.toString());
-        }catch(NumberFormatException e){return null;}        
+        }catch(NumberFormatException e){return null;}
     }
 
     /**
@@ -748,8 +748,8 @@ public class LPTestingOutFormat {
         if (value==null) return null;
         try{
             return Integer.valueOf(value.toString());
-        }catch(NumberFormatException e){return null;}        
-    }    
+        }catch(NumberFormatException e){return null;}
+    }
 
     /**
      *
@@ -760,7 +760,7 @@ public class LPTestingOutFormat {
         if (value==null) return null;
         try{
             return Date.valueOf(value.toString());
-        }catch(NumberFormatException e){return null;}        
+        }catch(NumberFormatException e){return null;}
     }
 
     /**
@@ -769,27 +769,27 @@ public class LPTestingOutFormat {
      * @return
      */
     public static Object[][] getCSVFileContent(String csvFileName) {
-        String csvPathName = LPTestingOutFormat.TESTING_FILES_PATH+csvFileName; 
-        String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;        
-        return LPArray.convertCSVinArray(csvPathName, csvFileSeparator);         
-    } 
-    
+        String csvPathName = LPTestingOutFormat.TESTING_FILES_PATH+csvFileName;
+        String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
+        return LPArray.convertCSVinArray(csvPathName, csvFileSeparator);
+    }
+
     private static int getStepObjectPosic(JsonObject jsonObject){
             int stepObjectPosic = 1;
             try{
-                stepObjectPosic = jsonObject.get("object_posic").getAsInt();  
+                stepObjectPosic = jsonObject.get("object_posic").getAsInt();
             }catch(Exception ex){stepObjectPosic = 1;}
             return stepObjectPosic;
     }
-    
-    public static String getAttributeValue(Object value, Object[][] scriptSteps){            
+
+    public static String getAttributeValue(Object value, Object[][] scriptSteps){
         try{
             if (!value.toString().contains("step")) return specialTagFilter(LPNulls.replaceNull(value.toString()));
 
             JsonObject jsonObject = LPJson.convertToJsonObjectStringedObject(value.toString());
-            int stepNumber = jsonObject.get("step").getAsInt();        
-            String stepObjectType = jsonObject.get("object_type").getAsString(); 
-            int stepObjectPosic=getStepObjectPosic(jsonObject); 
+            int stepNumber = jsonObject.get("step").getAsInt();
+            String stepObjectType = jsonObject.get("object_type").getAsString();
+            int stepObjectPosic=getStepObjectPosic(jsonObject);
             Integer stepPosic=LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length-5), stepNumber);
             if (stepPosic==-1) return "";
 
@@ -800,7 +800,7 @@ public class LPTestingOutFormat {
                String objType=object.get("object_type").getAsString();
                if (objType.equalsIgnoreCase(stepObjectType)){
                    numObjectsFound++;
-                   if (numObjectsFound.equals(stepObjectPosic)) return object.get("object_name").getAsString();                   
+                   if (numObjectsFound.equals(stepObjectPosic)) return object.get("object_name").getAsString();
                }
             }
             return "";
@@ -812,7 +812,7 @@ public class LPTestingOutFormat {
         return value;
     }
 
-    
+
     /**
      * @return the inputMode
      */
@@ -845,16 +845,16 @@ public class LPTestingOutFormat {
     }
     public Integer getAuditReasonPosic() {
         return auditReasonPosic;
-    }  
+    }
     public Integer getStepIdPosic() {
         return stepIdPosic;
-    }  
+    }
     public Integer getStopSyntaxisUnmatchPosic() {
         return stopSyntaxisUnmatchPosic;
-    }  
+    }
     public Integer getStopSyntaxisFalsePosic() {
         return stopSyntaxisFalsePosic;
-    }  
+    }
 
     /**
      * @return the htmlStyleHeader
@@ -869,31 +869,31 @@ public class LPTestingOutFormat {
     public Integer getNumEvaluationArguments() {
         return numEvaluationArguments;
     }
-                
-    public static void cleanLastRun(String schemaPrefix, Integer scriptId){   
-        String[] ScriptFieldName=new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(), TblsTesting.Script.FLD_EVAL_CODE_MATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNDEFINED.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()};
-        Object[] ScriptFieldValue=new Object[]{"NULL>>>STRING","NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER","NULL>>>DATETIME"};
-        
-        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
-            ScriptFieldName, ScriptFieldValue,
-            new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});        
-        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(), 
-            new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.FLD_EVAL_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EVAL_CODE.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()}, 
+
+    public static void cleanLastRun(String schemaPrefix, Integer scriptId){
+        String[] scriptFieldName=new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(), TblsTesting.Script.FLD_EVAL_CODE_MATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNDEFINED.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()};
+        Object[] scriptFieldValue=new Object[]{"NULL>>>STRING","NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER","NULL>>>DATETIME"};
+
+        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(),
+            scriptFieldName, scriptFieldValue,
+            new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
+        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),
+            new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.FLD_EVAL_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EVAL_CODE.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()},
             new Object[]{"NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING","NULL>>>DATETIME"},
-            new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});        
-    }    
+            new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
+    }
     public static void setAuditIndexValues(String schemaPrefix, Integer scriptId, String scriptAuditIds, String moment){
         JSONArray auditIndexInfo=getScriptAuditIncrements(schemaPrefix, scriptId, scriptAuditIds, moment);
         if (auditIndexInfo!=null){
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(),
                 new String[]{TblsTesting.Script.FLD_AUDIT_IDS_VALUES.getName()},
-                new Object[]{auditIndexInfo.toJSONString()},            
-                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});        
+                new Object[]{auditIndexInfo.toJSONString()},
+                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
         }
     }
     private static JSONArray getScriptAuditIncrements(String schemaPrefix, Integer scriptId, String scriptAuditIds, String moment){
         if (scriptAuditIds==null) return null;
-        if (moment==null) return null;        
+        if (moment==null) return null;
         String[] auditIds=scriptAuditIds.split("\\|");
         JSONArray indxInfo=new JSONArray();
         for (String curAuditId: auditIds){
@@ -905,13 +905,13 @@ public class LPTestingOutFormat {
                     currIndxInfo.put(Arrays.toString(auditIdInfo).replace("\\*", "_")+"_"+moment, "error getting the value");
                 else
                     currIndxInfo.put(Arrays.toString(auditIdInfo).replace("\\*", "_")+"_"+moment, dbGetIndexLastNumberInUse[dbGetIndexLastNumberInUse.length-1]);
-                indxInfo.add(currIndxInfo);            
+                indxInfo.add(currIndxInfo);
             }
-        }        
+        }
 //        currIndxInfo=new JSONObject();
 //        currIndxInfo.put("sample_audit", 456);
 //        indxInfo.add(currIndxInfo);
         return indxInfo;
     }
-    
+
 }

@@ -2,7 +2,6 @@
 package com.labplanet.servicios.testing.config;
 
 import lbplanet.utilities.LPPlatform;
-import databases.Rdbms;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;

@@ -5,7 +5,6 @@
  */
 package functionaljavaa.modulegenoma;
 
-import databases.Token;
 import functionaljavaa.parameter.Parameter;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;

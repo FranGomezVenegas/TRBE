@@ -91,8 +91,8 @@ public class ClassEnvMonSample {
                     Object smpTmpV=LPNulls.replaceNull(argValues[1]);
                     if (smpTmpV==null || smpTmpV.toString().length()==0)smpTmpV=1;
                     if (LPNulls.replaceNull(argValues[2]).toString().length()>0){
-                        fieldNames=(String[]) argValues[2].toString().split("\\|");
-                        fieldValues=(Object[]) LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|"));
+                        fieldNames=argValues[2].toString().split("\\|");
+                        fieldValues=LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|"));
                     }
                     if (argValues[5]==null){
                         actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV, 

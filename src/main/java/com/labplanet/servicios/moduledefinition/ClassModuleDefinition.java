@@ -24,7 +24,7 @@ public class ClassModuleDefinition {
         this.functionFound=true;
             switch (endPoint){
                 case DOC_API_ENDPOINTS_IN_DB:                    
-                    EndPointsToRequirements.EndpointDefinition();
+                    EndPointsToRequirements.endpointDefinition();
                     break;
             }    
         this.diagnostic=actionDiagnoses;

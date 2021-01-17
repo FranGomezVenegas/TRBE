@@ -125,11 +125,11 @@ public class DataSampleRevisionTestingGroup {
     public static Object[] markSampleAsReadyForRevision(Integer sampleId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        Object[][] PendingTestingGroupByRevisionValue= Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),
+        Object[][] pendingTestingGroupByRevisionValue= Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),
                 new String[]{TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName()},
                 new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName()}, 
                 new Object[]{sampleId}, null);
-        if (PendingTestingGroupByRevisionValue.length==1 && PendingTestingGroupByRevisionValue[0][0].toString().equalsIgnoreCase("TRUE")){
+        if (pendingTestingGroupByRevisionValue.length==1 && pendingTestingGroupByRevisionValue[0][0].toString().equalsIgnoreCase("TRUE")){
             DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
             DataSample smp=new DataSample(smpAna);
             smp.setReadyForRevision(sampleId);

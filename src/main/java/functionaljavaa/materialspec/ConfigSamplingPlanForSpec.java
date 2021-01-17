@@ -6,7 +6,6 @@
 package functionaljavaa.materialspec;
 
 import databases.Rdbms;
-import databases.Token;
 import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPMath.nthroot;
 import lbplanet.utilities.LPPlatform;

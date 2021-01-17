@@ -5,8 +5,6 @@
  */
 package functionaljavaa.samplestructure;
 
-import databases.Token;
-
 /**
  *
  * @author Administrator

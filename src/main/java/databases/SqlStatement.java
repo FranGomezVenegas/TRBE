@@ -5,7 +5,6 @@
  */
 package databases;
 
-import static com.sun.tools.doclint.Entity.prop;
 import functionaljavaa.parameter.Parameter;
 import lbplanet.utilities.LPArray;
 import java.util.HashMap;
@@ -50,12 +49,12 @@ public class SqlStatement {
             if (LPArray.valueInArray(dateTodayTranslation, startStr))
                 diagn=LPArray.addValueToArray1D(diagn, LPDate.getTimeStampLocalDate());      
             else
-                diagn=LPArray.addValueToArray1D(diagn, LPDate.StringFormatToDate(startStr));
+                diagn=LPArray.addValueToArray1D(diagn, LPDate.stringFormatToDate(startStr));
         if (endStr.length()>0) 
             if (LPArray.valueInArray(dateTodayTranslation, endStr))
                 diagn=LPArray.addValueToArray1D(diagn, LPDate.getTimeStampLocalDate()); 
             else
-                diagn=LPArray.addValueToArray1D(diagn, LPDate.StringFormatToDate(endStr));        
+                diagn=LPArray.addValueToArray1D(diagn, LPDate.stringFormatToDate(endStr));        
             
         return diagn;// LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DateRange filter NotImplementedYet", null);
     }

@@ -5,8 +5,6 @@
  */
 package com.labplanet.servicios.modulegenoma;
 
-import com.labplanet.servicios.app.GlobalAPIsParams;
-import databases.Rdbms;
 import functionaljavaa.modulegenoma.GenomaConfigVariablesQueries;
 import java.io.IOException;
 import java.io.PrintWriter;

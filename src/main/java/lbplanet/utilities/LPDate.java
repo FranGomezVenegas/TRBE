@@ -140,7 +140,7 @@ public class LPDate {
         }
     }
     
-    public static Date StringFormatToDate(String dateStr){ 
+    public static Date stringFormatToDate(String dateStr){ 
         if (!dateStr.toUpperCase().contains("T")) dateStr=dateStr+"T00:00:00";
         Calendar cal = Calendar.getInstance();    
         int y=LocalDateTime.parse(dateStr).getYear();

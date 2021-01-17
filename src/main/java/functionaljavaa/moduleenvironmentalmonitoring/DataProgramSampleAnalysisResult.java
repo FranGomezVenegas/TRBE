@@ -5,7 +5,6 @@
  */
 package functionaljavaa.moduleenvironmentalmonitoring;
 
-import databases.Token;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSampleAnalysisResultStrategy;
 import lbplanet.utilities.LPArray;

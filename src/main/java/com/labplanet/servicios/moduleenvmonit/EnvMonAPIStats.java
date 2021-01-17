@@ -7,7 +7,6 @@ package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
-import static com.labplanet.servicios.moduleenvmonit.EnvMonitAPIParams.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsData;
@@ -409,8 +408,8 @@ public class EnvMonAPIStats extends HttpServlet {
                             String microOrgList="";
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgInfo[0][0].toString())){
                                 for (Object[] curMicroOrg: sampleMicroOrgInfo){
-                                    if (microOrgList.length()>0)microOrgList=microOrgList+", ";
-                                    microOrgList=microOrgList+curMicroOrg[0].toString();
+                                    if (microOrgList.length()>0)microOrgList=microOrgList.concat(", ");
+                                    microOrgList=microOrgList.concat(curMicroOrg[0].toString());
                                 }
                                 jObj.put(TblsEnvMonitData.SampleMicroorganism.TBL.getName(), microOrgList);
                             }

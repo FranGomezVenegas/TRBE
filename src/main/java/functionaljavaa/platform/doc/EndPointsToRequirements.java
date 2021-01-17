@@ -48,7 +48,7 @@ import org.json.simple.JSONObject;
 public class EndPointsToRequirements {
     // Endpoints 'antiguos': AppHeaderAPIEndpoints, IncidentAPIfrontendEndpoints, BatchAPIEndpoints, GenomaVariableAPIEndPoints y todos los de Genoma!
 
-    public static void EndpointDefinition(){
+    public static void endpointDefinition(){
         Rdbms.stablishDBConectionTester();    
         // *** Falta encontrar la manera de tomar la url de un servlet!
         //"api_url",
