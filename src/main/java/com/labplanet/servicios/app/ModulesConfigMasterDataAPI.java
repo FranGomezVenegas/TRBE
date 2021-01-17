@@ -5,6 +5,11 @@
  */
 package com.labplanet.servicios.app;
 
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_ANALYSIS;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_CONFIG_VERSION;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_PARAMETER;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FIELD_NAME;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FIELD_VALUE;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.Token;
@@ -34,43 +39,43 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class ModulesConfigMasterDataAPI extends HttpServlet {
-
+    
     public enum ConfigMasterDataAPIEndpoints{
         /**
          *
          */
         ANALYSIS_NEW("ANALYSIS_NEW", "analysisNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("config_version", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
-                new LPAPIArguments("specFieldName", LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
-                new LPAPIArguments("specFieldValue", LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )}),
+                new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )}),
         ANALYSIS_UPDATE("ANALYSIS_UPDATE", "analysisNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("config_version", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
-                new LPAPIArguments("specFieldName", LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
-                new LPAPIArguments("specFieldValue", LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )}),
+                new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )}),
         SPEC_NEW("SPEC_NEW", "specNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("config_version", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
-                new LPAPIArguments("specFieldName", LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
-                new LPAPIArguments("specFieldValue", LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )}),
+                new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )}),
         SPEC_UPDATE("SPEC_UPDATE", "specUpdate_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("config_version", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
-                new LPAPIArguments("specFieldName", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8 ),
-                new LPAPIArguments("specFieldValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9 )}),
+                new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9 )}),
         SPEC_LIMIT_NEW("SPEC_LIMIT_NEW", "specLimitNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("configVersion", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
-                new LPAPIArguments("analysis", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_ANALYSIS, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
                 new LPAPIArguments("methodName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
                 new LPAPIArguments("methodVersion", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9 ),
                 new LPAPIArguments("variationName", LPAPIArguments.ArgumentType.STRING.toString(), true, 10 ),
-                new LPAPIArguments("parameter", LPAPIArguments.ArgumentType.STRING.toString(), true, 11 ),
+                new LPAPIArguments(REQUEST_PARAM_PARAMETER, LPAPIArguments.ArgumentType.STRING.toString(), true, 11 ),
                 new LPAPIArguments("ruleType", LPAPIArguments.ArgumentType.STRING.toString(), true, 12 ),
                 new LPAPIArguments("ruleVariables", LPAPIArguments.ArgumentType.STRING.toString(), true, 13 ),
-                new LPAPIArguments("specFieldName", LPAPIArguments.ArgumentType.STRING.toString(), false, 14 ),
-                new LPAPIArguments("specFieldValue", LPAPIArguments.ArgumentType.STRING.toString(), false, 15 )}),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 14 ),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 15 )}),
         ;
         private ConfigMasterDataAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
@@ -257,8 +262,8 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 specFieldValueArr=new Object[]{};
                 if (specFieldName!=null && specFieldName.length()>0) specFieldNameArr=specFieldName.split("\\|");
                 if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
-                if (!LPArray.valueInArray(specFieldNameArr, "analysis")){
-                    specFieldNameArr=LPArray.addValueToArray1D(specFieldNameArr, "analysis");
+                if (!LPArray.valueInArray(specFieldNameArr, REQUEST_PARAM_ANALYSIS)){
+                    specFieldNameArr=LPArray.addValueToArray1D(specFieldNameArr, REQUEST_PARAM_ANALYSIS);
                     specFieldValueArr=LPArray.addValueToArray1D(specFieldValueArr, analysis);
                 }
                 if (!LPArray.valueInArray(specFieldNameArr, "method_name")){
@@ -273,8 +278,8 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     specFieldNameArr=LPArray.addValueToArray1D(specFieldNameArr, "variation_name");
                     specFieldValueArr=LPArray.addValueToArray1D(specFieldValueArr, variationName);
                 }
-                if (!LPArray.valueInArray(specFieldNameArr, "parameter")){
-                    specFieldNameArr=LPArray.addValueToArray1D(specFieldNameArr, "parameter");
+                if (!LPArray.valueInArray(specFieldNameArr, REQUEST_PARAM_PARAMETER)){
+                    specFieldNameArr=LPArray.addValueToArray1D(specFieldNameArr, REQUEST_PARAM_PARAMETER);
                     specFieldValueArr=LPArray.addValueToArray1D(specFieldValueArr, parameter);
                 }
                 if (!LPArray.valueInArray(specFieldNameArr, "rule_type")){

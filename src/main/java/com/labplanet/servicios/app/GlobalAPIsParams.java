@@ -53,6 +53,7 @@ public class GlobalAPIsParams extends HttpServlet {
      */
     public static final String REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE = "addSampleAnalysisResultFieldToRetrieve";    
     public static final String REQUEST_PARAM_ANALYSIS_NAME = "analysisName";
+    public static final String REQUEST_PARAM_ANALYSIS = "analysis";
 
     /**
      *
@@ -84,6 +85,10 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
+    public static final String REQUEST_PARAM_CONFIG_VERSION = "config_version";     
+    public static final String REQUEST_PARAM_SPEC_FIELD_NAME = "specFieldName";     
+    public static final String REQUEST_PARAM_SPEC_FIELD_VALUE = "specFieldValue";     
+
     public static final String REQUEST_PARAM_CONFIRM_CHANGE_COMMENT = "confirmChangeComment"; 
 
     /**
@@ -198,8 +203,10 @@ public class GlobalAPIsParams extends HttpServlet {
 
     /**
      *
-     */
+     */    
+    public static final String REQUEST_PARAM_PARAMETER = "parameter";
     public static final String REQUEST_PARAM_PERSON_FIELDS_NAME = "passwdToCheck";
+    
 
     /**
      *

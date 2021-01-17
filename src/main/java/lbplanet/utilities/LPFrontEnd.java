@@ -11,10 +11,8 @@ import databases.Rdbms;
 import functionaljavaa.parameter.Parameter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -372,10 +370,6 @@ public class LPFrontEnd {
 
                 inStream.close();
                 outStream.close();                  
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
             } catch (IOException ex) {
                 Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
             }

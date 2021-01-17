@@ -24,12 +24,12 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class DataSampleRevisionTestingGroup {
-    public enum TestingGroupFileProperties{sampleTestingByGroup_ReviewByTestingGroup};
+    public enum TestingGroupFileProperties{SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP};
 
     public static Object[] addSampleRevisionByTestingGroup(Integer sampleId, Integer testId, String specAnalysisTestingGroup){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());
+        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.toString());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleTestingByGroup_ReviewByTestingGroup Not active", null);
         if (specAnalysisTestingGroup==null || specAnalysisTestingGroup.length()==0){
@@ -54,7 +54,7 @@ public class DataSampleRevisionTestingGroup {
     public static Object[] isSampleRevisionByTestingGroupReviewed(Integer sampleId, String testingGroup){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());
+        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.toString());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleTestingByGroup_ReviewByTestingGroup Not active", null);
         String[] fieldNames=new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName()};
@@ -89,7 +89,7 @@ public class DataSampleRevisionTestingGroup {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());
+        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.toString());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleTestingByGroup_ReviewByTestingGroup Not active", null);
         Object[] sampleRevisionByTestingGroupReviewed = isSampleRevisionByTestingGroupReviewed(sampleId, testingGroup);
@@ -132,7 +132,7 @@ public class DataSampleRevisionTestingGroup {
         if (pendingTestingGroupByRevisionValue.length==1 && pendingTestingGroupByRevisionValue[0][0].toString().equalsIgnoreCase("TRUE")){
             DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
             DataSample smp=new DataSample(smpAna);
-            smp.setReadyForRevision(sampleId);
+            DataSample.setReadyForRevision(sampleId);
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "There are pending testing group reviews for the sample <*1*> in procedure <*2*>", new Object[]{sampleId, procInstanceName});
