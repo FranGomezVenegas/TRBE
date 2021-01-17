@@ -9,7 +9,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
 import databases.Rdbms;
-import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -53,10 +52,6 @@ public class TestingEnvMonitSamples extends HttpServlet {
         Object[] functionEvaluation=new Object[0];
         JSONArray functionRelatedObjects=new JSONArray();        
 
-        Object schemaPrefix=request.getAttribute(LPTestingParams.SCHEMA_PREFIX);
-        Object tokenStr=request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
-        Token token = new Token(tokenStr.toString());
-                
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 

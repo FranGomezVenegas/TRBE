@@ -64,8 +64,6 @@ public class DataInspectionLotCertificate {
             LotAudit lotAudit = new LotAudit();            
             Object[] lotAuditAdd = lotAudit.lotAuditAdd(LotAudit.LotAuditEvents.LOT_DECISION_TAKEN.toString(), 
                     TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, null, null, fieldsOnLogLot, null);
-            Integer transactionId = null;
-            Integer preAuditId=Integer.valueOf(lotAuditAdd[lotAuditAdd.length-1].toString());            
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "LotCertificateNewStatus", new Object[]{lotName, newStatus, procInstanceName});
 //        }
 //        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);

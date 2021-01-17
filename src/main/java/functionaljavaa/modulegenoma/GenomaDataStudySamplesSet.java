@@ -265,8 +265,6 @@ public Object[] studySamplesSetUpdate( String studyName, String sampleSetName, S
 } 
 
 public Object[] studySamplesSetAddSample(String studyName, String sampleSetName, String sampleId) {
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;
     
@@ -284,8 +282,6 @@ public Object[] studySamplesSetAddSample(String studyName, String sampleSetName,
 }
 
 public Object[] studySamplesSetRemoveSample(String studyName, String sampleSetName, String sampleId) {
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-    
     Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;
 

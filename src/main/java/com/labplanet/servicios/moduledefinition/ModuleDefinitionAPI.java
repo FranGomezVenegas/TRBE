@@ -105,7 +105,6 @@ public class ModuleDefinitionAPI extends HttpServlet {
         String language = LPFrontEnd.setLanguage(request); 
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
-        String[] mandatoryParams = new String[]{""};
         Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
@@ -122,7 +121,6 @@ public class ModuleDefinitionAPI extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
                 return;                             
         }
-        mandatoryParams = null;                        
 
 /*        Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     

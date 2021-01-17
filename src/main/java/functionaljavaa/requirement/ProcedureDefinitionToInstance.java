@@ -316,7 +316,6 @@ public class ProcedureDefinitionToInstance {
      */
     public static final  JSONObject createDBModuleTablesAndFields(String procedure,  Integer procVersion, String schemaPrefix, String moduleName){
         JSONObject jsonObj = new JSONObject();
-        String schemaNameDestination=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
         
          Object[][] procModuleTablesAndFieldsSource = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureModuleTablesAndFields.TBL.getName(), 
                 new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_ACTIVE.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_PREFIX.getName()}, 
@@ -644,14 +643,11 @@ public class ProcedureDefinitionToInstance {
         //String diagn=parm.addTagInPropertiesFile("PROCEDURE_BUSINESS_RULE",  "oil-pl1-config",  "hola",  "adios");
         String[] filesNames=LPArray.getUniquesArray(procBusRulesFiles);
         for (String curFile: filesNames){
-            String diagn=parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
+            parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
                     instanceName+"-"+curFile);  
         }        
 //        if (1==1) return jsonArr;
         
-        
-        
-        String[] existingSopRole = new String[0];
         for (Object[] curProcEventSops: procBusRules){
             String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName())]).toString(),  
                     LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName())]).toString(),  

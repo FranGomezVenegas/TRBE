@@ -40,11 +40,15 @@ public class TestingRegressionUAT extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {        
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);        
-        if (procReqInstance.getHasErrors()) return;
+        ProcedureRequestSession procReqInstance = null;
         try{
             String actionName=request.getParameter("actionName");
             if ("GETTESTERSLIST".equalsIgnoreCase(actionName)){
+                procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, true);        
+                if (procReqInstance.getHasErrors()){
+                    procReqInstance.killIt();
+                    return;
+                }
                 TestingServletsConfig[] endPoints = TestingServletsConfig.values();
                 JSONArray jArr=new JSONArray();
 
@@ -60,6 +64,14 @@ public class TestingRegressionUAT extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
             }
+            procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);        
+            if (procReqInstance.getHasErrors()){
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, 
+                        procReqInstance.getErrorMessage(), null, procReqInstance.getLanguage());              
+                return;
+            }
+            
             response = LPTestingOutFormat.responsePreparation(response);        
             String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
             //String schemaPrefix="em-demo-a";
@@ -108,7 +120,8 @@ public class TestingRegressionUAT extends HttpServlet {
             }
         }
         finally{
-            procReqInstance.killIt();
+            if (procReqInstance!=null)
+                procReqInstance.killIt();
         }
     }
 

@@ -8,7 +8,6 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
 import databases.Rdbms;
 import databases.TblsProcedure;
-import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
@@ -34,7 +33,6 @@ public class ClassEnvMon {
 
     public ClassEnvMon(HttpServletRequest request, EnvMonAPIEndpoints endPoint){
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        AuditAndUserValidation auditAndUsrValid = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 

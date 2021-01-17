@@ -9,7 +9,6 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
 import functionaljavaa.audit.IncubBatchAudit;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.samplestructure.DataSampleIncubation;
@@ -196,7 +195,6 @@ public class DataBatchIncubatorStructured {
         return updateSampleInfo;
     }
     private static Object[] batchSampleIsAddable(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer row, Integer col, Boolean override, Boolean byMovement){
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] batchFldsToRetrieve= new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_ROWS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_COLS.getName()
@@ -207,7 +205,6 @@ public class DataBatchIncubatorStructured {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) return LPArray.array2dTo1d(batchInfo);
         Integer batchNumRows=(Integer) batchInfo[0][0];
         Integer batchNumCols=(Integer) batchInfo[0][1];
-        Integer batchTotalObjects=LPNulls.replaceNull(batchInfo[0][3]).toString().length()==0 ? 0 : Integer.valueOf(batchInfo[0][3].toString());
         String batchContentStr=batchInfo[0][4].toString();
         
         String[][] batchContent2D=new String[0][0];        
@@ -340,7 +337,6 @@ public class DataBatchIncubatorStructured {
     }
     
     static Object[] batchSampleIncubEndedStructured(String batchName, String incubName) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};

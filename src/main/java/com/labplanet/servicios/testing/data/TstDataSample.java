@@ -13,7 +13,6 @@ import lbplanet.utilities.LPNulls;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
@@ -98,7 +97,6 @@ public class TstDataSample extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
         response = LPTestingOutFormat.responsePreparation(response);        
-        Token token = new Token("eyJ1c2VyREIiOiJsYWJwbGFuZXQiLCJlU2lnbiI6Im1hbG90YSIsInVzZXJEQlBhc3N3b3JkIjoibGFzbGVjaHVnYXMiLCJ0eXAiOiJKV1QiLCJhcHBTZXNzaW9uSWQiOiIyOCIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IlNhdCBBdWcgMTcgMDE6NTU6NTUgQ0VTVCAyMDE5IiwidXNlclJvbGUiOiJjb29yZGluYXRvciIsImFsZyI6IkhTMjU2IiwiaW50ZXJuYWxVc2VySUQiOiIxIn0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.TYIUehSPitkr4p7_fSYCNCcF8PzoxC24qsYg5V4rxQw");
         String csvFileName = "dataSampleStructure.txt";      
         Object[][] dataSample2D = new Object[1][6];
         Object[] dataSample = new Object[6];

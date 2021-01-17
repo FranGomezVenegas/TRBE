@@ -62,6 +62,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
 
     /**
      *
+     * @param sampleId
      * @param testId
      * @return diagnoses
      */
@@ -168,10 +169,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
     public static Object[] isReadyForRevision(Integer sampleId, Integer testId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String[] sampleAnalysisFieldName=new String[]{TblsData.SampleAnalysis.FLD_READY_FOR_REVISION.getName()};
-        Object[] sampleAnalysisFieldValue=new Object[]{true};
+        String[] sampleAnalysisFieldToRetrieve=new String[]{TblsData.SampleAnalysis.FLD_READY_FOR_REVISION.getName()};
         Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysis.TBL.getName(),  
-                new String[] {TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, sampleAnalysisFieldName);
+                new String[] {TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, sampleAnalysisFieldToRetrieve);
         if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "readyForRevision", new Object[]{testId, sampleId, procInstanceName});
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", new Object[]{testId, sampleId, procInstanceName});

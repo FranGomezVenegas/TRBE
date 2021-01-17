@@ -102,9 +102,6 @@ public class ClassSampleQueries {
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
-        String batchName = "";
-        String incubationName = "";
-        String language="";
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;

@@ -5,7 +5,6 @@ import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lbplanet.utilities.LPAPIArguments;
 
 /**
  *
@@ -22,7 +21,6 @@ public class ClassModuleDefinition {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         
         Object[] actionDiagnoses = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
             switch (endPoint){
                 case DOC_API_ENDPOINTS_IN_DB:                    

@@ -10,7 +10,6 @@ import databases.Rdbms;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.TblsCnfg;
-import databases.Token;
 import functionaljavaa.audit.ConfigTablesAudit;
 import functionaljavaa.audit.ConfigTablesAudit.AnalysisAuditEvents;
 import java.lang.reflect.InvocationTargetException;
@@ -109,13 +108,9 @@ if (1==1) return DIAGNOSES_SUCCESS;
         Object[] mandatoryFieldValue = new String[0];
                 
         String myDiagnoses = "";
-        String procInstanceName = parameters[0].toString();
-        String variationNames = parameters[1].toString();
         
         Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf("code");        
         String specCode = (String) mandatoryFieldValue[specialFieldIndex];
-
-        StringBuilder variationNameExistBuilder = new StringBuilder(0);
 
 if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
         return DIAGNOSES_SUCCESS;
@@ -130,9 +125,6 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
         String[] mandatoryFields = new String[1];
         Object[] mandatoryFieldValue = new String[0];
                 
-        String procInstanceName = LPNulls.replaceNull(parameters[0]).toString();
-        String variationNames = LPNulls.replaceNull(parameters[1]).toString();
-        
         Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf("code");        
         String specCode = (String) mandatoryFieldValue[specialFieldIndex];
 
@@ -144,14 +136,15 @@ if (1==1){return "ERROR";}
     /**
      *
      * @param procInstanceName
+     * @param specCode
+     * @param specCodeVersion
+     * @param mandatoryFieldValue
+     * @param mandatoryFields
      * @return
      */
     public String specialFieldCheckSpecLimitsVariationName(String procInstanceName, String specCode, Integer specCodeVersion, String[] mandatoryFields, Object[] mandatoryFieldValue){ 
     //    Object[] mandatoryFieldValue = new String[0];
                 
-        String analysesMissing = "";
-        String myDiagnoses = "";        
-        String specVariations = "";
         String schemaName = LPPlatform.SCHEMA_CONFIG;
         
 //        String[]  mandatoryFields = getSpecLimitsMandatoryFields();
@@ -165,6 +158,10 @@ if (1==1){return "ERROR";}
     /**
      *
      * @param procInstanceName
+     * @param specCode
+     * @param mandatoryFields
+     * @param specCodeVersion
+     * @param mandatoryFieldValue
      * @return
      */
     public String specialFieldCheckSpecLimitsAnalysis(String procInstanceName, String specCode, Integer specCodeVersion, String[] mandatoryFields, Object[] mandatoryFieldValue){ 
@@ -221,7 +218,6 @@ if (1==1){return "ERROR";}
      * @return
      */
     public Object[] analysisUpdate(String code, Integer configVersion, String[] specFieldName, Object[] specFieldValue) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);        
         Object[] errorDetailVariables = new Object[0];
@@ -288,8 +284,6 @@ if (1==1){return "ERROR";}
 
     /**
      *
-     * @param token
-     * @param procInstanceName
      * @param code
      * @param configVersion
      * @param specFieldName
@@ -297,7 +291,6 @@ if (1==1){return "ERROR";}
      * @return
      */
     public Object[] analysisNew(String code, Integer configVersion, String[] specFieldName, Object[] specFieldValue ){                          
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -396,8 +389,8 @@ if (1==1){return "ERROR";}
 //                        TblsCnfg.AnalysisRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.AnalysisRules.FLD_ALLOW_MULTI_SPEC.getName()}, 
 //                    new Object[]{specCode, specCodeVersion, false, false});       
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                Object[] analysisAuditAddDiagn = ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_NEW.toString(), TblsCnfg.Analysis.TBL.getName(), code, 
-                        code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, ":"), null);
+                ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_NEW.toString(), TblsCnfg.Analysis.TBL.getName(), code, 
+                    code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, ":"), null);
                 errorCode = "analysisRecord_createdSuccessfully";
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, code);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
@@ -441,8 +434,6 @@ if (1==1){return "ERROR";}
 */    
     /**
      *
-     * @param token
-     * @param procInstanceName
      * @param specCode
      * @param specFieldName
      * @param specFieldValue
@@ -453,7 +444,6 @@ if (1==1){return "ERROR";}
      * @throws InvocationTargetException
      */
     public Object[] analysisMethodParamsNew(String specCode, Integer specCodeVersion, String[] specFieldName, Object[] specFieldValue ) throws IllegalAccessException, InvocationTargetException{
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -572,8 +562,8 @@ if (1==1){return "ERROR";}
             specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCodeVersion);            
             diagnoses = Rdbms.insertRecordInTable(schemaName, TblsCnfg.AnalysisMethodParams.TBL.getName(), specFieldName, specFieldValue); 
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                Object[] analysisAuditAddDiagn = ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_METHOD_PARAM_NEW.toString(), TblsCnfg.AnalysisMethodParams.TBL.getName(), specCode, 
-                        specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, ":"), null);
+                ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_METHOD_PARAM_NEW.toString(), TblsCnfg.AnalysisMethodParams.TBL.getName(), specCode, 
+                    specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, ":"), null);
             }
             return diagnoses;
         } catch (IllegalArgumentException ex) {

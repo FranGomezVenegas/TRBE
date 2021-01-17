@@ -104,10 +104,6 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
-
-//            if (!LPFrontEnd.servletStablishDBConection(request, response))return;
-
             switch (endPoint){
             case ACTIVE_BATCH_LIST: 
                 String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_TYPE.getName()

@@ -49,7 +49,6 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
         if (procReqInstance.getHasErrors()) return;
         String actionName=procReqInstance.getActionName();
-        String language=procReqInstance.getLanguage();
 
         try (PrintWriter out = response.getWriter()) {
             EnvMonSampleAPIFrontendEndpoints endPoint = null;

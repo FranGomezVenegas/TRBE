@@ -56,7 +56,6 @@ enum SavedQueriesAPIErrorMessages{
         Object[] diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.SavedQueries.TBL.getName(), 
             updFieldName, updFieldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
-        String investIdStr=diagnostic[diagnostic.length-1].toString();
         //Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(procInstanceName, token, InvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsData.SavedQueries.TBL.getName(), Integer.valueOf(investIdStr), investIdStr,  
         //        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, null);
         return diagnostic;               

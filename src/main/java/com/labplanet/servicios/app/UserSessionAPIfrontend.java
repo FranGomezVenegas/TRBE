@@ -152,7 +152,6 @@ public class UserSessionAPIfrontend extends HttpServlet {
                         fieldsToRetrieve, new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()+" desc"});
                 JSONArray userSessionArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString())){
-                    JSONArray procAuditArr = new JSONArray();
                     for (Object[] currUsrSession: userSessionInfo){
                         Integer sessionId=-1;
                         if (LPArray.valueInArray(fieldsToRetrieve, TblsApp.AppSession.FLD_SESSION_ID.getName()))
@@ -186,7 +185,6 @@ public class UserSessionAPIfrontend extends HttpServlet {
                                 procAuditJson.put("proc_audit_records", "No actions performed during this session on this procedure");
                             }else{
                                 Object[] procAuditTablesList = getProcAuditTablesList(LPPlatform.buildSchemaName(curProc.replace(String.valueOf((char)34), ""), LPPlatform.SCHEMA_DATA_AUDIT));
-                                JSONObject procAuditTableJson = new JSONObject();
                                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procAuditTablesList[0].toString()))
                                     procAuditJson.put("proc_audit_records", curProc+". ERROR. No tables in audit schema");
                                 else{
@@ -239,7 +237,6 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, userSessionArr);
-                return;  
 /*            case USER_SESSION_AUDIT_HISTORY:
                 String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
                 JSONArray jArray = new JSONArray(); 

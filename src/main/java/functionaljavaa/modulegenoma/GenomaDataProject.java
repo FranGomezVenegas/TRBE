@@ -225,7 +225,6 @@ public Object[] createProject(String projectName, String[] fieldsName, Object[] 
 
 public Object[] projectActivate(String projectName){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-    Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
     Object[] projOpenToChanges=isProjectOpenToChanges(projectName);    
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
 
@@ -275,7 +274,6 @@ public Object[] projectUpdate(String projectName, String[] fieldsName, Object[] 
 
 public Object[] projectUserManagement(String actionName, String projectName, String userName, String userRole){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-    Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
     String[] fieldsName = new String[]{TblsGenomaData.ProjectUsers.FLD_PROJECT.getName(), TblsGenomaData.ProjectUsers.FLD_PERSON.getName(), TblsGenomaData.ProjectUsers.FLD_ROLES.getName()};
     Object[] fieldsValue=new Object[]{projectName, userName, userRole};
     

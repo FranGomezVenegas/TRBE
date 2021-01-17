@@ -161,7 +161,6 @@ public class DataProgramCorrectiveAction {
     }
     public static Object[] markAsCompleted(Integer correctiveActionId, Integer investId){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
         String statusClosed=Parameter.getParameterBundle(procInstanceName+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
         Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
@@ -188,7 +187,6 @@ public class DataProgramCorrectiveAction {
     }
     public static Object[] markAsAddedToInvestigation(Integer investId, String objectType, Object objectId){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
         String statusClosed=Parameter.getParameterBundle(procInstanceName+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
         String objectIdClass=null;

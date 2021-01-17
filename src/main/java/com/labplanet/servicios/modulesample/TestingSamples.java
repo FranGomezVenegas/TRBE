@@ -53,10 +53,6 @@ public class TestingSamples extends HttpServlet {
         Object[] functionEvaluation=new Object[0];
         JSONArray functionRelatedObjects=new JSONArray();
 
-        Object schemaPrefix=request.getAttribute(LPTestingParams.SCHEMA_PREFIX);
-        Object tokenStr=request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
-        Token token = new Token(tokenStr.toString());
-                
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 

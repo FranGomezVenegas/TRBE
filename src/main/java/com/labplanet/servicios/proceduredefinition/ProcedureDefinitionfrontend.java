@@ -6,8 +6,6 @@
 package com.labplanet.servicios.proceduredefinition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import databases.Rdbms;
-import databases.Token;
 import static functionaljavaa.requirement.ProcedureDefinitionQueries.*;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -104,7 +102,6 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            Token token = new Token(finalToken);
             String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);                        
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
             JSONArray mainArr = new JSONArray(); 
@@ -139,11 +136,9 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, "This call raised one unhandled exception. Error:"+errMessage);     
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);    
-            Rdbms.closeRdbms();        
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       

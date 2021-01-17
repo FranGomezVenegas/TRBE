@@ -220,7 +220,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         //  then it turns mandatory all the fields required for linking this entity.
         Integer fieldIndexSpecCode = Arrays.asList(sampleFieldName).indexOf(TblsData.Sample.FLD_SPEC_CODE.getName());
         Integer fieldIndexSpecCodeVersion = Arrays.asList(sampleFieldName).indexOf(TblsData.Sample.FLD_SPEC_CODE_VERSION.getName());
-        Integer fieldIndexSpecVariationName = Arrays.asList(sampleFieldName).indexOf(TblsData.Sample.FLD_SPEC_VARIATION_NAME.getName());
         if ((fieldIndexSpecCode!=-1) && (fieldIndexSpecCodeVersion!=-1)){
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsData.Sample.FLD_SPEC_CODE.getName());
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsData.Sample.FLD_SPEC_CODE_VERSION.getName());

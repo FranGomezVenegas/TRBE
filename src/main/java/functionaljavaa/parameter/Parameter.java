@@ -221,7 +221,6 @@ public class Parameter {
             //return;                   
         }
 
-        StringBuilder newEntryBuilder = new StringBuilder(0);
         String fileDir = "";
         ResourceBundle propConfig = ResourceBundle.getBundle(BUNDLE_TAG_PARAMETER_CONFIG_CONF);  
         switch(endPoint){

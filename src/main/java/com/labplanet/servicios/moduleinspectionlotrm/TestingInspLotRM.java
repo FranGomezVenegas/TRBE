@@ -9,8 +9,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
 import com.labplanet.servicios.modulesample.ClassSampleQueriesController;
-import databases.Rdbms;
-import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
@@ -55,10 +53,6 @@ public class TestingInspLotRM extends HttpServlet {
         Object[] functionEvaluation=new Object[0];
         JSONArray functionRelatedObjects=new JSONArray();        
 
-        Object schemaPrefix=request.getAttribute(LPTestingParams.SCHEMA_PREFIX);
-        Object tokenStr=request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
-        Token token = new Token(tokenStr.toString());
-                
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
@@ -194,7 +188,6 @@ public class TestingInspLotRM extends HttpServlet {
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }               

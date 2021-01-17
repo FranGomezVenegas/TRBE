@@ -30,6 +30,7 @@ public class ProcedureRequestSession {
     private String language;
     private Boolean isForTesting;
     private Boolean hasErrors;
+    private String errorMessage;
     private AuditAndUserValidation auditAndUsrValid;
     
     
@@ -39,10 +40,7 @@ public class ProcedureRequestSession {
         this.language = LPFrontEnd.setLanguage(request); 
         this.isForTesting=isForTesting;
         
-        String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
-        
         if (!isForTesting){
-            String[] mandatoryParams = new String[]{""};
             Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response, 
@@ -50,43 +48,48 @@ public class ProcedureRequestSession {
                 this.hasErrors=true;
                 return;          
             }                     
-            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            this.actionName=actionName;
+            String actionNm = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+            this.actionName=actionNm;
         }
         String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         if (!isForUAT){
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-            Token token = new Token(finalToken);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                    LPFrontEnd.servletReturnResponseError(request, response, 
-                            LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
-                    this.hasErrors=true;
-                    return;                             
+            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);   
+            if (finalToken!=null){
+                Token tokn = new Token(finalToken);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())){
+                        LPFrontEnd.servletReturnResponseError(request, response, 
+                                LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
+                        this.hasErrors=true;
+                        return;                             
+                }
+                this.token=tokn;
+                this.tokenStr=finalToken;
             }
-            this.token=token;
-            this.tokenStr=finalToken;
             this.procedureInstance=procInstanceName;
         }
-        if (!isFrontend && !isForUAT){
+        if (!isForTesting && !isForUAT && !isFrontend){
             Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 this.hasErrors=true;
+                this.errorMessage=actionEnabled[actionEnabled.length-1].toString();
                 return ;                           
             }            
             actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, actionEnabled);
                 this.hasErrors=true;
+                this.errorMessage=actionEnabled[actionEnabled.length-1].toString();
                 return ;                           
             }                        
-            AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, language);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
+            AuditAndUserValidation auditAndUsrVal=AuditAndUserValidation.getInstanceForActions(request, null, language);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrVal.getCheckUserValidationPassesDiag()[0].toString())){
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrVal.getCheckUserValidationPassesDiag());              
                 this.hasErrors=true;
+                this.errorMessage=auditAndUsrVal.getCheckUserValidationPassesDiag()[auditAndUsrVal.getCheckUserValidationPassesDiag().length-1].toString();
                 return;          
             }     
-            this.auditAndUsrValid=auditAndUsrValid;
+            this.auditAndUsrValid=auditAndUsrVal;
             String schemaConfigName=LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);
             Rdbms.setTransactionId(schemaConfigName);
         }            
@@ -94,8 +97,8 @@ public class ProcedureRequestSession {
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
         this.hasErrors=false;
         }catch(Exception e){
-            String errMsg=e.getMessage();
             this.hasErrors=true;
+            this.errorMessage=e.getMessage();
         }
     }
     
@@ -130,6 +133,10 @@ public class ProcedureRequestSession {
     public Boolean getHasErrors(){
         if (this.hasErrors==null)return true;
         return this.hasErrors;
+    }    
+    public String getErrorMessage(){
+        if (this.errorMessage==null)return "";
+        return this.errorMessage;
     }    
     public AuditAndUserValidation getAuditAndUsrValid(){
         return this.auditAndUsrValid;

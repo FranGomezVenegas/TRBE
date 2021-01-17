@@ -9,7 +9,6 @@ import com.labplanet.servicios.app.SavedQueriesAPI.SavedQueriesAPIfrontendEndpoi
 import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.TblsProcedure;
 import databases.Token;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -18,7 +17,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -73,7 +71,6 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
         switch (endPoint){

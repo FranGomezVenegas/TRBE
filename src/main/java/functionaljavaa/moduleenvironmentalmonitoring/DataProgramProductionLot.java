@@ -104,9 +104,7 @@ public class DataProgramProductionLot{
       Object[] fieldValue=new Object[]{false};
       return updateProgramProductionLot(lotName, fieldName, fieldValue, appSessionId);
     }        
-    private static Object[] updateProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, Integer appSessionId) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        
+    private static Object[] updateProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, Integer appSessionId) {       
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
               fieldName, fieldValue, new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});                 

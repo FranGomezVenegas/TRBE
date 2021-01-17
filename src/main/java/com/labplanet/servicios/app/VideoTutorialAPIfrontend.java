@@ -12,7 +12,6 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import databases.TblsApp;
-import databases.Token;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -202,9 +201,7 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                 return;          
             }                  
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             
-            Token token = new Token(finalToken);
             VideoTutorialAPIfrontendEndpoints endPoint = null;
             try{
                 endPoint = VideoTutorialAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
@@ -212,7 +209,6 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
              
             switch (endPoint){

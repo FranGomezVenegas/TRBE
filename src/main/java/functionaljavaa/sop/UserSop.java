@@ -64,12 +64,12 @@ public class UserSop {
     
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param userName
      * @param sopName
      * @return
      */
-    public static final Object[][] getUserSop(String schemaPrefix, String userName, String sopName ){
+    public static final Object[][] getUserSop(String procInstanceName, String userName, String sopName ){
         UserProfile usProf = new UserProfile();
         Object[] userSchemas = usProf.getAllUserProcedurePrefix(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSchemas[0].toString())){
@@ -79,38 +79,38 @@ public class UserSop {
         String[] fieldsToReturn = new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_SOP_ID.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()};
         String[] filterFieldName =new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()};
         Object[] filterFieldValue =new Object[]{sopName, userName};        
-        Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{schemaPrefix});   
+        Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{procInstanceName});   
         if (getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopName, userName, schemaPrefix});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopName, userName, procInstanceName});
             return LPArray.array1dTo2d(diagnoses, diagnoses.length);
         }        
         return getUserProfileFieldValues;
     }
     /**
      *
-     * @param schemaPrefixName
+     * @param procInstanceNameName
      * @param userInfoId
      * @param sopName
      * @return
      */
-    public Object[] userSopCertifiedBySopName( String schemaPrefixName, String userInfoId, String sopName ) {    
-        return userSopCertifiedBySopInternalLogic(schemaPrefixName, userInfoId, TblsData.UserSop.FLD_SOP_NAME.getName(), sopName);        
+    public Object[] userSopCertifiedBySopName( String procInstanceNameName, String userInfoId, String sopName ) {    
+        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.FLD_SOP_NAME.getName(), sopName);        
         }
 
     /**
      *
-     * @param schemaPrefixName
+     * @param procInstanceNameName
      * @param userInfoId
      * @param sopId
      * @return
      */        
-    public Object[] userSopCertifiedBySopId( String schemaPrefixName, String userInfoId, String sopId ) {
-        return userSopCertifiedBySopInternalLogic(schemaPrefixName, userInfoId, TblsData.UserSop.FLD_SOP_ID.getName(), sopId);        
+    public Object[] userSopCertifiedBySopId( String procInstanceNameName, String userInfoId, String sopId ) {
+        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.FLD_SOP_ID.getName(), sopId);        
     }        
     
-    private Object[] userSopCertifiedBySopInternalLogic( String schemaPrefixName, String userInfoId, String sopIdFieldName, String sopIdFieldValue ) {
+    private Object[] userSopCertifiedBySopInternalLogic( String procInstanceNameName, String userInfoId, String sopIdFieldName, String sopIdFieldValue ) {
                         
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefixName, LPPlatform.SCHEMA_CONFIG);
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceNameName, LPPlatform.SCHEMA_CONFIG);
         
         UserProfile usProf = new UserProfile();
         Object[] userSchemas = usProf.getAllUserProcedurePrefix(userInfoId);
@@ -119,16 +119,16 @@ public class UserSop {
         }        
         Boolean schemaIsCorrect = false;
         for (String us: (String[]) userSchemas){
-            if (us.equalsIgnoreCase(schemaPrefixName)){schemaIsCorrect=true;break;}            
+            if (us.equalsIgnoreCase(procInstanceNameName)){schemaIsCorrect=true;break;}            
         }
         if (!schemaIsCorrect){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA.getErrorCode(), new Object[]{userInfoId, schemaPrefixName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA.getErrorCode(), new Object[]{userInfoId, procInstanceNameName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_ERROR"));
             return diagnoses;
         }
         String[] userSchema = new String[1];
-        userSchema[0]=schemaPrefixName;
+        userSchema[0]=procInstanceNameName;
         
         String[] filterFieldName = new String[2];
         Object[] filterFieldValue = new Object[2];
@@ -149,20 +149,20 @@ public class UserSop {
             return diagnoses;
         }
         if (getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopIdFieldValue, userInfoId, schemaPrefixName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopIdFieldValue, userInfoId, procInstanceNameName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_NotAssigned"));
             return diagnoses;
         }
         if (getUserProfileFieldValues[0][3].toString().contains(userSopStatuses.PASS.getLightCode())){
             Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), 
-                    new Object[]{userInfoId, sopIdFieldValue, schemaPrefixName, "current status is "+getUserProfileFieldValues[0][2].toString()+" and the light is "+getUserProfileFieldValues[0][3].toString()});
+                    new Object[]{userInfoId, sopIdFieldValue, procInstanceNameName, "current status is "+getUserProfileFieldValues[0][2].toString()+" and the light is "+getUserProfileFieldValues[0][3].toString()});
             diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.PASS.getCode());
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_Certified"));
             return diagnoses;
         }
         else{
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserSop_UserNotCertifiedForSop", new Object[]{userInfoId, sopIdFieldValue, schemaPrefixName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserSop_UserNotCertifiedForSop", new Object[]{userInfoId, sopIdFieldValue, procInstanceNameName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.NOTPASS.getCode());
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_NotCertified"));
             return diagnoses;
@@ -172,19 +172,19 @@ public class UserSop {
     /**
      *
      * @param userInfoId
-     * @param schemaPrefixName
+     * @param procInstanceNameName
      * @param fieldsToRetrieve
      * @return
      */
-    public Object[][] getNotCompletedUserSOP( String userInfoId, String schemaPrefixName, String[] fieldsToRetrieve) {
+    public Object[][] getNotCompletedUserSOP( String userInfoId, String procInstanceNameName, String[] fieldsToRetrieve) {
         Object[] userSchemas = null;
-        if (schemaPrefixName.contains("ALL")){
+        if (procInstanceNameName.contains("ALL")){
             UserProfile usProf = new UserProfile();
             userSchemas = usProf.getAllUserProcedurePrefix(userInfoId);
         }
         else{
             userSchemas = new String[1];
-            userSchemas[0]=schemaPrefixName;
+            userSchemas[0]=procInstanceNameName;
         }
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSchemas[0].toString())){
@@ -217,11 +217,11 @@ public class UserSop {
      * @param filterFieldName
      * @param filterFieldValue
      * @param fieldsToReturn
-     * @param schemaPrefix
+     * @param procInstanceName
      * @return
      */
         
-    public static final Object[][] getUserProfileFieldValues(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] schemaPrefix){                
+    public static final Object[][] getUserProfileFieldValues(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName){                
         String viewName = TblsData.ViewUserAndMetaDataSopView.TBL.getName();
         
         if (fieldsToReturn.length<=0){
@@ -230,16 +230,16 @@ public class UserSop {
             getUserProfileNEW[0][1]="No fields specified for fieldsToReturn";
             return getUserProfileNEW;}
                     
-        if ((filterFieldName==null) || (filterFieldValue==null) || (schemaPrefix==null)){
+        if ((filterFieldName==null) || (filterFieldValue==null) || (procInstanceName==null)){
             String[][] getUserProfileNEW = new String[1][4];
             getUserProfileNEW[0][0]=DIAGNOSES_ERROR_CODE;
-            getUserProfileNEW[0][1]="filterFieldName and/or filterFieldValue and/or schemaPrefix are null and this is not expected";
+            getUserProfileNEW[0][1]="filterFieldName and/or filterFieldValue and/or procInstanceName are null and this is not expected";
             if (filterFieldName==null){getUserProfileNEW[0][2]="filterFieldName is null";}else{getUserProfileNEW[0][2]="filterFieldName="+Arrays.toString(filterFieldName);}
             if (filterFieldValue==null){getUserProfileNEW[0][3]="filterFieldValue is null";}else{getUserProfileNEW[0][3]="filterFieldValue="+Arrays.toString(filterFieldValue);}
             return getUserProfileNEW;}       
                 
         StringBuilder query = new StringBuilder(0);
-        for(String currSchemaPrefix: schemaPrefix){ 
+        for(String currSchemaPrefix: procInstanceName){ 
             Object[] viewExistInSchema= Rdbms.dbViewExists(currSchemaPrefix, LPPlatform.SCHEMA_DATA, viewName);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())){
                 query.append("(select ");
@@ -263,9 +263,9 @@ public class UserSop {
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
         
         
-        Object[] filterFieldValueAllSchemas = new Object[filterFieldValue.length*schemaPrefix.length];
+        Object[] filterFieldValueAllSchemas = new Object[filterFieldValue.length*procInstanceName.length];
         Integer iFldValue=0;
-        for(String sPref: schemaPrefix){
+        for(String sPref: procInstanceName){
             for(Object fVal: filterFieldValue){
                 filterFieldValueAllSchemas[iFldValue]=fVal;    
                 iFldValue++;
@@ -332,14 +332,14 @@ public class UserSop {
      * @param sopIdFieldValue
      * @return
      */
-    private Object[] addSopToUserInternalLogic( String schemaPrefix, String personName, String sopIdFieldName, Object sopIdFieldValue){
-        String schemaName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
+    private Object[] addSopToUserInternalLogic( String procInstanceName, String personName, String sopIdFieldName, Object sopIdFieldValue){
+        String schemaName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
         Object[] exists = Rdbms.existsRecord(schemaName, TblsData.UserSop.TBL.getName(), new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
                 
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(exists[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserSop_sopAlreadyAssignToUser", new Object[]{sopIdFieldValue, personName, schemaName});
-        String userSopInitialStatus = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialStatus");
-        String userSopInitialLight = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialLight");
+        String userSopInitialStatus = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialStatus");
+        String userSopInitialLight = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialLight");
         
         if (userSopInitialStatus.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getCode();
         if (userSopInitialLight.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getLightCode();
@@ -348,11 +348,11 @@ public class UserSop {
         Object[] insertFieldValues=new Object[]{personName, sopIdFieldValue, userSopInitialStatus, userSopInitialLight};
         if ( (TblsCnfg.SopMetaData.FLD_SOP_NAME.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_NAME.getName())) ){
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()); 
-            insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopIdByName(schemaPrefix, sopIdFieldValue.toString()));
+            insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopIdByName(procInstanceName, sopIdFieldValue.toString()));
         }
         if ( (TblsCnfg.SopMetaData.FLD_SOP_ID.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_ID.getName())) ){
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_ID.getName()); 
-            insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopNameById(schemaPrefix, sopIdFieldValue));
+            insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopNameById(procInstanceName, sopIdFieldValue));
         }     
         if (!LPArray.valueInArray(insertFieldNames, TblsData.UserSop.FLD_USER_NAME.getName())){
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsData.UserSop.FLD_USER_NAME.getName()); 
@@ -380,17 +380,17 @@ public class UserSop {
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param userName
      * @param sopName
      * @return
      */
-    public static final Object[] userSopMarkedAsCompletedByUser( String schemaPrefix, String userName, String sopName ) {
-        String schemaName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
-        Object[][] sopInfo = getUserSop(schemaPrefix, userName, sopName);
+    public static final Object[] userSopMarkedAsCompletedByUser( String procInstanceName, String userName, String sopName ) {
+        String schemaName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
+        Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName);
         if(LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())){return LPArray.array2dTo1d(sopInfo);}
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING.getErrorCode(), new Object[]{sopName, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING.getErrorCode(), new Object[]{sopName, procInstanceName});
         }
         Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.UserSop.TBL.getName(), 
                 new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}, new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()},

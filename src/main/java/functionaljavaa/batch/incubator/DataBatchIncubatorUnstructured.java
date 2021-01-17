@@ -8,7 +8,6 @@ package functionaljavaa.batch.incubator;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
-import databases.Token;
 import functionaljavaa.audit.IncubBatchAudit;
 import functionaljavaa.samplestructure.DataSampleIncubation;
 import functionaljavaa.samplestructure.DataSampleStages;
@@ -33,7 +32,6 @@ public class DataBatchIncubatorUnstructured {
                 (LPNulls.replaceNull(batchInfo[0][0]).toString().length()==0);
     }
     static Object[] batchAddSampleUnstructured(String batchName, Integer sampleId, Integer incubStage) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String separator = "*";
@@ -69,7 +67,6 @@ public class DataBatchIncubatorUnstructured {
     }
 
     static Object[] batchRemoveSampleUnstructured(String batchName, Integer sampleId) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()};
@@ -117,7 +114,6 @@ public class DataBatchIncubatorUnstructured {
         return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), new String[]{batchFldName}, new Object[]{null}, new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});        
     }
     static Object[] batchSampleIncubStartedUnstructured(String batchName, String incubName) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()};
@@ -151,7 +147,6 @@ public class DataBatchIncubatorUnstructured {
     }
     
     static Object[] batchSampleIncubEndedUnstructured(String batchName, String incubName) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()};
@@ -183,7 +178,6 @@ public class DataBatchIncubatorUnstructured {
 
     
     static Object[] createBatchUnstructured(String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue) {        
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         if (LPArray.valuePosicInArray(fldName, TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName()) == -1) {

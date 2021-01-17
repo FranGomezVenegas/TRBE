@@ -159,10 +159,7 @@ public class BatchAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
-            
-
-           if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
+            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
             Rdbms.setTransactionId(schemaPrefix);
             try (PrintWriter out = response.getWriter()) {
                 Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);

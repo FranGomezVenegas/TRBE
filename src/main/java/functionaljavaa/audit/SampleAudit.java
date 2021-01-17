@@ -515,7 +515,6 @@ public class SampleAudit {
                 return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "The action "+actionName+" has no sampleId, testId or resultId linked with so this method returns true doing nothing", null);
         String[] auditRevisionModesRequired=new String[]{"ENABLE", "DISABLE"};
         String auditRevisionMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, null);  
-        String auditRevisionChildRequired = Parameter.getParameterBundle("config", procInstanceName, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_CHILD_REVISION_REQUIRED, null);   
         if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
                   new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, procInstanceName});
         String[] auditRevisionModeArr= auditRevisionMode.split("\\|");

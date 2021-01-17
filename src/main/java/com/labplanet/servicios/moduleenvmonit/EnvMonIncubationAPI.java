@@ -5,11 +5,6 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import com.labplanet.servicios.app.GlobalAPIsParams;
-import static com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.MANDATORY_PARAMS_MAIN_SERVLET;
-import databases.Rdbms;
-import databases.Token;
-import functionaljavaa.audit.AuditAndUserValidation;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -96,7 +91,6 @@ public class EnvMonIncubationAPI extends HttpServlet {
         if (procReqInstance.getHasErrors()) return;
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        String procInstanceName = procReqInstance.getProcedureInstance();
 
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 

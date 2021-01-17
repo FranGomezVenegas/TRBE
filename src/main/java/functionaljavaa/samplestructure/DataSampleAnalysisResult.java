@@ -462,7 +462,6 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
      * @return
      */
     public Object[] sarChangeUom(Integer resultId, String newuom, DataSample dataSample) {       
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
@@ -514,7 +513,6 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
      * @return
      */
     public Object[] sampleAnalysisResultUnCancel(Integer sampleId, Integer testId, Integer resultId) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Object[] diagnoses = new Object[7];
@@ -643,7 +641,6 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
      * @return
      */
     public Object[] sampleAnalysisResultCancel(Integer sampleId, Integer testId, Integer resultId) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Object[] diagnoses = new Object[7];
@@ -764,8 +761,6 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
     }
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @param analysisName
      * @return

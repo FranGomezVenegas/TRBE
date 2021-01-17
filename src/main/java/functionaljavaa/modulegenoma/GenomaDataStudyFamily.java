@@ -230,7 +230,6 @@ public Object[] studyFamilyActivate(String studyName, String familyName){
 
 public Object[] studyFamilyDeActivate(String studyName, String familyName){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-    Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
@@ -249,7 +248,6 @@ public Object[] studyFamilyDeActivate(String studyName, String familyName){
 
 public Object[] studyFamilyIndividualUpdate(String studyName, String familyName, String[] fieldsName, Object[] fieldsValue){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-    Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;

@@ -116,8 +116,6 @@ public class ProcedureDefinitionQueries {
     }
     
     public static JSONObject procedureActionsAndRoles(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        JSONArray enableActionAndRolesArr = new JSONArray();
-        JSONObject actionsAndRolesObj = new JSONObject();        
         String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "procedureActions").split("\\|");
         String[] verifyUserRequired = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");
         String[] eSignRequired = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
@@ -172,7 +170,6 @@ public class ProcedureDefinitionQueries {
         return mainObj;
     }
     public static JSONObject sampleStages(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        JSONArray sopArr=new JSONArray();
         String[] sampleStagesTimingCaptureStages = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "sampleStagesTimingCaptureStages").split("\\|");
         String[] sampleStagesListEn = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_DATA_FILE_NAME, "sampleStagesList_en").split("\\|");
         JSONArray sampleStagesDataArr=new JSONArray();

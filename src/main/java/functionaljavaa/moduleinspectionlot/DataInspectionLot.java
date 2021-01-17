@@ -219,8 +219,6 @@ public class DataInspectionLot {
             LotAudit lotAudit = new LotAudit();            
             Object[] lotAuditAdd = lotAudit.lotAuditAdd(LotAudit.LotAuditEvents.LOT_CREATED.toString(), 
                     TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, null, null, fieldsOnLogLot, null);
-            Integer transactionId = null;
-            Integer preAuditId=Integer.valueOf(lotAuditAdd[lotAuditAdd.length-1].toString());
             
             DataInspectionLotDecision lotDec=new DataInspectionLotDecision();
             lotDec.lotDecisionRecordCreateOrUpdate(lotName, null);

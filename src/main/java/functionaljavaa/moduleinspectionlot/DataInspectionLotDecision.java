@@ -13,7 +13,6 @@ import functionaljavaa.audit.LotAudit;
 import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotErrorTrapping;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSample;
-import functionaljavaa.samplestructure.DataSampleAnalysis;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -26,7 +25,6 @@ import trazit.session.ProcedureRequestSession;
  */
 public class DataInspectionLotDecision {
     public Object[] lotTakeDecision(String lotName, String decision, String[] fieldName, Object[] fieldValue) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String[] dataLotFlds=new String[]{TblsInspLotRMData.Lot.FLD_LOT_CONFIG_NAME.getName(), TblsInspLotRMData.Lot.FLD_LOT_CONFIG_VERSION.getName()};
@@ -75,7 +73,6 @@ public class DataInspectionLotDecision {
         else{
             String[] sampleAndSampleAnalysisFlds=new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_STATUS.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_STATUS.getName()};
             String sampleStatusReviewed = Parameter.getParameterBundle(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA).replace("\"", ""), DataSample.CONFIG_SAMPLE_STATUSREVIEWED);
-            String sampleAnalysisStatusReviewed = Parameter.getParameterBundle(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA).replace("\"", ""), DataSampleAnalysis.CONFIG_SAMPLEANALYSIS_STATUSREVIEWED);
             
             Object[][] sampleAndSampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                     new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOT_NAME.getName()}, new Object[]{lotName}, 
@@ -136,8 +133,6 @@ public class DataInspectionLotDecision {
             LotAudit lotAudit = new LotAudit();            
             Object[] lotAuditAdd = lotAudit.lotAuditAdd(LotAudit.LotAuditEvents.LOT_DECISION_TAKEN.toString(), 
                     TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, null, null, fieldsOnLogLot, null);
-            Integer transactionId = null;
-            Integer preAuditId=Integer.valueOf(lotAuditAdd[lotAuditAdd.length-1].toString());            
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "LotDecisionTaken", new Object[]{lotName, decision, procInstanceName});
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
