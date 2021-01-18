@@ -42,12 +42,14 @@ public class LPFilesTools {
                      .build()) {
             List<String[]> rows;
             rows = reader.readAll();
-            for (String[] row : rows) {
+            rows.stream().map((row) -> {
                 for (String e : row) {
                     System.out.format("%s ", e);
                 }
+                return row;
+            }).forEachOrdered((_item) -> {
                 System.out.println();
-            }
+            });
             return rows;
         } catch (IOException|CsvException ex) {
             Logger.getLogger(LPFilesTools.class.getName()).log(Level.SEVERE, null, ex);
@@ -60,7 +62,8 @@ public class LPFilesTools {
         //String fileName = "D:\\LP\\Postgresql Backups\\toCsvFromArray.csv"; //"src/main/resources/items.csv";
         List<String[]> fileContent=null;
         if (!cleanFileIfExist)
-            fileContent=fromCsvToArray(fileName, ',');        
+            fileContent=fromCsvToArray(fileName, ','); 
+        if (fileContent==null) return;
         fileContent.add(entries);
         //entries=LPArray.addValueToArray1D(fileContent, entries);
         try (FileOutputStream fos = new FileOutputStream(fileName); 

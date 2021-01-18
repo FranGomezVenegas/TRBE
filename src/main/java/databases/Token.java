@@ -44,7 +44,7 @@ public final class Token {
     private String userRole="";
     private String eSign="";
     private String appSessionId="";
-    private final Date appSessionStartedDate= null;
+    private Date appSessionStartedDate;
     private String userProcedures="";    
     /**
      *
@@ -59,8 +59,8 @@ public final class Token {
         this.personName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_INTERNAL_USERID)];         
         this.userRole = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ROLE)];                             
         this.eSign = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ESIGN)];     
-        this.appSessionId = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_APP_SESSION_ID)];     
-        this.userProcedures = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES)];     
+        this.appSessionId = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_APP_SESSION_ID)];    
+        this.userProcedures = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES)]; 
     }
 
     /**

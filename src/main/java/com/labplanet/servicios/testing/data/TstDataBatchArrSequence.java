@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Administrator
  */
 public class TstDataBatchArrSequence extends HttpServlet {
-        String literalObjectsInArray=". Objects in the array: ";
+        static final String LITERAL_OBJECTS_IN_ARRAY=". Objects in the array: ";
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -57,15 +57,15 @@ public class TstDataBatchArrSequence extends HttpServlet {
             
             String[] fieldName = new String[6];
             Object[] fieldValue = new Object[6];
-            String[] keyFieldName = new String[1];
-            Object[] keyFieldValue = new Object[1];                 
+            //String[] keyFieldName = new String[1];
+            //Object[] keyFieldValue = new Object[1];                 
                        
 
 
             String batchName = "Batch 22";
 
-            keyFieldName[0] = "name";
-            keyFieldValue[0] = batchName;             
+            //keyFieldName[0] = "name";
+            //keyFieldValue[0] = batchName;             
 
 //            dbObj = new DBTransac(rdbm, schemaName, currentUser, currentUSerRole, "Delete",tableName, null, null, keyFieldName, keyFieldValue);           
 //            dbObj.DBAction(rdbm);
@@ -123,21 +123,21 @@ public class TstDataBatchArrSequence extends HttpServlet {
                 
                 //System.out.println(mb.name + " " + mb.getBatchOperator() + " " + comment);
                 
-                out.println("Adding Sample 1 in position 11x1: " + mb.batchArrayAddObjectInPosic(1, 1, "Sample 1") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
-                out.println("Adding Sample 2 in position 9x1: " + mb.batchArrayAddObjectInPosic(2, 1, "Sample 2") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
-                out.println("Adding Sample 3 in position 9x1: " + mb.batchArrayAddObjectInPosic(1, 2, "Sample 3") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 1 in position 11x1: " + mb.batchArrayAddObjectInPosic(1, 1, "Sample 1") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 2 in position 9x1: " + mb.batchArrayAddObjectInPosic(2, 1, "Sample 2") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 3 in position 9x1: " + mb.batchArrayAddObjectInPosic(1, 2, "Sample 3") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
-                out.println("Adding Sample 4 in position 9x1 by override: " + mb.batchArrayAddObjectInPosicOverride(2, 2, "Sample 4") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 4 in position 9x1 by override: " + mb.batchArrayAddObjectInPosicOverride(2, 2, "Sample 4") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
-                out.println("Adding Sample 5 in position 10x10 by override: " + mb.batchArrayAddObjectInPosicOverride(10, 10, "Sample 5") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 5 in position 10x10 by override: " + mb.batchArrayAddObjectInPosicOverride(10, 10, "Sample 5") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
-                out.println("Adding Sample 5 in position 10x2 by override: " + mb.batchArrayAddObjectInPosicOverride(10, 2, "Sample 5") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 5 in position 10x2 by override: " + mb.batchArrayAddObjectInPosicOverride(10, 2, "Sample 5") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
 
-                out.println("Adding Sample 6 in position 10x2 without override: " + mb.batchArrayAddObjectInPosic(10, 2, "Sample 6") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 6 in position 10x2 without override: " + mb.batchArrayAddObjectInPosic(10, 2, "Sample 6") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                                 
-                out.println("Adding Sample 6 in position 1x1 by override: " + mb.batchArrayAddObjectInPosicOverride(1, 1, "Sample 6") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 6 in position 1x1 by override: " + mb.batchArrayAddObjectInPosicOverride(1, 1, "Sample 6") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
-                out.println("Adding Sample 7 in position 2x5 by override: " + mb.batchArrayAddObjectInPosicOverride(2, 5, "Sample 7") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 7 in position 2x5 by override: " + mb.batchArrayAddObjectInPosicOverride(2, 5, "Sample 7") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
 
                 out.println("The object in position 9x1 is: " + mb.getBatchPositionContent(1, 1) + "<br>");
                 
@@ -149,7 +149,7 @@ public class TstDataBatchArrSequence extends HttpServlet {
                 
                 out.println("The Sample 1 was found in " + mb.searchStringContent("Sample 1").size() + " positions." + "<br>");
                 
-                out.println("Adding Sample 4 again in position 1x2 by override: " + mb.batchArrayAddObjectInPosicOverride(1, 2, "Sample 4") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 4 again in position 1x2 by override: " + mb.batchArrayAddObjectInPosicOverride(1, 2, "Sample 4") + LITERAL_OBJECTS_IN_ARRAY + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
                 out.println("The Sample 4 was found in " + mb.searchStringContent("Sample 4").size() + " positions." + "<br>");
                 

@@ -28,7 +28,7 @@ public class RequirementLogFile {
 
         String logFile = logDir + "/" + newLogFileName;
         logFile=LPNulls.replaceNull(logFile);
-        logFile.replace("/", "\\");        
+        logFile=logFile.replace("/", "\\");        
     }
 
     /**

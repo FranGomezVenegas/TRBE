@@ -65,7 +65,6 @@ public class ProcedureDefinitionQueries {
     private final String methodSectionName;
     };
 
-    private static final Boolean PROC_DISPLAY_PROC_INSTANCE_SOPS=true;
     private static final String     PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME="sop_id|sop_name";
     private static final String     PROC_DISPLAY_PROC_INSTANCE_SOPS_SORT="sop_id";
     

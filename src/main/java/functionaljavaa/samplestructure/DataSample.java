@@ -138,12 +138,8 @@ public class DataSample {
     /**
      *
      */
-    public  String[] mandatoryFields = null;
-
-    /**
-     *
-     */
-    public  Object[] mandatoryFieldsValue = null;
+    String[] mandatoryFields = null;
+    Object[] mandatoryFieldsValue = null;
 
     DataDataIntegrity labIntChecker = new DataDataIntegrity();
     DataSampleAnalysisStrategy smpAna;

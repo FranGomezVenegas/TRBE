@@ -32,8 +32,6 @@ public class ConfigAnalysisStructure {
     private static final String DIAGNOSES_SUCCESS = "SUCCESS";
     private static final String DIAGNOSES_ERROR = "ERROR";
     
-    private static final String ERROR_TRAPING_ARG_VALUE_LBL_ERROR="ERROR: ";
-    
     public enum ConfigSpecErrorTrapping{ 
         SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),

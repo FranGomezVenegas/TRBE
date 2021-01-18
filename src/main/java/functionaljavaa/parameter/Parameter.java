@@ -137,6 +137,7 @@ public class Parameter {
 
     /**
      * Not in use
+     * @param type
      * @param fileName
      * @param entryName
      * @param entryValue
@@ -233,7 +234,8 @@ public class Parameter {
             default:
                 return LPPlatform.LAB_FALSE+"argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE";
         }
-        return fileDir = fileDir.replace("/", "\\");        
+        fileDir = fileDir.replace("/", "\\");        
+        return fileDir;
     }    
     /**
      *

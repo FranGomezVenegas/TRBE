@@ -388,15 +388,11 @@ public class TblsInspLotRMData {
         private final String dbObjTypePostgres;                     
     }            
     
-    
-    private static final String FIELDS_NAMES_LOCATION_NAME = "location_name";
     private static final String FIELDS_NAMES_LOT_NAME = "lot_name";
-
     /**
      *
      */
     public enum Sample{
-
         /**
          *
          */

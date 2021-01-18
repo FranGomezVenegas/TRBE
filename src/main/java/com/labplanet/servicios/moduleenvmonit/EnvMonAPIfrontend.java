@@ -94,12 +94,12 @@ public class EnvMonAPIfrontend extends HttpServlet {
     /**
      *
      */
-    public String[] programLocationCardFieldsInteger=new String[]{"spec_code_version"};
+    public static final String[] programLocationCardFieldsInteger=new String[]{"spec_code_version"};
 
     /**
      *
      */
-    public String[] programLocationCardFieldsNoDbType=new String[]{"description_en"};
+    public static final String[] programLocationCardFieldsNoDbType=new String[]{"description_en"};
     
     /**
      *

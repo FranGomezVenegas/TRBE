@@ -31,7 +31,6 @@ public class TblsDataAudit {
         }        
     }
 
-    private static final java.lang.String FIELDS_NAMES_LIGHT = "light";
     public static final String FIELDS_NAMES_USER_ID="user_id";
     public static final String FIELDS_NAMES_USER_NAME="user_name";
 

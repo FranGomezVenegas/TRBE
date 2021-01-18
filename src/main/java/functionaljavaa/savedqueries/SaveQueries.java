@@ -21,19 +21,19 @@ import trazit.session.ProcedureRequestSession;
  */
 public class SaveQueries {
 
-enum SavedQueriesAPIErrorMessages{
-//    AAA_FILE_NAME("errorTrapping"),
-//    INCIDENT_CURRENTLY_NOT_ACTIVE("incidentCurrentlyNotActive"),
-//    INCIDENT_ALREADY_ACTIVE("incidentAlreadyActive"),
-    ;
-    private SavedQueriesAPIErrorMessages(String sname){
-        name=sname;
-    } 
-    public String getErrorCode(){
-        return this.name;
+    enum SavedQueriesAPIErrorMessages{
+        AAA_FILE_NAME("errorTrapping"),
+    //    INCIDENT_CURRENTLY_NOT_ACTIVE("incidentCurrentlyNotActive"),
+    //    INCIDENT_ALREADY_ACTIVE("incidentAlreadyActive"),
+        ;
+        private SavedQueriesAPIErrorMessages(String sname){
+            name=sname;
+        } 
+        public String getErrorCode(){
+            return this.name;
+        }
+        private final String name;
     }
-    private final String name;
-}
 
     public static Object[] newSavedQuery(String name, String definition, String[] fldNames, Object[] fldValues){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

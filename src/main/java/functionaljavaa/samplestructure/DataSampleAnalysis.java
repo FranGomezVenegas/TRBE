@@ -129,7 +129,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        String auditActionName = SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_SET_READY_fOR_REVISION.toString();
+        String auditActionName = SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_SET_READY_FOR_REVISION.toString();
         if (parentAuditAction != null) {
             auditActionName = parentAuditAction + ":" + auditActionName;
         }
