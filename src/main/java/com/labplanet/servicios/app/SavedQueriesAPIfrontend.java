@@ -85,11 +85,10 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                     for (Object[] currSavedQry: savedQueriesInfo){
                         
                         JSONObject savedQryObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currSavedQry);
-                        Object qryDefinition=new Object[0];
                         JSONObject json=new JSONObject();
                         if (LPArray.valueInArray(fieldsToRetrieve, TblsData.SavedQueries.FLD_DEFINITION.getName())){
                             try {
-                                qryDefinition=currSavedQry[LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.SavedQueries.FLD_DEFINITION.getName())];
+                                Object qryDefinition=currSavedQry[LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.SavedQueries.FLD_DEFINITION.getName())];
                                 JSONParser parser = new JSONParser(); 
                                 json = (JSONObject) parser.parse(qryDefinition.toString());
                             } catch (ParseException ex) {
@@ -102,7 +101,6 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, savedQryJArr);
-                return;  
 /*            case INVESTIGATION_RESULTS_PENDING_DECISION:
                 String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
                 JSONArray jArray = new JSONArray(); 

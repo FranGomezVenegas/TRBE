@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
 /**
  *
  * @author Administrator
@@ -31,7 +32,7 @@ public class ResponseError extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);
+        response=LPHttp.responsePreparation(response);        
         
         try (PrintWriter out = response.getWriter()) {
             String errorDetail=(String) request.getAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME);

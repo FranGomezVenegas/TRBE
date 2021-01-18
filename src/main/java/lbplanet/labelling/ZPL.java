@@ -38,7 +38,7 @@ import javax.print.SimpleDoc;
  */
 public class ZPL {
 
-    enum ContentType{TEXT, BARCODE39};
+    enum ContentType{TEXT, BARCODE39}
     public static void zplLabel(String ip, int port, Object[][] lblContent){
         try {
             ResourceBundle propValue = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);

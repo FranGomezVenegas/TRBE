@@ -23,7 +23,7 @@ enum InvestigationAuditEvents{NEW_INVESTIGATION_CREATED, OBJECT_ADDED_TO_INVESTI
 }
 
 enum InvestigationAPIErrorMessages{
-//    AAA_FILE_NAME("errorTrapping"),
+    AAA_FILE_NAME("errorTrapping"),
 //    INCIDENT_CURRENTLY_NOT_ACTIVE("incidentCurrentlyNotActive"),
 //    INCIDENT_ALREADY_ACTIVE("incidentAlreadyActive"),
     ;

@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.moduleinspectionlotrm;
 
-import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -24,7 +23,7 @@ public class ClassInspLotRMController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassInspLotRMController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, AuditAndUserValidation auditAndUsrValid) {
+    public ClassInspLotRMController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
         InspLotRMAPI.InspLotRMAPIEndpoints endPoint = null;

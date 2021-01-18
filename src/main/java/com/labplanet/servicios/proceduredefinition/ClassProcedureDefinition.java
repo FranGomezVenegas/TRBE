@@ -24,7 +24,7 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class ClassProcedureDefinition {
-    enum UomImportType{INDIV, FAMIL};
+    enum UomImportType{INDIV, FAMIL}
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
@@ -92,10 +92,10 @@ public class ClassProcedureDefinition {
                     }     
                     String[] whereFieldNames = new String[0];
                     String[] whereFieldValues = new String[]{uomName};
-                    if (impTypeEnum.INDIV.toString().equalsIgnoreCase(importType)){
+                    if (UomImportType.INDIV.toString().equalsIgnoreCase(importType)){
                         whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()};
                     }
-                    if (impTypeEnum.FAMIL.toString().equalsIgnoreCase(importType)){
+                    if (UomImportType.FAMIL.toString().equalsIgnoreCase(importType)){
                         whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName()};
                     }
                     actionDiagnoses = Rdbms.insertRecordInTableFromTable(true, TblsCnfg.UnitsOfMeasurement.getAllFieldNames(),

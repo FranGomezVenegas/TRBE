@@ -970,11 +970,11 @@ if (1==1)return;
      * @param whereFieldValuesFrom
      * @param schemaNameTo
      * @param tableNameTo
+     * @param fieldNamesTo
      * @return
      */
     public static Object[] insertRecordInTableFromTable(Boolean includeFldsSameName, String[] fieldNamesFrom, String schemaNameFrom, String tableNameFrom, String[] whereFieldNamesFrom, Object[] whereFieldValuesFrom
         , String schemaNameTo, String tableNameTo, String[] fieldNamesTo){
-        Object[] diagnosis = new Object[0];
         SqlStatement sql = new SqlStatement(); 
         String[] fldsInBoth=new String[]{};
         if (includeFldsSameName){
@@ -993,15 +993,13 @@ if (1==1)return;
         //fieldValues = LPArray.encryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNamesFrom, fieldValues);
         String[] insertRecordDiagnosis = Rdbms.prepUpQueryK(query, whereFieldValuesFrom, 1);
 //        fieldValues = LPArray.decryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNames, (Object[]) whereFieldValuesFrom);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])){
+        Object[] diagnosis = new Object[0];
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0]))
             diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});
-            diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
-            return diagnosis;
-        }else{
-            diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_RecordNotCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});
-            diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
-            return diagnosis;                         
-        }        
+        else
+            diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_RecordNotCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});                
+        diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
+        return diagnosis;
     }
     
     /**

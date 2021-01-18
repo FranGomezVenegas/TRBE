@@ -83,10 +83,8 @@ public class AppHeaderAPI extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
-        
-        response=LPHttp.responsePreparation(response);
-        
         request=LPHttp.requestPreparation(request);
+        response=LPHttp.responsePreparation(response);        
         String language = LPFrontEnd.setLanguage(request); 
    
         try (PrintWriter out = response.getWriter()) {            

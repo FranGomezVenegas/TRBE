@@ -24,7 +24,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class DataSampleRevisionTestingGroup {
-    public enum TestingGroupFileProperties{SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP};
+    public enum TestingGroupFileProperties{SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP}
 
     public static Object[] addSampleRevisionByTestingGroup(Integer sampleId, Integer testId, String specAnalysisTestingGroup){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

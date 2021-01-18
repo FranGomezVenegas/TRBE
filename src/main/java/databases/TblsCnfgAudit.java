@@ -143,8 +143,6 @@ public class TblsCnfgAudit {
         public String getName(){
             return this.dbObjName;
         }
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
         /**
          *
          * @param schemaNamePrefix procedure prefix

@@ -197,9 +197,9 @@ public class DataProgramCorrectiveAction {
         if (fieldToFindRecord==null)
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Object Type <*1*> not recognized", new Object[]{objectType});
         else
-            objectIdClass=LPDatabase.integer().toString();
+            objectIdClass=LPDatabase.integer();
         Object[][] programCorrectiveActionsToMarkAsCompleted=null;
-        if (LPDatabase.integer().toString().equalsIgnoreCase(objectIdClass))
+        if (LPDatabase.integer().equalsIgnoreCase(objectIdClass))
             programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                     new String[]{fieldToFindRecord, TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, new Object[]{Integer.valueOf(objectId.toString()), statusClosed}, 
                     new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_INVEST_ID.getName()});

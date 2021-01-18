@@ -20,11 +20,13 @@ import javax.ws.rs.core.HttpHeaders;
 public class LPHttp {
     private LPHttp(){    throw new IllegalStateException("Utility class");}    
 
+
     /**
      *
      * @param request
      * @return
      */
+    
     public static HttpServletRequest requestPreparation(HttpServletRequest request){
         try {
             request.setCharacterEncoding(LPPlatform.LAB_ENCODER_UTF8);                    

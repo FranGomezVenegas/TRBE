@@ -89,7 +89,7 @@ public class AppProcedureListAPI extends HttpServlet {
     /**
      *
      */
-    public static final String LABEL_VALUE_SOP_CERTIFICATION_DISABLE="Disabled";
+    public static final String LBL_VAL_SOP_CERTIF_DISABLE="Disabled";
 
     /**
      *
@@ -143,7 +143,7 @@ public class AppProcedureListAPI extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {   
         request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);
+        response=LPHttp.responsePreparation(response);        
         String language = LPFrontEnd.setLanguage(request); 
             
         try (PrintWriter out = response.getWriter()) {
@@ -262,10 +262,6 @@ public class AppProcedureListAPI extends HttpServlet {
             }
         }                                       
     }
-    public static JSONObject allProcSops(String curProc){
-        JSONObject procSopDetail = new JSONObject();
-        return procSopDetail;
-    }
     /**
      *
      * @param internalUserID the personName
@@ -283,7 +279,7 @@ public class AppProcedureListAPI extends HttpServlet {
         UserSop userSop = new UserSop();        
 
         Boolean isProcedureSopEnable = userSop.isProcedureSopEnable((String) curProc);
-        if (!isProcedureSopEnable) procedure.put(LABEL_SOP_CERTIFICATION, LABEL_VALUE_SOP_CERTIFICATION_DISABLE);                 
+        if (!isProcedureSopEnable) procedure.put(LABEL_SOP_CERTIFICATION, LBL_VAL_SOP_CERTIF_DISABLE);                 
         if (isProcedureSopEnable){
             notCompletedUserSOP = userSop.getNotCompletedUserSOP(internalUserID, curProc, new String[]{LABEL_SOP_NAME});
             notCompletedUserSOP1D = LPArray.array2dTo1d(notCompletedUserSOP);
@@ -295,7 +291,7 @@ public class AppProcedureListAPI extends HttpServlet {
             procEventSops = (String) procEvent1[sopFieldposic];}
         
         Boolean userHasNotCompletedSOP = false;
-        if ( (procEventSops==null) || ( (procEventSops!=null) && ("".equals(procEventSops)) ) ){
+        if ( (procEventSops==null) || ( "".equals(procEventSops) ) ){
             procEventJson.put(LABEL_SOPS_PASSED, true);
             if ( (procEventSops==null) ) {
                 procEventJson.put(LABEL_SOPS_PASSED, true);

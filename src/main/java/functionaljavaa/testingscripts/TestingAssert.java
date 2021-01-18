@@ -21,7 +21,7 @@ public class TestingAssert {
     private String evalSyntaxisDiagnostic="";  
     private String evalCodeDiagnostic="";  
     
-    public enum EvalCodes{MATCH, UNMATCH, UNDEFINED};
+    public enum EvalCodes{MATCH, UNMATCH, UNDEFINED}
     /**
      *
      * @param line

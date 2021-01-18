@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import functionaljavaa.user.UserAndRolesViews;
-import static functionaljavaa.user.UserAndRolesViews.BUNDLE_PARAMETER_CREDENTIALS_USER_IS_CASESENSITIVE;
 import static functionaljavaa.user.UserAndRolesViews.setUserDefaultTabsOnLogin;
 import static functionaljavaa.user.UserAndRolesViews.setUserNewEsign;
 import static functionaljavaa.user.UserAndRolesViews.setUserNewPassword;
@@ -37,6 +36,7 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import static functionaljavaa.user.UserAndRolesViews.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT;
 /**
  *
  * @author Administrator
@@ -54,7 +54,7 @@ public class AuthenticationAPI extends HttpServlet {
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);
+        response=LPHttp.responsePreparation(response);        
 
         String language = LPFrontEnd.setLanguage(request); 
         Rdbms.stablishDBConection();
@@ -83,7 +83,7 @@ public class AuthenticationAPI extends HttpServlet {
                 case AUTHENTICATE:                                             
                     String dbUserName = argValues[0].toString();
                     String dbUserPassword = argValues[1].toString();                 
-                    String userIsCaseSensitive = prop.getString(BUNDLE_PARAMETER_CREDENTIALS_USER_IS_CASESENSITIVE);
+                    String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
                     if (!Boolean.valueOf(userIsCaseSensitive)) dbUserName=dbUserName.toLowerCase();
                     
                     String personName = UserAndRolesViews.getPersonByUser(dbUserName);
@@ -142,12 +142,9 @@ public class AuthenticationAPI extends HttpServlet {
                     }                    
                     Integer sessionId = Integer.parseInt((String) newAppSession[newAppSession.length-1]);
                     String sessionIdStr = sessionId.toString();
-                    if (sessionId==null){
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_SESSION_ID_NULL_NOT_ALLOWED, null, language);          
-                        return;                                                   
-                    }
-                   Date nowLocalDate =LPDate.getTimeStampLocalDate();
-                   Object[][] userInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, Users.TBL.getName(), 
+
+                    Date nowLocalDate =LPDate.getTimeStampLocalDate();
+                    Object[][] userInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, Users.TBL.getName(), 
                             new String[]{Users.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()}, 
                             new String[]{Users.FLD_ESIGN.getName(), TblsApp.Users.FLD_TABS_ON_LOGIN.getName()});
                    

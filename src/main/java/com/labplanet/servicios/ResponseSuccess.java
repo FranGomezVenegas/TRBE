@@ -31,7 +31,7 @@ public class ResponseSuccess extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)           {
         request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);
+        response=LPHttp.responsePreparation(response);        
         try (PrintWriter out = response.getWriter()) {
             String responseMsg=(String) request.getAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME);
             response.getWriter().write(responseMsg);

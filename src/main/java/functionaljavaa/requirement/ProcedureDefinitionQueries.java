@@ -63,10 +63,10 @@ public class ProcedureDefinitionQueries {
     private final Class[] methodParamClass;    
     private final String methodName;
     private final String methodSectionName;
-    };
+    }
 
-    private static final String     PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME="sop_id|sop_name";
-    private static final String     PROC_DISPLAY_PROC_INSTANCE_SOPS_SORT="sop_id";
+    private static final String     PROC_DISP_PROC_INSTC_SOPS_FLD_NAME="sop_id|sop_name";
+    private static final String     PROC_DISP_PROC_INSTC_SOPS_SORT="sop_id";
     
     public static JSONObject getProcBusinessRulesQueriesInfo(String procInstanceName, String sectionName){
         JSONObject mainObj = new JSONObject();
@@ -145,11 +145,11 @@ public class ProcedureDefinitionQueries {
     }
     public static JSONObject allProcSops(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
         Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SopMetaData.TBL.getName(),
-                new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"),
-                PROC_DISPLAY_PROC_INSTANCE_SOPS_SORT.split("\\|"), true );
+                new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISP_PROC_INSTC_SOPS_FLD_NAME.split("\\|"),
+                PROC_DISP_PROC_INSTC_SOPS_SORT.split("\\|"), true );
         JSONArray sopArr=new JSONArray();
         for (Object[] curProcSop: procSopInMetaData){ 
-            JSONObject currActionRolObj = convertArrayRowToJSONObject(PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"), curProcSop);
+            JSONObject currActionRolObj = convertArrayRowToJSONObject(PROC_DISP_PROC_INSTC_SOPS_FLD_NAME.split("\\|"), curProcSop);
             sopArr.add(currActionRolObj);            
         }                             
         mainObj.put(bsnRuleQry.getMethodSectionName().toLowerCase(), sopArr);

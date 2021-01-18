@@ -22,8 +22,8 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class AppIncidentAudit {
-    public static Object[] incidentAuditAdd(String action, String tableName, Integer incidentId, String tableId,
-                        Object[] auditlog, Integer parentAuditId, String note, String status) {
+    public static Object[] incidentAuditAdd(String action, String tableName, Integer incidentId,
+                        Object[] auditlog, Integer parentAuditId, String note) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         

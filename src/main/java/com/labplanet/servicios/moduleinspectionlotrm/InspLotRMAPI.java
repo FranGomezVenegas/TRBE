@@ -19,7 +19,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.ClassSample;
 import com.labplanet.servicios.modulesample.SampleAPI;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
-import databases.Rdbms;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPFrontEnd;
@@ -155,31 +154,22 @@ public class InspLotRMAPI extends HttpServlet {
 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
         if (procReqInstance.getHasErrors()) return;
-        String actionName=procReqInstance.getActionName();
-        String language=procReqInstance.getLanguage();
         
-        
-//        Connection con = Rdbms.createTransactionWithSavePoint();        
-        //Rdbms.setTransactionId(schemaConfigName);
         InspLotRMAPIEndpoints endPoint = null;
         try{
-            endPoint = InspLotRMAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = InspLotRMAPIEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
         }catch(Exception e){
             SampleAPIParams.SampleAPIEndpoints endPointSmp = null;
             try{
-                endPointSmp = SampleAPIParams.SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPointSmp = SampleAPIParams.SampleAPIEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
             }catch(Exception er){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage());              
                 return;                   
             }                
             ClassSample clssSmp=new ClassSample(request, endPointSmp);
             if (clssSmp.getEndpointExists()){
                 Object[] diagnostic=clssSmp.getDiagnostic();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-    /*                Rdbms.rollbackWithSavePoint();
-                    if (!con.getAutoCommit()){
-                        con.rollback();
-                        con.setAutoCommit(true);}                */                        
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
                 }else{
                     JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(SampleAPI.class.getSimpleName(), endPointSmp.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
@@ -188,23 +178,19 @@ public class InspLotRMAPI extends HttpServlet {
             }                
         }
         if (endPoint==null){
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage());              
             return;
         }
         Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response,
-                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, procReqInstance.getLanguage());
             return;
         }                
         try (PrintWriter out = response.getWriter()) {
             ClassInspLotRM clss=new ClassInspLotRM(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
@@ -218,16 +204,12 @@ public class InspLotRMAPI extends HttpServlet {
                 Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
 */                     
-            Rdbms.closeRdbms();                   
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            Object[] errMsg = LPFrontEnd.responseError(errObject, procReqInstance.getLanguage(), null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {            
-            // release database resources
             try {                
                 procReqInstance.killIt();
-                //con.close();
-                Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }      }
