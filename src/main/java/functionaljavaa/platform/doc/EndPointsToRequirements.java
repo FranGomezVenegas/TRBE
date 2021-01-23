@@ -40,7 +40,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -279,13 +279,13 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
 }
 
 private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues){
-    Object[] existsRecord = Rdbms.existsRecord(LPPlatform.SCHEMA_REQUIREMENTS, EndpointsDeclaration.TBL.getName(), 
+    Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), 
             new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()},
             new Object[]{apiName, endpointName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) return;
     fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.FLD_CREATION_DATE.getName());
     fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());                
-    Rdbms.insertRecordInTable(LPPlatform.SCHEMA_REQUIREMENTS, EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
+    Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
 }
 
 }

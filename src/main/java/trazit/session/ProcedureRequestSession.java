@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -90,11 +91,15 @@ public class ProcedureRequestSession {
                 return;          
             }     
             this.auditAndUsrValid=auditAndUsrVal;
-            String schemaConfigName=LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);
+            String schemaConfigName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
             Rdbms.setTransactionId(schemaConfigName);
         }            
         Rdbms.stablishDBConection();
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){
+            this.hasErrors=true;
+            this.errorMessage="db connection not stablished";
+            return;
+        }
         this.hasErrors=false;
         }catch(Exception e){
             this.hasErrors=true;

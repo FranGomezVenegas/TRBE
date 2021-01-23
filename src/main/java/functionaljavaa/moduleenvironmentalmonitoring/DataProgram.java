@@ -13,7 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -144,8 +144,8 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         String tableName = "project";
         String actionName = "Insert";
         
-        String schemaDataName = LPPlatform.SCHEMA_DATA;
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
+        String schemaDataName = GlobalVariables.Schemas.DATA.getName();
+        String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         
         schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName); 
@@ -225,7 +225,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         if (mandatoryFieldsMissingBuilder.length()>0){
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Mandatory fields not found: <*1*>", new Object[]{mandatoryFieldsMissingBuilder.toString()});
         }        
-        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{LPPlatform.SCHEMA_CONFIG,"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
+        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString())) return diagnosis;
 
         String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, "projectStructure");
@@ -261,7 +261,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
                     }                
             }
         }
-        sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, LPPlatform.SCHEMA_CONFIG);    
+        sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, GlobalVariables.Schemas.CONFIG.getName());    
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, projectTemplate);
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, "config_version");    
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, projectTemplateVersion); 

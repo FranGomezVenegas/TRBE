@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -247,7 +248,7 @@ public class LPFrontEnd {
     
     private static void servetInvokeResponseErrorServlet(HttpServletRequest request, HttpServletResponse response){
         Rdbms.closeRdbms();      
-        RequestDispatcher rd = request.getRequestDispatcher(LPPlatform.SERVLETS_RESPONSE_ERROR_SERVLET_NAME);
+        RequestDispatcher rd = request.getRequestDispatcher(GlobalVariables.ServletsResponse.ERROR.getServletName());
         try {   
             rd.forward(request,response);
         } catch (ServletException | IOException ex) {
@@ -257,7 +258,7 @@ public class LPFrontEnd {
     private static void servetInvokeResponseSuccessServlet(HttpServletRequest request, HttpServletResponse response){
         Rdbms.closeRdbms();      
         
-        RequestDispatcher rd = request.getRequestDispatcher(LPPlatform.SERVLETS_RESPONSE_SUCCESS_SERVLET_NAME);
+        RequestDispatcher rd = request.getRequestDispatcher(GlobalVariables.ServletsResponse.SUCCESS.getServletName());
         try {           
             rd.forward(request,response);
         } catch (IOException | ServletException ex) {
@@ -275,7 +276,7 @@ public class LPFrontEnd {
      */
     public static final void servletReturnResponseError(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] errorCodeVars, String language){  
         JSONObject errJSONMsg = LPFrontEnd.responseJSONError(errorCode,errorCodeVars);
-        request.setAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME, errJSONMsg.toString());
+        request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());
         servetInvokeResponseErrorServlet(request, response);
     }
 
@@ -285,7 +286,7 @@ public class LPFrontEnd {
      * @param response
      */
     public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response){  
-        request.setAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME,"");
+        request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(),"");
         servetInvokeResponseSuccessServlet(request, response);
     }    
 
@@ -296,8 +297,8 @@ public class LPFrontEnd {
      * @param myStr
      */
     public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response, String myStr){  
-        if (myStr==null){request.setAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME,"");}
-        else{request.setAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME, myStr);}
+        if (myStr==null){request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(),"");}
+        else{request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), myStr);}
         servetInvokeResponseSuccessServlet(request, response);
     }       
 
@@ -308,13 +309,13 @@ public class LPFrontEnd {
      * @param jsonObj
      */
     public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response, JSONObject jsonObj){  
-        if (jsonObj==null){request.setAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME,"");}
-        else{request.setAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME, jsonObj.toString());}
+        if (jsonObj==null){request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(),"");}
+        else{request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), jsonObj.toString());}
         servetInvokeResponseSuccessServlet(request, response);
     }   
 
     public static final void servletReturnSuccessFile(HttpServletRequest request, HttpServletResponse response, JSONObject jsonObj, HttpServlet srv, String filePath, String fileName){  
-        if (jsonObj==null){request.setAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME,"");}
+        if (jsonObj==null){request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(),"");}
         else{
             try { 
                 if (filePath==null || filePath.length()==0) filePath="D:\\\\LP\\\\";
@@ -384,8 +385,8 @@ public class LPFrontEnd {
      * @param jsonArr
      */
     public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response, JSONArray jsonArr){  
-        if (jsonArr==null){request.setAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME,"");}
-        else{request.setAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME, jsonArr.toString());}
+        if (jsonArr==null){request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(),"");}
+        else{request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), jsonArr.toString());}
         servetInvokeResponseSuccessServlet(request, response);
     }  
     
@@ -397,12 +398,12 @@ public class LPFrontEnd {
      */
     public static final void servletReturnResponseErrorLPFalseDiagnostic(HttpServletRequest request, HttpServletResponse response, Object[] lPFalseObject){       
         JSONObject errJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(lPFalseObject);
-        request.setAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME, errJSONMsg.toString());        
+        request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());        
         servetInvokeResponseErrorServlet(request, response);
     }    
     public static final void servletReturnResponseErrorLPFalseDiagnosticBilingue(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] msgVariables){       
         JSONObject errJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(errorCode, msgVariables);
-        request.setAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME, errJSONMsg.toString());          
+        request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());          
         servetInvokeResponseErrorServlet(request, response);
     }    
     /**
@@ -413,7 +414,7 @@ public class LPFrontEnd {
      */
     public static final void servletReturnResponseErrorLPTrueDiagnostic(HttpServletRequest request, HttpServletResponse response, Object[] lPTrueObject){       
         JSONObject successJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(lPTrueObject);
-        request.setAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME, successJSONMsg.toString());        
+        request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), successJSONMsg.toString());        
         servetInvokeResponseErrorServlet(request, response);
     }  
     public static final JSONObject noRecordsInTableMessage(){

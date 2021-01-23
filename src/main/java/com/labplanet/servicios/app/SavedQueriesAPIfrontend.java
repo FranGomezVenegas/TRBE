@@ -26,6 +26,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -76,7 +77,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
         switch (endPoint){
             case ALL_SAVED_QUERIES:              
                 String[] fieldsToRetrieve=TblsData.SavedQueries.getAllFieldNames();
-                Object[][] savedQueriesInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA),TblsData.SavedQueries.TBL.getName(), 
+                Object[][] savedQueriesInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName()),TblsData.SavedQueries.TBL.getName(), 
                         new String[]{TblsData.SavedQueries.FLD_ID.getName()+">"}, 
                         new Object[]{0}, 
                         fieldsToRetrieve, new String[]{TblsData.SavedQueries.FLD_ID.getName()+" desc"});
@@ -102,14 +103,14 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, savedQryJArr);
 /*            case INVESTIGATION_RESULTS_PENDING_DECISION:
-                String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
+                String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
                 JSONArray jArray = new JSONArray(); 
                 if (!isProgramCorrectiveActionEnable(schemaPrefix)){
                   JSONObject jObj=new JSONObject();
                   jArray.add(jObj.put(TblsProcedure.ProgramCorrectiveAction.TBL.getName(), "program corrective action not active!"));
                 }
                 else{
-                  Object[][] investigationResultsPendingDecision = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                  Object[][] investigationResultsPendingDecision = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                           new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                           new String[]{statusClosed}, 
                           TblsProcedure.ProgramCorrectiveAction.getAllFieldNames(), new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()});
@@ -130,7 +131,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                 if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
 
                 fieldsToRetrieve=TblsData.SavedQueries.getAllFieldNames();
-                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA),TblsData.SavedQueries.TBL.getName(), 
+                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName()),TblsData.SavedQueries.TBL.getName(), 
                         new String[]{TblsData.SavedQueries.FLD_ID.getName()}, 
                         new Object[]{investigationId}, 
                         fieldsToRetrieve, new String[]{TblsData.SavedQueries.FLD_ID.getName()+" desc"});
@@ -140,7 +141,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                         JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
                         
                         fieldsToRetrieve=TblsProcedure.InvestObjects.getAllFieldNames();
-                        incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA),TblsProcedure.InvestObjects.TBL.getName(), 
+                        incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName()),TblsProcedure.InvestObjects.TBL.getName(), 
                                 new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, 
                                 new Object[]{investigationId}, 
                                 fieldsToRetrieve, new String[]{TblsProcedure.InvestObjects.FLD_ID.getName()});

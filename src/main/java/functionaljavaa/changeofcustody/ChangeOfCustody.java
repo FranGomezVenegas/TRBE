@@ -14,7 +14,7 @@ import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -48,15 +48,15 @@ public class ChangeOfCustody {
         if (currCustodian.equalsIgnoreCase(custodianCandidate))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_sameCustodian", new Object[]{currCustodian, objectId, objectTable, procInstanceName});
 
-        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), objectTable);
+        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())) return changeOfCustodyEnable;
 
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), cocTableName,
+        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
                 new String[]{objectFieldName, TblsData.SampleCoc.FLD_STATUS.getName()},
                 new Object[]{objectId, cocStartChangeStatus});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_requestAlreadyInCourse", new Object[]{objectId, objectTable, procInstanceName});
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), objectTable.toLowerCase(),
+        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable.toLowerCase(),
                 new String[]{TblsData.SampleCoc.FLD_STARTED_ON.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()},
                 new Object[]{LPDate.getCurrentTimeStamp(), custodianCandidate},
                 new String[]{objectFieldName}, new Object[]{objectId});
@@ -65,7 +65,7 @@ public class ChangeOfCustody {
         String[] sampleFieldName = new String[]{objectFieldName, TblsData.SampleCoc.FLD_CUSTODIAN.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName(), TblsData.SampleCoc.FLD_STARTED_ON.getName(), TblsData.SampleCoc.FLD_STATUS.getName()};
         Object[] sampleFieldValue = new Object[]{objectId, currCustodian, custodianCandidate, LPDate.getCurrentTimeStamp(), cocStartChangeStatus};
 
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), cocTableName,
+        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
                 sampleFieldName, sampleFieldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString()))return insertRecordInTable;
 
@@ -111,11 +111,11 @@ public class ChangeOfCustody {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String cocTableName = objectTable.toLowerCase()+"_coc";
 
-        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), objectTable);
+        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())){
             return changeOfCustodyEnable;}
 
-        Object[][] startedProcessData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), cocTableName,
+        Object[][] startedProcessData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
                 new String[]{objectFieldName, TblsData.SampleCoc.FLD_STATUS.getName()},
                 new Object[]{objectId, cocStartChangeStatus},
                 new String[]{"id", TblsData.SampleCoc.FLD_STATUS.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()});
@@ -138,7 +138,7 @@ public class ChangeOfCustody {
             sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.SampleCoc.FLD_NEW_CUSTODIAN_NOTES.getName());
             sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, comment);
         }
-        Object[] updateRecordInTable = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), cocTableName,
+        Object[] updateRecordInTable = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
                 sampleFieldName, sampleFieldValue,
                 new String[]{TblsData.SampleCoc.FLD_ID.getName()}, new Object[]{recordId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateRecordInTable[0].toString())){
@@ -150,7 +150,7 @@ public class ChangeOfCustody {
             updSampleTblFlds = LPArray.addValueToArray1D(updSampleTblFlds, TblsData.SampleCoc.FLD_CUSTODIAN.getName());
             updSampleTblVls = LPArray.addValueToArray1D(updSampleTblVls, token.getUserName());
          }
-         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), objectTable.toLowerCase(),
+         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable.toLowerCase(),
                 updSampleTblFlds, updSampleTblVls,
                 new String[]{objectFieldName}, new Object[]{objectId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString())){

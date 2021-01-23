@@ -24,6 +24,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -155,7 +156,7 @@ public class GenomaProjectAPI extends HttpServlet {
         }                
         //Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         
-        String schemaConfigName = LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), LPPlatform.SCHEMA_CONFIG);    
+        String schemaConfigName = LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());    
         Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
 

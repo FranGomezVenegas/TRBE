@@ -11,7 +11,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -35,7 +35,7 @@ public class EnvMonFrontEndUtilities {
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
-    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.Program.TBL.getName(), 
+    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.Program.TBL.getName(), 
             new String[]{TblsEnvMonitConfig.Program.FLD_PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.Program.FLD_PROGRAM_VERSION.getName()}, 
             new Object[]{programConfigId, programVersion}, 
             fieldsName, sortFields);
@@ -57,7 +57,7 @@ public class EnvMonFrontEndUtilities {
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
-    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
+    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
             new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName()}, 
             new Object[]{programConfigId,}, 
             fieldsName, sortFields);
@@ -79,7 +79,7 @@ public class EnvMonFrontEndUtilities {
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
-    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Program.TBL.getName(), 
+    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Program.TBL.getName(), 
             new String[]{TblsEnvMonitData.Program.FLD_NAME.getName()}, 
             new Object[]{programName}, 
             fieldsName, sortFields);
@@ -97,7 +97,7 @@ public class EnvMonFrontEndUtilities {
     public static JSONArray dataProgramLocationInfo(String schemaPrefix, String programName, String[] fieldsName, String[] sortFields){
     if (fieldsName==null || fieldsName.length==0)
         fieldsName=TblsEnvMonitData.ProgramLocation.getAllFieldNames();
-    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
+    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
             new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, 
             new Object[]{programName,}, 
             fieldsName, sortFields);

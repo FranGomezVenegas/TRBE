@@ -17,7 +17,7 @@ import java.util.Arrays;
 import functionaljavaa.requirement.Requirement;
 import lbplanet.utilities.LPDate;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  * 
  * @author Fran Gomez
@@ -69,36 +69,18 @@ public class LotAudit {
         //SAMPLE_ANALYSIS_REVIEWED, SAMPLE_ANALYSIS_EVALUATE_STATUS, SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, 
     //    SAMPLE_ANALYSIS_ADDED, SAMPLE_ANALYSIS_CANCELED, SAMPLE_ANALYSIS_UNCANCELED, SAMPLE_ANALYSIS_SET_READY_fOR_REVISION
     }
-    
-    /**
-     *
-     */
-    String classVersion = "0.1";
-    Integer auditId=0;
-      
-    /**
-     *
-     */
-    public static final String PARAMETER_BUNDLE_LOT_AUDIT_REVISION_MODE= "lotAuditRevisionMode";
-    public static final String PARAMETER_BUNDLE_LOT_AUDIT_AUTHOR_CAN_REVIEW_TOO= "lotAuditAuthorCanBeReviewerToo";
-    public static final String PARAMETER_BUNDLE_LOT_AUDIT_CHILD_REVISION_REQUIRED= "lotAuditChildRevisionRequired";
-    
-    
-
 /**
  * Add one record in the audit table when altering any of the levels belonging to the sample structure when not linked to any other statement.
  * @param action String - Action being performed
  * @param tableName String - table where the action was performed into the Sample structure
  * @param tableId Integer - Id for the object where the action was performed.
-     * @param lotName
- * @param testId Integer - testId
- * @param resultId Integer - resultId
+ * @param lotName
  * @param auditlog Object[] - All data that should be stored in the audit as part of the action being performed
-@param parentAuditId paranet audit id when creating a child-record
-     * @return  
+ * @param parentAuditId paranet audit id when creating a child-record
+ * @return  
  */    
     public Object[] lotAuditAdd(String action, String tableName, String tableId, 
-                        String lotName, Integer testId, Integer resultId, Object[] auditlog, Integer parentAuditId) {
+                        String lotName, Object[] auditlog, Integer parentAuditId) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
@@ -131,7 +113,7 @@ public class LotAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
        
     //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
@@ -148,12 +130,12 @@ public class LotAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(null, null, null);
-        if (auditAndUsrValid.getAuditReasonPhrase()!=null){
+        AuditAndUserValidation auditAndUsrValid=ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
+        if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT),  TblsInspLotRMDataAudit.Lot.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()),  TblsInspLotRMDataAudit.Lot.TBL.getName(), 
                 fieldNames, fieldValues);
         
     }

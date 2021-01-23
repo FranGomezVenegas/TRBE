@@ -92,10 +92,6 @@
     <servlet>
         <servlet-name>SampleAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.modulesample.SampleAPI</servlet-class>
-        <context-param>
-            <param-name>jsfiles</param-name>
-            <param-value>/WEB-INF/classes/JavaScript</param-value>
-        </context-param>
     </servlet>
     <servlet>
         <servlet-name>SampleAPIfrontend</servlet-name>

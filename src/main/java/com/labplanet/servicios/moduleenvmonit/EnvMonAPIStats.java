@@ -33,7 +33,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -251,7 +251,7 @@ public class EnvMonAPIStats extends HttpServlet {
                         prodLotFieldToRetrieveArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
                     JSONObject jObj=new JSONObject();
                     if (!prodLotName.contains("rutina")){
-                        Object[][] prodLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+                        Object[][] prodLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProductionLot.TBL.getName(), 
                                 new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{prodLotName}
                                 , prodLotFieldToRetrieveArr, new String[]{TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName()+" desc"} ); 
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
@@ -390,7 +390,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     }
                 }
 
-                sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                          filterFieldName, filterFieldValue,
                          sampleFieldToRetrieveArr , new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName()+" desc"} ); 
                 jObj=new JSONObject();
@@ -402,7 +402,7 @@ public class EnvMonAPIStats extends HttpServlet {
                         jObj= LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRec);
                         if (Boolean.valueOf(includeMicroOrganisms)){
                             Integer curSampleId = Integer.valueOf(curRec[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName())].toString());
-                            Object[][] sampleMicroOrgInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
+                            Object[][] sampleMicroOrgInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
                                 new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()}, new Object[]{curSampleId},
                                 new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName()} , new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()+" desc"} ); 
                             String microOrgList="";
@@ -466,7 +466,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
                 }            
                         
-                investigationInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+                investigationInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
                          filterFieldName, filterFieldValue,
                          investigationFieldToRetrieveArr , new String[]{TblsProcedure.Investigation.FLD_ID.getName()+" desc"} ); 
                 jObj=new JSONObject();
@@ -488,7 +488,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     JSONArray sampleGrouperJsonArr = new JSONArray();
                     String[] groupInfo = currGroup.split("\\*");
                     String[] smpGroupFldsArr=groupInfo[0].split(",");
-                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                             smpGroupFldsArr, filterFieldName, filterFieldValue, 
                             null);
                     smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "count");
@@ -511,7 +511,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     JSONArray investigationGrouperJsonArr = new JSONArray();
                     String[] groupInfo = currGroup.split("\\*");
                     String[] invGroupFldsArr=groupInfo[0].split(",");
-                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
                             invGroupFldsArr, filterFieldName, filterFieldValue, 
                             null);
                     invGroupFldsArr=LPArray.addValueToArray1D(invGroupFldsArr, "count");

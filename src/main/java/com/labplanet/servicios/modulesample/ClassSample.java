@@ -31,7 +31,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -110,26 +110,26 @@ public class ClassSample {
                     diagn = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
                 }
                 Object[] dynamicDataObjects = new Object[]{diagn[diagn.length-1]};
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), diagn[diagn.length-1]);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), diagn[diagn.length-1]);
                 this.messageDynamicData=new Object[]{diagn[diagn.length-1]};
                 break;
             case RECEIVESAMPLE:
                 sampleId = (Integer) argValues[0];
                 diagn = smp.sampleReception(sampleId);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case SETSAMPLINGDATE:
                 sampleId = (Integer) argValues[0];
                 diagn = smp.setSamplingDate(sampleId);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{LPDate.getCurrentTimeStamp(), sampleId};
                 break;
             case CHANGESAMPLINGDATE:
                 sampleId = (Integer) argValues[0];
                 Date newDate=(Date) argValues[1];
                 diagn = smp.changeSamplingDate(sampleId, newDate);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case SAMPLINGCOMMENTADD:
@@ -137,13 +137,13 @@ public class ClassSample {
                 String comment=null;
                 comment = argValues[1].toString();
                 diagn = smp.sampleReceptionCommentAdd(sampleId, comment);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case SAMPLINGCOMMENTREMOVE:
                 sampleId = (Integer) argValues[0];
                 diagn = smp.sampleReceptionCommentRemove(sampleId);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case INCUBATIONSTART:
@@ -152,7 +152,7 @@ public class ClassSample {
                 String incubName=argValues[1].toString();
                 BigDecimal tempReading=null;
                 diagn = DataSampleIncubation.setSampleStartIncubationDateTime(sampleId, incubationStage, incubName, tempReading);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case INCUBATION2START:
@@ -161,7 +161,7 @@ public class ClassSample {
                 incubName=argValues[1].toString();
                 tempReading=null;
                 diagn = DataSampleIncubation.setSampleStartIncubationDateTime(sampleId, incubationStage, incubName, tempReading);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case INCUBATIONEND:
@@ -170,7 +170,7 @@ public class ClassSample {
                 incubName= argValues[1].toString();
                 tempReading=null;
                 diagn = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, incubationStage, incubName, tempReading);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case INCUBATION2END:
@@ -179,7 +179,7 @@ public class ClassSample {
                 incubName= argValues[1].toString();
                 tempReading=null;
                 diagn = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, incubationStage, incubName, tempReading);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case SAMPLEANALYSISADD:
@@ -192,14 +192,14 @@ public class ClassSample {
                 fieldValueArr = fieldValue.split("\\|");
                 fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray((String[]) fieldValueArr);
                 diagn = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldNameArr, fieldValueArr, null);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case ENTERRESULT:
                 Integer resultId = (Integer) argValues[0];
                 String rawValueResult = argValues[1].toString();
                 diagn = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{resultId};
                 break;
             case ENTERRESULT_BY_ANALYSIS_NAME:
@@ -207,33 +207,33 @@ public class ClassSample {
                 String analysisName = argValues[1].toString();
                 rawValueResult = argValues[2].toString();
                 diagn = smpAnaRes.sampleAnalysisResultEntryByAnalysisName(sampleId, analysisName, rawValueResult, smp);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId, analysisName};
                 break;
             case REVIEWSAMPLE:
                 sampleId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleResultReview(sampleId, null, null);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case REVIEWSAMPLE_TESTINGGROUP:
                 sampleId = (Integer) argValues[0];
                 String testingGroup = argValues[1].toString();
                 diagn = reviewSampleTestingGroup(sampleId, testingGroup);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId, testingGroup};
                 break;
             case REVIEWTEST:
                 Integer testId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleResultReview(null, testId, null);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{testId};
                 break;
             case REVIEWTEST_BY_SAMPLE_ID_AND_ANALYSIS_NAME:
                 sampleId = (Integer) argValues[0];
                 analysisName = argValues[1].toString();
                 diagn = smpAnaRes.sampleResultReviewBySampleAndAnalysis(sampleId, analysisName);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId, analysisName};
                 break;
             case REVIEWRESULT:
@@ -246,51 +246,51 @@ public class ClassSample {
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}
                 //diagn=smp.sampleReview(schemaPrefix, token.getPersonName(), token.getUserRole(), sampleId, Integer.parseInt(token.getAppSessionId()));
                 diagn = smpAnaRes.sampleResultReview(sampleId, testId, resultId);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case CANCELSAMPLE:
                 sampleId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultCancel(sampleId, null, null);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case CANCELTEST:
                 testId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultCancel(null, testId, null);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case CANCELRESULT:
                 resultId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultCancel(null, null, resultId);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case UNREVIEWRESULT:   // No break then will take the same logic than the next one
             case UNCANCELSAMPLE:
                 sampleId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultUnCancel(sampleId, null, null);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case UNCANCELTEST:
                 testId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultUnCancel(null, testId, null);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case UNCANCELRESULT:
                 resultId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultUnCancel(null, null, resultId);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case TESTASSIGNMENT:
                 testId = (Integer) argValues[0];
                 String newAnalyst = argValues[1].toString();
                 diagn = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst, smp);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case GETSAMPLEINFO:
@@ -298,7 +298,7 @@ public class ClassSample {
                 String sampleFieldToRetrieve = argValues[1].toString();
                 
                 String[] sampleFieldToRetrieveArr =sampleFieldToRetrieve.split("\\|");
-                schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
+                schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
                 
                 String[] sortFieldsNameArr = null;
                 String sortFieldsName = argValues[2].toString();
@@ -313,7 +313,7 @@ public class ClassSample {
                 }else{
                     LPFrontEnd.servletReturnSuccess(request, null, diagnStr);
                 }
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 return;
             case COC_STARTCHANGE:
@@ -324,7 +324,7 @@ public class ClassSample {
                 Integer appSessionId=null;
                 if (token.getAppSessionId()!=null){appSessionId=Integer.valueOf(token.getAppSessionId());}
                 diagn = coc.cocStartChange(TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), objectId, custodianCandidate);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case COC_CONFIRMCHANGE:
@@ -332,7 +332,7 @@ public class ClassSample {
                 String confirmChangeComment = argValues[1].toString();
                 coc =  new ChangeOfCustody();
                 diagn = coc.cocConfirmedChange(TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, confirmChangeComment);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case COC_ABORTCHANGE:
@@ -340,7 +340,7 @@ public class ClassSample {
                 String cancelChangeComment = argValues[1].toString();
                 coc =  new ChangeOfCustody();
                 diagn = coc.cocAbortedChange(TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, cancelChangeComment);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case LOGALIQUOT:
@@ -354,7 +354,7 @@ public class ClassSample {
                 diagn = smp.logSampleAliquot(sampleId,
                         // sampleTemplate, sampleTemplateVersion,
                         fieldNames, fieldValues);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case LOGSUBALIQUOT:
@@ -368,7 +368,7 @@ public class ClassSample {
                 diagn = smp.logSampleSubAliquot(aliquotId,
                         // sampleTemplate, sampleTemplateVersion,
                         fieldNames, fieldValues);
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case SAMPLESTAGE_MOVETOPREVIOUS:
@@ -385,7 +385,7 @@ public class ClassSample {
                 String sampleStageNext=null;
                 if (argValues.length>2 && argValues[2]!=null)sampleStageNext = argValues[2].toString();
                 if ((sampleStage==null) || (sampleStage.equalsIgnoreCase("undefined")) || (sampleStage.length()==0)){
-                    Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(),
+                    Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(),
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                             new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
@@ -407,7 +407,7 @@ public class ClassSample {
                 if (diagn!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
                     smpStage.dataSampleStagesTimingCapture(sampleId, sampleStage, DataSampleStages.SampleStageTimingCapturePhases.END.name());                                                         
                     smpStage.dataSampleStagesTimingCapture(sampleId, diagn[diagn.length-1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
-                    diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(),
+                    diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(),
                             sampleFieldName, 
                             sampleFieldValue,
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
@@ -415,12 +415,12 @@ public class ClassSample {
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
                 }
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId, procInstanceName};
                 break;
             case SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED:
                 Integer auditId = (Integer) argValues[0];
-                Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+                Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.Sample.TBL.getName(), 
                     new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()}, new Object[]{auditId}, 
                     new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName()}, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfo[0][0].toString())){
@@ -430,7 +430,7 @@ public class ClassSample {
                     diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(procInstanceName, auditId, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getPersonName());
                     sampleId=Integer.valueOf(auditInfo[0][0].toString());
                 }
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditId);
                 this.messageDynamicData=new Object[]{auditId, sampleId};
                 break;
             default:

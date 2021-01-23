@@ -53,6 +53,11 @@ public class Parameter {
      * @return
      **/
     public static String getParameterBundle(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
+        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();           
+
         ResourceBundle prop = null;
         if (parameterFolder==null){parameterFolder="config";}
         String filePath = "parameter."+parameterFolder+"."+procName;
@@ -62,16 +67,19 @@ public class Parameter {
         try {
             prop = ResourceBundle.getBundle(filePath);
             if (!prop.containsKey(parameterName)) {              
-                LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, parameterName);
+                LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
+                        new Object[]{className, classFullName, methodName, lineNumber}, parameterName);
                 return "";
             } else {
                 return prop.getString(parameterName);
             }
         } catch (Exception e) {
-            LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, parameterName);
+            LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
+                    new Object[]{className, classFullName, methodName, lineNumber}, parameterName);
             return "";
         }
     }
+    
 
     /**
      *  Check if a parameter is part or not of a properties file
@@ -99,16 +107,23 @@ public class Parameter {
     }
 
     private static String getParameterBundleInAppFile(String fileUrl, String parameterName) {
+        /*String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();           
+        */
         try {
             ResourceBundle prop = ResourceBundle.getBundle(fileUrl);
             if (!prop.containsKey(parameterName)) {
-                LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, parameterName);
+                LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, 
+                        new Object[]{}, parameterName);
                 return "";
             } else {
                 return prop.getString(parameterName);
             }
         } catch (Exception e) {
-            LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, parameterName);
+            LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, 
+                    new Object[]{}, parameterName);
             return e.getMessage();
         }
     }
@@ -120,16 +135,27 @@ public class Parameter {
      * @return
      */
     public static String getParameterBundle(String configFile, String parameterName) {
+        /*StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        String className = Thread.currentThread().toString();
+                Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();           
+        */
         try {            
             ResourceBundle prop = ResourceBundle.getBundle("parameter.config." + configFile.replace("\"", ""));
             if (!prop.containsKey(parameterName)) {
-                LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, parameterName);
+                LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, 
+                        //new Object[]{className, classFullName, methodName, lineNumber}, 
+                        new Object[]{}, 
+                        parameterName);
                 return "";
             } else {
                 return prop.getString(parameterName);
             }
         } catch (Exception e) {
-            LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, parameterName);
+            LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, 
+                    new Object[]{}, parameterName);
             return "";
         }
     }
@@ -260,5 +286,16 @@ public class Parameter {
         File dir = new File(propFilesDir);
         return dir.listFiles((File dir1, String name) -> name.contains(fileName));       
     }     
+    private static final int CLIENT_CODE_STACK_INDEX;    
+    static{
+        int i = 0;
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()){
+            i++;
+            if (ste.getClassName().equals(LPPlatform.class.getName())){
+                break;
+            }
+        }
+        CLIENT_CODE_STACK_INDEX = i;
+    }   
      
 }

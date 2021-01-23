@@ -18,7 +18,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -48,7 +48,7 @@ public class ClassProcedureDefinition {
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The user <*1*> does not exist", new Object[]{userName});                         
                         break;
                     }
-                    actionDiagnoses=Rdbms.insertRecordInTable(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureUsers.TBL.getName(), 
+                    actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUsers.TBL.getName(), 
                             new String[]{TblsReqs.ProcedureUsers.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.FLD_PROCEDURE_VERSION.getName(),
                                 TblsReqs.ProcedureUsers.FLD_SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUsers.FLD_USER_NAME.getName()}, 
                             new Object[]{procedureName, procedureVersion, schemaPrefix, userName});
@@ -70,7 +70,7 @@ public class ClassProcedureDefinition {
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The role <*1*> does not exist in procedure <*2*> and version <*3*>", new Object[]{roleName, procedureName, procedureVersion});
                         break;
                     }
-                    actionDiagnoses=Rdbms.insertRecordInTable(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureUserRole.TBL.getName(), 
+                    actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUserRole.TBL.getName(), 
                             new String[]{TblsReqs.ProcedureUserRole.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_PROCEDURE_VERSION.getName(),
                                 TblsReqs.ProcedureUserRole.FLD_SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUserRole.FLD_USER_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_ROLE_NAME.getName()}, 
                             new Object[]{procedureName, procedureVersion, schemaPrefix, userName, roleName});
@@ -99,9 +99,9 @@ public class ClassProcedureDefinition {
                         whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName()};
                     }
                     actionDiagnoses = Rdbms.insertRecordInTableFromTable(true, TblsCnfg.UnitsOfMeasurement.getAllFieldNames(),
-                            LPPlatform.SCHEMA_CONFIG, TblsCnfg.UnitsOfMeasurement.TBL.getName(), 
+                            GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.UnitsOfMeasurement.TBL.getName(), 
                             whereFieldNames, whereFieldValues,
-                            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsCnfg.UnitsOfMeasurement.TBL.getName(), TblsCnfg.UnitsOfMeasurement.getAllFieldNames());
+                            LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.UnitsOfMeasurement.TBL.getName(), TblsCnfg.UnitsOfMeasurement.getAllFieldNames());
                     break;                    
                 case DEPLOY_REQUIREMENTS:
                     procedureName=argValues[0].toString();
@@ -129,7 +129,7 @@ public class ClassProcedureDefinition {
                     Integer correctiveActionId = (Integer) argValues[1];                    
                     actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(schemaPrefix, token, correctiveActionId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){                        
-                        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
                             new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
                             new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName()});
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, correctiveActionInfo[0][0], schemaPrefix}); 

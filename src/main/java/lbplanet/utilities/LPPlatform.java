@@ -23,6 +23,7 @@ import org.json.simple.JSONObject;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.Token;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  * LPPlatform is a library for methods solving topics that are specifically part of the LabPLANET Paradigm.
@@ -45,43 +46,6 @@ public class LPPlatform {
      *
      */
     public static final String LAB_FALSE = "LABPLANET_FALSE";
-    
-    /**
-     *
-     */
-    public static final String SCHEMA_APP = "app";
-    
-    public static final String SCHEMA_APP_AUDIT = "app-audit";
-    public static final String SCHEMA_TESTING = "testing";
-
-    /**
-     *
-     */
-    public static final String SCHEMA_CONFIG = "config";
-
-    /**
-     *
-     */
-    public static final String SCHEMA_CONFIG_AUDIT = "config-audit";
-
-    /**
-     *
-     */
-    public static final String SCHEMA_DATA = "data";
-    public static final String SCHEMA_DATA_AUDIT = "data-audit";
-    public static final String SCHEMA_DATA_TESTING = "data_testing";
-    public static final String SCHEMA_DATA_AUDIT_TESTING = "data-audit_testing";
-
-    /**
-     *
-     */
-    public static final String SCHEMA_PROCEDURE = "procedure";
-    public static final String SCHEMA_PROCEDURE_AUDIT = "procedure-audit";
-
-    /**
-     *
-     */
-    public static final String SCHEMA_REQUIREMENTS = "requirements";
     
     /**
      *
@@ -131,26 +95,7 @@ public class LPPlatform {
      */
     public static final String API_ERRORTRAPING_INVALID_ESIGN = "invalidEsign";        
 
-    /**
-     *
-     */
-    public static final String SERVLETS_RESPONSE_SUCCESS_SERVLET_NAME="/ResponseSuccess";
 
-    /**
-     *
-     */
-    public static final String SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME="response";
-
-    /**
-     *
-     */
-    public static final String SERVLETS_RESPONSE_ERROR_SERVLET_NAME="/ResponseError";
-
-    /**
-     *
-     */
-    public static final String SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME="errorDetail";
-    
     public static final String REQUEST_PARAM_FILE_PATH = "filePath";
     public static final String REQUEST_PARAM_FILE_NAME = "fileName";
     public static final String REQUEST_PARAM_LANGUAGE = "language";
@@ -517,7 +462,7 @@ public class LPPlatform {
  */
     public static void addJavaClassDoc(String[] fields, Object[] values, StackTraceElement[] elementsDev) {
                 
-        String schemaName = LPPlatform.SCHEMA_REQUIREMENTS;
+        String schemaName = GlobalVariables.Schemas.REQUIREMENTS.getName();
         String tableName = "java_class_doc";
         String[] fldName = new String[0];
         Object[] fldValue = new Object[0];
@@ -962,7 +907,7 @@ public class LPPlatform {
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables) {          
     String procInstanceName = "";
     //if (Rdbms.stablishDBConection(false)){
-      Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, SCHEMA_CONFIG) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
+      Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
         new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
           TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()}, 
         new Object[]{LPDate.getCurrentTimeStamp(), query, Arrays.toString(queryParams), msgCode, Arrays.toString(callerInfo), false}                
@@ -974,17 +919,17 @@ public class LPPlatform {
      *
      * @param schemaName
      * @param fileName
+     * @param callerInfo
      * @param paramName
      */
-    public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, String paramName) {          
-        if (1==1) return;
+    public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, Object[] callerInfo, String paramName) {          
+//        if (1==1) return;
         String procInstanceName = LPNulls.replaceNull(schemaName);
         //if (Rdbms.stablishDBConection(false)){
-            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, SCHEMA_CONFIG) , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
-              new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(), 
-                TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName()}, 
-              new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName}                
-              );
+        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
+                new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(),
+                    TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName(), TblsCnfg.zzzPropertiesMissing.FLD_CLASS_CALLER.getName()},
+                new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName, Arrays.toString(callerInfo)});
         //}
     }      
     public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){

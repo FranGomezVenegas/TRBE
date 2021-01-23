@@ -10,6 +10,7 @@ import lbplanet.utilities.LPArray;
 import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsProcedure;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -36,7 +37,7 @@ public class UserProfile {
             filterFieldValue[1]=true;
             filterFieldName[2]="proc_name is not null";            
             if (!Rdbms.stablishDBConection()){return new Object[0];}   
-            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, tableName, filterFieldName, filterFieldValue, fieldsToReturn);            
+            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName, filterFieldName, filterFieldValue, fieldsToReturn);            
             return LPArray.array2dTo1d(userProc);                         
     }
     
@@ -58,7 +59,7 @@ public class UserProfile {
             filterFieldName[2]="proc_name is not null";          
             String tableName = "user_profile";                                  
             
-            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, tableName, filterFieldName, filterFieldValue, fieldsToReturn);
+            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName, filterFieldName, filterFieldValue, fieldsToReturn);
             return LPArray.array2dTo1d(userProc);                         
         }
         
@@ -72,7 +73,7 @@ public class UserProfile {
             String[] filterFieldName = new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName(), FIELDVALUE_ACTIVE, TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
             Object[] filterFieldValue = new Object[]{personName, true};            
             
-            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.PersonProfile.TBL.getName(), 
+            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.PersonProfile.TBL.getName(), 
                     filterFieldName, filterFieldValue, new String[] {TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()});
             return LPArray.array2dTo1d(userProc);                         
         }

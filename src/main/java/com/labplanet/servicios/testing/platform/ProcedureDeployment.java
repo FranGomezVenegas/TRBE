@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -80,8 +80,8 @@ public class ProcedureDeployment extends HttpServlet {
         String procName = argValues[0].toString(); //request.getParameter("procedureName"); //"process-us";         
         String schemaPrefix=argValues[2].toString(); //request.getParameter("schemaPrefix"); //"process-us";
         
-        String procInstanceSchemaConfigName=LPPlatform.buildSchemaName(procName, LPPlatform.SCHEMA_CONFIG);
-        String procInstanceSchemaProcName=LPPlatform.buildSchemaName(procName, LPPlatform.SCHEMA_PROCEDURE);
+        String procInstanceSchemaConfigName=LPPlatform.buildSchemaName(procName, GlobalVariables.Schemas.CONFIG.getName());
+        String procInstanceSchemaProcName=LPPlatform.buildSchemaName(procName, GlobalVariables.Schemas.PROCEDURE.getName());
         
         response=LPTestingOutFormat.responsePreparation(response);
         String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File need");

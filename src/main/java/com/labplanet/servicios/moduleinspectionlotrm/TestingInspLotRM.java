@@ -35,7 +35,6 @@ import org.json.simple.JSONArray;
  * @author User
  */
 public class TestingInspLotRM extends HttpServlet {
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -73,12 +72,14 @@ public class TestingInspLotRM extends HttpServlet {
                 return;
             }            
             Integer numEvaluationArguments = tstOut.getNumEvaluationArguments();
-            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
+            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
             
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
+                stopPhrase=null;
+
                 tstAssertSummary.increaseTotalTests();                    
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
 
@@ -134,10 +135,8 @@ public class TestingInspLotRM extends HttpServlet {
                     (LPNulls.replaceNull(testingContent[iLines][3]).toString().length()>0) ? "Yes" : "No",
                     (LPNulls.replaceNull(testingContent[iLines][4]).toString().length()>0) ? "Yes" : "No",
                 }));                                     
-
-                if (numEvaluationArguments==0){                    
+                if (numEvaluationArguments==0)
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));                     
-                }                                
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
                         
@@ -148,7 +147,7 @@ public class TestingInspLotRM extends HttpServlet {
                             !TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic()) ){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length;
-//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
 //                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length}, 
 //                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                         break;      
@@ -158,7 +157,7 @@ public class TestingInspLotRM extends HttpServlet {
                     && LPPlatform.LAB_FALSE.equalsIgnoreCase(functionEvaluation[0].toString())){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
-//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
 //                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation returning false "+(iLines+1)+" of "+testingContent.length}, 
 //                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                     break;

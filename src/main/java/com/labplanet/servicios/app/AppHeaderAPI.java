@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -117,7 +118,7 @@ public class AppHeaderAPI extends HttpServlet {
                 }    
                 if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
                 Token token = new Token(finalToken);
-                Object[][] personInfoArr = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_CONFIG, TblsAppConfig.Person.TBL.getName(), 
+                Object[][] personInfoArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
                      new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName()}, new String[]{token.getPersonName()}, personFieldsNameArr);             
                 if (LPPlatform.LAB_FALSE.equals(personInfoArr[0][0].toString())){                                                                                                                                                   
                     Object[] errMsg = LPFrontEnd.responseError(LPArray.array2dTo1d(personInfoArr), language, null);

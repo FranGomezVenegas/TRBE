@@ -14,6 +14,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -31,7 +32,7 @@ public class EnvMonitSchemaDefinition {
         JSONObject jsonObj = new JSONObject();
         
         String methodName = "createDataBaseSchemas";       
-        String[] schemaNames = new String[]{LPPlatform.SCHEMA_APP, LPPlatform.SCHEMA_REQUIREMENTS, LPPlatform.SCHEMA_CONFIG};
+        String[] schemaNames = new String[]{GlobalVariables.Schemas.APP.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), GlobalVariables.Schemas.CONFIG.getName()};
          jsonObj.put(JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION, schemaNames.length);     
         for (String configSchemaName:schemaNames){
             JSONArray jsSchemaArr = new JSONArray();

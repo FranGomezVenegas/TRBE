@@ -21,6 +21,7 @@ import static lbplanet.utilities.LPPlatform.CONFIG_PROC_DATA_FILE_NAME;
 import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -144,7 +145,7 @@ public class ProcedureDefinitionQueries {
         return mainObj;
     }
     public static JSONObject allProcSops(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SopMetaData.TBL.getName(),
+        Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.SopMetaData.TBL.getName(),
                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISP_PROC_INSTC_SOPS_FLD_NAME.split("\\|"),
                 PROC_DISP_PROC_INSTC_SOPS_SORT.split("\\|"), true );
         JSONArray sopArr=new JSONArray();
@@ -156,7 +157,7 @@ public class ProcedureDefinitionQueries {
         return mainObj;
     }
     public static JSONObject allProcUsersRoles(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        JSONObject programkpIsObj = LPKPIs.getKPIs(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), 
+        JSONObject programkpIsObj = LPKPIs.getKPIs(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), 
                 new String[]{"procedure_roles_by_user", "procedure_users_counter_by_role"}, 
                 new String[]{"procedure", "procedure"},
                 new String[]{TblsProcedure.ViewProcUserAndRoles.TBL.getName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName()},

@@ -9,7 +9,7 @@ import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -33,7 +33,7 @@ public class DataSampleUtilities {
     public static Object[] getSchemaSampleStatusList(String language){      
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String stList = "";
-        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         if (language==null){language="en";}
        switch (language){
            case "en":

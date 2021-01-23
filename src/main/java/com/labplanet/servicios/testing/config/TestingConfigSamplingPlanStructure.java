@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPPlatform;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +21,7 @@ import databases.Rdbms;
 import functionaljavaa.materialspec.ConfigSamplingPlanForSpec;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import trazit.session.ProcedureRequestSession;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -49,7 +49,7 @@ public class TestingConfigSamplingPlanStructure extends HttpServlet {
             return;
         }
             
-        Object[] exRec =  Rdbms.existsRecord(LPPlatform.SCHEMA_APP, "users", new String[]{"user_name"}, new Object[]{"labplanet"});
+        Object[] exRec =  Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), "users", new String[]{"user_name"}, new Object[]{"labplanet"});
         out.println("Exists record? " + Arrays.toString(exRec));
         
         String csvFileName = "dbActions.txt"; 

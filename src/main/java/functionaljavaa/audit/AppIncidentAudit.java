@@ -16,6 +16,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPSession;
 import trazit.session.ProcedureRequestSession;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -77,12 +78,12 @@ public class AppIncidentAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(null, null, null);
-        if (auditAndUsrValid.getAuditReasonPhrase()!=null){
+        AuditAndUserValidation auditAndUsrValid=ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
+        if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        return Rdbms.insertRecordInTable(LPPlatform.SCHEMA_APP_AUDIT, TblsAppAudit.Incident.TBL.getName(), 
+        return Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_AUDIT.getName(), TblsAppAudit.Incident.TBL.getName(), 
                 fieldNames, fieldValues);
     }    
     

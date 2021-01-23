@@ -11,6 +11,7 @@ import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntr
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -33,17 +34,17 @@ public class DbObjects {
      * @return
      */
     public static JSONObject createPlatformSchemas(){
-        String[] schemaNames = new String[]{LPPlatform.SCHEMA_APP, LPPlatform.SCHEMA_REQUIREMENTS, LPPlatform.SCHEMA_CONFIG};
+        String[] schemaNames = new String[]{GlobalVariables.Schemas.APP.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), GlobalVariables.Schemas.CONFIG.getName()};
         return createSchemas(schemaNames);
      }    
 
     public static JSONObject createModuleSchemas(String schemaPrefix){
         String tblCreateScript="";
         String[] schemaNames = new String[]{
-            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG_AUDIT), 
-            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), 
-            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_TESTING), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT_TESTING), 
-            LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING)};        
+            LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName()), LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), 
+            LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName()), LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
+            LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA_TESTING.getName()), LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()), 
+            LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName())};        
         JSONObject jsonObj=createSchemas(schemaNames);
 
         tblCreateScript=TblsProcedure.PersonProfile.createTableScript(schemaPrefix, new String[]{""});

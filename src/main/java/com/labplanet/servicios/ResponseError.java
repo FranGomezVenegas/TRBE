@@ -7,13 +7,13 @@ package com.labplanet.servicios;
 
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
-import lbplanet.utilities.LPPlatform;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import trazit.globalvariables.GlobalVariables;
 
 
 /**
@@ -35,7 +35,7 @@ public class ResponseError extends HttpServlet {
         response=LPHttp.responsePreparation(response);        
         
         try (PrintWriter out = response.getWriter()) {
-            String errorDetail=(String) request.getAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME);
+            String errorDetail=(String) request.getAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName());
             response.getWriter().write(errorDetail);
             response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
         }

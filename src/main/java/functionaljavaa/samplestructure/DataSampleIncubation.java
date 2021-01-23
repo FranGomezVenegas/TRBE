@@ -24,7 +24,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -100,10 +100,10 @@ public class DataSampleIncubation {
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
         
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
             diagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "DataSample_SampleIncubationEndedSuccessfully", 
-                    new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
+                    new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_ENDED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
@@ -130,10 +130,10 @@ public class DataSampleIncubation {
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
 
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "DataSample_SampleIncubationStartedSuccessfully", 
-                    new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
+                    new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_STARTED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
@@ -179,7 +179,7 @@ public class DataSampleIncubation {
             }
         }else if (sampleIncubationMode.contains(SampleIncubationLevel.INCUBATOR.toString())){
             if (incubName==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker Incubator should be specified", null);
-            Object[] incubInfo=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
+            Object[] incubInfo=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
                     new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{incubName});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubInfo[0].toString()))
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker Incubator <*1*> not found for schema <*2*>", new Object[]{incubName, procInstanceName});
@@ -280,7 +280,7 @@ public class DataSampleIncubation {
         if (finalDiagn) return new Object[]{LPPlatform.LAB_TRUE};  
 
         if (deviationAndStop>0){
-            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
+            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
                     new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_BY.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_REASON.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STAGE_CURRENT.getName()}, 
@@ -292,7 +292,7 @@ public class DataSampleIncubation {
         if (stoppables>0) return stoppablesDiagn;
         
         if (deviations>0){
-            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
+            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
                     new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_BY.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_REASON.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STAGE_CURRENT.getName()}, 

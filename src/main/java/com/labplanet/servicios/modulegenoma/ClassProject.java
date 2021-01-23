@@ -14,6 +14,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -51,7 +52,7 @@ public class ClassProject {
                         actionDiagnoses= prj.createProject(projectName, fieldNames, fieldValues,  false);
                     if ("PROJECT_UPDATE".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses= prj.projectUpdate(projectName, fieldNames, fieldValues);
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                
                     if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{projectName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{projectName, procInstanceName};
@@ -63,7 +64,7 @@ public class ClassProject {
                         actionDiagnoses =prj.projectActivate(projectName);
                     else if ("PROJECT_DEACTIVATE".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses =prj.projectDeActivate(projectName);                    
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                
                     break;
                 case PROJECT_ADD_USER:
                 case PROJECT_REMOVE_USER:
@@ -75,7 +76,7 @@ public class ClassProject {
                     String userRole=argValues[2].toString();
                     actionDiagnoses =prj.projectUserManagement(endPoint.getName(), projectName, userName, userRole);
                     this.messageDynamicData=new Object[]{projectName, userName, userRole, procInstanceName};
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                                    
                     break;
                 case STUDY_NEW:
                     projectName = argValues[0].toString();
@@ -89,7 +90,7 @@ public class ClassProject {
                     if (fieldValue!=null && fieldValue.length()>0) 
                         fieldValues=TblsGenomaData.Study.convertStringWithDataTypeToObjectArray(fieldNames, fieldValue.split("\\|"));
                     actionDiagnoses= prjStudy.createStudy(studyName, projectName, fieldNames, fieldValues,  false);
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{studyName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{projectName, studyName, procInstanceName};

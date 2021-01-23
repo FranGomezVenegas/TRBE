@@ -15,7 +15,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -50,7 +50,7 @@ public Object[] createStudyFamily(String studyName, String familyName, String[] 
     }    
         String actionName = "Insert";
         
-        String schemaDataName = LPPlatform.SCHEMA_DATA;
+        String schemaDataName = GlobalVariables.Schemas.DATA.getName();
         
         schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
         
@@ -111,7 +111,7 @@ public Object[] createStudyFamily(String studyName, String familyName, String[] 
         if (mandatoryFieldsMissingBuilder.length()>0){
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, GenomaDataProject.GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS.getErrorCode(), new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
         }        
-/*        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{LPPlatform.SCHEMA_CONFIG,"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
+/*        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){	
             StackTraceElement[] elements = Thread.currentThread().getStackTrace();
             diagnosesProj[0]= elements[1].getClassName() + "." + elements[1].getMethodName();
@@ -182,10 +182,10 @@ public Object[] createStudyFamily(String studyName, String familyName, String[] 
            fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyFamily.FLD_CREATED_BY.getName())] = token.getPersonName();
         if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyFamily.FLD_ACTIVE.getName())==-1){
            fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyFamily.FLD_ACTIVE.getName());
-           fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(LPPlatform.SCHEMA_DATA, TblsGenomaData.StudyFamily.TBL.getName()));
+           fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.StudyFamily.TBL.getName()));
         }else
-           fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyFamily.FLD_ACTIVE.getName())] = GenomaBusinessRules.activateOnCreation(LPPlatform.SCHEMA_DATA, TblsGenomaData.StudyFamily.TBL.getName());        
-/*        fieldsName = LPArray.addValueToArray1D(fieldsName, LPPlatform.SCHEMA_CONFIG);    
+           fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyFamily.FLD_ACTIVE.getName())] = GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.StudyFamily.TBL.getName());        
+/*        fieldsName = LPArray.addValueToArray1D(fieldsName, GlobalVariables.Schemas.CONFIG.getName());    
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplate);
         fieldsName = LPArray.addValueToArray1D(fieldsName, "config_version");    
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
@@ -220,7 +220,7 @@ public Object[] studyFamilyActivate(String studyName, String familyName){
     String[] fieldsName=new String[]{TblsGenomaData.StudyFamily.FLD_ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
     
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamily.TBL.getName(), 
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyFamily.TBL.getName(), 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.StudyFamily.FLD_NAME.getName()}, new Object[]{familyName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.ACTIVATE_STUDY_FAMILY.toString(), TblsGenomaData.StudyFamily.TBL.getName(), familyName, 
@@ -237,7 +237,7 @@ public Object[] studyFamilyDeActivate(String studyName, String familyName){
     String[] fieldsName=new String[]{TblsGenomaData.StudyFamily.FLD_ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{false};
     
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamily.TBL.getName(), 
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyFamily.TBL.getName(), 
             fieldsName, fieldsValue, 
             new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName(), TblsGenomaData.StudyFamily.FLD_NAME.getName()}, new Object[]{studyName, familyName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
@@ -252,10 +252,10 @@ public Object[] studyFamilyIndividualUpdate(String studyName, String familyName,
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
-    Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(LPPlatform.SCHEMA_DATA, TblsGenomaData.StudyFamily.TBL.getName(), fieldsName);
+    Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.StudyFamily.TBL.getName(), fieldsName);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString()))
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamily.TBL.getName(), 
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyFamily.TBL.getName(), 
             fieldsName, fieldsValue, 
             new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName(), TblsGenomaData.StudyFamily.FLD_NAME.getName()}, new Object[]{studyName, familyName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
@@ -279,7 +279,7 @@ public Object[] studyFamilyAddIndividual(String studyName, String familyName, St
     String[] indivList=individualId.split("\\|");
     Object[] familyAndIndividualLinked=new Object[0];
     for (String curIndiv: indivList){
-        Object[] curFamilyAndIndividualLinked=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamilyIndividual.TBL.getName(),
+        Object[] curFamilyAndIndividualLinked=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyFamilyIndividual.TBL.getName(),
                 new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_FAMILY_NAME.getName(),
                     TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_LINKED_ON.getName()}, 
                 new Object[]{studyName, familyName, Integer.valueOf(curIndiv), LPDate.getCurrentTimeStamp()});
@@ -307,7 +307,7 @@ public Object[] studyFamilyRemoveIndividual(String studyName, String familyName,
     Object[] projStudyIndividualToChanges=GenomaDataStudyIndividuals.isStudyIndividualOpenToChanges(studyName, Integer.valueOf(individualId));    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyIndividualToChanges[0].toString())) return projStudyIndividualToChanges;   
     
-    Object[] familyAndIndividualUnLinked=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamilyIndividual.TBL.getName(),
+    Object[] familyAndIndividualUnLinked=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyFamilyIndividual.TBL.getName(),
             new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_FAMILY_NAME.getName(),
                 TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName()}, 
             new Object[]{studyName, familyName, Integer.valueOf(individualId)});
@@ -322,7 +322,7 @@ public Object[] studyFamilyRemoveIndividual(String studyName, String familyName,
 
 public static Object[] isStudyFamilyOpenToChanges(String studyName, String familyName){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamily.TBL.getName(),
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyFamily.TBL.getName(),
             new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName(), TblsGenomaData.StudyFamily.FLD_NAME.getName()}, new Object[]{studyName, familyName}, new String[]{TblsGenomaData.StudyFamily.FLD_ACTIVE.getName()});
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The study family <*1*> does not exist in procedure <*2*>", new Object[]{studyName, procInstanceName});

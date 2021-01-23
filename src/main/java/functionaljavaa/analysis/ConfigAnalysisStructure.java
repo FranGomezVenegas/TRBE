@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
 import static lbplanet.utilities.LPPlatform.trapMessage;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  * The specification is considered one structure belonging to the material definition.<br>
  * This class contains all the required to verify that anything related to this structure will be properly defined accordingly
@@ -143,7 +143,7 @@ if (1==1){return "ERROR";}
     public String specialFieldCheckSpecLimitsVariationName(String procInstanceName, String specCode, Integer specCodeVersion, String[] mandatoryFields, Object[] mandatoryFieldValue){ 
     //    Object[] mandatoryFieldValue = new String[0];
                 
-        String schemaName = LPPlatform.SCHEMA_CONFIG;
+        String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         
 //        String[]  mandatoryFields = getSpecLimitsMandatoryFields();
 
@@ -166,7 +166,7 @@ if (1==1){return "ERROR";}
 //        String[] mandatoryFields = new String[1];
 //        Object[] mandatoryFieldValue = new String[0];
 
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
 
         Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName());
         String analysis =(String)  mandatoryFieldValue[specialFieldIndex];     
@@ -217,7 +217,7 @@ if (1==1){return "ERROR";}
      */
     public Object[] analysisUpdate(String code, Integer configVersion, String[] specFieldName, Object[] specFieldValue) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);        
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());        
         Object[] errorDetailVariables = new Object[0];
             
         Object[] diagnoses = Rdbms.existsRecord(schemaConfigName, TblsCnfg.Analysis.TBL.getName(), 
@@ -296,7 +296,7 @@ if (1==1){return "ERROR";}
         String errorCode = "";
         String[] errorDetailVariables = new String[0];
         
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
 
         String[] mandatoryFields = getSpecMandatoryFields();
         
@@ -409,7 +409,7 @@ if (1==1){return "ERROR";}
      */
 /*    public Object[] specVariationGetNamesList( String procInstanceName, String specCode){
 
-        String schemaName = LPPlatform.SCHEMA_CONFIG;
+        String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         StringBuilder variationListBuilder = new StringBuilder(0);
         String errorCode ="";
         
@@ -449,7 +449,7 @@ if (1==1){return "ERROR";}
         String errorCode="";
         Object[]  errorDetailVariables= new Object[0];
 
-        String schemaName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);
+        String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         String[] mandatoryFields = getSpecLimitsMandatoryFields();
 
         String[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(specFieldName, specFieldValue);

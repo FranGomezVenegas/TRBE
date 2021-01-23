@@ -9,7 +9,7 @@ import databases.Rdbms;
 import databases.TblsCnfg;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -66,7 +66,7 @@ public class Sop {
      * @return
      */
     public Object[] dbInsertSopId( String schemaPrefix, String userInfoId) {
-         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
+         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
          schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName);
         //requires added_on
         String[] fieldNames = new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName(), TblsCnfg.SopMetaData.FLD_SOP_VERSION.getName(), TblsCnfg.SopMetaData.FLD_SOP_REVISION.getName(),
@@ -88,7 +88,7 @@ public class Sop {
      * @return
      */
     public Integer dbGetSopIdById( String schemaPrefix, Integer sopId) {     
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
+        String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName);
         Object[][] sopInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
                                                                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()}, new Object[]{sopId}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()});
@@ -102,7 +102,7 @@ public class Sop {
      * @return
      */
     public static final Integer dbGetSopIdByName( String schemaPrefix, String sopName) {
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
+        String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName);
         Object[][] sopInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
                                                                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()});
@@ -116,7 +116,7 @@ public class Sop {
      * @return
      */
     public static final Integer dbGetSopNameById( String schemaPrefix, Object sopId) {
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
+        String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName);
         Object[][] sopName = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
                                                                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()}, new Object[]{sopId}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()});
@@ -131,7 +131,7 @@ public class Sop {
      * @return
      */
     public Object[][] dbGetSopObjByName( String schemaPrefix, String sopName, String[] fields) {
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
+        String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName);
         return Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
                                                                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName}, fields);
@@ -144,7 +144,7 @@ public class Sop {
      * @return
      */
     public Object[] createSop( String schemaPrefix, String sopName)  {
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
+        String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 
         String errorCode = "";        
         Object[] diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
@@ -169,7 +169,7 @@ public class Sop {
      * @return
      */
     public Object[] updateSop(String schemaPrefix, String fieldName, String fieldValue){        
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
+        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName());
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
                                         new String[]{fieldName}, new Object[]{fieldValue}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){

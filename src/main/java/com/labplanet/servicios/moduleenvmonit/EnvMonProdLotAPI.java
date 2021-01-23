@@ -26,6 +26,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -112,7 +113,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
         }*/
         try (PrintWriter out = response.getWriter()) {
 
-//            String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);    
+//            String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
 //            Rdbms.setTransactionId(schemaConfigName);      
             EnvMonProdLotAPIEndpoints endPoint = null;
             try{
@@ -142,7 +143,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
                         diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, procInstanceName});
                         messageDynamicData=new Object[]{lotName};
-                        rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     }else{
                         if (diagnostic[4]==DataProgramProductionLot.ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode())
                             messageDynamicData=new Object[]{diagnostic[diagnostic.length-2], diagnostic[diagnostic.length-1], procInstanceName};                                  
@@ -152,13 +153,13 @@ public class EnvMonProdLotAPI extends HttpServlet {
                     break;
                 case EM_ACTIVATE_PRODUCTION_LOT:
                     lotName=argValues[0].toString();
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     messageDynamicData=new Object[]{lotName};
                     diagnostic=DataProgramProductionLot.activateProgramProductionLot(lotName, Rdbms.getTransactionId());
                     break;
                 case EM_DEACTIVATE_PRODUCTION_LOT:
                     lotName=argValues[0].toString();
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     messageDynamicData=new Object[]{lotName};
                     diagnostic=DataProgramProductionLot.deactivateProgramProductionLot(lotName, Rdbms.getTransactionId());
                     break;

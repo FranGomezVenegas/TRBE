@@ -70,7 +70,7 @@ public class TestingSamples extends HttpServlet {
                 return;
             }            
             Integer numEvaluationArguments = tstOut.getNumEvaluationArguments();
-            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
+            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
             
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             

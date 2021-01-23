@@ -34,7 +34,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Properties;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -831,7 +831,7 @@ if (1==1)return;
                 res.next();
                 icurrLine++;
              }
-                diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+                //diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
                 return diagnoses2;
             }else{
                 Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
@@ -1568,7 +1568,7 @@ if (1==1)return;
     }
     public static String suffixForTesting(String schemaName){
         //if (1!=1){
-           if (schemaName.contains(LPPlatform.SCHEMA_DATA)){
+           if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())){
                 if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
                 else schemaName=schemaName+"_testing";
             }     

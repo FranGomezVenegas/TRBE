@@ -16,7 +16,7 @@ import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
 import java.util.HashMap;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -85,7 +85,7 @@ public class TblsInspLotRMConfig {
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = Material.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
@@ -136,7 +136,7 @@ public class TblsInspLotRMConfig {
             }
 */            
             if (tblAlterScript.toString().length()>0)
-                return LPDatabase.alterTable()+" "+LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG)+"."+Lot.TBL.getName()+" "+tblAlterScript.toString()+";";
+                return LPDatabase.alterTable()+" "+LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName())+"."+Lot.TBL.getName()+" "+tblAlterScript.toString()+";";
             else
                 return tblAlterScript.toString();
 /*            for (String curFld: fields){
@@ -220,7 +220,7 @@ public class TblsInspLotRMConfig {
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = MaterialSamplingPlan.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
@@ -271,7 +271,7 @@ public class TblsInspLotRMConfig {
             }
 */            
             if (tblAlterScript.toString().length()>0)
-                return LPDatabase.alterTable()+" "+LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG)+"."+Lot.TBL.getName()+" "+tblAlterScript.toString()+";";
+                return LPDatabase.alterTable()+" "+LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName())+"."+Lot.TBL.getName()+" "+tblAlterScript.toString()+";";
             else
                 return tblAlterScript.toString();
 /*            for (String curFld: fields){
@@ -358,7 +358,7 @@ public class TblsInspLotRMConfig {
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = MaterialCertificate.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
@@ -409,7 +409,7 @@ public class TblsInspLotRMConfig {
             }
 */            
             if (tblAlterScript.toString().length()>0)
-                return LPDatabase.alterTable()+" "+LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG)+"."+Lot.TBL.getName()+" "+tblAlterScript.toString()+";";
+                return LPDatabase.alterTable()+" "+LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName())+"."+Lot.TBL.getName()+" "+tblAlterScript.toString()+";";
             else
                 return tblAlterScript.toString();
 /*            for (String curFld: fields){
@@ -515,7 +515,7 @@ public class TblsInspLotRMConfig {
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = Lot.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
@@ -566,7 +566,7 @@ public class TblsInspLotRMConfig {
             }
 */            
             if (tblAlterScript.toString().length()>0)
-                return LPDatabase.alterTable()+" "+LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG)+"."+Lot.TBL.getName()+" "+tblAlterScript.toString()+";";
+                return LPDatabase.alterTable()+" "+LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName())+"."+Lot.TBL.getName()+" "+tblAlterScript.toString()+";";
             else
                 return tblAlterScript.toString();
 /*            for (String curFld: fields){
@@ -673,7 +673,7 @@ public class TblsInspLotRMConfig {
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = LotRules.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
@@ -749,7 +749,7 @@ public class TblsInspLotRMConfig {
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = LotDecisionRules.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            

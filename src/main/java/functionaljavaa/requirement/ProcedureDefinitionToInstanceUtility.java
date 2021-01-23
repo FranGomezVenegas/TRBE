@@ -13,7 +13,7 @@ import databases.TblsReqs;
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
 import functionaljavaa.sop.UserSop;
 import lbplanet.utilities.LPArray;
-
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -25,7 +25,7 @@ public class ProcedureDefinitionToInstanceUtility {
 
     
     public static final Object[] procedureRolesList(String procInstanceName, Integer procVersion){
-        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureRoles.TBL.getName(), 
+        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureRoles.TBL.getName(), 
                 new String[]{TblsReqs.ProcedureRoles.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.FLD_PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
                 new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()}, new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0].toString()))
@@ -44,7 +44,7 @@ public class ProcedureDefinitionToInstanceUtility {
      * @return
      */    
     public static final Object[][] procedureAddSopToUsersByRole( String procInstanceName, Integer procVersion, String schemaName, String roleName, String sopName, Integer sopVersion, Integer sopRevision){
-        String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_PROCEDURE);
+        String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.PROCEDURE.getName());
         UserSop usSop = new UserSop();
         Object[][] diagnoses = new Object[0][0];
         Object[][] personPerRole = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProcedure, TblsProcedure.PersonProfile.TBL.getName(),

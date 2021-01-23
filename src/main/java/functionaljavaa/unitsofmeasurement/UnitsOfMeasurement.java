@@ -12,7 +12,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import java.math.BigDecimal;
 import java.util.Arrays;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  * functionality where units of measurements are involved
  * @author Fran Gomez
@@ -99,7 +99,7 @@ public class UnitsOfMeasurement {
         }            
         String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();
         String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName();                
-        String schemaName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);
+        String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
              
         String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName(), 
             TblsCnfg.UnitsOfMeasurement.FLD_FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.FLD_OFFSET_VALUE.getName()};
@@ -150,7 +150,7 @@ public class UnitsOfMeasurement {
         String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName();
         BigDecimal valueConverted = valueToConvert;
         
-        String schemaName = LPPlatform.SCHEMA_CONFIG;
+        String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
              
         String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName(), 
@@ -208,7 +208,7 @@ public class UnitsOfMeasurement {
     public Object[][] getAllUnitsPerFamily( String procInstanceName, String family, String[] fieldsToRetrieve ){
        
         String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();        
-        String schemaName = LPPlatform.SCHEMA_CONFIG;
+        String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
         if (family==null){
             Object[] conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_FAMILY_FIELD_NOT_IN_QUERY,
@@ -232,7 +232,7 @@ public class UnitsOfMeasurement {
      */
     public String getFamilyBaseUnitName( String procInstanceName, String family){
         String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();                
-        String schemaName = LPPlatform.SCHEMA_CONFIG;
+        String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
        
         Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 

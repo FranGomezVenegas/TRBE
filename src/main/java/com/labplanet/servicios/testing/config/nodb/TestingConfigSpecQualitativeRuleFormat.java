@@ -56,7 +56,8 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
         StringBuilder fileContentBuilder = new StringBuilder(0);        
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());
         Object[][]  testingContent =tstOut.getTestingContent();
-
+        String stopPhrase=null;
+        
         try (PrintWriter out = response.getWriter()) {
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
@@ -64,7 +65,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                 return;
             }            
             Integer numEvaluationArguments = tstOut.getNumEvaluationArguments();
-            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
+            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
             
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
@@ -98,12 +99,31 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                 }                                
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
-// Es necesario usar este publishEvalStep aqui? toca revisar a fondo! NO BORRAR A LA LIGERA!
-//                    Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][testingContent[0].length-1]).toString());
-//                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, new JSONArray(), tstAssert));
+                    Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, new JSONArray(), tstAssert));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
+
+                    if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString()) &&
+                            !TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic()) ){
+                        out.println(fileContentBuilder.toString()); 
+                        stopPhrase="Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length;
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
+//                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length}, 
+//                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
+                        break;      
+                    }
                 }
+                if (tstOut.getStopSyntaxisFalsePosic()>-1 && Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisFalsePosic()]).toString())
+                    && LPPlatform.LAB_FALSE.equalsIgnoreCase(functionEvaluation[0].toString())){
+                        out.println(fileContentBuilder.toString()); 
+                        stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
+//                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation returning false "+(iLines+1)+" of "+testingContent.length}, 
+//                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
+                    break;
+                }                
+                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
+                
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
             //fileContentTable1Builder.append();

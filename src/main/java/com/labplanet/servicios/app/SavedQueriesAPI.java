@@ -25,6 +25,8 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
+
 /**
  *
  * @author Administrator
@@ -247,7 +249,7 @@ public class SavedQueriesAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SavedQueries.TBL.getName(), TblsData.SavedQueries.TBL.getName(), svqQryId);                
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName()), TblsData.SavedQueries.TBL.getName(), TblsData.SavedQueries.TBL.getName(), svqQryId);                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{svqQryId}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);

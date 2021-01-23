@@ -211,7 +211,7 @@ public class EnvMonSampleAPI extends HttpServlet {
             Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
         }*/
 
-//        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG);    
+//        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
 //        Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
             EnvMonSampleAPIEndpoints endPoint = null;

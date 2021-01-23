@@ -24,7 +24,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -41,6 +41,9 @@ public class TestingRegressionUAT extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {        
         ProcedureRequestSession procReqInstance = null;
+            response = LPTestingOutFormat.responsePreparation(response);        
+            String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
+            Object[][] scriptTblInfo=new Object[0][0];            
         try{
             String actionName=request.getParameter("actionName");
             if ("GETTESTERSLIST".equalsIgnoreCase(actionName)){
@@ -71,27 +74,32 @@ public class TestingRegressionUAT extends HttpServlet {
                         procReqInstance.getErrorMessage(), null, procReqInstance.getLanguage());              
                 return;
             }
-            
-            response = LPTestingOutFormat.responsePreparation(response);        
-            String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
             //String schemaPrefix="em-demo-a";
             //Integer scriptId=2;
             String schemaPrefix=request.getParameter("schemaPrefix");
             Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
 //            if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}     
-            Object[][] scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+            scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
                     new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
-                    new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName(), TblsTesting.Script.FLD_AUDIT_IDS_TO_GET.getName()},
+                    new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName(), TblsTesting.Script.FLD_AUDIT_IDS_TO_GET.getName(),
+                                    TblsTesting.Script.FLD_GET_DB_ERRORS.getName(), TblsTesting.Script.FLD_GET_MSG_ERRORS.getName()},
                     new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
                 Logger.getLogger("Script "+scriptId.toString()+" Not found"); 
                 return;
             }        
+            
             LPTestingOutFormat.cleanLastRun(schemaPrefix, scriptId);
 
             if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
                 LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[0][2].toString(), "before");
 
+            if (scriptTblInfo[0][3]!=null && Boolean.valueOf(scriptTblInfo[0][3].toString()))
+                LPTestingOutFormat.setDbErrorIndexValues(schemaPrefix, scriptId, "before");
+
+            if (scriptTblInfo[0][4]!=null && Boolean.valueOf(scriptTblInfo[0][4].toString()))
+                LPTestingOutFormat.setMessagesErrorIndexValues(schemaPrefix, scriptId, "before");
+            
             String testerName = scriptTblInfo[0][0].toString();
             Integer numEvalArgs = 0;
             if (scriptTblInfo[0][1]!=null && scriptTblInfo[0][1].toString().length()>0) numEvalArgs=Integer.valueOf(scriptTblInfo[0][1].toString());
@@ -120,8 +128,23 @@ public class TestingRegressionUAT extends HttpServlet {
             }
         }
         finally{
+            String scriptIdStr=request.getParameter("scriptId");
+            String schemaPrefix=request.getParameter("schemaPrefix");
+            if (scriptTblInfo==null || scriptIdStr==null) return;
+            Integer scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr)); 
             if (procReqInstance!=null)
-                procReqInstance.killIt();
+            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
+                if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
+                    LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[0][2].toString(), "completed");
+
+                if (scriptTblInfo[0][3]!=null && Boolean.valueOf(scriptTblInfo[0][3].toString()))
+                    LPTestingOutFormat.setDbErrorIndexValues(schemaPrefix, scriptId, "completed");
+
+                if (scriptTblInfo[0][4]!=null && Boolean.valueOf(scriptTblInfo[0][4].toString()))
+                    LPTestingOutFormat.setMessagesErrorIndexValues(schemaPrefix, scriptId, "completed");
+
+                    procReqInstance.killIt();
+            }
         }
     }
 
@@ -133,8 +156,9 @@ public class TestingRegressionUAT extends HttpServlet {
      * @param response servlet response
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response){
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {        //{
         try {
+            if (request==null) return;
             processRequest(request, response);
         } catch (ServletException | IOException ex) {
             Logger.getLogger(TestingRegressionUAT.class.getName()).log(Level.SEVERE, null, ex);
@@ -148,8 +172,9 @@ public class TestingRegressionUAT extends HttpServlet {
      * @param response servlet response
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response){
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {        //{
         try {
+            if (request==null) return;
             processRequest(request, response);
         } catch (ServletException | IOException ex) {
             Logger.getLogger(TestingRegressionUAT.class.getName()).log(Level.SEVERE, null, ex);

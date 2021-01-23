@@ -18,7 +18,7 @@ import java.util.Arrays;
 import functionaljavaa.requirement.Requirement;
 import lbplanet.utilities.LPDate;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  * 
  * @author Fran Gomez
@@ -52,10 +52,6 @@ public class GenomaDataAudit {
     /**
      *
      */
-    public static final String PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE= "sampleAuditRevisionMode";
-    public static final String PARAMETER_BUNDLE_SAMPLE_AUDIT_CHILD_REVISION_REQUIRED= "sampleAuditChildRevisionRequired";
-    
-
 /**
  * Add one record in the audit table when altering any of the levels belonging to the sample structure when not linked to any other statement.
  * @param action String - Action being performed
@@ -105,7 +101,7 @@ public class GenomaDataAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
        
     //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
@@ -134,7 +130,7 @@ public class GenomaDataAudit {
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
 //        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
 
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsGenomaDataAudit.Project.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsGenomaDataAudit.Project.TBL.getName(), 
                 fieldNames, fieldValues);
     }
 
@@ -186,7 +182,7 @@ public class GenomaDataAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
        
     //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
@@ -215,7 +211,7 @@ public class GenomaDataAudit {
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
 //        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
 
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA_AUDIT), TblsGenomaDataAudit.Study.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsGenomaDataAudit.Study.TBL.getName(), 
                 fieldNames, fieldValues);
     }
     

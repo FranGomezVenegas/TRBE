@@ -33,6 +33,8 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
+
 
 /**
  *
@@ -147,7 +149,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 if (whereFldName.length==0){
                     return;
                 }
-                Object[][] userSessionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP,TblsApp.AppSession.TBL.getName(), 
+                Object[][] userSessionInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.AppSession.TBL.getName(), 
                         whereFldName, whereFldValue, 
                         fieldsToRetrieve, new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()+" desc"});
                 JSONArray userSessionArr = new JSONArray();
@@ -165,7 +167,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 return; 
             case USER_SESSION_INCLUDING_AUDIT_HISTORY:
                 fieldsToRetrieve=TblsApp.AppSession.getAllFieldNames();
-                userSessionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP,TblsApp.AppSession.TBL.getName(), 
+                userSessionInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.AppSession.TBL.getName(), 
                         new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, 
                         new Object[]{argValues[0]}, 
                         fieldsToRetrieve, new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()+" desc"});
@@ -184,13 +186,13 @@ public class UserSessionAPIfrontend extends HttpServlet {
                             if (!userSessionExistAtProcLevel(curProc, sessionId)){
                                 procAuditJson.put("proc_audit_records", "No actions performed during this session on this procedure");
                             }else{
-                                Object[] procAuditTablesList = getProcAuditTablesList(LPPlatform.buildSchemaName(curProc.replace(String.valueOf((char)34), ""), LPPlatform.SCHEMA_DATA_AUDIT));
+                                Object[] procAuditTablesList = getProcAuditTablesList(LPPlatform.buildSchemaName(curProc.replace(String.valueOf((char)34), ""), GlobalVariables.Schemas.DATA_AUDIT.getName()));
                                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procAuditTablesList[0].toString()))
                                     procAuditJson.put("proc_audit_records", curProc+". ERROR. No tables in audit schema");
                                 else{
                                     for (Object curTable: procAuditTablesList){
                                         String[] procAuditTablesFieldsToRetrieve=getAuditTableAllFields("data", curTable.toString());
-                                        Object[][] dataAuditCurTableInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc, LPPlatform.SCHEMA_DATA_AUDIT), curTable.toString(), 
+                                        Object[][] dataAuditCurTableInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc, GlobalVariables.Schemas.DATA_AUDIT.getName()), curTable.toString(), 
                                             new String[]{TblsDataAudit.Sample.FLD_APP_SESSION_ID.getName()}, new Object[]{sessionId}, 
                                             procAuditTablesFieldsToRetrieve, 
                                             new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
@@ -218,7 +220,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
                         if (investFldPosic>-1){
                             Integer investigationId=Integer.valueOf(currInvestigation[investFldPosic].toString());
                             fieldsToRetrieve=TblsProcedure.InvestObjects.getAllFieldNames();
-                            incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE),TblsProcedure.InvestObjects.TBL.getName(), 
+                            incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()),TblsProcedure.InvestObjects.TBL.getName(), 
                                     new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, 
                                     new Object[]{investigationId}, 
                                     fieldsToRetrieve, new String[]{TblsProcedure.InvestObjects.FLD_ID.getName()});
@@ -238,14 +240,14 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, userSessionArr);
 /*            case USER_SESSION_AUDIT_HISTORY:
-                String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
+                String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
                 JSONArray jArray = new JSONArray(); 
                 if (!isProgramCorrectiveActionEnable(schemaPrefix)){
                   JSONObject jObj=new JSONObject();
                   jArray.add(jObj.put(TblsProcedure.ProgramCorrectiveAction.TBL.getName(), "program corrective action not active!"));
                 }
                 else{
-                  Object[][] investigationResultsPendingDecision = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                  Object[][] investigationResultsPendingDecision = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                           new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                           new String[]{statusClosed}, 
                           TblsProcedure.ProgramCorrectiveAction.getAllFieldNames(), new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()});
@@ -266,7 +268,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
 
                 fieldsToRetrieve=TblsApp.AppSession.getAllFieldNames();
-                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE),TblsApp.AppSession.TBL.getName(), 
+                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()),TblsApp.AppSession.TBL.getName(), 
                         new String[]{TblsApp.AppSession.FLD_ID.getName()}, 
                         new Object[]{investigationId}, 
                         fieldsToRetrieve, new String[]{TblsApp.AppSession.FLD_ID.getName()+" desc"});
@@ -276,7 +278,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
                         JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
                         
                         fieldsToRetrieve=TblsProcedure.InvestObjects.getAllFieldNames();
-                        incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE),TblsProcedure.InvestObjects.TBL.getName(), 
+                        incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()),TblsProcedure.InvestObjects.TBL.getName(), 
                                 new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, 
                                 new Object[]{investigationId}, 
                                 fieldsToRetrieve, new String[]{TblsProcedure.InvestObjects.FLD_ID.getName()});

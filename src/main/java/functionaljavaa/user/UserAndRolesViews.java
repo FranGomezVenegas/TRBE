@@ -13,6 +13,7 @@ import databases.TblsAppConfig;
 import databases.Token;
 import functionaljavaa.parameter.Parameter;
 import java.util.ResourceBundle;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -33,7 +34,7 @@ public class UserAndRolesViews {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
         if (!Boolean.valueOf(userIsCaseSensitive)) person=person.toLowerCase();        
-        Object[][] userByPerson = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), 
+        Object[][] userByPerson = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
                 new String[]{Users.FLD_PERSON_NAME.getName()}, new String[]{person}, new String[]{TblsApp.Users.FLD_USER_NAME.getName()}, new String[]{TblsApp.Users.FLD_USER_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userByPerson[0][0].toString())){return LPPlatform.LAB_FALSE;}
         return userByPerson[0][0].toString();
@@ -48,7 +49,7 @@ public class UserAndRolesViews {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
         if (!Boolean.valueOf(userIsCaseSensitive)) userName=userName.toLowerCase();
-        Object[][] personByUser = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), 
+        Object[][] personByUser = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
                 new String[]{TblsApp.Users.FLD_USER_NAME.getName()}, new String[]{userName}, new String[]{Users.FLD_PERSON_NAME.getName()}, new String[]{Users.FLD_PERSON_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0][0].toString())){return LPPlatform.LAB_FALSE;}
         return personByUser[0][0].toString();
@@ -66,7 +67,7 @@ public class UserAndRolesViews {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
         if (!Boolean.valueOf(userIsCaseSensitive)) user=user.toLowerCase();
-        return Rdbms.existsRecord(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), 
+        return Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
                 new String[]{Users.FLD_USER_NAME.getName(), Users.FLD_PASSWORD.getName()}, new Object[]{user, pass});
     }
 
@@ -80,13 +81,13 @@ public class UserAndRolesViews {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
         if (!Boolean.valueOf(userIsCaseSensitive)) user=user.toLowerCase();
-        return Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), 
+        return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
                 new String[]{fieldName}, new Object[]{newValue}, 
                 new String[]{Users.FLD_USER_NAME.getName()}, new Object[]{user});
     }
     
     public static final Object[] setUserDefaultTabsOnLogin(Token token, String tabs){
-        return Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), 
+        return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
                 new String[]{TblsApp.Users.FLD_TABS_ON_LOGIN.getName()}, new Object[]{tabs}, 
                 new String[]{TblsApp.Users.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()});
     }
@@ -98,10 +99,10 @@ public class UserAndRolesViews {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personIdDiagn[0].toString())) return personIdDiagn;
         String personId=personIdDiagn[1].toString();
         Object[] personCreatedDiagn; 
-        personCreatedDiagn = Rdbms.insertRecordInTable(LPPlatform.SCHEMA_CONFIG, TblsAppConfig.Person.TBL.getName(), 
+        personCreatedDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
                 new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName(), TblsAppConfig.Person.FLD_FIRST_NAME.getName()}, new Object[]{personId, uName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personCreatedDiagn[0].toString())) return personCreatedDiagn;
-        Object[] userCreatedDiagn = Rdbms.insertRecordInTable(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), 
+        Object[] userCreatedDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
                 new String[]{Users.FLD_USER_NAME.getName(), Users.FLD_PASSWORD.getName(), Users.FLD_PERSON_NAME.getName()}, new Object[]{uName, "trazit123", personId});        
         return userCreatedDiagn;
         //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet", null);        

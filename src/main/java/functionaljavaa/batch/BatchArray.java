@@ -16,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.serial.SerialArray;
 import javax.sql.rowset.serial.SerialException;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -255,7 +255,7 @@ public final class BatchArray extends Batch{
         for (String[] array :this.batchPosic) {         
               singleDArray.addAll(Arrays.asList(array));
         }       
-        schemaName = LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_DATA);
+        schemaName = LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
         
         return Rdbms.insertRecordInTable(schemaName, tableName, 
                                                 new String[]{"name", "template", "template_version", "array_num_rows",
@@ -272,7 +272,7 @@ public final class BatchArray extends Batch{
      * @return
      */
     public static BatchArray dbGetBatchArray(String schemaName, String batchName){
-        schemaName = LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_DATA);
+        schemaName = LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
         String tableName = "batch_java";
         Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
                 new String[]{"name"}, new Object[]{batchName}, 

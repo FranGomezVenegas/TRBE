@@ -11,7 +11,7 @@ import static lbplanet.utilities.LPMath.nthroot;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -91,7 +91,7 @@ public class ConfigSamplingPlanForSpec {
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }  
     if (!devMode){
-        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);         
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());         
         Object[][] mandatoryFieldsCheck = LPPlatform.mandatoryFieldsCheck(schemaDataName, fieldsName, fieldsValue, tableName, actionName);                
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mandatoryFieldsCheck[0][0].toString())){ return mandatoryFieldsCheck;}
         for (Integer i=0;i<mandatoryFieldsCheck[1].length;i++){
@@ -116,7 +116,7 @@ public class ConfigSamplingPlanForSpec {
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     } 
     if (!devMode){
-        diagnoses = LPPlatform.configObjectExists(LPPlatform.SCHEMA_CONFIG, fieldsName, fieldsValue, tableName);
+        diagnoses = LPPlatform.configObjectExists(GlobalVariables.Schemas.CONFIG.getName(), fieldsName, fieldsValue, tableName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
     }
     if (devMode){
@@ -128,7 +128,7 @@ public class ConfigSamplingPlanForSpec {
     }  
     if (!devMode){
         LPPlatform labPlat = new LPPlatform();
-        diagnoses = labPlat.specialFieldsCheck(LPPlatform.SCHEMA_DATA, fieldsName, fieldsValue, tableName, actionName);
+        diagnoses = labPlat.specialFieldsCheck(GlobalVariables.Schemas.DATA.getName(), fieldsName, fieldsValue, tableName, actionName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
     }
     if (devMode){
@@ -139,7 +139,7 @@ public class ConfigSamplingPlanForSpec {
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }  
     if (!devMode){
-        diagnoses = Rdbms.insertRecordInTable(LPPlatform.SCHEMA_DATA, tableName, fieldsName, fieldsValue);    
+        diagnoses = Rdbms.insertRecordInTable(GlobalVariables.Schemas.DATA.getName(), tableName, fieldsName, fieldsValue);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
     }    
     if (devMode){

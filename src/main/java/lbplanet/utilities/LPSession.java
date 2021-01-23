@@ -10,6 +10,7 @@ import databases.TblsApp;
 import databases.TblsAppAudit;
 import databases.TblsDataAudit;
 import java.time.LocalDateTime;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  * Create one new app.app_session
@@ -37,7 +38,7 @@ public class LPSession {
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, remoteAddr);
                 
                 
-        return Rdbms.insertRecordInTable(LPPlatform.SCHEMA_APP, tableName, fieldsName, fieldsValue);            
+        return Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), tableName, fieldsName, fieldsValue);            
     }
     
     /**
@@ -53,7 +54,7 @@ public class LPSession {
             fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, TblsApp.AppSession.FLD_DATE_STARTED.getName());
         }
         
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, tableName, 
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName, 
                 new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsToRetrieve);
         return LPArray.array2dTo1d(recordFieldsBySessionId);
     }
@@ -72,7 +73,7 @@ public class LPSession {
     public static Object[] addProcessSession( String processName, Integer appSessionId, String[] fieldsNamesToInsert){
         addProcessToAppSession(processName, appSessionId);
         String tableName = TblsDataAudit.Session.TBL.getName();
-        String schemaAuditName = LPPlatform.buildSchemaName(processName, LPPlatform.SCHEMA_DATA_AUDIT);       
+        String schemaAuditName = LPPlatform.buildSchemaName(processName, GlobalVariables.Schemas.DATA_AUDIT.getName());       
         
         Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(schemaAuditName, tableName, 
                 new String[]{TblsDataAudit.Session.FLD_SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
@@ -96,7 +97,7 @@ public class LPSession {
      * @return
      */    
     public static Object[] addProcessToAppSession(String processName, Integer appSessionId){
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.AppSession.TBL.getName(), 
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.AppSession.TBL.getName(), 
                 new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, new Object[]{appSessionId}, 
                 new String[]{TblsApp.AppSession.FLD_PROCEDURES.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString()))        
@@ -104,9 +105,9 @@ public class LPSession {
         String[] sessionProcsArr=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString().split("\\|");
         String procListValue=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString();
         if (procListValue.length()>0) procListValue=procListValue+"|";
-        procListValue=procListValue+processName.replace("-"+LPPlatform.SCHEMA_DATA_AUDIT, "");
+        procListValue=procListValue+processName.replace("-"+GlobalVariables.Schemas.DATA_AUDIT.getName(), "");
         if (!LPArray.valueInArray(sessionProcsArr, processName))
-            return Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.AppSession.TBL.getName(), 
+            return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.AppSession.TBL.getName(), 
                     new String[]{TblsApp.AppSession.FLD_PROCEDURES.getName()}, new Object[]{procListValue}, 
                     new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, new Object[]{appSessionId});
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>",new Object[]{processName, appSessionId} );
@@ -115,7 +116,7 @@ public class LPSession {
     public static Object[] addAppSession(Integer appSessionId, String[] fieldsNamesToInsert){
         String tableName = TblsAppAudit.Session.TBL.getName();        
         
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP_AUDIT, tableName, 
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(), tableName, 
                 new String[]{TblsAppAudit.Session.FLD_SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())){
             Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);
@@ -123,7 +124,7 @@ public class LPSession {
                 fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsAppAudit.Session.FLD_SESSION_ID.getName());
                 appSession = LPArray.addValueToArray1D(appSession, appSessionId);
             }
-            return Rdbms.insertRecordInTable(LPPlatform.SCHEMA_APP_AUDIT, tableName, fieldsNamesToInsert, appSession);
+            return Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_AUDIT.getName(), tableName, fieldsNamesToInsert, appSession);
         }
         return LPArray.array2dTo1d(recordFieldsBySessionId);
     }

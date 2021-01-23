@@ -16,7 +16,7 @@ import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -69,7 +69,7 @@ public class DataStudyObjectsVariableValues {
                         fieldsValue=LPArray.addValueToArray1D(fieldsValue, curFld[1]);
                     }
                 }
-                diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyVariableValues.TBL.getName(), 
+                diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyVariableValues.TBL.getName(), 
                     fieldsName, fieldsValue);            
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
                     GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.ADD_VARIABLE_SET_TO_STUDY_OBJECT.toString(), TblsGenomaData.StudyVariableValues.TBL.getName(), Arrays.toString(currVar), 
@@ -90,7 +90,7 @@ public class DataStudyObjectsVariableValues {
         String[] fieldsName=new String[]{TblsGenomaData.StudyVariableValues.FLD_STUDY.getName(), TblsGenomaData.StudyVariableValues.FLD_OWNER_TABLE.getName(), TblsGenomaData.StudyVariableValues.FLD_OWNER_ID.getName(),
             TblsGenomaData.StudyVariableValues.FLD_VARIABLE_SET.getName(), TblsGenomaData.StudyVariableValues.FLD_NAME.getName()};
         Object[] fieldsValue=new Object[]{studyName, ownerTable, ownerId, variableSetName, variableName};
-        Object[][] objectVariablePropInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyVariableValues.TBL.getName(),
+        Object[][] objectVariablePropInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyVariableValues.TBL.getName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(objectVariablePropInfo[0]))) return objectVariablePropInfo;
         
@@ -110,7 +110,7 @@ public class DataStudyObjectsVariableValues {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null);
         String[] updFieldsName=new String[]{TblsGenomaData.StudyVariableValues.FLD_VALUE.getName()};
         Object[] updFieldsValue=new Object[]{newValue};
-        diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyVariableValues.TBL.getName(), 
+        diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyVariableValues.TBL.getName(), 
             updFieldsName, updFieldsValue, new String[]{TblsGenomaData.StudyVariableValues.FLD_ID.getName()}, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())});            
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
             GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.STUDY_OBJECT_SET_VARIABLE_VALUE.toString(), TblsGenomaData.StudyVariableValues.TBL.getName(), newValue, 

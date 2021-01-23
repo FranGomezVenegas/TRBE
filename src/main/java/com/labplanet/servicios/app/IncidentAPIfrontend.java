@@ -27,6 +27,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -77,7 +78,7 @@ public class IncidentAPIfrontend extends HttpServlet {
         switch (endPoint){
             case USER_OPEN_INCIDENTS:              
                 String[] fieldsToRetrieve=TblsApp.Incident.getAllFieldNames();
-                Object[][] incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP,TblsApp.Incident.TBL.getName(), 
+                Object[][] incidentsNotClosed=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.Incident.TBL.getName(), 
                         new String[]{TblsApp.Incident.FLD_STATUS.getName()+"<>", TblsApp.Incident.FLD_PERSON_CREATION.getName()}, 
                         new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), token.getPersonName()}, 
                         fieldsToRetrieve, new String[]{TblsApp.Incident.FLD_ID.getName()+" desc"});
@@ -97,7 +98,7 @@ public class IncidentAPIfrontend extends HttpServlet {
                 if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
 
                 fieldsToRetrieve=TblsAppAudit.Incident.getAllFieldNames();
-                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP_AUDIT,TblsAppAudit.Incident.TBL.getName(), 
+                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(),TblsAppAudit.Incident.TBL.getName(), 
                         new String[]{TblsAppAudit.Incident.FLD_INCIDENT_ID.getName()}, 
                         new Object[]{incId}, 
                         fieldsToRetrieve, new String[]{TblsAppAudit.Incident.FLD_DATE.getName()+" desc"});

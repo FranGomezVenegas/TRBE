@@ -16,7 +16,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -68,7 +68,7 @@ public class SamplingPlanEntry {
         this.errorsjArr=new JSONArray();
         this.hasErrors=false;
         List<SamplingPlanEntryItem> myList = new ArrayList<>();
-        Object[][] materialSampPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_CONFIG), TblsInspLotRMConfig.MaterialSamplingPlan.TBL.getName(), 
+        Object[][] materialSampPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.MaterialSamplingPlan.TBL.getName(), 
             new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.FLD_MATERIAL.getName()}, new Object[]{materialName}, 
             new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.FLD_ENTRY_NAME.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FLD_ANALYSIS_VARIATION.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FLD_ALGORITHM.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FLD_FIX_SAMPLES_NUM.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialSampPlanInfo[0][0].toString())){

@@ -14,7 +14,7 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -64,7 +64,7 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
     public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample, Integer preAuditId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
+        String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);
 if (1 == 1) 
             return"ERROR: specialFieldCheckSampleAnalysisAnalyst not implemented yet.";

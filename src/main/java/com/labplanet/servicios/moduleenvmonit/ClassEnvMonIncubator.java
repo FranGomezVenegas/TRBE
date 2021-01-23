@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -38,21 +39,21 @@ public class ClassEnvMonIncubator {
                 case EM_INCUBATION_ACTIVATE:
                     instrName=argValues[0].toString();               
                     actionDiagnoses=ConfigIncubator.activateIncubator(instrName, token.getPersonName());
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), instrName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), instrName);                
                     this.messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_DEACTIVATE:
                     instrName=argValues[0].toString();
                     actionDiagnoses=ConfigIncubator.deactivateIncubator(instrName, token.getPersonName());
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), instrName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), instrName);                
                     this.messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_ADD_TEMP_READING:
                     instrName=argValues[0].toString();
                     temperature=(BigDecimal) argValues[1];
                     actionDiagnoses=DataIncubatorNoteBook.newTemperatureReading(instrName, token.getPersonName(),temperature);                    
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), instrName);                
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), "instrument_incubator_notebook", actionDiagnoses[actionDiagnoses.length-1]);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), instrName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), "instrument_incubator_notebook", actionDiagnoses[actionDiagnoses.length-1]);                
                     this.messageDynamicData=new Object[]{temperature, instrName};
                     break;      
         }

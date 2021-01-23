@@ -35,8 +35,8 @@ public class DataModuleSample{
             newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue);
                         
             /*if (!newProjSample[3].equalsIgnoreCase(LPPlatform.LAB_FALSE)){
-            String schemaDataNameProj = LPPlatform.SCHEMA_DATA;
-            String schemaConfigNameProj = LPPlatform.SCHEMA_CONFIG;
+            String schemaDataNameProj = GlobalVariables.Schemas.DATA.getName();
+            String schemaConfigNameProj = GlobalVariables.Schemas.CONFIG.getName();
             LPPlatform labPlat = new LPPlatform();
             schemaDataNameProj = labPlat.buildSchemaName(schemaPrefix, schemaDataNameProj);
             schemaConfigNameProj = labPlat.buildSchemaName(schemaPrefix, schemaConfigNameProj);

@@ -33,6 +33,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -195,7 +196,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case SPEC_UPDATE:
@@ -209,7 +210,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case ANALYSIS_NEW:
@@ -227,7 +228,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case ANALYSIS_UPDATE:
@@ -241,7 +242,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case SPEC_LIMIT_NEW:
@@ -295,7 +296,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             default:                

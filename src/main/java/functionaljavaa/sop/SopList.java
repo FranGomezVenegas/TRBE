@@ -9,7 +9,7 @@ import databases.Rdbms;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -115,7 +115,7 @@ public class SopList {
      * @return
      */
     public Object[] dbInsertSopList( String schemaPrefix, String userInfoId){
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
+        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName());
 
         //requires added_on
         String[] fieldNames = new String[0];
@@ -143,7 +143,7 @@ public class SopList {
      * @return
      */
     public Object[] dbUpdateSopListSopAssigned( String schemaPrefix, String[] sopAssigned){            
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
+        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName());
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, tableName, 
                                         new String[]{"sop_assigned"}, new Object[]{this.sopListId}, 
                                         new String[]{"sop_list_id"}, new Object[]{sopAssigned});

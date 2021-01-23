@@ -16,7 +16,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 
 enum InvestigationAuditEvents{NEW_INVESTIGATION_CREATED, OBJECT_ADDED_TO_INVESTIGATION, CLOSED_INVESTIGATION, CAPA_DECISION
 //CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT
@@ -49,7 +49,7 @@ public class Investigation {
         String[] updFieldName=new String[]{TblsProcedure.Investigation.FLD_CREATED_ON.getName(), TblsProcedure.Investigation.FLD_CREATED_BY.getName(), TblsProcedure.Investigation.FLD_CLOSED.getName()};
         Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), false};
         
-        Object[] diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+        Object[] diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
             updFieldName, updFieldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
         String investIdStr=diagnostic[diagnostic.length-1].toString();
@@ -70,7 +70,7 @@ public class Investigation {
         String[] updFieldName=new String[]{TblsProcedure.Investigation.FLD_CLOSED.getName(), TblsProcedure.Investigation.FLD_CLOSED_ON.getName(), TblsProcedure.Investigation.FLD_CLOSED_BY.getName()};
         Object[] updFieldValue=new Object[]{true, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
             updFieldName, updFieldValue,
             new String[]{TblsProcedure.Investigation.FLD_ID.getName()}, new Object[]{investId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
@@ -103,7 +103,7 @@ public class Investigation {
                 checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_OBJECT_NAME.getName());
                 checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[1]);
             }
-            Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.InvestObjects.TBL.getName(), 
+            Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.InvestObjects.TBL.getName(), 
                     checkFieldName, checkFieldValue);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) 
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Object <*1*> already added in <*2*>, should be two pieces of data separated by *", new Object[]{curObj, investId});
@@ -122,7 +122,7 @@ public class Investigation {
             updFieldName=LPArray.addValueToArray1D(updFieldName, baseFieldName);
             updFieldValue=LPArray.addValueToArray1D(updFieldValue, baseFieldValue);
             
-            diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.InvestObjects.TBL.getName(), 
+            diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.InvestObjects.TBL.getName(), 
                 updFieldName, updFieldValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){                
@@ -148,7 +148,7 @@ public class Investigation {
         Object[] updFieldValue=new Object[]{capaRequired, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         if (capaFieldName!=null) updFieldName=LPArray.addValueToArray1D(updFieldName, capaFieldName);
         if (capaFieldValue!=null) updFieldValue=LPArray.addValueToArray1D(updFieldValue, LPArray.convertStringWithDataTypeToObjectArray(capaFieldValue));
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
             updFieldName, updFieldValue,
             new String[]{TblsProcedure.Investigation.FLD_ID.getName()}, new Object[]{investId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
@@ -161,7 +161,7 @@ public class Investigation {
     
     private static Object[] isInvestigationClosed(Integer investId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] investigationInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+        Object[][] investigationInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
             new String[]{TblsProcedure.Investigation.FLD_ID.getName()}, new Object[]{investId}, new String[]{TblsProcedure.Investigation.FLD_CLOSED.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "InvestigationNotFound <*1*>", new Object[]{investId});

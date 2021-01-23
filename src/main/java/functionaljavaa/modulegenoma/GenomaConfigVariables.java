@@ -10,7 +10,7 @@ import static functionaljavaa.modulegenoma.GenomaUtilities.addObjectToUnstructur
 import static functionaljavaa.modulegenoma.GenomaUtilities.removeObjectToUnstructuredField;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -19,7 +19,7 @@ public class GenomaConfigVariables {
     
 public static Object[] variableSetAddVariable(String variableSetName, String variableName) {
     
-    Object[] updateFamilyIndividuals=addObjectToUnstructuredField(LPPlatform.SCHEMA_CONFIG, TblsGenomaConfig.VariablesSet.TBL.getName(), 
+    Object[] updateFamilyIndividuals=addObjectToUnstructuredField(GlobalVariables.Schemas.CONFIG.getName(), TblsGenomaConfig.VariablesSet.TBL.getName(), 
             new String[]{TblsGenomaConfig.VariablesSet.FLD_NAME.getName()}, new Object[]{variableSetName}, 
             TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName(), variableName, variableName);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
@@ -35,7 +35,7 @@ public static Object[] variableSetAddVariable(String variableSetName, String var
 public static Object[] variableSetRemoveVariable(String variableSetName, String variableName) {
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     
-    Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(LPPlatform.SCHEMA_CONFIG, TblsGenomaConfig.VariablesSet.TBL.getName(), 
+    Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(GlobalVariables.Schemas.CONFIG.getName(), TblsGenomaConfig.VariablesSet.TBL.getName(), 
             new String[]{TblsGenomaConfig.VariablesSet.FLD_NAME.getName()}, new Object[]{variableSetName}, 
             TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName(), TblsGenomaConfig.Variables.TBL.getName(), variableName, variableName);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {

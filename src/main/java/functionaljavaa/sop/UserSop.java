@@ -16,7 +16,7 @@ import functionaljavaa.user.UserAndRolesViews;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -110,7 +110,7 @@ public class UserSop {
     
     private Object[] userSopCertifiedBySopInternalLogic( String procInstanceNameName, String userInfoId, String sopIdFieldName, String sopIdFieldValue ) {
                         
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceNameName, LPPlatform.SCHEMA_CONFIG);
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceNameName, GlobalVariables.Schemas.CONFIG.getName());
         
         UserProfile usProf = new UserProfile();
         Object[] userSchemas = usProf.getAllUserProcedurePrefix(userInfoId);
@@ -240,7 +240,7 @@ public class UserSop {
                 
         StringBuilder query = new StringBuilder(0);
         for(String currSchemaPrefix: procInstanceName){ 
-            Object[] viewExistInSchema= Rdbms.dbViewExists(currSchemaPrefix, LPPlatform.SCHEMA_DATA, viewName);
+            Object[] viewExistInSchema= Rdbms.dbViewExists(currSchemaPrefix, GlobalVariables.Schemas.DATA.getName(), viewName);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())){
                 query.append("(select ");
                 for(String fRet: fieldsToReturn){
@@ -248,7 +248,7 @@ public class UserSop {
                 }
                 query.deleteCharAt(query.length() - 1);
 
-                if (currSchemaPrefix.contains(LPPlatform.SCHEMA_DATA)){
+                if (currSchemaPrefix.contains(GlobalVariables.Schemas.DATA.getName())){
                     query.append(" from \"").append(currSchemaPrefix).append("\".").append(viewName).append(" where 1=1");}
                 else{query.append(" from \"").append(currSchemaPrefix).append("-data\".").append(viewName).append(" where 1=1");}
                 for(String fFN: filterFieldName){
@@ -257,7 +257,7 @@ public class UserSop {
                 }
                 query.append(") union ");
             }else
-                LPPlatform.saveMessageInDbErrorLog("", new Object[]{currSchemaPrefix, LPPlatform.SCHEMA_DATA, viewName}, 
+                LPPlatform.saveMessageInDbErrorLog("", new Object[]{currSchemaPrefix, GlobalVariables.Schemas.DATA.getName(), viewName}, 
                         new Object[]{"UserSop", "UserSop", "getUserProfileFieldValues", 290}, "view not exist in this given schema", new Object[0]);
         }       
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
@@ -333,7 +333,7 @@ public class UserSop {
      * @return
      */
     private Object[] addSopToUserInternalLogic( String procInstanceName, String personName, String sopIdFieldName, Object sopIdFieldValue){
-        String schemaName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
+        String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         Object[] exists = Rdbms.existsRecord(schemaName, TblsData.UserSop.TBL.getName(), new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
                 
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(exists[0].toString()))
@@ -386,7 +386,7 @@ public class UserSop {
      * @return
      */
     public static final Object[] userSopMarkedAsCompletedByUser( String procInstanceName, String userName, String sopName ) {
-        String schemaName = LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
+        String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName);
         if(LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())){return LPArray.array2dTo1d(sopInfo);}
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){

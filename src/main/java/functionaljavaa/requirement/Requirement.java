@@ -5,10 +5,9 @@
  */
 package functionaljavaa.requirement;
 
-import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
 import databases.TblsProcedure;
-
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -23,7 +22,7 @@ public class Requirement {
      */
     public static final Object[][] getProcedureByProcInstanceName( String procInstanceName){
                 
-        String schemaName = LPPlatform.SCHEMA_REQUIREMENTS;
+        String schemaName = GlobalVariables.Schemas.REQUIREMENTS.getName();
         String tableName = TblsProcedure.ProcedureInfo.TBL.getName();
         String[] whereFldName = new String[]{TblsProcedure.ProcedureInfo.FLD_SCHEMA_PREFIX.getName()};
         Object[] whereFldValue = new Object[]{procInstanceName};

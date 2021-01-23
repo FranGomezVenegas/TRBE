@@ -6,7 +6,6 @@
 package com.labplanet.servicios;
 
 import lbplanet.utilities.LPHttp;
-import lbplanet.utilities.LPPlatform;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
+import trazit.globalvariables.GlobalVariables;
 
 
 /**
@@ -33,7 +33,7 @@ public class ResponseSuccess extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
         try (PrintWriter out = response.getWriter()) {
-            String responseMsg=(String) request.getAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME);
+            String responseMsg=(String) request.getAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName());
             response.getWriter().write(responseMsg);
             Response.ok().build();    
         } catch (IOException ex) {

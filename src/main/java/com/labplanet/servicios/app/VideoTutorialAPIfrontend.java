@@ -26,6 +26,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.parser.JSONParser;
+import trazit.globalvariables.GlobalVariables;
+
 
 /**
  *
@@ -213,7 +215,7 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
              
             switch (endPoint){
             case ALL_ACTIVE_VIDEO_TUTORIALS:
-                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.SCHEMA_APP, TblsApp.VideoTutorial.TBL.getName(), 
+                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.VideoTutorial.TBL.getName(), 
                         new String[]{TblsApp.VideoTutorial.FLD_ACTIVE.getName()}, new Object[]{true},
                         TblsApp.VideoTutorial.getAllFieldNames(), new String[]{TblsApp.VideoTutorial.FLD_ID.getName(), TblsApp.VideoTutorial.FLD_PARENT_ID.getName(), TblsApp.VideoTutorial.FLD_ORDER_NUMBER.getName()});
                 JSONArray jArr=new JSONArray();
@@ -227,7 +229,7 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, json);
                 return;
 /*            case ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY:
-                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.SCHEMA_APP, TblsApp.VideoTutorial.TBL.getName(), 
+                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.VideoTutorial.TBL.getName(), 
                         new String[]{TblsApp.VideoTutorial.FLD_ACTIVE.getName()}, new Object[]{true},
                         TblsApp.VideoTutorial.getAllFieldNames(), new String[]{TblsApp.VideoTutorial.FLD_ID.getName(), TblsApp.VideoTutorial.FLD_PARENT_ID.getName(), TblsApp.VideoTutorial.FLD_ORDER_NUMBER.getName()});
 

@@ -28,6 +28,7 @@ import functionaljavaa.sop.UserSop;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -174,7 +175,7 @@ public class AppProcedureListAPI extends HttpServlet {
             JSONArray procedures = new JSONArray();     
             for (Object curProc: allUserProcedurePrefix){
                 JSONObject procedure = new JSONObject();
-                String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), LPPlatform.SCHEMA_PROCEDURE);
+                String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
 
                 if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}           
 

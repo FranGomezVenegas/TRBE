@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
+
 /**
  *
  * @author Administrator
@@ -150,7 +152,7 @@ public class SopUserAPI extends HttpServlet {
                 }else{
                     messageDynamicData=new Object[]{sopName};                
                 }
-                rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsData.UserSop.TBL.getName(), TblsData.UserSop.TBL.getName(), sopName);
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.UserSop.TBL.getName(), TblsData.UserSop.TBL.getName(), sopName);
                 break;
             default:                
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              

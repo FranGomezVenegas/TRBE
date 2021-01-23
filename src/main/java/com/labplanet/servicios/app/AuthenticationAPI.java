@@ -37,6 +37,7 @@ import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.user.UserAndRolesViews.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT;
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -144,7 +145,7 @@ public class AuthenticationAPI extends HttpServlet {
                     String sessionIdStr = sessionId.toString();
 
                     Date nowLocalDate =LPDate.getTimeStampLocalDate();
-                    Object[][] userInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, Users.TBL.getName(), 
+                    Object[][] userInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), Users.TBL.getName(), 
                             new String[]{Users.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()}, 
                             new String[]{Users.FLD_ESIGN.getName(), TblsApp.Users.FLD_TABS_ON_LOGIN.getName()});
                    
@@ -226,7 +227,7 @@ public class AuthenticationAPI extends HttpServlet {
                             token.geteSign());
                     Rdbms.closeRdbms();  
                     RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
                     jsonObj = new JSONObject();
                     jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
@@ -261,7 +262,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                             token.geteSign());
                     Rdbms.closeRdbms();  
                     rObj=RelatedObjects.getInstanceForActions();
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
                     jsonObj = new JSONObject();
                     jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
@@ -290,7 +291,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
                     rObj=RelatedObjects.getInstanceForActions();
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
                     jsonObj = new JSONObject();
                     jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);

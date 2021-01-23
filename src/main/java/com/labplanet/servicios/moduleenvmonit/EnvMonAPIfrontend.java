@@ -41,6 +41,7 @@ import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPKPIs;
 import trazit.session.ProcedureRequestSession;
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -301,7 +302,7 @@ GlobalAPIsParams.
             switch (endPoint){
                 case PROGRAMS_LIST: 
 
-                    String schemaName=LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA);
+                    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
                     StringBuilder programFldNameList = new StringBuilder();
                     programFldNameList.append(request.getParameter("programFldNameList"));   
                       if (programFldNameList==null || "null".equalsIgnoreCase(programFldNameList.toString())) {
@@ -423,7 +424,7 @@ GlobalAPIsParams.
                         String[] fieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.FLD_CURRENT_STAGE.getName()};
                         String[] whereFieldNames=new String[]{TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName()}; 
                         Object[] whereFieldValues=new Object[]{currProgram};
-                        Object[][] samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                        Object[][] samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), 
                                 fieldToRetrieveArr, 
                                 whereFieldNames, whereFieldValues,
                                 new String[]{"COUNTER desc"}); 
@@ -444,7 +445,7 @@ GlobalAPIsParams.
                             TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_AREA.getName(), 
                             TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_VARIATION_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_ANALYSIS_VARIATION.getName() 
                         };                            
-                        Object[][] programCalendarDatePending=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewProgramScheduledLocations.TBL.getName(), 
+                        Object[][] programCalendarDatePending=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ViewProgramScheduledLocations.TBL.getName(), 
                                 new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                                 fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_DATE.getName()});
                         JSONArray programConfigScheduledPointsJsonArray=new JSONArray();
@@ -533,7 +534,7 @@ GlobalAPIsParams.
                                 fieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.FLD_CURRENT_STAGE.getName()};
                                 whereFieldNames=new String[]{TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.Sample.FLD_LOCATION_NAME.getName()}; 
                                 whereFieldValues=new Object[]{currProgram, locationName};
-                                samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                                samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), 
                                         fieldToRetrieveArr, 
                                         whereFieldNames, whereFieldValues,
                                         new String[]{"COUNTER desc"}); 
@@ -631,14 +632,14 @@ GlobalAPIsParams.
                   if (programFldSortList==null) programFldSortList = DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_SORT;                     
                   programFldSortArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programFldSortList);
 
-                  String statusClosed=Parameter.getParameterBundle(procInstanceName+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
+                  String statusClosed=Parameter.getParameterBundle(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
                   JSONArray jArray = new JSONArray(); 
                   if (!isProgramCorrectiveActionEnable(procInstanceName)){
                     JSONObject jObj=new JSONObject();
                     jArray.add(jObj.put(programFldNameArray, "program corrective action not active!"));
                   }
                   else{
-                    Object[][] programCorrectiveAction = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_PROCEDURE), ProgramCorrectiveAction.TBL.getName(), 
+                    Object[][] programCorrectiveAction = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), ProgramCorrectiveAction.TBL.getName(), 
                             new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                             new String[]{programName, statusClosed}, 
                             programFldNameArray, programFldSortArray);
@@ -661,7 +662,7 @@ GlobalAPIsParams.
                          fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fieldsList1.getName());
                        }                  
                      }
-                     Object[][] list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+                     Object[][] list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProductionLot.TBL.getName(), 
                              new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()}, 
                              new Object[]{true}
                              , fieldsToRetrieve

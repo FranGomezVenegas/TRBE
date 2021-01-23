@@ -73,7 +73,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 return;
             }            
             Integer numEvaluationArguments = tstOut.getNumEvaluationArguments();
-            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
+            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
             
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             
@@ -164,7 +164,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                             !TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic()) ){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length;
-//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
 //                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length}, 
 //                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                         break;      
@@ -174,7 +174,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                     && LPPlatform.LAB_FALSE.equalsIgnoreCase(functionEvaluation[0].toString())){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
-//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
 //                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation returning false "+(iLines+1)+" of "+testingContent.length}, 
 //                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                     break;

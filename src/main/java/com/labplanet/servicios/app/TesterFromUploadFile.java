@@ -8,7 +8,7 @@ package com.labplanet.servicios.app;
 import com.oreilly.servlet.MultipartRequest;
 import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
-import static functionaljavaa.testingscripts.LPTestingOutFormat.FILEHEADER_TOKEN;
+import functionaljavaa.testingscripts.LPTestingOutFormat.FileHeaderTags;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import java.io.IOException;
@@ -61,8 +61,8 @@ public class TesterFromUploadFile extends HttpServlet {
                     out.println(fileContentBuilder);                     
                     return;
                 }                        
-                String testerName = (String) csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TESTER_NAME_TAG_NAME);                           
-                String tokenStr = (String) csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TOKEN);                           
+                String testerName = (String) csvHeaderTags.get(FileHeaderTags.TESTER_NAME.getTagValue().toString());                           
+                String tokenStr = (String) csvHeaderTags.get(FileHeaderTags.TOKEN.getTagValue().toString());                           
                 if (tokenStr.length()==0){
                     PrintWriter out = response.getWriter();
                     out.println("No Token"); 
