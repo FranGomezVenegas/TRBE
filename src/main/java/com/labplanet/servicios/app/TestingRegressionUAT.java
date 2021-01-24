@@ -90,15 +90,7 @@ public class TestingRegressionUAT extends HttpServlet {
             }        
             
             LPTestingOutFormat.cleanLastRun(schemaPrefix, scriptId);
-
-            if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
-                LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[0][2].toString(), "before");
-
-            if (scriptTblInfo[0][3]!=null && Boolean.valueOf(scriptTblInfo[0][3].toString()))
-                LPTestingOutFormat.setDbErrorIndexValues(schemaPrefix, scriptId, "before");
-
-            if (scriptTblInfo[0][4]!=null && Boolean.valueOf(scriptTblInfo[0][4].toString()))
-                LPTestingOutFormat.setMessagesErrorIndexValues(schemaPrefix, scriptId, "before");
+            LPTestingOutFormat.getIdsBefore(schemaPrefix, scriptId, scriptTblInfo[0]);
             
             String testerName = scriptTblInfo[0][0].toString();
             Integer numEvalArgs = 0;

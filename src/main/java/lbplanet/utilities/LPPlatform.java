@@ -923,10 +923,10 @@ public class LPPlatform {
      * @param paramName
      */
     public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, Object[] callerInfo, String paramName) {          
-//        if (1==1) return;
+//if (1==1) return;
         String procInstanceName = LPNulls.replaceNull(schemaName);
         //if (Rdbms.stablishDBConection(false)){
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
+        Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName() , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
                 new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(),
                     TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName(), TblsCnfg.zzzPropertiesMissing.FLD_CLASS_CALLER.getName()},
                 new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName, Arrays.toString(callerInfo)});

@@ -865,6 +865,17 @@ public class LPTestingOutFormat {
             new Object[]{"NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING","NULL>>>DATETIME"},
             new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
     }
+    public static void getIdsBefore(String schemaPrefix, Integer scriptId, Object[] scriptTblInfo){
+        if (scriptTblInfo[2]!=null && scriptTblInfo[2].toString().length()>0)
+            LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[2].toString(), "before");
+
+        if (scriptTblInfo[3]!=null && Boolean.valueOf(scriptTblInfo[3].toString()))
+            LPTestingOutFormat.setDbErrorIndexValues(schemaPrefix, scriptId, "before");
+
+        if (scriptTblInfo[4]!=null && Boolean.valueOf(scriptTblInfo[4].toString()))
+            LPTestingOutFormat.setMessagesErrorIndexValues(schemaPrefix, scriptId, "before");
+    }
+    
     public static void setDbErrorIndexValues(String schemaPrefix, Integer scriptId, String moment){
         JSONArray auditIndexInfo=new JSONArray();       
         auditIndexInfo.add(getScriptCurrentFldValue(schemaPrefix, scriptId, TblsTesting.Script.FLD_DB_ERRORS_IDS_VALUES.getName()));
