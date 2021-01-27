@@ -124,8 +124,7 @@ public class TestingRegressionUAT extends HttpServlet {
             String schemaPrefix=request.getParameter("schemaPrefix");
             if (scriptTblInfo==null || scriptIdStr==null) return;
             Integer scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr)); 
-            if (procReqInstance!=null)
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
+            if ( (procReqInstance!=null) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())) ){
                 if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
                     LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[0][2].toString(), "completed");
 

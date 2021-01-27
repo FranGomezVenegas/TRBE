@@ -1411,6 +1411,8 @@ public class TblsCnfg {
          */
         FLD_PARAMETER_NAME("query_parameters", LPDatabase.stringNotNull())
         ,
+        FLD_PROCEDURE("procedure", LPDatabase.stringNotNull())
+        ,
 
         /**
          *

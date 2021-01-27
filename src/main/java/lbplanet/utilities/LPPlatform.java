@@ -926,10 +926,15 @@ public class LPPlatform {
 //if (1==1) return;
         String procInstanceName = LPNulls.replaceNull(schemaName);
         //if (Rdbms.stablishDBConection(false)){
+        String[] fldNames=new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(),
+            TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName(), TblsCnfg.zzzPropertiesMissing.FLD_CLASS_CALLER.getName()};
+        Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName, Arrays.toString(callerInfo)};
+        if (procInstanceName!=null){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_PROCEDURE.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, procInstanceName);
+        }
         Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName() , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
-                new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(),
-                    TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName(), TblsCnfg.zzzPropertiesMissing.FLD_CLASS_CALLER.getName()},
-                new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName, Arrays.toString(callerInfo)});
+                fldNames, fldValues);
         //}
     }      
     public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){

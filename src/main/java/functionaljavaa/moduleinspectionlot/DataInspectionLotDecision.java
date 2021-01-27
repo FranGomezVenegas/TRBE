@@ -82,7 +82,7 @@ public class DataInspectionLotDecision {
                 Object[] sampleAnalysisStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_STATUS.getName()));
                 for (Object curSmpAnaStatus: sampleAnalysisStatuses){
                     if (curSmpAnaStatus==null || curSmpAnaStatus.toString().length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lotHasOneSampleAnalysisWithNoStatus", null);
-                    if (!sampleStatusReviewed.equalsIgnoreCase(curSmpAnaStatus.toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lotHasNotReviewedSampleAnalysis", null);
+                    if (!sampleStatusReviewed.equalsIgnoreCase(curSmpAnaStatus.toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lotHasNotReviewedSampleAnalysis", new Object[]{lotName, procInstanceName});
                 }
             }
             if (Boolean.valueOf(sampleRevisionRequired)){            

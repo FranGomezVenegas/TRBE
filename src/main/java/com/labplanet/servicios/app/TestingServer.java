@@ -10,7 +10,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import databases.Token;
-import functionaljavaa.batch.incubator.DataBatchIncubator;
+import functionaljavaa.inventory.batch.DataBatchIncubator;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;

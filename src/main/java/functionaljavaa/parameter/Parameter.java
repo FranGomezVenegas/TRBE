@@ -37,13 +37,6 @@ public class Parameter {
     public static final String BUNDLE_TAG_PARAMETER_CONFIG_CONF="parameter.config.app-config";
 
     /**
-     *
-     */
-    //public static final String BUNDLE_TAG_TRANSLATION_DIR_PATH="translationDirPath";
-    //public static final String BUNDLE_TAG_PROCEDURE_BUSINESS_RULES_DIR_PATH="procedureBusinessRulesDirPath";
-    
-
-    /**
      *  Get the parameter value or blank otherwise.
      * @param parameterFolder - The directoy name LabPLANET (api messages/error trapping)/config (procedure business rules) (if null then config)
      * @param procName - procedureName
@@ -66,7 +59,8 @@ public class Parameter {
         
         try {
             prop = ResourceBundle.getBundle(filePath);
-            if (!prop.containsKey(parameterName)) {              
+            if (!prop.containsKey(parameterName)) {  
+                if (parameterName.toLowerCase().contains("encrypted_")) return ""; 
                 LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
                         new Object[]{className, classFullName, methodName, lineNumber}, parameterName);
                 return "";
@@ -74,13 +68,13 @@ public class Parameter {
                 return prop.getString(parameterName);
             }
         } catch (Exception e) {
+            if (parameterName.toLowerCase().contains("encrypted_")) return "";            
             LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
                     new Object[]{className, classFullName, methodName, lineNumber}, parameterName);
             return "";
         }
     }
-    
-
+  
     /**
      *  Check if a parameter is part or not of a properties file
      * @param parameterFolder - The directoy name LabPLANET (api messages/error trapping)/config (procedure business rules) (if null then config)
@@ -93,6 +87,7 @@ public class Parameter {
     public Boolean parameterInFile(String parameterFolder, String schemaName, String areaName, String parameterName, String language){
         return !"".equals(getParameterBundle(parameterFolder, schemaName, areaName, parameterName, language));
     }
+
     /**
      *
      * @param parameterName
@@ -115,6 +110,7 @@ public class Parameter {
         try {
             ResourceBundle prop = ResourceBundle.getBundle(fileUrl);
             if (!prop.containsKey(parameterName)) {
+                if (parameterName.toLowerCase().contains("encrypted_")) return ""; 
                 LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, 
                         new Object[]{}, parameterName);
                 return "";
@@ -146,6 +142,7 @@ public class Parameter {
         try {            
             ResourceBundle prop = ResourceBundle.getBundle("parameter.config." + configFile.replace("\"", ""));
             if (!prop.containsKey(parameterName)) {
+                if (parameterName.toLowerCase().contains("encrypted_")) return ""; 
                 LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, 
                         //new Object[]{className, classFullName, methodName, lineNumber}, 
                         new Object[]{}, 
@@ -161,7 +158,6 @@ public class Parameter {
             return "";
         }
     }
-    
 
     /**
      * Not in use

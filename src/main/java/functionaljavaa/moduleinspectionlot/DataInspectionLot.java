@@ -13,6 +13,9 @@ import databases.TblsCnfg;
 import databases.Token;
 import functionaljavaa.audit.LotAudit;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
+import functionaljavaa.materialspec.InventoryPlanEntry;
+import functionaljavaa.materialspec.InventoryPlanEntry.invLocations;
+import functionaljavaa.materialspec.InventoryPlanEntryItem;
 import functionaljavaa.materialspec.SamplingPlanEntry;
 import functionaljavaa.materialspec.SamplingPlanEntryItem;
 import functionaljavaa.parameter.Parameter;
@@ -81,7 +84,8 @@ public class DataInspectionLot {
 */        
         Object[][] materialInfo=Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsInspLotRMConfig.Material.TBL.getName(), 
             new String[]{TblsInspLotRMConfig.Material.FLD_NAME.getName()}, new Object[]{materialName}, 
-            new String[]{TblsInspLotRMConfig.Material.FLD_SPEC_CODE.getName(), TblsInspLotRMConfig.Material.FLD_SPEC_CODE_VERSION.getName()});
+            new String[]{TblsInspLotRMConfig.Material.FLD_SPEC_CODE.getName(), TblsInspLotRMConfig.Material.FLD_SPEC_CODE_VERSION.getName(),
+                TblsInspLotRMConfig.Material.FLD_INVENTORY_MANAGEMENT.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return materialInfo;
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.Spec.TBL.getName(), 
                 new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
@@ -181,9 +185,18 @@ public class DataInspectionLot {
         if (LPArray.valueInArray(fieldName, TblsInspLotRMData.Lot.FLD_NUM_CONTAINERS.getName()))
             numCont=Integer.valueOf(fieldValue[LPArray.valuePosicInArray(fieldName, TblsInspLotRMData.Lot.FLD_NUM_CONTAINERS.getName())].toString());
         SamplingPlanEntry spEntry=new SamplingPlanEntry(materialName, specCode, specCodeVersion, quant, numCont);
-        if (spEntry.getHasErrors()){
+        if (spEntry.getHasErrors())
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SamplePlanCheckerReturnedErrors "+Arrays.toString(spEntry.getErrorsArr()), null);
+        
+        Boolean inventoryManagement=Boolean.valueOf(LPNulls.replaceNull(materialInfo[0][2]).toString());
+        InventoryPlanEntry invPlanEntry=null;
+        if (inventoryManagement){
+            invPlanEntry=new InventoryPlanEntry(materialName, specCode, specCodeVersion, quant, numCont);
+            if (invPlanEntry.getHasErrors())
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "InventoryPlanCheckerReturnedErrors "+Arrays.toString(invPlanEntry.getErrorsArr()), null);
         }
+        
+        
         if (numLotsToCreate==null){numLotsToCreate=1;}
         
         for (int iNumLotsToLog=0; iNumLotsToLog<numLotsToCreate; iNumLotsToLog++ ){   
@@ -211,9 +224,12 @@ public class DataInspectionLot {
             DataInspectionLotDecision lotDec=new DataInspectionLotDecision();
             lotDec.lotDecisionRecordCreateOrUpdate(lotName, null);
             lotDec=null;
-            Object[] applySamplingPoint = applySamplingPoint(lotName, materialName, specCode, specCodeVersion, quant, numCont, lotFieldName, lotFieldValue, spEntry);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(applySamplingPoint[0].toString())) return applySamplingPoint;
-            
+            Object[] applySamplingPlan = applySamplingPlan(lotName, materialName, specCode, specCodeVersion, quant, numCont, lotFieldName, lotFieldValue, spEntry);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(applySamplingPlan[0].toString())) return applySamplingPlan;
+            if (inventoryManagement){
+                Object[] applyInventoryPlan = applyInventoryPlan(lotName, materialName, specCode, specCodeVersion, quant, numCont, lotFieldName, lotFieldValue, invPlanEntry);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(applyInventoryPlan[0].toString())) return applyInventoryPlan;
+            }
 //Area for event triggers (ex: apply sampling plan)
             /*
             this.smpAna.autoSampleAnalysisAdd(procPrefix, token, sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), preAuditId);
@@ -222,7 +238,7 @@ public class DataInspectionLot {
         }
         return diagnoses;          
     }
-    public Object[] applySamplingPoint(String lotName, String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont, String[] lotFldName, Object[] lotFldValue, SamplingPlanEntry spEntry){
+    public Object[] applySamplingPlan(String lotName, String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont, String[] lotFldName, Object[] lotFldValue, SamplingPlanEntry spEntry){
         String[] lotFieldsForSamples = new String[]{TblsInspLotRMData.Sample.FLD_SPEC_CODE.getName(), TblsInspLotRMData.Sample.FLD_SPEC_CODE_VERSION.getName()};
         DataInspLotRMSampleAnalysis dsInspLotRM = new DataInspLotRMSampleAnalysis();
         DataSample ds = new DataSample(dsInspLotRM);
@@ -242,6 +258,27 @@ public class DataInspectionLot {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString())) return newProjSample;
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+    }
+    public Object[] applyInventoryPlan(String lotName, String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont, String[] lotFldName, Object[] lotFldValue, InventoryPlanEntry invEntry){
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procPrefix=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        List<InventoryPlanEntryItem> invPlanInfoList = invEntry.getInvEntries();// SamplingPlanEntry.getSamplingPlanInfo(procPrefix, materialName, specCode, specCodeVersion, quant, numCont);
+        for (int i=0;i<invPlanInfoList.size();i++){
+            InventoryPlanEntryItem invEntryItem = invPlanInfoList.get(i);
+            if(invLocations.RETAIN.toString().equalsIgnoreCase(invEntryItem.getInvEntryType())){
+                String[] fieldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName(), TblsInspLotRMData.InventoryRetain.FLD_MATERIAL_NAME.getName(),
+                    TblsInspLotRMData.InventoryRetain.FLD_AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.FLD_AMOUNT_UOM.getName(),
+                    TblsInspLotRMData.InventoryRetain.FLD_CREATED_BY.getName(), TblsInspLotRMData.InventoryRetain.FLD_CREATED_ON.getName()};
+                Object[] fieldValue=new Object[]{lotName, materialName, invEntryItem.getQuantity(), invEntryItem.getQuantityUom(),
+                    token.getPersonName(), LPDate.getCurrentTimeStamp()};
+                Object[] newInvRec=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procPrefix, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.InventoryRetain.TBL.getName(), 
+                    fieldName, fieldValue);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newInvRec[0].toString())) return newInvRec;
+            }
+        }
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+
+        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NotImplemented", null);
     }
     
 }

@@ -23,6 +23,7 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsInspLotRMData {
     public static final String getTableCreationScriptFromDataTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
+            case "INVENTORY_RETAIN": return InventoryRetain.createTableScript(schemaNamePrefix, fields);
             case "LOT": return Lot.createTableScript(schemaNamePrefix, fields);
             case "LOT_DECISION": return LotDecision.createTableScript(schemaNamePrefix, fields);
             case "LOT_CERTIFICATE": return LotCertificate.createTableScript(schemaNamePrefix, fields);
@@ -900,5 +901,91 @@ public class TblsInspLotRMData {
         private final String dbObjTypePostgres;                     
     }        
 
+    public enum InventoryRetain{
+        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
+        ,        
+        TBL("inventory_retain", LPDatabase.createSequence(FLD_ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        ,
+        FLD_LOT_NAME("lot_name", LPDatabase.string())        ,
+        FLD_MATERIAL_NAME("material_name", LPDatabase.string()),        
+        FLD_SUPPLIER_NAME("supplier_name", LPDatabase.string()),        
+        FLD_SUPPLIER_BATCH("supplier_batch", LPDatabase.string()),        
+        FLD_MANUFACTURER_NAME("manufacturer_name", LPDatabase.string()),        
+        FLD_MANUFACTURER_BATCH("manufacturer_batch", LPDatabase.string()),        
+        FLD_MANUFACTURER_SITE("manufacturer_site", LPDatabase.string()),        
+        FLD_CREATED_ON("created_on", LPDatabase.date())        ,
+        FLD_CREATED_BY("created_by", LPDatabase.string())        ,       
+        FLD_EXPIRY_DATE("expiry_date", LPDatabase.date())        ,
+        FLD_REQUALIF_DATE("requalif_date", LPDatabase.date())        ,
+        FLD_STORAGE_ID("storage_id", LPDatabase.integer())        ,
+        FLD_QUANTITY_ITEMS("quantity_items", LPDatabase.integer())        ,
+        FLD_AMOUNT("amount", LPDatabase.integer())        ,
+        FLD_AMOUNT_UOM("amount_uom", LPDatabase.string())        ,       
+        FLD_CONTAINER_TYPE("container_type", LPDatabase.string())        ,       
+        FLD_RECEPTION_REQUIRED("reception_required", LPDatabase.booleanFld())        ,       
+        FLD_RECEPTION_ON("reception_on", LPDatabase.date())        ,
+        FLD_RECEPTION_BY("reception_by", LPDatabase.string())        ,       
+        ;
+        private InventoryRetain(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return entry name
+         */
+        public String getName(){return this.dbObjName;}
+        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
+
+        /**
+         *
+         * @param schemaNamePrefix procedure prefix
+         * @param fields fields , ALL when this is null
+         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = InventoryRetain.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (InventoryRetain obj: InventoryRetain.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }        
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (InventoryRetain obj: InventoryRetain.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }            
 
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.batch.incubator;
+package functionaljavaa.inventory.batch;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;

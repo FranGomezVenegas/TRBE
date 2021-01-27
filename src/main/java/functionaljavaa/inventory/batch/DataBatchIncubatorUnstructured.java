@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.batch.incubator;
+package functionaljavaa.inventory.batch;
 
+import functionaljavaa.inventory.batch.DataBatchIncubator;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;

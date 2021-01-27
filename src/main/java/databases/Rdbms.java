@@ -75,7 +75,7 @@ public class Rdbms {
     /**
      *
      */
-    public static final String ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND="Rbdms_existsRecord_RecordNotFound";  
+    public static final String ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND="Rdbms_existsRecord_RecordNotFound";  
     
     /**
      *
@@ -538,7 +538,7 @@ if (1==1)return;
             res.last();
 
             if (res.getRow()>0){                
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rbdms_existsRecord_RecordFound", new Object[]{keyFieldValue, tableName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{keyFieldValue, tableName, schemaName});                
             }else{
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{keyFieldValue, tableName, schemaName});                
             }
@@ -578,7 +578,7 @@ if (1==1)return;
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rbdms_existsRecord_RecordFound", new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
             }else{
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
             }
@@ -1446,7 +1446,7 @@ if (1==1)return;
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                Object[] diagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rbdms_existsRecord_RecordFound", filter);                
+                Object[] diagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", filter);                
                 diagn=LPArray.addValueToArray1D(diagn, res.getObject(1));
                 return diagn;
             }else{
@@ -1472,7 +1472,7 @@ if (1==1)return;
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rbdms_existsRecord_RecordFound", new Object[]{"", tableName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", tableName, schemaName});                
             }else{
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{"",tableName, schemaName});                
             }
@@ -1551,7 +1551,7 @@ if (1==1)return;
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rbdms_existsRecord_RecordFound", new Object[]{"", viewName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", viewName, schemaName});                
             }else{
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{"",viewName, schemaName});                
             }

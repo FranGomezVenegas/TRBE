@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.batch.incubator;
+package functionaljavaa.inventory.batch;
 
+import functionaljavaa.inventory.batch.DataBatchIncubator;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
@@ -45,29 +46,6 @@ public class DataBatchIncubatorStructured {
                     , TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_ROWS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_COLS.getName()
                     , TblsEnvMonitData.IncubBatch.FLD_STRUCT_ROWS_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_COLS_NAME.getName()
                     , TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_OBJECTS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_POSITIONS.getName()});
-        
-/*        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString())){                    
-            try {
-                SerialArray rowNames = (SerialArray) recordFieldsByFilter[0][8];
-                Object[] rowNamesArr = (Object[]) rowNames.getArray();
-                SerialArray colNames = (SerialArray) recordFieldsByFilter[0][8];
-                Object[] colNamesArr = (Object[]) colNames.getArray();                
-                
-                return new BatchArray(
-                        LPNulls.replaceNull(recordFieldsByFilter[0][1].toString()),
-                        (Integer) recordFieldsByFilter[0][2],  batchName,
-                        "",
-                        //(String) recordFieldsByFilter[0][3]==null ? "" : recordFieldsByFilter[0][3].toString(),
-                        //Integer.valueOf(LPNulls.replaceNull((String)recordFieldsByFilter[0][4])),
-                        (Integer) recordFieldsByFilter[0][4],
-                        (Integer) recordFieldsByFilter[0][5],
-                        (Object[]) rowNamesArr,
-                        (Object[]) colNamesArr );
-            } catch (SerialException ex) {
-                Logger.getLogger(BatchArray.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        return null;*/
     }
     
     static Object[] createBatchStructured(String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue) {

@@ -8,7 +8,7 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.TblsData;
-import functionaljavaa.batch.incubator.DataBatchIncubator;
+import functionaljavaa.inventory.batch.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
