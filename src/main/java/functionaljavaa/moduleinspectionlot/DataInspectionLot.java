@@ -13,6 +13,7 @@ import databases.TblsCnfg;
 import databases.Token;
 import functionaljavaa.audit.LotAudit;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
+import static functionaljavaa.inventory.DataInventoryRetain.createRetain;
 import functionaljavaa.materialspec.InventoryPlanEntry;
 import functionaljavaa.materialspec.InventoryPlanEntry.invLocations;
 import functionaljavaa.materialspec.InventoryPlanEntryItem;
@@ -265,20 +266,9 @@ public class DataInspectionLot {
         List<InventoryPlanEntryItem> invPlanInfoList = invEntry.getInvEntries();// SamplingPlanEntry.getSamplingPlanInfo(procPrefix, materialName, specCode, specCodeVersion, quant, numCont);
         for (int i=0;i<invPlanInfoList.size();i++){
             InventoryPlanEntryItem invEntryItem = invPlanInfoList.get(i);
-            if(invLocations.RETAIN.toString().equalsIgnoreCase(invEntryItem.getInvEntryType())){
-                String[] fieldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName(), TblsInspLotRMData.InventoryRetain.FLD_MATERIAL_NAME.getName(),
-                    TblsInspLotRMData.InventoryRetain.FLD_AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.FLD_AMOUNT_UOM.getName(),
-                    TblsInspLotRMData.InventoryRetain.FLD_CREATED_BY.getName(), TblsInspLotRMData.InventoryRetain.FLD_CREATED_ON.getName()};
-                Object[] fieldValue=new Object[]{lotName, materialName, invEntryItem.getQuantity(), invEntryItem.getQuantityUom(),
-                    token.getPersonName(), LPDate.getCurrentTimeStamp()};
-                Object[] newInvRec=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procPrefix, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.InventoryRetain.TBL.getName(), 
-                    fieldName, fieldValue);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newInvRec[0].toString())) return newInvRec;
-            }
+            if(invLocations.RETAIN.toString().equalsIgnoreCase(invEntryItem.getInvEntryType()))
+                createRetain(lotName, materialName, invEntryItem);
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
-
-        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NotImplemented", null);
     }
-    
 }

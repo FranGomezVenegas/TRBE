@@ -7,6 +7,7 @@ package com.labplanet.servicios.moduleinspectionlotrm;
 
 //import com.labplanet.servicios.moduleenvmonit.*;
 import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEndpoints;
+import static functionaljavaa.inventory.DataInventoryRetain.*;
 import functionaljavaa.moduleinspectionlot.DataInspectionLot;
 import functionaljavaa.moduleinspectionlot.DataInspectionLotDecision;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -95,6 +96,25 @@ public class ClassInspLotRM {
                 }
                 this.messageDynamicData=new Object[]{};
                 break;
+            case LOT_RETAIN_RECEPTION:                 
+                lotName= argValues[0].toString();
+                Integer retainId = (Integer) argValues[1];
+                actionDiagnoses=retainReception(lotName, retainId);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
+                    rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.InventoryRetain.TBL.getName(), TblsInspLotRMData.InventoryRetain.TBL.getName(), lotName);
+                }
+                this.messageDynamicData=new Object[]{};
+            case LOT_RETAIN_MOVEMENT:                 
+                lotName= argValues[0].toString();
+                retainId = (Integer) argValues[1];
+                String newLocation = argValues[2].toString();
+                actionDiagnoses=retainMovement(lotName, retainId, newLocation);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
+                    rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.InventoryRetain.TBL.getName(), TblsInspLotRMData.InventoryRetain.TBL.getName(), lotName);
+                }
+                this.messageDynamicData=new Object[]{};                
             default:
                 break;
             }    

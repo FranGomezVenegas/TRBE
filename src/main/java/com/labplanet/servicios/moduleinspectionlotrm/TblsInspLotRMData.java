@@ -928,6 +928,9 @@ public class TblsInspLotRMData {
         FLD_RECEPTION_REQUIRED("reception_required", LPDatabase.booleanFld())        ,       
         FLD_RECEPTION_ON("reception_on", LPDatabase.date())        ,
         FLD_RECEPTION_BY("reception_by", LPDatabase.string())        ,       
+        FLD_LOCKED("locked", LPDatabase.booleanFld())        ,
+        FLD_LOCKED_ON("locked_on", LPDatabase.date())        ,
+        FLD_LOCKED_BY("locked_by", LPDatabase.string())        ,       
         ;
         private InventoryRetain(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
