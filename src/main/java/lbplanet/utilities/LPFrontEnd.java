@@ -52,7 +52,7 @@ public class LPFrontEnd {
      */
     public static String setLanguage(HttpServletRequest request){
         String language = request.getParameter(LPPlatform.REQUEST_PARAM_LANGUAGE);
-        if (language == null){language = LPPlatform.REQUEST_PARAM_LANGUAGE_DEFAULT_VALUE;}
+        if (language == null){language = LPPlatform.REQUEST_PARAM_LANGUAGE_DEFAULT_VAL;}
         return language;
     }
     
@@ -68,7 +68,7 @@ public class LPFrontEnd {
         isConnected = Rdbms.getRdbms().startRdbms();      
         if (!isConnected){      
             LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.API_ERRORTRAPING_PROPERTY_DATABASE_NOT_CONNECTED, null, null);                                                                
+                    LPPlatform.ApiErrorTraping.PROPERTY_DATABASE_NOT_CONNECTED.getName(), null, null);                                                                
         }  
         return isConnected;
     }
@@ -87,7 +87,7 @@ public class LPFrontEnd {
         String passwordToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
             if (passwordToVerify==null) passwordToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK)).toString();
         if ( (!userToVerify.equalsIgnoreCase(dbUserName)) || (!passwordToVerify.equalsIgnoreCase(dbUserPassword)) ){
-            servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_INVALID_USER_VERIFICATION, null, null);           
+            servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_USER_VERIFICATION.getName(), null, null);           
             return false;                                
         }            
         return true;
@@ -104,7 +104,7 @@ public class LPFrontEnd {
         String eSignToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);      
             if (eSignToVerify==null) eSignToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK)).toString();
         if (!eSignToVerify.equalsIgnoreCase(eSign)) {  
-            servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_INVALID_ESIGN, null, null);           
+            servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_ESIGN.getName(), null, null);           
             return false;                                
         }            
         return true;
@@ -333,43 +333,36 @@ public class LPFrontEnd {
 
                 //String fileWithPath = "E:/Test/Download/MYPIC.JPG";
                 File downloadFile = new File(fileWithPath);
-                FileInputStream inStream = new FileInputStream(downloadFile);
-
+                OutputStream outStream;
                 // if you want to use a relative path to context root:
-                String relativePath = srv.getServletContext().getRealPath("");
-                System.out.println("relativePath = " + relativePath);
-
-                // obtains ServletContext
-                ServletContext context = srv.getServletContext();
-
-                // gets MIME type of the file
-                String mimeType = context.getMimeType(fileWithPath);
-                if (mimeType == null) {        
-                    // set to binary type if MIME mapping not found
-                    mimeType = "application/octet-stream";
+                try (FileInputStream inStream = new FileInputStream(downloadFile)) {
+                    // if you want to use a relative path to context root:
+                    String relativePath = srv.getServletContext().getRealPath("");
+                    System.out.println("relativePath = " + relativePath);
+                    // obtains ServletContext
+                    ServletContext context = srv.getServletContext();
+                    // gets MIME type of the file
+                    String mimeType = context.getMimeType(fileWithPath);
+                    if (mimeType == null) {
+                        // set to binary type if MIME mapping not found
+                        mimeType = "application/octet-stream";
+                    }   System.out.println("MIME type: " + mimeType);
+                    // modifies response
+                    response.setContentType(mimeType);
+                    response.setContentLength((int) downloadFile.length());
+                    // forces download
+                    String headerKey = "Content-Disposition";
+                    String headerValue = String.format("attachment; filename=\"%s\"", downloadFile.getName());
+                    response.setHeader(headerKey, headerValue);
+                    //response.getContext().responseComplete();
+                    // obtains response's output stream
+                    outStream = response.getOutputStream();
+                    byte[] buffer = new byte[4096];
+                    int bytesRead = -1;
+                    while ((bytesRead = inStream.read(buffer)) != -1) {
+                        outStream.write(buffer, 0, bytesRead);
+                    }
                 }
-                System.out.println("MIME type: " + mimeType);
-
-                // modifies response
-                response.setContentType(mimeType);
-                response.setContentLength((int) downloadFile.length());
-
-                // forces download
-                String headerKey = "Content-Disposition";
-                String headerValue = String.format("attachment; filename=\"%s\"", downloadFile.getName());
-                response.setHeader(headerKey, headerValue);
-                //response.getContext().responseComplete();
-                // obtains response's output stream
-                OutputStream outStream = response.getOutputStream();
-
-                byte[] buffer = new byte[4096];
-                int bytesRead = -1;
-
-                while ((bytesRead = inStream.read(buffer)) != -1) {
-                    outStream.write(buffer, 0, bytesRead);
-                }
-
-                inStream.close();
                 outStream.close();                  
             } catch (IOException ex) {
                 Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);

@@ -5,6 +5,8 @@
  */
 package functionaljavaa.moduleinspectionlot;
 
+import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI;
+import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEndpoints;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.Rdbms;
 import databases.Token;
@@ -58,11 +60,10 @@ public class DataInspectionLotCertificate {
         }
         Object[] fieldsOnLogLot = LPArray.joinTwo1DArraysInOneOf1DString(lotFieldName, lotFieldValue, ":");
         diagnoses = LPArray.addValueToArray1D(diagnoses, diagnoses[diagnoses.length-1]);
-
 //        if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){return diagnoses;}
 //        if (decision!=null && decision.length()>0){
             LotAudit lotAudit = new LotAudit();            
-            lotAudit.lotAuditAdd(LotAudit.LotAuditEvents.LOT_DECISION_TAKEN.toString(), 
+            lotAudit.lotAuditAdd(InspLotRMAPIEndpoints.LOT_TAKE_DECISION.getAuditActionName(), 
                     TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, fieldsOnLogLot, null);
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "LotCertificateNewStatus", new Object[]{lotName, newStatus, procInstanceName});
 //        }

@@ -242,7 +242,7 @@ public class Parameter {
             endPoint = PropertyFilesType.valueOf(type.toUpperCase());
         }catch(Exception e){
             return "argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE";
-            //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+            //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
             //return;                   
         }
 

@@ -5,6 +5,8 @@
  */
 package functionaljavaa.moduleinspectionlot;
 
+import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI;
+import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEndpoints;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMConfig;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.DataDataIntegrity;
@@ -209,7 +211,6 @@ public class DataInspectionLot {
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD.getErrorCode(), errorDetailVariables);
             }                                
-
             Object[] fieldsOnLogLot = LPArray.joinTwo1DArraysInOneOf1DString(lotFieldName, lotFieldValue, ":");
             diagnoses = LPArray.addValueToArray1D(diagnoses, diagnoses[diagnoses.length-1]);
 
@@ -219,9 +220,8 @@ public class DataInspectionLot {
 //            smpStages.dataLotStagesTimingCapture(procPrefix, sampleId, firstStage[firstStage.length-1][1].toString(), DataLotStages.SampleStageTimingCapturePhases.START.toString());
             
             LotAudit lotAudit = new LotAudit();            
-            lotAudit.lotAuditAdd(LotAudit.LotAuditEvents.LOT_CREATED.toString(), 
-                    TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, fieldsOnLogLot, null);
-            
+            lotAudit.lotAuditAdd(InspLotRMAPIEndpoints.NEW_LOT.getAuditActionName(), 
+                    TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, fieldsOnLogLot, null);            
             DataInspectionLotDecision lotDec=new DataInspectionLotDecision();
             lotDec.lotDecisionRecordCreateOrUpdate(lotName, null);
             lotDec=null;

@@ -63,38 +63,18 @@ public class LPPlatform {
     /**
      *
      */
-    public static final String API_ERRORTRAPING_EXCEPTION_RAISED= "exceptionRaised";
-
-    /**
-     *
-     */
-    public static final String API_ERRORTRAPING_PROPERTY_DATABASE_NOT_CONNECTED= "databaseConnectivityError";
-
-    /**
-     *
-     */
-    public static final String API_ERRORTRAPING_MANDATORY_PARAMS_MISSING="MissingMandatoryParametersInRequest";
-
-    /**
-     *
-     */
-    public static final String API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND = "endPointNotFound";
-
-    /**
-     *
-     */
-    public static final String API_ERRORTRAPING_INVALID_TOKEN = "invalidToken";
-
-    /**
-     *
-     */
-    public static final String API_ERRORTRAPING_INVALID_USER_VERIFICATION = "invalidUserVerification";
-
-    /**
-     *
-     */
-    public static final String API_ERRORTRAPING_INVALID_ESIGN = "invalidEsign";        
-
+    public enum ApiErrorTraping{EXCEPTION_RAISED("exceptionRaised"), PROPERTY_DATABASE_NOT_CONNECTED("databaseConnectivityError"),
+        MANDATORY_PARAMS_MISSING("MissingMandatoryParametersInRequest"), PROPERTY_ENDPOINT_NOT_FOUND("endPointNotFound"),
+        INVALID_TOKEN("invalidToken"), INVALID_USER_VERIFICATION("invalidUserVerification"), INVALID_ESIGN("invalidEsign")
+        ;
+        ApiErrorTraping(String nm){
+            this.name=nm;
+        }
+        public String getName() {
+            return name;
+        }
+        private final String name;           
+    }
 
     public static final String REQUEST_PARAM_FILE_PATH = "filePath";
     public static final String REQUEST_PARAM_FILE_NAME = "fileName";
@@ -113,7 +93,7 @@ public class LPPlatform {
     /**
      *
      */
-    public static final String REQUEST_PARAM_LANGUAGE_DEFAULT_VALUE = "ALL";    
+    public static final String REQUEST_PARAM_LANGUAGE_DEFAULT_VAL = "ALL";    
     
     /**
      *
@@ -135,13 +115,13 @@ public class LPPlatform {
     public static final String JAVADOC_LINE_FLDNAME = "line";
     
     
-    private static final String JSON_TAG_ERROR_MSG_EVALUATION = "evaluation";
-    private static final String JSON_TAG_ERROR_MSG_CLASS = JAVADOC_CLASS_FLDNAME;
-    private static final String JSON_TAG_ERROR_MSG_CLASS_VERSION = "classVersion";
-    private static final String JSON_TAG_ERROR_MSG_CLASS_LINE = "line";
-    private static final String JSON_TAG_ERROR_MSG_CLASS_ERROR_CODE = "errorCode";
-    private static final String JSON_TAG_ERROR_MSG_CLASS_ERROR_CODE_TEXT = "errorCodeText";
-    private static final String JSON_TAG_ERROR_MSG_CLASS_ERROR_DETAIL = "errorDetail";
+    private static final String JSON_TAG_ERR_MSG_EVALUATION = "evaluation";
+    private static final String JSON_TAG_ERR_MSG_CLSS = JAVADOC_CLASS_FLDNAME;
+    private static final String JSON_TAG_ERR_MSG_CLSS_VERSION = "classVersion";
+    private static final String JSON_TAG_ERR_MSG_CLSS_LINE = "line";
+    private static final String JSON_TAG_ERR_MSG_CLSS_ERR_CODE = "errorCode";
+    private static final String JSON_TAG_ERR_MSG_CLSS_ERR_CODE_TEXT = "errorCodeText";
+    private static final String JSON_TAG_ERR_MSG_CLSS_ERR_DETAIL = "errorDetail";
     public static final String CONFIG_OTRONOMBRE_FILE_NAME = "-otronombre";
     /**
      *
@@ -221,35 +201,25 @@ public class LPPlatform {
      * @param actionName
      * @return
      */
-    public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName){
-        
+    public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName){        
         actionName = actionName.toUpperCase();
         String errorCode = ""; 
         Object[] errorDetailVariables = new Object[0];
-        String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");
-        
+        String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
         if (LPArray.valueInArray(procedureActions, "ALL")){
-            errorCode = "VERIFY_USER_REQUIRED_BY_ALL";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{procInstanceName, actionName});
+            return trapMessage(LAB_TRUE, "VERIFY_USER_REQUIRED_BY_ALL", errorDetailVariables);
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            errorCode = "verifyUserRequired_denied_ruleNotFound";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActions));
-            return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{procInstanceName, Arrays.toString(procedureActions)});
+            return trapMessage(LAB_FALSE, "verifyUserRequired_denied_ruleNotFound", errorDetailVariables);
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            errorCode = "verifyUserRequired_denied";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActions));
-            return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);            
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, 
+                    new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
+            return trapMessage(LAB_FALSE, "verifyUserRequired_denied", errorDetailVariables);            
         }else{
-            errorCode = "verifyUserRequired_enabled";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), errorCode, errorDetailVariables);               
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{procInstanceName, actionName});
+            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), "verifyUserRequired_enabled", errorDetailVariables);               
         }    
     }    
 
@@ -869,13 +839,13 @@ public class LPPlatform {
      */
     public static JSONObject trapErrorMessageJSON(Object[] errorArray) {               
         JSONObject errorJson = new JSONObject();
-            errorJson.put(JSON_TAG_ERROR_MSG_EVALUATION, errorArray[0]);
-            errorJson.put(JSON_TAG_ERROR_MSG_CLASS, errorArray[1]);
-            errorJson.put(JSON_TAG_ERROR_MSG_CLASS_VERSION, errorArray[2]);
-            errorJson.put(JSON_TAG_ERROR_MSG_CLASS_LINE, errorArray[3]);
-            errorJson.put(JSON_TAG_ERROR_MSG_CLASS_ERROR_CODE, errorArray[4]);
-            errorJson.put(JSON_TAG_ERROR_MSG_CLASS_ERROR_CODE_TEXT, errorArray[5]);
-            errorJson.put(JSON_TAG_ERROR_MSG_CLASS_ERROR_DETAIL, errorArray[6]);
+            errorJson.put(JSON_TAG_ERR_MSG_EVALUATION, errorArray[0]);
+            errorJson.put(JSON_TAG_ERR_MSG_CLSS, errorArray[1]);
+            errorJson.put(JSON_TAG_ERR_MSG_CLSS_VERSION, errorArray[2]);
+            errorJson.put(JSON_TAG_ERR_MSG_CLSS_LINE, errorArray[3]);
+            errorJson.put(JSON_TAG_ERR_MSG_CLSS_ERR_CODE, errorArray[4]);
+            errorJson.put(JSON_TAG_ERR_MSG_CLSS_ERR_CODE_TEXT, errorArray[5]);
+            errorJson.put(JSON_TAG_ERR_MSG_CLSS_ERR_DETAIL, errorArray[6]);
         return errorJson;
     }
     

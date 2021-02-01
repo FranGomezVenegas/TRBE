@@ -39,85 +39,97 @@ public class ClassInspLotRM {
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
-            switch (endPoint){
-                case NEW_LOT:
-                    String lotName= argValues[0].toString();
-                    String materialName= argValues[1].toString();
-                    String template= argValues[2].toString();
-                    Integer templateVersion = (Integer) argValues[3];
-                    
-                    String q= argValues[4].toString();
-                    String qUomStr = argValues[5].toString();
-                    String nContStr = LPNulls.replaceNull(argValues[6]).toString();
-                    
-                    String fieldName=LPNulls.replaceNull(argValues[7]).toString();
-                    String fieldValue=LPNulls.replaceNull(argValues[8]).toString();
-                    String[] fieldNameArr=new String[]{};
-                    Object[] fieldValueArr=new Object[]{};
-                    if (fieldName.length()>0){
-                        fieldNameArr=fieldName.split("\\|");
-                        fieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    }
-                    if (q.length()>0){
-                        fieldNameArr=LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.FLD_QUANTITY.getName());
-                        fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(q));
-                    }
-                    if (qUomStr.length()>0){
-                        fieldNameArr=LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.FLD_QUANTITY_UOM.getName());
-                        fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, qUomStr);
-                    }
-                    if (nContStr.length()>0){
-                        fieldNameArr=LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.FLD_NUM_CONTAINERS.getName());
-                        fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(nContStr));
-                    }
-                    Integer numLotsToCreate=1;
-                    actionDiagnoses=insplot.createLot(lotName, materialName, template, templateVersion, fieldNameArr, fieldValueArr, numLotsToCreate);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, template, templateVersion, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
-                        rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);
-                    }
-                    this.messageDynamicData=new Object[]{};
-                    break;
-            case LOT_TAKE_DECISION:                 
-                lotName= argValues[0].toString();
-                String decision= argValues[1].toString();
-                fieldName=LPNulls.replaceNull(argValues[2]).toString();
-                fieldValue=LPNulls.replaceNull(argValues[3]).toString();
-                fieldNameArr=new String[]{};
-                fieldValueArr=new Object[]{};
+        switch (endPoint){
+            case NEW_LOT:
+                String lotName= argValues[0].toString();
+                String materialName= argValues[1].toString();
+                String template= argValues[2].toString();
+                Integer templateVersion = (Integer) argValues[3];
+
+                String q= argValues[4].toString();
+                String qUomStr = argValues[5].toString();
+                String nContStr = LPNulls.replaceNull(argValues[6]).toString();
+
+                String fieldName=LPNulls.replaceNull(argValues[7]).toString();
+                String fieldValue=LPNulls.replaceNull(argValues[8]).toString();
+                String[] fieldNameArr=new String[]{};
+                Object[] fieldValueArr=new Object[]{};
                 if (fieldName.length()>0){
                     fieldNameArr=fieldName.split("\\|");
                     fieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 }
-                actionDiagnoses=insplotDecision.lotTakeDecision(lotName, decision, fieldNameArr, fieldValueArr);
+                if (q.length()>0){
+                    fieldNameArr=LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.FLD_QUANTITY.getName());
+                    fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(q));
+                }
+                if (qUomStr.length()>0){
+                    fieldNameArr=LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.FLD_QUANTITY_UOM.getName());
+                    fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, qUomStr);
+                }
+                if (nContStr.length()>0){
+                    fieldNameArr=LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.FLD_NUM_CONTAINERS.getName());
+                    fieldValueArr=LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(nContStr));
+                }
+                Integer numLotsToCreate=1;
+                actionDiagnoses=insplot.createLot(lotName, materialName, template, templateVersion, fieldNameArr, fieldValueArr, numLotsToCreate);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, decision, fieldNameArr, fieldValueArr, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
+                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, template, templateVersion, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
                     rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);
                 }
                 this.messageDynamicData=new Object[]{};
                 break;
-            case LOT_RETAIN_RECEPTION:                 
-                lotName= argValues[0].toString();
-                Integer retainId = (Integer) argValues[1];
+        case LOT_TAKE_DECISION:                 
+            lotName= argValues[0].toString();
+            String decision= argValues[1].toString();
+            fieldName=LPNulls.replaceNull(argValues[2]).toString();
+            fieldValue=LPNulls.replaceNull(argValues[3]).toString();
+            fieldNameArr=new String[]{};
+            fieldValueArr=new Object[]{};
+            if (fieldName.length()>0){
+                fieldNameArr=fieldName.split("\\|");
+                fieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+            }
+            actionDiagnoses=insplotDecision.lotTakeDecision(lotName, decision, fieldNameArr, fieldValueArr);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, decision, fieldNameArr, fieldValueArr, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
+                rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), lotName);
+            }
+            this.messageDynamicData=new Object[]{};
+            break;
+        case LOT_RETAIN_RECEPTION:                 
+        case LOT_RETAIN_UNLOCK:
+        case LOT_RETAIN_LOCK:
+            lotName= argValues[0].toString();
+            Integer retainId = (Integer) argValues[1];
+            if ("LOT_RETAIN_RECEPTION".equalsIgnoreCase(endPoint.getName()))
                 actionDiagnoses=retainReception(lotName, retainId);
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
-                    rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.InventoryRetain.TBL.getName(), TblsInspLotRMData.InventoryRetain.TBL.getName(), lotName);
-                }
-                this.messageDynamicData=new Object[]{};
-            case LOT_RETAIN_MOVEMENT:                 
-                lotName= argValues[0].toString();
-                retainId = (Integer) argValues[1];
-                String newLocation = argValues[2].toString();
-                actionDiagnoses=retainMovement(lotName, retainId, newLocation);
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
-                    rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.InventoryRetain.TBL.getName(), TblsInspLotRMData.InventoryRetain.TBL.getName(), lotName);
-                }
-                this.messageDynamicData=new Object[]{};                
-            default:
-                break;
-            }    
+            if ("LOT_RETAIN_UNLOCK".equalsIgnoreCase(endPoint.getName()))
+                actionDiagnoses=retainUnlock(lotName, retainId);
+            if ("LOT_RETAIN_LOCK".equalsIgnoreCase(endPoint.getName()))
+                actionDiagnoses=retainLock(lotName, retainId);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
+                rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.InventoryRetain.TBL.getName(), TblsInspLotRMData.InventoryRetain.TBL.getName(), lotName);
+            }
+            this.messageDynamicData=new Object[]{};
+            break;
+        case LOT_RETAIN_MOVEMENT:                 
+            lotName= argValues[0].toString();
+            retainId = (Integer) argValues[1];
+            String newLocation = argValues[2].toString();
+            Integer newLocationId = (Integer) argValues[3];
+            if (newLocation!=null) actionDiagnoses=retainMovement(lotName, retainId, newLocation);
+            if (newLocationId!=null) actionDiagnoses=retainMovement(lotName, retainId, newLocationId);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
+                rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.InventoryRetain.TBL.getName(), TblsInspLotRMData.InventoryRetain.TBL.getName(), lotName);
+            }
+            this.messageDynamicData=new Object[]{}; 
+            break;
+        default:
+            this.functionFound=false;
+            break;
+        }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
         rObj.killInstance();

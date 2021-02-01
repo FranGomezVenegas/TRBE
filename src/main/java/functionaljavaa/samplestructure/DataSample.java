@@ -999,7 +999,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             if (prepRdQuery.getRow()>0){
                 return prepRdQuery.getString(1);
             }else{                
-                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, Rdbms.ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{"sample", "", procInstanceName});                         
+                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, Rdbms.ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"sample", "", procInstanceName});                         
                 return null;
             }            
         } catch (SQLException ex) {

@@ -921,6 +921,7 @@ public class TblsInspLotRMData {
         FLD_EXPIRY_DATE("expiry_date", LPDatabase.date())        ,
         FLD_REQUALIF_DATE("requalif_date", LPDatabase.date())        ,
         FLD_STORAGE_ID("storage_id", LPDatabase.integer())        ,
+        FLD_STORAGE_NAME("storage_name", LPDatabase.string())        ,
         FLD_QUANTITY_ITEMS("quantity_items", LPDatabase.integer())        ,
         FLD_AMOUNT("amount", LPDatabase.integer())        ,
         FLD_AMOUNT_UOM("amount_uom", LPDatabase.string())        ,       

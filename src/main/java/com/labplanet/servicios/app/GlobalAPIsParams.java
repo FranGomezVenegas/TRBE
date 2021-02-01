@@ -142,7 +142,8 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_LOT_NAME = "lotName";    
     public static final String REQUEST_PARAM_LOT_DECISION = "lotDecision";    
     public static final String REQUEST_PARAM_RETAIN_ID = "retainId";   
-    public static final String REQUEST_PARAM_NEW_LOCATION = "newLocation";   
+    public static final String REQUEST_PARAM_NEW_LOCATION_NAME = "newLocationName";   
+    public static final String REQUEST_PARAM_NEW_LOCATION_ID = "newLocationId";   
     /**
      *
      */

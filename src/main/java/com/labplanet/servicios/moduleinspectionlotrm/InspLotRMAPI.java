@@ -43,33 +43,43 @@ public class InspLotRMAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_CONTAINERS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 14),
-            }),
+            }, "NEW_LOT_CREATED"),
         CREATE_LOT_CERTIFICATE("CREATE_LOT_CERTIFICATE", "createLotCertificate", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MATERIAL_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_TEMPLATE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9), 
-        }),
+        }, "LOT_CERTIFICATE_CREATED"),
         LOT_TAKE_DECISION("LOT_TAKE_DECISION", "lotTakeDecision_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_DECISION, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
-            }),
+            },"LOT_DECISION_TAKEN"),
+        LOT_RETAIN_UNLOCK("LOT_RETAIN_UNLOCK", "lotRetainUnlock_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+            }, "LOT_RETAIN_UNLOCKED"),
+        LOT_RETAIN_LOCK("LOT_RETAIN_LOCK", "lotRetainLock_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+            }, "LOT_RETAIN_LOCKED"),
         LOT_RETAIN_RECEPTION("LOT_RETAIN_RECEPTION", "lotRetainReception_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
-            }),
+            }, "LOT_RETAIN_RECEIVED"),        
         LOT_RETAIN_MOVEMENT("LOT_RETAIN_MOVEMENT", "lotRetainMoved_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_LOCATION, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-            }),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_LOCATION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9),
+            }, "LOT_RETAIN_MOVED"),
         ;
-        private InspLotRMAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private InspLotRMAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, String actNameForAudit){
             this.name=name;
             this.successMessageCode=successMessageCode;
-            this.arguments=argums;  
+            this.arguments=argums; 
+            this.auditActionName=actNameForAudit;
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -87,16 +97,16 @@ public class InspLotRMAPI extends HttpServlet {
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
-
-        /**
-         * @return the arguments
-         */
         public LPAPIArguments[] getArguments() {
             return arguments;
         }     
+        public String getAuditActionName(){
+            return this.auditActionName;
+        }           
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final String auditActionName;
     }
     
     public enum InspLotRMQueriesAPIEndpoints{
@@ -162,7 +172,10 @@ public class InspLotRMAPI extends HttpServlet {
         response=LPHttp.responsePreparation(response);
 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
-        if (procReqInstance.getHasErrors()) return;
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            return;
+        }
         
         InspLotRMAPIEndpoints endPoint = null;
         try{
@@ -172,7 +185,7 @@ public class InspLotRMAPI extends HttpServlet {
             try{
                 endPointSmp = SampleAPIParams.SampleAPIEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
             }catch(Exception er){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage());              
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage());              
                 return;                   
             }                
             ClassSample clssSmp=new ClassSample(request, endPointSmp);
@@ -187,13 +200,13 @@ public class InspLotRMAPI extends HttpServlet {
             }                
         }
         if (endPoint==null){
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage());              
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage());              
             return;
         }
         Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response,
-                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, procReqInstance.getLanguage());
+                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, procReqInstance.getLanguage());
             return;
         }                
         try (PrintWriter out = response.getWriter()) {

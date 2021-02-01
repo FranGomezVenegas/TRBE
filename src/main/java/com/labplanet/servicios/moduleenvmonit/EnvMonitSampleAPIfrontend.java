@@ -57,7 +57,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
             }catch(Exception e){
                 RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                 rd.forward(request, response);                                   
-//                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+//                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}

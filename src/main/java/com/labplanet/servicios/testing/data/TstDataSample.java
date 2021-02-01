@@ -151,7 +151,7 @@ public class TstDataSample extends HttpServlet {
                 try{
                     endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
                 }catch(Exception e){
-//                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+//                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                     //return;                   
                             dataSample[0] = "LABPLANET_FALSE";
                             dataSample[1] = "function "+actionName+" not recognized"; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = "function "+actionName+" not recognized"; 
