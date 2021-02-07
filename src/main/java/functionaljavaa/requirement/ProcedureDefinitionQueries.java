@@ -156,8 +156,8 @@ public class ProcedureDefinitionQueries {
         mainObj.put(bsnRuleQry.getMethodSectionName().toLowerCase(), sopArr);
         return mainObj;
     }
-    public static JSONObject allProcUsersRoles(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        JSONObject programkpIsObj = LPKPIs.getKPIs(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), 
+    public static JSONObject allProcUsersRoles(ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
+        JSONObject programkpIsObj = LPKPIs.getKPIs( 
                 new String[]{"procedure_roles_by_user", "procedure_users_counter_by_role"}, 
                 new String[]{"procedure", "procedure"},
                 new String[]{TblsProcedure.ViewProcUserAndRoles.TBL.getName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName()},

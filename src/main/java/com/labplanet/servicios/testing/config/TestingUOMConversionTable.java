@@ -86,12 +86,12 @@ public class TestingUOMConversionTable extends HttpServlet {
                 if (lineNumCols>=numEvaluationArguments+3)                
                     baseValue = LPTestingOutFormat.csvExtractFieldValueBigDecimal(csvFileContent[iLines][numEvaluationArguments+3]);
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, procInstanceName, familyName, fieldsToRetrieve, baseValue}));
-                UnitsOfMeasurement uom = new UnitsOfMeasurement();
-                String baseUnitName = uom.getFamilyBaseUnitName(procInstanceName, familyName);
+                UnitsOfMeasurement uom = new UnitsOfMeasurement(baseValue, null);
+                String baseUnitName = uom.getFamilyBaseUnitName(familyName);
                 if (baseUnitName.length()==0){
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf("Nothing to convert with no base unit defined")));
                 }else{                    
-                Object[][] tableGet = uom.getAllUnitsPerFamily(procInstanceName, familyName, fieldsToRetrieve);
+                Object[][] tableGet = uom.getAllUnitsPerFamily(familyName, fieldsToRetrieve);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tableGet[0][0].toString())) {
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(tableGet[0][3].toString()))
                             .append(tableGet[0][5].toString());
@@ -99,11 +99,12 @@ public class TestingUOMConversionTable extends HttpServlet {
                     StringBuilder tableConversionsBuilder = new StringBuilder(0);
                     for (Object[] tableGet1 : tableGet) {
                         tableConversionsBuilder.append(LPTestingOutFormat.rowStart());
-                        Object[] newValue = uom.convertValue(procInstanceName, baseValue, baseUnitName, (String) tableGet1[0]);
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newValue[0].toString())) {
+                        uom.convertValue((String) tableGet1[0]);
+                        
+                        if (!uom.getConvertedFine()) {
                             tableConversionsBuilder.append(LPTestingOutFormat.rowAddField("Not Converted"));
                         }else{
-                            tableConversionsBuilder.append(LPTestingOutFormat.rowAddField("Value "+baseValue+" in "+baseUnitName+" is equal to "+newValue[newValue.length-2].toString()+" in "+newValue[newValue.length-1].toString()+" once converted."));
+                            tableConversionsBuilder.append(LPTestingOutFormat.rowAddField("Value "+baseValue+" in "+baseUnitName+" is equal to "+uom.getConvertedQuantity().toString()+" in "+uom.getConvertedQuantityUom().toString()+" once converted."));
                         }
                         tableConversionsBuilder.append(LPTestingOutFormat.rowEnd());
                     }                 

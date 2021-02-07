@@ -360,11 +360,11 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
             if ((!resultUomName.equalsIgnoreCase(specUomName)) && (specUomConversionMode == null || specUomConversionMode.equalsIgnoreCase("DISABLED") || ((!specUomConversionMode.contains(resultUomName)) && !specUomConversionMode.equalsIgnoreCase("ALL")))) 
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConversionNotAllowed", new Object[]{specUomConversionMode, specUomName, resultUomName,  limitId.toString(), schemaDataName});            
             requiresUnitsConversion = true;
-            UnitsOfMeasurement uom = new UnitsOfMeasurement();
-            Object[] convDiagnoses = uom.convertValue(procInstanceName, new BigDecimal(resultValue.toString()), resultUomName, specUomName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(convDiagnoses[0].toString())) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{resultId.toString(), convDiagnoses[3].toString(), schemaDataName});
-            resultConverted = (BigDecimal) convDiagnoses[1];
+            UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue.toString()), resultUomName);
+            uom.convertValue(specUomName);
+            if (!uom.getConvertedFine()) 
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
+            resultConverted = uom.getConvertedQuantity();
         }
         DataSpec resChkSpec = new DataSpec();
         Object[] resSpecEvaluation = null;
@@ -479,11 +479,11 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         String specUomConversionMode = resultInfo[0][6].toString();
         if (specUomConversionMode == null || specUomConversionMode.equalsIgnoreCase("DISABLED") || ((!specUomConversionMode.contains(newuom)) && !specUomConversionMode.equalsIgnoreCase("ALL"))) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConversionNotAllowed", new Object[]{specUomConversionMode, newuom, curruom, resultId.toString(), schemaDataName});
-        UnitsOfMeasurement uom = new UnitsOfMeasurement();
-        Object[] convDiagnoses = uom.convertValue(procInstanceName, new BigDecimal(currValue), curruom, newuom);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(convDiagnoses[0].toString())) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{resultId.toString(), convDiagnoses[3].toString(), schemaDataName});
-        BigDecimal resultConverted = (BigDecimal) convDiagnoses[convDiagnoses.length - 2];
+        UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(currValue), curruom);
+        uom.convertValue(newuom);
+        if (!uom.getConvertedFine()) 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
+        BigDecimal resultConverted = uom.getConvertedQuantity();
         String[] updFieldNames = new String[]{TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName(), TblsData.SampleAnalysisResult.FLD_UOM.getName()};
         Object[] updFieldValues = new Object[]{resultConverted.toString(), newuom};
         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 

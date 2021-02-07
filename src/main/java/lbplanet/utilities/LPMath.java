@@ -61,10 +61,10 @@ public class LPMath {
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                 
         }
-        UnitsOfMeasurement uom = new UnitsOfMeasurement();
+        UnitsOfMeasurement uom = new UnitsOfMeasurement(portion, portionUOM);
         if (portionUOM == null ? volumeUOM != null : !portionUOM.equals(volumeUOM)){
-            Object[] valueConverted = uom.convertValue(schemaPrefix, portion, portionUOM, volumeUOM);
-            portion = (BigDecimal) valueConverted[valueConverted.length-2];
+            uom.convertValue(volumeUOM);
+            portion = uom.getConvertedQuantity();
         }
         
         if ( portion.compareTo(BigDecimal.ZERO)<1) {

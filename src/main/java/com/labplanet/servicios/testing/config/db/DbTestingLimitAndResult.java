@@ -208,16 +208,16 @@ public class DbTestingLimitAndResult extends HttpServlet {
                     if (specRule.getRuleIsQuantitative()){
                         Boolean requiresUnitsConversion=true;
                         BigDecimal resultConverted =  null;
-                        UnitsOfMeasurement uom = new UnitsOfMeasurement();     
+                        UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue), resultUomName);     
                         resultUomName = LPNulls.replaceNull(resultUomName);
                         specUomName = LPNulls.replaceNull(specUomName);
                         if (resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
                         if (requiresUnitsConversion){
-                            Object[] convDiagnoses = uom.convertValue(schemaName, new BigDecimal(resultValue), resultUomName, specUomName);
-                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(convDiagnoses[0].toString())) {
-                                resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), convDiagnoses[3].toString(), schemaDataName});                  
+                            uom.convertValue(specUomName);
+                            if (!uom.getConvertedFine()) {
+                                resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});                  
                             }
-                            resultConverted =  new BigDecimal((String) convDiagnoses[1]);        
+                            resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        
                         }
 
                         

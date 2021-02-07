@@ -6,8 +6,11 @@
 package com.labplanet.servicios.moduleinspectionlotrm;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import static com.labplanet.servicios.moduleinspectionlotrm.InspLotQueries.configMaterialStructure;
+import static com.labplanet.servicios.moduleinspectionlotrm.InspLotQueries.dataSampleStructure;
 import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMQueriesAPIEndpoints;
 import databases.Rdbms;
+import databases.TblsData;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,6 +32,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
+import static trazit.queries.QueryUtilities.getTableData;
 /**
  *
  * @author User
@@ -107,24 +112,50 @@ public class InspLotRMAPIfrontend extends HttpServlet {
 
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
 
-        switch (endPoint){
-            
-        case GET_LOT_SAMPLES_INFO: 
+        switch (endPoint){            
+        case GET_LOT_INFO: 
             String lotName=LPNulls.replaceNull(argValues[0]).toString();
-            String[] fieldsToRetrieve=TblsInspLotRMData.Sample.getAllFieldNames();
-            if (argValues.length>1 && argValues[1]!=null && argValues[1].toString().length()>0){
-                if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=TblsInspLotRMData.Sample.getAllFieldNames();
-                else fieldsToRetrieve=argValues[1].toString().split("\\|");
-            }
-            Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Sample.TBL.getName(), 
-                    new String[]{TblsInspLotRMData.Sample.FLD_LOT_NAME.getName()}, new Object[]{lotName}, 
-                    fieldsToRetrieve, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()});
-
+            String fieldsToRetrieveStr=LPNulls.replaceNull(argValues[1].toString());
+            Boolean includesSamplesInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
+            Boolean includesMaterialInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());
+            if (includesMaterialInfo && fieldsToRetrieveStr.length()>0 && !fieldsToRetrieveStr.contains(TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName()))
+                fieldsToRetrieveStr=fieldsToRetrieveStr + "|"+TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName();
+            String[] fieldsToRetrieve=getFieldsListToRetrieve(fieldsToRetrieveStr, TblsInspLotRMData.Lot.getAllFieldNames());
+            Object[][] lotInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.Lot.TBL.getName(), 
+                fieldsToRetrieveStr, TblsInspLotRMData.Lot.getAllFieldNames(), 
+                new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()}, new Object[]{lotName}, new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()});        
             JSONArray jArr = new JSONArray();
+            for (Object[] currLot: lotInfo){
+                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currLot);
+                if (LPArray.valueInArray(fieldsToRetrieve, TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName())){
+                    String currMaterial=currLot[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName())].toString();
+                    if (includesSamplesInfo && currMaterial!=null && currMaterial.length()>0)
+                        jObj.put(TblsData.Sample.TBL.getName(), dataSampleStructure(lotName, null, null, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()}, true, true));
+                    if (includesMaterialInfo && currMaterial!=null && currMaterial.length()>0)
+                        jObj.put(TblsInspLotRMConfig.Material.TBL.getName(), configMaterialStructure(currMaterial, null, new String[]{TblsInspLotRMConfig.Material.FLD_NAME.getName()}, true, true, true));
+                }
+                jArr.add(jObj);                
+            }
+            Rdbms.closeRdbms();  
+            LPFrontEnd.servletReturnSuccess(request, response, jArr);
+            break;        
+        case GET_LOT_SAMPLES_INFO: 
+            lotName=LPNulls.replaceNull(argValues[0]).toString();
+            fieldsToRetrieveStr=LPNulls.replaceNull(argValues[1].toString());
+            Boolean includesSampleAnalysisInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
+            Boolean includesSampleAnalysisResultInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());            
+            //fieldsToRetrieve=getFieldsListToRetrieve(fieldsToRetrieveStr, TblsInspLotRMData.Sample.getAllFieldNames());
+/*            Object[][] sampleInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.Sample.TBL.getName(), 
+                fieldsToRetrieveStr, TblsInspLotRMData.Sample.getAllFieldNames(), 
+                new String[]{TblsInspLotRMData.Sample.FLD_LOT_NAME.getName()}, new Object[]{lotName}, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()});        
+            jArr = new JSONArray();
             for (Object[] currBatch: sampleInfo){
                 JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
                 jArr.add(jObj);
-            }
+            }*/
+            jArr = new JSONArray();
+            jArr.add(
+                dataSampleStructure(lotName, null, fieldsToRetrieveStr, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()}, includesSampleAnalysisInfo, includesSampleAnalysisResultInfo));
             Rdbms.closeRdbms();  
             LPFrontEnd.servletReturnSuccess(request, response, jArr);
             break;        

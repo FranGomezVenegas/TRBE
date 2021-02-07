@@ -134,7 +134,7 @@ public class TblsInspLotRMData {
         }     
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
-            for (Sample obj: Sample.values()){
+            for (Lot obj: Lot.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
@@ -923,8 +923,9 @@ public class TblsInspLotRMData {
         FLD_STORAGE_ID("storage_id", LPDatabase.integer())        ,
         FLD_STORAGE_NAME("storage_name", LPDatabase.string())        ,
         FLD_QUANTITY_ITEMS("quantity_items", LPDatabase.integer())        ,
-        FLD_AMOUNT("amount", LPDatabase.integer())        ,
+        FLD_AMOUNT("amount", LPDatabase.real())        ,
         FLD_AMOUNT_UOM("amount_uom", LPDatabase.string())        ,       
+        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string()),
         FLD_CONTAINER_TYPE("container_type", LPDatabase.string())        ,       
         FLD_RECEPTION_REQUIRED("reception_required", LPDatabase.booleanFld())        ,       
         FLD_RECEPTION_ON("reception_on", LPDatabase.date())        ,

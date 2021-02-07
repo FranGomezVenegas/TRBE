@@ -245,7 +245,7 @@ public class LPTestingOutFormat {
             this.tagValue=value;
         }
         public Object getTagValue(){return this.tagValue;}
-        private final Object tagValue;
+        private Object tagValue;
     }
 
     /**
@@ -540,19 +540,19 @@ public class LPTestingOutFormat {
 
     public static HashMap<String, Object>  getCSVHeaderTester(String[][] csvContent){
         HashMap<String, Object> fieldsRequired = new HashMap();
-        fieldsRequired.put(FileHeaderTags.MAX_NUM_HEADER_LINES.getTagValue().toString(), "");   
-        fieldsRequired.put(FileHeaderTags.NUM_TABLES.getTagValue().toString(), "");
-        fieldsRequired.put(FileHeaderTags.TESTER_NAME.getTagValue().toString(), "");
-        fieldsRequired.put(FileHeaderTags.NUM_EVALUATION_ARGUMENTS.getTagValue().toString(), "");
-        fieldsRequired.put(FileHeaderTags.TOKEN.getTagValue().toString(), "");
+        fieldsRequired.put(FileHeaderTags.MAX_NUM_HEADER_LINES.toString(), "");   
+        fieldsRequired.put(FileHeaderTags.NUM_TABLES.toString(), "");
+        fieldsRequired.put(FileHeaderTags.TESTER_NAME.toString(), "");
+        fieldsRequired.put(FileHeaderTags.NUM_EVALUATION_ARGUMENTS.toString(), "");
+        fieldsRequired.put(FileHeaderTags.TOKEN.toString(), "");
         return getCSVHeaderManager(fieldsRequired, csvContent);
     }
 
     public static HashMap<String, Object>  getCSVHeader(String[][] csvContent){
         HashMap<String, Object> fieldsRequired = new HashMap();
-        fieldsRequired.put(FileHeaderTags.MAX_NUM_HEADER_LINES.getTagValue().toString(), "");   
-        fieldsRequired.put(FileHeaderTags.NUM_TABLES.getTagValue().toString(), "");
-        fieldsRequired.put(FileHeaderTags.NUM_EVALUATION_ARGUMENTS.getTagValue().toString(), "");
+        fieldsRequired.put(FileHeaderTags.MAX_NUM_HEADER_LINES.toString(), "");   
+        fieldsRequired.put(FileHeaderTags.NUM_TABLES.toString(), "");
+        fieldsRequired.put(FileHeaderTags.NUM_EVALUATION_ARGUMENTS.toString(), "");
         return getCSVHeaderManager(fieldsRequired, csvContent);
     }
 

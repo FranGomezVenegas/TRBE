@@ -11,6 +11,7 @@ import static functionaljavaa.inventory.DataInventoryRetain.*;
 import functionaljavaa.moduleinspectionlot.DataInspectionLot;
 import functionaljavaa.moduleinspectionlot.DataInspectionLotDecision;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
@@ -120,6 +121,18 @@ public class ClassInspLotRM {
             Integer newLocationId = (Integer) argValues[3];
             if (newLocation!=null) actionDiagnoses=retainMovement(lotName, retainId, newLocation);
             if (newLocationId!=null) actionDiagnoses=retainMovement(lotName, retainId, newLocationId);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
+                rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.InventoryRetain.TBL.getName(), TblsInspLotRMData.InventoryRetain.TBL.getName(), lotName);
+            }
+            this.messageDynamicData=new Object[]{}; 
+            break;
+        case LOT_RETAIN_EXTRACT:
+            lotName= argValues[0].toString();
+            retainId = (Integer) argValues[1];
+            BigDecimal quantity = (BigDecimal) argValues[2];
+            String quantityUom = argValues[3].toString();
+            actionDiagnoses=retainExtract(lotName, retainId, quantity, quantityUom);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                 actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
                 rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.InventoryRetain.TBL.getName(), TblsInspLotRMData.InventoryRetain.TBL.getName(), lotName);

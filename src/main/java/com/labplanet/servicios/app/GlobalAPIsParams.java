@@ -139,6 +139,7 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
+    public static final String REQUEST_PARAM_INCLUDE_MATERIAL = "includesMaterial";   
     public static final String REQUEST_PARAM_LOT_NAME = "lotName";    
     public static final String REQUEST_PARAM_LOT_DECISION = "lotDecision";    
     public static final String REQUEST_PARAM_RETAIN_ID = "retainId";   
@@ -260,6 +261,8 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_INVESTIGATION_GROUPS = "investigationGroups";  
     public static final String REQUEST_PARAM_SAMPLE_GROUPS = "sampleGroups";  
     public static final String REQUEST_PARAM_INCLUDE_SAMPLES = "includeSamples";  
+    public static final String REQUEST_PARAM_INCLUDE_SAMPLE_ANALYSIS = "includeSampleAnalysis";  
+    public static final String REQUEST_PARAM_INCLUDE_SAMPLE_ANALYSIS_RESULTS = "includeSampleAnalysisResults";  
     public static final String REQUEST_PARAM_INCLUDE_SAMPLER_SAMPLES = "includeSamplerSamples";  
     public static final String REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES = "excludeSamplerSamples";  
     public static final String REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED = "excludeReadingNotEntered";  
@@ -290,6 +293,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_OUTPUT_IS_FILE = "outputIsFile";
     
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE = "prodLotFieldToRetrieve";
+    public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_SORT = "prodLotFieldToSort";
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY = "prodLotFieldsToDisplay";
 
     public static final String REQUEST_PARAM_QUANTITY = "quantity";  

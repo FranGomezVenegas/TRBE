@@ -153,7 +153,7 @@ public class TblsInspLotRMConfig {
         
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
-            for (TblsInspLotRMConfig.Lot obj: TblsInspLotRMConfig.Lot.values()){
+            for (Material obj: Material.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
@@ -163,7 +163,7 @@ public class TblsInspLotRMConfig {
         }  
         public static String[] getFldDefBydbFieldName(String fldName){
             String[] tableFields=new String[0];
-            for (TblsInspLotRMConfig.Lot obj: TblsInspLotRMConfig.Lot.values()){
+            for (Material obj: Material.values()){
                 String objName = obj.getName();
                 if (fldName.equalsIgnoreCase(objName)){
                     //tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
@@ -426,7 +426,7 @@ public class TblsInspLotRMConfig {
         
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
-            for (TblsInspLotRMConfig.Lot obj: TblsInspLotRMConfig.Lot.values()){
+            for (MaterialSamplingPlan obj: MaterialSamplingPlan.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
@@ -436,7 +436,7 @@ public class TblsInspLotRMConfig {
         }  
         public static String[] getFldDefBydbFieldName(String fldName){
             String[] tableFields=new String[0];
-            for (TblsInspLotRMConfig.Lot obj: TblsInspLotRMConfig.Lot.values()){
+            for (MaterialSamplingPlan obj: MaterialSamplingPlan.values()){
                 String objName = obj.getName();
                 if (fldName.equalsIgnoreCase(objName)){
                     //tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
@@ -564,7 +564,7 @@ public class TblsInspLotRMConfig {
         
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
-            for (TblsInspLotRMConfig.Lot obj: TblsInspLotRMConfig.Lot.values()){
+            for (MaterialCertificate obj: MaterialCertificate.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
@@ -574,7 +574,7 @@ public class TblsInspLotRMConfig {
         }  
         public static String[] getFldDefBydbFieldName(String fldName){
             String[] tableFields=new String[0];
-            for (TblsInspLotRMConfig.Lot obj: TblsInspLotRMConfig.Lot.values()){
+            for (MaterialCertificate obj: MaterialCertificate.values()){
                 String objName = obj.getName();
                 if (fldName.equalsIgnoreCase(objName)){
                     //tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());

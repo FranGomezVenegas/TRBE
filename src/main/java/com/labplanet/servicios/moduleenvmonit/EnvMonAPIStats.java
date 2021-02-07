@@ -282,7 +282,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     String[] fldToRetrieve=argValues[5].toString().split("\\/");
                     String[] dataGrouped=argValues[6].toString().split("\\/");
 
-                    jObjMainObject=getKPIs(procInstanceName, objGroupName, tblCategory, tblName, whereFieldsNameArr, whereFieldsValueArr, 
+                    jObjMainObject=getKPIs(objGroupName, tblCategory, tblName, whereFieldsNameArr, whereFieldsValueArr, 
                         fldToRetrieve, dataGrouped);
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
             }

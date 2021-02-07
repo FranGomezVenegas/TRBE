@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package functionaljavaa.unitsofmeasurement;
 
 import databases.Rdbms;
@@ -13,39 +8,94 @@ import lbplanet.utilities.LPPlatform;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 /**
  * functionality where units of measurements are involved
  * @author Fran Gomez
  * @version 0.1
  */
 public class UnitsOfMeasurement {
-    String classVersion = "0.1";
+    /**
+     * @return the origQuantity
+     */
+    public BigDecimal getOrigQuantity() {
+        return origQuantity;
+    }
+
+    /**
+     * @return the origQuantityUom
+     */
+    public String getOrigQuantityUom() {
+        return origQuantityUom;
+    }
+    /**
+     * @return the convertedQuantity
+     */
+    public BigDecimal getConvertedQuantity() {
+        return convertedQuantity;
+    }
+
+    /**
+     * @return the convertedQuantityUom
+     */
+    public String getConvertedQuantityUom() {
+        return convertedQuantityUom;
+    }
+
+    /**
+     * @return the convertedFine
+     */
+    public Boolean getConvertedFine() {
+        return convertedFine;
+    }
+
+    /**
+     * @return the conversionErrorDetail
+     */
+    public Object[] getConversionErrorDetail() {
+        return conversionErrorDetail;
+    }
+
+    /**
+     * @return the conversionDetail
+     */
+    public Object[] getConversionDetail() {
+        return conversionDetail;
+    }
+    private final BigDecimal origQuantity;
+    private String origQuantityUom;
+    private BigDecimal convertedQuantity;
+    private String convertedQuantityUom;
+    private Boolean convertedFine;
+    private Object[] conversionErrorDetail;
+    private Object[] conversionDetail;
+    /**
+     *
+     */
+    public enum UomErrorTrapping{ 
+        CURRENT_UNITS_NOT_DEFINED("UnitsOfMeasurement_currentUnitsNotDefined", "unit <*1*> not defined in procedure <*2*>", "Unidad de medida <*1*> no definida en proceso <*2*>"),
+        NEW_UNITS_NOT_DEFINED("UnitsOfMeasurement_newUnitsNotDefined","",""),
+        SAME_VALUE_NOT_CONVERTED("UnitsOfMeasurement_sameValueNotConverted","",""),
+        FAMILY_FIELD_NOT_IN_QUERY("UnitsOfMeasurement_methodError_familyFieldNotAddedToTheQuery","",""),
+        ;
+        private UomErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_CURRENT_UNITS_NOT_DEFINED="UnitsOfMeasurement_currentUnitsNotDefined";
-
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_NEW_UNITS_NOT_DEFINED="UnitsOfMeasurement_newUnitsNotDefined";
-
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_SAME_VALUE_NOT_CONVERTED="UnitsOfMeasurement_sameValueNotConverted";
-
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_FAMILY_FIELD_NOT_IN_QUERY="UnitsOfMeasurement_methodError_familyFieldNotAddedToTheQuery";
-
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
     /**
      *
      */
     public static final String MESSAGE_TRAPPING_CONVERTED_SUCCESS="UnitsOfMeasurement_convertedSuccesfully";
-    
+
     /**
      *
      */
@@ -62,123 +112,133 @@ public class UnitsOfMeasurement {
     public static final String MESSAGE_LABELS_NEW_UNIT="newUnit: ";
     /**
      *
+     * @param origQuant
+     * @param origQuantUom
      */
-    public UnitsOfMeasurement(){
-        // Not implemented yet
+    public UnitsOfMeasurement(BigDecimal origQuant, String origQuantUom){
+        this.origQuantity=origQuant;
+        this.origQuantityUom=origQuantUom;
     }
 /**
- * Convert one value expressed in currentUnit to be expressed in newUnit. Notes: 
- *  Units not assigned to any measurement family are not compatible so not convertible.
- *  Both units should belong to the same measurement family.
- * @param procInstanceName String - The schema/procedure where both uom should be present. 
- * @param valueToConvert Float - The value to be converted
+ * Convert one value expressed in currentUnit to be expressed in newUnit.Notes:
+  Units not assigned to any measurement family are not compatible so not convertible.Both units should belong to the same measurement family.
  * @param currentUnit String - The units as expressed the value before be converted
  * @param newUnit String - the units for the value once converted
  * @return Object[] - position 0 - boolean to know if converted (true) or not (false)
  *                  - position 1 - the new value once converted
  *                  - position 2 - the new units when converted or the current units when not converted
  *                  - position 3 - conclusion in a wording mode to provide further detail about what the method applied for this particular case
- */    
-    public Object[] twoUnitsInSameFamily( String procInstanceName, BigDecimal valueToConvert, String currentUnit, String newUnit){
-        Object[] conversion = new Object[6];        
+ */
+    public Object[] twoUnitsInSameFamily(String currentUnit, String newUnit){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=procReqSession.getProcedureInstance();
+        Object[] conversion = new Object[6];
         if (currentUnit==null){
-            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_CURRENT_UNITS_NOT_DEFINED,
-                        new Object[]{procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+valueToConvert+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
+            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.CURRENT_UNITS_NOT_DEFINED.getErrorCode(),
+                        new Object[]{procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
             return conversion;
         }
         if (newUnit==null){
-            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_NEW_UNITS_NOT_DEFINED,
-                        new Object[]{procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+valueToConvert+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
+            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.NEW_UNITS_NOT_DEFINED.getErrorCode(),
+                        new Object[]{procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
             return conversion;
-        }        
+        }
         if (newUnit.equals(currentUnit)){
-            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_SAME_VALUE_NOT_CONVERTED,
-                        new Object[]{procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+valueToConvert+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
-            conversion = LPArray.addValueToArray1D(conversion, valueToConvert);
+            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.SAME_VALUE_NOT_CONVERTED.getErrorCode(),
+                        new Object[]{procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
+            conversion = LPArray.addValueToArray1D(conversion, this.getOrigQuantity());
             return conversion;
-        }            
+        }
         String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();
-        String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName();                
+        String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
-             
-        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName(), 
+
+        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName(),
             TblsCnfg.UnitsOfMeasurement.FLD_FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.FLD_OFFSET_VALUE.getName()};
-        Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
+        Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()},  new Object[]{currentUnit}, fieldsToGet );
-        Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
+        Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()},  new Object[]{newUnit}, fieldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currentUnitInfo[0][0].toString())){
-            return conversion;            
-        }        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newUnitInfo[0][0].toString())){
-            return conversion;            
+            return currentUnitInfo[0];
         }
-        Integer currentUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);         
-        Integer newUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);                
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newUnitInfo[0][0].toString())){
+            return newUnitInfo[0];
+        }
+        Integer currentUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);
+        Integer newUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);
         if ((currentUnitFamilyFieldPosic==-1) || (newUnitFamilyFieldPosic==-1) ){
-            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_FAMILY_FIELD_NOT_IN_QUERY,
-                        new Object[]{familyFieldNameDataBase, Arrays.toString(fieldsToGet), procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+valueToConvert+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
-            return conversion;            
-        }                        
+            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
+                        new Object[]{familyFieldNameDataBase, Arrays.toString(fieldsToGet), procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
+            return conversion;
+        }
         if (!currentUnitInfo[0][currentUnitFamilyFieldPosic].toString().equalsIgnoreCase(newUnitInfo[0][currentUnitFamilyFieldPosic].toString())){
-            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_FAMILY_FIELD_NOT_IN_QUERY,
-                        new Object[]{currentUnit , currentUnitInfo[0][currentUnitFamilyFieldPosic].toString(), 
-                            newUnit, newUnitInfo[0][currentUnitFamilyFieldPosic].toString(), 
-                            procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+valueToConvert+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
-            return conversion; 
+            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
+                        new Object[]{currentUnit , currentUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
+                            newUnit, newUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
+                            procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
+            return conversion;
         }
         conversion[0]=LPPlatform.LAB_TRUE;
-        return conversion;        
+        return conversion;
     }
-    
+
     /**
      *
-     * @param procInstanceName
-     * @param valueToConvert
-     * @param currentUnit
      * @param newUnit
      * @return
      */
-    public Object[] convertValue( String procInstanceName, BigDecimal valueToConvert, String currentUnit, String newUnit){
-        
-        Object[] unitsCompatible = twoUnitsInSameFamily(procInstanceName, valueToConvert, currentUnit, newUnit);
+    public void convertValue(String newUnit){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=procReqSession.getProcedureInstance();
+        Object[] unitsCompatible = twoUnitsInSameFamily(this.origQuantityUom, newUnit);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(unitsCompatible[0].toString())){
-            return unitsCompatible;}
-        
+            this.convertedFine=false;
+            this.conversionErrorDetail=unitsCompatible;
+        }
+
         Object[] conversion = new Object[6];
         String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();
         String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName();
-        BigDecimal valueConverted = valueToConvert;
-        
+        BigDecimal valueConverted = this.getOrigQuantity();
+
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
-             
-        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName(), 
+
+        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName(),
             TblsCnfg.UnitsOfMeasurement.FLD_FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.FLD_OFFSET_VALUE.getName()};
-        Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()},  new Object[]{currentUnit}, fieldsToGet );
-        Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
+        Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()},  new Object[]{this.getOrigQuantityUom()}, fieldsToGet );
+        Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()},  new Object[]{newUnit}, fieldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currentUnitInfo[0][0].toString())){
-            return conversion;            
-        }        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newUnitInfo[0][0].toString())){
-            return conversion;            
+            this.convertedFine=false;
+            this.conversionErrorDetail=currentUnitInfo;
+            return;
         }
-        
-        Integer currentUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);         
-        Integer newUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);                
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newUnitInfo[0][0].toString())){
+            this.convertedFine=false;
+            this.conversionErrorDetail=newUnitInfo;
+            return;
+        }
+
+        Integer currentUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);
+        Integer newUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);
         if ((currentUnitFamilyFieldPosic==-1) || (newUnitFamilyFieldPosic==-1) ){
-            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_FAMILY_FIELD_NOT_IN_QUERY,
-                        new Object[]{familyFieldNameDataBase, Arrays.toString(fieldsToGet), procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+valueToConvert+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
-            return conversion;            
-        }                        
+            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
+                        new Object[]{familyFieldNameDataBase, Arrays.toString(fieldsToGet), procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(this.getOrigQuantityUom())+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
+            this.convertedFine=false;
+            this.conversionErrorDetail=conversion;
+            return;
+        }
         if (!currentUnitInfo[0][currentUnitFamilyFieldPosic].toString().equalsIgnoreCase(newUnitInfo[0][currentUnitFamilyFieldPosic].toString())){
-            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_FAMILY_FIELD_NOT_IN_QUERY,
-                        new Object[]{currentUnit , currentUnitInfo[0][currentUnitFamilyFieldPosic].toString(), 
-                            newUnit, newUnitInfo[0][currentUnitFamilyFieldPosic].toString(), 
-                            procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+valueToConvert+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
-            return conversion; 
+            conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
+                        new Object[]{this.getOrigQuantityUom(), currentUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
+                            newUnit, newUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
+                            procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(this.getOrigQuantityUom())+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
+            this.convertedFine=false;
+            this.conversionErrorDetail=conversion;
+            return;
         }
         BigDecimal currentUnitFactor = new BigDecimal(currentUnitInfo[0][3].toString());
         BigDecimal newUnitFactor = new BigDecimal(newUnitInfo[0][3].toString());
@@ -189,56 +249,59 @@ public class UnitsOfMeasurement {
         valueConverted=valueConverted.multiply(newUnitFactor);
         newUnitOffset=newUnitOffset.add(currentUnitOffset.negate());
         valueConverted=valueConverted.add(newUnitOffset);
-        
+
         conversion = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, MESSAGE_TRAPPING_CONVERTED_SUCCESS,
-                        new Object[]{currentUnit , newUnitInfo, valueToConvert, valueConverted, procInstanceName,
-                             MESSAGE_LABELS_VALUE_CONVERTED+valueToConvert+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
+                        new Object[]{this.getOrigQuantityUom(), newUnitInfo, this.getOrigQuantity(), valueConverted, procInstanceName,
+                             MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(this.getOrigQuantityUom())+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
         conversion = LPArray.addValueToArray1D(conversion, valueConverted);
         conversion = LPArray.addValueToArray1D(conversion, newUnit);
-        return conversion;
+        this.convertedFine=true;
+        this.convertedQuantity=valueConverted;
+        this.convertedQuantityUom=newUnit;
+        this.conversionErrorDetail=null;
+        this.conversionDetail=conversion;
     }
 /**
  * Get all units of measurement from the same given family from one specific schema/procedure and getting as many fields
  * as the ones specified in fieldsToRetrieve.
- * @param procInstanceName - String - ProcedureName  
  * @param family - String - The given family for the uom to be got.
  * @param fieldsToRetrieve String[] - Fields from the table that should be added to the array returned.
  * @return Object[][] - a dynamic table containing the fields specified in fieldsToRetrieve, position[0][3] set to FALSE when cannot buuilt.
  */
-    public Object[][] getAllUnitsPerFamily( String procInstanceName, String family, String[] fieldsToRetrieve ){
-       
-        String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();        
+    public Object[][] getAllUnitsPerFamily(String family, String[] fieldsToRetrieve ){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=procReqSession.getProcedureInstance();
+        String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
         if (family==null){
-            Object[] conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_FAMILY_FIELD_NOT_IN_QUERY,
+            Object[] conversion = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
                                     new Object[]{procInstanceName});
             return LPArray.array1dTo2d(conversion, conversion.length);
         }
-      
-        Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName()},  new Object[]{family}, fieldsToRetrieve, 
+
+        Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName()},  new Object[]{family}, fieldsToRetrieve,
                  new String[]{TblsCnfg.UnitsOfMeasurement.FLD_FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.FLD_OFFSET_VALUE.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(unitsList[0][0].toString())) return unitsList;            
-        
-        return unitsList;        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(unitsList[0][0].toString())) return unitsList;
+
+        return unitsList;
     }
 
     /**
      *
-     * @param procInstanceName
      * @param family
      * @return
      */
-    public String getFamilyBaseUnitName( String procInstanceName, String family){
-        String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();                
+    public String getFamilyBaseUnitName(String family){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=procReqSession.getProcedureInstance();
+        String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
-       
-        Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName(), TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName()},  new Object[]{family, true}, new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()});        
-        return unitsList[0][0].toString();            
 
+        Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName(), TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName()},  new Object[]{family, true}, new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()});
+        return unitsList[0][0].toString();
     }
-    
 }

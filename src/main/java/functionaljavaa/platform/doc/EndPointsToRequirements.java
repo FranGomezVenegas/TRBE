@@ -279,13 +279,25 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
 }
 
 private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues){
-    Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), 
+//    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
+    Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), 
             new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()},
-            new Object[]{apiName, endpointName});
-    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) return;
-    fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.FLD_CREATION_DATE.getName());
-    fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());                
-    Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
+            new Object[]{apiName, endpointName}, new String[]{EndpointsDeclaration.FLD_ID.getName(), EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
+        String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName())].toString();
+        if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[0][1].toString())){
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(),
+                    new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.FLD_LAST_UPDATE.getName()},
+                    new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()},
+                    new String[]{EndpointsDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
+            return;
+        }
+        return;
+    }else{
+        fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.FLD_CREATION_DATE.getName());
+        fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());                
+        Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
+    }
 }
 
 }

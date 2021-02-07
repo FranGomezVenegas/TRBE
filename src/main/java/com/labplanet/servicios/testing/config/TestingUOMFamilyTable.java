@@ -88,9 +88,9 @@ public class TestingUOMFamilyTable extends HttpServlet {
                 if (lineNumCols>=numEvaluationArguments+2)                
                     fieldsToRetrieve = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+2]);
                 
-                UnitsOfMeasurement uom = new UnitsOfMeasurement();
+                UnitsOfMeasurement uom = new UnitsOfMeasurement(null, null);
 
-                Object[][] tableGet = uom.getAllUnitsPerFamily(schemaPrefix, familyName, fieldsToRetrieve);    
+                Object[][] tableGet = uom.getAllUnitsPerFamily(familyName, fieldsToRetrieve);    
                 fileContentTable1Builder.append(LPTestingOutFormat.tableStart(""));
                 for (int iRows=0;iRows<tableGet.length;iRows++){
                    fileContentTable1Builder.append(LPTestingOutFormat.rowStart()); 

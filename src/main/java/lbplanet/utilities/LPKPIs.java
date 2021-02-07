@@ -10,6 +10,7 @@ import databases.Rdbms;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -17,8 +18,9 @@ import org.json.simple.JSONObject;
  */
 public class LPKPIs {
 
-public static JSONObject getKPIs(String schemaPrefix, String[] objGroupName, String[] tblCategory, String[] tblName, String[] whereFieldsNameArr, String[] whereFieldsValueArr, 
+public static JSONObject getKPIs(String[] objGroupName, String[] tblCategory, String[] tblName, String[] whereFieldsNameArr, String[] whereFieldsValueArr, 
                     String[] fldToRetrieve, String[] dataGrouped){
+    ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         
     JSONObject jObjMainObject=new JSONObject();
     if (objGroupName.length!=fldToRetrieve.length && objGroupName.length!=whereFieldsNameArr.length 
@@ -38,12 +40,12 @@ public static JSONObject getKPIs(String schemaPrefix, String[] objGroupName, Str
         if (curgrouperName.length()==0)curgrouperName="grouper_"+i;
         Object[][] dataInfo = new Object[][]{{}};
         if (Boolean.valueOf(curdataGrouped)){
-            dataInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, curtblCategory), curtblName, 
+            dataInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
                 curFldsToRetrieveArr, curWhereFieldsNameArr, curWhereFieldsValueArr, 
                 null);
             curFldsToRetrieveArr=LPArray.addValueToArray1D(curFldsToRetrieveArr, "count");
         }else{
-            dataInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, curtblCategory), curtblName, 
+            dataInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
                 curWhereFieldsNameArr, curWhereFieldsValueArr, curFldsToRetrieveArr);
         }
         JSONObject jObj = new JSONObject();
