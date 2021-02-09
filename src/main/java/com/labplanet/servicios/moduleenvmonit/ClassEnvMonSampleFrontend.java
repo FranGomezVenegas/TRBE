@@ -37,6 +37,8 @@ import org.json.simple.JSONObject;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
+import static trazit.queries.QueryUtilities.getTableData;
 
 /**
  *
@@ -157,35 +159,20 @@ public class ClassEnvMonSampleFrontend {
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
             switch (endPoint){
-/*                case CORRECTIVE_ACTION_COMPLETE:
-                    String programName=argValues[0].toString();
-                    Integer correctiveActionId = (Integer) argValues[1];                    
-                    actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(procInstanceName, token, correctiveActionId);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){                        
-                        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
-                            new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
-                            new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName()});
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName}); 
-                        this.messageDynamicData=new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName};   
-                    }else{
-                        this.messageDynamicData=new Object[]{correctiveActionId, procInstanceName};                           
-                    }                    
-                    break;*/
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
                     Integer sampleId = (Integer) argValues[0];                        
-                    String resultFieldToRetrieve = argValues[1].toString();
-                    String[] resultFieldToRetrieveArr=null;
-                    if (resultFieldToRetrieve!=null && resultFieldToRetrieve.length()>0){resultFieldToRetrieveArr=  resultFieldToRetrieve.split("\\|");}
+                    String[] resultFieldToRetrieveArr=getFieldsListToRetrieve(argValues[1].toString(), TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames());
+
                     resultFieldToRetrieveArr = LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
                     
-                    String sampleAnalysisWhereFieldsName = argValues[2].toString();
                     String[] sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()};
-                    if ( (sampleAnalysisWhereFieldsName!=null ) && (sampleAnalysisWhereFieldsName.length()>0) ) {
-                        sampleAnalysisWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
-                    }     
                     Object[] sampleAnalysisWhereFieldsValueArr = new Object[]{sampleId};
+
+                    String sampleAnalysisWhereFieldsName = argValues[2].toString();
+                    if ( (sampleAnalysisWhereFieldsName!=null ) && (sampleAnalysisWhereFieldsName.length()>0) ) 
+                        sampleAnalysisWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
                     String sampleAnalysisWhereFieldsValue = argValues[3].toString();
-                    if ( (sampleAnalysisWhereFieldsValue!=null) && (sampleAnalysisWhereFieldsValue.length()>0) ) 
+                    if ( (sampleAnalysisWhereFieldsValue!=null) && (sampleAnalysisWhereFieldsValue.length()>0) )
                         sampleAnalysisWhereFieldsValueArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
                     
                     String[] sortFieldsNameArr = null;
@@ -199,10 +186,11 @@ public class ClassEnvMonSampleFrontend {
                     Integer posicRawValueFld=resultFieldToRetrieveArr.length;
                     resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
                     Integer posicLimitIdFld=resultFieldToRetrieveArr.length;
-                    Object[][] analysisResultList = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
-                            sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
-                            //new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()},new Object[]{sampleId}, 
-                            resultFieldToRetrieveArr, sortFieldsNameArr);
+
+                    Object[][] analysisResultList=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                        argValues[1].toString(), TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames(), 
+                        sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
+                        sortFieldsNameArr);     
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
                         Rdbms.closeRdbms();   
                         this.isSuccess=false;
@@ -218,28 +206,28 @@ public class ClassEnvMonSampleFrontend {
                             if (TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName().equalsIgnoreCase(curObjDet[0]))
                                 rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), curObjDet[1]);
                         }
-                      JSONArray jArr=new JSONArray();
-                      for (Object[] curRow: analysisResultList){
-                        ConfigSpecRule specRule = new ConfigSpecRule();
-                        String currRowRawValue=curRow[posicRawValueFld-1].toString();
-                        String currRowLimitId=curRow[posicLimitIdFld-1].toString();
-                        Object[] resultLockData=sampleAnalysisResultLockData(procInstanceName, resultFieldToRetrieveArr, curRow);
-                        JSONObject row=new JSONObject();
-                        if (resultLockData!=null)
-                            row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(resultFieldToRetrieveArr, (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
-                        else        
-                            row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
-                        if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
-                          specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
-                          row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, LPNulls.replaceNull(specRule.getRuleRepresentation()).replace(("R"), "R ("+currRowRawValue+")"));
-                          Object[][] specRuleDetail=specRule.getRuleData();
-                          JSONArray specRuleDetailjArr=new JSONArray();
-                          JSONObject specRuleDetailjObj=new JSONObject();
-                          for (Object[] curSpcRlDet: specRuleDetail){
-                              specRuleDetailjObj.put(curSpcRlDet[0], curSpcRlDet[1]);                              
-                          }
-                          specRuleDetailjArr.add(specRuleDetailjObj);
-                          row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_INFO, specRuleDetailjArr);
+                        JSONArray jArr=new JSONArray();
+                        for (Object[] curRow: analysisResultList){
+                            ConfigSpecRule specRule = new ConfigSpecRule();
+                            String currRowRawValue=curRow[posicRawValueFld-1].toString();
+                            String currRowLimitId=curRow[posicLimitIdFld-1].toString();
+                            Object[] resultLockData=sampleAnalysisResultLockData(procInstanceName, resultFieldToRetrieveArr, curRow);
+                            JSONObject row=new JSONObject();
+                            if (resultLockData!=null)
+                                row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(resultFieldToRetrieveArr, (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
+                            else        
+                                row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
+                            if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
+                            specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
+                            row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, LPNulls.replaceNull(specRule.getRuleRepresentation()).replace(("R"), "R ("+currRowRawValue+")"));
+                            Object[][] specRuleDetail=specRule.getRuleData();
+                            JSONArray specRuleDetailjArr=new JSONArray();
+                            JSONObject specRuleDetailjObj=new JSONObject();
+                            for (Object[] curSpcRlDet: specRuleDetail){
+                                specRuleDetailjObj.put(curSpcRlDet[0], curSpcRlDet[1]);                              
+                            }
+                            specRuleDetailjArr.add(specRuleDetailjObj);
+                            row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_INFO, specRuleDetailjArr);
                         }
                         jArr.add(row);
                       }                        
@@ -249,18 +237,19 @@ public class ClassEnvMonSampleFrontend {
                     }                    
                     return;                  
                 case GET_MICROORGANISM_LIST:
-                  String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()};
-                  Object[][] list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
-                          new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}
-                          , fieldsToRetrieve, fieldsToRetrieve);
-                  JSONArray jArr=new JSONArray();
-                  for (Object[] curRec: list){
-                    JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
-                    jArr.add(jObj);
-                  }
-                  this.isSuccess=true;
-                  this.responseSuccessJArr=jArr;
-                  return;  
+                    String[] fieldsToRetrieve=getFieldsListToRetrieve("", TblsEnvMonitConfig.MicroOrganism.getAllFieldNames());                    
+                    Object[][] list=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
+                        "", TblsEnvMonitConfig.MicroOrganism.getAllFieldNames(), 
+                        new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+                        new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()});     
+                    JSONArray jArr=new JSONArray();
+                    for (Object[] curRec: list){
+                        JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
+                        jArr.add(jObj);
+                    }
+                    this.isSuccess=true;
+                    this.responseSuccessJArr=jArr;
+                    return;  
                 case GET_SAMPLE_MICROORGANISM_VIEW:
                     String whereFieldsName = argValues[0].toString(); 
                     if (whereFieldsName==null){whereFieldsName="";}

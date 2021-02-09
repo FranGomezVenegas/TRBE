@@ -144,18 +144,8 @@ public class InspLotRMAPIfrontend extends HttpServlet {
             fieldsToRetrieveStr=LPNulls.replaceNull(argValues[1].toString());
             Boolean includesSampleAnalysisInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
             Boolean includesSampleAnalysisResultInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());            
-            //fieldsToRetrieve=getFieldsListToRetrieve(fieldsToRetrieveStr, TblsInspLotRMData.Sample.getAllFieldNames());
-/*            Object[][] sampleInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.Sample.TBL.getName(), 
-                fieldsToRetrieveStr, TblsInspLotRMData.Sample.getAllFieldNames(), 
-                new String[]{TblsInspLotRMData.Sample.FLD_LOT_NAME.getName()}, new Object[]{lotName}, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()});        
             jArr = new JSONArray();
-            for (Object[] currBatch: sampleInfo){
-                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
-                jArr.add(jObj);
-            }*/
-            jArr = new JSONArray();
-            jArr.add(
-                dataSampleStructure(lotName, null, fieldsToRetrieveStr, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()}, includesSampleAnalysisInfo, includesSampleAnalysisResultInfo));
+            jArr.add(dataSampleStructure(lotName, null, fieldsToRetrieveStr, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()}, includesSampleAnalysisInfo, includesSampleAnalysisResultInfo));
             Rdbms.closeRdbms();  
             LPFrontEnd.servletReturnSuccess(request, response, jArr);
             break;        

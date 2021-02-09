@@ -108,14 +108,12 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         }
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                   
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
-
         switch (endPoint){
             case INCUBATORS_LIST: 
                 String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()};
                 String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};     
-//                Rdbms.stablishDBConection(false);
                 Object[][] incubatorsList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
                         new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, new Object[]{true}, 
                         fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()});
@@ -124,14 +122,11 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrument);
                     Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading( currInstrument[0].toString(), 5);                    
                     JSONArray jReadingsArr = new JSONArray();
-                    for (Object[] curReading: instrReadings){
-                        JSONObject jReadingsObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveReadings, curReading);
-                        jReadingsArr.add(jReadingsObj);
-                    }
+                    for (Object[] curReading: instrReadings)
+                        jReadingsArr.add(LPJson.convertArrayRowToJSONObject(fieldsToRetrieveReadings, curReading));                    
                     jObj.put("LAST_READINGS", jReadingsArr);
                     jArr.add(jObj);
                 }
-                Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 break;
             case INCUBATOR_TEMP_READINGS:
@@ -143,12 +138,9 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                             TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};            
                 if (numPoints!=null && numPoints.length()>0) numPointsInt=Integer.valueOf(numPoints);                    
                 Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading(instrName, numPointsInt);                    
-                Rdbms.closeRdbms();  
                 jArr = new JSONArray();
-                for (Object[] currReading: instrReadings){
-                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
-                    jArr.add(jObj);
-                }
+                for (Object[] currReading: instrReadings)
+                    jArr.add(LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading));                
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 break;
             default:      
