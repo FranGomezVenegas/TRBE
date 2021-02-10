@@ -17,7 +17,9 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class AuditUtilities {
+public final class AuditUtilities {
+    private AuditUtilities() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
+    
     public static String[] getUserSessionProceduresList(String[] tblFlds, Object[] fldVls){
         char procsSeparator = (char)34;
         if (LPArray.valueInArray(tblFlds, TblsApp.AppSession.FLD_PROCEDURES.getName())){

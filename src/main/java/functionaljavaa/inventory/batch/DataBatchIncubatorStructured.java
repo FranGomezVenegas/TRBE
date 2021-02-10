@@ -5,7 +5,6 @@
  */
 package functionaljavaa.inventory.batch;
 
-import functionaljavaa.inventory.batch.DataBatchIncubator;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
@@ -24,7 +23,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class DataBatchIncubatorStructured {
+public final class DataBatchIncubatorStructured {
+    private DataBatchIncubatorStructured() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
     public static final String BATCHCONTENTSEPARATORSTRUCTUREDBATCH="<>";
     public static final String POSITIONVALUESEPARATORSTRUCTUREDBATCH="*";

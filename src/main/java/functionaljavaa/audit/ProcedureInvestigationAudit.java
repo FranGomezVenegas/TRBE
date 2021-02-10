@@ -21,7 +21,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class ProcedureInvestigationAudit {
+public final class ProcedureInvestigationAudit {
+    private ProcedureInvestigationAudit() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
 /*
  * To change this license header, choose License Headers in Project Properties.

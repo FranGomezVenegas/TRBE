@@ -15,7 +15,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class GenomaConfigVariables {
+public final class GenomaConfigVariables {
+    private GenomaConfigVariables() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
 public static Object[] variableSetAddVariable(String variableSetName, String variableName) {
     

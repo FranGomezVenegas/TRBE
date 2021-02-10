@@ -29,7 +29,9 @@ import java.util.logging.Logger;
  * @author User
  */
 
-public class LPFilesTools {
+public final class LPFilesTools {
+    private LPFilesTools() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
+    
     public static List<String[]> fromCsvToArray (String fileName, char separator)  {
         //if (separator==null) separator="|";
         //String fileName = "D:\\LP\\testingRepository-20200203\\spec_limits.csv"; //"src/main/resources/numbers.csv";

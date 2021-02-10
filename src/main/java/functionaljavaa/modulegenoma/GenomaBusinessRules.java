@@ -14,7 +14,8 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class GenomaBusinessRules {
+public final class GenomaBusinessRules {
+    private GenomaBusinessRules() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
     public static Boolean activateOnCreation(String schemaSuffix, String tableName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

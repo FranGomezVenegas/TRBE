@@ -40,7 +40,8 @@ enum InvestigationAPIErrorMessages{
  *
  * @author User
  */
-public class Investigation {
+public final class Investigation {
+    private Investigation() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
 
     public static Object[] newInvestigation(String[] fldNames, Object[] fldValues, String objectsToAdd){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

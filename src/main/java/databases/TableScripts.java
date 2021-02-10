@@ -24,7 +24,9 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class TableScripts {
+public final class TableScripts {
+    private TableScripts() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
+    
     public static String createTableScript(String procInstanceName, String tableScript, String schema, String tableName, Object[][] TblDefFields, String[] fields){
         return createTableScriptPostgres(procInstanceName, tableScript, schema, tableName, TblDefFields, fields);
     }

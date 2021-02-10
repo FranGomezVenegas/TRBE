@@ -19,7 +19,8 @@ import static trazit.queries.QueryUtilities.getTableData;
  *
  * @author User
  */
-public class InspLotQueries {
+public final class InspLotQueries {
+    private InspLotQueries() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     public static JSONArray configMaterialStructure(String name, String filterFieldsToRetrieve, String[] orderBy,
             Boolean includeMatCertificate, Boolean includeMatInventoryPlan, Boolean includeMatSamplingPlan){
         String[] whereFldName=new String[]{TblsInspLotRMConfig.Material.FLD_NAME.getName()};

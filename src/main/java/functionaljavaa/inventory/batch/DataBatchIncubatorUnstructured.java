@@ -5,7 +5,6 @@
  */
 package functionaljavaa.inventory.batch;
 
-import functionaljavaa.inventory.batch.DataBatchIncubator;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
@@ -22,7 +21,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class DataBatchIncubatorUnstructured {
+public final class DataBatchIncubatorUnstructured {
+    private DataBatchIncubatorUnstructured() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
 
     static Boolean batchIsEmptyUnstructured(String batchName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

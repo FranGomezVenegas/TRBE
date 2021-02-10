@@ -22,7 +22,9 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class AppIncidentAudit {
+public final class AppIncidentAudit {
+    private AppIncidentAudit() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
+    
     public static Object[] incidentAuditAdd(String action, String tableName, Integer incidentId,
                         Object[] auditlog, Integer parentAuditId, String note) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();

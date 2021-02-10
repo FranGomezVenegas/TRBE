@@ -10,7 +10,6 @@ import databases.Rdbms;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
-import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
@@ -20,7 +19,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author Administrator
  */
-public class EnvMonitSchemaDefinition {
+public final class EnvMonitSchemaDefinition {
+    private EnvMonitSchemaDefinition() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
 
     /**
      *

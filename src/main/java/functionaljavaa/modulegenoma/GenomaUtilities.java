@@ -16,7 +16,8 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class GenomaUtilities {
+public final class GenomaUtilities {
+    private GenomaUtilities() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
     public static Object[] addObjectToUnstructuredField(String schemaType, String tableName, String[] tableKeyFieldName, Object[] tableKeyFieldValue, String unstructuredFieldName, String newObjectId, String newObjectInfoToStore){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
