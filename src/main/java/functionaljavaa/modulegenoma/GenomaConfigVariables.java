@@ -15,7 +15,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class GenomaConfigVariables {
+public final class GenomaConfigVariables {
+    private GenomaConfigVariables() {throw new IllegalStateException("Utility class");}
     
 public static Object[] variableSetAddVariable(String variableSetName, String variableName) {
     

@@ -16,8 +16,9 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class GenomaUtilities {
-    
+class GenomaUtilities {
+    private GenomaUtilities() {throw new IllegalStateException("Utility class");}
+   
     public static Object[] addObjectToUnstructuredField(String schemaType, String tableName, String[] tableKeyFieldName, Object[] tableKeyFieldValue, String unstructuredFieldName, String newObjectId, String newObjectInfoToStore){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String[] sampleInfoFieldsToRetrieve = new String[]{unstructuredFieldName};

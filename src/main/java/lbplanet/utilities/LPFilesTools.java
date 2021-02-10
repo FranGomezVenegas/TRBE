@@ -29,7 +29,9 @@ import java.util.logging.Logger;
  * @author User
  */
 
-public class LPFilesTools {
+class LPFilesTools {
+    private LPFilesTools() {throw new IllegalStateException("Utility class");}
+    
     public static List<String[]> fromCsvToArray (String fileName, char separator)  {
         //if (separator==null) separator="|";
         //String fileName = "D:\\LP\\testingRepository-20200203\\spec_limits.csv"; //"src/main/resources/numbers.csv";

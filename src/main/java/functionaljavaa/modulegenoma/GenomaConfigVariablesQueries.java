@@ -16,7 +16,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class GenomaConfigVariablesQueries {
+public final class GenomaConfigVariablesQueries {
+    private GenomaConfigVariablesQueries() {throw new IllegalStateException("Utility class");}
     
     public static Object[] getVariableSetVariablesId(String variableSetName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

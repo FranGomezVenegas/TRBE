@@ -23,7 +23,8 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class DataInventoryRetain {
+public final class DataInventoryRetain {
+    private DataInventoryRetain() {throw new IllegalStateException("Utility class");}
     
     public static Object[] createRetain(String lotName, String materialName, InventoryPlanEntryItem invEntryItem){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);

@@ -21,7 +21,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class IncubBatchAudit {
+public final class IncubBatchAudit {
+    private IncubBatchAudit() {throw new IllegalStateException("Utility class");}
 
 /**
  * Add one record in the audit table when altering any of the levels belonging to the sample structure when not linked to any other statement.

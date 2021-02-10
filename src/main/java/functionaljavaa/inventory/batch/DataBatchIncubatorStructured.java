@@ -24,7 +24,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class DataBatchIncubatorStructured {
+public final class DataBatchIncubatorStructured {
+    private DataBatchIncubatorStructured() {throw new IllegalStateException("Utility class");}
     
     public static final String BATCHCONTENTSEPARATORSTRUCTUREDBATCH="<>";
     public static final String POSITIONVALUESEPARATORSTRUCTUREDBATCH="*";

@@ -45,7 +45,9 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class EndPointsToRequirements {
+public final class EndPointsToRequirements {
+    private EndPointsToRequirements() {throw new IllegalStateException("Utility class");}
+    
     // Endpoints 'antiguos': AppHeaderAPIEndpoints, IncidentAPIfrontendEndpoints, BatchAPIEndpoints, GenomaVariableAPIEndPoints y todos los de Genoma!
 
     public static void endpointDefinition(){
