@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package functionaljavaa.modulegenoma;
 
 import functionaljavaa.parameter.Parameter;
@@ -9,8 +14,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-class GenomaBusinessRules {
-    private GenomaBusinessRules() {throw new IllegalStateException("Utility class");}
+public class GenomaBusinessRules {
     
     public static Boolean activateOnCreation(String schemaSuffix, String tableName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

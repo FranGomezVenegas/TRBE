@@ -22,9 +22,7 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public final class AppIncidentAudit {
-    private AppIncidentAudit() {throw new IllegalStateException("Utility class");}
-    
+public class AppIncidentAudit {
     public static Object[] incidentAuditAdd(String action, String tableName, Integer incidentId,
                         Object[] auditlog, Integer parentAuditId, String note) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();

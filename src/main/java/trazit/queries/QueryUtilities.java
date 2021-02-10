@@ -17,9 +17,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public final class QueryUtilities {
-    private QueryUtilities() {throw new IllegalStateException("Utility class");}
-    
+public class QueryUtilities {
     public static String[] getFieldsListToRetrieve(String fldToRetrieve, String[] tableAllFields){
         String[] fieldsToRetrieve=tableAllFields;
         if (!(fldToRetrieve==null || fldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fldToRetrieve)))

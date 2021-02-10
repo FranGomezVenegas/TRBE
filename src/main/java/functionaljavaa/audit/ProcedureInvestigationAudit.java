@@ -22,7 +22,6 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class ProcedureInvestigationAudit {
-    private ProcedureInvestigationAudit() {throw new IllegalStateException("Utility class");}
     
 /*
  * To change this license header, choose License Headers in Project Properties.

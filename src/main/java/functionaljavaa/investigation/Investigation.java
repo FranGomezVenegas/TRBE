@@ -40,8 +40,7 @@ enum InvestigationAPIErrorMessages{
  *
  * @author User
  */
-public final class Investigation {
-    private Investigation() {throw new IllegalStateException("Utility class");}
+public class Investigation {
 
     public static Object[] newInvestigation(String[] fldNames, Object[] fldValues, String objectsToAdd){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

@@ -16,8 +16,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public final class LPKPIs {
-    private LPKPIs() {throw new IllegalStateException("Utility class");}
+public class LPKPIs {
 
 public static JSONObject getKPIs(String[] objGroupName, String[] tblCategory, String[] tblName, String[] whereFieldsNameArr, String[] whereFieldsValueArr, 
                     String[] fldToRetrieve, String[] dataGrouped){

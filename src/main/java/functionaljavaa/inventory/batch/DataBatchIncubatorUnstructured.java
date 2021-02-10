@@ -22,8 +22,7 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public final class DataBatchIncubatorUnstructured {
-    private DataBatchIncubatorUnstructured() {throw new IllegalStateException("Utility class");}
+public class DataBatchIncubatorUnstructured {
 
     static Boolean batchIsEmptyUnstructured(String batchName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

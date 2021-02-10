@@ -19,9 +19,7 @@ import static trazit.queries.QueryUtilities.getTableData;
  *
  * @author User
  */
-class InspLotQueries {
-    private InspLotQueries() {throw new IllegalStateException("Utility class");}
-
+public class InspLotQueries {
     public static JSONArray configMaterialStructure(String name, String filterFieldsToRetrieve, String[] orderBy,
             Boolean includeMatCertificate, Boolean includeMatInventoryPlan, Boolean includeMatSamplingPlan){
         String[] whereFldName=new String[]{TblsInspLotRMConfig.Material.FLD_NAME.getName()};

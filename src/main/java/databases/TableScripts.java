@@ -24,9 +24,7 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-class TableScripts {
-    private TableScripts() {throw new IllegalStateException("Utility class");}
-    
+public class TableScripts {
     public static String createTableScript(String procInstanceName, String tableScript, String schema, String tableName, Object[][] TblDefFields, String[] fields){
         return createTableScriptPostgres(procInstanceName, tableScript, schema, tableName, TblDefFields, fields);
     }

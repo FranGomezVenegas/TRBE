@@ -18,8 +18,6 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class AuditUtilities {
-    private AuditUtilities() {throw new IllegalStateException("Utility class");}
-    
     public static String[] getUserSessionProceduresList(String[] tblFlds, Object[] fldVls){
         char procsSeparator = (char)34;
         if (LPArray.valueInArray(tblFlds, TblsApp.AppSession.FLD_PROCEDURES.getName())){

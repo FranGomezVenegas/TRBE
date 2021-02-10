@@ -20,9 +20,7 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-class SampleAPIlogic {
-    private SampleAPIlogic() {throw new IllegalStateException("Utility class");}
-    
+public class SampleAPIlogic {
     public static JSONObject performAction  (HttpServletRequest request, DataSample smp, SampleAPIParams.SampleAPIEndpoints endPoint, RelatedObjects rObj)  {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
