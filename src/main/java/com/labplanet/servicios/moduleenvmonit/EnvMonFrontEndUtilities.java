@@ -16,7 +16,10 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author Administrator
  */
-public class EnvMonFrontEndUtilities {
+class EnvMonFrontEndUtilities {
+  private EnvMonFrontEndUtilities() {
+    throw new IllegalStateException("Utility class");
+  }
 
     /**
      *
