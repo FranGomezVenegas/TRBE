@@ -86,6 +86,16 @@
         <servlet-class>com.labplanet.servicios.app.SopUserAPI</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>CertifyAPIfrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.CertifyAPIfrontend</servlet-class>
+    </servlet>    
+    <servlet>
+        <servlet-name>CertifyAnalysisMethod</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.CertifyAnalysisMethodAPI</servlet-class>
+    </servlet>
+
+        
+    <servlet>
         <servlet-name>SopUserAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.app.SopUserAPIfrontend</servlet-class>
     </servlet>
@@ -316,6 +326,14 @@
     <servlet-mapping>
         <servlet-name>SopUser</servlet-name>
         <url-pattern>/app/SopUserAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CertifyAPIfrontend</servlet-name>
+        <url-pattern>/app/frontend/CertifyAPIfrontend</url-pattern>
+    </servlet-mapping>    
+    <servlet-mapping>
+        <servlet-name>CertifyAnalysisMethod</servlet-name>
+        <url-pattern>/app/CertifyAnalysisMethodAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestingServer</servlet-name>

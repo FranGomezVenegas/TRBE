@@ -270,6 +270,9 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_READING_MIN = "readingMin";  
     public static final String REQUEST_PARAM_READING_MAX = "readingMax";  
     public static final String REQUEST_PARAM_INCLUDE_MICROORGANISMS = "includeMicroorganisms";      
+    public static final String REQUEST_PARAM_METHOD_NAME = "methodName";      
+    public static final String REQUEST_PARAM_METHOD_VERSION = "methodVersion";      
+    public static final String REQUEST_PARAM_TRAINING_ID = "trainingId";      
     public static final String REQUEST_PARAM_MICROORGANISMS_TO_FIND = "MicroorganismsToFind";      
     public static final String REQUEST_PARAM_CREATION_DAY_START = "creationDayStart";  
     public static final String REQUEST_PARAM_CREATION_DAY_END = "creationDayEnd";  
@@ -391,6 +394,7 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
+    public static final String REQUEST_PARAM_USER_NAME = "userName";
     public static final String REQUEST_PARAM_USER_ROLE = "userRole";
     public static final String REQUEST_PARAM_USER_SESSION_ID = "userSessionId";
     public static final String REQUEST_PARAM_PERSON= "person";

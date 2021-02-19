@@ -803,7 +803,8 @@ public class LPPlatform {
         if (errorCodeText.length()==0){errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode, null);}
         if (errorCodeText.length()==0){errorCodeText = msgCode; errorCodeFromBundle=false;}
         if (!errorCodeFromBundle){
-            errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file)";
+            errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file) ";
+            if (msgVariables!=null)errorDetail=errorDetail+Arrays.toString(msgVariables);
             if ( (msgVariables!=null) &&  msgVariables.length>0){
                 for (int iVarValue=1; iVarValue<=msgVariables.length; iVarValue++){
                     errorDetail = errorDetail.replace("<*"+iVarValue+"*>", msgVariables[iVarValue-1].toString());

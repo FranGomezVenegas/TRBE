@@ -87,11 +87,12 @@ public class AuthenticationAPI extends HttpServlet {
                     String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
                     if (!Boolean.valueOf(userIsCaseSensitive)) dbUserName=dbUserName.toLowerCase();
                     
-                    String personName = UserAndRolesViews.getPersonByUser(dbUserName);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personName)){               
+                    Object[] personNameObj = UserAndRolesViews.getPersonByUser(dbUserName);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personNameObj[0].toString())){               
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_PERSON_NOT_FOUND, null, language);              
                         return;                                                          
-                    }                    
+                    }      
+                    String personName=personNameObj[0].toString();
                     Object[] validUserPassword = UserAndRolesViews.isValidUserPassword(dbUserName, dbUserPassword);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(validUserPassword[0].toString())){
                         validUserPassword = UserAndRolesViews.isValidUserPassword(dbUserName, dbUserPassword);

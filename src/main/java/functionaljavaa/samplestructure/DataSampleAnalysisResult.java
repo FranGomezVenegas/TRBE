@@ -14,6 +14,7 @@ import databases.TblsCnfg;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
+import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.DataSpec;
 import functionaljavaa.parameter.Parameter;
@@ -207,7 +208,7 @@ public class DataSampleAnalysisResult {
      * @return
      * @throws IllegalArgumentException
      */
-    public Object[] sampleAnalysisResultEntry(Integer resultId, Object resultValue, DataSample dataSample) {   
+    public Object[] sampleAnalysisResultEntry(Integer resultId, Object resultValue, DataSample dataSample) {           
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
@@ -242,6 +243,8 @@ public class DataSampleAnalysisResult {
         String currResultStatus = (String) resultData[0][6];
         String currRawValue = (String) resultData[0][7];
         String resultUomName = (String) resultData[0][8];
+        Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName);
+        if (!Boolean.valueOf(userCertified[0].toString())) return (Object[]) userCertified[1];
         if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultLocked", new Object[]{currResultStatus, resultId.toString(), schemaConfigName});
         if ((currRawValue != null) && (currRawValue.equalsIgnoreCase(resultValue.toString()))) 

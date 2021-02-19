@@ -36,8 +36,6 @@ public class DataProgramSampleAnalysisResult implements DataSampleAnalysisResult
 
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param resultId
      * @param sampleFieldName
      * @param sampleFieldValue

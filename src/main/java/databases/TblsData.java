@@ -33,6 +33,7 @@ public class TblsData {
             case "SAMPLE_ANALYSIS": return SampleAnalysis.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_ANALYSIS_RESULT": return SampleAnalysisResult.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_COC": return SampleCoc.createTableScript(schemaNamePrefix, fields);
+            case "CERTIF_USER_ANALYSIS_METHOD": return CertifUserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
             case "USER_ANALYSIS_METHOD": return UserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
             case "USER_SOP": return UserSop.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW": return ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, fields);
@@ -1269,10 +1270,140 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }        
+    public enum Training{
+        FLD_ID("id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
+        ,        
+        TBL("training", LPDatabase.createSequence(FLD_ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
+        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull())        ,
+        FLD_LIGHT(FIELDS_NAMES_LIGHT, LPDatabase.stringNotNull()),
+        ;
+        private Training(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
 
-    /**
-     *
-     */
+        /**
+         *
+         * @return
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
+
+        /**
+         *
+         * @param schemaNamePrefix
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = Training.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (Training obj: Training.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }  
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }           
+
+    public enum CertifUserAnalysisMethod{
+        FLD_ID("id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
+        ,        
+        TBL("certif_user_analysis_method", LPDatabase.createSequence(FLD_ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
+        FLD_USER_ID(FIELDS_NAMES_USER_ID, LPDatabase.string())        ,
+        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string())        ,
+        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer())        ,
+        FLD_ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, LPDatabase.dateTime())        ,
+        FLD_ASSIGNED_BY("assigned_by", LPDatabase.string())        ,
+        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull())        ,
+        FLD_CERTIFICATION_DATE("certification_date", LPDatabase.dateTime())        ,
+        FLD_CERTIF_EXPIRY_DATE("certif_expiry_date", LPDatabase.dateTime())        ,
+        FLD_CERTIF_STARTED("certif_started", LPDatabase.booleanFld())        ,
+        FLD_CERTIF_COMPLETED("certif_completed", LPDatabase.booleanFld())        ,
+        FLD_SOP_NAME(FIELDS_NAMES_SOP_NAME, LPDatabase.string())        ,
+        FLD_USER_NAME(FIELDS_NAMES_USER_NAME, LPDatabase.string())        ,
+        FLD_LIGHT(FIELDS_NAMES_LIGHT, LPDatabase.stringNotNull()),
+        FLD_TRAINING_ID("training_id", LPDatabase.integer()),        
+        ;
+        private CertifUserAnalysisMethod(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
+
+        /**
+         *
+         * @param schemaNamePrefix
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = CertifUserAnalysisMethod.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (CertifUserAnalysisMethod obj: CertifUserAnalysisMethod.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }  
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }           
+
     public enum UserAnalysisMethod{
 
         /**

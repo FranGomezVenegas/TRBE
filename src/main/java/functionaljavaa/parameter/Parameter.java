@@ -12,6 +12,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -46,10 +47,10 @@ public class Parameter {
      * @return
      **/
     public static String getParameterBundle(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
-        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
-        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
-        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
-        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();           
+        String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+        String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+        Integer lineNumber = -999;//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();           
 
         ResourceBundle prop = null;
         if (parameterFolder==null){parameterFolder="config";}
@@ -294,6 +295,12 @@ public class Parameter {
             }
         }
         CLIENT_CODE_STACK_INDEX = i;
-    }   
+    }  
+    
+    public static Boolean isTagValueOneOfEnableOnes(String tagValue){
+        String enableValuesStr=getParameterBundleAppFile("businessRulesEnableValues"); 
+        String[] enableValues=enableValuesStr.split("\\|");
+        return LPArray.valueInArray(enableValues, tagValue);
+    }
      
 }

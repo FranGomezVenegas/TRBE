@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -178,7 +179,17 @@ public class LPFrontEnd {
                 errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
                 errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
             }        
-        }        
+            if (errorTextEn.length()==0){
+                errorTextEn=msgCode+ " (*** This MessageCode, "+msgCode+", has no entry defined in messages property file) ";
+                if (msgDynamicValues!=null)
+                    errorTextEn=errorTextEn+Arrays.toString(msgDynamicValues);
+            }
+            if (errorTextEs.length()==0){
+                errorTextEs=msgCode+ " (*** Este CódigoDeMensaje, "+msgCode+", no está definido en los archivos de mensajes) ";
+                if (msgDynamicValues!=null)
+                    errorTextEs=errorTextEs+Arrays.toString(msgDynamicValues);
+            }
+        }      
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_TRUE);
         errJsObj.put(ResponseTags.CATEGORY.getLabelName(), apiName.toUpperCase().replace("API", ""));

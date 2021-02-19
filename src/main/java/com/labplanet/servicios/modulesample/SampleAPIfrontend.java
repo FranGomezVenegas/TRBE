@@ -19,6 +19,7 @@ import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
 import databases.Token;
+import static functionaljavaa.certification.AnalysisMethodCertifQueries.analysisMethodCertifiedUsersList;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.samplestructure.DataSample;
 import java.io.IOException;
@@ -700,6 +701,20 @@ public class SampleAPIfrontend extends HttpServlet {
                    }
                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
                    return;
+                case GET_METHOD_CERTIFIED_USERS_LIST:
+                    String methodName=argValues[0].toString();
+                    Object[] analysisMethodCertifiedUsersList = analysisMethodCertifiedUsersList(methodName, null, null);
+                    jArr = new JSONArray();
+                    String[] fldNames=(String[])analysisMethodCertifiedUsersList[0];
+                    Object[][] dataValues=(Object[][])analysisMethodCertifiedUsersList[1];
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dataValues[0][0].toString())){
+                        for (Object[] curRow: dataValues){      
+                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fldNames, curRow);
+                            jArr.add(jObj);
+                        }
+                    }
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    return;
                 default:      
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);                              
                 }                     

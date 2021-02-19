@@ -151,5 +151,13 @@ public class LPDate {
                 d);
         return cal.getTime();
     }
+    
+//    public static LocalDateTime convertSqlDateTimeToLocalDateTime(java.sql.Date dateSql){
+//    }
+    
+    public static Boolean isDateBiggerThanTimeStamp(Calendar dateToCompare){
+        if (Calendar.getInstance().before(dateToCompare)) return true;
+        return false;
+    }
 
 }

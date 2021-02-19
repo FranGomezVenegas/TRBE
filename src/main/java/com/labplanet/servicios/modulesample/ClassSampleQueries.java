@@ -15,8 +15,6 @@ import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
-import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
-import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
@@ -47,55 +45,6 @@ public class ClassSampleQueries {
     private static final String[] SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION=new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()};
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
 
-    public enum SampleAPIFrontendEndpoints{
-        GET_SAMPLE_ANALYSIS_RESULT_LIST("GET_SAMPLE_ANALYSIS_RESULT_LIST", new LPAPIArguments[]{
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
-                //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
-                }),
-        GET_SAMPLE_STAGES_SUMMARY_REPORT("GET_SAMPLE_STAGES_SUMMARY_REPORT", new LPAPIArguments[]{
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            }),
-        KPIS("KPIS", new LPAPIArguments[]{
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 10),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),
-                }),        
-        ;
-        private SampleAPIFrontendEndpoints(String name, LPAPIArguments[] argums){
-            this.name=name;
-            this.arguments=argums;  
-        } 
-        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
-            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
-            Object[] argValues=new Object[0];
-            for (LPAPIArguments curArg: this.arguments){                
-                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
-                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
-            }  
-            hm.put(request, argValues);            
-            return hm;
-        }        
-        public String getName(){
-            return this.name;
-        }
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
-        private final String name;
-        private final LPAPIArguments[] arguments;
-    };
-    
     public ClassSampleQueries(HttpServletRequest request, SampleAPIfrontendEndpoints endPoint){
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
@@ -181,7 +130,8 @@ public class ClassSampleQueries {
                     this.responseSuccessJArr=jArr;                                        
                     }                    
                     return;                  
-                               
+                case GET_METHOD_CERTIFIED_USERS_LIST:
+                    
                 default:      
 //                  RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
 //                  rd.forward(request, null);                                   

@@ -238,7 +238,14 @@
     <artifactId>opencsv</artifactId>
     <version>5.2</version>
 </dependency>
-                                
+<!-- https://mvnrepository.com/artifact/org.molgenis/molgenis-data-excel
+<dependency>
+    <groupId>org.molgenis</groupId>
+    <artifactId>molgenis-data-excel</artifactId>
+    <version>8.4.5</version>
+</dependency>   
+-->
+                             
 </dependencies>    
 
     <build>

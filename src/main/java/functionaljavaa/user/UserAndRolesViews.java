@@ -41,18 +41,19 @@ public class UserAndRolesViews {
     }
 
     /**
-     *  Returns LABPLANET_FALSE when the person not found.
+     *  Returns Object[] LABPLANET_FALSE when the person not found or user name in position 0.
      * @param userName
      * @return
      */
-    public static final String getPersonByUser(String userName){ 
+    public static final Object[] getPersonByUser(String userName){ 
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
         if (!Boolean.valueOf(userIsCaseSensitive)) userName=userName.toLowerCase();
         Object[][] personByUser = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
                 new String[]{TblsApp.Users.FLD_USER_NAME.getName()}, new String[]{userName}, new String[]{Users.FLD_PERSON_NAME.getName()}, new String[]{Users.FLD_PERSON_NAME.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0][0].toString())){return LPPlatform.LAB_FALSE;}
-        return personByUser[0][0].toString();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0][0].toString()))
+            LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "userNotExists", new Object[]{userName});
+        return new Object[]{personByUser[0][0].toString()};
     }
     
 
@@ -93,8 +94,8 @@ public class UserAndRolesViews {
     }
     
     public static final Object[] createAppUser(String uName, String[] fldNames, Object[] fldValues){
-        String personByUser = getPersonByUser(uName);        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserAlreadyExists", new Object[]{uName});        
+        Object[] personByUserObj = getPersonByUser(uName);        
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserAlreadyExists", new Object[]{uName});        
         Object[] personIdDiagn = getNextAppPersonId();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personIdDiagn[0].toString())) return personIdDiagn;
         String personId=personIdDiagn[1].toString();

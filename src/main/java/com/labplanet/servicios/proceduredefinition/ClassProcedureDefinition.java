@@ -43,9 +43,9 @@ public class ClassProcedureDefinition {
                     Integer procedureVersion = (Integer) argValues[1];   
                     String schemaPrefix=argValues[2].toString();
                     String userName=argValues[3].toString();
-                    String personByUser = getPersonByUser(userName);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser)){
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The user <*1*> does not exist", new Object[]{userName});                         
+                    Object[] personByUserObj = getPersonByUser(userName);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())){
+                        actionDiagnoses=personByUserObj;
                         break;
                     }
                     actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUsers.TBL.getName(), 
@@ -60,9 +60,9 @@ public class ClassProcedureDefinition {
                     schemaPrefix=argValues[2].toString();
                     String roleName=argValues[3].toString();
                     userName=argValues[4].toString();
-                    personByUser = getPersonByUser(userName);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser)){
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The user <*1*> does not exist", new Object[]{userName});                         
+                    personByUserObj = getPersonByUser(userName);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())){
+                        actionDiagnoses=personByUserObj;
                         break;
                     }
                     Object[] procedureRolesList = procedureRolesList(procedureName, procedureVersion);    
