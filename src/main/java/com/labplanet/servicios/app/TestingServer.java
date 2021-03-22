@@ -10,7 +10,9 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import databases.Token;
+import functionaljavaa.certification.CertifGlobalVariables;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
+import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPPlatform;
 
 
 /**
@@ -76,8 +79,6 @@ public class TestingServer extends HttpServlet {
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 //if  (1==1)      return;
-
-        
 //lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
 //        null, null, new String[]{"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
 //lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
@@ -86,7 +87,6 @@ public class TestingServer extends HttpServlet {
 //LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
 //LPFilesTools.toCsvFromArray("D:\\LP\\Postgresql Backups\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});
 //TblsReqs.ProcedureUserRequirements.
-
 //            List<String[]> fromCsvToArray = LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
 //Rdbms.stablishDBConectionTester();
 //insertRecordInTableFromTable(true, TblsReqs.ProcedureUserRequirementsEvents.getAllFieldNames(),
@@ -94,55 +94,65 @@ public class TestingServer extends HttpServlet {
 //        new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_SCHEMA_PREFIX.getName()},
 //        new Object[]{"proc-deploy", 1, "proc-deploy"},
 //        LPPlatform.buildSchemaName("proc-deploy", GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
-
 //            if (1==1) return;            
 //            out.println(SomeEnumClass.getCell(1));
 //            out.println(OtherEnumClass.getCell(1));
 //            MyEnum m = null;            
 //            out.println("Fran "+m.getByIndexFran(1));
 /*
-Integer[] misEnterosArr = new Integer[5];
-Integer valorABuscar=12;
-
-misEnterosArr[0]=1;        
-misEnterosArr[1]=12;  
-misEnterosArr[2]=41;
-misEnterosArr[3]=44;
-misEnterosArr[4]=87;
-String dameLaPosicion=null;
-int indice=0;
-Integer indiceEnArray=null;
-
-Boolean noOut=true;
-Integer tamañoArr=misEnterosArr.length;
-while(noOut){
-    indiceEnArray=Integer.valueOf(tamañoArr/2);
-    if (misEnterosArr[indiceEnArray]==valorABuscar){
-       dameLaPosicion=indiceEnArray.toString();
-       noOut=false;
-    }else{
-        if (misEnterosArr[indiceEnArray]<valorABuscar) tamañoArr
-    }
+            Integer[] misEnterosArr = new Integer[5];
+            Integer valorABuscar=12;
+            misEnterosArr[0]=1;
+            misEnterosArr[1]=12;
+            misEnterosArr[2]=41;
+            misEnterosArr[3]=44;
+            misEnterosArr[4]=87;
+            String dameLaPosicion=null;
+            int indice=0;
+            Integer indiceEnArray=null;
+            Boolean noOut=true;
+            Integer tamañoArr=misEnterosArr.length;
+            while(noOut){
+            indiceEnArray=Integer.valueOf(tamañoArr/2);
+            if (misEnterosArr[indiceEnArray]==valorABuscar){
+            dameLaPosicion=indiceEnArray.toString();
+            noOut=false;
+            }else{
+            if (misEnterosArr[indiceEnArray]<valorABuscar) tamañoArr
+            }
+            }
+            //for (Integer currInt: misEnterosArr){
+            //    if (currInt==valorABuscar) {
+            //        dameLaPosicion=String.valueOf(indice);
+            //        break;
+            //    }
+            //    indice++;
+            //}
+            if (dameLaPosicion==null) dameLaPosicion="No existe";
+            //dameLaPosicion == null ? "No existe" : String.valueOf(indice);
+            String msgStr="El valor "+valorABuscar.toString()+" está en la posición "+dameLaPosicion;
+            out.println(msgStr);
+            if (1==1) return;
+            if (1==1) return;
+             */
+Rdbms.stablishDBConectionTester();
+//String scriptToAddCertifToAnyObject = CertifGlobalVariables.getScriptToAddCertifToAnyObject("mp-release1", "data", "user_sop");
+//Rdbms.prepRdQuery(scriptToAddCertifToAnyObject, new Object[]{});
+String[][] endpointArr=new String[2][2];
+endpointArr[0][0]="SampleAPIfrontendEndpoints";
+endpointArr[0][1]="GET_METHOD_CERTIFIED_USERS_LIST";
+endpointArr[1][0]="SampleAPIfrontendEndpoints";
+endpointArr[1][1]="KPIS";
+for (String[] curEntry: endpointArr){
+    String apiName=curEntry[0];//"SampleAPIfrontendEndpoints";
+    String endPointName=curEntry[1];//"GET_METHOD_CERTIFIED_USERS_LIST";
+    Object[] docInfoForEndPoint = getDocInfoForEndPoint(apiName, endPointName);    
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(docInfoForEndPoint[0].toString()))
+        out.println("No doc info for "+apiName+"."+endPointName);         
+    else
+        out.println(apiName+"."+endPointName+" >> "+Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString((String[]) docInfoForEndPoint[0], (Object[]) docInfoForEndPoint[1], ":")));
 }
-
-//for (Integer currInt: misEnterosArr){    
-//    if (currInt==valorABuscar) {
-//        dameLaPosicion=String.valueOf(indice);
-//        break;
-//    } 
-//    indice++;
-//}
-
-if (dameLaPosicion==null) dameLaPosicion="No existe";
-
-//dameLaPosicion == null ? "No existe" : String.valueOf(indice);
-String msgStr="El valor "+valorABuscar.toString()+" está en la posición "+dameLaPosicion;
-out.println(msgStr);         
 if (1==1) return;
-
-if (1==1) return;
-*/
-
 String procInstanceName="em-demo-a";
 /*
         String tblCreateScript=TblsTesting.Script.createTableScript(procInstanceName, new String[]{""});

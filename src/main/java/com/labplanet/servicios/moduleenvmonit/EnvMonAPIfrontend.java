@@ -319,8 +319,8 @@ GlobalAPIsParams.
                         programLocationCardInfoFldNameArray = LPArray.addValueToArray1D(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName());
                     }
                     Object[] statusList = DataSampleUtilities.getSchemaSampleStatusList();
-                    Object[] statusListEn = DataSampleUtilities.getSchemaSampleStatusList(LPPlatform.REQUEST_PARAM_LANGUAGE_ENGLISH);
-                    Object[] statusListEs = DataSampleUtilities.getSchemaSampleStatusList(LPPlatform.REQUEST_PARAM_LANGUAGE_SPANISH);
+                    Object[] statusListEn = DataSampleUtilities.getSchemaSampleStatusList(GlobalVariables.Languages.EN.getName());
+                    Object[] statusListEs = DataSampleUtilities.getSchemaSampleStatusList(GlobalVariables.Languages.ES.getName());
 
                     Object[][] programInfo=getTableData(GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.Program.TBL.getName(), 
                         argValues[0].toString(), TblsEnvMonitData.Program.getAllFieldNames(), 

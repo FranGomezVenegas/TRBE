@@ -281,7 +281,7 @@ public class TblsAppAudit {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */

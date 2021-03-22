@@ -21,7 +21,8 @@ import lbplanet.utilities.LPPlatform;
  */
 public class Parameter {
     public enum PropertyFilesType{TRANSLATION_DIR_PATH("translationDirPath", "="),
-        PROCEDURE_BUSINESS_RULES_DIR_PATH("procedureBusinessRulesDirPath", ":")
+        PROCEDURE_BUSINESS_RULES_DIR_PATH("procedureBusinessRulesDirPath", ":"),
+        ENDPOINTDOCUMENTATION("EndPointDocumentation", ":")
         ;
         private PropertyFilesType(String appConfigParamName, String appConfigSeparator){
             this.appConfigParamName=appConfigParamName;
@@ -47,6 +48,15 @@ public class Parameter {
      * @return
      **/
     public static String getParameterBundle(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
+        return getParameterBundle(parameterFolder, procName, schemaSuffix, parameterName, language, true);       
+    }
+    public static String parameterBundleExists(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {
+        return getParameterBundle(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, true);        
+    }
+    public static String getParameterBundle(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {    
+        return getParameterBundle(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, null);
+    }
+    public static String getParameterBundle(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp, Boolean returnFalseIfMissing) {
         String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
         String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
         String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
@@ -68,7 +78,10 @@ public class Parameter {
             } else {
                 return prop.getString(parameterName);
             }
-        } catch (Exception e) {
+        } catch (Exception e) {            
+            if (returnFalseIfMissing!=null && returnFalseIfMissing) 
+                return LPPlatform.LAB_FALSE;
+            if (reportMissingProp!=null && !reportMissingProp) return "";
             if (parameterName.toLowerCase().contains("encrypted_")) return "";            
             LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
                     new Object[]{className, classFullName, methodName, lineNumber}, parameterName);
@@ -225,7 +238,7 @@ public class Parameter {
             String fileDir=getFileDirByPropertyFileType(type);
             if (fileDir.contains(LPPlatform.LAB_FALSE)) return fileDir;
             File[] transFiles = propertiesFiles(fileDir, fileName);
-            if (transFiles.length>0) return "file "+fileName+" already exists";
+            if (transFiles!=null && transFiles.length>0) return "file "+fileName+" already exists";
             File newFile = new File(fileDir+fileName+".properties");
             boolean createNewFile = newFile.createNewFile();
             if (createNewFile) return "New properties file created, "+fileName;
@@ -242,9 +255,11 @@ public class Parameter {
         try{
             endPoint = PropertyFilesType.valueOf(type.toUpperCase());
         }catch(Exception e){
-            return "argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE";
-            //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
-            //return;                   
+            try{
+            endPoint = PropertyFilesType.valueOf(type);
+            }catch(Exception e2){
+                return "argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE, ENDPOINT_DOC_FOLDER";
+            }
         }
 
         String fileDir = "";
@@ -256,8 +271,11 @@ public class Parameter {
             case PROCEDURE_BUSINESS_RULES_DIR_PATH:
                 fileDir = propConfig.getString(PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.getAppConfigParamName());
                 break;
+            case ENDPOINTDOCUMENTATION:
+                fileDir = propConfig.getString(PropertyFilesType.ENDPOINTDOCUMENTATION.getAppConfigParamName());
+                break;
             default:
-                return LPPlatform.LAB_FALSE+"argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE";
+                return LPPlatform.LAB_FALSE+"argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE, ENDPOINT_DOC_FOLDER";
         }
         fileDir = fileDir.replace("/", "\\");        
         return fileDir;

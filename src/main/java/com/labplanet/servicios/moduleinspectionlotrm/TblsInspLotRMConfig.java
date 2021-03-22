@@ -62,7 +62,7 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @return
+         * @return table or field name
          */
         public String getName(){
             return this.dbObjName;
@@ -76,9 +76,9 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @param schemaNamePrefix
-         * @param fields
-         * @return
+         * @param schemaNamePrefix - Procedure Instance where it applies
+         * @param fields fields , ALL when this is null
+         * @return  table or field name
          */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);
@@ -200,7 +200,7 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @return
+         * @return table or field name
          */
         public String getName(){
             return this.dbObjName;
@@ -214,9 +214,9 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @param schemaNamePrefix
-         * @param fields
-         * @return
+         * @param schemaNamePrefix - Procedure Instance where it applies
+         * @param fields fields , ALL when this is null
+         * @return table or field name
          */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);
@@ -335,7 +335,7 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @return
+         * @return table or field name
          */
         public String getName(){
             return this.dbObjName;
@@ -349,9 +349,9 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @param schemaNamePrefix
-         * @param fields
-         * @return
+         * @param schemaNamePrefix - Procedure Instance where it applies
+         * @param fields fields , ALL when this is null
+         * @return string with the table creation script
          */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);
@@ -473,7 +473,7 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @return
+         * @return table or field name
          */
         public String getName(){
             return this.dbObjName;
@@ -487,9 +487,9 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @param schemaNamePrefix
-         * @param fields
-         * @return
+         * @param schemaNamePrefix - Procedure Instance where it applies
+         * @param fields fields , ALL when this is null
+         * @return string with table creation script
          */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);
@@ -630,7 +630,7 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @return
+         * @return table or field name
          */
         public String getName(){
             return this.dbObjName;
@@ -644,9 +644,9 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @param schemaNamePrefix
-         * @param fields
-         * @return
+         * @param schemaNamePrefix - Procedure Instance where it applies
+         * @param fields fields , ALL when this is null
+         * @return string with the table creation script
          */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);
@@ -791,7 +791,7 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @return
+         * @return table or field name
          */
         public String getName(){
             return this.dbObjName;
@@ -802,9 +802,9 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @param schemaNamePrefix
-         * @param fields
-         * @return
+         * @param schemaNamePrefix - Procedure Instance where it applies
+         * @param fields fields , ALL when this is null
+         * @return string with table creation script
          */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);
@@ -867,7 +867,7 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @return
+         * @return table or field name
          */
         public String getName(){
             return this.dbObjName;
@@ -878,9 +878,9 @@ public class TblsInspLotRMConfig {
 
         /**
          *
-         * @param schemaNamePrefix
-         * @param fields
-         * @return
+         * @param schemaNamePrefix  - Procedure Instance where it applies
+         * @param fields fields , ALL when this is null
+         * @return string with table creation script
          */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);

@@ -182,13 +182,18 @@ public class ClassEnvMonSampleFrontend {
                     else
                         sortFieldsNameArr = SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|");     
                     
-                    resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName());
-                    Integer posicRawValueFld=resultFieldToRetrieveArr.length;
-                    resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
-                    Integer posicLimitIdFld=resultFieldToRetrieveArr.length;
-
+                    Integer posicRawValueFld=LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName());
+                    if (posicRawValueFld==-1){
+                        resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName());
+                        posicRawValueFld=resultFieldToRetrieveArr.length;
+                    }
+                    Integer posicLimitIdFld=LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
+                    if (posicLimitIdFld==-1){
+                        resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
+                        posicLimitIdFld=resultFieldToRetrieveArr.length;
+                    }
                     Object[][] analysisResultList=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
-                        argValues[1].toString(), TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames(), 
+                        argValues[1].toString(), resultFieldToRetrieveArr, 
                         sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
                         sortFieldsNameArr);     
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
@@ -209,11 +214,11 @@ public class ClassEnvMonSampleFrontend {
                         JSONArray jArr=new JSONArray();
                         for (Object[] curRow: analysisResultList){
                             ConfigSpecRule specRule = new ConfigSpecRule();
-                            String currRowRawValue=curRow[posicRawValueFld-1].toString();
-                            String currRowLimitId=curRow[posicLimitIdFld-1].toString();
+                            String currRowRawValue=curRow[posicRawValueFld].toString();
+                            String currRowLimitId=curRow[posicLimitIdFld].toString();
                             Object[] resultLockData=sampleAnalysisResultLockData(procInstanceName, resultFieldToRetrieveArr, curRow);
                             JSONObject row=new JSONObject();
-                            if (resultLockData!=null)
+                            if (resultLockData!=null && resultLockData[0]!=null)
                                 row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(resultFieldToRetrieveArr, (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
                             else        
                                 row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
@@ -858,8 +863,8 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
 }
     
     static Object[] sampleAnalysisResultLockData(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow){
-        String[] fldNameArr=new String[0];
-        Object[] fldValueArr=new Object[0];
+        String[] fldNameArr=null;
+        Object[] fldValueArr=null;
         Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
         Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
         
@@ -882,6 +887,7 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         }
         return new Object[]{fldNameArr, fldValueArr};
     }
+
     static Object[] getObjectsId(String[] headerFlds, Object[][] analysisResultList, String separator){
         if (analysisResultList==null || analysisResultList.length==0)
             return new Object[]{};

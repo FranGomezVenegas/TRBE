@@ -92,7 +92,7 @@ public class TblsProcedure {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -223,7 +223,7 @@ public class TblsProcedure {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -330,7 +330,7 @@ public class TblsProcedure {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -361,11 +361,12 @@ public class TblsProcedure {
         private final String dbObjName;             
         private final String dbObjTypePostgres;           
     } 
+    // Esta no tiene sentido a este nivel porque business rules a nivel de proceso son archivos, no tabla.
+    //  La que tiene sentido está en TblsReqs porque es la declaración de cuales son las reglas de negocio del proceso
+    //      según se definen en el Excel.
+/*    
     public enum ProcedureBusinessRules{
 
-        /**
-         *
-         */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_#FLD_ID_seq'::regclass)"),        
         TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
@@ -385,28 +386,14 @@ public class TblsProcedure {
             this.dbObjTypePostgres=dbObjType;
         }
 
-        /**
-         *
-         * @return
-         */
         public String getName(){
             return this.dbObjName;
         }
 
-        /**
-         *
-         * @return
-         */
         public String[] getDbFieldDefinitionPostgres(){
             return new String[]{this.dbObjName, this.dbObjTypePostgres};
         }
 
-        /**
-         *
-         * @param schemaNamePrefix
-         * @param fields
-         * @return
-         */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
@@ -444,7 +431,7 @@ public class TblsProcedure {
         private final String dbObjName;             
         private final String dbObjTypePostgres;           
     } 
-
+*/
     public enum ViewProcUserAndRoles{
 
         /**
@@ -502,7 +489,7 @@ public class TblsProcedure {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */

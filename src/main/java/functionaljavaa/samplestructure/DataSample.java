@@ -424,8 +424,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
 
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @return
      */
@@ -455,8 +453,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
 
     /**
      *
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @param newDate
      * @return
@@ -712,8 +708,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     /**
      *  Automate the sample analysis assignment as to be triggered by any sample action.<br>
      *      Assigned to the actions: LOGSAMPLE.
-     * @param procInstanceName
-     * @param token
      * @param sampleId
      * @param sampleFieldName
      * @param sampleFieldValue

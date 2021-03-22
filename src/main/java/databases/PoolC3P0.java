@@ -43,6 +43,8 @@ public class PoolC3P0 {
          cpds.setDriverClass("java.sql.Driver"); // prop.getString(BUNDLE_PARAMETER_DBDRIVER);
          // La url de la base de datos a la que nos conectaremos
          cpds.setJdbcUrl("jdbc:postgresql://51.75.202.142:5555/labplanet"); // prop.getString(BUNDLE_PARAMETER_DBURL);
+         cpds.setJdbcUrl(Rdbms.DbConnectionParams.DBURL.getParamValue()); // prop.getString(BUNDLE_PARAMETER_DBURL);
+         //cpds.setJdbcUrl("jdbc:postgresql://51.75.202.142:5555/trazit"); // prop.getString(BUNDLE_PARAMETER_DBURL);
          // Usuario de esa base de datos
          cpds.setUser(LPTestingOutFormat.TESTING_USER);
          // Contraseña de la base de datos

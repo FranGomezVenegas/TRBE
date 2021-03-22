@@ -48,9 +48,6 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         response=LPTestingOutFormat.responsePreparation(response);
         String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File");
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-        //String procName = "em-demo-a"; 
-        //Integer procVersion = 1; 
-        //String schemaPrefix = "em-demo-a";
         ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint = ProcedureDefinitionAPIEndpoints.DEPLOY_REQUIREMENTS;
         LPAPIArguments[] arguments = endPoint.getArguments();
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, arguments);                
@@ -68,15 +65,13 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
 //                            , {"PROC_DISPLAY_PROC_INSTANCE_SOPS", PROC_DISPLAY_PROC_INSTANCE_SOPS.toString()}                
 //                            , {"PROC_DEPLOYMENT_ENTIRE_PROCEDURE", PROC_DEPLOYMENT_ENTIRE_PROCEDURE.toString()}
 //                            , {"PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS", PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS.toString()}
-                
 //                            , {"PROC_DEPLOYMENT_ASSIGN_USER_SOPS", PROC_DEPLOYMENT_ASSIGN_USER_SOPS.toString()}
                     };
         
         fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(businessVariablesHeader); 
         try (PrintWriter out = response.getWriter()) {
-            
             if (Boolean.valueOf(argValues[4].toString()) || CREATE_SCHEMAS_AND_PROC_TBLS){
-                JSONObject createDBProcedureInfo = DbObjects.createModuleSchemas(schemaPrefix);
+                JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(schemaPrefix);
                 String[][] createDBProcedureInfoTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_INFO"},{createDBProcedureInfo.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureInfoTbl);
             }   

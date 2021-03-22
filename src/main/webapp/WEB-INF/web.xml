@@ -143,6 +143,10 @@
         <servlet-class>com.labplanet.servicios.ResponseSuccess</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>PlatformDefinitionToInstance</servlet-name>
+        <servlet-class>com.labplanet.servicios.requirements.PlatformDefinitionToInstance</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>ProcedureDefinitionToInstance</servlet-name>
         <servlet-class>com.labplanet.servicios.requirements.ProcedureDefinitionToInstance</servlet-class>
     </servlet>
@@ -338,6 +342,10 @@
     <servlet-mapping>
         <servlet-name>TestingServer</servlet-name>
         <url-pattern>/app/TestingServer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PlatformDefinitionToInstance</servlet-name>
+        <url-pattern>/PlatformDefinitionToInstance</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ProcedureDefinitionToInstance</servlet-name>

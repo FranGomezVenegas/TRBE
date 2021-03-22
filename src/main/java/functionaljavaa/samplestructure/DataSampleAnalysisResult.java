@@ -243,7 +243,7 @@ public class DataSampleAnalysisResult {
         String currResultStatus = (String) resultData[0][6];
         String currRawValue = (String) resultData[0][7];
         String resultUomName = (String) resultData[0][8];
-        Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName);
+        Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
         if (!Boolean.valueOf(userCertified[0].toString())) return (Object[]) userCertified[1];
         if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultLocked", new Object[]{currResultStatus, resultId.toString(), schemaConfigName});

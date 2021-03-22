@@ -9,6 +9,7 @@ import databases.TblsData;
 import databases.Token;
 import static functionaljavaa.certification.CertifyQueries.CertificationsHistory;
 import static functionaljavaa.certification.CertifyQueries.CertificationsInProgress;
+import static functionaljavaa.certification.CertifyQueries.objectsUponCertificationProcedure;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,9 +21,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPAPIEndPointdocumentation;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
@@ -32,24 +35,32 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class CertifyAPIfrontend extends HttpServlet {
-
     public enum CertifyAPIfrontendEndpoints{
         CERTIFICATIONS_IN_PROGRESS("CERTIFICATIONS_IN_PROGRESS", "",new LPAPIArguments[]{
             new LPAPIArguments("areasToInclude", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
-            new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7),
-        }),
+            new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7)},
+            new LPAPIEndPointdocumentation("certify-frontend", "CERTIFICATIONS_IN_PROGRESS", "", -1,"")
+        ),
         USER_CERTIFICATIONS_HISTORY("USER_CERTIFICATIONS_HISTORY", "",new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments("areasToInclude", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
             new LPAPIArguments(TblsData.CertifUserAnalysisMethod.FLD_CERTIFICATION_DATE.getName().toLowerCase()+"_start", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
             new LPAPIArguments(TblsData.CertifUserAnalysisMethod.FLD_CERTIFICATION_DATE.getName().toLowerCase()+"_end", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
-            new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 10),
-        }),
+            new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 10)},
+            new LPAPIEndPointdocumentation("certify-frontend", "USER_CERTIFICATIONS_HISTORY", "", -1,"")                
+        ),
+        OBJECTS_UPON_CERTIFICATION("OBJECTS_UPON_CERTIFICATION", "",new LPAPIArguments[]{},
+            new LPAPIEndPointdocumentation("certify-frontend", "OBJECTS_UPON_CERTIFICATION", "", -1,"")
+        ),
+        OBJECTS_ENABLED_CERTIFICATION("OBJECTS_ENABLED_CERTIFICATION", "",new LPAPIArguments[]{},
+            new LPAPIEndPointdocumentation("certify-frontend", "OBJECTS_ENABLED_CERTIFICATION", "", -1,"")
+        ),
         ;
-        private CertifyAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private CertifyAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, LPAPIEndPointdocumentation docInfo){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
+            this.endPointDocumentation=docInfo;
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -77,6 +88,7 @@ public class CertifyAPIfrontend extends HttpServlet {
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final LPAPIEndPointdocumentation endPointDocumentation;
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
@@ -135,69 +147,18 @@ public class CertifyAPIfrontend extends HttpServlet {
                         if (buildDateRangeFromStrings.length>3)
                             whereFldValue=LPArray.addValueToArray1D(whereFldValue, buildDateRangeFromStrings[3]);                        
                     }
-                    includeAuditHistory=Boolean.valueOf(argValues[4].toString());                    
+                    includeAuditHistory=Boolean.valueOf(LPNulls.replaceNull(argValues[4]).toString());                    
                     jGlobalArr=CertificationsHistory(areasToInclude, whereFldName, whereFldValue, includeAuditHistory);
+                    procReqInstance.killIt();
                     LPFrontEnd.servletReturnSuccess(request, response, jGlobalArr);
                     return;  
-    /*            case INVESTIGATION_RESULTS_PENDING_DECISION:
-                    String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
-                    JSONArray jArray = new JSONArray(); 
-                    if (!isProgramCorrectiveActionEnable(schemaPrefix)){
-                      JSONObject jObj=new JSONObject();
-                      jArray.add(jObj.put(TblsProcedure.ProgramCorrectiveAction.TBL.getName(), "program corrective action not active!"));
-                    }
-                    else{
-                      Object[][] investigationResultsPendingDecision = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
-                              new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
-                              new String[]{statusClosed}, 
-                              TblsProcedure.ProgramCorrectiveAction.getAllFieldNames(), new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()});
-                      if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationResultsPendingDecision[0][0].toString()))LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-
-
-                      for (Object[] curRow: investigationResultsPendingDecision){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(TblsProcedure.ProgramCorrectiveAction.getAllFieldNames(), curRow);
-                        jArray.add(jObj);
-                      }
-                    }
-                    Rdbms.closeRdbms();                    
-                    LPFrontEnd.servletReturnSuccess(request, response, jArray);
-                    break;                
-                case INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION:
-                    Integer investigationId=null;
-                    String investigationIdStr=LPNulls.replaceNull(argValues[0]).toString();
-                    if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
-
-                    fieldsToRetrieve=TblsProcedure.Investigation.getAllFieldNames();
-                    incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()),TblsProcedure.Investigation.TBL.getName(), 
-                            new String[]{TblsProcedure.Investigation.FLD_ID.getName()}, 
-                            new Object[]{investigationId}, 
-                            fieldsToRetrieve, new String[]{TblsProcedure.Investigation.FLD_ID.getName()+" desc"});
-                    investigationJArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
-                        for (Object[] currInvestigation: incidentsNotClosed){
-                            JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
-
-                            fieldsToRetrieve=TblsProcedure.InvestObjects.getAllFieldNames();
-                            incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()),TblsProcedure.InvestObjects.TBL.getName(), 
-                                    new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, 
-                                    new Object[]{investigationId}, 
-                                    fieldsToRetrieve, new String[]{TblsProcedure.InvestObjects.FLD_ID.getName()});
-                            JSONArray investObjectsJArr = new JSONArray();
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
-                                for (Object[] currInvestObject: incidentsNotClosed){
-                                    JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestObject);
-                                    investObjectsJArr.add(investObjectsJObj);
-                                }
-                            }
-                            investigationJObj.put(TblsProcedure.InvestObjects.TBL.getName(), investObjectsJArr);
-                            investigationJArr.add(investigationJObj);
-                        }
-
-                    }
-                    Rdbms.closeRdbms();  
-                    LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
+                case OBJECTS_UPON_CERTIFICATION:
+                    LPFrontEnd.servletReturnSuccess(request, response, objectsUponCertificationProcedure(false));
                     return;
-    */                
+                case OBJECTS_ENABLED_CERTIFICATION:
+                    LPFrontEnd.servletReturnSuccess(request, response, objectsUponCertificationProcedure(true));
+                    return;
+                    
             default:
             }
         }catch(Exception e){      

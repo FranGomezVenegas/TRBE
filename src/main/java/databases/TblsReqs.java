@@ -90,14 +90,14 @@ public class TblsReqs {
          * @param fields
          * @return
          */
-        public static String createTableScript(String[] fields){
-            return createTableScriptPostgres(fields);
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
         }
-        private static String createTableScriptPostgres(String[] fields){
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProcedureInfo.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, GlobalVariables.Schemas.REQUIREMENTS.getName());
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.REQUIREMENTS.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
@@ -292,7 +292,7 @@ public class TblsReqs {
         /**
          *
          */
-        FLD_FIELD_LINK("field_link", LPDatabase.string())
+        FLD_FILE_LINK("file_link", LPDatabase.string())
         ,
 
         /**
@@ -395,8 +395,29 @@ public class TblsReqs {
         /**
          *
          */
-        FLD_ORDER_NUMBER("order_number", LPDatabase.integer())
-        // ....
+        FLD_ORDER_NUMBER("order_number", LPDatabase.integer()),
+
+        FLD_CODE("code", LPDatabase.string()),
+        FLD_NAME("name", LPDatabase.string()),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
+        FLD_ACTIVE("active", LPDatabase.booleanFld()),
+        FLD_IN_SCOPE("in_scope", LPDatabase.booleanFld()),
+        FLD_IN_SYSTEM("in_system", LPDatabase.booleanFld()),
+        FLD_ROLES("roles", LPDatabase.string()),
+        FLD_SOP_NAME("sop_name", LPDatabase.string()),
+        FLD_ESIGN_REQ("esign_required", LPDatabase.booleanFld()),
+        FLD_USERCONFIRM_REQ("userconfirmation_required", LPDatabase.booleanFld()),
+        FLD_WIDGET("widget", LPDatabase.string()),
+        FLD_WIDGET_VERSION("widget_version", LPDatabase.integer()),
+        FLD_WIDGET_ACTION("widget_action", LPDatabase.string()),
+        FLD_WIDGET_ACCESS_MODE("widget_access_mode", LPDatabase.string()),
+        FLD_WIDGET_TYPE("widget_type", LPDatabase.string()),
+        FLD_WIDGET_LABEL_EN("widget_label_en", LPDatabase.string()),
+        FLD_WIDGET_LABEL_ES("widget_label_es", LPDatabase.string()),
+        FLD_ROLE_NAME("role_name", LPDatabase.string()),
+        FLD_MODE("mode", LPDatabase.string()),
+        FLD_TYPE("type", LPDatabase.string()),
+        FLD_BRANCH_LEVEL("branch_level", LPDatabase.string()),
         ;
         private ProcedureUserRequirements(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -445,7 +466,18 @@ public class TblsReqs {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                
+        }    
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ProcedureUserRequirements obj: ProcedureUserRequirements.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                     
+        
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
@@ -679,7 +711,7 @@ public class TblsReqs {
         /**
          *
          */
-        FLD_DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.stringNotNull())
+        FLD_FULL_NAME("full_name", LPDatabase.stringNotNull())
         ,
 
         /**
@@ -753,7 +785,7 @@ public class TblsReqs {
         /**
          *
          */
-        TBL("procedure_module_tables",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_ROLE_NAME) ) "
+        TBL("procedure_module_tables",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_NAME, #FLD_TABLE_NAME) ) "
                 + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
@@ -844,10 +876,6 @@ public class TblsReqs {
         private final String dbObjTypePostgres;                     
     }
     public enum EndpointsDeclaration{
-
-        /**
-         *
-         */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
         ,        TBL("endpoints_declaration", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
@@ -862,6 +890,14 @@ public class TblsReqs {
         FLD_ARGUMENTS_ARRAY("arguments_array", LPDatabase.string()),
         FLD_CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
         FLD_LAST_UPDATE("last_update", LPDatabase.dateTime()),
+        FLD_BRIEF_SUMMARY_EN("brief_summary_en", LPDatabase.string()),
+        FLD_DOCUMENT_NAME_EN("document_name_en", LPDatabase.string()),
+        FLD_DOC_CHAPTER_NAME_EN("doc_chapter_name_en", LPDatabase.string()),
+        FLD_DOC_CHAPTER_ID_EN("doc_chapter_id_en", LPDatabase.string()),
+        FLD_BRIEF_SUMMARY_ES("brief_summary_es", LPDatabase.string()),
+        FLD_DOCUMENT_NAME_ES("document_name_es", LPDatabase.string()),
+        FLD_DOC_CHAPTER_NAME_ES("doc_chapter_name_es", LPDatabase.string()),
+        FLD_DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string()),
         ;
         private EndpointsDeclaration(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -922,6 +958,103 @@ public class TblsReqs {
             }           
             return tableFields;
         }              
+    }
+    public enum ProcedureBusinessRules{ // 'the sequence is session_id integer NOT NULL DEFAULT nextval('app.app_session_session_id_seq1'::regclass)'
+
+        /**
+         *
+         */
+        TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_PREFIX, #FLD_FILE_SUFFIX, #FLD_RULE_NAME) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        ,
+
+        /**
+         *
+         */
+        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull())
+        ,
+
+        /**
+         *
+         */
+        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull())
+        ,
+
+        /**
+         *
+         */
+//        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull())        ,
+        FLD_INSTANCE_NAME("instance_name", LPDatabase.stringNotNull()),
+        
+        FLD_MODULE_NAME("module_name", LPDatabase.stringNotNull()),
+        FLD_MODULE_VERSION("module_version", LPDatabase.integerNotNull()),
+        FLD_FILE_SUFFIX("file_suffix", LPDatabase.string()),
+        FLD_RULE_NAME("rule_name", LPDatabase.string()),
+        FLD_RULE_VALUE("rule_value", LPDatabase.string()),
+        FLD_ACTIVE("active", LPDatabase.booleanFld())
+
+        ;
+        private ProcedureBusinessRules(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String[] fields){
+            return createTableScriptPostgres(fields);
+        }
+        private static String createTableScriptPostgres(String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = ProcedureBusinessRules.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, GlobalVariables.Schemas.REQUIREMENTS.getName());
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ProcedureBusinessRules obj: ProcedureBusinessRules.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, GlobalVariables.Schemas.REQUIREMENTS.getName());
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }   
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ProcedureBusinessRules obj: ProcedureBusinessRules.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                
+        
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
     }
     
 }

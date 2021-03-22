@@ -122,7 +122,7 @@ public enum OtherEnumClass {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -332,7 +332,7 @@ public enum OtherEnumClass {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */

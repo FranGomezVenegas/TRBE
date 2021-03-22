@@ -119,7 +119,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -210,7 +210,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -325,7 +325,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -416,7 +416,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -525,7 +525,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -653,7 +653,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -767,7 +767,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -922,7 +922,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1017,7 +1017,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1124,7 +1124,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1223,7 +1223,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1338,7 +1338,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1449,7 +1449,7 @@ public class TblsCnfg {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */

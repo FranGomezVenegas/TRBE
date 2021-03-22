@@ -10,9 +10,7 @@ import lbplanet.utilities.LPHttp;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.ClassEnvMonSampleFrontend.EnvMonSampleAPIFrontendEndpoints;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
-import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,12 +35,10 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
      */                
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
@@ -94,11 +90,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
-        try{
         processRequest(request, response);
-        }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
-        }
     }
 
     /**
@@ -109,11 +101,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)  {
-        try{
         processRequest(request, response);
-        }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
-        }
     }
 
     /**

@@ -193,18 +193,20 @@ public class ProcedureDefinitionToInstance {
     }     
 
     /**
-     *
+     * 
      * @param procedure
      * @param procVersion
      * @param schemaPrefix
      * @return
      */
     public static final  JSONObject createDBProcedureEvents(String procedure,  Integer procVersion, String schemaPrefix){
-        Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, TblsReqs.ProcedureUserRequirementsEvents.getAllFieldNames(),
-                GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUserRequirementsEvents.TBL.getName(), 
+        Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, 
+                TblsReqs.ProcedureUserRequirementsEvents.getAllFieldNames(),
+                    GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUserRequirementsEvents.TBL.getName(), 
                 new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_SCHEMA_PREFIX.getName()},
                 new Object[]{procedure, procVersion, schemaPrefix},
-                LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
+                LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), 
+                    TblsProcedure.ProcedureEvents.TBL.getName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
         JSONObject jsonObj = new JSONObject();
         jsonObj.put("Diagnostic from createDBProcedureEvents", insertRecordInTableFromTable[0].toString());
         return jsonObj;
@@ -458,7 +460,7 @@ public class ProcedureDefinitionToInstance {
     
     /**
      *
-     * @param schemaNamePrefix
+     * @param schemaNamePrefix - Procedure Instance where it applies
      * @return
      */
     public static final  JSONObject createDBProcessSchemas(String schemaNamePrefix){
@@ -490,7 +492,7 @@ public class ProcedureDefinitionToInstance {
     
     /**
      *
-     * @param schemaNamePrefix
+     * @param schemaNamePrefix - Procedure Instance where it applies
      * @param tableName
      * @param fieldsName
      * @return
@@ -619,16 +621,16 @@ public class ProcedureDefinitionToInstance {
      }        
     
     public static final  JSONArray createPropBusinessRules(String procedure,  Integer procVersion, String instanceName){
-        String[] fieldsRequired=new String[]{TblsProcedure.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()};
+        String[] fieldsRequired=new String[]{TblsReqs.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.FLD_RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.FLD_RULE_VALUE.getName()};
         String diagnObjName="diagnostic";
-        String[] fildsToGet=TblsProcedure.ProcedureBusinessRules.getAllFieldNames();
+        String[] fildsToGet=TblsReqs.ProcedureBusinessRules.getAllFieldNames();
         for (String curFldReq: fieldsRequired){
             if (!LPArray.valueInArray(fildsToGet, curFldReq)) LPArray.addValueToArray1D(fildsToGet, curFldReq);
         }
         JSONArray jsonArr = new JSONArray();
         JSONObject jsonObj = new JSONObject();
-        Object[][] procBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
-                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_PROCEDURE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_PROCEDURE_VERSION.getName(), TblsProcedure.ProcedureBusinessRules.FLD_INSTANCE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_ACTIVE.getName()}, 
+        Object[][] procBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureBusinessRules.TBL.getName(), 
+                new String[]{TblsReqs.ProcedureBusinessRules.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureBusinessRules.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureBusinessRules.FLD_INSTANCE_NAME.getName(), TblsReqs.ProcedureBusinessRules.FLD_ACTIVE.getName()}, 
                 new Object[]{procedure, procVersion, instanceName, true}, 
                 fildsToGet, new String[]{});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procBusRules[0][0].toString())){
@@ -640,7 +642,7 @@ public class ProcedureDefinitionToInstance {
         jsonObj.put(JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION, procBusRules.length); 
         jsonArr.add(jsonObj);
         Parameter parm=new Parameter();
-        Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName()));
+        Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName()));
         //String diagn=parm.addTagInPropertiesFile("PROCEDURE_BUSINESS_RULE",  "oil-pl1-config",  "hola",  "adios");
         String[] filesNames=LPArray.getUniquesArray(procBusRulesFiles);
         for (String curFile: filesNames){
@@ -650,9 +652,9 @@ public class ProcedureDefinitionToInstance {
 //        if (1==1) return jsonArr;
         
         for (Object[] curProcEventSops: procBusRules){
-            String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName())]).toString(),  
-                    LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName())]).toString(),  
-                    LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName())]).toString());
+            String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FLD_FILE_SUFFIX.getName())]).toString(),  
+                    LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FLD_RULE_NAME.getName())]).toString(),  
+                    LPNulls.replaceNull(curProcEventSops[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FLD_RULE_VALUE.getName())]).toString());
             if (!LPArray.valueInArray(fildsToGet, diagnObjName))//{
                 fildsToGet=LPArray.addValueToArray1D(fildsToGet, diagnObjName);
 //                curProcEventSops=LPArray.addValueToArray1D(curProcEventSops, diagn);

@@ -61,6 +61,10 @@ public class LPDate {
         cal.add(Calendar.DATE, years*365); //minus number would decrement the days
         return cal.getTime();
     } 
+    public static Object[] getDaysInRangeByIntervals(Calendar startDate, Calendar endDate, String dayOfWeek, String inverval, Integer numIterations){
+        Object[] dt = new Object[0];
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "notImplementedYet", null);
+    }
     
     /**
      *

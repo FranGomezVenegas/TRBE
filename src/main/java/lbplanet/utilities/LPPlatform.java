@@ -51,6 +51,7 @@ public class LPPlatform {
      *
      */
     public static final String CONFIG_FILES_FOLDER = "LabPLANET";
+    
     static final String CONFIG_FILES_ERRORTRAPING = "errorTraping";
 
     /**
@@ -80,24 +81,6 @@ public class LPPlatform {
     public static final String REQUEST_PARAM_FILE_NAME = "fileName";
     public static final String REQUEST_PARAM_LANGUAGE = "language";
 
-    /**
-     *
-     */
-    public static final String REQUEST_PARAM_LANGUAGE_ENGLISH = "en";
-
-    /**
-     *
-     */
-    public static final String REQUEST_PARAM_LANGUAGE_SPANISH = "es";
-
-    /**
-     *
-     */
-    public static final String REQUEST_PARAM_LANGUAGE_DEFAULT_VAL = "ALL";    
-    
-    /**
-     *
-     */    
     public static final String CONFIG_PROC_CONFIG_FILE_NAME = "-config";
     public static final String CONFIG_PROC_DATA_FILE_NAME = "-data";
     public static final String CONFIG_PROC_FILE_NAME = "-procedure";

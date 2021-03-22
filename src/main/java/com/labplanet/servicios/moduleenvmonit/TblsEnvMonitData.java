@@ -119,7 +119,7 @@ public class TblsEnvMonitData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields fields , ALL when this is null
          * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
          */
@@ -231,7 +231,7 @@ public class TblsEnvMonitData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields fields , ALL when this is null
          * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
          */
@@ -463,7 +463,7 @@ public class TblsEnvMonitData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields fields , ALL when this is null
          * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
          */

@@ -6,7 +6,6 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.app.TestingRegressionUAT;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsData;
@@ -44,8 +43,6 @@ public class EnvMonAPIStats extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
      */
     public enum EnvMonAPIstatsEndpoints{
         /**
@@ -184,7 +181,7 @@ public class EnvMonAPIStats extends HttpServlet {
         private final LPAPIArguments[] arguments;
     }
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response){
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
@@ -539,7 +536,11 @@ public class EnvMonAPIStats extends HttpServlet {
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            try {           
+                response.sendError((int) errMsg[0], (String) errMsg[1]);
+            } catch (IOException ex) {
+                Logger.getLogger(EnvMonAPIStats.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } finally {
             try {
                 procReqInstance.killIt();
@@ -558,11 +559,7 @@ public class EnvMonAPIStats extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response){
-        try {
-            processRequest(request, response);
-        } catch (ServletException | IOException ex) {
-            Logger.getLogger(TestingRegressionUAT.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
 
@@ -574,11 +571,7 @@ public class EnvMonAPIStats extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response){
-        try {
-            processRequest(request, response);
-        } catch (ServletException | IOException ex) {
-            Logger.getLogger(TestingRegressionUAT.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**

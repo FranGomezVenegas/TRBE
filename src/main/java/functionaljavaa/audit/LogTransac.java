@@ -43,7 +43,6 @@ public class LogTransac {
      * @param methodName
      * @param mainInputArguments
      * @param mainOutput
-     * @param level
  */
     public void addCall(String methodName, String[] mainInputArguments, Object[] mainOutput){        
         

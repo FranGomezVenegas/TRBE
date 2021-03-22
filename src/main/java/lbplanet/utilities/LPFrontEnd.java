@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.LANGUAGE_ALL_LANGUAGES;
 
 /**
  *
@@ -53,7 +54,7 @@ public class LPFrontEnd {
      */
     public static String setLanguage(HttpServletRequest request){
         String language = request.getParameter(LPPlatform.REQUEST_PARAM_LANGUAGE);
-        if (language == null){language = LPPlatform.REQUEST_PARAM_LANGUAGE_DEFAULT_VAL;}
+        if (language == null)language = LANGUAGE_ALL_LANGUAGES;
         return language;
     }
     

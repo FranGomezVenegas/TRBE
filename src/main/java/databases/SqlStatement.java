@@ -31,7 +31,7 @@ public class SqlStatement {
     
     public static Object[] buildDateRangeFromStrings(String fieldName, String startStr, String endStr){
         if ((startStr==null || startStr.length()==0) && (endStr==null || endStr.length()==0) )
-            return new Object[]{LPPlatform.LAB_TRUE};
+            return new Object[]{LPPlatform.LAB_FALSE};
         startStr=LPNulls.replaceNull(startStr);
         endStr=LPNulls.replaceNull(endStr);
         Object[] diagn=new Object[]{LPPlatform.LAB_TRUE};

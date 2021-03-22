@@ -150,7 +150,7 @@ public class ProcedureRequestSession {
    
     
     public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
-        if (theSession==null){
+        if (theSession==null || theSession.getTokenString()==null){
             theSession=new ProcedureRequestSession(req, resp, isTesting, false, true);
         }
         return theSession;

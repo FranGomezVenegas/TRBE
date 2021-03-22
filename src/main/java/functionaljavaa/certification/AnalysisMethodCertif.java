@@ -24,7 +24,8 @@ import trazit.session.ProcedureRequestSession;
 public class AnalysisMethodCertif {
 
     public enum certificationAnalysisMethodBusinessRules{
-        CERTIFICATION_ANALYSIS_METHOD_MODE("certificationAnalysisMethodMode", GlobalVariables.Schemas.PROCEDURE.getName())
+        CERTIFICATION_ANALYSIS_METHOD_MODE("certificationAnalysisMethodMode", GlobalVariables.Schemas.PROCEDURE.getName()),
+        USER_SOP("certificationAnalysisMethodMode", GlobalVariables.Schemas.PROCEDURE.getName())
         ;
         private certificationAnalysisMethodBusinessRules(String tgName, String areaNm){
             this.tagName=tgName;
@@ -37,11 +38,21 @@ public class AnalysisMethodCertif {
         private final String areaName;
     }
 
-    public static Object[] isUserCertified(String methodName){
+    public static Object[] isUserCertified(String methodName, String userName){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()};        
         Object[] userCertificationEnabled = isUserCertificationEnabled();
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) return new Object[]{false, userCertificationEnabled};
-        
-        return new Object[]{false, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "notImplementedYet", null)};
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) return new Object[]{true, userCertificationEnabled};
+        uncertifyExpiredOnes();
+        Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.CertifUserAnalysisMethod.TBL.getName(), 
+            new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName(), 
+                TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()},
+            new Object[]{methodName, userName, CertifLight.GREEN.toString(), true, false}, fieldsToGet);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString()))
+            return new Object[]{false, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "user not certified", null)};            
+        else
+            return new Object[]{true, LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "user is certified", null)};
+                
     }
     
     public static Object[] isUserCertificationEnabled(){

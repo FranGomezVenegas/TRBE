@@ -344,7 +344,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -411,7 +411,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -611,7 +611,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -863,7 +863,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -998,7 +998,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1111,7 +1111,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1236,7 +1236,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1296,7 +1296,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1338,9 +1338,9 @@ public class TblsData {
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
-        FLD_USER_ID(FIELDS_NAMES_USER_ID, LPDatabase.string())        ,
         FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string())        ,
         FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer())        ,
+        FLD_USER_ID(FIELDS_NAMES_USER_ID, LPDatabase.string())        ,
         FLD_ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, LPDatabase.dateTime())        ,
         FLD_ASSIGNED_BY("assigned_by", LPDatabase.string())        ,
         FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull())        ,
@@ -1369,7 +1369,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1399,7 +1399,20 @@ public class TblsData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }  
+        }
+        public static String[] getFldDefBydbFieldName(String fldName){
+            String[] tableFields=new String[0];
+            for (CertifUserAnalysisMethod obj: CertifUserAnalysisMethod.values()){
+                String objName = obj.getName();
+                if (fldName.equalsIgnoreCase(objName)){
+                    //tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getDbFieldDefinitionPostgres());
+                    return tableFields;
+                }
+            }           
+            return tableFields;            
+        }
+
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }           
@@ -1485,7 +1498,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_EXPIRATION_DATE(FIELDS_NAMES_EXPIRATION_DATE, LPDatabase.dateTime())
+        FLD_CERTIF_EXPIRY_DATE("certif_expiry_date", LPDatabase.dateTime())
         ,
 
         /**
@@ -1521,7 +1534,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1679,7 +1692,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1825,7 +1838,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -1987,7 +2000,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -2301,7 +2314,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */
@@ -2408,7 +2421,7 @@ public class TblsData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
          * @return
          */

@@ -24,6 +24,18 @@ public class GlobalVariables {
         private final String name;        
     }
 
+    public static final String LANGUAGE_ALL_LANGUAGES="ALL";
+    public enum Languages{EN("en"), ES("es")
+        ;
+        Languages(String nm){
+            this.name=nm;
+        }
+        public String getName() {
+            return name;
+        }
+        private final String name;        
+    }    
+    
     public enum ServletsResponse{SUCCESS("/ResponseSuccess", "response"), ERROR("/ResponseError", "errorDetail");
         ServletsResponse(String svlt, String attr){
             this.attributeName=attr;

@@ -7,6 +7,8 @@ package functionaljavaa.platform.doc;
 
 import com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPIfrontendEndpoints;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
+import com.labplanet.servicios.app.CertifyAPIfrontend.CertifyAPIfrontendEndpoints;
+import com.labplanet.servicios.app.CertifyAnalysisMethodAPI.CertifyAnalysisMethodAPIEndpoints;
 import com.labplanet.servicios.app.IncidentAPI.IncidentAPIEndpoints;
 import com.labplanet.servicios.app.IncidentAPI.IncidentAPIfrontendEndpoints;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIEndpoints;
@@ -32,15 +34,20 @@ import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI.Proced
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionfrontend.ProcedureDefinitionAPIfrontendEndpoints;
 import com.labplanet.servicios.testing.config.db.DbTestingLimitAndResult.TestingLimitAndResult;
 import databases.Rdbms;
+import databases.TblsProcedure;
 import databases.TblsReqs.EndpointsDeclaration;
+import functionaljavaa.parameter.Parameter;
+import functionaljavaa.parameter.Parameter.PropertyFilesType;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.Languages;
 /**
  *
  * @author User
@@ -138,6 +145,24 @@ public final class EndPointsToRequirements {
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
             declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
         }
+        CertifyAnalysisMethodAPIEndpoints[] certifAnaMeth = CertifyAnalysisMethodAPIEndpoints.values();
+        for (CertifyAnalysisMethodAPIEndpoints curApi: certifAnaMeth){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+        }
+        CertifyAPIfrontendEndpoints[] certifEndpoints = CertifyAPIfrontendEndpoints.values();
+        for (CertifyAPIfrontendEndpoints curApi: certifEndpoints){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+        }
+        
+        
         SopUserAPIfrontendEndpoints[] valuesSopFrontend = SopUserAPIfrontendEndpoints.values();
         for (SopUserAPIfrontendEndpoints curApi: valuesSopFrontend){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
@@ -146,7 +171,6 @@ public final class EndPointsToRequirements {
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
             declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
         }
-        
         ConfigMasterDataAPIEndpoints[] valuesConfigMasterData = ConfigMasterDataAPIEndpoints.values();
         for (ConfigMasterDataAPIEndpoints curApi: valuesConfigMasterData){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
@@ -285,6 +309,7 @@ private static void declareInDatabase(String apiName, String endpointName, Strin
     Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), 
             new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()},
             new Object[]{apiName, endpointName}, new String[]{EndpointsDeclaration.FLD_ID.getName(), EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+    Object[] docInfoForEndPoint = getDocInfoForEndPoint(apiName, endpointName);
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
         String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName())].toString();
         if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[0][1].toString())){
@@ -292,13 +317,55 @@ private static void declareInDatabase(String apiName, String endpointName, Strin
                     new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.FLD_LAST_UPDATE.getName()},
                     new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()},
                     new String[]{EndpointsDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
+            
+            return;
+        }else{
+            String[] flds=(String[]) docInfoForEndPoint[0];
+            if (flds.length>0)
+                Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(),
+                        (String[]) docInfoForEndPoint[0],
+                        (String[]) docInfoForEndPoint[1],
+                        new String[]{EndpointsDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
             return;
         }
-        return;
     }else{
         fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.FLD_CREATION_DATE.getName());
-        fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());                
+        fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
+        fieldNames=LPArray.addValueToArray1D(fieldNames, (String[]) docInfoForEndPoint[0]);
+        fieldValues=LPArray.addValueToArray1D(fieldValues, (String[]) docInfoForEndPoint[1]);
         Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
+    }
+}
+
+public static Object[] getDocInfoForEndPoint(String apiName, String endpointName){
+    Parameter parm=new Parameter();
+    try{
+        String[] fldNames=new String[]{EndpointsDeclaration.FLD_BRIEF_SUMMARY_EN.getName(), EndpointsDeclaration.FLD_DOCUMENT_NAME_EN.getName(),
+            EndpointsDeclaration.FLD_DOC_CHAPTER_ID_EN.getName(), EndpointsDeclaration.FLD_DOC_CHAPTER_NAME_EN.getName()};
+        Object[] data=new Object[2];
+        String[] fldsToRetrieve=new String[]{};
+        String[] fldsValuesToRetrieve=new String[]{};
+        for (String curFld: fldNames){
+            for (Languages curLang: GlobalVariables.Languages.values()){            
+                String propName=endpointName+"_"+curFld.replace("_en", ""); //"GET_METHOD_CERTIFIED_USERS_LIST_brief_summary"
+                 String propValue = Parameter.getParameterBundle(PropertyFilesType.ENDPOINTDOCUMENTATION.toString(), apiName, null, propName, curLang.getName(), false);
+                if (propValue.length()>0){
+                    fldsToRetrieve=LPArray.addValueToArray1D(fldsToRetrieve, curFld.replace("_en", "_"+curLang.getName()));
+                    fldsValuesToRetrieve=LPArray.addValueToArray1D(fldsValuesToRetrieve, propValue);
+                }else{
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Parameter.parameterBundleExists(PropertyFilesType.ENDPOINTDOCUMENTATION.toString(), apiName, null, propName, curLang.getName(), false))){                
+                        parm.createPropertiesFile(PropertyFilesType.ENDPOINTDOCUMENTATION.toString(), apiName+"_"+curLang.getName());  
+                        parm.addTagInPropertiesFile(PropertyFilesType.ENDPOINTDOCUMENTATION.toString(),  apiName+"_"+curLang.getName(), propName, propValue);
+                    }
+                }
+            }
+        }    
+        if (fldsToRetrieve.length==0) data[0]=LPPlatform.LAB_FALSE;
+        data[0]=fldsToRetrieve;
+        data[1]=fldsValuesToRetrieve;
+        return data;
+    }finally{
+        parm=null;
     }
 }
 

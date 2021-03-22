@@ -105,7 +105,7 @@ public class TblsInspLotRMData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields fields , ALL when this is null
          * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
          */
@@ -195,7 +195,7 @@ public class TblsInspLotRMData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields fields , ALL when this is null
          * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
          */
@@ -851,7 +851,7 @@ public class TblsInspLotRMData {
 
         /**
          *
-         * @return
+         * @return table or field name
          */
         public String getName(){
             return this.dbObjName;
@@ -862,9 +862,9 @@ public class TblsInspLotRMData {
 
         /**
          *
-         * @param schemaNamePrefix
+         * @param schemaNamePrefix - Procedure Instance where it applies
          * @param fields
-         * @return
+         * @return string with view creation script
          */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);

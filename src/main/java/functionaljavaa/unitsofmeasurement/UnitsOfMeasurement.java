@@ -186,7 +186,6 @@ public class UnitsOfMeasurement {
     /**
      *
      * @param newUnit
-     * @return
      */
     public void convertValue(String newUnit){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
