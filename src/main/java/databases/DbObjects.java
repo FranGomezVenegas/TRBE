@@ -210,58 +210,5 @@ public class DbObjects {
      *
      * @return Json object log built after running the script for the db tables creation.
      */
-    public static final  JSONObject createDBTables(){
-        JSONObject jsonObj = new JSONObject();        
-        
-        String tblCreateScript=TblsApp.AppSession.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsApp.AppSession", tblCreateScript);
-        
-        tblCreateScript=TblsApp.UserProcess.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsApp.UserProcess", tblCreateScript);
-
-        tblCreateScript=TblsApp.Users.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsApp.Users", tblCreateScript);
-
-        tblCreateScript=TblsApp.HolidaysCalendar.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsApp.HolidaysCalendar", tblCreateScript);
-
-        tblCreateScript=TblsApp.HolidaysCalendarDate.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsApp.HolidaysCalendarDate", tblCreateScript);
-        
-        tblCreateScript=TblsAppConfig.Person.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsAppConfig.Person", tblCreateScript);
-        
-        tblCreateScript=TblsReqs.ProcedureInfo.createTableScript("", new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsReqs.ProcedureInfo", tblCreateScript);
-
-        tblCreateScript=TblsReqs.ProcedureRoles.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsReqs.ProcedureRoles", tblCreateScript);
-
-        tblCreateScript=TblsReqs.ProcedureSopMetaData.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsReqs.ProcedureSopMetaData", tblCreateScript);
-        
-        tblCreateScript=TblsReqs.ProcedureUserRequirements.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsReqs.ProcedureUserRequirements", tblCreateScript);
-
-        tblCreateScript=TblsReqs.ProcedureUserRole.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsReqs.ProcedureUserRole", tblCreateScript);
-
-        tblCreateScript=TblsReqs.ProcedureUsers.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsReqs.ProcedureUsers", tblCreateScript);
-        
-        return jsonObj;
-     }    
     
 }

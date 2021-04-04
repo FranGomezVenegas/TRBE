@@ -1632,7 +1632,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_MANDATORY_LEVEL(FIELDS_NAMES_MANDATORY_LEVEL, LPDatabase.stringNotNull())
+        FLD_MANDATORY_LEVEL(FIELDS_NAMES_MANDATORY_LEVEL, LPDatabase.string())
         ,
 
         /**

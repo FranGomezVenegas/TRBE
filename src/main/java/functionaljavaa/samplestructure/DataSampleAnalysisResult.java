@@ -233,7 +233,7 @@ public class DataSampleAnalysisResult {
                     TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName(), TblsData.SampleAnalysisResult.FLD_UOM.getName(), 
                     TblsData.SampleAnalysisResult.FLD_UOM_CONVERSION_MODE.getName()});
         if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString())) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotFound", new Object[]{resultId.toString(), schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getSimpleName()+"_SampleAnalysisResultNotFound", new Object[]{resultId.toString(), schemaDataName});
         Integer sampleId = (Integer) resultData[0][0];
         Integer testId = (Integer) resultData[0][1];
         String analysis = (String) resultData[0][2];
@@ -246,9 +246,9 @@ public class DataSampleAnalysisResult {
         Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
         if (!Boolean.valueOf(userCertified[0].toString())) return (Object[]) userCertified[1];
         if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultLocked", new Object[]{currResultStatus, resultId.toString(), schemaConfigName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getSimpleName()+"_SampleAnalysisResultLocked", new Object[]{currResultStatus, resultId.toString(), schemaConfigName});
         if ((currRawValue != null) && (currRawValue.equalsIgnoreCase(resultValue.toString()))) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultSampleValue", new Object[]{resultId.toString(), schemaDataName, currRawValue});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getSimpleName()+"_SampleAnalysisResultSampleValue", new Object[]{resultId.toString(), schemaDataName, currRawValue});
         Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_CONFIG_CODE.getName(), TblsData.Sample.FLD_CONFIG_CODE_VERSION.getName()});

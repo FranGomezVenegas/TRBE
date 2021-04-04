@@ -164,7 +164,7 @@ public class ProcedureDefinitionToInstance {
         String schemaNameDestinationProc=LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName());
          Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsProcedure.ProcedureInfo.TBL.getName(), 
                 new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName(), TblsProcedure.ProcedureInfo.FLD_VERSION.getName(),FLD_NAME_PROCEDURE_SCHEMA_PREFIX}, new Object[]{procedure, procVersion, schemaPrefix}, 
-                FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"), null);
+                FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString())){
           jsonObj.put(JSON_LABEL_FOR_ERROR, LPJson.convertToJSON(procInfoRecordsSource[0]));
         }else{
@@ -172,7 +172,7 @@ public class ProcedureDefinitionToInstance {
             for (Object[] curRow: procInfoRecordsSource){
                 Object[][] procInfoRecordsDestination = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.ProcedureInfo.TBL.getName(), 
                        new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName(), TblsProcedure.ProcedureInfo.FLD_VERSION.getName()}, new Object[]{procedure, procVersion}, 
-                       FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"), null);
+                       FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"));
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsDestination[0][0].toString())){
                     jsonObj.put("Record in the instance", "Already exists");
                 }else{
@@ -238,7 +238,7 @@ public class ProcedureDefinitionToInstance {
             jsUserRoleObj.put("User", curUserName); jsUserRoleObj.put("Role", curRoleName);
 
             Object[][] existsAppUser = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TABLE_NAME_APP_USERS, 
-                    new String[]{FLD_NAME_APP_USERS_USER_NAME}, new Object[]{curUserName.toString()}, new String[]{FLD_NAME_APP_USERS_PERSON_NAME}, null);
+                    new String[]{FLD_NAME_APP_USERS_USER_NAME}, new Object[]{curUserName.toString()}, new String[]{FLD_NAME_APP_USERS_PERSON_NAME});
             String diagnosesForLog = (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) ? JSON_LABEL_FOR_NO : JSON_LABEL_FOR_YES;
             jsUserRoleObj.put("User exists in the app?", diagnosesForLog); 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())){
@@ -294,7 +294,7 @@ public class ProcedureDefinitionToInstance {
             jsUserRoleObj.put("SOP Id", curSopId); jsUserRoleObj.put("SOP Name", curSopName);
 
             Object[][] existsAppUser = Rdbms.getRecordFieldsByFilter(schemaNameDestination, TblsCnfg.SopMetaData.TBL.getName(), 
-                    new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{curSopName.toString()}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, null);
+                    new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{curSopName.toString()}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()});
             String diagnosesForLog = (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) ? JSON_LABEL_FOR_NO : JSON_LABEL_FOR_YES;
             jsUserRoleObj.put("SOP exists in the procedure?", diagnosesForLog); 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())){
@@ -443,7 +443,7 @@ public class ProcedureDefinitionToInstance {
                     String diagnosesForLog = (sopRolePosic==-1) ? JSON_LABEL_FOR_NO : JSON_LABEL_FOR_YES;
                     jsSopRoleObj.put("SOP "+sopFromArr+" exists for role "+roleFromArr+" ?", diagnosesForLog);
                     if (sopRolePosic==-1){
-                        ProcedureDefinitionToInstanceUtility.procedureAddSopToUsersByRole(procedure, procVersion, schemaPrefix, 
+                        Object[][] procedureAddSopToUsersByRole = ProcedureDefinitionToInstanceUtility.procedureAddSopToUsersByRole(procedure, procVersion, schemaPrefix, 
                                 roleFromArr, sopFromArr, null, null);                        
                     }
                     jsSopRoleArr.add(jsSopRoleObj);

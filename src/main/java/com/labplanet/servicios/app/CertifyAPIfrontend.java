@@ -97,7 +97,11 @@ public class CertifyAPIfrontend extends HttpServlet {
 
         String language = LPFrontEnd.setLanguage(request); 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
-        if (procReqInstance.getHasErrors()) return;
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            return;
+        }
 
 /*        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){

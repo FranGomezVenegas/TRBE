@@ -33,7 +33,7 @@ public class DataInspectionLotDecision {
         
         Object[][] lotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Lot.TBL.getName(), 
                 new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()}, new Object[]{lotName}, 
-                dataLotFlds, null);
+                dataLotFlds);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) return lotInfo;
         
         String templateName=lotInfo[0][LPArray.valuePosicInArray(dataLotFlds, TblsInspLotRMData.Lot.FLD_LOT_CONFIG_NAME.getName())].toString();
@@ -41,7 +41,7 @@ public class DataInspectionLotDecision {
         
         Object[][] configLotDecisionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.LotDecisionRules.TBL.getName(), 
                 new String[]{TblsInspLotRMConfig.LotDecisionRules.FLD_CODE.getName(), TblsInspLotRMConfig.LotDecisionRules.FLD_CODE_VERSION.getName()}, new Object[]{templateName, templateVersion}, 
-                configLotDecisionFlds, null);
+                configLotDecisionFlds);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(configLotDecisionInfo[0][0].toString())) return configLotDecisionInfo;
 
         // , String template, Integer templateVersion
@@ -77,7 +77,7 @@ public class DataInspectionLotDecision {
             
             Object[][] sampleAndSampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                     new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOT_NAME.getName()}, new Object[]{lotName}, 
-                    sampleAndSampleAnalysisFlds, null);
+                    sampleAndSampleAnalysisFlds);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAndSampleAnalysisInfo[0][0].toString())) return sampleAndSampleAnalysisInfo;
             if (Boolean.valueOf(testRevisionRequired)){            
                 Object[] sampleAnalysisStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_STATUS.getName()));

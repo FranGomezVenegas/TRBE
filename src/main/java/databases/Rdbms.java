@@ -69,7 +69,8 @@ public class Rdbms {
         ErrorTrappingEnum(String cl){this.errorCode=cl;}
         public String getErrorCode(){            return errorCode;        }        
     }
-    public enum DbConnectionParams{FILE_NAME_CONFIG("parameter.config.app-config"), DBURL("dburl"), 
+    public enum DbConnectionParams{FILE_NAME_CONFIG("parameter.config.app-config"), 
+        DBURL("dburl"), DBNAME("dbname"), DBMODULES("dbmodules"),
         DBMANAGER("dbManager"), DBMANAGER_VALUE_TOMCAT("TOMCAT"), DBMANAGER_VALUE_GLASSFISH("GLASSFISH"),
         DBDRIVER("dbDriver"), DBTIMEOUT("dbtimeout"), SSL("false"), DATASOURCE("datasource"), MAX_CONNECTIONS("10")
         ;
@@ -140,7 +141,10 @@ public class Rdbms {
      */
     public Boolean startRdbmsTomcatWithNoPool(String user, String pass) {   
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-        String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
+//        String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
+        String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
+        dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());        
+        
         Integer conTimeOut = Integer.valueOf(prop.getString(DbConnectionParams.DBTIMEOUT.getParamValue()));
         try{
             Properties dbProps = new Properties();
@@ -150,8 +154,8 @@ public class Rdbms {
             dbProps.setProperty("ConnectTimeout", conTimeOut.toString());                
             //dbProps.setProperty("ssl", "true");
             //dbProps.setProperty("ConnectTimeout", "conTimeOut");
-
-            Connection getConnection = DriverManager.getConnection(url, dbProps);          
+            Connection getConnection = DriverManager.getConnection(dbUrlAndName, dbProps);          
+//            Connection getConnection = DriverManager.getConnection(url, dbProps);          
             setConnection(getConnection);
             setTimeout(conTimeOut);
             if(getConnection()!=null){
@@ -229,7 +233,9 @@ public class Rdbms {
      */
     public Boolean startRdbmsTomcatNoRefactoring(String user, String pass) {        
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-            String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
+//            String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
+        String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
+        dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());        
             Integer conTimeOut = Integer.valueOf(prop.getString(DbConnectionParams.DBTIMEOUT.getParamValue()));  
             Integer initialConnections = 3;
             Integer maxConnections = 50; //Integer.valueOf(prop.getString(BUNDLE_PARAMETER_MAX_CONNECTIONS));  
@@ -244,8 +250,8 @@ public class Rdbms {
                 
                 //dbProps.setProperty("ssl", "true");
                 //dbProps.setProperty("ConnectTimeout", "conTimeOut");
-                
-                Connection getConnection = DriverManager.getConnection(url, dbProps);          
+                Connection getConnection = DriverManager.getConnection(dbUrlAndName, dbProps);          
+//                Connection getConnection = DriverManager.getConnection(url, dbProps);          
                 setConnection(getConnection);
                 setTimeout(conTimeOut);
                 if(getConnection()!=null){
@@ -281,13 +287,17 @@ public class Rdbms {
             ds.setLoginTimeout(Rdbms.timeout);
             setConnection(ds.getConnection(user, pass));
 
-            String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
+//            String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
+        String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
+        dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());        
+            
             Properties props = new Properties();
                   
             props.setProperty("user",user);
             props.setProperty("password",pass);
             props.setProperty("ssl","true");
-            DriverManager.getConnection(url, props);
+//            DriverManager.getConnection(url, props);
+            DriverManager.getConnection(dbUrlAndName, props);
 
             if(getConnection()!=null){
               setIsStarted(Boolean.TRUE);                                                      
@@ -304,7 +314,10 @@ public class Rdbms {
    
     public Object[] startRdbmsTomcatTester(String user, String pass) {        
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-            String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
+//            String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
+        String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
+        dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());        
+
             Integer conTimeOut = Integer.valueOf(prop.getString(DbConnectionParams.DBTIMEOUT.getParamValue()));  
             Integer initialConnections = 3;
             Integer maxConnections = 50; //Integer.valueOf(prop.getString(BUNDLE_PARAMETER_MAX_CONNECTIONS));  
@@ -319,8 +332,8 @@ public class Rdbms {
                 
                 //dbProps.setProperty("ssl", "true");
                 //dbProps.setProperty("ConnectTimeout", "conTimeOut");
-                
-                Connection getConnection = DriverManager.getConnection(url, dbProps);          
+                Connection getConnection = DriverManager.getConnection(dbUrlAndName, dbProps);                          
+//                Connection getConnection = DriverManager.getConnection(url, dbProps);          
                 setConnection(getConnection);
                 setTimeout(conTimeOut);
                 if(getConnection()!=null){
@@ -355,13 +368,16 @@ public class Rdbms {
             ds.setLoginTimeout(Rdbms.timeout);
             setConnection(ds.getConnection(user, pass));
 
-            String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
+        String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
+        dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());        
+//            String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
             Properties props = new Properties();
                   
             props.setProperty("user",user);
             props.setProperty("password",pass);
             props.setProperty("ssl","true");
-            DriverManager.getConnection(url, props);
+//            DriverManager.getConnection(url, props);
+            DriverManager.getConnection(dbUrlAndName, props);
 
             if(getConnection()!=null){
               setIsStarted(Boolean.TRUE);                                                      
@@ -586,12 +602,16 @@ if (1==1)return;
      * @return
      */
     public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve){        
+        return getRecordFieldsByFilter(schemaName, tableName, whereFieldNames, whereFieldValues, fieldsToRetrieve, false);
+    }
+    public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, Boolean excludeTestingSuffix){        
         if ( (schemaName==null) || (schemaName.length()==0) ){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_NotschemaNameSpecified", new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }          
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
-        schemaName=addSuffixIfItIsForTesting(schemaName);           
+        if (excludeTestingSuffix==null || !excludeTestingSuffix)
+            schemaName=addSuffixIfItIsForTesting(schemaName);           
 
         if ( (whereFieldNames==null) || (whereFieldNames.length==0) ){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         

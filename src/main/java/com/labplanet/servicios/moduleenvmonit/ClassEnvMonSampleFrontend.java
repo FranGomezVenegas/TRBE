@@ -243,7 +243,7 @@ public class ClassEnvMonSampleFrontend {
                     return;                  
                 case GET_MICROORGANISM_LIST:
                     String[] fieldsToRetrieve=getFieldsListToRetrieve("", TblsEnvMonitConfig.MicroOrganism.getAllFieldNames());                    
-                    Object[][] list=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
+                    Object[][] list=getTableData(GlobalVariables.Schemas.CONFIG.getName(), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
                         "", TblsEnvMonitConfig.MicroOrganism.getAllFieldNames(), 
                         new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                         new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()});     

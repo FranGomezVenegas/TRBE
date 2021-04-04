@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -67,6 +68,9 @@ public class Parameter {
         String filePath = "parameter."+parameterFolder+"."+procName;
         if (schemaSuffix!=null){filePath=filePath+"-"+schemaSuffix;}
         if (language != null) {filePath=filePath+"_" + language;}
+        else 
+            if (filePath.toLowerCase().contains("parameter.LabPLANET"))
+                filePath=filePath+"_" + GlobalVariables.Languages.EN.getName();
         
         try {
             prop = ResourceBundle.getBundle(filePath);

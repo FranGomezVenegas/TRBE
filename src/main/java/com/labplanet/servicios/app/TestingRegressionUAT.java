@@ -48,10 +48,11 @@ public class TestingRegressionUAT extends HttpServlet {
             String actionName=request.getParameter("actionName");
             if ("GETTESTERSLIST".equalsIgnoreCase(actionName)){
                 procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, true);        
-                if (procReqInstance.getHasErrors()){
-                    procReqInstance.killIt();
-                    return;
-                }
+            if (procReqInstance.getHasErrors()){
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+                return;
+            }
                 TestingServletsConfig[] endPoints = TestingServletsConfig.values();
                 JSONArray jArr=new JSONArray();
 

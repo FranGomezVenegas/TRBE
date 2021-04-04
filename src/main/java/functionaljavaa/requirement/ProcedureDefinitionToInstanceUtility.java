@@ -28,7 +28,7 @@ public class ProcedureDefinitionToInstanceUtility {
         Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureRoles.TBL.getName(), 
                 new String[]{TblsReqs.ProcedureRoles.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.FLD_PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
                 new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()}, new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0].toString()))
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0][0].toString()))
             return new Object[]{};
         return LPArray.getColumnFromArray2D(procedureRolesListArr, 0);
     }
@@ -48,11 +48,12 @@ public class ProcedureDefinitionToInstanceUtility {
         UserSop usSop = new UserSop();
         Object[][] diagnoses = new Object[0][0];
         Object[][] personPerRole = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProcedure, TblsProcedure.PersonProfile.TBL.getName(),
-        new String[]{TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()}, new Object[]{roleName}, new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName()}, null);
+        new String[]{TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()}, new Object[]{roleName}, new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName()});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personPerRole[0][0].toString())){
             for (Object[] curPersRole: personPerRole){
                 String curPersonName=curPersRole[0].toString();
-                usSop.addSopToUserByName(schemaName, curPersonName, sopName);            
+                Object[] addSopToUserByName = usSop.addSopToUserByName(schemaName, curPersonName, sopName);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSopToUserByName[0].toString())) return LPArray.array1dTo2d(addSopToUserByName,addSopToUserByName.length-1);
                 //diagnoses = LPArray.joinTwo2DArrays(diagnoses, new Object[][]{{curPersonName, addSopToUserByName}});
             }
         }

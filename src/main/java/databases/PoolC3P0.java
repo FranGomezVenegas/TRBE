@@ -6,6 +6,7 @@
 package databases;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import databases.Rdbms.DbConnectionParams;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.beans.PropertyVetoException;
@@ -42,8 +43,11 @@ public class PoolC3P0 {
          // Que driver de base de datos usaremos
          cpds.setDriverClass("java.sql.Driver"); // prop.getString(BUNDLE_PARAMETER_DBDRIVER);
          // La url de la base de datos a la que nos conectaremos
-         cpds.setJdbcUrl("jdbc:postgresql://51.75.202.142:5555/labplanet"); // prop.getString(BUNDLE_PARAMETER_DBURL);
-         cpds.setJdbcUrl(Rdbms.DbConnectionParams.DBURL.getParamValue()); // prop.getString(BUNDLE_PARAMETER_DBURL);
+         String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
+         dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());
+         cpds.setJdbcUrl(dbUrlAndName);
+         //cpds.setJdbcUrl("jdbc:postgresql://51.75.202.142:5555/labplanet"); // prop.getString(BUNDLE_PARAMETER_DBURL);
+         //cpds.setJdbcUrl(Rdbms.DbConnectionParams.DBURL.getParamValue()); // prop.getString(BUNDLE_PARAMETER_DBURL);
          //cpds.setJdbcUrl("jdbc:postgresql://51.75.202.142:5555/trazit"); // prop.getString(BUNDLE_PARAMETER_DBURL);
          // Usuario de esa base de datos
          cpds.setUser(LPTestingOutFormat.TESTING_USER);

@@ -43,9 +43,10 @@ public class TestingConfigSamplingPlanStructure extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ConfigSamplingPlanForSpec smpPlan = new ConfigSamplingPlanForSpec();
 
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true);        
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true, "");        
         if (procReqInstance.getHasErrors()){
             procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
             return;
         }
             

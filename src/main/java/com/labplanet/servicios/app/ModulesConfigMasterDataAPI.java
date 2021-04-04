@@ -34,6 +34,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -124,59 +125,24 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
-
-        String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }                 
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);  
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
-            
-        Token token = new Token(finalToken);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, language);              
-                return;                                
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            return;
         }
-        mandatoryParams = null;                        
-        Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);    
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+        
+        ConfigMasterDataAPIEndpoints endPoint = null;
+        try{
+            endPoint = ConfigMasterDataAPIEndpoints.valueOf(actionName.toUpperCase());
+        }catch(Exception e){
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
+            return;                   
         }
-        Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())){                                                      
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
-        }        
-        if (mandatoryParams!=null){
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                return;                  
-            }     
-        }
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     
-             (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){return;}
-
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
-             (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
-
-            ConfigMasterDataAPIEndpoints endPoint = null;
-            try{
-                endPoint = ConfigMasterDataAPIEndpoints.valueOf(actionName.toUpperCase());
-            }catch(Exception e){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
-                return;                   
-            }
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
-            Object[] messageDynamicData=new Object[]{};
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
+        Object[] messageDynamicData=new Object[]{};
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         Object[] diagnostic=new Object[0];
         try (PrintWriter out = response.getWriter()) {        
@@ -193,7 +159,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
                 diagnostic = spcStr.specNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                    messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
+                    messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
@@ -207,7 +173,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 specFieldValue = argValues[3].toString();
                 diagnostic = spcStr.specUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|")));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                    messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
+                    messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
@@ -225,10 +191,10 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
                 diagnostic = anaStr.analysisNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                    messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
+                    messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.Analysis.TBL.getName(), TblsCnfg.Analysis.TBL.getName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case ANALYSIS_UPDATE:
@@ -239,10 +205,10 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 specFieldValue = argValues[3].toString();
                 diagnostic = anaStr.analysisUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|")));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                    messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
+                    messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.Analysis.TBL.getName(), TblsCnfg.Analysis.TBL.getName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case SPEC_LIMIT_NEW:
@@ -293,7 +259,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 }
                 diagnostic = spcStr.specLimitNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                    messageDynamicData=new Object[]{specFieldName, specFieldValue, schemaPrefix};
+                    messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);

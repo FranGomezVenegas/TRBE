@@ -48,7 +48,11 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         response=LPHttp.responsePreparation(response);
 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
-        if (procReqInstance.getHasErrors()) return;
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            return;
+        }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
         String procInstanceName=procReqInstance.getProcedureInstance();
