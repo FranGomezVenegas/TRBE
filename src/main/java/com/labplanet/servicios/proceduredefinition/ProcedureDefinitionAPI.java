@@ -37,6 +37,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
          */
         PROCEDURE_NAME("procedureName"), PROCEDURE_VERSION("procedureVersion"), SCHEMA_PREFIX("schemaPrefix"), MODULE_NAME("moduleName"), USER_NAME("userName"), ROLE_NAME("roleName"),
         UOM_NAME("uomName"),UOM_IMPORT_TYPE("importType"),
+        CREATE_DATABASE("createDatabase"),
         DEPLOY_SCHEMAS_AND_PROC_TBLS("deploySchemasAndProcTbls"), DEPLOY_PROC_INFO("deployProcInfo"), DEPLOY_PROC_USER_ROLES("deployProcUserRoles"),
         DEPLOY_PROC_SOP_META_DATA("deployProcSopMetaData"), DEPLOY_PROC_SOPS_TO_USERS("deployProcSopsToUsers"), DEPLOY_PROC_EVENTS("deployProcEvents"),
         DEPLOY_PROC_BUSINESS_RULES_PROP_FILES("deployProcBusinessRulesPropFiles"), DEPLOY_MODULE_TABLES_AND_FIELDS("deployModuleTablesAndFields"),

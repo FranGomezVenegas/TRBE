@@ -101,7 +101,12 @@ public class Rdbms {
     }    */
     public static final Boolean stablishDBConection(){
         boolean isConnected = false;                               
-        isConnected = Rdbms.getRdbms().startRdbms();      
+        isConnected = Rdbms.getRdbms().startRdbms(null);      
+        return isConnected;
+    }    
+    public static final Boolean stablishDBConection(String dbName){
+        boolean isConnected = false;                               
+        isConnected = Rdbms.getRdbms().startRdbms(dbName);      
         return isConnected;
     }    
 
@@ -116,17 +121,20 @@ public class Rdbms {
      * @return
      */
     public Boolean startRdbms(){
-        return startRdbmsInternal();
+        return startRdbmsInternal(null);
     }
-    public Boolean startRdbmsInternal(){
+    public Boolean startRdbms(String dbName){
+        return startRdbmsInternal(dbName);
+    }
+    public Boolean startRdbmsInternal(String dbName){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String dbDriver = prop.getString(DbConnectionParams.DBMANAGER.getParamValue());
         switch (dbDriver.toUpperCase()){
             case "TOMCAT":
                 if (DB_CONNECTIVITY_POOLING_MODE)
-                    return startRdbmsTomcatWithPool();                
+                    return startRdbmsTomcatWithPool(dbName);                
                 else
-                    return startRdbmsTomcatWithNoPool(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);                
+                    return startRdbmsTomcatWithNoPool(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, dbName);                
             case "GLASSFISH":
                 return startRdbmsGlassfish(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);
             default:
@@ -139,11 +147,14 @@ public class Rdbms {
      * @param pass
      * @return
      */
-    public Boolean startRdbmsTomcatWithNoPool(String user, String pass) {   
+    public Boolean startRdbmsTomcatWithNoPool(String user, String pass, String dbName) {   
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
 //        String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
         String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
-        dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());        
+        if (dbName==null)
+            dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());        
+        else
+            dbUrlAndName=dbUrlAndName+"/"+dbName;
         
         Integer conTimeOut = Integer.valueOf(prop.getString(DbConnectionParams.DBTIMEOUT.getParamValue()));
         try{
@@ -169,10 +180,10 @@ public class Rdbms {
             return Boolean.FALSE;
         }        
     }    
-    public Boolean startRdbmsTomcatWithPool() {        
+    public Boolean startRdbmsTomcatWithPool(String dbName) {        
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         Integer conTimeOut = Integer.valueOf(prop.getString(DbConnectionParams.DBTIMEOUT.getParamValue()));
-        PoolC3P0 pool = PoolC3P0.getInstanceForActions();
+        PoolC3P0 pool = PoolC3P0.getInstanceForActions(dbName);
         //ConnectionPoolDataSource cpds = assertCpds();
 //        pool = PoolC3P0.getInstanceForActions();
         if (pool==null){
@@ -181,7 +192,7 @@ public class Rdbms {
         }
         Connection cx = pool.getConnection();
         if (cx==null){        
-            pool = PoolC3P0.getInstanceForActions();
+            pool = PoolC3P0.getInstanceForActions(dbName);
             //pool.killConnection();
             cx = pool.getConnection();
             if (cx==null){
@@ -204,7 +215,7 @@ public class Rdbms {
         String dbDriver = prop.getString(DbConnectionParams.DBMANAGER.getParamValue());
         switch (dbDriver.toUpperCase()){
             case "TOMCAT":
-                return startRdbmsTomcatWithPool();                
+                return startRdbmsTomcatWithPool(null);                
             case "GLASSFISH":
                 return startRdbmsGlassfish(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);
             default:
@@ -423,7 +434,7 @@ if (1==1)return;
         if(getConnection()!=null){
             try {
                 if (DB_CONNECTIVITY_POOLING_MODE){
-                    PoolC3P0 pool = PoolC3P0.getInstanceForActions();
+                    PoolC3P0 pool = PoolC3P0.getInstanceForActions(null);
                     if (pool==null){
                         setIsStarted(Boolean.FALSE);
                         return;
@@ -1521,6 +1532,49 @@ if (1==1)return;
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
+
+    public static Object[] dbExists(String dbName){
+        String query="SELECT FROM pg_database WHERE datname = ? ";
+        try{
+            String[] filter=new String[]{dbName};
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res==null){
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+            }            
+            res.first();
+            Integer numRows=res.getRow();
+            if (numRows>0){
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", dbName});                
+            }else{
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",dbName});                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+        }  
+    }
+
+    public static Object[] createDb(String dbName){
+        String query="SELECT 'CREATE DATABASE ? WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = ?) ";
+        try{
+            String[] filter=new String[]{dbName, dbName};
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res==null){
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+            }            
+            res.first();
+            Integer numRows=res.getRow();
+            if (numRows>0){
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", dbName});                
+            }else{
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",dbName});                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+        }  
+    }
+
     public static String addSuffixIfItIsForTesting(String schemaName){
         //if (Rdbms.getIsTesting()){
         if (ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting())

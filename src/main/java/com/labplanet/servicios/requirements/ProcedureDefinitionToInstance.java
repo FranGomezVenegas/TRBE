@@ -28,13 +28,13 @@ import org.json.simple.JSONObject;
 public class ProcedureDefinitionToInstance extends HttpServlet {
 
     private static final Boolean  CREATE_SCHEMAS_AND_PROC_TBLS=false;
-    private static final Boolean  PROC_DEPLOY_PROCEDURE_INFO=false;
-    private static final Boolean  PROC_DEPLOY_PROCEDURE_USER_ROLES=false;
-    private static final Boolean  PROC_DEPLOY_PROCEDURE_SOP_META_DATA=false;
-    private static final Boolean  PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS=false;
-    private static final Boolean  PROC_DEPLOY_PROCEDURE_EVENTS=false;
-    private static final Boolean  PROC_DEPLOY_BUSINESS_RULES_PROPERTIES_FILES=false;
-    private static final Boolean  PROC_DEPLOY_MODULE_TABLES_AND_FIELDS=false;
+    private static final Boolean  PROCDEPL_PROCEDURE_INFO=false;
+    private static final Boolean  PROCDEPL_PROCEDURE_USER_ROLES=false;
+    private static final Boolean  PROCDEPL_PROCEDURE_SOP_META_DATA=false;
+    private static final Boolean  PROCDEPL_ASIGN_PROC_SOPS_TO_USERS=false;
+    private static final Boolean  PROCDEPL_PROCEDURE_EVENTS=false;
+    private static final Boolean  PROCDEPL_BUSINESS_RULES_PROPTS_FILS=false;
+    private static final Boolean  PROCDEPL_MODULE_TABLES_AND_FIELDS=false;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -58,10 +58,10 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
                             , {"Process Name", procName}, {"Process Version", procVersion.toString()}, {"Instance", schemaPrefix}
                             , {"CREATE_SCHEMAS_AND_PROC_TBLS", CREATE_SCHEMAS_AND_PROC_TBLS.toString()}
-                            , {"PROC_DEPLOY_PROCEDURE_INFO", PROC_DEPLOY_PROCEDURE_INFO.toString()}
-                            , {"PROC_DEPLOY_PROCEDURE_USER_ROLES", PROC_DEPLOY_PROCEDURE_USER_ROLES.toString()}
-                            , {"PROC_DEPLOY_PROCEDURE_SOP_META_DATA", PROC_DEPLOY_PROCEDURE_SOP_META_DATA.toString()}    
-                            , {"PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS", PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS.toString()}                
+                            , {"PROC_DEPLOY_PROCEDURE_INFO", PROCDEPL_PROCEDURE_INFO.toString()}
+                            , {"PROC_DEPLOY_PROCEDURE_USER_ROLES", PROCDEPL_PROCEDURE_USER_ROLES.toString()}
+                            , {"PROC_DEPLOY_PROCEDURE_SOP_META_DATA", PROCDEPL_PROCEDURE_SOP_META_DATA.toString()}    
+                            , {"PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS", PROCDEPL_ASIGN_PROC_SOPS_TO_USERS.toString()}                
 //                            , {"PROC_DISPLAY_PROC_INSTANCE_SOPS", PROC_DISPLAY_PROC_INSTANCE_SOPS.toString()}                
 //                            , {"PROC_DEPLOYMENT_ENTIRE_PROCEDURE", PROC_DEPLOYMENT_ENTIRE_PROCEDURE.toString()}
 //                            , {"PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS", PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS.toString()}
@@ -75,37 +75,37 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 String[][] createDBProcedureInfoTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_INFO"},{createDBProcedureInfo.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureInfoTbl);
             }   
-            if (Boolean.valueOf(argValues[5].toString()) || PROC_DEPLOY_PROCEDURE_INFO){
+            if (Boolean.valueOf(argValues[5].toString()) || PROCDEPL_PROCEDURE_INFO){
                 JSONObject createDBProcedureInfo = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureInfo(procName, procVersion, schemaPrefix);
                 String[][] createDBProcedureInfoTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_INFO"},{createDBProcedureInfo.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureInfoTbl);
             }   
-            if (Boolean.valueOf(argValues[6].toString()) || PROC_DEPLOY_PROCEDURE_USER_ROLES){
+            if (Boolean.valueOf(argValues[6].toString()) || PROCDEPL_PROCEDURE_USER_ROLES){
                 JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procName, procVersion, schemaPrefix);
                 String[][] createDBProcedureUserRolesTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_USER_ROLES"},{createDBProcedureUserRoles.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureUserRolesTbl);
             }            
-            if (Boolean.valueOf(argValues[7].toString()) || PROC_DEPLOY_PROCEDURE_SOP_META_DATA){
+            if (Boolean.valueOf(argValues[7].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA){
                 JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBSopMetaDataAndUserSop(procName, procVersion, schemaPrefix);
                 String[][] createDBProcedureUserRolesTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_SOP_META_DATA"},{createDBProcedureUserRoles.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureUserRolesTbl);
             }       
-            if (Boolean.valueOf(argValues[8].toString()) || PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS){
+            if (Boolean.valueOf(argValues[8].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS){
                 JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, schemaPrefix);
                 String[][] createDBProcedureUserRolesTbl = new String[][]{{"Log for PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS"},{createDBProcedureUserRoles.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureUserRolesTbl);
             }  
-            if (Boolean.valueOf(argValues[9].toString()) || PROC_DEPLOY_PROCEDURE_EVENTS){
+            if (Boolean.valueOf(argValues[9].toString()) || PROCDEPL_PROCEDURE_EVENTS){
                 JSONObject createDBProcedureEvents = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureEvents(procName, procVersion, schemaPrefix);
                 String[][] createDBProcedureEventsDiagnostic = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_EVENTS"},{createDBProcedureEvents.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureEventsDiagnostic);                
             }
-            if (Boolean.valueOf(argValues[10].toString()) || PROC_DEPLOY_BUSINESS_RULES_PROPERTIES_FILES){
+            if (Boolean.valueOf(argValues[10].toString()) || PROCDEPL_BUSINESS_RULES_PROPTS_FILS){
                 JSONArray createPropBusinessRules = functionaljavaa.requirement.ProcedureDefinitionToInstance.createPropBusinessRules(procName, procVersion, schemaPrefix);
                 String[][] createPropBusinessRulesTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_SOP_META_DATA"},{createPropBusinessRules.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createPropBusinessRulesTbl);                
             }
-            if (Boolean.valueOf(argValues[11].toString()) || PROC_DEPLOY_MODULE_TABLES_AND_FIELDS){
+            if (Boolean.valueOf(argValues[11].toString()) || PROCDEPL_MODULE_TABLES_AND_FIELDS){
                 JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBModuleTablesAndFields(procName, procVersion, schemaPrefix, moduleName);
                 String[][] createDBModuleTablesAndFieldsDiagnostic = new String[][]{{"Log for PROC_DEPLOY_MODULE_TABLES_AND_FIELDS"},{createDBModuleTablesAndFields.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBModuleTablesAndFieldsDiagnostic);                

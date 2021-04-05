@@ -35,9 +35,10 @@ import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionfrontend.P
 import com.labplanet.servicios.testing.config.db.DbTestingLimitAndResult.TestingLimitAndResult;
 import databases.Rdbms;
 import databases.TblsProcedure;
-import databases.TblsReqs.EndpointsDeclaration;
+import databases.TblsTrazitDocTrazit.EndpointsDeclaration;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.parameter.Parameter.PropertyFilesType;
+import java.util.ResourceBundle;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -58,7 +59,11 @@ public final class EndPointsToRequirements {
     // Endpoints 'antiguos': AppHeaderAPIEndpoints, IncidentAPIfrontendEndpoints, BatchAPIEndpoints, GenomaVariableAPIEndPoints y todos los de Genoma!
 
     public static void endpointDefinition(){
-        Rdbms.stablishDBConectionTester();    
+        
+    ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
+    String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
+        
+        Rdbms.stablishDBConection(dbTrazitModules);    
         // *** Falta encontrar la manera de tomar la url de un servlet!
         //"api_url",
 
@@ -291,14 +296,14 @@ public final class EndPointsToRequirements {
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
             declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
         }
+        Rdbms.closeRdbms();
 }
     
 private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
     String[] argHeader=new String[]{"name", "type", "is_mandatory?","testing arg posic"};
     JSONArray argsJsonArr = new JSONArray();
-    JSONObject argsJson=new JSONObject();
     for (LPAPIArguments curArg: arguments){
-        argsJson = LPJson.convertArrayRowToJSONObject(argHeader, new Object[]{curArg.getName(), curArg.getType(), curArg.getMandatory(), curArg.getTestingArgPosic()});
+        JSONObject argsJson = LPJson.convertArrayRowToJSONObject(argHeader, new Object[]{curArg.getName(), curArg.getType(), curArg.getMandatory(), curArg.getTestingArgPosic()});
         argsJsonArr.add(argsJson);
     }
     return argsJsonArr;
@@ -306,14 +311,17 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
 
 private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues){
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
-    Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), 
+    ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
+    String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
+    Rdbms.getRdbms().startRdbms(dbTrazitModules);
+    Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(), 
             new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()},
             new Object[]{apiName, endpointName}, new String[]{EndpointsDeclaration.FLD_ID.getName(), EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
     Object[] docInfoForEndPoint = getDocInfoForEndPoint(apiName, endpointName);
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
         String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName())].toString();
         if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[0][1].toString())){
-            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(),
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(),
                     new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.FLD_LAST_UPDATE.getName()},
                     new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()},
                     new String[]{EndpointsDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
@@ -322,7 +330,7 @@ private static void declareInDatabase(String apiName, String endpointName, Strin
         }else{
             String[] flds=(String[]) docInfoForEndPoint[0];
             if (flds.length>0)
-                Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(),
+                Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(),
                         (String[]) docInfoForEndPoint[0],
                         (String[]) docInfoForEndPoint[1],
                         new String[]{EndpointsDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
@@ -333,7 +341,7 @@ private static void declareInDatabase(String apiName, String endpointName, Strin
         fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
         fieldNames=LPArray.addValueToArray1D(fieldNames, (String[]) docInfoForEndPoint[0]);
         fieldValues=LPArray.addValueToArray1D(fieldValues, (String[]) docInfoForEndPoint[1]);
-        Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
+        Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
     }
 }
 

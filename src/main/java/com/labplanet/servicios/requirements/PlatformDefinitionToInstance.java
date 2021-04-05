@@ -12,11 +12,13 @@ import databases.Rdbms;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
@@ -27,6 +29,7 @@ import org.json.simple.JSONObject;
  */
 public class PlatformDefinitionToInstance extends HttpServlet {
 
+    private static final Boolean  CREATE_DATABASE=false;
     private static final Boolean  CREATE_SCHEMAS_AND_PLATFORM_TBLS=false;
 /*    private static final Boolean  PROC_DEPLOY_PROCEDURE_INFO=false;
     private static final Boolean  PROC_DEPLOY_PROCEDURE_USER_ROLES=false;
@@ -73,7 +76,16 @@ public class PlatformDefinitionToInstance extends HttpServlet {
         
         fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(businessVariablesHeader); 
         try (PrintWriter out = response.getWriter()) {            
-            if (Boolean.valueOf(argValues[1].toString()) || CREATE_SCHEMAS_AND_PLATFORM_TBLS){
+            if (Boolean.valueOf(argValues[1].toString()) || CREATE_DATABASE){
+                Object[] createDB = Rdbms.createDb(platfName);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(createDB[0].toString())){
+                    fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(LPArray.array1dTo2d(createDB, createDB.length));
+                    return;
+                }
+                String[][] createDBTbl = new String[][]{{"Log for CREATE_DATABASE"},{Arrays.toString(createDB)}};  
+                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBTbl);
+            }   
+            if (Boolean.valueOf(argValues[2].toString()) || CREATE_SCHEMAS_AND_PLATFORM_TBLS){
                 JSONObject createDBPlatformSchemas = DbObjects.createPlatformSchemasAndBaseTables(platfName);
                 String[][] createDBPlatformSchemasTbl = new String[][]{{"Log for CREATE_SCHEMAS_AND_PLATFORM_TBLS"},{createDBPlatformSchemas.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBPlatformSchemasTbl);

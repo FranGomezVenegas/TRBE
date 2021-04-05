@@ -175,11 +175,7 @@ public class DbObjects {
         return jsonObj;
     }    
     private static JSONObject createSchemas(String[] schemasNames){
-        return createSchemas(schemasNames, null);
-    }   
-    private static JSONObject createSchemas(String[] schemasNames, String dbName){
-        String achemaAuthRole=SCHEMA_AUTHORIZATION_ROLE;
-        if (dbName!=null) achemaAuthRole=dbName;
+        String schemaAuthRole=SCHEMA_AUTHORIZATION_ROLE;
         Rdbms.stablishDBConection();
         JSONObject jsonObj = new JSONObject();
         
@@ -192,8 +188,8 @@ public class DbObjects {
             if (configSchemaName.contains("-") && (!configSchemaName.startsWith("\""))){            
                 configSchemaName = "\""+configSchemaName+"\"";}
 
-            String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+achemaAuthRole+";"+
-                    " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+achemaAuthRole+ ";";     
+            String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+schemaAuthRole+";"+
+                    " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+schemaAuthRole+ ";";     
             Rdbms.prepRdQuery(configSchemaScript, new Object[]{});
             
             // La idea es no permitir ejecutar prepUpQuery directamente, por eso es privada y no publica.            

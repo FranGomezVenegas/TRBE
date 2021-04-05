@@ -65,9 +65,13 @@ public class LPFrontEnd {
      * @return
      */
     public static final Boolean servletStablishDBConection(HttpServletRequest request, HttpServletResponse response){
-        
-        boolean isConnected = false;                               
-        isConnected = Rdbms.getRdbms().startRdbms();      
+        String dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);
+
+        boolean isConnected = false;    
+        if (dbName==null || dbName.length()==0)
+            isConnected = Rdbms.getRdbms().startRdbms();      
+        else
+            isConnected = Rdbms.getRdbms().startRdbms(dbName);      
         if (!isConnected){      
             LPFrontEnd.servletReturnResponseError(request, response, 
                     LPPlatform.ApiErrorTraping.PROPERTY_DATABASE_NOT_CONNECTED.getName(), null, null);                                                                
