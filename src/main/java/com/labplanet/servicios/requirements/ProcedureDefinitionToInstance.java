@@ -71,7 +71,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(businessVariablesHeader); 
         try (PrintWriter out = response.getWriter()) {
             if (Boolean.valueOf(argValues[4].toString()) || CREATE_SCHEMAS_AND_PROC_TBLS){
-                JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(schemaPrefix);
+                JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(schemaPrefix, null);
                 String[][] createDBProcedureInfoTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_INFO"},{createDBProcedureInfo.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureInfoTbl);
             }   

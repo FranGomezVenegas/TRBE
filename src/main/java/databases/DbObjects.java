@@ -5,6 +5,8 @@
  */
 package databases;
 
+import functionaljavaa.datatransfer.FromInstanceToInstance;
+import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
@@ -12,6 +14,8 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import java.util.ResourceBundle;
+
 
 /**
  *
@@ -34,12 +38,27 @@ public class DbObjects {
      * @return one Json Object with the log built after running the script for the platform instance creation.
      */
     public static JSONObject createPlatformSchemasAndBaseTables(String platformName){
+        ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
+        String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());        
+        String[][] tablesToTransferData=new String[][]{
+            {GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.UnitsOfMeasurement.TBL.getName(), dbTrazitModules}
+        };
+        
         String[] schemaNames = new String[]{GlobalVariables.Schemas.APP_AUDIT.getName(),
             GlobalVariables.Schemas.CONFIG.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), 
             GlobalVariables.Schemas.APP.getName()};
         String tblCreateScript="";
         JSONObject jsonObj=new JSONObject();
-        jsonObj=createSchemas(schemaNames);
+        
+        tblCreateScript = TblsCnfg.zzzDbErrorLog.createTableScript("", new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        //jsonObj.put("TblsCnfg.zzzDbErrorLog", tblCreateScript);
+
+        tblCreateScript=TblsCnfg.zzzPropertiesMissing.createTableScript("", new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        //jsonObj.put("TblsCnfg.zzzPropertiesMissing", tblCreateScript);
+        
+        jsonObj=createSchemas(schemaNames, platformName);
         tblCreateScript=TblsApp.AppSession.createTableScript(new String[]{""});
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsApp.AppSession", tblCreateScript);
@@ -79,15 +98,15 @@ public class DbObjects {
         tblCreateScript=TblsCnfg.UnitsOfMeasurement.createTableScript("", new String[]{""});
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsCnfg.UnitsOfMeasurement", tblCreateScript);
-
-        tblCreateScript=TblsCnfg.zzzDbErrorLog.createTableScript("", new String[]{""});
+// Comentadas porque se han movido para que se creen justo las primeras por tema de que si no existen 'paran la ejecución'
+/*        tblCreateScript=TblsCnfg.zzzDbErrorLog.createTableScript("", new String[]{""});
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsCnfg.zzzDbErrorLog", tblCreateScript);
         
         tblCreateScript=TblsCnfg.zzzPropertiesMissing.createTableScript("", new String[]{""});
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsCnfg.zzzPropertiesMissing", tblCreateScript);
-
+*/
         tblCreateScript=TblsAppConfig.Person.createTableScript(new String[]{""});
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsAppConfig.Person", tblCreateScript);
@@ -128,17 +147,21 @@ public class DbObjects {
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureBusinessRules", tblCreateScript);
 
+        for (String[] curTable: tablesToTransferData){
+            Object[] tableContent = FromInstanceToInstance.tableContent(curTable[0], curTable[1], curTable[2], platformName);
+            jsonObj.put("Transfer Data for "+curTable[0]+"."+curTable[1]+" from "+curTable[2], tableContent[tableContent.length-2]);
+        }
         return jsonObj;
      }    
 
-    public static JSONObject createModuleSchemasAndBaseTables(String schemaPrefix){
+    public static JSONObject createModuleSchemasAndBaseTables(String schemaPrefix, String dbName){
         String tblCreateScript="";
         String[] schemaNames = new String[]{
             LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName()), LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), 
             LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName()), LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
             LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA_TESTING.getName()), LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()), 
             LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName())};        
-        JSONObject jsonObj=createSchemas(schemaNames);
+        JSONObject jsonObj=createSchemas(schemaNames, dbName);
 
         tblCreateScript=TblsProcedure.PersonProfile.createTableScript(schemaPrefix, new String[]{""});
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
@@ -174,9 +197,9 @@ public class DbObjects {
 
         return jsonObj;
     }    
-    private static JSONObject createSchemas(String[] schemasNames){
+    public static JSONObject createSchemas(String[] schemasNames, String dbName){
         String schemaAuthRole=SCHEMA_AUTHORIZATION_ROLE;
-        Rdbms.stablishDBConection();
+        Rdbms.stablishDBConection(dbName);
         JSONObject jsonObj = new JSONObject();
         
         String methodName = "createDataBaseSchemas";       
@@ -187,10 +210,12 @@ public class DbObjects {
             requirementsLogEntry("", methodName, configSchemaName,2);
             if (configSchemaName.contains("-") && (!configSchemaName.startsWith("\""))){            
                 configSchemaName = "\""+configSchemaName+"\"";}
-
-            String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+schemaAuthRole+";"+
-                    " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+schemaAuthRole+ ";";     
-            Rdbms.prepRdQuery(configSchemaScript, new Object[]{});
+            Object[] dbSchemaExists = Rdbms.dbSchemaExists(configSchemaName);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbSchemaExists[0].toString())){
+                String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+schemaAuthRole+";"+
+                        " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+schemaAuthRole+ ";";     
+                Rdbms.prepRdQuery(configSchemaScript, new Object[]{});            
+            }
             
             // La idea es no permitir ejecutar prepUpQuery directamente, por eso es privada y no publica.            
                 //Integer prepUpQuery = Rdbms.prepUpQuery(configSchemaScript, new Object[0]);

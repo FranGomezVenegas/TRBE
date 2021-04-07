@@ -9,8 +9,10 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
+import databases.TblsCnfg;
 import databases.Token;
 import functionaljavaa.certification.CertifGlobalVariables;
+import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
@@ -60,6 +62,9 @@ public class TestingServer extends HttpServlet {
             out.println("<h1>Servlet testingServer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
+            
+            Object[] tableContent = FromInstanceToInstance.tableContent("config", TblsCnfg.UnitsOfMeasurement.TBL.getName(), "labplanet", "modules_trazit");
+if (1==1) return;
 //        String tblCreateScript2=TblsProcedureAudit.Investigation.createTableScript("em-demo-a", new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 

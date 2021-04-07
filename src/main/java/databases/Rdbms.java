@@ -1454,6 +1454,10 @@ if (1==1)return;
         }  
     }
     
+    /**
+    *   This method will return one 1D Array of Strings with the fields names list and one 2D Array of Objects with more fields attributes (table_schema, table_name, column_name, data_type)
+    * @return
+    */
     public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName){
         schemaName=addSuffixIfItIsForTesting(schemaName);           
         HashMap<String[], Object[][]> hm = new HashMap<>();          
@@ -1526,6 +1530,27 @@ if (1==1)return;
                 return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", viewName, schemaName});                
             }else{
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",viewName, schemaName});                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+        }  
+    }
+
+    public static Object[] dbSchemaExists(String schemaName){
+        String query="SELECT TRUE FROM information_schema.schemata WHERE schema_name = ? ";
+        try{
+            String[] filter=new String[]{schemaName};
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res==null){
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+            }            
+            res.first();
+            Integer numRows=res.getRow();
+            if (numRows>0){
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", schemaName});                
+            }else{
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",schemaName});                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
