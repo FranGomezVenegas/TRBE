@@ -42,6 +42,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
         DEPLOY_SCHEMAS_AND_PROC_TBLS("deploySchemasAndProcTbls"), DEPLOY_PROC_INFO("deployProcInfo"), DEPLOY_PROC_USER_ROLES("deployProcUserRoles"),
         DEPLOY_PROC_SOP_META_DATA("deployProcSopMetaData"), DEPLOY_PROC_SOPS_TO_USERS("deployProcSopsToUsers"), DEPLOY_PROC_EVENTS("deployProcEvents"),
         DEPLOY_PROC_BUSINESS_RULES_PROP_FILES("deployProcBusinessRulesPropFiles"), DEPLOY_MODULE_TABLES_AND_FIELDS("deployModuleTablesAndFields"),
+        DEPLOY_PROC_MASTER_DATA("deployMasterData"),
         ;
         private ProcedureDefinitionpParametersEndpoints(String name){
             this.name=name;
@@ -68,7 +69,8 @@ public class ProcedureDefinitionAPI extends HttpServlet {
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_SOPS_TO_USERS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 14),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_EVENTS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 15),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_BUSINESS_RULES_PROP_FILES.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 16),
-new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_MODULE_TABLES_AND_FIELDS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17)}),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_MODULE_TABLES_AND_FIELDS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_MASTER_DATA.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17)}),
         ADD_USER("ADD_USER", "addUserToProcedure_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),

@@ -58,8 +58,12 @@ public class AuthenticationAPI extends HttpServlet {
         response=LPHttp.responsePreparation(response);        
 
         String language = LPFrontEnd.setLanguage(request); 
-        Rdbms.stablishDBConection();
-        
+        String dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);                                    
+/*        if (dbName==null || dbName.length()==0)
+            Rdbms.stablishDBConection();
+        else
+            Rdbms.stablishDBConection(dbName);
+*/        
         try (PrintWriter out = response.getWriter()) {            
             
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
@@ -102,7 +106,7 @@ public class AuthenticationAPI extends HttpServlet {
                         }
                     }                                                          
                     Token token = new Token("");                    
-                    String myToken = token.createToken(dbUserName, dbUserPassword, personName, "Admin", "", "", "");                    
+                    String myToken = token.createToken(dbUserName, dbUserPassword, personName, "Admin", "", "", "", dbName);                    
 
                     JSONObject jsonObj = new JSONObject();
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_USER_INFO_ID, personName);
@@ -155,7 +159,7 @@ public class AuthenticationAPI extends HttpServlet {
                         return;                                                                                
                     }                               
                     String myFinalToken = token.createToken(token.getUserName(), token.getUsrPw(), token.getPersonName(), 
-                            userRole, sessionIdStr, nowLocalDate.toString(), userInfo[0][0].toString());
+                            userRole, sessionIdStr, nowLocalDate.toString(), userInfo[0][0].toString(), token.getDbName());
                     Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
@@ -225,7 +229,7 @@ public class AuthenticationAPI extends HttpServlet {
                             token.getUserRole(), 
                             token.getAppSessionId(), 
                             appStartedDate, 
-                            token.geteSign());
+                            token.geteSign(), token.getDbName());
                     Rdbms.closeRdbms();  
                     RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
@@ -260,7 +264,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                             token.getUserRole(), 
                             token.getAppSessionId(), 
                             appStartedDate, 
-                            token.geteSign());
+                            token.geteSign(), token.getDbName());
                     Rdbms.closeRdbms();  
                     rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
@@ -288,7 +292,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                             token.getUserRole(), 
                             token.getAppSessionId(), 
                             appStartedDate, 
-                            newEsign);
+                            newEsign, token.getDbName());
                     Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
                     rObj=RelatedObjects.getInstanceForActions();

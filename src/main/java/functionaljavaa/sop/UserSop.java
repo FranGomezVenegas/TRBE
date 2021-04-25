@@ -43,12 +43,12 @@ public class UserSop {
         private final String lightCode;
     }
     
-    public enum userSopErrorTrapping{ 
+    public enum UserSopErrorTrapping{ 
         MARKEDASCOMPLETED_NOT_PENDING("sopMarkedAsCompletedNotPending", "", ""),
         NOT_ASSIGNED_TO_THIS_USER("UserSop_SopNotAssignedToThisUser", "", ""),
         USER_WITHNOROLE_FORGIVENSCHEMA("UserSop_UserWithNoRolesForThisGivenSchema", "", "")
         ;
-        private userSopErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+        private UserSopErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
@@ -81,7 +81,7 @@ public class UserSop {
         Object[] filterFieldValue =new Object[]{sopName, userName};        
         Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{procInstanceName});   
         if (getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopName, userName, procInstanceName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopName, userName, procInstanceName});
             return LPArray.array1dTo2d(diagnoses, diagnoses.length);
         }        
         return getUserProfileFieldValues;
@@ -122,9 +122,9 @@ public class UserSop {
             if (us.equalsIgnoreCase(procInstanceNameName)){schemaIsCorrect=true;break;}            
         }
         if (!schemaIsCorrect){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA.getErrorCode(), new Object[]{userInfoId, procInstanceNameName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA.getErrorCode(), new Object[]{userInfoId, procInstanceNameName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_ERROR"));
+            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getMessageCodeValue(schemaConfigName, "userSopCertificationLevelImage_ERROR"));
             return diagnoses;
         }
         String[] userSchema = new String[1];
@@ -149,22 +149,22 @@ public class UserSop {
             return diagnoses;
         }
         if (getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopIdFieldValue, userInfoId, procInstanceNameName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopIdFieldValue, userInfoId, procInstanceNameName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_NotAssigned"));
+            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getMessageCodeValue(schemaConfigName, "userSopCertificationLevelImage_NotAssigned"));
             return diagnoses;
         }
         if (getUserProfileFieldValues[0][3].toString().contains(userSopStatuses.PASS.getLightCode())){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), 
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), 
                     new Object[]{userInfoId, sopIdFieldValue, procInstanceNameName, "current status is "+getUserProfileFieldValues[0][2].toString()+" and the light is "+getUserProfileFieldValues[0][3].toString()});
             diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.PASS.getCode());
-            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_Certified"));
+            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getMessageCodeValue(schemaConfigName, "userSopCertificationLevelImage_Certified"));
             return diagnoses;
         }
         else{
             Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserSop_UserNotCertifiedForSop", new Object[]{userInfoId, sopIdFieldValue, procInstanceNameName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.NOTPASS.getCode());
-            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_NotCertified"));
+            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getMessageCodeValue(schemaConfigName, "userSopCertificationLevelImage_NotCertified"));
             return diagnoses;
         }               
     }
@@ -338,8 +338,8 @@ public class UserSop {
                 
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(exists[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserSop_sopAlreadyAssignToUser", new Object[]{sopIdFieldValue, personName, schemaName});
-        String userSopInitialStatus = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialStatus");
-        String userSopInitialLight = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialLight");
+        String userSopInitialStatus = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialStatus");
+        String userSopInitialLight = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialLight");
         
         if (userSopInitialStatus.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getCode();
         if (userSopInitialLight.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getLightCode();
@@ -371,7 +371,7 @@ public class UserSop {
      * @return
      */
     public boolean isProcedureSopEnable(String procedureName){
-        String sopCertificationLevel = Parameter.getParameterBundle("config", procedureName, "procedure", "actionEnabledUserSopCertification", null);
+        String sopCertificationLevel = Parameter.getMessageCodeValue("config", procedureName, "procedure", "actionEnabledUserSopCertification", null);
         if ("DISABLE".equalsIgnoreCase(sopCertificationLevel)) return false;
         if ("DISABLED".equalsIgnoreCase(sopCertificationLevel)) return false;
         if ("OFF".equalsIgnoreCase(sopCertificationLevel)) return false;
@@ -390,7 +390,7 @@ public class UserSop {
         Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName);
         if(LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())){return LPArray.array2dTo1d(sopInfo);}
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING.getErrorCode(), new Object[]{sopName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING.getErrorCode(), new Object[]{sopName, procInstanceName});
         }
         Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.UserSop.TBL.getName(), 
                 new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}, new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()},

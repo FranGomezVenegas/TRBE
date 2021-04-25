@@ -34,8 +34,8 @@ public class EnvMonAPI extends HttpServlet {
          *
          */
         CORRECTIVE_ACTION_COMPLETE("CORRECTIVE_ACTION_COMPLETE", "programCompleteCorrectiveAction_success", 
-                new LPAPIArguments[]{new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7)}),
+                new LPAPIArguments[]{new LPAPIArguments("programName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments("programCorrectiveActionId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7)}),
         EM_BATCH_INCUB_CREATE("EM_BATCH_INCUB_CREATE", "incubatorBatch_create_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -62,7 +62,7 @@ public class EnvMonAPI extends HttpServlet {
         EM_LOGSAMPLE_SCHEDULER("EM_LOGSAMPLE_SCHEDULER", "programScheduler_logScheduledSamples", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
-                new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8)}),
+                new LPAPIArguments("programName", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8)}),
         ;
         private EnvMonAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
@@ -148,49 +148,6 @@ public class EnvMonAPI extends HttpServlet {
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
 
     /**
-     *
-     */
-    
-    /**
-     *
-     */
-    public static final String PARAMETER_PROGRAM_SAMPLE_TEMPLATE="sampleTemplate";
-
-    /**
-     *
-     */
-    public static final String PARAMETER_PROGRAM_SAMPLE_TEMPLATE_VERSION="sampleTemplateVersion";       
-
-    /**
-     *
-     */
-    public static final String PARAMETER_NUM_SAMPLES_TO_LOG="numSamplesToLog";
-
-    /**
-     *
-     */
-    public static final String PARAMETER_PROGRAM_FIELD_NAME="fieldName";
-
-    /**
-     *
-     */
-    public static final String PARAMETER_PROGRAM_FIELD_VALUE="fieldValue";    
-
-    /**
-     *
-     */
-    public static final String PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME="programName"; 
-
-    /**
-     *
-     */
-    public static final String PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID="programCorrectiveActionId"; 
-    
-    /**
-     *
-     */
-    public static final String TABLE_SAMPLE_PROGRAM_FIELD="program"; 
-    /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
      * @param request servlet request
@@ -211,11 +168,6 @@ public class EnvMonAPI extends HttpServlet {
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
 
-        String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
-
-//        Connection con = Rdbms.createTransactionWithSavePoint();        
-
-        //Rdbms.setTransactionId(schemaConfigName);
         EnvMonAPIEndpoints endPoint = null;
         try{
             endPoint = EnvMonAPIEndpoints.valueOf(actionName.toUpperCase());
@@ -252,8 +204,7 @@ public class EnvMonAPI extends HttpServlet {
             }
 */            
             procReqInstance.killIt();
-            errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            Object[] errMsg = LPFrontEnd.responseError(new String[]{"Servlet "+this.getClass().getSimpleName()+"Error: "+e.getMessage()}, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             // release database resources

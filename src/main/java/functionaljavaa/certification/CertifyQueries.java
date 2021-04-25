@@ -8,7 +8,7 @@ package functionaljavaa.certification;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.TblsDataAudit;
-import functionaljavaa.certification.AnalysisMethodCertif.certificationAnalysisMethodBusinessRules;
+import functionaljavaa.certification.AnalysisMethodCertif.CertificationAnalysisMethodBusinessRules;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.ProcedureDefinitionQueries.ProcBusinessRulesQueries;
 import lbplanet.utilities.LPArray;
@@ -26,7 +26,7 @@ import trazit.session.ProcedureRequestSession;
 public class CertifyQueries {
     
     public enum CertifObjects{
-        ANALYSIS_METHOD(certificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName(), 
+        ANALYSIS_METHOD(CertificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName(), 
                 TblsData.CertifUserAnalysisMethod.TBL.getName(),
                 new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName(), TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), 
                     TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), 
@@ -60,7 +60,7 @@ public class CertifyQueries {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();  
         for (CertifObjects curCertifObj: CertifObjects.values()){                        
             Boolean tagValueOneOfEnableOnes = false;
-            String tagValue = Parameter.getParameterBundle("config", procInstanceName, 
+            String tagValue = Parameter.getMessageCodeValue("config", procInstanceName, 
                 GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), curCertifObj.getPropertyName(), null);
             tagValueOneOfEnableOnes = Parameter.isTagValueOneOfEnableOnes(tagValue);
             if (!includeOnlyEnabled || tagValueOneOfEnableOnes){
@@ -91,7 +91,7 @@ public class CertifyQueries {
                     fieldsToGet=LPArray.addValueToArray1D(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_ID.getName());
             }
             if ("ALL".equalsIgnoreCase(areasToInclude) || LPArray.valueInArray(areasToIncludeArr, curCertifObj.toString())){
-                String tagValue = Parameter.getParameterBundle("config", procInstanceName, 
+                String tagValue = Parameter.getMessageCodeValue("config", procInstanceName, 
                         GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), curCertifObj.getPropertyName(), null);
                 if (Parameter.isTagValueOneOfEnableOnes(tagValue)){
                     Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), curCertifObj.getTableName(), 

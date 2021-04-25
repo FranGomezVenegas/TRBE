@@ -35,6 +35,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
     private static final Boolean  PROCDEPL_PROCEDURE_EVENTS=false;
     private static final Boolean  PROCDEPL_BUSINESS_RULES_PROPTS_FILS=false;
     private static final Boolean  PROCDEPL_MODULE_TABLES_AND_FIELDS=false;
+    private static final Boolean  PROCDEPL_MASTER_DATA=false;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -110,6 +111,12 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 String[][] createDBModuleTablesAndFieldsDiagnostic = new String[][]{{"Log for PROC_DEPLOY_MODULE_TABLES_AND_FIELDS"},{createDBModuleTablesAndFields.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBModuleTablesAndFieldsDiagnostic);                
             }
+            if (Boolean.valueOf(argValues[12].toString()) || PROCDEPL_MASTER_DATA){
+                JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.deployMasterData(procName, procVersion, schemaPrefix);
+                String[][] createDBModuleTablesAndFieldsDiagnostic = new String[][]{{"Log for PROCDEPL_MASTER_DATA"},{createDBModuleTablesAndFields.toJSONString()}};  
+                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBModuleTablesAndFieldsDiagnostic);                
+            }
+            
             
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();
             out.println(fileContent);            

@@ -521,7 +521,7 @@ GlobalAPIsParams.
                     Response.ok().build();
                     return;  
                 case PROGRAMS_CORRECTIVE_ACTION_LIST:   
-                    String statusClosed=Parameter.getParameterBundle(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");                    
+                    String statusClosed=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");                    
                     String programName = argValues[0].toString();
                     String[] progCorrFldNameList = getFieldsListToRetrieve(argValues[1].toString(), TblsProcedure.ProgramCorrectiveAction.TBL.getAllFieldNames());
                     String[] progCorrFldSortArray=argValues[2].toString().split("\\|");

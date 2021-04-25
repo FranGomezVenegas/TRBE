@@ -23,15 +23,49 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class DataSampleRevisionTestingGroup {
-    public enum TestingGroupFileProperties{SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP}
-
+public class DataSampleRevisionTestingGroup{
+    public enum DataSampleRevisionTestingGroupBusinessRules{
+        SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP("sampleTestingByGroup_ReviewByTestingGroup", GlobalVariables.Schemas.PROCEDURE.getName())
+        ;
+        private DataSampleRevisionTestingGroupBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }    
+            
+    public enum DataSampleRevisionTestingGroupErrorTrapping{ 
+        SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP_NOT_ACTIVE("sampleTestingByGroup_ReviewByTestingGroupNotActive", "sampleTestingByGroup_ReviewByTestingGroup Not Active", "sampleTestingByGroup_ReviewByTestingGroup No Activo"),
+        SAMPLETESTINGBYGROUP_PENDING_TESTINGGROUPREVISION("DataSampleRevision_PendingTestingGroupRevision", "There are pending testing group, <*1*>, for the sample <*2*> in procedure <*3*>", "There are pending testing group, <*1*>, for the sample <*2*> in procedure <*3*>"),
+        SAMPLETESTINGBYGROUP_NOPENDING_TESTINGGROUPREVISION("DataSampleRevision_NoPendingTestingGroupRevision", "No testing group revision pending for sample <*1*> in procedure <*2*>", "No testing group revision pending for sample <*1*> in procedure <*2*>"),
+        SAMPLETESTINGBYGROUP_ALREADY_READYFORREVISION("DataSampleRevision_alreadyReadyForRevision", "Already ready for revision", "Ya está marcado para revisión"),
+        READY_FOR_REVISION("DataSampleRevision_readyForRevision", "Ready for revision", "Listo para la revisión"),
+        NOT_READY_FOR_REVISION("DataSampleRevision_notReadyForRevision", "Not ready for revision", "No listo para la revisión"),
+        SAMPLETESTINGBYGROUP_PENDINGRESULTSINTESTINGGROUP("DataSampleRevision_PendingResultsInTestingGroup","There are pending results for the testing group <*1*> for the sample <*2*> in procedure <*3*>","There are pending results for the testing group <*1*> for the sample <*2*> in procedure <*3*>")
+        ;
+        private DataSampleRevisionTestingGroupErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }            
     public static Object[] addSampleRevisionByTestingGroup(Integer sampleId, Integer testId, String specAnalysisTestingGroup){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.toString());
+        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleTestingByGroup_ReviewByTestingGroup Not active", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP_NOT_ACTIVE.getErrorCode(), null);
         if (specAnalysisTestingGroup==null || specAnalysisTestingGroup.length()==0){
             Object[][] testInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(),
                 new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()},
@@ -54,9 +88,9 @@ public class DataSampleRevisionTestingGroup {
     public static Object[] isSampleRevisionByTestingGroupReviewed(Integer sampleId, String testingGroup){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.toString());
+        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleTestingByGroup_ReviewByTestingGroup Not active", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP_NOT_ACTIVE.getErrorCode(), null);
         String[] fieldNames=new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName()};
         Object[] fieldValues=new Object[]{sampleId, false};
         if (testingGroup!=null && testingGroup.length()>0){
@@ -66,10 +100,10 @@ public class DataSampleRevisionTestingGroup {
         Object[][] existsPendingRevisionRecord = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(),
                 fieldNames, fieldValues, new String[]{TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsPendingRevisionRecord[0][0].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "No testing group revision pending for sample <*1*> in procedure <*2*>", new Object[]{sampleId, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_NOPENDING_TESTINGGROUPREVISION.getErrorCode() , new Object[]{sampleId, procInstanceName});
         }else{            
             String pendingTestingGroupStr=Arrays.toString(LPArray.getColumnFromArray2D(existsPendingRevisionRecord, 0));
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "There are pending testing group, <*1*>, for the sample <*2*> in procedure <*3*>", 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_PENDING_TESTINGGROUPREVISION.getErrorCode() , 
                 new Object[]{pendingTestingGroupStr, sampleId, procInstanceName});
         }
     }
@@ -80,8 +114,8 @@ public class DataSampleRevisionTestingGroup {
         Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(),  
                 new String[] {TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleAnalysisFieldName);
         if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "readyForRevision", new Object[]{sampleId, procInstanceName});
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "notReadyForRevision", new Object[]{sampleId, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleRevisionTestingGroupErrorTrapping.READY_FOR_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.NOT_READY_FOR_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
         //return diagnoses;
     }  
     
@@ -89,9 +123,9 @@ public class DataSampleRevisionTestingGroup {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", TestingGroupFileProperties.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.toString());
+        Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleTestingByGroup_ReviewByTestingGroup Not active", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP_NOT_ACTIVE.getErrorCode(), null);
         Object[] sampleRevisionByTestingGroupReviewed = isSampleRevisionByTestingGroupReviewed(sampleId, testingGroup);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;
         
@@ -99,8 +133,8 @@ public class DataSampleRevisionTestingGroup {
                 new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_TESTING_GROUP.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_MANDATORY.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+" is null"}, 
                 new Object[]{sampleId, testingGroup, true});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsPendingAnalysis[0].toString())) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "There are pending results for the testing group <*1*> for the sample <*2*> in procedure <*3*>", null);
-        Object[] isRevisionSampleAnalysisRequired=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED);
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_PENDINGRESULTSINTESTINGGROUP.getErrorCode(), new Object[]{testingGroup, sampleId, procInstanceName});
+        Object[] isRevisionSampleAnalysisRequired=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName,  GlobalVariables.Schemas.PROCEDURE.getName(), PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisRequired[0].toString())){            
             Object[] isallsampleAnalysisReviewed = DataSampleAnalysis.isAllsampleAnalysisReviewed(sampleId, new String[]{TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()}, new Object[]{testingGroup});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isallsampleAnalysisReviewed[0].toString())) return isallsampleAnalysisReviewed;
@@ -135,7 +169,7 @@ public class DataSampleRevisionTestingGroup {
             DataSample.setReadyForRevision(sampleId);
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "There are pending testing group reviews for the sample <*1*> in procedure <*2*>", new Object[]{sampleId, procInstanceName});
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_PENDING_TESTINGGROUPREVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
     }
     /**
      *
@@ -152,7 +186,7 @@ public class DataSampleRevisionTestingGroup {
         Object[][] sampleRevisionTestingGroupInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(),  
                 new String[] {TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(),TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()}, new Object[]{sampleId, testingGroup}, sampleFieldName);
         if ("TRUE".equalsIgnoreCase(sampleRevisionTestingGroupInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "alreadyReadyForRevision", new Object[]{sampleId, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_ALREADY_READYFORREVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
         
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(), 
                 sampleFieldName, sampleFieldValue, 

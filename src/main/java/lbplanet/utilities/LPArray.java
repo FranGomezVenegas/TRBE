@@ -80,7 +80,7 @@ public class  LPArray {
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY; // 128 bit key
         //? Should be by schemaPrefix? config or data???
-        String fieldsEncrypted = Parameter.getParameterBundle(schemaName.replace("\"", ""), ENCRYPTED_PREFIX+tableName);        
+        String fieldsEncrypted = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), ENCRYPTED_PREFIX+tableName);        
         for (int iFields=0;iFields<fieldName.length;iFields++){
             if (fieldsEncrypted.contains(fieldName[iFields])){
                 try{
@@ -124,7 +124,7 @@ if (1==1) return fieldValue;
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
         String keyStr="AES";
-        String fieldsEncrypted = Parameter.getParameterBundle(schemaName.replace("\"", ""), ENCRYPTED_PREFIX+tableName);
+        String fieldsEncrypted = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), ENCRYPTED_PREFIX+tableName);
         for (int iFields=0;iFields<fieldName.length;iFields++){
             if (fieldsEncrypted.contains(fieldName[iFields])){
                     for (Object[] fieldValue1 : fieldValue) {
@@ -164,7 +164,7 @@ if (1==1) return fieldValue;
     public static Object[] decryptTableFieldArray(String schemaName, String tableName, String[] fieldName, Object[] fieldValue){
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY;
-        String fieldsEncrypted = Parameter.getParameterBundle(schemaName.replace("\"", ""), ENCRYPTED_PREFIX+tableName);
+        String fieldsEncrypted = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), ENCRYPTED_PREFIX+tableName);
         for (int iFields=0;iFields<fieldName.length;iFields++){
             if (fieldsEncrypted.contains(fieldName[iFields])){
                 try{                                        

@@ -240,7 +240,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, userSessionArr);
 /*            case USER_SESSION_AUDIT_HISTORY:
-                String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
+                String statusClosed=Parameter.getMessageCodeValue(schemaPrefix+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
                 JSONArray jArray = new JSONArray(); 
                 if (!isProgramCorrectiveActionEnable(schemaPrefix)){
                   JSONObject jObj=new JSONObject();

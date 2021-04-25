@@ -7,7 +7,7 @@ package functionaljavaa.moduleenvironmentalmonitoring;
 
 import databases.TblsProcedure;
 import databases.Rdbms;
-import static functionaljavaa.requirement.ProcedureDefinitionToInstance.JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION;
+import functionaljavaa.requirement.ProcedureDefinitionToInstance.JsonTags;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
 import org.json.simple.JSONArray;
@@ -33,7 +33,7 @@ public final class EnvMonitSchemaDefinition {
         
         String methodName = "createDataBaseSchemas";       
         String[] schemaNames = new String[]{GlobalVariables.Schemas.APP.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), GlobalVariables.Schemas.CONFIG.getName()};
-         jsonObj.put(JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION, schemaNames.length);     
+         jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), schemaNames.length);     
         for (String configSchemaName:schemaNames){
             JSONArray jsSchemaArr = new JSONArray();
             jsSchemaArr.add(configSchemaName);

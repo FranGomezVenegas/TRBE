@@ -17,13 +17,34 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class ConfigIncubator {
     
-    public enum ConfigIncubatorErrorCodes{NOT_EXISTS("incubatorDoesnotExist"),ALREADY_ACTIVE("incubatorAlreadyActive"), CURRENTLY_DEACTIVE("incubatorCurrentlyDeactive"); 
+public enum ConfigIncubatorErrorTrapping{ 
+        NOT_EXISTS("incubatorDoesnotExist", "", ""),
+        ALREADY_ACTIVE("incubatorAlreadyActive", "", ""),
+        CURRENTLY_DEACTIVE("incubatorCurrentlyDeactive", "", ""),
+        ;
+        private ConfigIncubatorErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+/*
+    public enum ConfigIncubatorErrorCodes{NOT_EXISTS("incubatorDoesnotExist"),ALREADY_ACTIVE("incubatorAlreadyActive"), 
+    CURRENTLY_DEACTIVE("incubatorCurrentlyDeactive"); 
         ConfigIncubatorErrorCodes(String cde){
             this.code=cde;
         }
         public String getErrorCode(){return this.code;}
         private final String code;
     }
+*/
     /**
      *
      * @param instName
@@ -36,9 +57,9 @@ public class ConfigIncubator {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.toString(), new Object[]{instName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
         if (Boolean.valueOf(instrInfo[0][1].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.ALREADY_ACTIVE.toString(), new Object[]{instName, procInstanceName}); 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.ALREADY_ACTIVE.getErrorCode(), new Object[]{instName, procInstanceName}); 
         Object[] incubUpdate=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(),
             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, new Object[]{true}, 
             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName});
@@ -60,9 +81,9 @@ public class ConfigIncubator {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.toString(), new Object[]{instName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.CURRENTLY_DEACTIVE.toString(), new Object[]{instName, procInstanceName}); 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE.getErrorCode(), new Object[]{instName, procInstanceName}); 
         Object[] incubUpdate=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(),
             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, new Object[]{false}, 
             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName});

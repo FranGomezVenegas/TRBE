@@ -55,7 +55,7 @@ public Object[] createStudy(String studyName, String projectName, String[] field
         
         schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
         
-        mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.Study.TBL.getName(), actionName);
+        mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(TblsGenomaData.Study.TBL.getName(), actionName);
         
         
     if (devMode){

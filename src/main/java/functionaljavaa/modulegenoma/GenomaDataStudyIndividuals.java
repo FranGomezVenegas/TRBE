@@ -53,7 +53,7 @@ public class GenomaDataStudyIndividuals {
 
             schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
 
-            mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.StudyIndividual.TBL.getName(), actionName);
+            mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.StudyIndividual.TBL.getName(), actionName);
 
 
         if (devMode){

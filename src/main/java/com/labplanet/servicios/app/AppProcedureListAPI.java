@@ -184,7 +184,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){
                     procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
                     String attributeName="windowOpenableWhenNotSopCertifiedUserSopCertification";
-                    String propValue = Parameter.getParameterBundle(curProc.toString().replace("\"", "")+CONFIG_PROC_FILE_NAME, attributeName);
+                    String propValue = Parameter.getMessageCodeValue(curProc.toString().replace("\"", "")+CONFIG_PROC_FILE_NAME, attributeName);
                     procedure.put(attributeName, propValue);
                     procedure.put(LABEL_PROC_SCHEMA, curProc);
 

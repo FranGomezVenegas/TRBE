@@ -53,7 +53,7 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
 
             schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
 
-            mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.StudyIndividualSample.TBL.getName(), actionName);
+            mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.StudyIndividualSample.TBL.getName(), actionName);
 
 
         if (devMode){

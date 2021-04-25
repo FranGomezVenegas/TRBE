@@ -62,11 +62,14 @@ public class Rdbms {
      */
     public static final String TBL_KEY_NOT_FIRST_TABLEFLD="PRIMARY KEY NOT FIRST FIELD IN TABLE";
     
-    public enum ErrorTrappingEnum{RDBMS_DT_SQL_EXCEPTION("Rdbms_dtSQLException"), RDBMS_NOT_FILTER_SPECIFIED("Rdbms_NotFilterSpecified"),
-        RDBMS_RECORD_NOT_FOUND("Rdbms_existsRecord_RecordNotFound"), ARG_VALUE_RES_NULL("res is set to null"), ARG_VALUE_LBL_VALUES(" Values: ")
+    public enum RdbmsErrorTrapping{RDBMS_DT_SQL_EXCEPTION("Rdbms_dtSQLException"), RDBMS_NOT_FILTER_SPECIFIED("Rdbms_NotFilterSpecified"),
+        RDBMS_RECORD_NOT_FOUND("existsRecord_RecordNotFound"), RDBMS_RECORD_FOUND("existsRecord_RecordFound"),
+        ARG_VALUE_RES_NULL("res is set to null"), ARG_VALUE_LBL_VALUES(" Values: "),
+        RDBMS_RECORD_CREATED("RecordCreated"), RDBMS_RECORD_NOT_CREATED("RecordNotCreated"),
+        RDBMS_RECORD_UPDATED("RecordUpdated"), 
         ;
         private final String errorCode;
-        ErrorTrappingEnum(String cl){this.errorCode=cl;}
+        RdbmsErrorTrapping(String cl){this.errorCode=cl;}
         public String getErrorCode(){            return errorCode;        }        
     }
     public enum DbConnectionParams{FILE_NAME_CONFIG("parameter.config.app-config"), 
@@ -501,18 +504,18 @@ if (1==1)return;
             ResultSet res;
             res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
             }
             res.last();
 
             if (res.getRow()>0){                
                 return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{keyFieldValue, tableName, schemaName});                
             }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{keyFieldValue, tableName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{keyFieldValue, tableName, schemaName});                
             }
         }catch (SQLException|NullPointerException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                                       
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                                       
         }                    
     }
     /**
@@ -531,7 +534,7 @@ if (1==1)return;
         if (keyFieldNames.length==0){           
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, tableName);
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaName);          
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), errorDetailVariables);                         
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), errorDetailVariables);                         
         }
         SqlStatement sql = new SqlStatement(); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
@@ -541,18 +544,18 @@ if (1==1)return;
         try{
             ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
             }            
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND.getErrorCode(), new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
             }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }                    
     }
 
@@ -572,7 +575,7 @@ if (1==1)return;
         schemaName=addSuffixIfItIsForTesting(schemaName);           
         
         if (whereFieldNames.length==0){
-           LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
+           LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
            return null;
         }
         SqlStatement sql = new SqlStatement(); 
@@ -586,19 +589,19 @@ if (1==1)return;
             query = "select array_to_json(array_agg(row_to_json(t))) from (" + query +") t";
             res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
-                 LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
+                 LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
                  return null;
             }            
             res.last();
             if (res.getRow()>0){
                 return res.getString(1);
             }else{                
-                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});                         
+                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});                         
                 return null;
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
             return null;
         }                    
     }
@@ -625,7 +628,7 @@ if (1==1)return;
             schemaName=addSuffixIfItIsForTesting(schemaName);           
 
         if ( (whereFieldNames==null) || (whereFieldNames.length==0) ){
-           Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
+           Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }        
         
@@ -639,7 +642,7 @@ if (1==1)return;
             ResultSet res = null;            
             res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
-                Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
+                Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
                 return LPArray.array1dTo2d(errorLog, 1);
             }              
             res.last();
@@ -659,12 +662,12 @@ if (1==1)return;
              diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
              return diagnoses2;
             }else{
-                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
+                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }                    
     }
@@ -682,7 +685,7 @@ if (1==1)return;
         schemaName=addSuffixIfItIsForTesting(schemaName);           
         if (whereFieldNames.length==0){
            String[] errorDetailVariables = new String[]{Arrays.toString(tableName), schemaName};
-           Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), errorDetailVariables);                         
+           Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), errorDetailVariables);                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
         }        
         StringBuilder query = new StringBuilder(0);
@@ -711,7 +714,7 @@ if (1==1)return;
         try{
             ResultSet res = Rdbms.prepRdQuery(query.toString(), whereFieldValues);
             if (res==null){
-                Object[] errorLog=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(whereFieldValues)});
+                Object[] errorLog=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(whereFieldValues)});
                 return LPArray.array1dTo2d(errorLog, 1);
             }              
             res.last();
@@ -734,12 +737,12 @@ if (1==1)return;
                 return diagnoses2;
             }else{
                 String[] errorDetailVariables = new String[]{Arrays.toString(whereFieldValues), Arrays.toString(tableName), schemaName};
-                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), errorDetailVariables);                         
+                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), errorDetailVariables);                         
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
             }
         }catch (SQLException er) {
             Logger.getLogger(query.toString()).log(Level.SEVERE, null, er);                 
-            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new String[]{er.getLocalizedMessage()+er.getCause(), query.toString()});                         
+            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new String[]{er.getLocalizedMessage()+er.getCause(), query.toString()});                         
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
         }                    
     }
@@ -771,7 +774,7 @@ if (1==1)return;
     public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct){
         schemaName=addSuffixIfItIsForTesting(schemaName);           
         if (whereFieldNames.length==0){
-           Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
+           Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
         }
         SqlStatement sql = new SqlStatement(); 
@@ -784,7 +787,7 @@ if (1==1)return;
         try{            
             ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
-                Object[] errorLog=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(whereFieldValues)});
+                Object[] errorLog=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(whereFieldValues)});
                 return LPArray.array1dTo2d(errorLog, 1);
             }               
             res.last();
@@ -806,18 +809,18 @@ if (1==1)return;
                 //diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
                 return diagnoses2;
             }else{
-                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
+                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);             
         }                    
     }
     public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy){
         if (whereFieldNames.length==0){
-           Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
+           Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
         }
         SqlStatement sql = new SqlStatement();         
@@ -833,7 +836,7 @@ if (1==1)return;
         try{            
             ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
-                Object[] errorLog=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(whereFieldValues)});
+                Object[] errorLog=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(whereFieldValues)});
                 return LPArray.array1dTo2d(errorLog, 1);
             }               
             res.last();
@@ -862,12 +865,12 @@ if (1==1)return;
                 entireArr = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToGroupAltered, entireArr);
                 return entireArr;
             }else{
-                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
+                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);             
         }                    
     }
@@ -891,9 +894,9 @@ if (1==1)return;
         if (deleteRecordDiagnosis>0){     
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordUpdated", new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});   
         }else if(deleteRecordDiagnosis==-999){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query});   
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query});   
         }else{   
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});                         
         }        
 /*        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(deleteRecordDiagnosis[0])){
             Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordDeleted", new String[]{String.valueOf(deleteRecordDiagnosis[1]), query, Arrays.toString(whereFieldValues), schemaName});
@@ -908,7 +911,7 @@ if (1==1)return;
     public static Object[] insertRecordInTable(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
         schemaName=addSuffixIfItIsForTesting(schemaName);
         if (fieldNames.length==0){
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
         }
         if (fieldNames.length!=fieldValues.length){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_FieldArraysDifferentSize", new Object[]{Arrays.toString(fieldNames), Arrays.toString(fieldValues)});
@@ -922,11 +925,11 @@ if (1==1)return;
         String[] insertRecordDiagnosis = Rdbms.prepUpQueryK(query, fieldValues, 1);
         fieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, fieldNames, (Object[]) fieldValues);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])){
-            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
+            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_CREATED.getErrorCode(), new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
             return diagnosis;
         }else{
-            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_RecordNotCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
+            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_CREATED.getErrorCode(), new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
             return diagnosis;                         
         }
@@ -967,9 +970,9 @@ if (1==1)return;
 //        fieldValues = LPArray.decryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNames, (Object[]) whereFieldValuesFrom);
         Object[] diagnosis = new Object[0];
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0]))
-            diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});
+            diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_CREATED.getErrorCode(), new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});
         else
-            diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_RecordNotCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});                
+            diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_CREATED.getErrorCode(), new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});                
         diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
         return diagnosis;
     }
@@ -988,7 +991,7 @@ if (1==1)return;
         schemaName=addSuffixIfItIsForTesting(schemaName);
         updateFieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues);        
         if (whereFieldNames.length==0){
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
         }
         SqlStatement sql = new SqlStatement();       
 
@@ -1000,11 +1003,11 @@ if (1==1)return;
         Object[] keyFieldValueNew = hmQuery.get(query);                     
         Integer numr = Rdbms.prepUpQuery(query, keyFieldValueNew);
         if (numr>0){     
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordUpdated", new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});   
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_UPDATED.getErrorCode(), new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});   
         }else if(numr==-999){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Query: "+query+", By the values "+ Arrays.toString(keyFieldValueNew), query});   
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Query: "+query+", By the values "+ Arrays.toString(keyFieldValueNew), query});   
         }else{   
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});                         
         }
     }    
 
@@ -1115,7 +1118,7 @@ if (1==1)return;
             res = prepRdQuery(query, new Object[]{schema, table});
             String [] items ;
             if (res==null){
-                Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(new Object[]{schema, table})});
+                Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(new Object[]{schema, table})});
                 return new String[] {errorLog[0].toString()};
             }               
             items = res.next() ? LPArray.getStringArray(res.getArray("fields").getArray()) : null;
@@ -1142,7 +1145,7 @@ if (1==1)return;
             res = prepRdQuery(query, new Object[]{schema, table});
             String [] items ;
             if (res==null){
-                Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(new Object[]{schema, table})});
+                Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(new Object[]{schema, table})});
                 return Arrays.toString(errorLog);
             }
             items = res.next() ? LPArray.getStringArray(res.getArray("fields").getArray()) : null;
@@ -1374,7 +1377,7 @@ if (1==1)return;
             String[] filter=new String[]{schemaName, "BASE TABLE"};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
             }       
             res.last();
             if (res.getRow()>0){
@@ -1392,12 +1395,12 @@ if (1==1)return;
                 }         
                  return diagnoses2;
             }else{
-                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(filter), schemaName});                         
+                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(filter), schemaName});                         
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }          
     }
     
@@ -1413,20 +1416,20 @@ if (1==1)return;
             String[] filter=new String[]{query, schema};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
             }            
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                Object[] diagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", filter);                
+                Object[] diagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND.getErrorCode(), filter);                
                 diagn=LPArray.addValueToArray1D(diagn, res.getObject(1));
                 return diagn;
             }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), filter);                
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), filter);                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
 
@@ -1439,18 +1442,18 @@ if (1==1)return;
             String[] filter=new String[]{tableName, schema};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
             }            
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", tableName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND.getErrorCode(), new Object[]{"", tableName, schemaName});                
             }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",tableName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",tableName, schemaName});                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
     
@@ -1472,7 +1475,7 @@ if (1==1)return;
             ResultSet res = null;            
             res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
-                Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
+                Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(keyFieldValueNew)});
                 hm.put(fieldsToRetrieve, LPArray.array1dTo2d(errorLog, 1));
                 return hm;
                 //return LPArray.array1dTo2d(errorLog, 1);
@@ -1495,14 +1498,14 @@ if (1==1)return;
              hm.put(fieldsToRetrieve, diagnoses2);
              return hm; //diagnoses2;
             }else{
-                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(keyFieldValueNew), schemaName});                         
+                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(keyFieldValueNew), schemaName});                         
                 hm.put(fieldsToRetrieve, LPArray.array1dTo2d(diagnosesError, diagnosesError.length));
                 return hm;
 //                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
             hm.put(fieldsToRetrieve, LPArray.array1dTo2d(diagnosesError, diagnosesError.length));
             return hm;
 //            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -1522,18 +1525,18 @@ if (1==1)return;
             String[] filter=new String[]{viewName, schema};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
             }            
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", viewName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND.getErrorCode(), new Object[]{"", viewName, schemaName});                
             }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",viewName, schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",viewName, schemaName});                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
 
@@ -1543,18 +1546,18 @@ if (1==1)return;
             String[] filter=new String[]{schemaName};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
             }            
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND.getErrorCode(), new Object[]{"", schemaName});                
             }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",schemaName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",schemaName});                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
 
@@ -1564,18 +1567,18 @@ if (1==1)return;
             String[] filter=new String[]{dbName};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
             }            
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", dbName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND.getErrorCode(), new Object[]{"", dbName});                
             }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",dbName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",dbName});                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
 
@@ -1585,18 +1588,18 @@ if (1==1)return;
             String[] filter=new String[]{dbName, dbName};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{ErrorTrappingEnum.ARG_VALUE_RES_NULL.getErrorCode(), query + ErrorTrappingEnum.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});
             }            
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_existsRecord_RecordFound", new Object[]{"", dbName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND.getErrorCode(), new Object[]{"", dbName});                
             }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",dbName});                
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",dbName});                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ErrorTrappingEnum.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
 

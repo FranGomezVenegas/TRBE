@@ -91,24 +91,9 @@ public class UnitsOfMeasurement {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
-    /**
-     *
-     */
     public static final String MESSAGE_TRAPPING_CONVERTED_SUCCESS="UnitsOfMeasurement_convertedSuccesfully";
-
-    /**
-     *
-     */
     public static final String MESSAGE_LABELS_VALUE_CONVERTED="valueToConvert: ";
-
-    /**
-     *
-     */
     public static final String MESSAGE_LABELS_CURRENT_UNIT="currentUnit: ";
-
-    /**
-     *
-     */
     public static final String MESSAGE_LABELS_NEW_UNIT="newUnit: ";
     /**
      *

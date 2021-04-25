@@ -2,6 +2,7 @@ package com.labplanet.servicios.moduledefinition;
 
 import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIEndpoints;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
+import functionaljavaa.platform.doc.PropertiesToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,14 +11,14 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author User
  */
-public class ClassModuleDefinition {
+public class ClassTrazitCodeDoc {
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassModuleDefinition(HttpServletRequest request, HttpServletResponse response, ModuleDefinitionAPIEndpoints endPoint){
+    public ClassTrazitCodeDoc(HttpServletRequest request, HttpServletResponse response, ModuleDefinitionAPIEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         
         Object[] actionDiagnoses = null;
@@ -25,6 +26,12 @@ public class ClassModuleDefinition {
             switch (endPoint){
                 case DOC_API_ENDPOINTS_IN_DB:                    
                     EndPointsToRequirements.endpointDefinition();
+                    break;
+                case DOC_API_MESSAGE_CODES_IN_DB:
+                    PropertiesToRequirements.messageDefinition();
+                    break;
+                case DOC_API_BUSINESS_RULES_IN_DB:
+                    PropertiesToRequirements.businessRulesDefinition();
                     break;
             }    
         this.diagnostic=actionDiagnoses;

@@ -10,6 +10,7 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.samplestructure.DataSampleStages.SampleStageBusinessRules;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import lbplanet.utilities.LPArray;
@@ -19,6 +20,7 @@ import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.CONFIG_PROC_CONFIG_FILE_NAME;
 import static lbplanet.utilities.LPPlatform.CONFIG_PROC_DATA_FILE_NAME;
 import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
+import lbplanet.utilities.LPPlatform.LpPlatformBusinessRules;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
@@ -89,7 +91,7 @@ public class ProcedureDefinitionQueries {
         if (bsnRuleQry.getIncludeRunAttributesToJsonObj()){        
             for (String curProp: bsnRuleQry.getPropertiesList()){
                 for (String currFileNameSuffix: bsnRuleQry.getFileNameSuffix()){
-                    String propValue = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+currFileNameSuffix, curProp);
+                    String propValue = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+currFileNameSuffix, curProp);
                 if (propValue.length()>0)
                     mainObj.put(curProp, propValue);  
                 }
@@ -116,10 +118,10 @@ public class ProcedureDefinitionQueries {
     }
     
     public static JSONObject procedureActionsAndRoles(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "procedureActions").split("\\|");
-        String[] verifyUserRequired = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");
-        String[] eSignRequired = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
-        String[] sampleStagesActionAutoMoveToNext = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "sampleStagesActionAutoMoveToNext").split("\\|");
+        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(), LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).toString().split("\\|");
+        String[] verifyUserRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).toString().split("\\|");
+        String[] eSignRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
+        String[] sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName()).toString().split("\\|");
         JSONArray procActionsArr = new JSONArray();
         for (Object curProcAction: procedureActions){                                                      
             JSONObject procedureActionsObj = convertArrayRowToJSONObject(new String[]{"action_name"}, new Object[]{curProcAction});                
@@ -134,7 +136,7 @@ public class ProcedureDefinitionQueries {
                 procedureActionsObj.put("auto_move_to_next", "NO");           
             
             procActionAndRolesArr.add(procedureActionsObj);
-            String[] curActionRoles = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+curProcAction).split("\\|");
+            String[] curActionRoles = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+curProcAction).split("\\|");
             for (Object curActionRole: curActionRoles){ 
                 JSONObject currActionRolObj = convertArrayRowToJSONObject(new String[]{"rol"}, new Object[]{curActionRole});                
                 procedureActionsObj.put("rol", currActionRolObj);
@@ -170,15 +172,15 @@ public class ProcedureDefinitionQueries {
         return mainObj;
     }
     public static JSONObject sampleStages(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        String[] sampleStagesTimingCaptureStages = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "sampleStagesTimingCaptureStages").split("\\|");
-        String[] sampleStagesListEn = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_DATA_FILE_NAME, "sampleStagesList_en").split("\\|");
+        String[] sampleStagesTimingCaptureStages = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "sampleStagesTimingCaptureStages").split("\\|");
+        String[] sampleStagesListEn = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_DATA_FILE_NAME, "sampleStagesList_en").split("\\|");
         JSONArray sampleStagesDataArr=new JSONArray();
         for (String curSampleStage: sampleStagesListEn){
             JSONObject stageDetailObj = new JSONObject();
             stageDetailObj.put("stage_name", curSampleStage);
             String[] directionNames=new String[]{"Previous", "Next"};
             for (String curDirection: directionNames){
-                String[] propValuePrevious = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_DATA_FILE_NAME, "sampleStage"+curSampleStage+curDirection).split("\\|");
+                String[] propValuePrevious = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_DATA_FILE_NAME, "sampleStage"+curSampleStage+curDirection).split("\\|");
                 if (propValuePrevious[0].length()==0)
                     stageDetailObj.put(curDirection.toLowerCase()+"_stages_total", 0);
                 else{
@@ -201,7 +203,7 @@ public class ProcedureDefinitionQueries {
     }
 
     public static JSONObject sampleIncubation(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        String[] sampleIncubationTempReadingBusinessRule = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "sampleIncubationTempReadingBusinessRule").split("\\|");
+        String[] sampleIncubationTempReadingBusinessRule = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "sampleIncubationTempReadingBusinessRule").split("\\|");
         JSONArray incubRulesArr = new JSONArray();
         for (String curIncubRule: sampleIncubationTempReadingBusinessRule){
             JSONObject incubRulesObj = new JSONObject();
@@ -221,7 +223,7 @@ public class ProcedureDefinitionQueries {
         for (String curSchema: schemasArr){
             JSONObject curSchemaMainObj = new JSONObject();
             JSONObject curSchemaObj=new JSONObject();
-            String[] encryptedTables = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+curSchema, "encrypted_tables").split("\\|");
+            String[] encryptedTables = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+curSchema, "encrypted_tables").split("\\|");
             if (encryptedTables[0].length()==0)
                 curSchemaMainObj.put(totalTables, 0);
             else
@@ -232,7 +234,7 @@ public class ProcedureDefinitionQueries {
                     encrypTableFldsObjArr.add("Nothing");
                 }else{
                     encrypTableFldsObjArr=new JSONArray();
-                    String[] encryptedTableFlds = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+curSchema, "encrypted_"+currEncrypTable).split("\\|");
+                    String[] encryptedTableFlds = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+curSchema, "encrypted_"+currEncrypTable).split("\\|");
                     JSONObject encrypTableFldsObj = new JSONObject();
                     if (encryptedTables[0].length()==0)
                         encrypTableFldsObj.put(totalFields, 0);

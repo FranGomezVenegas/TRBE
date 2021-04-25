@@ -51,8 +51,9 @@ public class ModuleDefinitionAPI extends HttpServlet {
         /**
          *
          */
-        DOC_API_ENDPOINTS_IN_DB("DOC_API_ENDPOINTS_IN_DB", "documentedApiEndpointsInDb_success", 
-                new LPAPIArguments[]{new LPAPIArguments(ModuleDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),}),
+        DOC_API_ENDPOINTS_IN_DB("DOC_API_ENDPOINTS_IN_DB", "documentedApiEndpointsInDb_success", new LPAPIArguments[]{}),
+        DOC_API_BUSINESS_RULES_IN_DB("DOC_API_BUSINESS_RULES_IN_DB", "documentedApiBusinessRulesInDb_success", new LPAPIArguments[]{}),
+        DOC_API_MESSAGE_CODES_IN_DB("DOC_API_MESSAGE_CODES_IN_DB", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{}),
         ;
         private ModuleDefinitionAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
@@ -101,9 +102,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
             throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
-
         String language = LPFrontEnd.setLanguage(request); 
-        String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -111,7 +110,6 @@ public class ModuleDefinitionAPI extends HttpServlet {
                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
             return;          
         }             
-//        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
         
@@ -121,27 +119,8 @@ public class ModuleDefinitionAPI extends HttpServlet {
                         LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, language);              
                 return;                             
         }
-
-/*        Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);    
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
-        }
-        Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())){                                                      
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
-        }        
-        
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     
-             (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){return;}
-
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
-             (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}        
-*/
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
-      
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
-
         //Rdbms.setTransactionId(schemaConfigName);
         ModuleDefinitionAPIEndpoints endPoint = null;
         try{
@@ -157,19 +136,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
             return;
         }                
         try (PrintWriter out = response.getWriter()) {
-
-/*            Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;                           
-            }            
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(schemaPrefix, token.getUserRole(), actionName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
-                return ;                           
-            }                        
-*/
-            ClassModuleDefinition clss=new ClassModuleDefinition(request, response, endPoint);
+            ClassTrazitCodeDoc clss=new ClassTrazitCodeDoc(request, response, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
@@ -191,8 +158,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
             }
 */            
             Rdbms.closeRdbms();                   
-            errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            Object[] errMsg = LPFrontEnd.responseError(new String[]{e.getMessage()}, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             // release database resources

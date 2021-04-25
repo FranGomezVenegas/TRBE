@@ -103,7 +103,6 @@ public class DataSample {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
-
     public enum DataSampleErrorTrapping{ 
         SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
@@ -204,9 +203,9 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         
         String sampleLevel = TblsData.Sample.TBL.getName();
 
-        mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, sampleLevel, actionName);
+        mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel, actionName);
         
-        String sampleStatusFirst = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), sampleLevel+DataSampleProperties.SUFFIX_STATUS_FIRST.propertyName);     
+        String sampleStatusFirst = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), sampleLevel+DataSampleProperties.SUFFIX_STATUS_FIRST.propertyName);     
 
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_STATUS.getName());
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, sampleStatusFirst);
@@ -255,8 +254,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 new String[]{TblsCnfg.Sample.FLD_CODE.getName(), TblsCnfg.Sample.FLD_CODE_VERSION.getName()}, new Object[]{sampleTemplate, sampleTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_CONFIG_CODE.getErrorCode(), new Object[]{sampleTemplate, sampleTemplateVersion, schemaConfigName, diagnosis[5]});    
-        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName());
-        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName());
+        String[] specialFields = labIntChecker.getStructureSpecialFields(sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName());
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName());
         Integer specialFieldIndex = -1;
         
         for (Integer inumLines=0;inumLines<sampleFieldName.length;inumLines++){
@@ -560,8 +559,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
 
-        String sampleStatusFirst = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_FIRST.getPropertyName());
-        String sampleStatusInReceived = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_RECEIVED.getPropertyName());
+        String sampleStatusFirst = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_FIRST.getPropertyName());
+        String sampleStatusInReceived = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_RECEIVED.getPropertyName());
 
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()},
                 new Object[]{sampleId}, new String[]{TblsData.Sample.FLD_STATUS.getName()});
@@ -572,8 +571,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, preAuditId);              
             return new Object[]{LPPlatform.LAB_TRUE};
         }    
-        String sampleStatusIncomplete = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_INCOMPLETE.getPropertyName());
-        String sampleStatusComplete = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_COMPLETE.getPropertyName());
+        String sampleStatusIncomplete = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_INCOMPLETE.getPropertyName());
+        String sampleStatusComplete = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_COMPLETE.getPropertyName());
 
         String smpAnaNewStatus="";    
         Object[] diagnoses =  Rdbms.existsRecord(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
@@ -605,8 +604,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
         Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;
-        String sampleStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSCANCELED);
-        String sampleStatusReviewed = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSREVIEWED);
+        String sampleStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSCANCELED);
+        String sampleStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSREVIEWED);
         Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) return sampleAuditRevision;
         Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
@@ -737,7 +736,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         BigDecimal aliqVolume = BigDecimal.ZERO;
         String aliqVolumeuom = "";
 
-        String actionEnabledSampleAliquotVolumeRequired = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+"-"+GlobalVariables.Schemas.DATA.getName(), DataSampleProperties.SAMPLEALIQUOTING_VOLUME_REQUIRED.getPropertyName());   
+        String actionEnabledSampleAliquotVolumeRequired = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+GlobalVariables.Schemas.DATA.getName(), DataSampleProperties.SAMPLEALIQUOTING_VOLUME_REQUIRED.getPropertyName());   
         if (actionEnabledSampleAliquotVolumeRequired.toUpperCase().contains(LPPlatform.BUSINESS_RULES_VALUE_ENABLED)){
             String[] mandatorySampleFields = new String[]{TblsData.Sample.FLD_VOLUME_FOR_ALIQ.getName(), TblsData.Sample.FLD_VOLUME_FOR_ALIQ_UOM.getName()};
             String[] mandatorySampleAliqFields = new String[]{TblsData.Sample.FLD_VOLUME.getName(), TblsData.Sample.FLD_VOLUME_UOM.getName()};
@@ -817,7 +816,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
 
         Integer sampleId = 0;
         String[] mandatoryAliquotFields = new String[]{TblsData.SampleAliq.FLD_SAMPLE_ID.getName()};
-        String actionEnabledSampleSubAliquotVolumeRequired = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+"-"+GlobalVariables.Schemas.DATA.getName(), DataSampleProperties.SAMPLEASUBLIQUOTING_VOLUME_REQUIRED.getPropertyName());             
+        String actionEnabledSampleSubAliquotVolumeRequired = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+GlobalVariables.Schemas.DATA.getName(), DataSampleProperties.SAMPLEASUBLIQUOTING_VOLUME_REQUIRED.getPropertyName());             
 
         if (actionEnabledSampleSubAliquotVolumeRequired.toUpperCase().contains(LPPlatform.BUSINESS_RULES_VALUE_ENABLED)){
             mandatoryAliquotFields = LPArray.addValueToArray1D(mandatoryAliquotFields, TblsData.SampleAliq.FLD_VOLUME_FOR_ALIQ.getName());
@@ -993,7 +992,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             if (prepRdQuery.getRow()>0){
                 return prepRdQuery.getString(1);
             }else{                
-                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, Rdbms.ErrorTrappingEnum.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"sample", "", procInstanceName});                         
+                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"sample", "", procInstanceName});                         
                 return null;
             }            
         } catch (SQLException ex) {

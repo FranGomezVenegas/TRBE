@@ -9,7 +9,7 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubati
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
-import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorErrorCodes;
+import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorErrorTrapping;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lbplanet.utilities.LPArray;
@@ -56,9 +56,9 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.CURRENTLY_DEACTIVE.getErrorCode(), new Object[]{instName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE.getErrorCode(), new Object[]{instName, procInstanceName});
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(),
@@ -78,7 +78,7 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()}, 
@@ -97,7 +97,7 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()}, 
@@ -117,9 +117,9 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS.getErrorCode(), new Object[]{instName, procInstanceName});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.CURRENTLY_DEACTIVE.getErrorCode(), new Object[]{instName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE.getErrorCode(), new Object[]{instName, procInstanceName});
         Object[] diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(),

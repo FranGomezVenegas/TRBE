@@ -76,6 +76,57 @@ public class LPPlatform {
         }
         private final String name;           
     }
+   public enum LpPlatformBusinessRules{
+        PROCEDURE_ACTIONS("procedureActions", GlobalVariables.Schemas.PROCEDURE.getName()),
+        ACTION_ENABLED_ROLES("actionEnabled", GlobalVariables.Schemas.PROCEDURE.getName()),
+        ESIGN_REQUIRED("eSignRequired", GlobalVariables.Schemas.PROCEDURE.getName()),
+        VERIFYUSER_REQUIRED("verifyUserRequired", GlobalVariables.Schemas.PROCEDURE.getName()),
+        AUDITREASON_PHRASE("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName()),
+        TABLE_MANDATORYFIELDS_ACTIONNAME("_mandatoryFields", GlobalVariables.Schemas.PROCEDURE.getName()),
+        ;
+        private LpPlatformBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+public enum LpPlatformErrorTrapping{ 
+        RULE_NAME_VALUE("LpPlatform_ruleNameValue", "Rule name = <*1*>", "Nombre de la regla = <*1*>"),
+        BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND("LpPlatform_BusinessRulesampleTestingByGroup_ReviewByTestingGroupNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
+        ACTION_ENABLED_BY_ALL("ACTION_ENABLED_BY_ALL", "", ""),
+        USER_NOTASSIGNED_TOPROCEDURE("userNotAssignedToProcedure", "", ""),
+        USRROLACTIONENABLED_DENIED_RULESNOTFOUND("userRoleActionEnabled_denied_rulesNotFound", "", ""),
+        USRROLACTIONENABLED_DENIED("userRoleActionEnabled_denied", "", ""),
+        USRROLACTIONENABLED_ENABLED("userRoleActionEnabled_enabled", "", ""),
+        USRROLACTIONENABLED_ENABLED_BYALL("userRoleActionEnabled_ALL", "", ""),
+        USRROLACTIONENABLED_MISSEDPARAMETER("userRoleActionEnabled_missedParameter", "", ""),
+        USRROLACTIONENABLED_ROLENOTINCLUDED("userRoleActionEnabled_roleNotIncluded", "", ""),
+        VERIFYUSERREQUIRED_ENABLED_BY_ALL("VERIFY_USER_REQUIRED_BY_ALL", "", ""),
+        VERIFYUSERREQUIRED_DENIED_RULENOTFOUND("verifyUserRequired_denied_ruleNotFound", "", ""),
+        VERIFYUSERREQUIRED_DENIED("verifyUserRequired_denied", "", ""),
+        VERIFYUSERREQUIRED_ENABLED("verifyUserRequired_enabled", "", ""),
+        ESIGNREQUIRED_ENABLED_BY_ALL("VERIFY_USER_REQUIRED_BY_ALL", "", ""),
+        ESIGNREQUIRED_DENIED_RULENOTFOUND("verifyUserRequired_denied_ruleNotFound", "", ""),
+        ESIGNREQUIRED_DENIED("verifyUserRequired_denied", "", ""),
+        ESIGNREQUIRED_ENABLED("verifyUserRequired_enabled", "", ""),
+        ; 
+        private LpPlatformErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
 
     public static final String REQUEST_PARAM_FILE_PATH = "filePath";
     public static final String REQUEST_PARAM_FILE_NAME = "fileName";
@@ -97,7 +148,6 @@ public class LPPlatform {
      */
     public static final String JAVADOC_LINE_FLDNAME = "line";
     
-    
     private static final String JSON_TAG_ERR_MSG_EVALUATION = "evaluation";
     private static final String JSON_TAG_ERR_MSG_CLSS = JAVADOC_CLASS_FLDNAME;
     private static final String JSON_TAG_ERR_MSG_CLSS_VERSION = "classVersion";
@@ -110,6 +160,8 @@ public class LPPlatform {
      *
      */
     public static final String BUSINESS_RULES_VALUE_ENABLED="ENABLE";    
+    public static final Object[] breakPointArray=new Object[]{"MissingMandatoryParametersInRequest_detail"};
+
     /**
      *
      * @param procInstanceName
@@ -123,23 +175,22 @@ public class LPPlatform {
         userProceduresList=userProceduresList.replace("[", "");
         userProceduresList=userProceduresList.replace("]", "");        
         if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName))
-            return trapMessage(LAB_FALSE, "userNotAssignedToProcedure", new String[]{token.getUserName(), procInstanceName, userProceduresList});
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE.getErrorCode(), new String[]{token.getUserName(), procInstanceName, userProceduresList});
         
         actionName = actionName.toUpperCase();
-        String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "procedureActions").split("\\|");
+        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(), LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).toString().split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
-            return trapMessage(LAB_TRUE, "ACTION_ENABLED_BY_ALL", new String[]{procInstanceName, actionName});
+            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new String[]{procInstanceName, actionName});
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return trapMessage(LAB_FALSE, "userRoleActionEnabled_denied_rulesNotFound", new String[]{procInstanceName, Arrays.toString(procedureActions)});
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED_RULESNOTFOUND.getErrorCode(), new String[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            return trapMessage(LAB_FALSE, "userRoleActionEnabled_denied", new String[]{actionName, procInstanceName, Arrays.toString(procedureActions)});            
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED.getErrorCode(), new String[]{actionName, procInstanceName, Arrays.toString(procedureActions)});            
         }else{
-            return trapMessage(LAB_TRUE, "userRoleActionEnabled_enabled", new String[]{procInstanceName, actionName});               
+            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED.getErrorCode(), new String[]{procInstanceName, actionName});               
         }    
     }    
-    
     /**
      *
      * @param procInstanceName
@@ -148,104 +199,67 @@ public class LPPlatform {
      * @return
      */
     public static Object[] procUserRoleActionEnabled(String procInstanceName, String userRole, String actionName){
-        String errorCode = ""; 
-        Object[] errorDetailVariables = new Object[0];            
-        String[] procedureActionsUserRoles = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
+        String[] procedureActionsUserRoles = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getAreaName(), LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+actionName).toString().split("\\|");
+                //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
         
         if (LPArray.valueInArray(procedureActionsUserRoles, "ALL")){
-            errorCode = "userRoleActionEnabled_ALL";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);            
-            return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);                    
+            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new Object[]{procInstanceName});                    
         }
         if ( (procedureActionsUserRoles.length==1 && "".equals(procedureActionsUserRoles[0])) ){
-            errorCode = "userRoleActionEnabled_missedParameter";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);            
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procedureActionsUserRoles);                        
-            return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);        
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER.getErrorCode(), new Object[]{procInstanceName, procedureActionsUserRoles});        
         }else if(!LPArray.valueInArray(procedureActionsUserRoles, userRole)){    
-            errorCode = "userRoleActionEnabled_roleNotIncluded";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, userRole);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActionsUserRoles));            
-            return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);      
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ROLENOTINCLUDED.getErrorCode(), new Object[]{procInstanceName, actionName, userRole, Arrays.toString(procedureActionsUserRoles)});        
         }else{
-            errorCode = "userRoleActionEnabled_enabled";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);        
+            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});        
         }            
     }
-
-    /**
+    
+    /**    
      *
      * @param procInstanceName
      * @param actionName
      * @return
-     */
+     */ 
     public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName){        
         actionName = actionName.toUpperCase();
-        String errorCode = ""; 
-        Object[] errorDetailVariables = new Object[0];
-        String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
+        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()+actionName).toString().split("\\|");
+                //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
         if (LPArray.valueInArray(procedureActions, "ALL")){
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{procInstanceName, actionName});
-            return trapMessage(LAB_TRUE, "VERIFY_USER_REQUIRED_BY_ALL", errorDetailVariables);
+            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{procInstanceName, Arrays.toString(procedureActions)});
-            return trapMessage(LAB_FALSE, "verifyUserRequired_denied_ruleNotFound", errorDetailVariables);
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, 
-                    new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
-            return trapMessage(LAB_FALSE, "verifyUserRequired_denied", errorDetailVariables);            
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         }else{
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{procInstanceName, actionName});
-            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), "verifyUserRequired_enabled", errorDetailVariables);               
+            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});
         }    
     }    
 
-    /**
+    /** VERIFYUSERREQUIRED_ENABLED_BY_ALL VERIFYUSERREQUIRED_DENIED_RULENOTFOUND VERIFYUSERREQUIRED_DENIED VERIFYUSERREQUIRED_ENABLED
      *
      * @param procInstanceName
      * @param actionName
      * @return
      */
     public static Object[] procActionRequiresEsignConfirmation(String procInstanceName, String actionName){
-        
         actionName = actionName.toUpperCase();
-        String errorCode = ""; 
-        Object[] errorDetailVariables = new Object[0];
-        String[] procedureActions = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
+        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()+actionName).toString().split("\\|");
+                //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
-        if (LPArray.valueInArray(procedureActions, "ALL")){
-            errorCode = "ESIGN_REQUIRED_BY_ALL";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);
-        }
+        if (LPArray.valueInArray(procedureActions, "ALL"))
+            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            errorCode = "eSignRequired_denied_ruleNotFound";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActions));
-            return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            errorCode = "eSignRequired_denied";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(procedureActions));
-            return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);            
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         }else{
-            errorCode = "eSignRequired_enabled";
-            
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), errorCode, errorDetailVariables);               
+            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});               
         }    
     }    
     private static String auditReasonType(String procInstanceName, String actionName){
-        String auditReasonType = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
+        String auditReasonType = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(), actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName()+actionName).toString();
+                //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
         if (auditReasonType.length()==0)return "TEXT";
         if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("DISABLE"))return "";
         if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("NO"))return "";
@@ -265,7 +279,7 @@ public class LPPlatform {
         schemaName = schemaName.replace("\"", "");
         
         if ( fieldName.contains(" ")){fieldName=fieldName.substring(0, fieldName.indexOf(' '));}
-        String tableEncrytedFields = Parameter.getParameterBundle(schemaName, parameterName);
+        String tableEncrytedFields = Parameter.getMessageCodeValue(schemaName, parameterName);
         if ( (tableEncrytedFields==null) ){return diagnoses;}
         if ( ("".equals(tableEncrytedFields)) ){return diagnoses;}        
         return LPArray.valueInArray(tableEncrytedFields.split("\\|"), fieldName);        
@@ -504,9 +518,9 @@ public class LPPlatform {
     public static Object[][] mandatoryFieldsCheck(String schemaName, String[] fieldNames, Object[] fieldValues, String tableName, String actionName){
         Object[][] diagnoses = new Object[3][6];
        
-        String propertyName = tableName+"_mandatoryFields"+actionName;
+        String propertyName = tableName+LpPlatformBusinessRules.TABLE_MANDATORYFIELDS_ACTIONNAME.getTagName()+actionName;
         
-        String mandatoryFieldsToCheckDefault = Parameter.getParameterBundle(schemaName.replace("\"", ""), propertyName+"Default");
+        String mandatoryFieldsToCheckDefault = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), propertyName+"Default");
         
         String[] mandatoryFields = mandatoryFieldsByDependency(schemaName, fieldNames, tableName, actionName);
 
@@ -589,7 +603,7 @@ public class LPPlatform {
  */   
     public static String[] mandatoryFieldsByDependency(String schemaName, String[] fieldNames, String tableName, String actionName){
         String propertyName = tableName+"_fieldsAddingMandatory"+actionName;
-        String mandatoryFieldsByDependency = Parameter.getParameterBundle(schemaName.replace("\"", ""), propertyName);
+        String mandatoryFieldsByDependency = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), propertyName);
         String[] mandatoryByDependency = mandatoryFieldsByDependency.split("\\|");
 
         for (String currField: fieldNames){
@@ -630,8 +644,8 @@ public class LPPlatform {
         String configTableNamePropertyName = tableName+"_configTableName";
         String configTableKeyFieldsPropertyName = tableName+"_configTableKeyFields";        
         
-        String configTableName = Parameter.getParameterBundle(schemaName.replace("\"", ""), configTableNamePropertyName);
-        String configTableKeyFields = Parameter.getParameterBundle(schemaName.replace("\"", ""), configTableKeyFieldsPropertyName);
+        String configTableName = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), configTableNamePropertyName);
+        String configTableKeyFields = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), configTableKeyFieldsPropertyName);
 
         String[] configTableKeyFieldName = configTableKeyFields.split("\\|");
         Object[] configTableKeyFielValue = new Object[0];
@@ -697,8 +711,8 @@ public class LPPlatform {
         String specialFieldNamePropertyName = tableName+"_specialFieldsCheck";
         String specialFieldMethodNamePropertyName = tableName+"_specialFieldsCheck_methodName";        
         
-        String specialFieldName = Parameter.getParameterBundle(schemaName.replace("\"", ""), specialFieldNamePropertyName);
-        String specialFieldMethodName = Parameter.getParameterBundle(schemaName.replace("\"", ""), specialFieldMethodNamePropertyName);
+        String specialFieldName = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), specialFieldNamePropertyName);
+        String specialFieldMethodName = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), specialFieldMethodNamePropertyName);
         String[] specialFields = specialFieldName.split("\\|");
         String[] specialFieldsMethods = specialFieldMethodName.split("\\|");
         Integer specialFieldIndex = -1;
@@ -770,20 +784,49 @@ public class LPPlatform {
     public static final Integer TRAP_MESSAGE_MESSAGE_POSIC=6;
     
     public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables) {
-        return trapMessage(evaluation, msgCode, msgVariables, null);
-    }
-    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language) {
-        Object[] fldValue = new Object[7];
-        String errorDetail = "";
         String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
         String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
         String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
         Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
         className = className.replace(".java", "");
+        Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
+        return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo);
+    }
+    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language) {
+        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        className = className.replace(".java", "");
+        Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
+        return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo);
+    }
+    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language, Object[] callerInfo) {
+        if (LPArray.valueInArray(breakPointArray, msgCode))
+            System.out.println("I'm "+msgCode);
+        if (callerInfo==null){
+            String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+            String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+            String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+            Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+            className = className.replace(".java", "");
+            callerInfo=new Object[]{className, classFullName, methodName, lineNumber};            
+        }
+        String errorDetail = "";
+        Object[] fldValue = new Object[7];
         Boolean errorCodeFromBundle = true;
         String errorCodeText="";
-        errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode, null);
-        if (errorCodeText.length()==0){errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode, null);}
+        String className=callerInfo[0].toString();
+        String classFullName=callerInfo[1].toString(); 
+        String methodName=callerInfo[2].toString();
+        Integer lineNumber = Integer.valueOf(callerInfo[3].toString());
+        String propertiesFilePrefix="";
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))
+            propertiesFilePrefix=LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+className;
+        else
+            propertiesFilePrefix=CONFIG_FILES_ERRORTRAPING;
+        errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, className+"_"+msgCode, null, callerInfo, false);
+        if (errorCodeText.length()==0){errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, msgCode, null, callerInfo, true);}
         if (errorCodeText.length()==0){errorCodeText = msgCode; errorCodeFromBundle=false;}
         if (!errorCodeFromBundle){
             errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file) ";
@@ -794,8 +837,9 @@ public class LPPlatform {
                 }
             }            
         }else{
-            errorDetail = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode+"_detail", language);
-            if (errorDetail.length()==0){errorDetail = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode+"_detail", language);}
+            errorDetail=errorCodeText;
+            //errorDetail = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode, language, callerInfo, false);
+            if (errorDetail.length()==0){errorDetail = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode, language, callerInfo, true);}
             if (errorDetail==null || errorDetail.length()==0 ){
                 if (msgVariables.length>0){errorDetail =msgVariables[0].toString();}else{errorDetail="";}
             }else{
@@ -893,14 +937,13 @@ public class LPPlatform {
     }      
     public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){
         String[] enableRuleValues=new String[]{"ENABLE", "YES", "ACTIVE", "ACTIVADO", "SI", "ACTIVO"};
-        String ruleValue=Parameter.getParameterBundle("config", procName, fileSchemaRepository, ruleName, null);
+        String ruleValue=Parameter.getBusinessRuleProcedureFile(procName, fileSchemaRepository, ruleName);
         if (ruleValue.length()==0) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleTestingByGroup_ReviewByTestingGroup not found or not define", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND.getErrorCode(), null);
         for (String curVal: enableRuleValues){
             if (curVal.equalsIgnoreCase(ruleValue))
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ruleName = "+ruleValue, null);        
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, LpPlatformErrorTrapping.RULE_NAME_VALUE.getErrorCode(), new Object[]{ruleName, ruleValue});        
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ruleName = "+ruleValue, null);
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.RULE_NAME_VALUE.getErrorCode(), new Object[]{ruleName, ruleValue});
     }
-    
 }

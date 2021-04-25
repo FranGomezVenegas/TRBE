@@ -22,7 +22,7 @@ public final class GenomaBusinessRules {
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaSuffix);
         
         String propertyEntryName = tableName+"_activeOnCreation";        
-        String propertyEntryValue = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), propertyEntryName);        
+        String propertyEntryValue = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), propertyEntryName);        
         if (propertyEntryValue.length()==0) return false;
         return ("YES".equalsIgnoreCase(propertyEntryValue)) || ("SI".equalsIgnoreCase(propertyEntryValue));
     }
@@ -33,7 +33,7 @@ public final class GenomaBusinessRules {
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaSuffix);
         
         String propertyEntryName = tableName+"_specialFieldsLockedForProjectUpdateEndPoint";        
-        String propertyEntryValue = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), propertyEntryName);        
+        String propertyEntryValue = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), propertyEntryName);        
         if (propertyEntryValue.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "", null);
         String[] propertyEntryValueArr=propertyEntryValue.split("\\|");
         StringBuilder specialFieldsPresent=new StringBuilder();

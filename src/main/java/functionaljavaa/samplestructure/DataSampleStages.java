@@ -51,6 +51,36 @@ Boolean isSampleStagesTimingCaptureEnable=false;
 Integer sampleId=-999;
 Object[][] firstStageData=new Object[0][0];
 
+public enum SampleStageErrorTrapping{ 
+        ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT("actionNotDeclaredToPerformAutoMoveToNext", "The action <*1*> is not declared as to perform auto move to next in procedure <*2*>", ""),
+        ;
+        private SampleStageErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+
+    public enum SampleStageBusinessRules{        
+        ACTION_AUTOMOVETONEXT("sampleStagesActionAutoMoveToNext", GlobalVariables.Schemas.PROCEDURE.getName())
+        ;
+        private SampleStageBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
     public enum SampleStageTimingCapturePhases{START, END}
     /**
      *
@@ -76,16 +106,16 @@ Object[][] firstStageData=new Object[0][0];
     public DataSampleStages() {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String sampleStagesMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_MODE, null);
+        String sampleStagesMode = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_MODE, null);
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesMode)>-1)
         this.isSampleStagesEnable=true;  
-    String sampleStagesTimingCaptureMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, null);
+    String sampleStagesTimingCaptureMode = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, null);
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
         this.isSampleStagesTimingCaptureEnable=true;  
-    String sampleStagesTimingCaptureStages = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_STAGES, null);
+    String sampleStagesTimingCaptureStages = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_STAGES, null);
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
         this.isSampleStagesTimingCaptureStages=sampleStagesTimingCaptureStages;  
-    String statusFirst=Parameter.getParameterBundle(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst");
+    String statusFirst=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst");
     this.firstStageData=new Object[][]{{TblsData.Sample.FLD_CURRENT_STAGE.getName(), statusFirst}};
   }
 
@@ -126,7 +156,7 @@ Object[][] firstStageData=new Object[0][0];
             return new Object[]{LPPlatform.LAB_TRUE, newStageProposedByChecker};
         }
         
-        String sampleStageNextStage = Parameter.getParameterBundle("config", procInstanceName, "data", "sampleStage"+currStage+"Next", null);
+        String sampleStageNextStage = Parameter.getMessageCodeValue("config", procInstanceName, "data", "sampleStage"+currStage+"Next", null);
         if (sampleStageNextStage.length()==0) return new Object[]{LPPlatform.LAB_FALSE, "Next Stage is blank for "+currStage};
 
         String[] nextStageArr=sampleStageNextStage.split("\\|");
@@ -148,7 +178,7 @@ Object[][] firstStageData=new Object[0][0];
         Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Previous");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic;
 
-        String sampleStagePreviousStage = Parameter.getParameterBundle("config", procInstanceName, "data", "sampleStage"+currStage+"Previous", null);
+        String sampleStagePreviousStage = Parameter.getMessageCodeValue("config", procInstanceName, "data", "sampleStage"+currStage+"Previous", null);
         if (sampleStagePreviousStage.length()==0) return new Object[]{LPPlatform.LAB_FALSE, "Previous Stage is blank for "+currStage};
 
         String[] previousStageArr=sampleStagePreviousStage.split("\\|");
@@ -167,9 +197,9 @@ Object[][] firstStageData=new Object[0][0];
                 new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) return sampleInfo;
         String sampleCurrStage=sampleInfo[0][0].toString();
-        String sampleStagesActionAutoMoveToNext = Parameter.getParameterBundle("config", procInstanceName, "procedure", "sampleStagesActionAutoMoveToNext", null);
+        String sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName());
         if (LPArray.valuePosicInArray(sampleStagesActionAutoMoveToNext.split("\\|"), actionName)==-1)
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The action <*1*> is not declared as to perform auto move to next in procedure <*2*>", new Object[]{actionName, procInstanceName});        
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleStageErrorTrapping.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT.getErrorCode(), new Object[]{actionName, procInstanceName});        
         Object[] moveDiagn=moveToNextStage(sampleId, sampleCurrStage,null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
             dataSampleStagesTimingCapture(sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 
@@ -191,7 +221,7 @@ Object[][] firstStageData=new Object[0][0];
         
     private Object[] moveStagetChecker(Integer sampleId, String currStage, String moveDirection){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String sampleStagesType = Parameter.getParameterBundle("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TYPE, null);
+        String sampleStagesType = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TYPE, null);
         if (SampleStagesTypes.JAVA.toString().equalsIgnoreCase(sampleStagesType)) return moveStageCheckerJava(sampleId, currStage, moveDirection);
         else return moveStageCheckerJavaScript(sampleId, currStage, moveDirection);
     }

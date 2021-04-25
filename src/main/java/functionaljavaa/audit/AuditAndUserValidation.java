@@ -121,11 +121,11 @@ public class AuditAndUserValidation {
             return;
         }
     
-        this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+        this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "checkUserValidationPassesSuccess", null);
     }
     private Boolean isValidAuditPhrase(String actionName, String auditReasonPhrase){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        String[] actionAuditReasonInfo = Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase").split("\\|");
+        String[] actionAuditReasonInfo = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase").split("\\|");
         if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (!LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase)) ){
             this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "wrongAuditReasonPhrase", new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
             return false;

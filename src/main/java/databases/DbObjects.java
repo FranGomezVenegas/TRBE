@@ -7,7 +7,7 @@ package databases;
 
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
-import static functionaljavaa.requirement.ProcedureDefinitionToInstance.JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION;
+import functionaljavaa.requirement.ProcedureDefinitionToInstance.JsonTags;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
 import lbplanet.utilities.LPPlatform;
@@ -147,6 +147,10 @@ public class DbObjects {
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureBusinessRules", tblCreateScript);
 
+        tblCreateScript=TblsReqs.ProcedureMasterData.createTableScript(new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        jsonObj.put("TblsReqs.ProcedureMasterData", tblCreateScript);
+
         for (String[] curTable: tablesToTransferData){
             Object[] tableContent = FromInstanceToInstance.tableContent(curTable[0], curTable[1], curTable[2], platformName);
             jsonObj.put("Transfer Data for "+curTable[0]+"."+curTable[1]+" from "+curTable[2], tableContent[tableContent.length-2]);
@@ -203,7 +207,7 @@ public class DbObjects {
         JSONObject jsonObj = new JSONObject();
         
         String methodName = "createDataBaseSchemas";       
-        jsonObj.put(JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION, schemasNames.length);     
+        jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), schemasNames.length);     
         for (String configSchemaName:schemasNames){
             JSONArray jsSchemaArr = new JSONArray();
             jsSchemaArr.add(configSchemaName);

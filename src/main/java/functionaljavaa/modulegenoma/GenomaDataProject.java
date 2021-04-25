@@ -64,15 +64,14 @@ public Object[] createProject(String projectName, String[] fieldsName, Object[] 
         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, classVersionProj);
         LPPlatform.addJavaClassDoc(javaDocFieldsProj, javaDocValuesProj, elementsDev);
     }    
-        String tableName = "project";
-        String actionName = "Insert";
-        
-        String schemaDataName = GlobalVariables.Schemas.DATA.getName();
-        
-        schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
-        
-        mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(schemaDataName, tableName, actionName);
-        
+    String tableName = "project";
+    String actionName = "Insert";
+
+    String schemaDataName = GlobalVariables.Schemas.DATA.getName();
+
+    schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
+
+    mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(tableName, actionName);
         
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();

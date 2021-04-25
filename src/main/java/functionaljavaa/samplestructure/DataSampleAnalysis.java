@@ -38,6 +38,35 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
     /**
      *
      */
+    public enum DataSampleAnalysisBusinessRules{
+        MARK_READYFORREVISION_WHENALLRESULTSENTERED("revisionSampleAnalysis_markAsReadyForRevisionWhenAllResultsEntered", GlobalVariables.Schemas.PROCEDURE.getName())
+        ;
+        private DataSampleAnalysisBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    public enum DataSampleAnalysisErrorTrapping{ 
+        MARK_READYFORREVISION_WHENALLRESULTSENTERED_NOTACTIVE_SUCCESS("markAsReadyForRevisionWhenAllResultsEnteredNotActive", "", ""),
+        SAMPLE_ANALYSIS_ADDED_SUCCESS("SampleAnalysisAddedSuccessfully", "", "");
+        private DataSampleAnalysisErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
 
     
     public enum DataSampleAnalyisAutoAddLevel{    
@@ -70,8 +99,8 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        String sampleAnalysisStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSIS_STATUSCANCELED);
-        String sampleAnalysisStatusReviewed = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSIS_STATUSREVIEWED);
+        String sampleAnalysisStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSIS_STATUSCANCELED);
+        String sampleAnalysisStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSIS_STATUSREVIEWED);
         Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
                 new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
                 new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName(), TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName(), TblsData.SampleAnalysis.FLD_TEST_ID.getName(), TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
@@ -196,8 +225,8 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         if (parentAuditAction != null) {
             auditActionName = parentAuditAction + ":" + auditActionName;
         }
-        String sampleAnalysisStatusIncomplete = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sampleAnalysis_statusIncomplete");
-        String sampleAnalysisStatusComplete = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sampleAnalysis_statusComplete");
+        String sampleAnalysisStatusIncomplete = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sampleAnalysis_statusIncomplete");
+        String sampleAnalysisStatusComplete = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sampleAnalysis_statusComplete");
         String smpAnaNewStatus = "";
         Object[] diagnoses = Rdbms.existsRecord(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
                 new String[]{TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_MANDATORY.getName()}, 
@@ -222,13 +251,13 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
     }
     public static Object[] sampleAnalysisEvaluateStatusAutomatismForComplete(Integer sampleId, Integer testId,String parentAuditAction,Integer parentAuditId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] isRevisionSampleAnalysisMarkAsReadyForRevisionWhenAllResultsEntered = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", "revisionSampleAnalysis_markAsReadyForRevisionWhenAllResultsEntered");
+        Object[] isRevisionSampleAnalysisMarkAsReadyForRevisionWhenAllResultsEntered = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getAreaName(), DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getTagName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisMarkAsReadyForRevisionWhenAllResultsEntered[0].toString()))
             return setReadyForRevision(sampleId, testId, parentAuditAction, parentAuditId);
-        Object[] isRevisionSampleAnalysisMarkAsReviewedWhenAllResultsEntered = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, "procedure", "revisionSampleAnalysis_markAsReviewedWhenAllResultsEntered");
+        Object[] isRevisionSampleAnalysisMarkAsReviewedWhenAllResultsEntered = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getAreaName(), DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getTagName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisMarkAsReviewedWhenAllResultsEntered[0].toString()))
             return sampleAnalysisReview(sampleId, testId);
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "revisionSampleAnalysis_markAsReadyForRevisionWhenAllResultsEntered not active", null);
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "markAsReadyForRevisionWhenAllResultsEnteredNotActive", null);
     }
     /**
      *
@@ -244,9 +273,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         Boolean assignTestAnalyst = false;
-        String testStatusReviewed = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSIS_STATUSREVIEWED);
-        String testStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSIS_STATUSCANCELED);
-        String assignmentModes = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sampleAnalysis_analystAssigmentModes");
+        String testStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSIS_STATUSREVIEWED);
+        String testStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSIS_STATUSCANCELED);
+        String assignmentModes = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sampleAnalysis_analystAssigmentModes");
         Object[][] testData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
                 new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, 
                 new Object[]{testId}, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysis.FLD_STATUS.getName(), TblsData.SampleAnalysis.FLD_ANALYST.getName(), 
@@ -290,7 +319,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         } else {
             UserMethod ana = new UserMethod();
             String userMethodCertificationMode = ana.userMethodCertificationLevel(procInstanceName, testAnalysis, testMethodName, testMethodVersion, newAnalyst);
-            String userCertifiedModes = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sampleAnalysis_analystAssigmentMode" + testAssignmentMode);
+            String userCertifiedModes = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sampleAnalysis_analystAssigmentMode" + testAssignmentMode);
             String[] userMethodModesArr = userCertifiedModes.split("\\|");
             assignTestAnalyst = LPArray.valueInArray(userMethodModesArr, userMethodCertificationMode);
             if (!assignTestAnalyst) {
@@ -377,7 +406,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         String sampleLevel = TblsData.Sample.TBL.getName();
-        mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, sampleLevel + tableName, actionName);
+        mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())) {
             return fieldNameValueArrayChecker;
@@ -401,7 +430,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     new String[]{mandatoryFieldsMissingBuilder.toString(), Arrays.toString(fieldName), schemaConfigName});
         }
         // set first status. Begin
-        String firstStatus = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sampleAnalysis_statusFirst");
+        String firstStatus = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sampleAnalysis_statusFirst");
         Integer specialFieldIndex = Arrays.asList(fieldName).indexOf(TblsData.Sample.FLD_STATUS.getName());
         if (specialFieldIndex == -1) {
             fieldName = LPArray.addValueToArray1D(fieldName, TblsData.Sample.FLD_STATUS.getName());
@@ -464,8 +493,8 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             }
         }
         // Spec Business Rule. Allow other analyses. End
-        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, sampleLevel + "Structure");
-        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, sampleLevel + "Structure");
+        String[] specialFields = labIntChecker.getStructureSpecialFields(sampleLevel + "Structure");
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(sampleLevel + "Structure");
         for (Integer inumLines = 0; inumLines < fieldName.length; inumLines++) {
             String currField = tableName + "." + fieldName[inumLines];
             boolean contains = Arrays.asList(specialFields).contains(currField);
@@ -559,14 +588,14 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         // This is temporary !!!! ***************************************************************
         specialFieldIndex = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.FLD_STATUS.getName());
         if (specialFieldIndex == -1) {
-            firstStatus = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sampleAnalysisResult_statusFirst");
+            firstStatus = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sampleAnalysisResult_statusFirst");
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, firstStatus);
             getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.FLD_STATUS.getName());
         }
         // This is temporary !!!! ***************************************************************
-        String[] resultMandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, sampleLevel, actionName);
-        String[] resultDefaulFields = labIntChecker.getTableFieldsDefaulValues(schemaDataName, tableName, actionName);
-        Object[] resultDefaulFieldValue = labIntChecker.getTableFieldsDefaulValues(schemaDataName, tableName, actionName);
+        String[] resultMandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel, actionName);
+        String[] resultDefaulFields = labIntChecker.getTableFieldsDefaulValues(tableName, actionName);
+        Object[] resultDefaulFieldValue = labIntChecker.getTableFieldsDefaulValues(tableName, actionName);
         Object[] resultMandatoryFieldsValue = new Object[resultMandatoryFields.length];
         StringBuilder resultMandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines = 0; inumLines < resultMandatoryFieldsValue.length; inumLines++) {
@@ -666,11 +695,11 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         Object[] addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup[0].toString())) return addSampleRevisionByTestingGroup;
         
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "DataSample_SampleAnalysisAddedSuccessfully", new Object[]{"", testId, schemaDataName});
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_ADDED_SUCCESS.getErrorCode(), new Object[]{"", testId, schemaDataName});
     }
     public static Object[] isAllsampleAnalysisReviewed(Integer sampleId, String[] whereFieldName, Object[] whereFieldValue) {    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String sampleAnalysisStatusReviewed = Parameter.getParameterBundle(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()).replace("\"", ""), "sampleAnalysis_statusReviewed");        
+        String sampleAnalysisStatusReviewed = Parameter.getMessageCodeValue(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()).replace("\"", ""), "sampleAnalysis_statusReviewed");        
         if (whereFieldName==null) whereFieldName=new String[0];
         if (whereFieldValue==null) whereFieldValue=new String[0];
         whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName());

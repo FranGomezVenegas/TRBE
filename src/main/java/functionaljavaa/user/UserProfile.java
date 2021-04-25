@@ -36,7 +36,7 @@ public class UserProfile {
             filterFieldName[1]=FIELDVALUE_ACTIVE;
             filterFieldValue[1]=true;
             filterFieldName[2]="proc_name is not null";            
-            if (!Rdbms.stablishDBConection()){return new Object[0];}   
+            //if (!Rdbms.stablishDBConection()){return new Object[0];}   
             Object[][] userProc =  Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName, filterFieldName, filterFieldValue, fieldsToReturn);            
             return LPArray.array2dTo1d(userProc);                         
     }

@@ -9,6 +9,7 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import functionaljavaa.audit.IncubBatchAudit;
+import functionaljavaa.inventory.batch.DataBatchIncubator.IncubatorBatchErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleIncubation;
 import functionaljavaa.samplestructure.DataSampleStages;
 import java.math.BigDecimal;
@@ -144,7 +145,7 @@ public final class DataBatchIncubatorUnstructured {
                     smpStage.dataSampleActionAutoMoveToNext(EnvMonAPIEndpoints.EM_BATCH_INCUB_START.getName(), sampleId);                
             }
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "All sample set as incubation started", null);
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataBatchIncubator.IncubatorBatchErrorTrapping.SAMPLES_IN_BATCH_SET_AS_BATCHSTARTED.getErrorCode(), new Object[]{batchName});
     }
     
     static Object[] batchSampleIncubEndedUnstructured(String batchName, String incubName) {
@@ -174,7 +175,7 @@ public final class DataBatchIncubatorUnstructured {
                     smpStage.dataSampleActionAutoMoveToNext(EnvMonAPIEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);                                                
             }
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "All sample set as incubation ended", null);
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchErrorTrapping.SAMPLES_IN_BATCH_SET_AS_BATCHENDED.getErrorCode(), new Object[]{batchName});
     }
 
     

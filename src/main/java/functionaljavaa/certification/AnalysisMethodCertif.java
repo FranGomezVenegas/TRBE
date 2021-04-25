@@ -23,11 +23,11 @@ import trazit.session.ProcedureRequestSession;
  */
 public class AnalysisMethodCertif {
 
-    public enum certificationAnalysisMethodBusinessRules{
+    public enum CertificationAnalysisMethodBusinessRules{
         CERTIFICATION_ANALYSIS_METHOD_MODE("certificationAnalysisMethodMode", GlobalVariables.Schemas.PROCEDURE.getName()),
-        USER_SOP("certificationAnalysisMethodMode", GlobalVariables.Schemas.PROCEDURE.getName())
+        USER_SOP("certificationUserSOPMode", GlobalVariables.Schemas.PROCEDURE.getName())
         ;
-        private certificationAnalysisMethodBusinessRules(String tgName, String areaNm){
+        private CertificationAnalysisMethodBusinessRules(String tgName, String areaNm){
             this.tagName=tgName;
             this.areaName=areaNm;
         }       
@@ -57,11 +57,11 @@ public class AnalysisMethodCertif {
     
     public static Object[] isUserCertificationEnabled(){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String tagValue = Parameter.getParameterBundle("config", procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), certificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName(), null);
+        String tagValue = Parameter.getMessageCodeValue("config", procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), CertificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName(), null);
         if (Parameter.isTagValueOneOfEnableOnes(tagValue))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "isUserCertificationEnabled", null);
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "isUserCertificationEnabled not Enabled", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "isUserCertificationEnabledNotEnabled", null);
     }
     public static Object[] newRecord(String methodName, String userName){
         return newRecord(methodName, null, userName, null, null);

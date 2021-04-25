@@ -64,9 +64,9 @@ public class DataInspectionLot {
         
         String lotLevel = TblsInspLotRMData.Lot.TBL.getName();
 
-        String[] mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, lotLevel, actionName);
+        String[] mandatoryFields = labIntChecker.getTableMandatoryFields(lotLevel, actionName);
         
-        String lotStatusFirst = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_STATUS_FIRST.getPropertyName());     
+        String lotStatusFirst = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_STATUS_FIRST.getPropertyName());     
 
         String[] lotFieldName =fieldName; //new String[]{};
         Object[] lotFieldValue =fieldValue; //new Object[]{};
@@ -121,8 +121,8 @@ public class DataInspectionLot {
                 new String[]{TblsInspLotRMConfig.Lot.FLD_CODE.getName(), TblsInspLotRMConfig.Lot.FLD_CODE_VERSION.getName()}, new Object[]{template, templateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.MISSING_CONFIG_CODE.getErrorCode(), new Object[]{template, templateVersion, schemaConfigName, diagnosis[5]});    
-        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_LOTSTRUCTURE.getPropertyName());
-        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_LOTSTRUCTURE.getPropertyName());
+        String[] specialFields = labIntChecker.getStructureSpecialFields(lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_LOTSTRUCTURE.getPropertyName());
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_LOTSTRUCTURE.getPropertyName());
         Integer specialFieldIndex = -1;
         for (Integer inumLines=0;inumLines<lotFieldName.length;inumLines++){
             String currField = TblsInspLotRMData.Lot.TBL.getName()+"." + lotFieldName[inumLines];

@@ -54,7 +54,7 @@ public Object[] createStudyFamily(String studyName, String familyName, String[] 
         
         schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
         
-        mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.StudyFamily.TBL.getName(), actionName);
+        mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.StudyFamily.TBL.getName(), actionName);
         
         
     if (devMode){

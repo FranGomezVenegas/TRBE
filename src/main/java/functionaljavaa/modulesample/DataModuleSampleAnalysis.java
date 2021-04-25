@@ -49,7 +49,7 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
             functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue, preAuditId);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded.toString()+" to the sample "+sampleId.toString()+" for schema "+procInstanceName});        
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{analysisAdded.toString(), sampleId.toString(), procInstanceName});        
   }
 
     /**

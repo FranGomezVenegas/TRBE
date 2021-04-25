@@ -34,7 +34,6 @@ import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI.Proced
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionfrontend.ProcedureDefinitionAPIfrontendEndpoints;
 import com.labplanet.servicios.testing.config.db.DbTestingLimitAndResult.TestingLimitAndResult;
 import databases.Rdbms;
-import databases.TblsProcedure;
 import databases.TblsTrazitDocTrazit.EndpointsDeclaration;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.parameter.Parameter.PropertyFilesType;
@@ -43,7 +42,6 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
-import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -356,7 +354,7 @@ public static Object[] getDocInfoForEndPoint(String apiName, String endpointName
         for (String curFld: fldNames){
             for (Languages curLang: GlobalVariables.Languages.values()){            
                 String propName=endpointName+"_"+curFld.replace("_en", ""); //"GET_METHOD_CERTIFIED_USERS_LIST_brief_summary"
-                 String propValue = Parameter.getParameterBundle(PropertyFilesType.ENDPOINTDOCUMENTATION.toString(), apiName, null, propName, curLang.getName(), false);
+                 String propValue = Parameter.getMessageCodeValue(PropertyFilesType.ENDPOINTDOCUMENTATION.toString(), apiName, null, propName, curLang.getName(), false);
                 if (propValue.length()>0){
                     fldsToRetrieve=LPArray.addValueToArray1D(fldsToRetrieve, curFld.replace("_en", "_"+curLang.getName()));
                     fldsValuesToRetrieve=LPArray.addValueToArray1D(fldsValuesToRetrieve, propValue);

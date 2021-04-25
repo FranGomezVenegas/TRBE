@@ -11,6 +11,7 @@ import databases.Rdbms;
 import databases.TblsData;
 import functionaljavaa.audit.IncubBatchAudit;
 import functionaljavaa.audit.SampleAudit;
+import functionaljavaa.inventory.batch.DataBatchIncubator.IncubatorBatchErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleIncubation;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -311,7 +312,7 @@ public final class DataBatchIncubatorStructured {
                 return setSampleIncubStarted;
             }
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "All sample set as incubation started", null);
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchErrorTrapping.SAMPLES_IN_BATCH_SET_AS_BATCHSTARTED.getErrorCode(), new Object[]{batchName});
     }
     
     static Object[] batchSampleIncubEndedStructured(String batchName, String incubName) {
@@ -337,7 +338,7 @@ public final class DataBatchIncubatorStructured {
                 return setSampleIncubEnded;
             }
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "All sample set as incubation ended", null);
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchErrorTrapping.SAMPLES_IN_BATCH_SET_AS_BATCHENDED.getErrorCode(), new Object[]{batchName});
     }   
     static Object[] batchSampleIncubEndedStructured() {
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "batchRemoveSampleStructured not implemented yet", null);

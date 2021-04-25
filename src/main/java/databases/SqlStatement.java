@@ -21,7 +21,8 @@ public class SqlStatement {
     enum WHERE_FLDVALUES_ARRAY_TYPES{NUMBER, INTEGER, BOOLEAN}
     
     public enum WHERECLAUSE_TYPES{IS_NULL(" is null"), IS_NOT_NULL(" is not null"), NULL("NULL"), IN("IN"), NOT_IN("NOT IN"), EQUAL("="), LIKE("LIKE"), BETWEEN("BETWEEN"),
-        LESS_THAN_STRICT("<"), LESS_THAN("<="), GREATER_THAN_STRICT(">"), GREATER_THAN(">=");
+        LESS_THAN_STRICT("<"), LESS_THAN("<="), GREATER_THAN_STRICT(">"), GREATER_THAN(">="),
+        OR("or");
         private final String clause;
         WHERECLAUSE_TYPES(String cl){this.clause=cl;}
         public String getSqlClause(){
@@ -165,7 +166,10 @@ public class SqlStatement {
         for (int iwhereFieldNames=0; iwhereFieldNames<whereFieldNames.length; iwhereFieldNames++){
             String fn = whereFieldNames[iwhereFieldNames];
             if (iwhereFieldNames > 0) {
-                queryWhere.append(" and ");
+                if (!fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))
+//                    queryWhere.append(" or ");
+//                else
+                    queryWhere.append(" and ");
             }
             if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
                 queryWhere.append(fn);

@@ -38,7 +38,7 @@ public class Parameter {
      *
      */
     public static final String BUNDLE_TAG_PARAMETER_CONFIG_CONF="parameter.config.app-config";
-
+        
     /**
      *  Get the parameter value or blank otherwise.
      * @param parameterFolder - The directoy name LabPLANET (api messages/error trapping)/config (procedure business rules) (if null then config)
@@ -48,36 +48,37 @@ public class Parameter {
      * @param language - Language
      * @return
      **/
-    public static String getParameterBundle(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
-        return getParameterBundle(parameterFolder, procName, schemaSuffix, parameterName, language, true);       
+    public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
+        return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, true);       
+    }
+    public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Object[] callerInfo, Boolean reportMissingProp) {
+        if (reportMissingProp==null) reportMissingProp=true;
+        return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, null, callerInfo);       
     }
     public static String parameterBundleExists(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {
-        return getParameterBundle(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, true);        
+        return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, true, null);        
     }
-    public static String getParameterBundle(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {    
-        return getParameterBundle(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, null);
+    public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {    
+        return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, null, null);
     }
-    public static String getParameterBundle(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp, Boolean returnFalseIfMissing) {
-        String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
-        String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
-        String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
-        Integer lineNumber = -999;//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();           
-
+    private static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp, Boolean returnFalseIfMissing, Object[] callerInfo) {
         ResourceBundle prop = null;
         if (parameterFolder==null){parameterFolder="config";}
         String filePath = "parameter."+parameterFolder+"."+procName;
         if (schemaSuffix!=null){filePath=filePath+"-"+schemaSuffix;}
-        if (language != null) {filePath=filePath+"_" + language;}
-        else 
-            if (filePath.toLowerCase().contains("parameter.LabPLANET"))
+        if (language != null) {filePath=filePath+"_" + language;}        
+        else{ 
+            if (filePath.toLowerCase().contains("parameter.labplanet"))
                 filePath=filePath+"_" + GlobalVariables.Languages.EN.getName();
-        
+        }
         try {
             prop = ResourceBundle.getBundle(filePath);
-            if (!prop.containsKey(parameterName)) {  
+            if ((!prop.containsKey(parameterName)) && reportMissingProp!=null && reportMissingProp) {  
                 if (parameterName.toLowerCase().contains("encrypted_")) return ""; 
                 LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
-                        new Object[]{className, classFullName, methodName, lineNumber}, parameterName);
+                        //new Object[]{className, classFullName, methodName, lineNumber}, 
+                        callerInfo,
+                        parameterName);
                 return "";
             } else {
                 return prop.getString(parameterName);
@@ -88,7 +89,9 @@ public class Parameter {
             if (reportMissingProp!=null && !reportMissingProp) return "";
             if (parameterName.toLowerCase().contains("encrypted_")) return "";            
             LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
-                    new Object[]{className, classFullName, methodName, lineNumber}, parameterName);
+                    //new Object[]{className, classFullName, methodName, lineNumber}, 
+                    callerInfo,
+                    parameterName);
             return "";
         }
     }
@@ -103,7 +106,7 @@ public class Parameter {
      * @return
      */
     public Boolean parameterInFile(String parameterFolder, String schemaName, String areaName, String parameterName, String language){
-        return !"".equals(getParameterBundle(parameterFolder, schemaName, areaName, parameterName, language));
+        return !"".equals(getMessageCodeValue(parameterFolder, schemaName, areaName, parameterName, language));
     }
 
     /**
@@ -111,15 +114,37 @@ public class Parameter {
      * @param parameterName
      * @return
      */
-    public static String getParameterBundleAppFile(String parameterName) {
-        return getParameterBundleInAppFile("parameter.config.app", parameterName);
+    public static String getBusinessRuleAppFile(String parameterName) {
+        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        className = className.replace(".java", "");
+        Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
+        return getBusinessRuleInAppFile("parameter.config.app", parameterName, callerInfo);
     }
 
-    public static String getParameterBundleInConfigFile(String configFile, String parameterName, String language) {
-        return getParameterBundleInAppFile("parameter.config." + configFile + "_" + language, parameterName);
+    public static String getBusinessRuleInConfigFile(String configFile, String parameterName, String language) {
+        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        className = className.replace(".java", "");
+        Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
+        return getBusinessRuleInAppFile("parameter.config." + configFile + "_" + language, parameterName, callerInfo);
     }
 
-    private static String getParameterBundleInAppFile(String fileUrl, String parameterName) {
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName) {
+        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        className = className.replace(".java", "");
+        Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
+        return getBusinessRuleInAppFile("parameter.config."+procInstanceName+"-"+suffixFile, parameterName, callerInfo);
+    }
+    
+    private static String getBusinessRuleInAppFile(String fileUrl, String parameterName, Object[] callerInfo) {
         /*String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
         String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
         String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
@@ -138,7 +163,7 @@ public class Parameter {
         } catch (Exception e) {
             if (parameterName.toLowerCase().contains("encrypted_")) return "";
             LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, 
-                    new Object[]{}, parameterName);
+                    callerInfo, parameterName);
             return e.getMessage();
         }
     }
@@ -149,7 +174,7 @@ public class Parameter {
      * @param parameterName
      * @return
      */
-    public static String getParameterBundle(String configFile, String parameterName) {
+    public static String getMessageCodeValue(String configFile, String parameterName) {
         /*StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         String className = Thread.currentThread().toString();
                 Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
@@ -195,7 +220,7 @@ public class Parameter {
         {
             String fileidt = fileDir + "\\" + f.getName();
             try{    
-                String paramExists=getParameterBundle(fileName, entryName);
+                String paramExists=getMessageCodeValue(fileName, entryName);
                 if (paramExists.length()>0 && paramExists.equalsIgnoreCase(entryValue) )
                     return "the parameter "+entryName+" already exists in properties file "+fileName+" . (Path:"+fileDir+")";
                 String newLogEntry = " created tag in " + f.getName() + " for the entry " + entryName + " and value " + entryValue;
@@ -320,7 +345,7 @@ public class Parameter {
     }  
     
     public static Boolean isTagValueOneOfEnableOnes(String tagValue){
-        String enableValuesStr=getParameterBundleAppFile("businessRulesEnableValues"); 
+        String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues"); 
         String[] enableValues=enableValuesStr.split("\\|");
         return LPArray.valueInArray(enableValues, tagValue);
     }

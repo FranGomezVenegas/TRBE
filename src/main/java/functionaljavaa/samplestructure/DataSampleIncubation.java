@@ -78,6 +78,7 @@ public class DataSampleIncubation {
         DEVIATION,
         STOP,
         DEVIATION_AND_STOP
+        ;
     }    
 
     /**
@@ -102,7 +103,7 @@ public class DataSampleIncubation {
         
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-            diagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "DataSample_SampleIncubationEndedSuccessfully", 
+            diagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_ENDED_SUCCESS.getErrorCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
             SampleAudit smpAudit = new SampleAudit();
@@ -132,7 +133,7 @@ public class DataSampleIncubation {
 
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "DataSample_SampleIncubationStartedSuccessfully", 
+            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_STARTED_SUCCESS.getErrorCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
             SampleAudit smpAudit = new SampleAudit();
@@ -144,9 +145,10 @@ public class DataSampleIncubation {
     private static Object[] sampleIncubatorModeChecker(Integer incubationStage, String moment, String incubName, BigDecimal tempReading){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String sampleIncubationMode = Parameter.getParameterBundle("config", procInstanceName, "procedure", "sampleIncubationMode", null);
-        if (sampleIncubationMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorMode Business Rule not defined for "+procInstanceName, null);
-        if (!SampleIncubationModes.contains(sampleIncubationMode)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorMode <*1*> not recognized as one of the expected values", new Object[]{sampleIncubationMode});        
+        //String sampleIncubationMode = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", "sampleIncubationMode", null);
+        String sampleIncubationMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "sampleIncubationMode");
+        if (sampleIncubationMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeBusinessRuleNotDefined", new Object[]{procInstanceName});
+        if (!SampleIncubationModes.contains(sampleIncubationMode)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeValueNotRrecognized", new Object[]{sampleIncubationMode});        
         
         String[] requiredFields=new String[0];
         Object[] requiredFieldsValue=new Object[0];
@@ -223,7 +225,7 @@ public class DataSampleIncubation {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String sampleIncubationTempReadingBusinessRulevalue = Parameter.getParameterBundle("config", procInstanceName, "procedure", "sampleIncubationTempReadingBusinessRule", null);
+        String sampleIncubationTempReadingBusinessRulevalue = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleIncubationBusinessRules.SAMPLE_INCUB_TEMP_READING_BUSRULE.getAreaName(), DataSampleIncubationBusinessRules.SAMPLE_INCUB_TEMP_READING_BUSRULE.getTagName());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime tempReadingDateDateTime = LocalDateTime.parse(tempReadingDate.toString().substring(0, 19), formatter);
         if (sampleIncubationTempReadingBusinessRulevalue.length()==0)
@@ -244,7 +246,7 @@ public class DataSampleIncubation {
             String[] currSampleIncubationTempReadingBusinessRulevalueArr=currSampleIncubationTempReadingBusinessRulevalue.split("\\*");
             if (TempReadingBusinessRules.SAME_DAY.toString().equalsIgnoreCase(currSampleIncubationTempReadingBusinessRulevalueArr[0])){                
                 currDiagn = tempReadingDateDateTime.getDayOfYear()==LPDate.getCurrentTimeStamp().getDayOfYear();
-                    currDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The temperature reading day is <*1*> and is not from today as set for procedure <*2*>", new Object[]{tempReadingDate.toString(), procInstanceName} );                
+                    currDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.TEMPERATUREREADYDAY_ISNOTTODAY.getErrorCode(), new Object[]{tempReadingDate.toString(), procInstanceName} );                
             }else if (TempReadingBusinessRules.HOURS.toString().equalsIgnoreCase(currSampleIncubationTempReadingBusinessRulevalueArr[0])){
                 long hours = ChronoUnit.HOURS.between(tempReadingDateDateTime, LPDate.getCurrentTimeStamp());
                 if (hours>Long.valueOf(currSampleIncubationTempReadingBusinessRulevalueArr[1])){
@@ -303,6 +305,39 @@ public class DataSampleIncubation {
         }
         
         return new Object[]{LPPlatform.LAB_FALSE}; 
+    }    
+    public enum DataSampleIncubationBusinessRules{
+        SAMPLE_INCUB_TEMP_READING_BUSRULE("sampleIncubationTempReadingBusinessRule", GlobalVariables.Schemas.PROCEDURE.getName())
+        ;
+        private DataSampleIncubationBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    
+    public enum DataSampleIncubationErrorTrapping{ 
+        INCUBATORBATCH_NOT_STARTED("IncubatorBatchNotStartedYet", "The batch <*1*> was not started yet for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
+        SAMPLEINCUBATION_STARTED_SUCCESS("SampleIncubationStartedSuccessfully", "", ""),
+        SAMPLEINCUBATION_ENDED_SUCCESS("SampleIncubationEndedSuccessfully", "", ""),
+        TEMPERATUREREADYDAY_ISNOTTODAY("TemperatureReadingDayIsNotToday", "", ""),
+        ;
+        private DataSampleIncubationErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
     }
     
 }

@@ -54,7 +54,7 @@ public Object[] createStudySamplesSet( String studyName, String sampleSetName, S
         
         schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
         
-        mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.StudySamplesSet.TBL.getName(), actionName);
+        mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.StudySamplesSet.TBL.getName(), actionName);
         
         
     if (devMode){

@@ -101,9 +101,9 @@ public class UserMethod {
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());  
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());   
         
-        String userMethodNotAssigned = Parameter.getParameterBundle(schemaConfigName, "userMethodCertificate_notAssigned");
-        String userMethodInactive = Parameter.getParameterBundle(schemaConfigName, "userMethodCertificate_inactive");
-        String userMethodCertified = Parameter.getParameterBundle(schemaConfigName, "userMethodCertificate_certified");
+        String userMethodNotAssigned = Parameter.getMessageCodeValue(schemaConfigName, "userMethodCertificate_notAssigned");
+        String userMethodInactive = Parameter.getMessageCodeValue(schemaConfigName, "userMethodCertificate_inactive");
+        String userMethodCertified = Parameter.getMessageCodeValue(schemaConfigName, "userMethodCertificate_certified");
         
         String[] whereFieldName = new String[]{FIELDNAME_DATA_USER_METHOD_USER_ID, FIELDNAME_DATA_USER_METHOD_ANALYSIS,
                 FIELDNAME_DATA_USER_METHOD_METHOD_NAME, FIELDNAME_DATA_USER_METHOD_METHOD_VERSION};

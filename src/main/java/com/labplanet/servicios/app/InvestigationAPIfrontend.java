@@ -112,7 +112,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
                 return;  
             case INVESTIGATION_RESULTS_PENDING_DECISION:
-                String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
+                String statusClosed=Parameter.getMessageCodeValue(schemaPrefix+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
                 JSONArray jArray = new JSONArray(); 
                 if (!isProgramCorrectiveActionEnable(schemaPrefix)){
                   JSONObject jObj=new JSONObject();

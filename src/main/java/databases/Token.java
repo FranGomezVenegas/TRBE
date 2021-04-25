@@ -35,6 +35,7 @@ public final class Token {
     private static final String TOKEN_PARAM_APP_SESSION_ID="appSessionId";
     private static final String TOKEN_PARAM_APP_SESSION_STARTED_DATE="appSessionStartedDate";
     private static final String TOKEN_PARAM_USER_PROCEDURES="user_procedures";
+    private static final String TOKEN_PARAM_DB_NAME="dbName";
     
     private static final String TOKEN_PARAM_PREFIX = "TOKEN_";
     
@@ -46,6 +47,7 @@ public final class Token {
     private String appSessionId="";
     private Date appSessionStartedDate;
     private String userProcedures="";    
+    private String dbName="";  
     /**
      *
      * @param tokenString
@@ -61,6 +63,7 @@ public final class Token {
         this.eSign = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ESIGN)];     
         this.appSessionId = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_APP_SESSION_ID)];    
         this.userProcedures = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES)]; 
+        this.dbName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_DB_NAME)]; 
     }
 
     /**
@@ -77,6 +80,7 @@ public final class Token {
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_APP_SESSION_STARTED_DATE);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_ESIGN);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_PROCEDURES);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_DB_NAME);
         return diagnoses;
     }  
     
@@ -140,7 +144,7 @@ public final class Token {
      * @param eSign
      * @return
      */
-    public String  createToken(String userDBId, String userDBPassword, String userId, String userRole, String appSessionId, String appSessionStartedDate, String eSign){        
+    public String  createToken(String userDBId, String userDBPassword, String userId, String userRole, String appSessionId, String appSessionStartedDate, String eSign, String dbName){        
         Algorithm algorithm = Algorithm.HMAC256(KEY); 
         Map <String, Object> myParams = new HashMap<>();
         myParams.put(TOKEN_PARAM_USERDB, userDBId);
@@ -150,6 +154,7 @@ public final class Token {
         myParams.put(TOKEN_PARAM_APP_SESSION_ID, appSessionId);
         myParams.put(TOKEN_PARAM_APP_SESSION_STARTED_DATE, appSessionStartedDate);
         myParams.put(TOKEN_PARAM_USER_ESIGN, eSign);
+        myParams.put(TOKEN_PARAM_DB_NAME, dbName);
         UserProfile usProf = new UserProfile();
         Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(userDBId);
         myParams.put(TOKEN_PARAM_USER_PROCEDURES, Arrays.toString(allUserProcedurePrefix));
@@ -253,5 +258,11 @@ public final class Token {
      */
     public String getUserProcedures() {
         return this.userProcedures;
+    }    
+    /**
+     * @return the userProceduresList in a Arrays.strings format
+     */
+    public String getDbName() {
+        return this.dbName;
     }    
 }

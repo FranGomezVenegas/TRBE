@@ -39,13 +39,13 @@ public class DataSampleUtilities {
         if (language==null){language="en";}
        switch (language){
            case "en":
-               stList = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sample_statuses_label_en"); 
+               stList = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sample_statuses_label_en"); 
                break;
            case "es":
-               stList = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sample_statuses_label_es"); 
+               stList = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sample_statuses_label_es"); 
                break;
            default:
-               stList = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sample_statuses"); 
+               stList = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sample_statuses"); 
                break;
        }        
         return LPTestingOutFormat.csvExtractFieldValueStringArr(stList);

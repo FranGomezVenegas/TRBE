@@ -10,7 +10,7 @@ import databases.TblsApp;
 import databases.TblsAppAudit;
 import databases.Token;
 import functionaljavaa.audit.AppIncidentAudit;
-import static functionaljavaa.parameter.Parameter.getParameterBundleAppFile;
+import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
@@ -145,7 +145,7 @@ public class AppIncident {
         Object[] isActive=isIncidentActive(incidentId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isActive[0].toString())) return isActive;
         
-        String addNoteAvailableStatuses=getParameterBundleAppFile("incidentsAddNoteAvailableStatuses"); 
+        String addNoteAvailableStatuses=getBusinessRuleAppFile("incidentsAddNoteAvailableStatuses"); 
         if ( (newStatus!=null) && (newStatus.length()>0) && (!addNoteAvailableStatuses.contains("ALL") || (!addNoteAvailableStatuses.contains(newStatus))) )
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "status <*1*> not allowed as new status through Add Note Incident", new Object[]{newStatus});
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();

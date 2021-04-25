@@ -28,7 +28,43 @@ public class ChangeOfCustody {
     /**
      *
      */
-    public static final String BUNDLE_PROCEDURE_CUSTODIAN_FUNCTIONALITY_MODE="custodianFunctionalityMode";
+    public enum ChangeOfCustodyBusinessRules{
+        CUSTODIAN_FUNCTIONALITY_MODE("custodianFunctionalityMode", GlobalVariables.Schemas.PROCEDURE.getName())
+        ;
+        private ChangeOfCustodyBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    
+public enum ChangeOfCustodyErrorTrapping{ 
+        REQUEST_COMPLETED("ChainOfCustody_requestCompleted", "", ""),
+        NO_CUSTODIAN_CANDIDATE("ChainOfCustody_noCustodianCandidate", "", ""),
+        SAME_CUSTODIAN("ChainOfCustody_sameCustodian","", ""),
+        REQUEST_ALREADY_INCOURSE("ChainOfCustody_requestAlreadyInCourse","", ""),
+        NO_CHANGE_IN_PROGRESS("ChainOfCustody_noChangeInProgress","", ""),
+        REQUEST_STARTED("ChainOfCustody_requestStarted","", ""),
+        ;
+        private ChangeOfCustodyErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
+    //public static final String BUNDLE_PROCEDURE_="custodianFunctionalityMode";
 
     /**
      *
@@ -44,9 +80,9 @@ public class ChangeOfCustody {
         String cocTableName = objectTable.toLowerCase()+"_coc";
         String currCustodian=token.getPersonName();
         if ((custodianCandidate==null) || (custodianCandidate.length()==0) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noCustodian", new Object[]{objectId, objectTable, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CUSTODIAN_CANDIDATE.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
         if (currCustodian.equalsIgnoreCase(custodianCandidate))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_sameCustodian", new Object[]{currCustodian, objectId, objectTable, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.SAME_CUSTODIAN.getErrorCode(), new Object[]{currCustodian, objectId, objectTable, procInstanceName});
 
         Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())) return changeOfCustodyEnable;
@@ -55,7 +91,7 @@ public class ChangeOfCustody {
                 new String[]{objectFieldName, TblsData.SampleCoc.FLD_STATUS.getName()},
                 new Object[]{objectId, cocStartChangeStatus});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_requestAlreadyInCourse", new Object[]{objectId, objectTable, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.REQUEST_ALREADY_INCOURSE.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable.toLowerCase(),
                 new String[]{TblsData.SampleCoc.FLD_STARTED_ON.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()},
                 new Object[]{LPDate.getCurrentTimeStamp(), custodianCandidate},
@@ -79,7 +115,7 @@ public class ChangeOfCustody {
             default:
                 break;
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ChainOfCustody_requestStarted", new Object[]{objectId, objectTable, procInstanceName});
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodyErrorTrapping.REQUEST_STARTED.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
     }
 
     /**
@@ -120,7 +156,7 @@ public class ChangeOfCustody {
                 new Object[]{objectId, cocStartChangeStatus},
                 new String[]{"id", TblsData.SampleCoc.FLD_STATUS.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(startedProcessData[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noChangeInProgress", new Object[]{objectId, objectTable, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CHANGE_IN_PROGRESS.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
 
         String custodianCandidate = "";
         Integer recordId=null;
@@ -129,7 +165,7 @@ public class ChangeOfCustody {
             custodianCandidate = startedProcessData[0][2].toString();}
 
         if ( (startedProcessData[0][2]==null) || (!token.getUserName().equalsIgnoreCase(custodianCandidate)) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ChainOfCustody_noCustodianCandidate", new Object[]{objectId, objectTable, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CUSTODIAN_CANDIDATE.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
 
 
         String[] sampleFieldName=new String[]{TblsData.SampleCoc.FLD_STATUS.getName(), TblsData.SampleCoc.FLD_CONFIRMED_ON.getName() };
@@ -166,7 +202,7 @@ public class ChangeOfCustody {
             default:
                 break;
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ChainOfCustody_requestCompleted", new Object[]{procInstanceName, objectTable, objectId, actionName.toLowerCase()});
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodyErrorTrapping.REQUEST_COMPLETED.getErrorCode(), new Object[]{procInstanceName, objectTable, objectId, actionName.toLowerCase()});
     }
 
     /**
@@ -176,13 +212,14 @@ public class ChangeOfCustody {
      * @return
      */
     public Object[] isChangeOfCustodyEnable(String schemaName, String objectTable){
-            // Este método no está implementado y es necesario.
-            String bundleProcedureCustodianFunctionalityMode = Parameter.getParameterBundle(schemaName.replace("\"", ""), BUNDLE_PROCEDURE_CUSTODIAN_FUNCTIONALITY_MODE);
-            if ("ENABLE".equalsIgnoreCase(bundleProcedureCustodianFunctionalityMode)){
-              return new Object[]{LPPlatform.LAB_TRUE};
-            }else{
-              return new Object[]{LPPlatform.LAB_FALSE};
-            }
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        // Este método no está implementado y es necesario.
+        String bundleProcedureCustodianFunctionalityMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, ChangeOfCustodyBusinessRules.CUSTODIAN_FUNCTIONALITY_MODE.getAreaName(), ChangeOfCustodyBusinessRules.CUSTODIAN_FUNCTIONALITY_MODE.getTagName());
+        if ("ENABLE".equalsIgnoreCase(bundleProcedureCustodianFunctionalityMode)){
+          return new Object[]{LPPlatform.LAB_TRUE};
+        }else{
+          return new Object[]{LPPlatform.LAB_FALSE};
+        }
     }
 
 }

@@ -405,8 +405,8 @@ public class TblsReqs {
         FLD_IN_SYSTEM("in_system", LPDatabase.booleanFld()),
         FLD_ROLES("roles", LPDatabase.string()),
         FLD_SOP_NAME("sop_name", LPDatabase.string()),
-        FLD_ESIGN_REQ("esign_required", LPDatabase.booleanFld()),
-        FLD_USERCONFIRM_REQ("userconfirmation_required", LPDatabase.booleanFld()),
+        FLD_ESIGN_REQ("esign_req", LPDatabase.booleanFld()),
+        FLD_USERCONFIRM_REQ("userconfirmation_req", LPDatabase.booleanFld()),
         FLD_WIDGET("widget", LPDatabase.string()),
         FLD_WIDGET_VERSION("widget_version", LPDatabase.integer()),
         FLD_WIDGET_ACTION("widget_action", LPDatabase.string()),
@@ -418,6 +418,9 @@ public class TblsReqs {
         FLD_MODE("mode", LPDatabase.string()),
         FLD_TYPE("type", LPDatabase.string()),
         FLD_BRANCH_LEVEL("branch_level", LPDatabase.string()),
+        FLD_BUSINESS_RULE_NAME("business_rule_name", LPDatabase.string()),
+        FLD_BUSINESS_RULE_VALUE("business_rule_value", LPDatabase.string()),
+        
         ;
         private ProcedureUserRequirements(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -973,4 +976,98 @@ public class TblsReqs {
         private final String dbObjTypePostgres;                     
     }
     
+    public enum ProcedureMasterData{ // 'the sequence is session_id integer NOT NULL DEFAULT nextval('app.app_session_session_id_seq1'::regclass)'
+
+        /**
+         *
+         */
+        TBL("procedure_master_data",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_INSTANCE_NAME, #FLD_OBJECT_TYPE) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        ,
+        /**
+         *
+         */
+        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull())
+        ,
+
+        /**
+         *
+         */
+        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull())
+        ,
+
+        /**
+         *
+         */
+//        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull())        ,
+        FLD_INSTANCE_NAME("instance_name", LPDatabase.stringNotNull()),
+        FLD_DESCRIPTION(LPDatabase.FIELDS_NAMES_DESCRIPTION, LPDatabase.string()),
+        FLD_OBJECT_TYPE("object_type", LPDatabase.string()),
+        FLD_JSON_OBJ("json_obj", LPDatabase.string()),
+        
+        FLD_ACTIVE("active", LPDatabase.booleanFld())
+
+        ;
+        private ProcedureMasterData(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String[] fields){
+            return createTableScriptPostgres(fields);
+        }
+        private static String createTableScriptPostgres(String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = ProcedureMasterData.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, GlobalVariables.Schemas.REQUIREMENTS.getName());
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ProcedureMasterData obj: ProcedureMasterData.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, GlobalVariables.Schemas.REQUIREMENTS.getName());
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }   
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ProcedureMasterData obj: ProcedureMasterData.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                
+        
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }
 }

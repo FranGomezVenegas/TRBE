@@ -58,7 +58,7 @@ public class DataProgramCorrectiveAction {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        String statusFirst=Parameter.getParameterBundle(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusFirst");
+        String statusFirst=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusFirst");
         String[] sampleFldsToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), 
         TblsProcedure.ProgramCorrectiveAction.FLD_LOCATION_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_AREA.getName()};
         String[] sampleAnalysisResultToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(),
@@ -162,7 +162,7 @@ public class DataProgramCorrectiveAction {
     public static Object[] markAsCompleted(Integer correctiveActionId, Integer investId){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String statusClosed=Parameter.getParameterBundle(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
+        String statusClosed=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
         Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
         new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
         new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()});
@@ -183,12 +183,12 @@ public class DataProgramCorrectiveAction {
                 new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId});
     }  
     public static Boolean isProgramCorrectiveActionEnable(String procInstanceName){
-        return "ENABLE".equalsIgnoreCase(Parameter.getParameterBundle(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "programCorrectiveActionMode"));
+        return "ENABLE".equalsIgnoreCase(Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "programCorrectiveActionMode"));
     }
     public static Object[] markAsAddedToInvestigation(Integer investId, String objectType, Object objectId){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String statusClosed=Parameter.getParameterBundle(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
+        String statusClosed=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
         String objectIdClass=null;
         String fieldToFindRecord=null;
         if (TblsData.Sample.TBL.getName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName();

@@ -286,7 +286,7 @@ out.println("Bye");
             out.println("Statuses en inglés: "+Arrays.toString(DataSampleUtilities.getSchemaSampleStatusList(procName)));
             out.println("Statuses en castellano: "+Arrays.toString(DataSampleUtilities.getSchemaSampleStatusList(procName, "es")));
             
-            out.println("First sample analysis status for process-us is: "+Parameter.getParameterBundle("process-us-data", "sampleAnalysis_statusFirst"));
+            out.println("First sample analysis status for process-us is: "+Parameter.getMessageCodeValue("process-us-data", "sampleAnalysis_statusFirst"));
             
             String[] errObject = new String[]{"Servlet sampleAPI at " + request.getServletPath()};          
             
@@ -460,7 +460,7 @@ String holidaysCalendar="España Comunidad X 2019";
 //Structured Batches. End
             
             out.println("Before creating the token");
-            String myToken = token.createToken(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, "3", "Admin", "", "", "");
+            String myToken = token.createToken(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, "3", "Admin", "", "", "", null);
             out.println("Token created: "+myToken);
             
             out.println("Reading web text file");

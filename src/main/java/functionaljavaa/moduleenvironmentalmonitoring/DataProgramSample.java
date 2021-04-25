@@ -83,7 +83,7 @@ public class DataProgramSample{
     public static Object[] logProgramSamplerSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer programSampleId){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
-        String samplerSmpTemplate=Parameter.getParameterBundle("config", procInstanceName, "procedure", "samplerSampleTemplate", null);  
+        String samplerSmpTemplate=Parameter.getMessageCodeValue("config", procInstanceName, "procedure", "samplerSampleTemplate", null);  
         
         Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
                 new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 

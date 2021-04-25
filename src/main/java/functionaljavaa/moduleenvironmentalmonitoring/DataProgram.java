@@ -150,7 +150,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName); 
         
-        mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(schemaDataName, tableName, actionName);
+        mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(tableName, actionName);
         
         
     if (devMode){
@@ -228,8 +228,8 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString())) return diagnosis;
 
-        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, "projectStructure");
-        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, "projectStructure");
+        String[] specialFields = labIntChecker.getStructureSpecialFields("projectStructure");
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction("projectStructure");
         
         Integer specialFieldIndex = -1;
         for (Integer inumLines=0;inumLines<sampleFieldName.length;inumLines++){
