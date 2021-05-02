@@ -95,9 +95,16 @@ public class LPMath {
     }
     public static boolean isNumeric(String strNum){
         if (strNum==null) return false;
-        try  {
-            Double.parseDouble(strNum);
-        }catch (NumberFormatException nfe){return false;}
+        try  {            
+            for (int i=0;i<strNum.length();i++){
+                if (!"-".equalsIgnoreCase(strNum.substring(i, i+1))){
+                    Double valueParsed=Double.parseDouble(strNum.substring(i, i+1));}
+            }
+            //Float f = Float.valueOf(strNum);
+            //System.out.print(valueParsed);
+            
+        }catch (Exception nfe){
+            return false;}
         return true;
     }
 } // end class

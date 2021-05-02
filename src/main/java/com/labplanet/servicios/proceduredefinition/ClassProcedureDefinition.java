@@ -1,10 +1,11 @@
 package com.labplanet.servicios.proceduredefinition;
 
 import databases.Rdbms;
-import databases.TblsCnfg;
 import databases.TblsReqs;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.procedureRolesList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomImportType;
+import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import static functionaljavaa.user.UserAndRolesViews.getPersonByUser;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -24,7 +25,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class ClassProcedureDefinition {
-    enum UomImportType{INDIV, FAMIL}
+    
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
@@ -89,19 +90,8 @@ public class ClassProcedureDefinition {
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UOM Import Type "+importType+" not recognized", null);
                         LPFrontEnd.servletReturnResponseError(request, response, "UOM Import Type "+importType+" not recognized", new Object[]{importType}, "");                                      
                         return;
-                    }     
-                    String[] whereFieldNames = new String[0];
-                    String[] whereFieldValues = new String[]{uomName};
-                    if (UomImportType.INDIV.toString().equalsIgnoreCase(importType)){
-                        whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()};
-                    }
-                    if (UomImportType.FAMIL.toString().equalsIgnoreCase(importType)){
-                        whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName()};
-                    }
-                    actionDiagnoses = Rdbms.insertRecordInTableFromTable(true, TblsCnfg.UnitsOfMeasurement.getAllFieldNames(),
-                            GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.UnitsOfMeasurement.TBL.getName(), 
-                            whereFieldNames, whereFieldValues,
-                            LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.UnitsOfMeasurement.TBL.getName(), TblsCnfg.UnitsOfMeasurement.getAllFieldNames());
+                    }   
+                    actionDiagnoses=getUomFromConfig(uomName, importType);
                     break;                    
                 case DEPLOY_REQUIREMENTS:
                     procedureName=argValues[0].toString();
@@ -118,6 +108,8 @@ public class ClassProcedureDefinition {
                     } catch (ServletException | IOException ex) {
                         Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Completed", null);
+                    break;                    
 
                     //String procName = request.getParameter("procedureName"); //"process-us"; 
                     //String schemaPrefix=request.getParameter("schemaPrefix"); //"process-us";

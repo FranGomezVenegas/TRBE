@@ -12,6 +12,7 @@ import lbplanet.utilities.LPPlatform;
 import databases.TblsCnfg;
 import functionaljavaa.audit.ConfigTablesAudit;
 import functionaljavaa.audit.ConfigTablesAudit.SpecAuditEvents;
+import functionaljavaa.materialspec.ConfigSpecRule.quantitativeVariables;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -181,6 +182,10 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
     /**
      *
      * @param procInstanceName
+     * @param specCode
+     * @param specCodeVersion
+     * @param mandatoryFieldValue
+     * @param mandatoryFields
      * @return
      */
     public String specialFieldCheckSpecLimitsVariationName(String procInstanceName, String specCode, Integer specCodeVersion, String[] mandatoryFields, Object[] mandatoryFieldValue){ 
@@ -226,6 +231,10 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
     /**
      *
      * @param procInstanceName
+     * @param specCode
+     * @param specCodeVersion
+     * @param mandatoryFields
+     * @param mandatoryFieldValue
      * @return
      */
     public String specialFieldCheckSpecLimitsAnalysis(String procInstanceName, String specCode, Integer specCodeVersion, String[] mandatoryFields, Object[] mandatoryFieldValue){ 
@@ -280,7 +289,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
         
         String myDiagnoses = "";        
         
-        String[] ruleVariablesArr = ruleVariables.split("\\*", -1);
+        String[] ruleVariablesArr = ruleVariables.split("\\*");
         switch (ruleType.toUpperCase()){
             case "QUALITATIVE":
                 if (ruleVariablesArr.length!=3 && ruleVariablesArr.length!=2){
@@ -300,10 +309,14 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
                 Float minControl = null;
                 Float maxControl = null;
                 for (String ruleVar: ruleVariablesArr){
-                    if (ruleVar.contains("MINSPEC")){ruleVar = ruleVar.replace("MINSPEC", ""); minSpec=Float.parseFloat(ruleVar);}
-                    if (ruleVar.contains("MAXSPEC")){ruleVar = ruleVar.replace("MAXSPEC", ""); maxSpec=Float.parseFloat(ruleVar);}
-                    if (ruleVar.contains("MINCONTROL")){ruleVar = ruleVar.replace("MINCONTROL", ""); minControl=Float.parseFloat(ruleVar);}
-                    if (ruleVar.contains("MAXCONTROL")){ruleVar = ruleVar.replace("MAXCONTROL", ""); maxControl=Float.parseFloat(ruleVar);}
+                    if (ruleVar.contains(quantitativeVariables.MINSPECSTRICT.toString())){ruleVar = ruleVar.replace(quantitativeVariables.MINSPECSTRICT.toString(), ""); minSpec=Float.parseFloat(ruleVar);}
+                    if (ruleVar.contains(quantitativeVariables.MAXSPECSTRICT.toString())){ruleVar = ruleVar.replace(quantitativeVariables.MAXSPECSTRICT.toString(), ""); maxSpec=Float.parseFloat(ruleVar);}
+                    if (ruleVar.contains(quantitativeVariables.MINCONTROLSTRICT.toString())){ruleVar = ruleVar.replace(quantitativeVariables.MINCONTROLSTRICT.toString(), ""); minControl=Float.parseFloat(ruleVar);}
+                    if (ruleVar.contains(quantitativeVariables.MAXCONTROLSTRICT.toString())){ruleVar = ruleVar.replace(quantitativeVariables.MAXCONTROLSTRICT.toString(), ""); maxControl=Float.parseFloat(ruleVar);}
+                    if (ruleVar.contains(quantitativeVariables.MINSPEC.toString())){ruleVar = ruleVar.replace(quantitativeVariables.MINSPEC.toString(), ""); minSpec=Float.parseFloat(ruleVar);}
+                    if (ruleVar.contains(quantitativeVariables.MAXSPEC.toString())){ruleVar = ruleVar.replace(quantitativeVariables.MAXSPEC.toString(), ""); maxSpec=Float.parseFloat(ruleVar);}
+                    if (ruleVar.contains(quantitativeVariables.MINCONTROL.toString())){ruleVar = ruleVar.replace(quantitativeVariables.MINCONTROL.toString(), ""); minControl=Float.parseFloat(ruleVar);}
+                    if (ruleVar.contains(quantitativeVariables.MAXCONTROL.toString())){ruleVar = ruleVar.replace(quantitativeVariables.MAXCONTROL.toString(), ""); maxControl=Float.parseFloat(ruleVar);}
                 }
 /*                if (ruleVariablesArr.length!=4){
                     myDiagnoses="ERROR: Qualitative rule type requires 4 or 4 parameters and the string ("+ruleVariables+") contains "+ruleVariablesArr.length+ " parameters";
@@ -417,9 +430,11 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
      * @param specCodeVersion
      * @param specFieldName
      * @param specFieldValue
+     * @param specRulesFieldName
+     * @param specRulesFieldValue
      * @return
      */
-    public Object[] specNew(String specCode, Integer specCodeVersion, String[] specFieldName, Object[] specFieldValue ){                          
+    public Object[] specNew(String specCode, Integer specCodeVersion, String[] specFieldName, Object[] specFieldValue, String[] specRulesFieldName, Object[] specRulesFieldValue){                          
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -476,10 +491,12 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
                     } catch (NoSuchMethodException | SecurityException ex) {
                         Logger.getLogger(ConfigSpecStructure.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    String[] parameters = new String[3];
+                    Object[] parameters = new Object[3];
                     parameters[0]=schemaConfigName;
                     parameters[1]=currFieldValue;
                     parameters[2]=specCode;
+method = null;
+specialFunctionReturn=DIAGNOSES_SUCCESS;
                     if (method!=null){ try {
                         specialFunctionReturn = method.invoke(this, (Object[]) parameters);
                         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -508,10 +525,14 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);           
         }
         try{
-            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.FLD_CODE.getName());
-            specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCode);
-            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName());
-            specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCodeVersion);                        
+            if (!LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.FLD_CODE.getName())){
+                specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.FLD_CODE.getName());
+                specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCode);
+            }
+            if (!LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName())){
+                specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName());
+                specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCodeVersion);                        
+            }
             diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.Spec.TBL.getName(), specFieldName, specFieldValue);                                   
 //            diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.SpecRules.TBL.getName(), 
 //                    new String[]{TblsCnfg.SpecRules.FLD_CODE.getName(), TblsCnfg.SpecRules.FLD_CONFIG_VERSION.getName(), 
@@ -523,6 +544,16 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
                 String[] specRulesFldNames=new String[]{TblsCnfg.SpecRules.FLD_CODE.getName(), TblsCnfg.SpecRules.FLD_CONFIG_VERSION.getName(),
                             TblsCnfg.SpecRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.FLD_ALLOW_MULTI_SPEC.getName()};
                 Object[] specRulesFldValues=new Object[] {specCode, specCodeVersion, false, false};
+                if (specRulesFieldName!=null){
+                    for (int i=0;i<specRulesFieldName.length;i++){
+                        if (LPArray.valueInArray(specRulesFldNames, specRulesFieldName[i]))
+                            specRulesFldValues[LPArray.valuePosicInArray(specRulesFldNames, specRulesFieldName[i])]=specRulesFieldValue[i];
+                        else{
+                            LPArray.addValueToArray1D(specRulesFldNames, specRulesFieldName[i]);
+                            LPArray.addValueToArray1D(specRulesFldValues, specRulesFieldValue[i]);
+                        }    
+                    }
+                }
                 Object[] insertRecordInSpecRules = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.SpecRules.TBL.getName(), 
                         specRulesFldNames,specRulesFldValues);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordInSpecRules[0].toString()))
@@ -577,10 +608,8 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
      * @param specFieldName
      * @param specFieldValue
      * @return
-     * @throws IllegalAccessException
-     * @throws java.lang.reflect.InvocationTargetException
      */
-    public Object[] specLimitNew(String specCode, Integer specCodeVersion, String[] specFieldName, Object[] specFieldValue ) throws IllegalAccessException, InvocationTargetException{
+    public Object[] specLimitNew(String specCode, Integer specCodeVersion, String[] specFieldName, Object[] specFieldValue ){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -605,9 +634,9 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
         Integer fieldIndexMethodVersion = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.FLD_METHOD_VERSION.getName());
         String methodName="";
         Integer methodVersion=-1;
-        if (fieldIndex>-1 && specFieldValue[fieldIndexMethodName].toString().length()>0){
-            methodName = (String) specFieldValue[fieldIndexMethodName];
-            methodVersion = (Integer) specFieldValue[fieldIndexMethodVersion];  
+        if (fieldIndexMethodName>-1 && fieldIndexMethodVersion>-1 && specFieldValue[fieldIndexMethodName].toString().length()>0){
+            if (fieldIndexMethodName>-1) methodName = (String) specFieldValue[fieldIndexMethodName];
+            if (fieldIndexMethodVersion>-1) methodVersion = (Integer) specFieldValue[fieldIndexMethodVersion];  
         }else{
             Object[][] analysisMethods = Rdbms.getRecordFieldsByFilter(schemaName, TblsCnfg.AnalysisMethod.TBL.getName(), 
                 new String[]{TblsCnfg.AnalysisMethod.FLD_ANALYSIS.getName()}, new Object[]{analysis}, 
@@ -617,8 +646,18 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "analysis <*1*> with multiple methods, <*2*>, then the method should be specified", new Object[]{analysis, analysisMethods.length});
             methodName=(String)analysisMethods[0][0];
             methodVersion=(Integer)analysisMethods[0][1];
-            specFieldValue[fieldIndexMethodName]=methodName;
-            specFieldValue[fieldIndexMethodVersion]=methodVersion;
+            if (fieldIndexMethodName>-1)
+                specFieldValue[fieldIndexMethodName]=methodName;
+            else{
+                specFieldName=LPArray.addValueToArray1D(specFieldName, TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName());
+                specFieldValue=LPArray.addValueToArray1D(specFieldValue, methodName);
+            }
+            if (fieldIndexMethodVersion>-1)
+                specFieldValue[fieldIndexMethodVersion]=methodVersion;
+            else{
+                specFieldName=LPArray.addValueToArray1D(specFieldName, TblsCnfg.AnalysisMethod.FLD_METHOD_VERSION.getName());
+                specFieldValue=LPArray.addValueToArray1D(specFieldValue, methodVersion);                
+            }
         }
 
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
@@ -663,7 +702,12 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
                 }                        
                 try {                    
                     Object specialFunctionReturn = DIAGNOSES_ERROR;
-                    if (method!=null){ specialFunctionReturn = method.invoke(this, schemaName, specCode, specCodeVersion, specFieldName, specFieldValue); }
+                    if (method!=null){ try {
+                        specialFunctionReturn = method.invoke(this, schemaName, specCode, specCodeVersion, specFieldName, specFieldValue);
+                        } catch (IllegalAccessException | IllegalArgumentException ex) {
+                            Logger.getLogger(ConfigSpecStructure.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+}
                     if (specialFunctionReturn.toString().contains(DIAGNOSES_ERROR)){
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFunctionReturn.toString());
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
@@ -686,11 +730,10 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
         diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.AnalysisMethod.TBL.getName(), whereFields, whereFieldsValue);                
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
             Object[] whereFieldsAndValues = LPArray.joinTwo1DArraysInOneOf1DString(diagnoses, whereFieldsValue, ":");
-            errorCode = "Rdbms_NoRecordsFound";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, TblsCnfg.AnalysisMethod.TBL.getName());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(whereFieldsAndValues));                                   
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaName);
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                                            
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), errorDetailVariables);                                            
         }else{
             fieldIndex = Arrays.asList(specFieldName).indexOf(TblsCnfg.SpecLimits.FLD_PARAMETER.getName());
             String parameter = (String) specFieldValue[fieldIndex];            
@@ -699,11 +742,10 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
             diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.AnalysisMethodParams.TBL.getName(), whereFields, whereFieldsValue);      
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 Object[] whereFieldsAndValues = LPArray.joinTwo1DArraysInOneOf1DString(diagnoses, whereFieldsValue, ":");
-                errorCode = "Rdbms_NoRecordsFound";
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, TblsCnfg.AnalysisMethodParams.TBL.getName());
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(whereFieldsAndValues));                                   
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaName);
-                diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                    
+                diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), errorDetailVariables);                    
                 diagnoses[5]="The parameter " + parameter + " was not found even though the method "+ methodName+" in its version " + methodVersion.toString()+" in the analysis " + analysis + " exists in the schema "+schemaName + "......... " + diagnoses[5].toString();                                             
                 return diagnoses;}                   
         }

@@ -162,6 +162,33 @@ public class ProcedureRequestSession {
     }
 
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
+/*        if (isTesting){
+            Boolean passCheckers=true;
+            String actionNm = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+            String procInstanceName = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
+            String finalToken = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
+            Token tokn = null;
+            if (finalToken!=null){
+                tokn = new Token(finalToken);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())){
+                        LPFrontEnd.servletReturnResponseError(req, resp, 
+                                LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, LPFrontEnd.setLanguage(req));              
+                        return null;                             
+                }
+            }
+            
+            Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, tokn, actionNm);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(req, resp, actionEnabled);
+                return null;                             
+            }            
+            actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, tokn.getUserRole(), actionNm);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(req, null, actionEnabled);
+                return null;                             
+            }                        
+        }
+*/
         if (theSession==null || theSession.getTokenString()==null){
             theSession=new ProcedureRequestSession(req, resp, isTesting, false, false, null);
         }
@@ -169,6 +196,7 @@ public class ProcedureRequestSession {
     }
 
     public static ProcedureRequestSession getInstanceForUAT(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, String theActionName){
+
         if (theSession==null || theSession.getTokenString()==null){
             theSession=new ProcedureRequestSession(req, resp, isTesting, true, false, theActionName);
         }

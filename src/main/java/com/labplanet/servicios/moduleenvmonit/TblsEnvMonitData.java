@@ -29,10 +29,10 @@ public class TblsEnvMonitData {
             case "INCUB_BATCH": return IncubBatch.createTableScript(schemaNamePrefix, fields);
             case "INSTRUMENT_INCUBATOR_NOTEBOOK": return InstrIncubatorNoteBook.createTableScript(schemaNamePrefix, fields);
             case "PRODUCTION_LOT": return ProductionLot.createTableScript(schemaNamePrefix, fields);
-            case "PROGRAM": return Program.createTableScript(schemaNamePrefix, fields);
-            case "PROGRAM_CALENDAR_DATE": return ProgramCalendarDate.createTableScript(schemaNamePrefix, fields);
-            case "PROGRAM_DAY": return ProgramDay.createTableScript(schemaNamePrefix, fields);
-            case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
+            //case "PROGRAM": return Program.createTableScript(schemaNamePrefix, fields);
+            //case "PROGRAM_CALENDAR_DATE": return ProgramCalendarDate.createTableScript(schemaNamePrefix, fields);
+            //case "PROGRAM_DAY": return ProgramDay.createTableScript(schemaNamePrefix, fields);
+            //case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
             case "SAVED_QUERIES": return TblsData.SavedQueries.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_MICROORGANISM": return SampleMicroorganism.createTableScript(schemaNamePrefix, fields);

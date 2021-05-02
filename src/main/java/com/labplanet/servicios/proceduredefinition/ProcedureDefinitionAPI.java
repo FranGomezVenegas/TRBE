@@ -7,7 +7,6 @@ package com.labplanet.servicios.proceduredefinition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
-import databases.Token;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,6 +23,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -35,9 +35,9 @@ public class ProcedureDefinitionAPI extends HttpServlet {
         /**
          *
          */
-        PROCEDURE_NAME("procedureName"), PROCEDURE_VERSION("procedureVersion"), SCHEMA_PREFIX("schemaPrefix"), MODULE_NAME("moduleName"), USER_NAME("userName"), ROLE_NAME("roleName"),
+        PROCEDURE_NAME("procedureName"), PROCEDURE_VERSION("procedureVersion"), SCHEMA_PREFIX("schemaPrefix"), MODULE_NAME("moduleName"), MODULE_VERSION("moduleVersion"), USER_NAME("userName"), ROLE_NAME("roleName"),
         UOM_NAME("uomName"),UOM_IMPORT_TYPE("importType"),
-        CREATE_DATABASE("createDatabase"),
+        CREATE_DATABASE("createDatabase"), CREATE_FILES("createFiles"), MAIN_PATH("mainPath"), 
         CREATE_CHECKPLATFORM_PROCEDURE("createCheckPlatformProcedure"),
         DEPLOY_SCHEMAS_AND_PROC_TBLS("deploySchemasAndProcTbls"), DEPLOY_PROC_INFO("deployProcInfo"), DEPLOY_PROC_USER_ROLES("deployProcUserRoles"),
         DEPLOY_PROC_SOP_META_DATA("deployProcSopMetaData"), DEPLOY_PROC_SOPS_TO_USERS("deployProcSopsToUsers"), DEPLOY_PROC_EVENTS("deployProcEvents"),
@@ -71,6 +71,14 @@ public class ProcedureDefinitionAPI extends HttpServlet {
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_BUSINESS_RULES_PROP_FILES.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 16),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_MODULE_TABLES_AND_FIELDS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_MASTER_DATA.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17)}),
+        DEPLOY_FRONTEND("DEPLOY_FRONTEND", "deployFrontend_success", 
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.SCHEMA_PREFIX.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.MODULE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.MODULE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 10),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.MAIN_PATH.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.CREATE_FILES.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 11)}),
         ADD_USER("ADD_USER", "addUserToProcedure_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -137,7 +145,15 @@ public class ProcedureDefinitionAPI extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            return;
+        }
         String language = LPFrontEnd.setLanguage(request); 
+        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+        
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
@@ -146,6 +162,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
             return;          
         }             
+/*
 //        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
@@ -157,19 +174,14 @@ public class ProcedureDefinitionAPI extends HttpServlet {
                 return;                             
         }
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
-        ProcedureDefinitionAPIEndpoints endPoint = null;
+*/        
+        ProcedureDefinitionAPIEndpoints endPoint = null;        
         try{
             endPoint = ProcedureDefinitionAPIEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }
-        areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response,
-                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
-            return;
-        }                
         try (PrintWriter out = response.getWriter()) {
             ClassProcedureDefinition clss=new ClassProcedureDefinition(request, response, endPoint);
             Object[] diagnostic=clss.getDiagnostic();

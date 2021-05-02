@@ -47,8 +47,27 @@ import static lbplanet.utilities.LPPlatform.trapMessage;
  * @version 0.1
  */
 
-public class  LPArray {
+public class  LPArray {        
     private LPArray(){    throw new IllegalStateException("Utility class");}    
+    
+    
+    public enum LpArrayErrorTrapping{ 
+        FIELDS_DUPLICATED("DataSample_FieldsDuplicated", "There are duplicated fields", "Hay campos por duplicado"),
+        ;
+        private LpArrayErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
     private static final String ENCRYPTION_KEY = "Bar12345Bar12345";
     private static final String ENCRYPTED_PREFIX = "encrypted_";
     private static final String ERRORTRAPPING_EXCEPTION= "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION";

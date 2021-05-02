@@ -88,13 +88,11 @@
     <servlet>
         <servlet-name>CertifyAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.app.CertifyAPIfrontend</servlet-class>
-    </servlet>    
+    </servlet>
     <servlet>
         <servlet-name>CertifyAnalysisMethod</servlet-name>
         <servlet-class>com.labplanet.servicios.app.CertifyAnalysisMethodAPI</servlet-class>
     </servlet>
-
-        
     <servlet>
         <servlet-name>SopUserAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.app.SopUserAPIfrontend</servlet-class>
@@ -284,6 +282,10 @@
         <servlet-name>InspLotRMAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPIfrontend</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>FrontendDefinition</servlet-name>
+        <servlet-class>com.labplanet.servicios.requirements.FrontendDefinition</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DownloadFileServlet</servlet-name>
         <url-pattern>/DownloadFileServlet</url-pattern>
@@ -334,7 +336,7 @@
     <servlet-mapping>
         <servlet-name>CertifyAPIfrontend</servlet-name>
         <url-pattern>/app/frontend/CertifyAPIfrontend</url-pattern>
-    </servlet-mapping>    
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CertifyAnalysisMethod</servlet-name>
         <url-pattern>/app/CertifyAnalysisMethodAPI</url-pattern>
@@ -570,6 +572,10 @@
     <servlet-mapping>
         <servlet-name>InspLotRMAPIfrontend</servlet-name>
         <url-pattern>/moduleinsplotrm/InspLotRMAPIfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>FrontendDefinition</servlet-name>
+        <url-pattern>/app/FrontendDefinitionAPI</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -27,9 +27,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import org.json.simple.JSONArray;
@@ -849,6 +851,20 @@ public class LPTestingOutFormat {
         return numEvaluationArguments;
     }
 
+    public Object[] checkMissingMandatoryParamValuesByCall(LPAPIArguments[] args, Object[] testingRowValues){
+        String missingValues="";
+        for (int i=0;i<args.length;i++){
+            String curArgValue = LPTestingOutFormat.csvExtractFieldValueString(testingRowValues[getActionNamePosic()+i]);
+            if (LPNulls.replaceNull(curArgValue).length()==0  && args[i].getMandatory()){
+                if (missingValues.length()>0) missingValues=missingValues+", ";
+                missingValues=missingValues+args[i].getName();
+            }
+        }
+        if (missingValues.length()==0)
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allFine", null);
+        else
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{missingValues});
+    }
     public static void cleanLastRun(String schemaPrefix, Integer scriptId){
         String[] scriptFieldName=new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName(), 
             TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNMATCH.getName(), 

@@ -46,16 +46,18 @@ public class DataSpec {
     public enum ResultCheckSuccessErrorTrapping{ 
         QUANT_OUT_MIN_CONTROL_IN_SPEC("resultCheck_quantitativeOutMinControlInSpec", "", ""),
         EVALUATION_IN("IN", "", ""), 
-        QUANTITATIVE_IN("DataSpec_resultCheck_quantitativeIN", "", ""), QUALITATIVE_IN("DataSpec_resultCheck_qualitativeIN", "", ""),
+        QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED("resultCheck_quantitativeLessThanMinValAllowed", "", ""),
+        QUANTITATIVE_GREATER_THAN_MAX_VAL_ALLOWED("resultCheck_quantitativeGreaterThanMaxValAllowed", "", ""),
+        QUANTITATIVE_IN("resultCheck_quantitativeIN", "", ""), QUALITATIVE_IN("resultCheck_qualitativeIN", "", ""),
         QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL("resultCheck_quantitativeOutMaxControlInSpec", "", ""),
         QUANTITATIVE_IN_SPEC_BUT_OUT_MIN_CONTROL("resultCheck_quantitativeOutMinControlInSpec", "", ""),
         EVALUATION_OUT("OUT", "", ""),
-        QUALITATIVE_OUT_EQUAL_TO("DataSpec_resultCheck_qualitativeEqualToOUT", "", ""), 
-        QUALITATIVE_OUT_NOT_EQUAL_TO("DataSpec_resultCheck_qualitativeNotEqualToOUT", "", ""),
-        QUALITATIVE_OUT_CONTAINS("DataSpec_resultCheck_qualitativeContainsOUT", "", ""), 
-        QUALITATIVE_OUT_NOT_CONTAINS("DataSpec_resultCheck_qualitativeNotContainsOUT", "", ""),
-        QUALITATIVE_OUT_IS_ONE_OF("DataSpec_resultCheck_qualitativeIsOneOfOUT", "", ""), 
-        QUALITATIVE_OUT_IS_NOT_ONE_OF("DataSpec_resultCheck_qualitativeIsNotOneOfOUT", "", ""),
+        QUALITATIVE_OUT_EQUAL_TO("resultCheck_qualitativeEqualToOUT", "", ""), 
+        QUALITATIVE_OUT_NOT_EQUAL_TO("resultCheck_qualitativeNotEqualToOUT", "", ""),
+        QUALITATIVE_OUT_CONTAINS("resultCheck_qualitativeContainsOUT", "", ""), 
+        QUALITATIVE_OUT_NOT_CONTAINS("resultCheck_qualitativeNotContainsOUT", "", ""),
+        QUALITATIVE_OUT_IS_ONE_OF("resultCheck_qualitativeIsOneOfOUT", "", ""), 
+        QUALITATIVE_OUT_IS_NOT_ONE_OF("resultCheck_qualitativeIsNotOneOfOUT", "", ""),
         QUANTITATIVE_OUT_SPEC_BY_MIN_STRICT("resultCheck_quantitativeOutSpecByMinStrict", "", ""), 
         QUANTITATIVE_OUT_SPEC_BY_MIN("resultCheck_quantitativeOutSpecByMin", "", ""),
         QUANTITATIVE_OUT_SPEC_BY_MAX_STRICT("resultCheck_quantitativeOutSpecByMaxStrict", "", ""), 
@@ -244,22 +246,31 @@ public class DataSpec {
      * @param maxStrict
      * @return
      */
-    public Object[] resultCheck(BigDecimal result, BigDecimal minSpec, BigDecimal maxSpec, Boolean minStrict, Boolean maxStrict){
-        
+    public Object[] resultCheck(BigDecimal result, BigDecimal minSpec, BigDecimal maxSpec, Boolean minStrict, Boolean maxStrict, BigDecimal minValAllowed, BigDecimal maxValAllowed){
+        Object [] errorVariables = new Object[0];                
         ConfigSpecRule matQuant = new ConfigSpecRule();
 
-        Object [] errorVariables = new Object[0];        
-        
         if (result==null){
-            String errorCode = ResultCheckErrorsErrorTrapping.NULL_MANDATORY_FIELD.getErrorCode();
             errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrorsErrorTrapping.MANDATORY_FIELD_ARGUMENT_RESULT.getErrorCode());
-            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrorsErrorTrapping.EVALUATION_WRONG_RULE.getErrorCode());
-            return diagnoses;
+            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.NULL_MANDATORY_FIELD.getErrorCode(), errorVariables);
+            return LPArray.addValueToArray1D(diagnoses, ResultCheckErrorsErrorTrapping.EVALUATION_WRONG_RULE.getErrorCode());
         }
         Object[] isCorrectMinMaxSpec = matQuant.specLimitIsCorrectQuantitative(minSpec, maxSpec);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isCorrectMinMaxSpec[0].toString())){
             return isCorrectMinMaxSpec;}
+        int compareTo=0;
+        if (minValAllowed!=null)
+            compareTo = result.compareTo(minValAllowed);
+        if (minValAllowed!=null && compareTo<0){
+            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED.getErrorCode(), new Object[]{result, minValAllowed});
+            return LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED.getErrorCode());
+        }
+        if (maxValAllowed!=null)
+            compareTo=result.compareTo(maxValAllowed);
+        if (maxValAllowed!=null && compareTo>0){
+            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED.getErrorCode(), new Object[]{result, maxValAllowed});
+            return LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED.getErrorCode());
+        }
                 
         if (minStrict==null){minStrict=true;}
         if (maxStrict==null){maxStrict=true;}
@@ -319,7 +330,7 @@ public class DataSpec {
      * @param maxControlStrict
      * @return
      */
-    public Object[] resultCheck(BigDecimal result, BigDecimal minSpec, BigDecimal maxSpec, Boolean minStrict, Boolean maxStrict, BigDecimal minControl, BigDecimal maxControl, Boolean minControlStrict, Boolean maxControlStrict){
+    public Object[] resultCheck(BigDecimal result, BigDecimal minSpec, BigDecimal maxSpec, Boolean minStrict, Boolean maxStrict, BigDecimal minControl, BigDecimal maxControl, Boolean minControlStrict, Boolean maxControlStrict, BigDecimal minValAllowed, BigDecimal maxValAllowed){
         
         Object [] errorVariables = new Object[0]; 
 
@@ -330,7 +341,7 @@ public class DataSpec {
                 return diagnoses;
         }
         
-        Object[] isCorrectMinMaxSpec = this.resultCheck(result,minSpec,maxSpec, minStrict, maxStrict);
+        Object[] isCorrectMinMaxSpec = this.resultCheck(result,minSpec,maxSpec, minStrict, maxStrict, minValAllowed, maxValAllowed);
         
         if (!"IN".equalsIgnoreCase(isCorrectMinMaxSpec[isCorrectMinMaxSpec.length-1].toString())){
             return isCorrectMinMaxSpec;

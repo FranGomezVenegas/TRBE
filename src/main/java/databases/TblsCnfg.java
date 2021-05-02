@@ -184,12 +184,7 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())
         ;
         private AnalysisMethod(String dbObjName, String dbObjType){
@@ -305,7 +300,9 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string())
+        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())        
         ;
         private AnalysisMethodParams(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

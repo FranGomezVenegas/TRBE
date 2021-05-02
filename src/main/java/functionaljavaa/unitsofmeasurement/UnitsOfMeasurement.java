@@ -15,6 +15,7 @@ import trazit.session.ProcedureRequestSession;
  * @version 0.1
  */
 public class UnitsOfMeasurement {
+    public enum UomImportType{INDIV, FAMIL}
     /**
      * @return the origQuantity
      */
@@ -287,5 +288,22 @@ public class UnitsOfMeasurement {
         Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName(), TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName()},  new Object[]{family, true}, new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()});
         return unitsList[0][0].toString();
+    }
+    
+    public static Object[] getUomFromConfig(String uomName, String importType){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=procReqSession.getProcedureInstance();    
+        String[] whereFieldNames = new String[0];
+        String[] whereFieldValues = new String[]{uomName};
+        if (UomImportType.INDIV.toString().equalsIgnoreCase(importType)){
+            whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()};
+        }
+        if (UomImportType.FAMIL.toString().equalsIgnoreCase(importType)){
+            whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName()};
+        }
+        return Rdbms.insertRecordInTableFromTable(true, TblsCnfg.UnitsOfMeasurement.getAllFieldNames(),
+                GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.UnitsOfMeasurement.TBL.getName(), 
+                whereFieldNames, whereFieldValues,
+                LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.UnitsOfMeasurement.TBL.getName(), TblsCnfg.UnitsOfMeasurement.getAllFieldNames());
     }
 }

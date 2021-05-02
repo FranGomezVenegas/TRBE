@@ -7,6 +7,7 @@ package functionaljavaa.analysis;
 
 import lbplanet.utilities.LPNulls;
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.TblsCnfg;
@@ -17,6 +18,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lbplanet.utilities.LPArray.LpArrayErrorTrapping;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
 import static lbplanet.utilities.LPPlatform.trapMessage;
 import trazit.session.ProcedureRequestSession;
@@ -32,13 +35,15 @@ public class ConfigAnalysisStructure {
     private static final String DIAGNOSES_SUCCESS = "SUCCESS";
     private static final String DIAGNOSES_ERROR = "ERROR";
     
-    public enum ConfigSpecErrorTrapping{ 
+    public enum ConfigAnalysisErrorTrapping{ 
         SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "MissingMandatoryFields <*1*>", ""),
-        MISSING_CONFIG_CODE("MissingConfigCode", "", ""),        
+        MISSING_CONFIG_CODE("MissingConfigCode", "", ""),   
+        ANALYSIS_CREATED("analysisRecord_createdSuccessfully", "", ""),   
+        
         ;
-        private ConfigSpecErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+        private ConfigAnalysisErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
@@ -51,12 +56,9 @@ public class ConfigAnalysisStructure {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
-    
-    
 
     private static String[] getSpecialFields(){
         String[] mySpecialFields = new String[6];
-        
         mySpecialFields[0]="spec.analyses";
         mySpecialFields[1]="spec.variation_nameszzz";        
         mySpecialFields[2]="spec_limits.variation_name";
@@ -84,15 +86,9 @@ public class ConfigAnalysisStructure {
     }
     
     private String[] getSpecLimitsMandatoryFields(){
-        String[] myMandatoryFields = new String[7];       
-/*        myMandatoryFields[0] = TblsCnfg.AnalysisMethodParams.FLD_VARIATION_NAME.getName();
-        myMandatoryFields[1] = TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName();
-        myMandatoryFields[2] = TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName();
-        myMandatoryFields[3] = TblsCnfg.AnalysisMethodParams.FLD_METHOD_VERSION.getName(); 
-        myMandatoryFields[4] = TblsCnfg.AnalysisMethodParams.FLD_PARAMETER.getName(); 
-        myMandatoryFields[5] = TblsCnfg.AnalysisMethodParams.FLD_RULE_TYPE.getName();  
-        myMandatoryFields[6] = TblsCnfg.AnalysisMethodParams.FLD_RULE_VARIABLES.getName();   */
-        return myMandatoryFields;
+    return new String[]{//TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName(),
+    //    TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName(), TblsCnfg.AnalysisMethodParams.FLD_METHOD_VERSION.getName(),
+        TblsCnfg.AnalysisMethodParams.FLD_PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.FLD_PARAM_TYPE.getName()};  
     }
     
     /**
@@ -284,55 +280,50 @@ if (1==1){return "ERROR";}
      *
      * @param code
      * @param configVersion
-     * @param specFieldName
-     * @param specFieldValue
+     * @param fieldName
+     * @param fieldValue
      * @return
      */
-    public Object[] analysisNew(String code, Integer configVersion, String[] specFieldName, Object[] specFieldValue ){                          
+    public Object[] analysisNew(String code, Integer configVersion, String[] fieldName, Object[] fieldValue ){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
-
-        String errorCode = "";
         String[] errorDetailVariables = new String[0];
-        
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
 
         String[] mandatoryFields = getSpecMandatoryFields();
         
-        String[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(specFieldName, specFieldValue);
+        String[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(fieldName, fieldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkTwoArraysSameLength[0])){return checkTwoArraysSameLength;}
 
-        if (LPArray.duplicates(specFieldName)){
-           errorCode = "DataSample_FieldsDuplicated";
-           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(specFieldName));
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                      
+        if (LPArray.duplicates(fieldName)){
+           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fieldName));
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpArrayErrorTrapping.FIELDS_DUPLICATED.getErrorCode(), errorDetailVariables);                      
         }
-
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
-            boolean contains = Arrays.asList(specFieldName).contains(currField.toLowerCase());
+            boolean contains = Arrays.asList(fieldName).contains(currField.toLowerCase());
             if (!contains){
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);                
             }
             else{
-                Object currFieldValue = specFieldValue[Arrays.asList(specFieldName).indexOf(currField.toLowerCase())];
+                Object currFieldValue = fieldValue[Arrays.asList(fieldName).indexOf(currField.toLowerCase())];
                 mandatoryFieldValue = LPArray.addValueToArray1D(mandatoryFieldValue, currFieldValue);
             }            
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, mandatoryFieldsMissingBuilder.toString());
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);           
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigSpecErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);                
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);                
         }
 
         String[] specialFields = getSpecialFields();
         String[] specialFieldsFunction = getSpecialFieldsFunction();
-        for (Integer inumLines=0;inumLines<specFieldName.length;inumLines++){
-            String currField = "analysis." + specFieldName[inumLines];
-            String currFieldValue = specFieldValue[inumLines].toString();
+        for (Integer inumLines=0;inumLines<fieldName.length;inumLines++){
+            String currField = "analysis." + fieldName[inumLines];
+            String currFieldValue = fieldValue[inumLines].toString();
             boolean contains = Arrays.asList(specialFields).contains(currField);
             if (contains){                    
                     Integer specialFieldIndex = Arrays.asList(specialFields).indexOf(currField);
@@ -370,34 +361,32 @@ if (1==1){return "ERROR";}
                 new String[]{TblsCnfg.Analysis.FLD_CODE.getName(), TblsCnfg.Analysis.FLD_CONFIG_VERSION.getName()}, 
                 new Object[] {code, configVersion});        
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            errorCode = "analysisRecord_AlreadyExists";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, code);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, configVersion.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);           
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND.getErrorCode(), errorDetailVariables);           
         }
         try{
-            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.Analysis.FLD_CODE.getName());
-            specFieldValue = LPArray.addValueToArray1D(specFieldValue, code);
-            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.Analysis.FLD_CONFIG_VERSION.getName());
-            specFieldValue = LPArray.addValueToArray1D(specFieldValue, configVersion);                        
-            diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.Analysis.TBL.getName(), specFieldName, specFieldValue);                                   
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.Analysis.FLD_CODE.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, code);
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.Analysis.FLD_CONFIG_VERSION.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, configVersion);                        
+            diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.Analysis.TBL.getName(), fieldName, fieldValue);                                   
 //            diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.AnalysisRules.TBL.getName(), 
 //                    new String[]{TblsCnfg.AnalysisRules.FLD_CODE.getName(), TblsCnfg.AnalysisRules.FLD_CONFIG_VERSION.getName(), 
 //                        TblsCnfg.AnalysisRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.AnalysisRules.FLD_ALLOW_MULTI_SPEC.getName()}, 
 //                    new Object[]{specCode, specCodeVersion, false, false});       
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_NEW.toString(), TblsCnfg.Analysis.TBL.getName(), code, 
-                    code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, ":"), null);
-                errorCode = "analysisRecord_createdSuccessfully";
+                    code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, ":"), null);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, code);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);                   
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ConfigAnalysisErrorTrapping.ANALYSIS_CREATED.getErrorCode(), errorDetailVariables);                   
             }    
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(ConfigAnalysisStructure.class.getName()).log(Level.SEVERE, null, ex);
         }                    
-        String params = "procInstanceName: " + procInstanceName+"specFieldName: "+Arrays.toString(specFieldName)+"specFieldValue: "+Arrays.toString(specFieldValue);
+        String params = "procInstanceName: " + procInstanceName+"specFieldName: "+Arrays.toString(fieldName)+"specFieldValue: "+Arrays.toString(fieldValue);
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, params);
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);                  
     }
@@ -432,16 +421,13 @@ if (1==1){return "ERROR";}
 */    
     /**
      *
-     * @param specCode
-     * @param specFieldName
-     * @param specFieldValue
-     * @param specCodeVersion
+     * @param analysisCode
+     * @param fieldName
+     * @param fieldValue
+     * @param analysisCodeVersion
      * @return
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
      */
-    public Object[] analysisMethodParamsNew(String specCode, Integer specCodeVersion, String[] specFieldName, Object[] specFieldValue ) throws IllegalAccessException, InvocationTargetException{
+    public Object[] analysisMethodParamsNew(String analysisCode, Integer analysisCodeVersion, String methodName, String[] fieldName, Object[] fieldValue ){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -452,65 +438,66 @@ if (1==1){return "ERROR";}
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         String[] mandatoryFields = getSpecLimitsMandatoryFields();
 
-        String[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(specFieldName, specFieldValue);
+        String[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(fieldName, fieldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkTwoArraysSameLength[0])){return checkTwoArraysSameLength;}
 
-        if (LPArray.duplicates(specFieldName)){
+        if (LPArray.duplicates(fieldName)){
            errorCode = "DataSample_FieldsDuplicated";
-           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(specFieldName));
+           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fieldName));
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                      
         }                
-        Integer fieldIndex = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.FLD_ANALYSIS.getName());
-        String analysis = (String) specFieldValue[fieldIndex];
-        Integer fieldIndexMethodName = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName());
-        Integer fieldIndexMethodVersion = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.FLD_METHOD_VERSION.getName());
-        String methodName="";
-        Integer methodVersion=-1;
-        if (fieldIndex>-1 && specFieldValue[fieldIndexMethodName].toString().length()>0){
-            methodName = (String) specFieldValue[fieldIndexMethodName];
-            methodVersion = (Integer) specFieldValue[fieldIndexMethodVersion];  
-        }else{
-            Object[][] analysisMethods = Rdbms.getRecordFieldsByFilter(schemaName, TblsCnfg.AnalysisMethod.TBL.getName(), 
-                new String[]{TblsCnfg.AnalysisMethod.FLD_ANALYSIS.getName()}, new Object[]{analysis}, 
+
+        Integer methodVersion=1;
+        if (LPArray.valueInArray(fieldName, "method_version"))
+            methodVersion=Integer.valueOf(fieldValue[LPArray.valuePosicInArray(fieldName, "method_version")].toString());
+        //Integer fieldIndex = Arrays.asList(fieldName).indexOf(TblsCnfg.AnalysisMethod.FLD_ANALYSIS.getName());
+        //String analysis = (String) fieldValue[fieldIndex];
+        //Integer fieldIndexMethodName = Arrays.asList(fieldName).indexOf(TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName());
+        //Integer fieldIndexMethodVersion = Arrays.asList(fieldName).indexOf(TblsCnfg.AnalysisMethod.FLD_METHOD_VERSION.getName());
+        //if (fieldIndex>-1 && fieldValue[fieldIndexMethodName].toString().length()>0){
+        //    methodName = (String) fieldValue[fieldIndexMethodName];
+        //}else{
+/*            Object[][] analysisMethods = Rdbms.getRecordFieldsByFilter(schemaName, TblsCnfg.AnalysisMethod.TBL.getName(), 
+                new String[]{TblsCnfg.AnalysisMethod.FLD_ANALYSIS.getName()}, new Object[]{analysisCode}, 
                 new String[]{TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.FLD_METHOD_VERSION.getName()}, 
                 new String[]{"1"}, true);
             if (analysisMethods.length!=1)
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "analysis <*1*> with multiple methods, <*2*>, then the method should be specified", new Object[]{analysis, analysisMethods.length});
-            methodName=(String)analysisMethods[0][0];
-            methodVersion=(Integer)analysisMethods[0][1];
-            specFieldValue[fieldIndexMethodName]=methodName;
-            specFieldValue[fieldIndexMethodVersion]=methodVersion;
-        }
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "analysis <*1*> with multiple methods, <*2*>, then the method should be specified", new Object[]{analysisCode, analysisMethods.length});
+            methodName=(String)analysisMethods[0][0];*/
+            //Integer methodVersion=1;
+            //fieldValue[fieldIndexMethodName]=methodName;
+            //fieldValue[fieldIndexMethodVersion]=methodVersion;
+        //}
 
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
-            boolean contains = Arrays.asList(specFieldName).contains(currField.toLowerCase());
+            boolean contains = Arrays.asList(fieldName).contains(currField.toLowerCase());
             if (!contains){
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);                
             }
             else{
-                Object currFieldValue = specFieldValue[Arrays.asList(specFieldName).indexOf(currField.toLowerCase())];
+                Object currFieldValue = fieldValue[Arrays.asList(fieldName).indexOf(currField.toLowerCase())];
                 mandatoryFieldValue = LPArray.addValueToArray1D(mandatoryFieldValue, currFieldValue);
             }
         }                    
         Object[] diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.Analysis.TBL.getName(), 
                 new String[]{TblsCnfg.Analysis.FLD_CODE.getName(), TblsCnfg.Analysis.FLD_CONFIG_VERSION.getName()}, 
-                new Object[] {specCode, specCodeVersion});        
+                new Object[] {analysisCode, analysisCodeVersion});        
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){                       
             return diagnoses;
         }
         
         if (mandatoryFieldsMissingBuilder.length()>0){           
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, mandatoryFieldsMissingBuilder.toString());
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigSpecErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);    
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);    
         }
         
         String[] specialFields = getSpecialFields();
         String[] specialFieldsFunction = getSpecialFieldsFunction();
-        for (Integer inumLines=0;inumLines<specFieldName.length;inumLines++){
-            String currField = "spec_limits." + specFieldName[inumLines];
+        for (Integer inumLines=0;inumLines<fieldName.length;inumLines++){
+            String currField = "analysis_method." + fieldName[inumLines];
             boolean contains = Arrays.asList(specialFields).contains(currField);
             if (contains){                    
                 Integer specialFieldIndex = Arrays.asList(specialFields).indexOf(currField);
@@ -524,7 +511,13 @@ if (1==1){return "ERROR";}
                 }                        
                 try {                    
                     Object specialFunctionReturn = DIAGNOSES_ERROR;
-                    if (method!=null){ specialFunctionReturn = method.invoke(this, schemaName, specCode, specCodeVersion, specFieldName, specFieldValue); }
+                    if (method!=null){ 
+                        try {
+                            specialFunctionReturn = method.invoke(this, schemaName, analysisCode, analysisCodeVersion, fieldName, fieldValue);
+                            } catch (IllegalAccessException | IllegalArgumentException ex) {
+                                Logger.getLogger(ConfigAnalysisStructure.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
                     if (specialFunctionReturn.toString().contains(DIAGNOSES_ERROR)){
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFunctionReturn.toString());
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
@@ -541,33 +534,43 @@ if (1==1){return "ERROR";}
                     return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
                 }
             }
-        }                        
+        }                    
         String[] whereFields = new String[]{TblsCnfg.AnalysisMethod.FLD_ANALYSIS.getName(), TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.FLD_METHOD_VERSION.getName()};
-        Object[] whereFieldsValue = new Object[] {analysis, methodName, methodVersion};
+        Object[] whereFieldsValue = new Object[] {analysisCode, methodName, methodVersion};
         diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.AnalysisMethod.TBL.getName(), whereFields, whereFieldsValue);                
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            Object[] whereFieldsAndValues = LPArray.joinTwo1DArraysInOneOf1DString(diagnoses, whereFieldsValue, ":");
-            errorCode = "Rdbms_NoRecordsFound";
+/*            Object[] whereFieldsAndValues = LPArray.joinTwo1DArraysInOneOf1DString(diagnoses, whereFieldsValue, ":");
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, TblsCnfg.AnalysisMethod.TBL.getName());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(whereFieldsAndValues));                                   
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaName);
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                                            
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), errorDetailVariables);                                            
+*/
+            String[] anaMethFldName=new String[]{TblsCnfg.AnalysisMethod.FLD_ANALYSIS.getName(), TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.FLD_METHOD_VERSION.getName(),
+            TblsCnfg.AnalysisMethod.FLD_CREATED_BY.getName(), TblsCnfg.AnalysisMethod.FLD_CREATED_ON.getName()};
+            Object[] anaMethFldValue=new Object[]{analysisCode, methodName, methodVersion, fieldValue[LPArray.valuePosicInArray(fieldName, TblsCnfg.AnalysisMethod.FLD_CREATED_BY.getName())], LPDate.getCurrentTimeStamp()};
+            diagnoses = Rdbms.insertRecordInTable(schemaName, TblsCnfg.AnalysisMethod.TBL.getName(), anaMethFldName, anaMethFldValue); 
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+                ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_METHOD_NEW.toString(), TblsCnfg.AnalysisMethodParams.TBL.getName(), analysisCode, 
+                    analysisCode, analysisCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(anaMethFldName, anaMethFldValue, ":"), null);
+            }
         }
         try{
-            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName());
-            specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCode);
-            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.AnalysisMethodParams.FLD_METHOD_VERSION.getName());
-            specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCodeVersion);            
-            diagnoses = Rdbms.insertRecordInTable(schemaName, TblsCnfg.AnalysisMethodParams.TBL.getName(), specFieldName, specFieldValue); 
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, analysisCode);
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, methodName);
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.AnalysisMethodParams.FLD_METHOD_VERSION.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, methodVersion);            
+            diagnoses = Rdbms.insertRecordInTable(schemaName, TblsCnfg.AnalysisMethodParams.TBL.getName(), fieldName, fieldValue); 
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_METHOD_PARAM_NEW.toString(), TblsCnfg.AnalysisMethodParams.TBL.getName(), specCode, 
-                    specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, ":"), null);
+                ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_METHOD_PARAM_NEW.toString(), TblsCnfg.AnalysisMethodParams.TBL.getName(), analysisCode, 
+                    analysisCode, analysisCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, ":"), null);
             }
             return diagnoses;
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(ConfigAnalysisStructure.class.getName()).log(Level.SEVERE, null, ex);
         }                    
-        String params = "procInstanceName: " + procInstanceName+"specFieldName: "+Arrays.toString(specFieldName)+"specFieldValue: "+Arrays.toString(specFieldValue);
+        String params = "procInstanceName: " + procInstanceName+"fieldName: "+Arrays.toString(fieldName)+"fieldValue: "+Arrays.toString(fieldValue);
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, params);
         diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);                    
         return diagnoses;

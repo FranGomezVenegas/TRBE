@@ -112,12 +112,12 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
                 Object[] resSpecEvaluation = new Object[0];
                 if (minControl==null){
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, result, minSpec, minStrict, maxSpec, maxStrict}));
-                    resSpecEvaluation = resChkSpec.resultCheck(result, minSpec, maxSpec, minStrict, maxStrict);
+                    resSpecEvaluation = resChkSpec.resultCheck(result, minSpec, maxSpec, minStrict, maxStrict, null, null);
                 }else{
                     fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(
                             new Object[]{iLines, minSpec, minStrict, minControl, minControlStrict, result, maxControl, maxControlStrict, maxSpec, maxStrict}));
                     resSpecEvaluation = resChkSpec.resultCheck(
-                            result, minSpec, maxSpec, minStrict, maxStrict, minControl, maxControl, minControlStrict, maxControlStrict);
+                            result, minSpec, maxSpec, minStrict, maxStrict, minControl, maxControl, minControlStrict, maxControlStrict, null, null);
                 }               
                 if (numEvaluationArguments==0){                    
                     if (minControl==null){

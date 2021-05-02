@@ -68,7 +68,12 @@ public class TestingRegressionUAT extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
             }
-            procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);        
+            procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);
+            if (procReqInstance==null){
+                LPFrontEnd.servletReturnResponseError(request, response, 
+                    "Error", null, procReqInstance.getLanguage());              
+                return;
+            }
             if (procReqInstance.getHasErrors()){
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, 

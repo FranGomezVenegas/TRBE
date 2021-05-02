@@ -12,7 +12,6 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FI
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FIELD_VALUE;
 import databases.Rdbms;
 import databases.TblsCnfg;
-import databases.Token;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
 import functionaljavaa.materialspec.ConfigSpecStructure;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -157,7 +156,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 Object[] specFieldValueArr=new Object[]{};
                 if (specFieldName!=null && specFieldName.length()>0) specFieldNameArr=specFieldName.split("\\|");
                 if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
-                diagnostic = spcStr.specNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
+                diagnostic = spcStr.specNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr, null, null);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{

@@ -323,7 +323,6 @@ private static void declareInDatabase(String apiName, String endpointName, Strin
                     new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.FLD_LAST_UPDATE.getName()},
                     new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()},
                     new String[]{EndpointsDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
-            
             return;
         }else{
             String[] flds=(String[]) docInfoForEndPoint[0];

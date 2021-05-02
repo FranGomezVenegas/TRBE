@@ -30,7 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
+import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
+import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -50,7 +52,8 @@ public class DbTestingLimitAndResult extends HttpServlet {
                 new LPAPIArguments("methodName", LPAPIArguments.ArgumentType.STRING.toString(), true, 11),
                 new LPAPIArguments("methodVersion", LPAPIArguments.ArgumentType.STRING.toString(), true, 12),
                 new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 13),
-                new LPAPIArguments("resultUomName", LPAPIArguments.ArgumentType.STRING.toString(), false, 14),
+                new LPAPIArguments("resultValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 14),
+                new LPAPIArguments("resultUomName", LPAPIArguments.ArgumentType.STRING.toString(), false, 15),
         } ),                
         ;
         private TestingLimitAndResult(String name, String successMessageCode, LPAPIArguments[] argums){
@@ -88,6 +91,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
         String table1Header = TestingServletsConfig.DB_SCHEMACONFIG_SPEC_RESULTCHECK.getTablesHeaders();
         response = LPTestingOutFormat.responsePreparation(response);        
         DataSpec resChkSpec = new DataSpec();   
+        Object[] resSpecEvaluation = null;                
 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true, "");        
         if (procReqInstance.getHasErrors()){
@@ -105,19 +109,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
         StringBuilder fileContentBuilder = new StringBuilder(0);        
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());
         Object[][]  testingContent =tstOut.getTestingContent();
-
-/*        
-        String csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
-        String csvFileName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME);
-        if ("".equals(csvPathName) || csvPathName==null){
-            csvFileName = LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK.getTesterFileName();                         
-            csvPathName = LPTestingOutFormat.TESTING_FILES_PATH; }
-        csvPathName = csvPathName+csvFileName; 
-        String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
-        
-        Object[][] testingContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
-        StringBuilder fileContentBuilder = new StringBuilder(0);*/
-
+Integer currentLine=0;
         try (PrintWriter out = response.getWriter()) {
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
@@ -129,27 +121,15 @@ public class DbTestingLimitAndResult extends HttpServlet {
             
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
-            
-/*            fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
-            HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
-            if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
-                fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
-                out.println(fileContentBuilder.toString()); 
-                return;
-            }            
-            
-            Integer numEvaluationArguments = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_EVALUATION_ARGUMENTS.getTagValue().toString()).toString());   
-            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
-            String table1Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"1").toString();               
-            StringBuilder fileContentTable1Builder = new StringBuilder(0);
-            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
-            Integer totalLines =testingContent.length; */
-//            numHeaderLines=13;
-//            totalLines=14;
+            LPAPIArguments[] arguments = TestingLimitAndResult.DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT.getArguments();
+//numHeaderLines=48;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
+currentLine=iLines;  
+//if (currentLine==48) 
+//    out.println("parate aqui");
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
-                
+
                 Integer lineNumCols = testingContent[0].length-1;
                 String resultValue = null;
                 
@@ -162,82 +142,116 @@ public class DbTestingLimitAndResult extends HttpServlet {
                 Integer methodVersion=null;
                 String parameterName="";
                 String resultUomName=null; 
-                if (lineNumCols>=numEvaluationArguments)
-                    {schemaName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()]);}
-                if (lineNumCols>=numEvaluationArguments+1)
-                    {specCode = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+1]);}
-                if (lineNumCols>=numEvaluationArguments+2)
-                    {specCodeVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
-                if (lineNumCols>=numEvaluationArguments+3)
-                    {variation = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
-                if (lineNumCols>=numEvaluationArguments+4)
-                    { analysis = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+4]);}
-                if (lineNumCols>=numEvaluationArguments+5)
-                    { methodName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+5]);}
-                if (lineNumCols>=numEvaluationArguments+6)
-                    { methodVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+6]);}
-                if (lineNumCols>=numEvaluationArguments+7)
-                    {parameterName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+7]);}
-                if (lineNumCols>=numEvaluationArguments+8)
-                    {resultValue = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+8]);}
-                if (lineNumCols>=numEvaluationArguments+9)
-                    {resultUomName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+9]);}
+                int argIndex=0;
                 
-                String schemaConfigName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.CONFIG.getName());
-                String schemaDataName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
-
-                Object[] resSpecEvaluation = null;                
-                Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
-                    new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), 
-                        TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(),TblsCnfg.SpecLimits.FLD_PARAMETER.getName()}, 
-                    new Object[]{specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName}, 
-                    new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(),TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(),TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), 
-                        TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), TblsCnfg.SpecLimits.FLD_UOM.getName(), TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName()});
-                if ( (LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) ){ //&& (!"Rdbms_NoRecordsFound".equalsIgnoreCase(specLimits[0][4].toString())) ){
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
-                    resSpecEvaluation=specLimits[0];
-                    resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla No encontrada ");                    
+                resSpecEvaluation=tstOut.checkMissingMandatoryParamValuesByCall(arguments, testingContent[iLines]);
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, schemaName, specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName, resultValue, resultUomName}));
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){                    
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
+                    Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
+//                    break;
                 }else{
-                    Integer limitId = (Integer) specLimits[0][0];
-                    String specUomName=(String) specLimits[0][4];
-                    ConfigSpecRule specRule = new ConfigSpecRule();
-                    specRule.specLimitsRule(limitId, null);
-                    if (specRule.getRuleIsQualitative()){        
-                      resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
-                              specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
-                    } 
-                    if (specRule.getRuleIsQuantitative()){
-                        Boolean requiresUnitsConversion=true;
-                        BigDecimal resultConverted =  null;
-                        UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue), resultUomName);     
-                        resultUomName = LPNulls.replaceNull(resultUomName);
-                        specUomName = LPNulls.replaceNull(specUomName);
-                        if (resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
-                        if (requiresUnitsConversion){
-                            uom.convertValue(specUomName);
-                            if (!uom.getConvertedFine()) {
-                                resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});                  
-                            }
-                            resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        
-                        }
+                
+                    if (lineNumCols>=numEvaluationArguments+argIndex)
+                        schemaName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()]);
+                    argIndex++;
+                    if (lineNumCols>=numEvaluationArguments+argIndex)
+                        specCode = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+argIndex]);
+                    argIndex++;
+                    if (lineNumCols>=numEvaluationArguments+argIndex)
+                        {specCodeVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
+                    argIndex++;
+                    if (lineNumCols>=numEvaluationArguments+argIndex)
+                        {variation = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
+                    argIndex++;
+                    if (lineNumCols>=numEvaluationArguments+argIndex)
+                        { analysis = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+4]);}
+                    argIndex++;
+                    if (lineNumCols>=numEvaluationArguments+argIndex)
+                        { methodName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+5]);}
+                    argIndex++;
+                    if (lineNumCols>=numEvaluationArguments+argIndex){ 
+                        methodVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+6]);
+                    }
+                    argIndex++;
+                    if (lineNumCols>=numEvaluationArguments+argIndex)
+                        {parameterName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+7]);}
+                    argIndex++;
+                    if (lineNumCols>=numEvaluationArguments+argIndex)
+                        {resultValue = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+8]);}
+                    argIndex++;
+                    if (lineNumCols>=numEvaluationArguments+argIndex)
+                        {resultUomName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+9]);}
+                    argIndex++;
 
-                        
-                      BigDecimal resultValueBigDecimal= new BigDecimal(resultValue);
-                      if (specRule.getQuantitativeHasControl()){
-                          if (requiresUnitsConversion) {
-                              resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict());
-                          } else {
-                              resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict());
-                          }
-                          resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " +specRule.getQualitativeRuleRepresentation());
-                      } else {
-                          if (requiresUnitsConversion) {
-                              resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict());
-                          } else {
-                              resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict());
-                          }
-                      }
-                      resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " +specRule.getQuantitativeRuleRepresentation());
+                    String schemaConfigName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.CONFIG.getName());
+                    String schemaDataName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
+                    if (methodVersion==null){
+                        Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
+//                        Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
+//                        fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
+//                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
+                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
+                        resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{"methodVersion"});
+                        resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "method version incorrect");                    
+                    }else{
+                        Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
+                            new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), 
+                                TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(),TblsCnfg.SpecLimits.FLD_PARAMETER.getName()}, 
+                            new Object[]{specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName}, 
+                            new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(),TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(),TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), 
+                                TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), TblsCnfg.SpecLimits.FLD_UOM.getName(), TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName()});
+                        if ( (LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) ){ //&& (!"Rdbms_NoRecordsFound".equalsIgnoreCase(specLimits[0][4].toString())) ){
+                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
+                            resSpecEvaluation=specLimits[0];
+                            resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla No encontrada ");                    
+                        }else{
+                            Integer limitId = (Integer) specLimits[0][0];
+                            String specUomName=(String) specLimits[0][4];
+                            ConfigSpecRule specRule = new ConfigSpecRule();
+                            specRule.specLimitsRule(limitId, null);
+                            if (specRule.getRuleIsQualitative()){        
+                              resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
+                                      specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
+                            } 
+                            if (specRule.getRuleIsQuantitative()){
+                                if (!isNumeric(resultValue))
+                                        resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_valueNotNumeric", new Object[]{resultValue});                  
+                                else{
+                                    Boolean requiresUnitsConversion=true;
+                                    BigDecimal resultConverted =  null;
+                                    UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue), resultUomName);     
+                                    resultUomName = LPNulls.replaceNull(resultUomName);
+                                    specUomName = LPNulls.replaceNull(specUomName);
+                                    if (resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
+                                    if (requiresUnitsConversion){
+                                        uom.convertValue(specUomName);
+                                        if (!uom.getConvertedFine()) {
+                                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});                  
+                                        }
+                                        resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        
+                                    }
+                                    BigDecimal resultValueBigDecimal= new BigDecimal(resultValue);
+                                    if (specRule.getQuantitativeHasControl()){
+                                        if (requiresUnitsConversion) {
+                                            resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                        } else {
+                                            resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                        }
+                                        resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " +specRule.getQualitativeRuleRepresentation());
+                                    } else {
+                                        if (requiresUnitsConversion) {
+                                            resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                        } else {
+                                            resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                        }
+                                    }
+                                    resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " +specRule.getQuantitativeRuleRepresentation());
+                                }
+                            }
+                        }
                     }
                 }
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, schemaName, specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName, resultValue, resultUomName}));
@@ -265,11 +279,11 @@ public class DbTestingLimitAndResult extends HttpServlet {
         tstAssertSummary=null; resChkSpec=null; */
         }
         catch(Exception error){
-            PrintWriter out = response.getWriter();
-            out.println(error.getMessage());
+            PrintWriter out = response.getWriter() ;
+            out.println(Arrays.toString(testingContent[currentLine])+ error.getMessage()+ currentLine.toString());
             tstAssertSummary=null; resChkSpec=null;
             String exceptionMessage = error.getMessage();     
-            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
+           // LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
         } finally {
             // release database resources
             try {
