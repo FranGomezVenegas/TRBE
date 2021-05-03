@@ -54,11 +54,11 @@ public class DataProgramSample{
             }else
                 fieldValue[programLocationPosic] = programLocation;
             String[] specFldNames=new String[]{TblsEnvMonitData.ProgramLocation.FLD_SPEC_CODE.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_ANALYSIS_VARIATION.getName(), TblsEnvMonitData.ProgramLocation.FLD_AREA.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_VARIATION_NAME.getName()};
-            Object[][] diagnosis = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(),
+            Object[][] diagnosis = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(),
                 new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
                 new Object[]{programName, programLocation}, 
                 specFldNames, true);            
-//            Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
+//            Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
 //                    new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
 //                    new Object[]{programName, programLocation});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0][0].toString()))
@@ -85,7 +85,7 @@ public class DataProgramSample{
         
         String samplerSmpTemplate=Parameter.getMessageCodeValue("config", procInstanceName, "procedure", "samplerSampleTemplate", null);  
         
-        Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
+        Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
                 new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
                 new Object[]{programName, programLocation}, 
                 new String[]{TblsEnvMonitData.ProgramLocation.FLD_REQUIRES_PERSON_ANA.getName(), TblsEnvMonitData.ProgramLocation.FLD_PERSON_ANA_DEFINITION.getName()});

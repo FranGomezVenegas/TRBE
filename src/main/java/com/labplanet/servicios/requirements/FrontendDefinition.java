@@ -7,11 +7,14 @@ package com.labplanet.servicios.requirements;
 
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints;
-import databases.DbObjects;
 import databases.Rdbms;
+import functionaljavaa.parameter.Parameter;
+import functionaljavaa.platform.doc.frontend.DeploymentFrontEnd;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ResourceBundle;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +28,19 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class FrontendDefinition extends HttpServlet {
+    
+    public enum MainProcInstanceFolders{MODULE_FUNCT("01moduleFunctionality"),
+        REDUX("02Redux"), CONFIG("03config"), PROC("04procedure"), IMAGES("05images");
+        private MainProcInstanceFolders(String pathName){
+            this.pathName=pathName;} 
+     
+        public String getPathName(){
+            return this.pathName;
+        }
+        private final String pathName;
+        
+    }
+    
     Boolean CREATE_FILES=false;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -44,11 +60,19 @@ public class FrontendDefinition extends HttpServlet {
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, arguments);                
         String procName = argValues[0].toString(); //request.getParameter("procedureName"); //"process-us";         
         Integer procVersion= (Integer) argValues[1];
-        String schemaPrefix=argValues[2].toString(); //request.getParameter("schemaPrefix"); //"process-us";
+        String procInstanceName=argValues[2].toString(); //request.getParameter("schemaPrefix"); //"process-us";
         String moduleName=argValues[3].toString();
-        String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
-                            , {"Process Name", procName}, {"Process Version", procVersion.toString()}, {"Instance", schemaPrefix}
-                            , {"CREATE_SCHEMAS_AND_PROC_TBLS", CREATE_FILES.toString()}
+        Integer moduleVersion= (Integer) argValues[4];
+        String mainPath= argValues[5].toString();
+        String newFileCamelLower= argValues[6].toString();
+        String newFileCamel= argValues[7].toString();
+        String newFileProcName= argValues[8].toString();
+        String newAliasUnderscore= argValues[9].toString();
+        
+        String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}, 
+            {"Process Name", procName}, {"Process Version"}, {procVersion.toString()}, {"Instance", procInstanceName},
+            {"Module Name", moduleName}, {"Module Version", moduleVersion.toString()},
+            {"CREATE_SCHEMAS_AND_PROC_TBLS", CREATE_FILES.toString()}
 //                            , {"PROC_DEPLOY_PROCEDURE_INFO", PROCDEPL_PROCEDURE_INFO.toString()}
 //                            , {"PROC_DEPLOY_PROCEDURE_USER_ROLES", PROCDEPL_PROCEDURE_USER_ROLES.toString()}
 //                            , {"PROC_DEPLOY_PROCEDURE_SOP_META_DATA", PROCDEPL_PROCEDURE_SOP_META_DATA.toString()}    
@@ -58,11 +82,24 @@ public class FrontendDefinition extends HttpServlet {
 //                            , {"PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS", PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS.toString()}
 //                            , {"PROC_DEPLOYMENT_ASSIGN_USER_SOPS", PROC_DEPLOYMENT_ASSIGN_USER_SOPS.toString()}
                     };
-        
+    ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
+    String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());        
+    Rdbms.stablishDBConection(dbTrazitModules);   
+    
+    File mainPathFile = new File(mainPath+File.separator+procInstanceName);
+    mainPathFile.mkdirs();
+    
+    for (MainProcInstanceFolders curFldr: MainProcInstanceFolders.values()){   
+        File otherDirs = new File(mainPathFile.getPath()+File.separator+curFldr.getPathName());
+        otherDirs.mkdirs();        
+    }
+    File newFile = new File(mainPathFile.getAbsolutePath() + File.separator + "newFile.txt");
+        boolean createNewFile = newFile.createNewFile();
+    //Files.touch(newFile);        
         fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(businessVariablesHeader); 
         try (PrintWriter out = response.getWriter()) {
-            if (Boolean.valueOf(argValues[4].toString()) || CREATE_FILES){
-                JSONObject createFiles = DbObjects.createModuleSchemasAndBaseTables(schemaPrefix, null);
+            if (Boolean.valueOf(argValues[10].toString()) || CREATE_FILES){
+                JSONObject createFiles = DeploymentFrontEnd.createFiles(mainPathFile, newFileCamelLower, newFileCamel, newFileProcName, newAliasUnderscore, moduleName, moduleVersion);
                 String[][] createDBProcedureInfoTbl = new String[][]{{"Log for createFiles"},{createFiles.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureInfoTbl);
             }   
@@ -71,8 +108,7 @@ public class FrontendDefinition extends HttpServlet {
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();
             out.println(fileContent);            
         }
-        Rdbms.closeRdbms();
-        
+        Rdbms.closeRdbms();        
         
     }
 

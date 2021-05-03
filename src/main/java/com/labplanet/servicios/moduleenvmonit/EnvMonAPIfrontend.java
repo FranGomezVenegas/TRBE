@@ -306,7 +306,7 @@ GlobalAPIsParams.
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
             switch (endPoint){
                 case PROGRAMS_LIST: 
-                    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+                    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
                     String[] programFldNameArray = getFieldsListToRetrieve(argValues[0].toString(), TblsEnvMonitData.Program.TBL.getAllFieldNames());
                     String[] programFldSortArray = getFieldsListToRetrieve(argValues[1].toString(), new String[]{});
                     String[] programLocationFldNameArray = getFieldsListToRetrieve(argValues[2].toString(), TblsEnvMonitData.ProgramLocation.TBL.getAllFieldNames());
@@ -326,7 +326,7 @@ GlobalAPIsParams.
                     Object[] statusListEn = DataSampleUtilities.getSchemaSampleStatusList(GlobalVariables.Languages.EN.getName());
                     Object[] statusListEs = DataSampleUtilities.getSchemaSampleStatusList(GlobalVariables.Languages.ES.getName());
 
-                    Object[][] programInfo=getTableData(GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.Program.TBL.getName(), 
+                    Object[][] programInfo=getTableData(GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.Program.TBL.getName(), 
                         argValues[0].toString(), TblsEnvMonitData.Program.getAllFieldNames(), 
                         new String[]{TblsEnvMonitData.Program.FLD_ACTIVE.getName()}, new Object[]{true}, programFldSortArray);        
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())) return;
@@ -344,7 +344,7 @@ GlobalAPIsParams.
                         programJsonObj.put(JSON_TAG_NAME_TOTAL, programSampleSummary.length); 
                         programJsonObj.put("KPI", getKPIInfoFromRequest(request, TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName(), curProgramName));   
                        
-                        Object[][] programLocations=getTableData(GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.ProgramLocation.TBL.getName(), 
+                        Object[][] programLocations=getTableData(GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.ProgramLocation.TBL.getName(), 
                             argValues[2].toString(), TblsEnvMonitData.ProgramLocation.getAllFieldNames(), 
                             new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new Object[]{curProgramName}, programLocationFldSortArray);        
 /**/ 

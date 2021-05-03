@@ -110,8 +110,8 @@ public class TblsTrazitDocTrazit {
     }
 
     public enum BusinessRulesDeclaration{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
-        ,        TBL("business_rules_declaration", LPDatabase.createSequence(FLD_ID.getName())
+        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)"),
+        TBL("business_rules_declaration", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_ID_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
@@ -196,8 +196,8 @@ public class TblsTrazitDocTrazit {
     }
 
     public enum MessageCodeDeclaration{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
-        ,        TBL("message_codes_declaration", LPDatabase.createSequence(FLD_ID.getName())
+        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)"),
+        TBL("message_codes_declaration", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_ID_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")

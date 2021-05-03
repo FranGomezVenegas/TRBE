@@ -122,10 +122,11 @@ Integer currentLine=0;
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             LPAPIArguments[] arguments = TestingLimitAndResult.DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT.getArguments();
-//numHeaderLines=48;
+//numHeaderLines=103;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
 currentLine=iLines;  
-//if (currentLine==48) 
+//out.println(iLines);
+//if (currentLine==103) 
 //    out.println("parate aqui");
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
@@ -188,14 +189,17 @@ currentLine=iLines;
 
                     String schemaConfigName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.CONFIG.getName());
                     String schemaDataName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
-                    if (methodVersion==null){
+                    if (specCodeVersion==null || methodVersion==null){
                         Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
 //                        Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
 //                        fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
 //                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
-                        resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{"methodVersion"});
-                        resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "method version incorrect");                    
+                        Object[] fldsNull = new Object[]{0};
+                        if (specCodeVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "specCodeVersion");
+                        if (methodVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "methodVersion");
+                        resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), fldsNull);
+                        resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");                    
                     }else{
                         Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
                             new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), 
@@ -226,7 +230,7 @@ currentLine=iLines;
                                     resultUomName = LPNulls.replaceNull(resultUomName);
                                     specUomName = LPNulls.replaceNull(specUomName);
                                     if (resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
-                                    if (requiresUnitsConversion){
+                                    if (requiresUnitsConversion && specUomName!=null && specUomName.length()>0){
                                         uom.convertValue(specUomName);
                                         if (!uom.getConvertedFine()) {
                                             resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});                  
