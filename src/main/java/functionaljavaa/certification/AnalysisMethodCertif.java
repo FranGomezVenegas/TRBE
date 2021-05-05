@@ -57,7 +57,7 @@ public class AnalysisMethodCertif {
     
     public static Object[] isUserCertificationEnabled(){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String tagValue = Parameter.getMessageCodeValue("config", procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), CertificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName(), null);
+        String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), CertificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName());
         if (Parameter.isTagValueOneOfEnableOnes(tagValue))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "isUserCertificationEnabled", null);
         else

@@ -122,12 +122,12 @@ Integer currentLine=0;
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             LPAPIArguments[] arguments = TestingLimitAndResult.DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT.getArguments();
-//numHeaderLines=103;
+//numHeaderLines=34;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
 currentLine=iLines;  
 //out.println(iLines);
-//if (currentLine==103) 
-//    out.println("parate aqui");
+if (currentLine==34) 
+    out.println("parate aqui");
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
 
@@ -145,56 +145,50 @@ currentLine=iLines;
                 String resultUomName=null; 
                 int argIndex=0;
                 
-                resSpecEvaluation=tstOut.checkMissingMandatoryParamValuesByCall(arguments, testingContent[iLines]);
+                if (lineNumCols>=numEvaluationArguments+argIndex)
+                    schemaName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()]);
+                argIndex++;
+                if (lineNumCols>=numEvaluationArguments+argIndex)
+                    specCode = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+argIndex]);
+                argIndex++;
+                if (lineNumCols>=numEvaluationArguments+argIndex)
+                    {specCodeVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
+                argIndex++;
+                if (lineNumCols>=numEvaluationArguments+argIndex)
+                    {variation = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
+                argIndex++;
+                if (lineNumCols>=numEvaluationArguments+argIndex)
+                    { analysis = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+4]);}
+                argIndex++;
+                if (lineNumCols>=numEvaluationArguments+argIndex)
+                    { methodName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+5]);}
+                argIndex++;
+                if (lineNumCols>=numEvaluationArguments+argIndex){ 
+                    methodVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+6]);
+                }
+                argIndex++;
+                if (lineNumCols>=numEvaluationArguments+argIndex)
+                    {parameterName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+7]);}
+                argIndex++;
+                if (lineNumCols>=numEvaluationArguments+argIndex)
+                    {resultValue = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+8]);}
+                argIndex++;
+                if (lineNumCols>=numEvaluationArguments+argIndex)
+                    {resultUomName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+9]);}
+                argIndex++;
+
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, schemaName, specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName, resultValue, resultUomName}));
+                resSpecEvaluation=tstOut.checkMissingMandatoryParamValuesByCall(arguments, testingContent[iLines]);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
                     Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
-//                    break;
                 }else{
-                
-                    if (lineNumCols>=numEvaluationArguments+argIndex)
-                        schemaName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()]);
-                    argIndex++;
-                    if (lineNumCols>=numEvaluationArguments+argIndex)
-                        specCode = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+argIndex]);
-                    argIndex++;
-                    if (lineNumCols>=numEvaluationArguments+argIndex)
-                        {specCodeVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
-                    argIndex++;
-                    if (lineNumCols>=numEvaluationArguments+argIndex)
-                        {variation = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
-                    argIndex++;
-                    if (lineNumCols>=numEvaluationArguments+argIndex)
-                        { analysis = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+4]);}
-                    argIndex++;
-                    if (lineNumCols>=numEvaluationArguments+argIndex)
-                        { methodName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+5]);}
-                    argIndex++;
-                    if (lineNumCols>=numEvaluationArguments+argIndex){ 
-                        methodVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+6]);
-                    }
-                    argIndex++;
-                    if (lineNumCols>=numEvaluationArguments+argIndex)
-                        {parameterName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+7]);}
-                    argIndex++;
-                    if (lineNumCols>=numEvaluationArguments+argIndex)
-                        {resultValue = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+8]);}
-                    argIndex++;
-                    if (lineNumCols>=numEvaluationArguments+argIndex)
-                        {resultUomName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+9]);}
-                    argIndex++;
-
+                    
                     String schemaConfigName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.CONFIG.getName());
                     String schemaDataName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
                     if (specCodeVersion==null || methodVersion==null){
                         Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
-//                        Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
-//                        fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
-//                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
-                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
                         Object[] fldsNull = new Object[]{0};
                         if (specCodeVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "specCodeVersion");
                         if (methodVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "methodVersion");
@@ -208,7 +202,6 @@ currentLine=iLines;
                             new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(),TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(),TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), 
                                 TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), TblsCnfg.SpecLimits.FLD_UOM.getName(), TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName()});
                         if ( (LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) ){ //&& (!"Rdbms_NoRecordsFound".equalsIgnoreCase(specLimits[0][4].toString())) ){
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
                             resSpecEvaluation=specLimits[0];
                             resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla No encontrada ");                    
                         }else{
@@ -226,30 +219,32 @@ currentLine=iLines;
                                 else{
                                     Boolean requiresUnitsConversion=true;
                                     BigDecimal resultConverted =  null;
+                                    BigDecimal resultValueBigDecimal= new BigDecimal(resultValue);
                                     UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue), resultUomName);     
                                     resultUomName = LPNulls.replaceNull(resultUomName);
                                     specUomName = LPNulls.replaceNull(specUomName);
-                                    if (resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
+                                    if (resultUomName.length()==0 || specUomName.length()==0 || resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
                                     if (requiresUnitsConversion && specUomName!=null && specUomName.length()>0){
                                         uom.convertValue(specUomName);
-                                        if (!uom.getConvertedFine()) {
-                                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});                  
-                                        }
-                                        resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        
+                                        if (!uom.getConvertedFine()) 
+                                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), "", schemaDataName});                  
+                                        else
+                                            resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        
                                     }
-                                    BigDecimal resultValueBigDecimal= new BigDecimal(resultValue);
-                                    if (specRule.getQuantitativeHasControl()){
-                                        if (requiresUnitsConversion) {
-                                            resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                    if (!requiresUnitsConversion || (requiresUnitsConversion && uom.getConvertedFine())){
+                                        if (specRule.getQuantitativeHasControl()){
+                                            if (requiresUnitsConversion) {
+                                                resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                            } else {
+                                                resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                            }
+                                            resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " +specRule.getQualitativeRuleRepresentation());
                                         } else {
-                                            resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                                        }
-                                        resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " +specRule.getQualitativeRuleRepresentation());
-                                    } else {
-                                        if (requiresUnitsConversion) {
-                                            resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                                        } else {
-                                            resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                            if (requiresUnitsConversion) {
+                                                resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                            } else {
+                                                resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                            }
                                         }
                                     }
                                     resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " +specRule.getQuantitativeRuleRepresentation());

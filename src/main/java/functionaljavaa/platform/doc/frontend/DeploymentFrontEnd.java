@@ -10,6 +10,7 @@ import databases.TblsTrazitDocModules;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
@@ -49,7 +50,7 @@ public class DeploymentFrontEnd {
                    //curFilePath.replace(currentFileProcName, newFileProcName);
                 File newFile = new File(curFilePath);
                 boolean createNewFile = newFile.createNewFile();
-                FileWriter myWriter = new FileWriter(curFilePath);
+                FileWriter myWriter = new FileWriter(curFilePath, StandardCharsets.UTF_8);
                 if (currentFileCamelLower!=null && currentFileCamelLower.length()>0)
                    sourceCode=sourceCode.replaceAll(currentFileCamelLower, newFileCamelLower);
                 if (currentFileCamel!=null && currentFileCamel.length()>0)

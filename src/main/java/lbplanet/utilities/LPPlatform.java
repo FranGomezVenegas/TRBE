@@ -160,7 +160,7 @@ public enum LpPlatformErrorTrapping{
      *
      */
     public static final String BUSINESS_RULES_VALUE_ENABLED="ENABLE";    
-    public static final Object[] breakPointArray=new Object[]{"MissingMandatoryParametersInRequest_detail"};
+    public static final Object[] breakPointArray=new Object[]{"MissingMandatoryParametersInRequest"};
 
     /**
      *

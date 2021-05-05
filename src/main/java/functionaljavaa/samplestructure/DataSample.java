@@ -206,7 +206,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel, actionName);
         
         String sampleStatusFirst = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), sampleLevel+DataSampleProperties.SUFFIX_STATUS_FIRST.propertyName);     
-
+        if (sampleStatusFirst.length()==0)
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleStatusMandatory", new Object[]{TblsData.Sample.FLD_SPEC_CODE.getName()});    
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_STATUS.getName());
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, sampleStatusFirst);
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);

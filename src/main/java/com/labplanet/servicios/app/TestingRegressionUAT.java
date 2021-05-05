@@ -115,6 +115,7 @@ public class TestingRegressionUAT extends HttpServlet {
             case NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK:
             case NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT:
             case NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK:
+            case NODB_DBACTIONS:
             case DB_SCHEMACONFIG_SPEC_RESULTCHECK:
             case DB_SCHEMADATA_ENVMONIT_SAMPLES:
             case DB_SCHEMADATA_INSPECTION_LOT_RM:

@@ -362,12 +362,17 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         if (resultUomName.length()>0) {
             if ((!resultUomName.equalsIgnoreCase(specUomName)) && (specUomConversionMode == null || specUomConversionMode.equalsIgnoreCase("DISABLED") || ((!specUomConversionMode.contains(resultUomName)) && !specUomConversionMode.equalsIgnoreCase("ALL")))) 
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConversionNotAllowed", new Object[]{specUomConversionMode, specUomName, resultUomName,  limitId.toString(), schemaDataName});            
-            requiresUnitsConversion = true;
-            UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue.toString()), resultUomName);
-            uom.convertValue(specUomName);
-            if (!uom.getConvertedFine()) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
-            resultConverted = uom.getConvertedQuantity();
+            if (resultUomName.equalsIgnoreCase(specUomName)){
+                requiresUnitsConversion = false;
+                resultConverted=new BigDecimal(resultValue.toString());
+            }else{                
+                requiresUnitsConversion = true;
+                UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue.toString()), resultUomName);
+                uom.convertValue(specUomName);
+                if (!uom.getConvertedFine()) 
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
+                resultConverted = uom.getConvertedQuantity();
+            }
         }
         DataSpec resChkSpec = new DataSpec();
         Object[] resSpecEvaluation = null;
