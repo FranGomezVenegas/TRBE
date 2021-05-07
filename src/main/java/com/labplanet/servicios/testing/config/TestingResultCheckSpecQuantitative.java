@@ -13,14 +13,12 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author Administrator
@@ -36,7 +34,24 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {        
+        String[] tableHeaders = LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK.getTablesHeaders().split("\\|");
+        String table1Header=tableHeaders[0];
+        String table2Header=tableHeaders[1];
+
         response = LPTestingOutFormat.responsePreparation(response);        
+        DataSpec resChkSpec = new DataSpec();   
+        TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
+
+        String testerFileName=LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK.getTesterFileName();                         
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
+        HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
+
+        StringBuilder fileContentBuilder = new StringBuilder(0);        
+        fileContentBuilder.append(tstOut.getHtmlStyleHeader());
+        Object[][]  testingContent =tstOut.getTestingContent();
+        String stopPhrase=null;
+
+/*        response = LPTestingOutFormat.responsePreparation(response);        
         DataSpec resChkSpec = new DataSpec();   
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
@@ -55,9 +70,22 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
         csvPathName = csvPathName+csvFileName; 
         String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
         
-        Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
+        Object[][] testingContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
         StringBuilder fileContentBuilder = new StringBuilder(0);
+*/        
         try (PrintWriter out = response.getWriter()) {
+            if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
+                fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
+                out.println(fileContentBuilder.toString()); 
+                return;
+            }            
+            Integer numEvaluationArguments = tstOut.getNumEvaluationArguments();
+            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
+            
+            StringBuilder fileContentTable1Builder = new StringBuilder(0);
+            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
+        
+/*            
             fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
             HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
@@ -68,46 +96,47 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
             
             Integer numEvaluationArguments = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_EVALUATION_ARGUMENTS.getTagValue().toString()).toString());   
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
-            String table1Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"1").toString();               
-            StringBuilder fileContentTable1Builder = new StringBuilder(0);
+*/
+//            String table1Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"1").toString();               
+//            StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
 
-            String table2Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"2").toString();            
+//            String table2Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"2").toString();            
             StringBuilder fileContentTable2Builder = new StringBuilder(0);
             fileContentTable2Builder.append(LPTestingOutFormat.createTableWithHeader(table2Header, numEvaluationArguments));
 
-            for (Integer iLines=numHeaderLines;iLines<csvFileContent.length;iLines++){
+            for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
-                TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments);
+                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
                 
-                Integer lineNumCols = csvFileContent[0].length-1;
+                Integer lineNumCols = testingContent[0].length-1;
                 BigDecimal result = null;
                 if (lineNumCols>=numEvaluationArguments)
-                    {result = LPTestingOutFormat.csvExtractFieldValueBigDecimal(csvFileContent[iLines][numEvaluationArguments]);}
+                    {result = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()]);}
                 BigDecimal minSpec = null;
                 if (lineNumCols>=numEvaluationArguments+1)
-                    {minSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(csvFileContent[iLines][numEvaluationArguments+1]);}
+                    {minSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+1]);}
                 Boolean minStrict = null;
                 if (lineNumCols>=numEvaluationArguments+2)
-                    {minStrict = LPTestingOutFormat.csvExtractFieldValueBoolean(csvFileContent[iLines][numEvaluationArguments+2]);}
+                    {minStrict = LPTestingOutFormat.csvExtractFieldValueBoolean(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
                 BigDecimal maxSpec = null;
                 if (lineNumCols>=numEvaluationArguments+3)
-                    {maxSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(csvFileContent[iLines][numEvaluationArguments+3]);}
+                    {maxSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
                 Boolean maxStrict = null;
                 if (lineNumCols>=numEvaluationArguments+4)
-                    { maxStrict = LPTestingOutFormat.csvExtractFieldValueBoolean(csvFileContent[iLines][numEvaluationArguments+4]);}
+                    { maxStrict = LPTestingOutFormat.csvExtractFieldValueBoolean(testingContent[iLines][tstOut.getActionNamePosic()+4]);}
                 BigDecimal minControl = null;
                 if (lineNumCols>=numEvaluationArguments+5)
-                    { minControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(csvFileContent[iLines][numEvaluationArguments+5]);}
+                    { minControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+5]);}
                 Boolean minControlStrict = null;
                 if (lineNumCols>=numEvaluationArguments+6)
-                    { minControlStrict = LPTestingOutFormat.csvExtractFieldValueBoolean(csvFileContent[iLines][numEvaluationArguments+6]);}
+                    { minControlStrict = LPTestingOutFormat.csvExtractFieldValueBoolean(testingContent[iLines][tstOut.getActionNamePosic()+6]);}
                 BigDecimal maxControl = null;
                 if (lineNumCols>=numEvaluationArguments+7)
-                    {maxControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(csvFileContent[iLines][numEvaluationArguments+7]);}
+                    {maxControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+7]);}
                 Boolean maxControlStrict = null;
                 if (lineNumCols>=numEvaluationArguments+8)
-                    {maxControlStrict = LPTestingOutFormat.csvExtractFieldValueBoolean(csvFileContent[iLines][numEvaluationArguments+8]);}
+                    {maxControlStrict = LPTestingOutFormat.csvExtractFieldValueBoolean(testingContent[iLines][tstOut.getActionNamePosic()+8]);}
                     
                 Object[] resSpecEvaluation = new Object[0];
                 if (minControl==null){
@@ -141,7 +170,7 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
             String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
             fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder.toString()).append(fileContentTable2Builder.toString());
             out.println(fileContentBuilder.toString());            
-            LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());
+            LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
             tstAssertSummary=null; resChkSpec=null;
         }
         catch(Exception error){

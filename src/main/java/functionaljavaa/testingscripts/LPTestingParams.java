@@ -20,12 +20,12 @@ public class LPTestingParams {
     
     public enum TestingServletsConfig{
         NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT("/testing/config/testingConfigSpecQualitativeRuleFormat", "noDBSchema_config_SpecQualitativeRuleGeneratorChecker.txt", 1, "Rule;Text Spec;Separator"),
-        NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK("/testing/config/ResultCheckSpecQualitative", "noDBSchema_config_specQualitative_resultCheck.txt", 1, ""),
-        NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT("/testing/config/testingConfigSpecQuantitativeRuleFormat", "noDBSchema_config_SpecQuantitativeRuleGeneratorChecker.txt", 2, "Min;Max Spec;|Min Spec;Min Control;Max Control;Max Spec"),
-        NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK("/testing/config/ResultCheckSpecQuantitative", "noDBSchema_config_specQuantitative_resultCheck.txt", 2, ""),
+        NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK("/testing/config/ResultCheckSpecQualitative", "noDBSchema_config_specQualitative_resultCheck.txt", 1, "Result; rule; rule value(s); separator; list name"),
+        NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT("/testing/config/testingConfigSpecQuantitativeRuleFormat", "noDBSchema_config_SpecQuantitativeRuleGeneratorChecker.txt", 2, "Min;Max Acción;|Min Acción;Min Alerta;Max Alerta;Max Acción"),
+        NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK("/testing/config/ResultCheckSpecQuantitative", "noDBSchema_config_specQuantitative_resultCheck.txt", 2, "Result;Min;Strict;Max Acción;Strict;|Result;Min Acción;Strict;Min Alerta;Strict;Max Alerta;Strict;Max Acción;Strict"),
         NODB_DBACTIONS("/testing/platform/DBActions", "noDBSchema_dbActions.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"),        
         
-        DB_SCHEMACONFIG_SPEC_RESULTCHECK("/testing/config/db/DbTestingLimitAndResult", "dbSchema_config_spec_resultCheck.txt", 2, ""),
+        DB_SCHEMACONFIG_SPEC_RESULTCHECK("/testing/config/db/DbTestingLimitAndResult", "dbSchema_config_spec_resultCheck.txt", 2, "procInstance; specCode; specCodeVersion; variation; analysis; methodName; methodVersion; Parameter; Value; UOM"),
         
         DB_SCHEMADATA_ENVMONIT_SAMPLES("/testing/moduleEnvMonit/TestingEnvMonitSamples", "DBSchema_data_envMonitSamples.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"),
         DB_SCHEMADATA_SAMPLES("/testing/moduleSamples/TestingSamples", "DBSchema_data_Samples.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"),

@@ -277,7 +277,7 @@ public class DataSpec {
                 if ( comparingMIN>-1) {
                         errorVariables = new Object[]{result.toString(), minSpec.toString()}; 
                         Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.OUT_SPEC_MIN_STRICT.getErrorCode(), errorVariables);
-                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.OUT_SPEC_MIN.getErrorCode());
+                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.OUT_SPEC_MIN_STRICT.getErrorCode());
                         return diagnoses;                
                 }
             }else{
@@ -294,8 +294,8 @@ public class DataSpec {
             if (maxStrict){
                 if (comparingMAX>-1) {
                         errorVariables = new Object[]{result.toString(), maxSpec.toString()}; 
-                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.OUT_SPEC_MAX.getErrorCode(), errorVariables);
-                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.OUT_SPEC_MAX.getErrorCode());
+                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.OUT_SPEC_MAX_STRICT.getErrorCode(), errorVariables);
+                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.OUT_SPEC_MAX_STRICT.getErrorCode());
                         return diagnoses;            
                 }
             }else{

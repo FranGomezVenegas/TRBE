@@ -81,13 +81,13 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                 Integer lineNumCols = testingContent[0].length-1;
                 String ruleType = null;
                 if (lineNumCols>=numEvaluationArguments)                               
-                     ruleType = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][numEvaluationArguments]);
+                     ruleType = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()]);
                 String specText = null;
                 if (lineNumCols>=numEvaluationArguments+1)                               
-                     specText = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][numEvaluationArguments+1]);
+                     specText = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+1]);
                 String separator = null;
                 if (lineNumCols>=numEvaluationArguments+2)                               
-                     separator = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][numEvaluationArguments+2]);
+                     separator = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+2]);
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, ruleType, specText, separator}));
                     

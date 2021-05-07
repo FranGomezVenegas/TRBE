@@ -7,7 +7,6 @@ package com.labplanet.servicios.testing.config;
 
 import databases.Rdbms;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import functionaljavaa.materialspec.DataSpec;
 import java.io.IOException;
@@ -18,12 +17,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
+import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lbplanet.utilities.LPAPIArguments;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -31,6 +32,42 @@ import trazit.session.ProcedureRequestSession;
  * @author Administrator
  */
 public class TestingResultCheckSpecQualitative extends HttpServlet {
+    public enum TestingResultCheckSpecQualitativeArgs{
+        DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT("DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT", "productionLot_newLotCreated_success",
+                new LPAPIArguments[]{new LPAPIArguments("schemaName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments("specCode", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                new LPAPIArguments("specCodeVersion", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments("variation", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                new LPAPIArguments("analysis", LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
+                new LPAPIArguments("methodName", LPAPIArguments.ArgumentType.STRING.toString(), true, 11),
+                new LPAPIArguments("methodVersion", LPAPIArguments.ArgumentType.STRING.toString(), true, 12),
+                new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 13),
+                new LPAPIArguments("resultValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 14),
+                new LPAPIArguments("resultUomName", LPAPIArguments.ArgumentType.STRING.toString(), false, 15),
+        } ),                
+        ;
+        private TestingResultCheckSpecQualitativeArgs(String name, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums; 
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
+        private final String name;
+        private final String successMessageCode;       
+        private  LPAPIArguments[] arguments;
+    }    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -42,6 +79,7 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String table1Header = TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK.getTablesHeaders();
         response = LPTestingOutFormat.responsePreparation(response);        
         DataSpec resChkSpec = new DataSpec();   
 
@@ -53,7 +91,17 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
         }
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
-        String csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
+
+        String testerFileName=LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.getTesterFileName();                         
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
+        HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
+
+        StringBuilder fileContentBuilder = new StringBuilder(0);        
+        fileContentBuilder.append(tstOut.getHtmlStyleHeader());
+        Object[][]  testingContent =tstOut.getTestingContent();
+Integer currentLine=0;
+        
+/*        String csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
         String csvFileName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME);
         if ("".equals(csvPathName) || csvPathName==null){
             csvFileName = LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK.getTesterFileName();                         
@@ -65,8 +113,21 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
 
         StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
+*/
         try (PrintWriter out = response.getWriter()) {
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(csvFileContent[0][0].toString())){
+            if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
+                fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
+                out.println(fileContentBuilder.toString()); 
+                return;
+            }            
+            Integer numEvaluationArguments = tstOut.getNumEvaluationArguments();
+            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
+            
+            StringBuilder fileContentTable1Builder = new StringBuilder(0);
+            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
+            LPAPIArguments[] arguments = TestingResultCheckSpecQualitativeArgs.DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT.getArguments();
+            
+/*            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(csvFileContent[0][0].toString())){
                 fileContentBuilder.append("Problem trying to extract file content for file "+csvPathName+csvFileContent[0][1].toString()); 
                 out.println(fileContentBuilder.toString());
                 return;            
@@ -82,22 +143,22 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
             String table1Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"1").toString();     
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));       
-
-            for (Integer iLines=numHeaderLines;iLines<csvFileContent.length;iLines++){
+*/
+            for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
-                TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments);                
+                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
                 
-                Integer lineNumCols = csvFileContent[0].length-1;
+                Integer lineNumCols = testingContent[0].length-1;
                 String result = null;
                 String ruleType = null;
                 String values = null;
                 String separator = null;
                 String listName = null;
-                if (lineNumCols>=numEvaluationArguments) result = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments]);
-                if (lineNumCols>=numEvaluationArguments+1) ruleType = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+1]);
-                if (lineNumCols>=numEvaluationArguments+2) values = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+2]);
-                if (lineNumCols>=numEvaluationArguments+3) separator = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+3]);
-                if (lineNumCols>=numEvaluationArguments+4) listName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+4]);
+                if (lineNumCols>=numEvaluationArguments) result = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()]);
+                if (lineNumCols>=numEvaluationArguments+1) ruleType = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+1]);
+                if (lineNumCols>=numEvaluationArguments+2) values = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+2]);
+                if (lineNumCols>=numEvaluationArguments+3) separator = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+3]);
+                if (lineNumCols>=numEvaluationArguments+4) listName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+4]);
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, result, ruleType, values, separator, listName}));                    
                 Object[] resSpecEvaluation = resChkSpec.resultCheck(result, ruleType, values, separator, listName);
@@ -111,11 +172,11 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
             }                          
             tstAssertSummary.notifyResults();
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            fileContentTable1Builder.append(csvPathName);
+            fileContentTable1Builder.append(tstOut.getFilePathName());
             fileContentBuilder.append(LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments)).append(fileContentTable1Builder)
                     .append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
             out.println(fileContentBuilder.toString());            
-            LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());
+            LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
         }
         catch(IOException error){
             PrintWriter out = response.getWriter();

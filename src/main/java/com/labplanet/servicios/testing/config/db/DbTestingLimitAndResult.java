@@ -36,10 +36,7 @@ import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-/**
- *
- * @author Administrator
- */
+
 public class DbTestingLimitAndResult extends HttpServlet {
 
     public enum TestingLimitAndResult{
@@ -122,7 +119,7 @@ Integer currentLine=0;
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             LPAPIArguments[] arguments = TestingLimitAndResult.DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT.getArguments();
-//numHeaderLines=34;
+//numHeaderLines=testingContent.length-1;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
 currentLine=iLines;  
 //out.println(iLines);
@@ -145,14 +142,19 @@ if (currentLine==34)
                 String resultUomName=null; 
                 int argIndex=0;
                 
+                String specCodeVersionStr=null;
+                String methodVersionStr=null;
+                
                 if (lineNumCols>=numEvaluationArguments+argIndex)
                     schemaName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()]);
                 argIndex++;
                 if (lineNumCols>=numEvaluationArguments+argIndex)
                     specCode = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+argIndex]);
                 argIndex++;
-                if (lineNumCols>=numEvaluationArguments+argIndex)
-                    {specCodeVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
+                if (lineNumCols>=numEvaluationArguments+argIndex){
+                    specCodeVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+2]);
+                    specCodeVersionStr = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+2]);
+                }
                 argIndex++;
                 if (lineNumCols>=numEvaluationArguments+argIndex)
                     {variation = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
@@ -165,6 +167,7 @@ if (currentLine==34)
                 argIndex++;
                 if (lineNumCols>=numEvaluationArguments+argIndex){ 
                     methodVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+6]);
+                    methodVersionStr = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+6]);
                 }
                 argIndex++;
                 if (lineNumCols>=numEvaluationArguments+argIndex)
@@ -177,10 +180,8 @@ if (currentLine==34)
                     {resultUomName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+9]);}
                 argIndex++;
 
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, schemaName, specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName, resultValue, resultUomName}));
                 resSpecEvaluation=tstOut.checkMissingMandatoryParamValuesByCall(arguments, testingContent[iLines]);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){                    
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
                     Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
                 }else{
@@ -188,11 +189,13 @@ if (currentLine==34)
                     String schemaConfigName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.CONFIG.getName());
                     String schemaDataName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
                     if (specCodeVersion==null || methodVersion==null){
-                        Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
                         Object[] fldsNull = new Object[]{0};
                         if (specCodeVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "specCodeVersion");
                         if (methodVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "methodVersion");
-                        resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), fldsNull);
+                        if ((specCodeVersion==null && specCodeVersionStr==null) || (methodVersion==null && methodVersionStr==null))
+                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), fldsNull);
+                        else
+                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_valueNotNumeric", fldsNull);
                         resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");                    
                     }else{
                         Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
@@ -253,36 +256,27 @@ if (currentLine==34)
                         }
                     }
                 }
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, schemaName, specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName, resultValue, resultUomName}));
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, schemaName, specCode, specCodeVersionStr, variation, analysis, methodName, methodVersionStr, parameterName, resultValue, resultUomName}));
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
                     Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
                 }
-        } 
-        fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-        //fileContentTable1Builder.append();
-        fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
+            } 
+            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
 
-        fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
-        out.println(fileContentBuilder.toString());            
-        LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
-        tstAssertSummary=null; resChkSpec=null;            
-/*        tstAssertSummary.notifyResults();
-        fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-        String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
-        fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder.toString());
-        out.println(fileContentBuilder.toString());            
-        LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());
-        tstAssertSummary=null; resChkSpec=null; */
+            fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+            out.println(fileContentBuilder.toString());            
+            LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
+            tstAssertSummary=null; resChkSpec=null;            
         }
         catch(Exception error){
             PrintWriter out = response.getWriter() ;
             out.println(Arrays.toString(testingContent[currentLine])+ error.getMessage()+ currentLine.toString());
             tstAssertSummary=null; resChkSpec=null;
             String exceptionMessage = error.getMessage();     
-           // LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
         } finally {
             // release database resources
             try {
