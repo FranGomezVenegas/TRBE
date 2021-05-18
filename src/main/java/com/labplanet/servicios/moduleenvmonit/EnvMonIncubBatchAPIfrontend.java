@@ -130,11 +130,10 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                     jObj.put("NUM_SAMPLES", incubBatchContentInfo[1]);                 
                     jArr.add(jObj);
                 }
-                procReqInstance.killIt();               
+                procReqInstance.killIt();              
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 break;        
             default:      
-                procReqInstance.killIt();              
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);                                                                  
         }
     }catch(Exception e){      

@@ -15,6 +15,7 @@ import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -49,7 +50,7 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
         String testerFileName=LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT.getTesterFileName();                         
-        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT.name(), testerFileName);
         HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
 
         StringBuilder fileContentBuilder = new StringBuilder(0);        
@@ -99,7 +100,9 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
 //            String table2Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"2").toString();            
             StringBuilder fileContentTable2Builder = new StringBuilder(0);
             fileContentTable2Builder.append(LPTestingOutFormat.createTableWithHeader(table2Header, numEvaluationArguments));
-            
+//testingContent.length    
+//Integer totall=5;
+//numHeaderLines=20;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
                     
@@ -109,18 +112,18 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
 
                 Integer lineNumCols = testingContent[0].length-1;
-                Float minSpec = null;
+                BigDecimal minSpec = null;
                 if (lineNumCols>=numEvaluationArguments)
-                    {minSpec = LPTestingOutFormat.csvExtractFieldValueFloat(testingContent[iLines][tstOut.getActionNamePosic()]);}
-                Float minControl = null;
+                    {minSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()]);}
+                BigDecimal minControl = null;
                 if (lineNumCols>=numEvaluationArguments+1)
-                    {minControl = LPTestingOutFormat.csvExtractFieldValueFloat(testingContent[iLines][tstOut.getActionNamePosic()+1]);}
-                Float maxControl = null;
+                    {minControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+1]);}
+                BigDecimal maxControl = null;
                 if (lineNumCols>=numEvaluationArguments+2)
-                    {maxControl = LPTestingOutFormat.csvExtractFieldValueFloat(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
-                Float maxSpec = null;
+                    {maxControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
+                BigDecimal maxSpec = null;
                 if (lineNumCols>=numEvaluationArguments+3)
-                    {maxSpec = LPTestingOutFormat.csvExtractFieldValueFloat(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
+                    {maxSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
                     
                 Object[] resSpecEvaluation = new Object[0];                
                 if (minControl==null){

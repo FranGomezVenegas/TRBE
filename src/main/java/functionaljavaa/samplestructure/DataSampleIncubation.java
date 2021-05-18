@@ -31,6 +31,22 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class DataSampleIncubation {
 
+    public enum DataSampleIncubationBusinessRules{
+        SAMPLE_INCUBATION_MODE("sampleIncubationMode", GlobalVariables.Schemas.PROCEDURE.getName()),
+        SAMPLE_INCUB_TEMP_READING_BUSRULE("sampleIncubationTempReadingBusinessRule", GlobalVariables.Schemas.PROCEDURE.getName())
+        
+        ;
+        private DataSampleIncubationBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    
     /**
      *
      * @param procInstanceName
@@ -96,7 +112,7 @@ public class DataSampleIncubation {
         Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.END.toString(), incubName, tempReading);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleIncubatorModeCheckerInfo[0].toString())) return sampleIncubatorModeCheckerInfo;
         if ((incubationStage < 1) || (incubationStage > 2)) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATION STAGE SHOULD BE SET TO 1 OR 2", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null);
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
@@ -126,7 +142,7 @@ public class DataSampleIncubation {
         Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.START.toString(), incubName, tempReading);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleIncubatorModeCheckerInfo[0].toString())) return sampleIncubatorModeCheckerInfo;
         if ((incubationStage < 1) || (incubationStage > 2)) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATION STAGE SHOULD BE SET TO 1 OR 2", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null);
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
@@ -145,8 +161,7 @@ public class DataSampleIncubation {
     private static Object[] sampleIncubatorModeChecker(Integer incubationStage, String moment, String incubName, BigDecimal tempReading){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        //String sampleIncubationMode = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", "sampleIncubationMode", null);
-        String sampleIncubationMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "sampleIncubationMode");
+        String sampleIncubationMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleIncubationBusinessRules.SAMPLE_INCUBATION_MODE.getAreaName(), DataSampleIncubationBusinessRules.SAMPLE_INCUBATION_MODE.getTagName());
         if (sampleIncubationMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeBusinessRuleNotDefined", new Object[]{procInstanceName});
         if (!SampleIncubationModes.contains(sampleIncubationMode)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeValueNotRrecognized", new Object[]{sampleIncubationMode});        
         
@@ -306,25 +321,14 @@ public class DataSampleIncubation {
         
         return new Object[]{LPPlatform.LAB_FALSE}; 
     }    
-    public enum DataSampleIncubationBusinessRules{
-        SAMPLE_INCUB_TEMP_READING_BUSRULE("sampleIncubationTempReadingBusinessRule", GlobalVariables.Schemas.PROCEDURE.getName())
-        ;
-        private DataSampleIncubationBusinessRules(String tgName, String areaNm){
-            this.tagName=tgName;
-            this.areaName=areaNm;
-        }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        
-        private final String tagName;
-        private final String areaName;
-    }
     
     public enum DataSampleIncubationErrorTrapping{ 
         INCUBATORBATCH_NOT_STARTED("IncubatorBatchNotStartedYet", "The batch <*1*> was not started yet for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
         SAMPLEINCUBATION_STARTED_SUCCESS("SampleIncubationStartedSuccessfully", "", ""),
         SAMPLEINCUBATION_ENDED_SUCCESS("SampleIncubationEndedSuccessfully", "", ""),
         TEMPERATUREREADYDAY_ISNOTTODAY("TemperatureReadingDayIsNotToday", "", ""),
+        INCUBATION_STAGE_NOTRECOGNIZED("incubationStageNotRecognized", "", ""),
+        
         ;
         private DataSampleIncubationErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

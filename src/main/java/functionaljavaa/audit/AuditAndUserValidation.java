@@ -17,7 +17,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
-import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
+import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
     
@@ -27,6 +27,38 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class AuditAndUserValidation {
+    public enum AuditAndUserValidationErrorTrapping{ 
+        CHECK_SUCCESS ("checkUserValidationPassesSuccess", "", ""),
+        WRONG_PHRASE ("wrongAuditReasonPhrase", "", ""),
+      
+        ;
+        private AuditAndUserValidationErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    public enum AuditAndUserValidationBusinessRules{     
+        PREFIX_AUDITREASONPHRASE ("AuditReasonPhrase", GlobalVariables.Schemas.CONFIG.getName()),
+        ;
+        private AuditAndUserValidationBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+
     private static AuditAndUserValidation auditUserVal;
 
      public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, HttpServletResponse response, String language) { 
@@ -120,14 +152,13 @@ public class AuditAndUserValidation {
             this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()});                             
             return;
         }
-    
-        this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "checkUserValidationPassesSuccess", null);
+        this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_TRUE, AuditAndUserValidationErrorTrapping.CHECK_SUCCESS.getErrorCode(), null);
     }
     private Boolean isValidAuditPhrase(String actionName, String auditReasonPhrase){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        String[] actionAuditReasonInfo = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase").split("\\|");
+        String[] actionAuditReasonInfo = Parameter.getBusinessRuleProcedureFile(procInstanceName.replace("\"", ""), AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getAreaName(), actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
         if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (!LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase)) ){
-            this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "wrongAuditReasonPhrase", new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
+            this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.WRONG_PHRASE.getErrorCode(), new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
             return false;
         }
         return true;

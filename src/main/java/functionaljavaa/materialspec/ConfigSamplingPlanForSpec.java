@@ -92,7 +92,7 @@ public class ConfigSamplingPlanForSpec {
     }  
     if (!devMode){
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());         
-        Object[][] mandatoryFieldsCheck = LPPlatform.mandatoryFieldsCheck(schemaDataName, fieldsName, fieldsValue, tableName, actionName);                
+        Object[][] mandatoryFieldsCheck = LPPlatform.mandatoryFieldsCheck(procInstanceName, GlobalVariables.Schemas.DATA.getName(), fieldsName, fieldsValue, tableName, actionName);                
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mandatoryFieldsCheck[0][0].toString())){ return mandatoryFieldsCheck;}
         for (Integer i=0;i<mandatoryFieldsCheck[1].length;i++){
             if (mandatoryFieldsCheck[1][i]!=null){
@@ -116,7 +116,7 @@ public class ConfigSamplingPlanForSpec {
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     } 
     if (!devMode){
-        diagnoses = LPPlatform.configObjectExists(GlobalVariables.Schemas.CONFIG.getName(), fieldsName, fieldsValue, tableName);
+        diagnoses = LPPlatform.configObjectExists(procInstanceName, fieldsName, fieldsValue, tableName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
     }
     if (devMode){
@@ -128,7 +128,7 @@ public class ConfigSamplingPlanForSpec {
     }  
     if (!devMode){
         LPPlatform labPlat = new LPPlatform();
-        diagnoses = labPlat.specialFieldsCheck(GlobalVariables.Schemas.DATA.getName(), fieldsName, fieldsValue, tableName, actionName);
+        diagnoses = labPlat.specialFieldsCheck(procInstanceName, GlobalVariables.Schemas.DATA.getName(), fieldsName, fieldsValue, tableName, actionName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
     }
     if (devMode){

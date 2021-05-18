@@ -55,7 +55,7 @@ public class TestingInspLotRM extends HttpServlet {
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
         String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTesterFileName();                         
-        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.name(), testerFileName);
         HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        

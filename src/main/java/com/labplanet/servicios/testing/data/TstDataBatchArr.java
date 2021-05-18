@@ -53,7 +53,7 @@ public class TstDataBatchArr extends HttpServlet {
             Object[][] dataSample2D = new Object[1][6];
             
             String[][] configSpecTestingArray = LPArray.convertCSVinArray(csvPathName, csvFileSeparator);                        
-            fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), csvFileName));
+            fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), csvFileName, null, null));
             
             for (Integer j=0;j<configSpecTestingArray[0].length;j++){                
                 fileContentBuilder.append(LPTestingOutFormat.headerAddFields(configSpecTestingArray[0]));

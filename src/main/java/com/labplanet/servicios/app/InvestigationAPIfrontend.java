@@ -10,6 +10,8 @@ import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN
 import databases.Rdbms;
 import databases.TblsProcedure;
 import databases.Token;
+import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
+import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import functionaljavaa.parameter.Parameter;
 import java.io.IOException;
@@ -36,6 +38,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class InvestigationAPIfrontend extends HttpServlet {
 
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -112,7 +115,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
                 return;  
             case INVESTIGATION_RESULTS_PENDING_DECISION:
-                String statusClosed=Parameter.getMessageCodeValue(schemaPrefix+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
+                String statusClosed=Parameter.getBusinessRuleProcedureFile(schemaPrefix, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
                 JSONArray jArray = new JSONArray(); 
                 if (!isProgramCorrectiveActionEnable(schemaPrefix)){
                   JSONObject jObj=new JSONObject();

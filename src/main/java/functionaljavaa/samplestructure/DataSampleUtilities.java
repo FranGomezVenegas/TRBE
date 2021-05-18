@@ -7,6 +7,7 @@ package functionaljavaa.samplestructure;
 
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.samplestructure.DataSample.DataSampleBusinessRules;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -39,13 +40,16 @@ public class DataSampleUtilities {
         if (language==null){language="en";}
        switch (language){
            case "en":
-               stList = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sample_statuses_label_en"); 
+               stList = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.STATUSES_LABEL_EN.getAreaName(), DataSampleBusinessRules.STATUSES_LABEL_EN.getTagName()); 
+               if (stList.length()==0) stList=DataSample.SAMPLE_STATUSES_LABEL_EN_WHEN_NO_PROPERTY;
                break;
            case "es":
-               stList = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sample_statuses_label_es"); 
+               stList = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.STATUSES_LABEL_ES.getAreaName(), DataSampleBusinessRules.STATUSES_LABEL_ES.getTagName()); 
+               if (stList.length()==0) stList=DataSample.SAMPLE_STATUSES_LABEL_ES_WHEN_NO_PROPERTY;
                break;
            default:
-               stList = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sample_statuses"); 
+               stList = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.STATUSES.getAreaName(), DataSampleBusinessRules.STATUSES.getTagName()); 
+               if (stList.length()==0) stList=DataSample.SAMPLE_STATUSES_WHEN_NO_PROPERTY;
                break;
        }        
         return LPTestingOutFormat.csvExtractFieldValueStringArr(stList);

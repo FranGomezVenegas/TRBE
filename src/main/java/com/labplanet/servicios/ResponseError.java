@@ -5,11 +5,11 @@
  */
 package com.labplanet.servicios;
 
-import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,10 +27,8 @@ public class ResponseError extends HttpServlet {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response){
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
         
@@ -38,6 +36,8 @@ public class ResponseError extends HttpServlet {
             String errorDetail=(String) request.getAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName());
             response.getWriter().write(errorDetail);
             response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
+        } catch (IOException ex) {
+            Logger.getLogger(ResponseError.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -50,11 +50,7 @@ public class ResponseError extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
-        try{
         processRequest(request, response);
-        }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
-        }
     }
 
     /**
@@ -65,11 +61,7 @@ public class ResponseError extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)  {
-        try{
         processRequest(request, response);
-        }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
-        }
     }
 
     /**

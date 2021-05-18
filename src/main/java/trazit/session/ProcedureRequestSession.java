@@ -40,8 +40,12 @@ public class ProcedureRequestSession {
         if (request==null) return;
         this.language = LPFrontEnd.setLanguage(request); 
         this.isForTesting=isForTesting;
-
-        Rdbms.stablishDBConection();
+        
+        String dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);            
+        if (dbName==null || dbName.length()==0)        
+            Rdbms.stablishDBConection();
+        else
+            Rdbms.stablishDBConection(dbName);
         if (!LPFrontEnd.servletStablishDBConection(request, response)){
             this.hasErrors=true;
             this.errorMessage="db connection not stablished";
@@ -86,18 +90,18 @@ public class ProcedureRequestSession {
             }            
             actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, actionEnabled);
                 this.hasErrors=true;
                 this.errorMessage=actionEnabled[actionEnabled.length-1].toString();
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, actionEnabled);
                 return ;                           
             }                        
         }
         if (!isForTesting && !isForUAT && !isQuery){            
             AuditAndUserValidation auditAndUsrVal=AuditAndUserValidation.getInstanceForActions(request, null, language);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrVal.getCheckUserValidationPassesDiag()[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrVal.getCheckUserValidationPassesDiag());              
                 this.hasErrors=true;
                 this.errorMessage=auditAndUsrVal.getCheckUserValidationPassesDiag()[auditAndUsrVal.getCheckUserValidationPassesDiag().length-1].toString();
+                //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrVal.getCheckUserValidationPassesDiag());              
                 return;          
             }     
             this.auditAndUsrValid=auditAndUsrVal;
@@ -115,7 +119,7 @@ public class ProcedureRequestSession {
     public void killIt(){
 //        if (!this.isForQuery) 
             this.theSession=null;
-        if (!this.isForQuery) this.token=null;
+        if (this.isForQuery!=null && !this.isForQuery) this.token=null;
         this.actionName=null;
         this.isForTesting=null;
         this.procedureInstance=null;

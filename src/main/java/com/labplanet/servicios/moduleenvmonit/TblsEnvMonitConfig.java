@@ -68,23 +68,23 @@ public class TblsEnvMonitConfig {
         /**
          *
          */
-        FLD_SPEC_CODE("spec_code", LPDatabase.string()),        
+        FLD_SPEC_CODE("spec_code", LPDatabase.stringNotNull()),        
 
         /**
          *
          */
-        FLD_SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integer()),
+        FLD_SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integerNotNull()),
 
         /**
          *
          */
-        FLD_SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.string()),        
+        FLD_SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull()),        
+        FLD_SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integerNotNull()),        
         FLD_MAP_IMAGE("map_image", LPDatabase.string()),        
         
         /**
          *
          */
-        FLD_SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer()),        
         FLD_DESCRIPTION_EN("description_en", LPDatabase.string()),        
         FLD_DESCRIPTION_ES("description_es", LPDatabase.string()),        
 

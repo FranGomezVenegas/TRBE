@@ -53,7 +53,7 @@ public class FrontendDefinition extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
         response=LPTestingOutFormat.responsePreparation(response);
-        String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File");
+        String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File", null, null);
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
         ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint = ProcedureDefinitionAPIEndpoints.DEPLOY_FRONTEND;
         LPAPIArguments[] arguments = endPoint.getArguments();

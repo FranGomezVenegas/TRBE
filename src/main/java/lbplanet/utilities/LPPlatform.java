@@ -83,6 +83,14 @@ public class LPPlatform {
         VERIFYUSER_REQUIRED("verifyUserRequired", GlobalVariables.Schemas.PROCEDURE.getName()),
         AUDITREASON_PHRASE("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName()),
         TABLE_MANDATORYFIELDS_ACTIONNAME("_mandatoryFields", GlobalVariables.Schemas.PROCEDURE.getName()),
+        SUFFIX_CONFIGTABLENAME("_configTableName", GlobalVariables.Schemas.CONFIG.getName()),
+        SUFFIX_CONFIGTABLEKEYFIELDS("_configTableKeyFields", GlobalVariables.Schemas.CONFIG.getName()),
+        SUFFIX_SPECIALFIELDNAME("_specialFieldsCheck", GlobalVariables.Schemas.CONFIG.getName()),
+        SUFFIX_SPECIALFIELDMETHODNAME("_specialFieldsCheck_methodName", GlobalVariables.Schemas.CONFIG.getName()),
+        PREFIX_ENCRYPTED_TABLENAME("encrypted_", ""),
+        MIDDLEOF_FIELDSADDINGMANDATORY("_fieldsAddingMandatory", ""),
+        
+
         ;
         private LpPlatformBusinessRules(String tgName, String areaNm){
             this.tagName=tgName;
@@ -113,6 +121,11 @@ public enum LpPlatformErrorTrapping{
         ESIGNREQUIRED_DENIED_RULENOTFOUND("verifyUserRequired_denied_ruleNotFound", "", ""),
         ESIGNREQUIRED_DENIED("verifyUserRequired_denied", "", ""),
         ESIGNREQUIRED_ENABLED("verifyUserRequired_enabled", "", ""),
+        MISSINGTABLECONFIGCODE("LabPLANETPlatform_MissingTableConfigCode", "", ""),
+        SPECIALFUNCTION_RETURNEDERROR("LabPLANETPlatform_SpecialFunctionReturnedERROR", "", ""),
+        SPECIALFUNCTION_CAUSEDEXCEPTION("LabPLANETPlatform_SpecialFunctionCausedException", "", ""),
+        SPECIALFUNCTION_ALLSUCCESS("LabPLANETPlatform_SpecialFunctionAllSuccess", "", ""),
+          
         ; 
         private LpPlatformErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -272,14 +285,13 @@ public enum LpPlatformErrorTrapping{
      * @param fieldName
      * @return
      */
-    public static Boolean isEncryptedField(String schemaName, String tableName, String fieldName){
+    public static Boolean isEncryptedField(String schemaName, String areaName, String tableName, String fieldName){
         Boolean diagnoses = false;
         if ((schemaName==null) || (tableName==null) || (fieldName==null) ) {return diagnoses;}
-        String parameterName = "encrypted_"+tableName;
+        String parameterName = LpPlatformBusinessRules.PREFIX_ENCRYPTED_TABLENAME.getTagName()+tableName;
         schemaName = schemaName.replace("\"", "");
-        
         if ( fieldName.contains(" ")){fieldName=fieldName.substring(0, fieldName.indexOf(' '));}
-        String tableEncrytedFields = Parameter.getMessageCodeValue(schemaName, parameterName);
+        String tableEncrytedFields = Parameter.getBusinessRuleProcedureFile(schemaName, areaName, parameterName);
         if ( (tableEncrytedFields==null) ){return diagnoses;}
         if ( ("".equals(tableEncrytedFields)) ){return diagnoses;}        
         return LPArray.valueInArray(tableEncrytedFields.split("\\|"), fieldName);        
@@ -503,26 +515,26 @@ public enum LpPlatformErrorTrapping{
  * When logging/creating objects that conceptually are mandatory on be part of a structure for a field added or required
  * to get all the fields consider mandatory we invoke the specific parameter field called in the way of "table_name_mandatoryFieldsAction" containing a peer entries in the way of:
  * A call per each mandaotry field to the method mandatoryFieldsByDependency will add the prerrequisites as mandatory too
- * All fields should be in context when the action is performed and not null.
- * The entry is stored in the specific data.properties file for this particular procedure.
- *      where the content is expressed in the way of fieldNAmes between spaces where the first field is the one having the prerrequisites. 
- *      and all different fields separated by pipe, "|".
- *      Example: project_fieldsAddingMandatoryInsert:analysis method_name method_version*analysis method_name method_version|method_name*analysis method_name method_version|spec*spec spec_code spec_code_version
- * @param schemaName - Schema where the template belongs to
+ * All fields should be in context when the action is performed and not null.The entry is stored in the specific data.properties file for this particular procedure.
+ * where the content is expressed in the way of fieldNAmes between spaces where the first field is the one having the prerrequisites. 
+      and all different fields separated by pipe, "|".
+      Example: project_fieldsAddingMandatoryInsert:analysis method_name method_version*analysis method_name method_version|method_name*analysis method_name method_version|spec*spec spec_code spec_code_version
+ * @param procInstanceName - Schema where the template belongs to
+ * @param areaName
  * @param fieldNames[] - Fields for the filter to find and get the prerrequisites.
-     * @param fieldValues
+ * @param fieldValues
  * @param tableName. Table where the template is stored in.
  * @param actionName. The action in the database INSERT/UPDATE/DELETE (lowercas preferred).
  * @return String[] All prerrequisite fields for all the fields added to the fieldNames input argument array, when position 3 is set to FALSE then the template is not found.
  */  
-    public static Object[][] mandatoryFieldsCheck(String schemaName, String[] fieldNames, Object[] fieldValues, String tableName, String actionName){
+    public static Object[][] mandatoryFieldsCheck(String procInstanceName, String areaName, String[] fieldNames, Object[] fieldValues, String tableName, String actionName){
         Object[][] diagnoses = new Object[3][6];
        
         String propertyName = tableName+LpPlatformBusinessRules.TABLE_MANDATORYFIELDS_ACTIONNAME.getTagName()+actionName;
         
-        String mandatoryFieldsToCheckDefault = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), propertyName+"Default");
+        String mandatoryFieldsToCheckDefault = Parameter.getBusinessRuleProcedureFile(procInstanceName.replace("\"", ""), areaName, propertyName+"Default");
         
-        String[] mandatoryFields = mandatoryFieldsByDependency(schemaName, fieldNames, tableName, actionName);
+        String[] mandatoryFields = mandatoryFieldsByDependency(procInstanceName, areaName, fieldNames, tableName, actionName);
 
         StringBuilder mandatoryFieldsMissing = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
@@ -595,15 +607,15 @@ public enum LpPlatformErrorTrapping{
  *      where the content is expressed in the way of fieldNAmes between spaces where the first field is the one having the prerrequisites. 
  *      and all different fields separated by pipe, "|".
  *      Example: project_fieldsAddingMandatoryInsert:analysis method_name method_version*analysis method_name method_version|method_name*analysis method_name method_version|spec*spec spec_code spec_code_version
- * @param schemaName - Schema where the template belongs to
+ * @param procInstanceName - Schema where the template belongs to
  * @param fieldNames[] - Fields for the filter to find and get the prerrequisites.
  * @param tableName. Table where the template is stored in.
  * @param actionName. The action in the database INSERT/UPDATE/DELETE (lowercas preferred).
  * @return String[] All prerrequisite fields for all the fields added to the fieldNames input argument array, when position 3 is set to FALSE then the template is not found.
  */   
-    public static String[] mandatoryFieldsByDependency(String schemaName, String[] fieldNames, String tableName, String actionName){
-        String propertyName = tableName+"_fieldsAddingMandatory"+actionName;
-        String mandatoryFieldsByDependency = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), propertyName);
+    public static String[] mandatoryFieldsByDependency(String procInstanceName, String areaName, String[] fieldNames, String tableName, String actionName){
+        String propertyName = tableName+LpPlatformBusinessRules.MIDDLEOF_FIELDSADDINGMANDATORY.getTagName()+actionName;
+        String mandatoryFieldsByDependency = Parameter.getBusinessRuleProcedureFile(procInstanceName, areaName, propertyName);
         String[] mandatoryByDependency = mandatoryFieldsByDependency.split("\\|");
 
         for (String currField: fieldNames){
@@ -638,14 +650,12 @@ public enum LpPlatformErrorTrapping{
  * @param tableName. Table where the template is stored in.
  * @return String[] when position 3 is set to FALSE then the template is not found.
  */   
-    public static Object[] configObjectExists( String schemaName, String[] fieldNames, Object[] fieldValues, String tableName){
+    public static Object[] configObjectExists( String procInstanceName, String[] fieldNames, Object[] fieldValues, String tableName){
         String errorCode = ""; 
         Object[] errorDetailVariables = new Object[0];        
-        String configTableNamePropertyName = tableName+"_configTableName";
-        String configTableKeyFieldsPropertyName = tableName+"_configTableKeyFields";        
         
-        String configTableName = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), configTableNamePropertyName);
-        String configTableKeyFields = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), configTableKeyFieldsPropertyName);
+        String configTableName = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.SUFFIX_CONFIGTABLENAME.getAreaName(), tableName+LpPlatformBusinessRules.SUFFIX_CONFIGTABLENAME.getTagName());
+        String configTableKeyFields = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.SUFFIX_CONFIGTABLEKEYFIELDS.getAreaName(), tableName+LpPlatformBusinessRules.SUFFIX_CONFIGTABLEKEYFIELDS.getTagName());
 
         String[] configTableKeyFieldName = configTableKeyFields.split("\\|");
         Object[] configTableKeyFielValue = new Object[0];
@@ -678,41 +688,34 @@ public enum LpPlatformErrorTrapping{
             }
                 
         }       
-        Object[] diagnosis = Rdbms.existsRecord(schemaName, configTableName, configTableKeyFieldName, configTableKeyFielValue);
+        Object[] diagnosis = Rdbms.existsRecord(procInstanceName, configTableName, configTableKeyFieldName, configTableKeyFielValue);
         if (!LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){            
            String[] configTableFilter = LPArray.joinTwo1DArraysInOneOf1DString(configTableKeyFieldName, configTableKeyFielValue, ":");
-           errorCode = "LabPLANETPlatform_MissingTableConfigCode";
-           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, tableName);
-           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(configTableFilter));
-           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaName);
-           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnosis[5]);
-           return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);
+           return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MISSINGTABLECONFIGCODE.getErrorCode(), new Object[]{tableName, Arrays.toString(configTableFilter), procInstanceName, diagnosis[5]});
         }    
 
         
         return diagnosis;
     }
 /**
- * In some cases the field value requires check a kind of logic to verify that the value is aligned with a particular business rule.
- * When this is required then a peer should be added to the properties field
- * Each procedure has a specific parameter field called in the way of "procedureName-config" containing a peer entries in the way of: 
- *      tableName+"_specialFieldsCheck - Specify the field having this need.
- *      tableName+"_specialFieldsCheck_methodName - The method to be invoked that contains the logic.
- * @param schemaName - String - Procedure
+ * In some cases the field value requires check a kind of logic to verify that the value is aligned with a particular business rule.When this is required then a peer should be added to the properties field
+ Each procedure has a specific parameter field called in the way of "procedureName-config" containing a peer entries in the way of: 
+      tableName+"_specialFieldsCheck - Specify the field having this need.
+ * tableName+"_specialFieldsCheck_methodName - The method to be invoked that contains the logic.
+ * @param procInstanceName - String - Procedure
+     * @param areaName
  * @param fieldNames - String[] - fields involved in the actionName being performed
  * @param fieldValues - Object[] - field values 
  * @param tableName - String - Table Name
  * @param actionName - String - action being performed
  * @return String[] - Returns detailed info about the evaluation and where it ends, position 3 set to TRUE means all is ok otherwise FALSE.
  */    
-    public String[] specialFieldsCheck(String schemaName, String[] fieldNames, Object[] fieldValues, String tableName, String actionName){
-        String errorCode = ""; 
+    public String[] specialFieldsCheck(String procInstanceName, String areaName, String[] fieldNames, Object[] fieldValues, String tableName, String actionName){
         Object[] errorDetailVariables = new Object[0];        
-        String specialFieldNamePropertyName = tableName+"_specialFieldsCheck";
-        String specialFieldMethodNamePropertyName = tableName+"_specialFieldsCheck_methodName";        
         
-        String specialFieldName = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), specialFieldNamePropertyName);
-        String specialFieldMethodName = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), specialFieldMethodNamePropertyName);
+        String specialFieldName = Parameter.getBusinessRuleProcedureFile(procInstanceName, areaName, tableName+LpPlatformBusinessRules.SUFFIX_SPECIALFIELDNAME.getTagName());
+        String specialFieldMethodName = Parameter.getBusinessRuleProcedureFile(procInstanceName, areaName, tableName+LpPlatformBusinessRules.SUFFIX_SPECIALFIELDMETHODNAME.getTagName());
+
         String[] specialFields = specialFieldName.split("\\|");
         String[] specialFieldsMethods = specialFieldMethodName.split("\\|");
         Integer specialFieldIndex = -1;
@@ -729,26 +732,17 @@ public enum LpPlatformErrorTrapping{
                         Class<?>[] paramTypes = {Rdbms.class, String[].class, Object[].class, String.class};
                         method = getClass().getDeclaredMethod(aMethod, paramTypes);
                         
-                        Object specialFunctionReturn = LPNulls.replaceNull(method.invoke(this, fieldNames, fieldValues, schemaName));
+                        Object specialFunctionReturn = LPNulls.replaceNull(method.invoke(this, fieldNames, fieldValues, procInstanceName));
                         if (specialFunctionReturn.toString().contains("ERROR")) {
-                            errorCode = "LabPLANETPlatform_SpecialFunctionReturnedERROR";
-                            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
-                            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, aMethod);
-                            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFunctionReturn.toString());                            
-                            return (String[]) trapMessage(LAB_FALSE, errorCode, errorDetailVariables);
+                            return (String[]) trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_RETURNEDERROR.getErrorCode(), new Object[]{currField, aMethod, specialFunctionReturn.toString()});
                         }
                     } catch (NoSuchMethodException | SecurityException|IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                            errorCode = "LabPLANETPlatform_SpecialFunctionCausedException";
-                            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
-                            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, ex.getCause());
-                            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, ex.getMessage());                            
-                            return (String[]) trapMessage(LAB_FALSE, errorCode, errorDetailVariables);                      
+                        return (String[]) trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new Object[]{currField, ex.getCause(), ex.getMessage()});
                     }
             }
         }         
-        errorCode = "LabPLANETPlatform_SpecialFunctionAllSuccess";
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFieldName.replace("\\|", ", "));
-        return (String[]) trapMessage(LAB_TRUE, errorCode, errorDetailVariables);                      
+        return (String[]) trapMessage(LAB_TRUE, LpPlatformErrorTrapping.SPECIALFUNCTION_ALLSUCCESS.getErrorCode(), errorDetailVariables);                      
     }
 /**
  * Get Class Method Name dynamically for the method that call this method.

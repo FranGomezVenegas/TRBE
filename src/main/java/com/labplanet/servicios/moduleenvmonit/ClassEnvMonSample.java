@@ -87,7 +87,7 @@ public class ClassEnvMonSample {
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
                     String smpTmp=LPNulls.replaceNull(argValues[0]).toString();
-                    if (smpTmp==null || smpTmp.length()==0)smpTmp=Parameter.getMessageCodeValue("config", procInstanceName, "procedure", "SampleTemplate", null);  
+                    if (smpTmp==null || smpTmp.length()==0)smpTmp=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "SampleTemplate");  
                     Object smpTmpV=LPNulls.replaceNull(argValues[1]);
                     if (smpTmpV==null || smpTmpV.toString().length()==0)smpTmpV=1;
                     if (LPNulls.replaceNull(argValues[2]).toString().length()>0){

@@ -103,7 +103,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, savedQryJArr);
 /*            case INVESTIGATION_RESULTS_PENDING_DECISION:
-                String statusClosed=Parameter.getMessageCodeValue(schemaPrefix+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
+                String statusClosed=Parameter.getBusinessRuleProcedureFile(schemaPrefix, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
                 JSONArray jArray = new JSONArray(); 
                 if (!isProgramCorrectiveActionEnable(schemaPrefix)){
                   JSONObject jObj=new JSONObject();

@@ -5,7 +5,6 @@
  */
 package functionaljavaa.moduleinspectionlot;
 
-import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI;
 import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEndpoints;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMConfig;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
@@ -44,6 +43,20 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class DataInspectionLot {
 
+    public enum DataInspectionLotBusinessRules{     
+        SUFFIX_STATUS_FIRST ("_statusFirst", GlobalVariables.Schemas.DATA.getName()),
+        ;
+        private DataInspectionLotBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    
     
     
     public Object[] createLot(String lotName, String materialName, String template, Integer templateVersion, String[] fieldName, Object[] fieldValue, Integer numLotsToCreate) {
@@ -66,7 +79,7 @@ public class DataInspectionLot {
 
         String[] mandatoryFields = labIntChecker.getTableMandatoryFields(lotLevel, actionName);
         
-        String lotStatusFirst = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), lotLevel+ModuleInspLotRMenum.DataLotProperties.SUFFIX_STATUS_FIRST.getPropertyName());     
+        String lotStatusFirst = Parameter.getBusinessRuleProcedureFile(procPrefix, DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), lotLevel+DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getTagName());     
 
         String[] lotFieldName =fieldName; //new String[]{};
         Object[] lotFieldValue =fieldValue; //new Object[]{};

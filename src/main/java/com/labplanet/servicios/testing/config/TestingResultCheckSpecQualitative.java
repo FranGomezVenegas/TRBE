@@ -93,7 +93,7 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
 
 
         String testerFileName=LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.getTesterFileName();                         
-        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.name(), testerFileName);
         HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
 
         StringBuilder fileContentBuilder = new StringBuilder(0);        

@@ -16,6 +16,7 @@ import functionaljavaa.user.UserAndRolesViews;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -46,7 +47,13 @@ public class UserSop {
     public enum UserSopErrorTrapping{ 
         MARKEDASCOMPLETED_NOT_PENDING("sopMarkedAsCompletedNotPending", "", ""),
         NOT_ASSIGNED_TO_THIS_USER("UserSop_SopNotAssignedToThisUser", "", ""),
-        USER_WITHNOROLE_FORGIVENSCHEMA("UserSop_UserWithNoRolesForThisGivenSchema", "", "")
+        USER_WITHNOROLE_FORGIVENSCHEMA("UserSop_UserWithNoRolesForThisGivenSchema", "", ""),
+        USER_NOT_CERTIFIED_FOR_SOP("UserSop_UserNotCertifiedForSop", "", ""),
+        SOP_ALREADY_ASSIGNED("UserSop_sopAlreadyAssignToUser", "", ""),
+        SOP_ADDED_TO_USER("UserSop_sopAddedToUser", "", "")
+
+
+        
         ;
         private UserSopErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -61,6 +68,30 @@ public class UserSop {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
+    public enum UserSopBusinessRules{
+        ACTIONENABLED_USERSOP_CERTIFICATION("actionEnabledUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName()),        
+        WINDOWOPENABLE_WHENNOTSOPCERTIFIED("windowOpenableWhenNotSopCertifiedUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName()),
+        CERTIF_LEVEL_IMAGE_ERROR("userSopCertificationLevelImage_ERROR", GlobalVariables.Schemas.PROCEDURE.getName()),
+        CERTIF_LEVEL_IMAGE_NOTASSIGNED("userSopCertificationLevelImage_NotAssigned", GlobalVariables.Schemas.PROCEDURE.getName()),
+        CERTIF_LEVEL_IMAGE_CERTIFIED("userSopCertificationLevelImage_Certified", GlobalVariables.Schemas.PROCEDURE.getName()),
+        CERTIF_LEVEL_IMAGE_NOTCERTIFIED("userSopCertificationLevelImage_NotCertified", GlobalVariables.Schemas.PROCEDURE.getName()),
+
+        USERSOP_INITIAL_STATUS("userSopInitialStatus", GlobalVariables.Schemas.CONFIG.getName()),
+        USERSOP_INITIAL_LIGHT("userSopInitialLight", GlobalVariables.Schemas.CONFIG.getName()),
+        ;
+        private UserSopBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    
+
+    
     
     /**
      *
@@ -108,9 +139,9 @@ public class UserSop {
         return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.FLD_SOP_ID.getName(), sopId);        
     }        
     
-    private Object[] userSopCertifiedBySopInternalLogic( String procInstanceNameName, String userInfoId, String sopIdFieldName, String sopIdFieldValue ) {
+    private Object[] userSopCertifiedBySopInternalLogic( String procInstanceName, String userInfoId, String sopIdFieldName, String sopIdFieldValue ) {
                         
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceNameName, GlobalVariables.Schemas.CONFIG.getName());
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         
         UserProfile usProf = new UserProfile();
         Object[] userSchemas = usProf.getAllUserProcedurePrefix(userInfoId);
@@ -119,16 +150,16 @@ public class UserSop {
         }        
         Boolean schemaIsCorrect = false;
         for (String us: (String[]) userSchemas){
-            if (us.equalsIgnoreCase(procInstanceNameName)){schemaIsCorrect=true;break;}            
+            if (us.equalsIgnoreCase(procInstanceName)){schemaIsCorrect=true;break;}            
         }
         if (!schemaIsCorrect){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA.getErrorCode(), new Object[]{userInfoId, procInstanceNameName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA.getErrorCode(), new Object[]{userInfoId, procInstanceName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getMessageCodeValue(schemaConfigName, "userSopCertificationLevelImage_ERROR"));
+            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.CERTIF_LEVEL_IMAGE_ERROR.getAreaName(), UserSopBusinessRules.CERTIF_LEVEL_IMAGE_ERROR.getTagName()));
             return diagnoses;
         }
         String[] userSchema = new String[1];
-        userSchema[0]=procInstanceNameName;
+        userSchema[0]=procInstanceName;
         
         String[] filterFieldName = new String[2];
         Object[] filterFieldValue = new Object[2];
@@ -149,22 +180,22 @@ public class UserSop {
             return diagnoses;
         }
         if (getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopIdFieldValue, userInfoId, procInstanceNameName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopIdFieldValue, userInfoId, procInstanceName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getMessageCodeValue(schemaConfigName, "userSopCertificationLevelImage_NotAssigned"));
+            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.CERTIF_LEVEL_IMAGE_NOTASSIGNED.getAreaName(), UserSopBusinessRules.CERTIF_LEVEL_IMAGE_NOTASSIGNED.getTagName()));
             return diagnoses;
         }
         if (getUserProfileFieldValues[0][3].toString().contains(userSopStatuses.PASS.getLightCode())){
             Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), 
-                    new Object[]{userInfoId, sopIdFieldValue, procInstanceNameName, "current status is "+getUserProfileFieldValues[0][2].toString()+" and the light is "+getUserProfileFieldValues[0][3].toString()});
+                    new Object[]{userInfoId, sopIdFieldValue, procInstanceName, "current status is "+getUserProfileFieldValues[0][2].toString()+" and the light is "+getUserProfileFieldValues[0][3].toString()});
             diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.PASS.getCode());
-            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getMessageCodeValue(schemaConfigName, "userSopCertificationLevelImage_Certified"));
+            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.CERTIF_LEVEL_IMAGE_CERTIFIED.getAreaName(), UserSopBusinessRules.CERTIF_LEVEL_IMAGE_CERTIFIED.getTagName()));
             return diagnoses;
         }
         else{
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserSop_UserNotCertifiedForSop", new Object[]{userInfoId, sopIdFieldValue, procInstanceNameName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.USER_NOT_CERTIFIED_FOR_SOP.getErrorCode(), new Object[]{userInfoId, sopIdFieldValue, procInstanceName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.NOTPASS.getCode());
-            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getMessageCodeValue(schemaConfigName, "userSopCertificationLevelImage_NotCertified"));
+            diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.CERTIF_LEVEL_IMAGE_NOTCERTIFIED.getAreaName(), UserSopBusinessRules.CERTIF_LEVEL_IMAGE_NOTCERTIFIED.getTagName()));
             return diagnoses;
         }               
     }
@@ -285,7 +316,7 @@ public class UserSop {
             }
             return getUserProfileNEW;                
         }catch(SQLException ex){
-            Object[] trpErr=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION", new String[]{ex.getMessage()});
+            Object[] trpErr=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new String[]{ex.getMessage()});
             return LPArray.array1dTo2d(trpErr, trpErr.length);            
         }
     }
@@ -337,9 +368,9 @@ public class UserSop {
         Object[] exists = Rdbms.existsRecord(schemaName, TblsData.UserSop.TBL.getName(), new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
                 
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(exists[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserSop_sopAlreadyAssignToUser", new Object[]{sopIdFieldValue, personName, schemaName});
-        String userSopInitialStatus = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialStatus");
-        String userSopInitialLight = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialLight");
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.SOP_ALREADY_ASSIGNED.getErrorCode(), new Object[]{sopIdFieldValue, personName, schemaName});
+        String userSopInitialStatus = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.USERSOP_INITIAL_STATUS.getAreaName(), UserSopBusinessRules.USERSOP_INITIAL_STATUS.getTagName());
+        String userSopInitialLight = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.USERSOP_INITIAL_LIGHT.getAreaName(), UserSopBusinessRules.USERSOP_INITIAL_LIGHT.getTagName());
         
         if (userSopInitialStatus.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getCode();
         if (userSopInitialLight.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getLightCode();
@@ -362,7 +393,7 @@ public class UserSop {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
             return diagnosis;
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "UserSop_sopAddedToUser", new Object[]{sopIdFieldValue, personName, schemaName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, UserSopErrorTrapping.SOP_ADDED_TO_USER.getErrorCode(), new Object[]{sopIdFieldValue, personName, schemaName});
     }    
     
     /**
@@ -371,7 +402,7 @@ public class UserSop {
      * @return
      */
     public boolean isProcedureSopEnable(String procedureName){
-        String sopCertificationLevel = Parameter.getMessageCodeValue("config", procedureName, "procedure", "actionEnabledUserSopCertification", null);
+        String sopCertificationLevel = Parameter.getBusinessRuleProcedureFile(procedureName, UserSopBusinessRules.ACTIONENABLED_USERSOP_CERTIFICATION.getAreaName(), UserSopBusinessRules.ACTIONENABLED_USERSOP_CERTIFICATION.getTagName());
         if ("DISABLE".equalsIgnoreCase(sopCertificationLevel)) return false;
         if ("DISABLED".equalsIgnoreCase(sopCertificationLevel)) return false;
         if ("OFF".equalsIgnoreCase(sopCertificationLevel)) return false;
@@ -400,5 +431,4 @@ public class UserSop {
         }
         return userSopDiagnostic; 
     }
-    
 }

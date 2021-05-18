@@ -18,7 +18,6 @@ import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -29,6 +28,23 @@ public class DataProgramCorrectiveAction {
     
     public enum ProgramCorrectiveStatus{CREATED, CLOSED} 
 
+    public enum DataProgramCorrectiveActionBusinessRules{
+        STATUS_CLOSED("programCorrectiveAction_statusClosed", GlobalVariables.Schemas.DATA.getName()),
+        STATUS_FIRST("programCorrectiveAction_statusFirst", GlobalVariables.Schemas.DATA.getName()),
+        ACTION_MODE("programCorrectiveActionMode", GlobalVariables.Schemas.CONFIG.getName()),
+        
+        ;
+        private DataProgramCorrectiveActionBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    
     public enum ProgramCorrectiveActionErrorTrapping{ 
         ACTION_CLOSED("DataProgramCorrectiveAction_actionClosed", "The action <*1*> is already closed, no action can be performed.", "La acción <*1*> está cerrada y no admite cambios."),
         ;
@@ -58,7 +74,7 @@ public class DataProgramCorrectiveAction {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        String statusFirst=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusFirst");
+        String statusFirst=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_FIRST.getAreaName(),DataProgramCorrectiveActionBusinessRules.STATUS_FIRST.getTagName());
         String[] sampleFldsToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), 
         TblsProcedure.ProgramCorrectiveAction.FLD_LOCATION_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_AREA.getName()};
         String[] sampleAnalysisResultToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(),
@@ -162,7 +178,7 @@ public class DataProgramCorrectiveAction {
     public static Object[] markAsCompleted(Integer correctiveActionId, Integer investId){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String statusClosed=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
+        String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
         Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
         new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
         new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()});
@@ -183,12 +199,12 @@ public class DataProgramCorrectiveAction {
                 new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId});
     }  
     public static Boolean isProgramCorrectiveActionEnable(String procInstanceName){
-        return "ENABLE".equalsIgnoreCase(Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "programCorrectiveActionMode"));
+        return "ENABLE".equalsIgnoreCase(Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName()));
     }
     public static Object[] markAsAddedToInvestigation(Integer investId, String objectType, Object objectId){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String statusClosed=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");
+        String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
         String objectIdClass=null;
         String fieldToFindRecord=null;
         if (TblsData.Sample.TBL.getName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName();

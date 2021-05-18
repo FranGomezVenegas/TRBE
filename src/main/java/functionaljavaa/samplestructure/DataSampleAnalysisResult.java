@@ -21,6 +21,7 @@ import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSample.DataSampleErrorTrapping;
 import static functionaljavaa.samplestructure.DataSample.PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED;
 import static functionaljavaa.samplestructure.DataSample.PROCEDURE_SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO;
+import static functionaljavaa.samplestructure.DataSampleAnalysis.SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;
 import static functionaljavaa.samplestructure.DataSampleAnalysis.isReadyForRevision;
 import static functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisEvaluateStatusAutomatismForReview;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
@@ -34,7 +35,32 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class DataSampleAnalysisResult {
-
+    
+    String SAMPLEANALYSISRESULT_STATUS_FIRST_WHEN_NO_PROPERTY="BLANK";
+    String SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY="CANCELED";
+    String SAMPLEANALYSISRESULT_STATUS_REVIEWED_WHEN_NO_PROPERTY="REVIEWED";
+    String SAMPLEANALYSISRESULT_STATUS_SPEC_EVAL_NOSPEC_WHEN_NO_PROPERTY="NO SPEC";
+    String SAMPLEANALYSISRESULT_STATUS_EVAL_NOSPECPARAMLIMIT_WHEN_NO_PROPERTY="NO SPEC LIMIT";
+    
+    public enum DataSampleAnalysisResultBusinessRules{        
+        STATUS_FIRST("sampleAnalysisResult_statusFirst", GlobalVariables.Schemas.DATA.getName()),
+        STATUS_REVIEWED("sampleAnalysisResult_statusReviewed", GlobalVariables.Schemas.DATA.getName()),
+        STATUS_CANCELED("sampleAnalysisResult_statusCanceled", GlobalVariables.Schemas.DATA.getName()),
+        STATUS_SPEC_EVAL_NOSPEC("sampleAnalysisResult_statusSpecEvalNoSpec", GlobalVariables.Schemas.DATA.getName()),
+        STATUS_EVAL_NOSPECPARAMLIMIT("sampleAnalysisResult_statusSpecEvalNoSpecParamLimit", GlobalVariables.Schemas.DATA.getName()),
+         
+        ;
+        private DataSampleAnalysisResultBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    
     String[] mandatoryFields = null;
     Object[] mandatoryFieldsValue = null;
     DataDataIntegrity labIntChecker = new DataDataIntegrity(); 
@@ -43,16 +69,6 @@ public class DataSampleAnalysisResult {
     DataSampleAnalysisResultStrategy sar;
         
     
-    /**
-     *
-     */
-    public static final String CONFIG_SAMPLEANALYSISRESULT_STATUSREVIEWED = "sampleAnalysisResult_statusReviewed";
-
-    /**
-     *
-     */
-    public static final String CONFIG_SAMPLEANALYSISRESULT_STATUSCANCELED = "sampleAnalysisResult_statusCanceled";
-
     /**
      *
      * @param sar
@@ -74,12 +90,20 @@ public class DataSampleAnalysisResult {
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         String[] diagnoses = new String[6];
-        String sampleAnalysisResultStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSCANCELED);
-        String sampleAnalysisResultStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSREVIEWED);
-        String sampleAnalysisStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleAnalysis.CONFIG_SAMPLEANALYSIS_STATUSCANCELED);
-        String sampleAnalysisStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleAnalysis.CONFIG_SAMPLEANALYSIS_STATUSREVIEWED);
-        String sampleStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSample.CONFIG_SAMPLE_STATUSCANCELED);
-        String sampleStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSample.CONFIG_SAMPLE_STATUSREVIEWED);
+        String sampleAnalysisResultStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getTagName());
+        if (sampleAnalysisResultStatusCanceled.length()==0)sampleAnalysisResultStatusCanceled=SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String sampleAnalysisResultStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED.getTagName());
+        if (sampleAnalysisResultStatusReviewed.length()==0)sampleAnalysisResultStatusReviewed=SAMPLEANALYSISRESULT_STATUS_REVIEWED_WHEN_NO_PROPERTY;
+        
+        String sampleAnalysisStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getAreaName(), DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getTagName());
+        if (sampleAnalysisStatusCanceled.length()==0)sampleAnalysisStatusCanceled=SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String sampleAnalysisStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCOMPLETE.getAreaName(), DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getTagName());
+        if (sampleAnalysisStatusReviewed.length()==0)sampleAnalysisStatusReviewed=SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;
+
+        String sampleStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSample.DataSampleBusinessRules.SAMPLE_STATUS_CANCELED.getAreaName(), DataSample.DataSampleBusinessRules.SAMPLE_STATUS_CANCELED.getTagName());
+        if (sampleStatusCanceled.length()==0)sampleStatusCanceled=DataSample.SAMPLE_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String sampleStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSample.DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSample.DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
+        if (sampleStatusReviewed.length()==0)sampleStatusReviewed=DataSample.SAMPLE_STATUS_COMPLETE_WHEN_NO_PROPERTY;
         Object[] samplesToCancel = new Object[0];
         Object[] testsToCancel = new Object[0];
         Object[] testsSampleToCancel = new Object[0];
@@ -206,7 +230,6 @@ public class DataSampleAnalysisResult {
      * @param resultValue
      * @param dataSample
      * @return
-     * @throws IllegalArgumentException
      */
     public Object[] sampleAnalysisResultEntry(Integer resultId, Object resultValue, DataSample dataSample) {           
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
@@ -216,12 +239,18 @@ public class DataSampleAnalysisResult {
         Object[] sampleFieldValue=new Object[0];
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
-        String specEvalNoSpec = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sampleAnalysisResult_statusSpecEvalNoSpec");
-        String specEvalNoSpecParamLimit = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sampleAnalysisResult_statusSpecEvalNoSpecParamLimit");
-        String resultStatusDefault = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), "sampleAnalysisResult_statusFirst");
-        String resultStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSREVIEWED);
-        String resultStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSCANCELED);
-        
+        String specEvalNoSpec = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_SPEC_EVAL_NOSPEC.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_SPEC_EVAL_NOSPEC.getTagName());
+        if(specEvalNoSpec.length()==0) specEvalNoSpec=SAMPLEANALYSISRESULT_STATUS_SPEC_EVAL_NOSPEC_WHEN_NO_PROPERTY;
+        String specEvalNoSpecParamLimit = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_EVAL_NOSPECPARAMLIMIT.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_EVAL_NOSPECPARAMLIMIT.getTagName());
+        if(specEvalNoSpecParamLimit.length()==0) specEvalNoSpecParamLimit=SAMPLEANALYSISRESULT_STATUS_EVAL_NOSPECPARAMLIMIT_WHEN_NO_PROPERTY;
+
+        String resultStatusDefault = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_FIRST.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_FIRST.getTagName());
+        if (resultStatusDefault.length()==0)resultStatusDefault=SAMPLEANALYSISRESULT_STATUS_FIRST_WHEN_NO_PROPERTY;
+        String resultStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getTagName());
+        if (resultStatusCanceled.length()==0)resultStatusCanceled=SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String resultStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED.getTagName());
+        if (resultStatusReviewed.length()==0)resultStatusReviewed=SAMPLEANALYSISRESULT_STATUS_REVIEWED_WHEN_NO_PROPERTY;
+
         String[] fieldsName = new String[0];
         Object[] fieldsValue = new Object[0];
         fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName());
@@ -525,9 +554,15 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        String sampleAnalysisResultStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSCANCELED);
-        String sampleAnalysisStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleAnalysis.CONFIG_SAMPLEANALYSIS_STATUSCANCELED);
-        String sampleStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSample.CONFIG_SAMPLE_STATUSCANCELED);
+
+        String sampleAnalysisResultStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getTagName());
+        if (sampleAnalysisResultStatusCanceled.length()==0)sampleAnalysisResultStatusCanceled=SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String sampleAnalysisStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getAreaName(), DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getTagName());
+        if (sampleAnalysisStatusCanceled.length()==0)sampleAnalysisStatusCanceled=SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String sampleStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSample.DataSampleBusinessRules.SAMPLE_STATUS_CANCELED.getAreaName(), DataSample.DataSampleBusinessRules.SAMPLE_STATUS_CANCELED.getTagName());
+        if (sampleStatusCanceled.length()==0)sampleStatusCanceled=DataSample.SAMPLE_STATUS_CANCELED_WHEN_NO_PROPERTY;
+
+
         String cancelScope = "";
         Integer cancelScopeId = 0;
         if (sampleId != null) {
@@ -653,12 +688,22 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        String sampleAnalysisResultStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSCANCELED);
-        String sampleAnalysisResultStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSREVIEWED);
-        String sampleAnalysisStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleAnalysis.CONFIG_SAMPLEANALYSIS_STATUSCANCELED);
-        String sampleAnalysisStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleAnalysis.CONFIG_SAMPLEANALYSIS_STATUSREVIEWED);
-        String sampleStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSample.CONFIG_SAMPLE_STATUSCANCELED);
-        String sampleStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSample.CONFIG_SAMPLE_STATUSREVIEWED);
+
+        String sampleAnalysisResultStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getTagName());
+        if (sampleAnalysisResultStatusCanceled.length()==0)sampleAnalysisResultStatusCanceled=SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String sampleAnalysisResultStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED.getTagName());
+        if (sampleAnalysisResultStatusReviewed.length()==0)sampleAnalysisResultStatusReviewed=SAMPLEANALYSISRESULT_STATUS_REVIEWED_WHEN_NO_PROPERTY;
+        
+        String sampleAnalysisStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getAreaName(), DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getTagName());
+        if (sampleAnalysisStatusCanceled.length()==0)sampleAnalysisStatusCanceled=SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String sampleAnalysisStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCOMPLETE.getAreaName(), DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getTagName());
+        if (sampleAnalysisStatusReviewed.length()==0)sampleAnalysisStatusReviewed=SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;
+
+        String sampleStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSample.DataSampleBusinessRules.SAMPLE_STATUS_CANCELED.getAreaName(), DataSample.DataSampleBusinessRules.SAMPLE_STATUS_CANCELED.getTagName());
+        if (sampleStatusCanceled.length()==0)sampleStatusCanceled=DataSample.SAMPLE_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String sampleStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSample.DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSample.DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
+        if (sampleStatusReviewed.length()==0)sampleStatusReviewed=DataSample.SAMPLE_STATUS_COMPLETE_WHEN_NO_PROPERTY;
+
         Object[] samplesToCancel = new Object[0];
         Object[] testsToCancel = new Object[0];
         Object[] testsSampleToCancel = new Object[0];
@@ -793,8 +838,11 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        String sampleAnalysisResultStatusCanceled = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleAnalysisResult.CONFIG_SAMPLEANALYSISRESULT_STATUSCANCELED);
-        String sampleAnalysisResultStatusReviewed = Parameter.getMessageCodeValue(schemaDataName.replace("\"", ""), DataSampleAnalysisResult.CONFIG_SAMPLEANALYSISRESULT_STATUSREVIEWED);
+        String sampleAnalysisResultStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_CANCELED.getTagName());
+        if (sampleAnalysisResultStatusCanceled.length()==0)sampleAnalysisResultStatusCanceled=SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        String sampleAnalysisResultStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED.getAreaName(), DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED.getTagName());
+        if (sampleAnalysisResultStatusReviewed.length()==0)sampleAnalysisResultStatusReviewed=SAMPLEANALYSISRESULT_STATUS_REVIEWED_WHEN_NO_PROPERTY;
+        
         Object[] samplesToReview = new Object[0];
         Object[] testsToReview = new Object[0];
         Object[] testsSampleToReview = new Object[0];

@@ -199,6 +199,10 @@ public class ClassMasterData {
                                 fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsString());
                             }
                         }
+                        if (LPArray.valueInArray(fldName, TblsEnvMonitConfig.Program.FLD_SAMPLE_CONFIG_CODE_VERSION.getName())){
+                            fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.Program.FLD_SAMPLE_CONFIG_CODE_VERSION.getName());
+                            fldValue=LPArray.addValueToArray1D(fldValue, 1);                            
+                        }
                         this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.Program.TBL.getName(), 
                             fldName, fldValue);
                     }
@@ -249,12 +253,12 @@ public class ClassMasterData {
                             if (jO.getAsJsonObject().has(curFldName) && !"START".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
                                 parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
                                     instanceName+"-"+GlobalVariables.Schemas.DATA.getName(),  
-                                    "sampleStages"+curStage+"Previous", jO.getAsJsonObject().get(curFldName).getAsString());
+                                    "sampleStage"+curStage+"Previous", jO.getAsJsonObject().get(curFldName).getAsString());
                             curFldName="NEXT STAGES";
                             if (jO.getAsJsonObject().has(curFldName) && !"START".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
                                 parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
                                     instanceName+"-"+GlobalVariables.Schemas.DATA.getName(),  
-                                    "sampleStages"+curStage+"Next", jO.getAsJsonObject().get(curFldName).getAsString());
+                                    "sampleStage"+curStage+"Next", jO.getAsJsonObject().get(curFldName).getAsString());
                         }
                     }
                     parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  

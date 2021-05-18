@@ -12,7 +12,7 @@ header {
 	width: 100%;
 	height: auto;
 	background-size: cover;
-                    background-color:#A9E2F3;
+                    background-color:black;
 	background-attachment: fixed;
 	position: relative;
 	overflow: hidden;
@@ -59,8 +59,8 @@ body {
 }
 
 body, html{
-	height: 90%;
-                    width:90%;  
+	height: 100%;
+        width:100%;  
 }
 
 .btn-group2 input {

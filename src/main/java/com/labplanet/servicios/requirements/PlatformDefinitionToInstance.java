@@ -54,7 +54,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response=LPTestingOutFormat.responsePreparation(response);
-        String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File");
+        String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File", null, null);
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
         PlatformDefinitionAPIEndpoints endPoint = PlatformDefinitionAPIEndpoints.CREATE_PLATFORM_INSTANCE_STRUCTURE;
         LPAPIArguments[] arguments = endPoint.getArguments();

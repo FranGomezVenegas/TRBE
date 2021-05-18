@@ -216,8 +216,8 @@ public class EnvMonAPIStats extends HttpServlet {
             Object[] filterFieldValue=new Object[]{};
             String prodLotName="";
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
-            String smpTemplate=Parameter.getMessageCodeValue("config", procInstanceName, "procedure", "SampleTemplate", null);  
-            String samplerSmpTemplate=Parameter.getMessageCodeValue("config", procInstanceName, "procedure", "samplerSampleTemplate", null);  
+            String smpTemplate=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "SampleTemplate");  
+            String samplerSmpTemplate=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "samplerSampleTemplate");  
             Boolean getSampleInfo=false;
             Boolean getInvestigationInfo=false;
             switch (endPoint){

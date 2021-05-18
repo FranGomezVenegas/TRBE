@@ -26,7 +26,7 @@ public class TblsEnvMonitProcedure {
     public static final String getTableCreationScriptFromDataProcedureTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "INCUBATOR_TEMP_READING_VIOLATIONS": return IncubatorTempReadingViolations.createTableScript(schemaNamePrefix, fields);
-            case "PROGRAM_CORRECTIVE_ACTIONS": return TblsProcedure.ProgramCorrectiveAction.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_CORRECTIVE_ACTION": return TblsProcedure.ProgramCorrectiveAction.createTableScript(schemaNamePrefix, fields);
             case "INVESTIGATION": return TblsProcedure.Investigation.createTableScript(schemaNamePrefix, fields);
             case "INVEST_OBJECTS": return TblsProcedure.InvestObjects.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_STAGE_TIMING_CAPTURE": return SampleStageTimingCapture.createTableScript(schemaNamePrefix, fields);

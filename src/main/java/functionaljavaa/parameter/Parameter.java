@@ -115,31 +115,49 @@ public class Parameter {
      * @return
      */
     public static String getBusinessRuleAppFile(String parameterName) {
-        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
-        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
-        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
-        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        String className ="NO_TRACE";
+        String classFullName = "NO_TRACE";
+        String methodName = "NO TRACE"; 
+        Integer lineNumber = -999999;
+        if (Thread.currentThread().getStackTrace().length>CLIENT_CODE_STACK_INDEX){        
+            className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+            classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+            methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+            lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        }
         className = className.replace(".java", "");
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
         return getBusinessRuleInAppFile("parameter.config.app", parameterName, callerInfo);
     }
 
     public static String getBusinessRuleInConfigFile(String configFile, String parameterName, String language) {
-        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
-        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
-        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
-        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        String className ="NO_TRACE";
+        String classFullName = "NO_TRACE";
+        String methodName = "NO TRACE"; 
+        Integer lineNumber = -999999;
+        if (Thread.currentThread().getStackTrace().length>CLIENT_CODE_STACK_INDEX){
+            className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+            classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+            methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+            lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        }
         className = className.replace(".java", "");
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
         return getBusinessRuleInAppFile("parameter.config." + configFile + "_" + language, parameterName, callerInfo);
     }
 
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName) {
-        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
-        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
-        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
-        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        String className ="NO_TRACE";
+        String classFullName = "NO_TRACE";
+        String methodName = "NO TRACE"; 
+        Integer lineNumber = -999999;
+        if (Thread.currentThread().getStackTrace().length>CLIENT_CODE_STACK_INDEX){
+            className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+            classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+            methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+            lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
         className = className.replace(".java", "");
+        }
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
         return getBusinessRuleInAppFile("parameter.config."+procInstanceName+"-"+suffixFile, parameterName, callerInfo);
     }

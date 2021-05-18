@@ -28,6 +28,7 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
+import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
@@ -521,7 +522,7 @@ GlobalAPIsParams.
                     Response.ok().build();
                     return;  
                 case PROGRAMS_CORRECTIVE_ACTION_LIST:   
-                    String statusClosed=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "programCorrectiveAction_statusClosed");                    
+                    String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
                     String programName = argValues[0].toString();
                     String[] progCorrFldNameList = getFieldsListToRetrieve(argValues[1].toString(), TblsProcedure.ProgramCorrectiveAction.TBL.getAllFieldNames());
                     String[] progCorrFldSortArray=argValues[2].toString().split("\\|");

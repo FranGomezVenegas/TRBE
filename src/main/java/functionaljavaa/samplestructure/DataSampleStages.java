@@ -69,7 +69,13 @@ public enum SampleStageErrorTrapping{
     }
 
     public enum SampleStageBusinessRules{        
-        ACTION_AUTOMOVETONEXT("sampleStagesActionAutoMoveToNext", GlobalVariables.Schemas.PROCEDURE.getName())
+        ACTION_AUTOMOVETONEXT("sampleStagesActionAutoMoveToNext", GlobalVariables.Schemas.PROCEDURE.getName()),
+        SAMPLE_STAGES_FIRST("sampleStagesFirst", GlobalVariables.Schemas.PROCEDURE.getName()),
+        SAMPLE_STAGE_MODE("sampleStagesMode", GlobalVariables.Schemas.PROCEDURE.getName()),
+        SAMPLE_STAGE_TYPE("sampleStagesLogicType", GlobalVariables.Schemas.PROCEDURE.getName()),
+        SAMPLE_STAGE_TIMING_CAPTURE_MODE("sampleStagesTimingCaptureMode", GlobalVariables.Schemas.PROCEDURE.getName()),
+        SAMPLE_STAGE_TIMING_CAPTURE_STAGES("sampleStagesTimingCaptureStages", GlobalVariables.Schemas.PROCEDURE.getName()),
+        
         ;
         private SampleStageBusinessRules(String tgName, String areaNm){
             this.tagName=tgName;
@@ -95,10 +101,6 @@ public enum SampleStageErrorTrapping{
     public static final String LOD_JAVASCRIPT_FORMULA="procInstanceName-sample-stage.js"; // "WEB-INF/classes/JavaScript/"+"procInstanceName-sample-stage.js";
     public static final String LOD_JAVASCRIPT_LOCAL_FORMULA="D:\\LP\\LabPLANETAPI_20200113_beforeRefactoring\\src\\main\\resources\\JavaScript\\"+"procInstanceName-sample-stage.js";
     
-    public static final String BUSINESS_RULE_SAMPLE_STAGE_MODE="sampleStagesMode";
-    public static final String BUSINESS_RULE_SAMPLE_STAGE_TYPE="sampleStagesLogicType";    
-    public static final String BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE="sampleStagesTimingCaptureMode";
-    public static final String BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_STAGES="sampleStagesTimingCaptureStages";
 
     /**
      *
@@ -106,16 +108,16 @@ public enum SampleStageErrorTrapping{
     public DataSampleStages() {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String sampleStagesMode = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_MODE, null);
+        String sampleStagesMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_MODE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_MODE.getTagName());
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesMode)>-1)
         this.isSampleStagesEnable=true;  
-    String sampleStagesTimingCaptureMode = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, null);
+    String sampleStagesTimingCaptureMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getTagName());
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
         this.isSampleStagesTimingCaptureEnable=true;  
-    String sampleStagesTimingCaptureStages = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_STAGES, null);
+    String sampleStagesTimingCaptureStages = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_STAGES.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_STAGES.getTagName());
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
         this.isSampleStagesTimingCaptureStages=sampleStagesTimingCaptureStages;  
-    String statusFirst=Parameter.getMessageCodeValue(procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst");
+    String statusFirst=Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getTagName());
     this.firstStageData=new Object[][]{{TblsData.Sample.FLD_CURRENT_STAGE.getName(), statusFirst}};
   }
 
@@ -156,7 +158,7 @@ public enum SampleStageErrorTrapping{
             return new Object[]{LPPlatform.LAB_TRUE, newStageProposedByChecker};
         }
         
-        String sampleStageNextStage = Parameter.getMessageCodeValue("config", procInstanceName, "data", "sampleStage"+currStage+"Next", null);
+        String sampleStageNextStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), "sampleStage"+currStage+"Next");
         if (sampleStageNextStage.length()==0) return new Object[]{LPPlatform.LAB_FALSE, "Next Stage is blank for "+currStage};
 
         String[] nextStageArr=sampleStageNextStage.split("\\|");
@@ -178,7 +180,7 @@ public enum SampleStageErrorTrapping{
         Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Previous");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic;
 
-        String sampleStagePreviousStage = Parameter.getMessageCodeValue("config", procInstanceName, "data", "sampleStage"+currStage+"Previous", null);
+        String sampleStagePreviousStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), "sampleStage"+currStage+"Previous");
         if (sampleStagePreviousStage.length()==0) return new Object[]{LPPlatform.LAB_FALSE, "Previous Stage is blank for "+currStage};
 
         String[] previousStageArr=sampleStagePreviousStage.split("\\|");
@@ -221,7 +223,7 @@ public enum SampleStageErrorTrapping{
         
     private Object[] moveStagetChecker(Integer sampleId, String currStage, String moveDirection){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String sampleStagesType = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TYPE, null);
+        String sampleStagesType = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_TYPE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_TYPE.getTagName());
         if (SampleStagesTypes.JAVA.toString().equalsIgnoreCase(sampleStagesType)) return moveStageCheckerJava(sampleId, currStage, moveDirection);
         else return moveStageCheckerJavaScript(sampleId, currStage, moveDirection);
     }
@@ -301,7 +303,7 @@ public enum SampleStageErrorTrapping{
     public Object[] dataSampleStagesTimingCapture(Integer sampleId, String currStage, String phase) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         if (!this.isSampleStagesTimingCaptureEnable)
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, procInstanceName});
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getTagName(), procInstanceName});
         if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, procInstanceName});
         if (SampleStageTimingCapturePhases.START.toString().equalsIgnoreCase(phase)){

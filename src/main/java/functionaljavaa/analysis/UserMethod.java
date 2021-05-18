@@ -19,6 +19,22 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class UserMethod {
    String classVersion = "0.1";
+
+    public enum UserMethodBusinessRules{     
+        CERTIFICATE_NOTASSIGNED ("userMethodCertificate_notAssigned", GlobalVariables.Schemas.CONFIG.getName()),
+        CERTIFICATE_INACTIVE("userMethodCertificate_inactive", GlobalVariables.Schemas.CONFIG.getName()),
+        CERTIFICATE_CERTIFIED("userMethodCertificate_certified", GlobalVariables.Schemas.CONFIG.getName()),
+        ;
+        private UserMethodBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
    
     /**
      *
@@ -97,13 +113,12 @@ public class UserMethod {
  * @return String - The certification level
  */    
     public String userMethodCertificationLevel( String procInstanceName, String analysis, String methodName, Integer methodVersion, String userName){
-                
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());  
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());   
         
-        String userMethodNotAssigned = Parameter.getMessageCodeValue(schemaConfigName, "userMethodCertificate_notAssigned");
-        String userMethodInactive = Parameter.getMessageCodeValue(schemaConfigName, "userMethodCertificate_inactive");
-        String userMethodCertified = Parameter.getMessageCodeValue(schemaConfigName, "userMethodCertificate_certified");
+        String userMethodNotAssigned = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_NOTASSIGNED.getAreaName(), UserMethodBusinessRules.CERTIFICATE_NOTASSIGNED.getTagName());
+        String userMethodInactive = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_INACTIVE.getAreaName(), UserMethodBusinessRules.CERTIFICATE_INACTIVE.getTagName());
+        String userMethodCertified = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_CERTIFIED.getAreaName(), UserMethodBusinessRules.CERTIFICATE_CERTIFIED.getTagName());
         
         String[] whereFieldName = new String[]{FIELDNAME_DATA_USER_METHOD_USER_ID, FIELDNAME_DATA_USER_METHOD_ANALYSIS,
                 FIELDNAME_DATA_USER_METHOD_METHOD_NAME, FIELDNAME_DATA_USER_METHOD_METHOD_VERSION};

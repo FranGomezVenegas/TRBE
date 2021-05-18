@@ -64,7 +64,7 @@ public class LPTestingOutFormat {
     private Integer stopSyntaxisUnmatchPosic = -1;
     private Integer stopSyntaxisFalsePosic = -1;
 
-    public LPTestingOutFormat(HttpServletRequest request, String testerFileName){
+    public LPTestingOutFormat(HttpServletRequest request, String testerName, String testerFileName){
         String csvPathName ="";
         String csvFileName ="";
         Object[][] csvFileContent = new Object[0][0];
@@ -84,12 +84,14 @@ public class LPTestingOutFormat {
             TblsTesting.ScriptSteps.FLD_AUDIT_REASON.getName(),
             TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_UNMATCH.getName(), TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_FALSE.getName()
         };
+        Integer scriptId = null;
+        String schemaPrefix=null;
         if (testingSource!=null && testingSource=="DB"){
             csvPathName ="";
             csvFileName ="";
             if (!LPFrontEnd.servletStablishDBConection(request, null)){return;}
-            Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
-            String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
+            scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
+            schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
             csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptSteps.TBL.getName(),
                     new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_ACTIVE.getName()}, new Object[]{scriptId, true},
                     fieldsName,
@@ -114,7 +116,7 @@ public class LPTestingOutFormat {
             numEvalArgs = Integer.valueOf(headerTags.get(LPTestingOutFormat.FileHeaderTags.NUM_EVALUATION_ARGUMENTS.getTagValue().toString()).toString());
         }
         htmlStyleHdr = new StringBuilder(0);
-        htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
+        htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(testerName, csvFileName, scriptId, schemaPrefix));
 
         this.testingContent=csvFileContent;
         this.inputMode=LPNulls.replaceNull(testingSource).toString();
@@ -507,7 +509,7 @@ public class LPTestingOutFormat {
      * @param fileName
      * @return
      */
-    public static String getHtmlStyleHeader(String servletName, String fileName) {
+    public static String getHtmlStyleHeader(String servletName, String fileName, Integer scriptId, String procInstanceName) {
         String fileContent = "";
         fileContent = fileContent + "<!DOCTYPE html>" + "";
         fileContent = fileContent + "<html>" + "";
@@ -528,8 +530,14 @@ public class LPTestingOutFormat {
         fileContent = fileContent + "<title>Servlet " + servletName + "</title>" + "";
         fileContent = fileContent + "</head>" + "";
         fileContent = fileContent + "<body>" + "\n";
-        fileContent = fileContent + "<h1>Tester for " + servletName + "</h1>" + "";
-        fileContent = fileContent + "<h2>File being tested: " + fileName +" on "+LPDate.getCurrentTimeStamp().toString()+"</h2>" + "";
+        if (scriptId==null)
+            fileContent = fileContent + "<h2>File "+fileName+" being tested on "+LPDate.getCurrentTimeStamp().toString()+"</h2>" + "";
+        else
+            fileContent = fileContent + "<h2>Script "+scriptId+" being tested on "+LPDate.getCurrentTimeStamp().toString()+"</h2>" + "";
+        if (procInstanceName!=null)
+            fileContent = fileContent + "<h2>Procedure Instance Name: " + procInstanceName+"</h2>" + "";
+        fileContent = fileContent + "<h2>Tester " + servletName + "</h2>" + "";
+
         fileContent = fileContent + "<table id=\"scriptTable\">";
         return fileContent;
     }

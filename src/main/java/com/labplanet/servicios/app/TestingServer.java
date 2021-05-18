@@ -11,10 +11,11 @@ import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.Token;
-import functionaljavaa.certification.CertifGlobalVariables;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
+import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
+import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
@@ -260,6 +261,9 @@ out.println(Rdbms.dbViewExists("em-demo-a", "data", "padsasr_scheduled_locations
 out.println("Bye");
 //if (1==1) return;
 
+            
+
+
             if ((Boolean) isConnected[0]){out.println("Connected to the db !:)");
             }else{out.println("NOT Connected to the db :( "+ Arrays.toString(isConnected));}
             Token token = new Token("eyJ1c2VyREIiOiJtYXJjIiwiZVNpZ24iOiJ2YWxlZSIsInVzZXJEQlBhc3N3b3JkIjoiYXVsaW4iLCJ1c2VyX3Byb2NlZHVyZXMiOiJbZW0tZGVtby1hXSIsInR5cCI6IkpXVCIsImFwcFNlc3Npb25JZCI6IjExNTQxIiwiYXBwU2Vzc2lvblN0YXJ0ZWREYXRlIjoiVHVlIFNlcCAwOCAyMjoyNDoxNyBDRVNUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEyIn0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.IOclIuaUZ-OhyTif3Mmmt4r9m8F9PYC2ECZ4coX3Jno");
@@ -285,8 +289,8 @@ out.println("Bye");
             
             out.println("Statuses en inglés: "+Arrays.toString(DataSampleUtilities.getSchemaSampleStatusList(procName)));
             out.println("Statuses en castellano: "+Arrays.toString(DataSampleUtilities.getSchemaSampleStatusList(procName, "es")));
-            
-            out.println("First sample analysis status for process-us is: "+Parameter.getMessageCodeValue("process-us-data", "sampleAnalysis_statusFirst"));
+            DataSampleAnalysisBusinessRules
+            out.println("First sample analysis status for process-us is: "+Parameter.getBusinessRuleProcedureFile("process-us", DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSFIRST.getAreaName(), DataSampleAnalysis.DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSFIRST.getTagName()));
             
             String[] errObject = new String[]{"Servlet sampleAPI at " + request.getServletPath()};          
             

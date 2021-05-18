@@ -71,7 +71,7 @@ public class DBActions extends HttpServlet {
         
         Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
         StringBuilder fileContentBuilder = new StringBuilder(0);
-        fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
+        fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName, null, null));
                 
         try (PrintWriter out = response.getWriter()) {    
             HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
@@ -128,7 +128,7 @@ public class DBActions extends HttpServlet {
                 Object[] fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue);
                 if ( (fieldName!=null) && (fieldValue!=null) ){
                     for (int iFields=0; iFields<fieldName.length; iFields++){
-                        if (LPPlatform.isEncryptedField(schemaPrefix, "sample", fieldName[iFields])){                
+                        if (LPPlatform.isEncryptedField(schemaPrefix, "ZZZ", "sample", fieldName[iFields])){                
                             HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(fieldName[iFields], fieldValues[iFields].toString());
                             fieldName[iFields]= hm.keySet().iterator().next();    
                             if ( hm.get(fieldName[iFields]).length()!=fieldValues[iFields].toString().length()){

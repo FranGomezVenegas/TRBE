@@ -84,7 +84,7 @@ public class ProcedureDeployment extends HttpServlet {
         String procInstanceSchemaProcName=LPPlatform.buildSchemaName(procName, GlobalVariables.Schemas.PROCEDURE.getName());
         
         response=LPTestingOutFormat.responsePreparation(response);
-        String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File need");
+        String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File need", null, null);
         String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}
                             , {"PROC_DISPLAY_PROC_DEF_REQUIREMENTS", PROC_DISPLAY_PROC_DEF_REQUIREMENTS.toString()}
                             , {"PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS", PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS.toString()}

@@ -13,7 +13,7 @@ import databases.Token;
 import functionaljavaa.audit.LotAudit;
 import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotErrorTrapping;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.samplestructure.DataSample;
+import functionaljavaa.samplestructure.DataSample.DataSampleBusinessRules;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -73,7 +73,7 @@ public class DataInspectionLotDecision {
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "NoDecisionsListDefined", null);
         else{
             String[] sampleAndSampleAnalysisFlds=new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_STATUS.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_STATUS.getName()};
-            String sampleStatusReviewed = Parameter.getMessageCodeValue(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()).replace("\"", ""), DataSample.CONFIG_SAMPLE_STATUSREVIEWED);
+            String sampleStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
             
             Object[][] sampleAndSampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                     new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOT_NAME.getName()}, new Object[]{lotName}, 

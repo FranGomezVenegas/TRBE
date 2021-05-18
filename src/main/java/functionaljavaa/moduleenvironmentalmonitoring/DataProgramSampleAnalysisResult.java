@@ -27,11 +27,11 @@ public class DataProgramSampleAnalysisResult implements DataSampleAnalysisResult
      */
     @Override
   public Object[] sarControlAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue) {
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-      String sampleActionWhenUponControlMode = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", "sampleActionWhenUponControlMode", null);
-      if (LPArray.valuePosicInArray(SAMPLEACTIONWHENUPONCONTROLMODEENABLINGSTATUSES.split("\\|"), sampleActionWhenUponControlMode)==-1)
-          return new Object[0];
-      return DataProgramCorrectiveAction.createNew(resultId, sampleFieldName, sampleFieldValue,sarFieldName, sarFieldValue);
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    String sampleActionWhenUponControlMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultStrategyBusinessRules.SAMPLE_ACTION_WHENUPONCONTROL_MODE.getAreaName(), DataSampleAnalysisResultStrategyBusinessRules.SAMPLE_ACTION_WHENUPONCONTROL_MODE.getTagName());
+    if (LPArray.valuePosicInArray(SAMPLEACTIONWHENUPONCONTROLMODEENABLINGSTATUSES.split("\\|"), sampleActionWhenUponControlMode)==-1)
+        return new Object[0];
+    return DataProgramCorrectiveAction.createNew(resultId, sampleFieldName, sampleFieldValue,sarFieldName, sarFieldValue);
   }
 
     /**
@@ -47,7 +47,7 @@ public class DataProgramSampleAnalysisResult implements DataSampleAnalysisResult
   public Object[] sarOOSAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-      String sampleActionWhenOOSMode = Parameter.getMessageCodeValue("config", procInstanceName, "procedure", "sampleActionWhenOOSMode", null);
+      String sampleActionWhenOOSMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisResultStrategy.DataSampleAnalysisResultStrategyBusinessRules.SAMPLE_ACTION_WHENOOS_MODE.getAreaName(), DataSampleAnalysisResultStrategyBusinessRules.SAMPLE_ACTION_WHENOOS_MODE.getTagName());
       if (LPArray.valuePosicInArray(SAMPLEACTIONWHENUPONOOSMODEENABLINGSTATUSES.split("\\|"), sampleActionWhenOOSMode)==-1)
           return new Object[0];
       return DataProgramCorrectiveAction.createNew(resultId, sampleFieldName, sampleFieldValue,sarFieldName, sarFieldValue);

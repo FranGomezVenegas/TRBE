@@ -50,7 +50,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
         String testerFileName=LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.getTesterFileName();                         
-        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.name(), testerFileName);
         HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        
@@ -69,8 +69,11 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
             
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
-            
+//numHeaderLines=29;
+//testingContent.length            
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
+//if (iLines==42)
+//    System.out.print("h");
                 tstAssertSummary.increaseTotalTests();
                     
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);

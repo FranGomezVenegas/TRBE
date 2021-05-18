@@ -60,8 +60,7 @@ public class CertifyQueries {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();  
         for (CertifObjects curCertifObj: CertifObjects.values()){                        
             Boolean tagValueOneOfEnableOnes = false;
-            String tagValue = Parameter.getMessageCodeValue("config", procInstanceName, 
-                GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), curCertifObj.getPropertyName(), null);
+            String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), curCertifObj.getPropertyName());
             tagValueOneOfEnableOnes = Parameter.isTagValueOneOfEnableOnes(tagValue);
             if (!includeOnlyEnabled || tagValueOneOfEnableOnes){
                 JSONObject jObj=new JSONObject();
@@ -91,8 +90,8 @@ public class CertifyQueries {
                     fieldsToGet=LPArray.addValueToArray1D(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_ID.getName());
             }
             if ("ALL".equalsIgnoreCase(areasToInclude) || LPArray.valueInArray(areasToIncludeArr, curCertifObj.toString())){
-                String tagValue = Parameter.getMessageCodeValue("config", procInstanceName, 
-                        GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), curCertifObj.getPropertyName(), null);
+                String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, 
+                        GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), curCertifObj.getPropertyName());
                 if (Parameter.isTagValueOneOfEnableOnes(tagValue)){
                     Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), curCertifObj.getTableName(), 
                         fldsName, fldsValue, fieldsToGet,

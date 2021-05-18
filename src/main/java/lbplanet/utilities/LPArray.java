@@ -67,9 +67,22 @@ public class  LPArray {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
+
+    public enum LpArrayBusinessRules{    
+        ENCRYPTED_PREFIX("encrypted_", ""),
+        ;
+        private LpArrayBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
     
     private static final String ENCRYPTION_KEY = "Bar12345Bar12345";
-    private static final String ENCRYPTED_PREFIX = "encrypted_";
     private static final String ERRORTRAPPING_EXCEPTION= "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION";
     /**
      *
@@ -99,7 +112,8 @@ public class  LPArray {
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY; // 128 bit key
         //? Should be by schemaPrefix? config or data???
-        String fieldsEncrypted = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), ENCRYPTED_PREFIX+tableName);        
+        String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
+
         for (int iFields=0;iFields<fieldName.length;iFields++){
             if (fieldsEncrypted.contains(fieldName[iFields])){
                 try{
@@ -143,7 +157,7 @@ if (1==1) return fieldValue;
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
         String keyStr="AES";
-        String fieldsEncrypted = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), ENCRYPTED_PREFIX+tableName);
+        String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
         for (int iFields=0;iFields<fieldName.length;iFields++){
             if (fieldsEncrypted.contains(fieldName[iFields])){
                     for (Object[] fieldValue1 : fieldValue) {
@@ -183,7 +197,7 @@ if (1==1) return fieldValue;
     public static Object[] decryptTableFieldArray(String schemaName, String tableName, String[] fieldName, Object[] fieldValue){
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY;
-        String fieldsEncrypted = Parameter.getMessageCodeValue(schemaName.replace("\"", ""), ENCRYPTED_PREFIX+tableName);
+        String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
         for (int iFields=0;iFields<fieldName.length;iFields++){
             if (fieldsEncrypted.contains(fieldName[iFields])){
                 try{                                        

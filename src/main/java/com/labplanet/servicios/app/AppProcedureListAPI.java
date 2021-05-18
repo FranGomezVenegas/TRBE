@@ -27,7 +27,6 @@ import org.json.simple.JSONArray;
 import functionaljavaa.sop.UserSop;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -183,15 +182,15 @@ public class AppProcedureListAPI extends HttpServlet {
                         new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_FLD_NAME.split("\\|"));
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){
                     procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
-                    String attributeName="windowOpenableWhenNotSopCertifiedUserSopCertification";
-                    String propValue = Parameter.getMessageCodeValue(curProc.toString().replace("\"", "")+CONFIG_PROC_FILE_NAME, attributeName);
-                    procedure.put(attributeName, propValue);
+                    String propValue = Parameter.getBusinessRuleProcedureFile(curProc.toString(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getAreaName(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName());
+                    procedure.put(UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName(), propValue);
                     procedure.put(LABEL_PROC_SCHEMA, curProc);
 
                     if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
                     
                     Object[][] procEvent = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.ProcedureEvents.TBL.getName(), 
-                            new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.FLD_TYPE.getName()}, new String[]{rolName,elementType.TREE_LIST.toString().toLowerCase().replace("_","-")}, 
+                            new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.FLD_TYPE.getName()}, 
+                            new String[]{rolName,elementType.TREE_LIST.toString().toLowerCase().replace("_","-")}, 
                             procEventFldNameArray, new String[]{TblsProcedure.ProcedureEvents.FLD_ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.FLD_BRANCH_LEVEL.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procEvent[0][0].toString())){ 
                         JSONObject procEventJson = new JSONObject();

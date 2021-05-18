@@ -91,7 +91,7 @@ public class ProcedureDefinitionQueries {
         if (bsnRuleQry.getIncludeRunAttributesToJsonObj()){        
             for (String curProp: bsnRuleQry.getPropertiesList()){
                 for (String currFileNameSuffix: bsnRuleQry.getFileNameSuffix()){
-                    String propValue = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+currFileNameSuffix, curProp);
+                    String propValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, currFileNameSuffix, curProp);
                 if (propValue.length()>0)
                     mainObj.put(curProp, propValue);  
                 }
