@@ -10,18 +10,16 @@ import databases.DbObjects;
 import static databases.DbObjects.createSchemas;
 import lbplanet.utilities.LPFrontEnd;
 import databases.Rdbms;
-import databases.TblsCnfg;
 import static functionaljavaa.requirement.PlatformNewInstance.createCheckPlatformProcedure;
+import static functionaljavaa.requirement.PlatformNewInstance.removeCheckPlatformProcedure;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
@@ -36,6 +34,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
     private static final Boolean  CREATE_DATABASE=false;
     private static final Boolean  CREATE_SCHEMAS_AND_PLATFORM_TBLS=false;
     private static final Boolean  CREATE_CHECKPLATFORM_PROCEDURE=false;
+    private static final Boolean  REMOVE_CHECKPLATFORM_PROCEDURE=false;    
 /*    private static final Boolean  PROC_DEPLOY_PROCEDURE_INFO=false;
     private static final Boolean  PROC_DEPLOY_PROCEDURE_USER_ROLES=false;
     private static final Boolean  PROC_DEPLOY_PROCEDURE_SOP_META_DATA=false;
@@ -102,6 +101,13 @@ public class PlatformDefinitionToInstance extends HttpServlet {
                 Rdbms.stablishDBConection(platfName);                
                 JSONObject createCheckPlatformProcedure = createCheckPlatformProcedure(platfName);
                 String[][] createCheckPlatformProcedureTbl = new String[][]{{"Log for CREATE_CHECKPLATFORM_PROCEDURE"},{createCheckPlatformProcedure.toJSONString()}};  
+                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createCheckPlatformProcedureTbl);
+            }   
+            if (Boolean.valueOf(argValues[4].toString()) || REMOVE_CHECKPLATFORM_PROCEDURE){
+                Rdbms.closeRdbms();
+                Rdbms.stablishDBConection(platfName);                
+                JSONObject createCheckPlatformProcedure = removeCheckPlatformProcedure(platfName);
+                String[][] createCheckPlatformProcedureTbl = new String[][]{{"Log for REMOVE_CHECKPLATFORM_PROCEDURE"},{createCheckPlatformProcedure.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createCheckPlatformProcedureTbl);
             }   
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();

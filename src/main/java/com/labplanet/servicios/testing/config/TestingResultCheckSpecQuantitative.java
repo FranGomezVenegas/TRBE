@@ -1,6 +1,7 @@
 package com.labplanet.servicios.testing.config;
 
 import databases.Rdbms;
+import functionaljavaa.materialspec.ConfigSpecRule.QuantSymbols;
 import functionaljavaa.materialspec.DataSpec;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,11 +20,28 @@ import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lbplanet.utilities.LPNulls;
 /**
  *
  * @author Administrator
  */
 public class TestingResultCheckSpecQuantitative extends HttpServlet {
+    public static String getprettyValue(Object value, Boolean strictMode, String bound){
+        //if (1==1) return "hola";
+        if (value==null || value.toString().length()==0) return "";
+        String prettyVal=LPNulls.replaceNull(value).toString();
+        if (strictMode)
+            if ("MIN".equalsIgnoreCase(bound))                
+                prettyVal=prettyVal+" "+QuantSymbols.MIN_STRICT.getSymbol();
+            else
+                prettyVal=QuantSymbols.MAX_STRICT.getSymbol()+" "+prettyVal;
+        else
+            if ("MIN".equalsIgnoreCase(bound))                
+                prettyVal=prettyVal+" "+QuantSymbols.MIN.getSymbol();
+            else
+                prettyVal=QuantSymbols.MAX.getSymbol()+" "+prettyVal;
+        return prettyVal;
+    }    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -32,8 +50,10 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
-     */
+     */    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {        
+
+        
         String[] tableHeaders = LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK.getTablesHeaders().split("\\|");
         String table1Header=tableHeaders[0];
         String table2Header=tableHeaders[1];
@@ -99,12 +119,12 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
 */
 //            String table1Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"1").toString();               
 //            StringBuilder fileContentTable1Builder = new StringBuilder(0);
-            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
+//            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
 
 //            String table2Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"2").toString();            
             StringBuilder fileContentTable2Builder = new StringBuilder(0);
             fileContentTable2Builder.append(LPTestingOutFormat.createTableWithHeader(table2Header, numEvaluationArguments));
-
+//testingContent.length
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
@@ -140,11 +160,11 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
                     
                 Object[] resSpecEvaluation = new Object[0];
                 if (minControl==null){
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, result, minSpec, minStrict, maxSpec, maxStrict}));
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, result, getprettyValue(minSpec, minStrict, "MIN"), getprettyValue(maxSpec, maxStrict, "MAX")}));
                     resSpecEvaluation = resChkSpec.resultCheck(result, minSpec, maxSpec, minStrict, maxStrict, null, null);
-                }else{
-                    fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(
-                            new Object[]{iLines, minSpec, minStrict, minControl, minControlStrict, result, maxControl, maxControlStrict, maxSpec, maxStrict}));
+                }else{                   
+                    fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines, getprettyValue(minSpec, minStrict, "MIN"), 
+                                getprettyValue(minControl, minControlStrict, "MIN"), result, getprettyValue(maxControl, maxControlStrict, "MAX"), getprettyValue(maxSpec, maxStrict, "MAX")}));
                     resSpecEvaluation = resChkSpec.resultCheck(
                             result, minSpec, maxSpec, minStrict, maxStrict, minControl, maxControl, minControlStrict, maxControlStrict, null, null);
                 }               
@@ -187,6 +207,7 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
             }
         }       }
 
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -229,3 +250,4 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
     }// </editor-fold>
 
 }
+

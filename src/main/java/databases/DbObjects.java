@@ -5,6 +5,8 @@
  */
 package databases;
 
+import static databases.DbObjects.SchemaActions.CREATE;
+import static databases.DbObjects.SchemaActions.DELETE;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.ProcedureDefinitionToInstance.JsonTags;
@@ -27,7 +29,7 @@ public class DbObjects {
      *
      */
     public static final String POSTGRES_DB_OWNER="labplanet";
-
+    enum SchemaActions{CREATE, DELETE};
     /**
      *
      */
@@ -202,6 +204,12 @@ public class DbObjects {
         return jsonObj;
     }    
     public static JSONObject createSchemas(String[] schemasNames, String dbName){
+        return schemasActions(schemasNames, dbName, SchemaActions.CREATE.name());
+    }
+    public static JSONObject removeSchemas(String[] schemasNames, String dbName){
+        return schemasActions(schemasNames, dbName, SchemaActions.DELETE.name());
+    }
+    private static JSONObject schemasActions(String[] schemasNames, String dbName, String actionToPerform){
         String schemaAuthRole=SCHEMA_AUTHORIZATION_ROLE;
         Rdbms.stablishDBConection(dbName);
         JSONObject jsonObj = new JSONObject();
@@ -215,12 +223,26 @@ public class DbObjects {
             if (configSchemaName.contains("-") && (!configSchemaName.startsWith("\""))){            
                 configSchemaName = "\""+configSchemaName+"\"";}
             Object[] dbSchemaExists = Rdbms.dbSchemaExists(configSchemaName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbSchemaExists[0].toString())){
-                String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+schemaAuthRole+";"+
-                        " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+schemaAuthRole+ ";";     
-                Rdbms.prepRdQuery(configSchemaScript, new Object[]{});            
+            SchemaActions SchemaAction = SchemaActions.valueOf(actionToPerform);
+            switch (SchemaAction){
+            case CREATE:
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbSchemaExists[0].toString()) && actionToPerform.equalsIgnoreCase(SchemaActions.CREATE.name())){
+                    String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+schemaAuthRole+";"+
+                            " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+schemaAuthRole+ ";";     
+                    Rdbms.prepRdQuery(configSchemaScript, new Object[]{});            
+                }else
+                    jsonObj.put(configSchemaName, "schema exists");
+                
+                break;
+            case DELETE:
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbSchemaExists[0].toString()) && actionToPerform.equalsIgnoreCase(SchemaActions.CREATE.name()))
+                    jsonObj.put(configSchemaName, "schema not exists");
+                else{
+                    String configSchemaScript = "DROP SCHEMA "+configSchemaName+" CASCADE";     
+                    Rdbms.prepRdQuery(configSchemaScript, new Object[]{});            
+                }
+                break;
             }
-            
             // La idea es no permitir ejecutar prepUpQuery directamente, por eso es privada y no publica.            
                 //Integer prepUpQuery = Rdbms.prepUpQuery(configSchemaScript, new Object[0]);
                 //String diagnosesForLog = (prepUpQuery==-1) ? JSON_LABEL_FOR_NO : JSON_LABEL_FOR_YES;

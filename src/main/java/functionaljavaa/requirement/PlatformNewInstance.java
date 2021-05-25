@@ -6,6 +6,7 @@
 package functionaljavaa.requirement;
 
 import static databases.DbObjects.createSchemas;
+import static databases.DbObjects.removeSchemas;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsAppConfig;
@@ -49,6 +50,30 @@ public class PlatformNewInstance {
                 TblsAppConfig.Person.FLD_LAST_NAME.getName(), TblsAppConfig.Person.FLD_PHOTO.getName()}, 
             new Object[]{personId, "I'm a user demo", "for demos "+platfName, "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"});
         
+        return new JSONObject();
+    }
+
+    public static JSONObject removeCheckPlatformProcedure(String platfName){
+        String fakeProcName = "check-platform";
+        String fakeProcUserName = "demo";
+        String personId="d1m2";
+        String[] schemaNames = new String[]{LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName())};
+        String tblCreateScript="";
+        JSONObject jsonObj=new JSONObject();
+        jsonObj=removeSchemas(schemaNames, LPPlatform.buildSchemaName(fakeProcName, platfName));  
+        
+        Object[] removeRecordInTable=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.PersonProfile.TBL.getName(), 
+            new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName(), TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()}, 
+            new Object[]{personId, "testing"});        
+        removeRecordInTable = Rdbms.removeRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
+                new String[]{TblsApp.Users.FLD_USER_NAME.getName()},
+                new Object[]{fakeProcUserName});
+        removeRecordInTable=Rdbms.removeRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.UserProcess.TBL.getName(), 
+            new String[]{TblsApp.UserProcess.FLD_USER_NAME.getName(), TblsApp.UserProcess.FLD_PROC_NAME.getName()}, 
+            new Object[]{fakeProcUserName, fakeProcName});
+        removeRecordInTable=Rdbms.removeRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
+            new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName()}, 
+            new Object[]{personId});
         return new JSONObject();
     }
 }

@@ -41,6 +41,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
         NEW_FILE_CAMEL_LOWER("newFileCamelLower"), NEW_FILE_CAMEL("newFileCamel"),
         NEW_FILE_PROC_NAME("newFileProcName"), NEW_FILE_ALIAS_UNDERSCORE("newAliasUnderscore"),
         CREATE_CHECKPLATFORM_PROCEDURE("createCheckPlatformProcedure"),
+        REMOVE_CHECKPLATFORM_PROCEDURE("removeCheckPlatformProcedure"),
         DEPLOY_SCHEMAS_AND_PROC_TBLS("deploySchemasAndProcTbls"), DEPLOY_PROC_INFO("deployProcInfo"), DEPLOY_PROC_USER_ROLES("deployProcUserRoles"),
         DEPLOY_PROC_SOP_META_DATA("deployProcSopMetaData"), DEPLOY_PROC_SOPS_TO_USERS("deployProcSopsToUsers"), DEPLOY_PROC_EVENTS("deployProcEvents"),
         DEPLOY_PROC_BUSINESS_RULES_PROP_FILES("deployProcBusinessRulesPropFiles"), DEPLOY_MODULE_TABLES_AND_FIELDS("deployModuleTablesAndFields"),

@@ -71,6 +71,7 @@ public class ConfigSpecRule {
         
         MINCONTROL_GREATEROREQUALTO_MAXCONTROL("specLimits_minControlGreaterOrEqualToMaxControl"),
         MINCONTROL_GREATEROREQUALTO_MAXSPEC("specLimits_minControlGreaterOrEqualToMaxSpec"),
+        MINCONTROL_LESSTHANOREQUALTO_MINSPEC("specLimits_minControlLessThanOrEqualToMinSpec"),
         MAXCONTROL_GREATEREQUALTO_MINSPEC("specLimits_maxControlGreaterThanOrEqualToMinSpec"),
         MINCONTROL_GREATEREQUALTO_MINSPEC("specLimits_minControlGreaterThanOrEqualToMinSpec"),
         MAXCONTROL_GREATEROREQUALTO_MAXSPEC("specLimits_MaxControlGreaterThanOrEqualToMaxSpec"),
@@ -144,6 +145,19 @@ public class ConfigSpecRule {
     public static final String SPEC_WORD_FOR_UPON_CONTROL="CONTROL";
     public static final String SPEC_WORD_FOR_OOS="OUT";
     public static final String SPEC_WORD_FOR_INSPEC="IN";
+    public enum QuantSymbols{
+        MIN("<= R"), MIN_STRICT("< R"), MAX("R >="), MAX_STRICT("R >")
+        ;
+        private QuantSymbols(String c){
+            this.symbol=c;
+        }    
+        public String getSymbol(){
+            return this.symbol;
+        }        
+        private final String symbol;        
+        
+    }
+
     /**
      *
      * @param rule
@@ -382,7 +396,19 @@ public class ConfigSpecRule {
             if (minControl1.compareTo(minSpec)<=0){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(minControl1).toString());        
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(minSpec).toString());    
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_GREATEREQUALTO_MINSPEC.getErrorCode(), errorDetailVariables);                                      
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_LESSTHANOREQUALTO_MINSPEC.getErrorCode(), errorDetailVariables);                                      
+            } else if(maxControl!=null){
+                if (maxControl.compareTo(minControl1)<=0){
+                    errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(minControl1).toString());        
+                    errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(minSpec).toString());    
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_GREATEROREQUALTO_MAXCONTROL.getErrorCode(), errorDetailVariables);                                      
+                }
+            } else if(maxSpec!=null){
+                if (maxSpec.compareTo(minControl1)<=0){
+                    errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(minControl1).toString());        
+                    errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(minSpec).toString());    
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_GREATEROREQUALTO_MAXSPEC.getErrorCode(), errorDetailVariables);                                      
+                }                
             }else{
                 this.quantitativeRuleValues=currSpecLimitVariables+specArgumentsSeparator+quantitativeVariables.MINCONTROLSTRICT.toString()+minControl1.toString()
                         +quantitativeVariables.MINSPECSTRICT.toString()+minSpec.toString();

@@ -195,14 +195,18 @@ public class DataSpec {
                     return diagnoses;
                 }else{
                     String[] textSpecArray = values.split(separator);
+                    if (textSpecArray.length==0) textSpecArray=values.split("\\"+separator);
+                    Boolean contained=values.contains("\\"+separator);
+                    if (textSpecArray.length==0 || !(values.contains("\\"+separator))) 
+                        textSpecArray=LPArray.addValueToArray1D(textSpecArray, values);
                     for (Integer itextSpecArrayLen=0;itextSpecArrayLen<textSpecArray.length;itextSpecArrayLen++){
                         if (result.equalsIgnoreCase(textSpecArray[itextSpecArrayLen])){                            
-                            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUALITATIVE_IN.getErrorCode(), null);
+                            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUALITATIVE_IN.getErrorCode(), errorVariables);
                             diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.EVALUATION_IN.getErrorCode());
                             return diagnoses;                    
                         }
                     }                
-                    errorVariables = new Object[]{result, String.valueOf((Integer)textSpecArray.length+1), values};
+                    errorVariables = new Object[]{result, String.valueOf((Integer)textSpecArray.length), values};
                     Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUALITATIVE_OUT_IS_ONE_OF.getErrorCode(), errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.EVALUATION_OUT.getErrorCode());
                     return diagnoses;                                                                 
@@ -215,14 +219,17 @@ public class DataSpec {
                     return diagnoses;
                 }else{
                     String[] textSpecArray = values.split(separator);
+                    if (textSpecArray.length==0) textSpecArray=values.split("\\"+separator);
+                    if (textSpecArray.length==0) textSpecArray=LPArray.addValueToArray1D(textSpecArray, values);
                     if (!LPArray.valueInArray(textSpecArray, result)){
-                        errorVariables = new Object[]{result, String.valueOf((Integer)textSpecArray.length+1), values};                        
-                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUALITATIVE_OUT_IS_NOT_ONE_OF.getErrorCode(), errorVariables);
-                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.EVALUATION_OUT.getErrorCode());
+                        errorVariables = new Object[]{result, String.valueOf((Integer)textSpecArray.length), values};                        
+                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUALITATIVE_IN.getErrorCode(), errorVariables);
+                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.EVALUATION_IN.getErrorCode());
                         return diagnoses;
                     }
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUALITATIVE_IN.getErrorCode(), null);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.EVALUATION_IN.getErrorCode());
+                    errorVariables = new Object[]{result, String.valueOf((Integer)textSpecArray.length), values};                        
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUALITATIVE_OUT_IS_NOT_ONE_OF.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.EVALUATION_OUT.getErrorCode());
                     return diagnoses;                    
                 }
             default:                

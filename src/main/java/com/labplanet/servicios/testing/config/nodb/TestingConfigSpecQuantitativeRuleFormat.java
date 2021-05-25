@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.testing.config.nodb;
 
+import static com.labplanet.servicios.testing.config.TestingResultCheckSpecQuantitative.getprettyValue;
 import databases.Rdbms;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPFrontEnd;
@@ -95,14 +96,14 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
 */            
 //            String table1Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"1").toString();               
 //            StringBuilder fileContentTable1Builder = new StringBuilder(0);
-            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
+//            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
 
 //            String table2Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"2").toString();            
             StringBuilder fileContentTable2Builder = new StringBuilder(0);
             fileContentTable2Builder.append(LPTestingOutFormat.createTableWithHeader(table2Header, numEvaluationArguments));
 //testingContent.length    
 //Integer totall=5;
-//numHeaderLines=20;
+numHeaderLines=27;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
                     
@@ -127,10 +128,10 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                     
                 Object[] resSpecEvaluation = new Object[0];                
                 if (minControl==null){
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, minSpec, maxSpec}));
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, getprettyValue(minSpec, false, "MIN"), getprettyValue(maxSpec, false, "MAX")}));
                     resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
                 }else{
-                    fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, minSpec, minControl, maxControl, maxSpec}));
+                    fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, getprettyValue(minSpec, false, "MIN"), getprettyValue(minControl, false, "MIN"), getprettyValue(maxControl, false, "MAX"), getprettyValue(maxSpec, false, "MAX")}));
                     resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
                 }        
                 if (numEvaluationArguments==0){                    
