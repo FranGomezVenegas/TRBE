@@ -123,8 +123,8 @@ Integer currentLine=0;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
 currentLine=iLines;  
 //out.println(iLines);
-if (currentLine==34) 
-    out.println("parate aqui");
+//if (currentLine==34) 
+//    out.println("parate aqui");
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
 
@@ -188,13 +188,13 @@ if (currentLine==34)
                     String schemaConfigName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.CONFIG.getName());
                     String schemaDataName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
                     if (specCodeVersion==null || methodVersion==null){
-                        Object[] fldsNull = new Object[]{0};
+                        Object[] fldsNull = new Object[]{};
                         if (specCodeVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "specCodeVersion");
                         if (methodVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "methodVersion");
                         if ((specCodeVersion==null && specCodeVersionStr==null) || (methodVersion==null && methodVersionStr==null))
                             resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), fldsNull);
                         else
-                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_valueNotNumeric", fldsNull);
+                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", fldsNull);
                         resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");                    
                     }else{
                         Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
@@ -217,7 +217,7 @@ if (currentLine==34)
                             } 
                             if (specRule.getRuleIsQuantitative()){
                                 if (!isNumeric(resultValue))
-                                        resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_valueNotNumeric", new Object[]{resultValue});                  
+                                        resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", new Object[]{resultValue});                  
                                 else{
                                     Boolean requiresUnitsConversion=true;
                                     BigDecimal resultConverted =  null;

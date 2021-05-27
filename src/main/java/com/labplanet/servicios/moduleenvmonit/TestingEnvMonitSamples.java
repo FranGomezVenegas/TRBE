@@ -29,6 +29,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -196,6 +197,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
         } finally {
             // release database resources
             try {
+                ProcedureRequestSession.getInstanceForActions(request, response, Boolean.TRUE).killIt();
                 Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

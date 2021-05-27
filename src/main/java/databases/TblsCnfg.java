@@ -383,7 +383,8 @@ public class TblsCnfg {
          */
         FLD_DESCRIPTION("description", LPDatabase.string())
         ,
-
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date()),
         /**
          *
          */
@@ -502,7 +503,9 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_AUTO_ADD_SAMPLE_ANALYSIS_LEVEL("auto_add_sample_analysis_lvl", LPDatabase.string())        
+        FLD_AUTO_ADD_SAMPLE_ANALYSIS_LEVEL("auto_add_sample_analysis_lvl", LPDatabase.string()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())        
         ;
         private SampleRules(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

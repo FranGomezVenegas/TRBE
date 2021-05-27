@@ -37,6 +37,7 @@ import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 /*
  *
  * @author Administrator
@@ -197,9 +198,20 @@ public class LPTestingOutFormat {
                 }
                 updFldNames=LPArray.addValueToArray1D(updFldNames,TblsTesting.Script.FLD_RUN_SUMMARY.getName());
                 updFldValues=LPArray.addValueToArray1D(updFldValues, summaryPhrase);
+                
+                ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, null, true);
+                TestingAuditIds testingAuditObj = procReqInstance.getTestingAuditObj();
+                if (testingAuditObj!=null){
+                    JSONArray jsonContent = testingAuditObj.getJsonContent();
+                    
+                    updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.FLD_AUDIT_IDS_VALUES.getName());
+                    updFldValues=LPArray.addValueToArray1D(updFldValues, jsonContent.toJSONString());
+                }
+                
                 Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
                         updFldNames, updFldValues,
                         new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
+                procReqInstance.killIt();
             }
         }
         return fileContentBuilder;

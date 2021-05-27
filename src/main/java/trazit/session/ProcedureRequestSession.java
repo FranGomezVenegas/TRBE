@@ -10,6 +10,7 @@ import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATO
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
+import functionaljavaa.testingscripts.TestingAuditIds;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
@@ -34,6 +35,7 @@ public class ProcedureRequestSession {
     private Boolean hasErrors;
     private String errorMessage;
     private AuditAndUserValidation auditAndUsrValid;
+    private TestingAuditIds tstAuditObj;
     
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName){
         try{
@@ -50,8 +52,7 @@ public class ProcedureRequestSession {
             this.hasErrors=true;
             this.errorMessage="db connection not stablished";
             return;
-        }
-        
+        }        
         if (!isForTesting){
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -107,7 +108,10 @@ public class ProcedureRequestSession {
             this.auditAndUsrValid=auditAndUsrVal;
             String schemaConfigName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
             Rdbms.setTransactionId(schemaConfigName);
-        }           
+        }
+        if (isForTesting){
+            this.tstAuditObj = TestingAuditIds.getInstance();
+        }
         this.isForQuery=isForQuery;
         this.hasErrors=false;
         }catch(Exception e){
@@ -123,6 +127,8 @@ public class ProcedureRequestSession {
         this.actionName=null;
         this.isForTesting=null;
         this.procedureInstance=null;
+        tstAuditObj.killIt();
+        
         Rdbms.closeRdbms(); 
     }
     
@@ -155,6 +161,9 @@ public class ProcedureRequestSession {
     }    
     public AuditAndUserValidation getAuditAndUsrValid(){
         return this.auditAndUsrValid;
+    }
+    public TestingAuditIds getTestingAuditObj(){
+        return this.tstAuditObj;
     }
    
     

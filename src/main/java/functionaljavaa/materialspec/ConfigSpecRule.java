@@ -146,7 +146,7 @@ public class ConfigSpecRule {
     public static final String SPEC_WORD_FOR_OOS="OUT";
     public static final String SPEC_WORD_FOR_INSPEC="IN";
     public enum QuantSymbols{
-        MIN("<= R"), MIN_STRICT("< R"), MAX("R >="), MAX_STRICT("R >")
+        MIN("<= R"), MIN_STRICT("< R"), MAX("R <="), MAX_STRICT("R <")
         ;
         private QuantSymbols(String c){
             this.symbol=c;

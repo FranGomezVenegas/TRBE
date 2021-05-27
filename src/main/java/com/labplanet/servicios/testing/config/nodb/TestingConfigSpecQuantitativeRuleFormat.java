@@ -103,7 +103,7 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
             fileContentTable2Builder.append(LPTestingOutFormat.createTableWithHeader(table2Header, numEvaluationArguments));
 //testingContent.length    
 //Integer totall=5;
-numHeaderLines=27;
+//numHeaderLines=27;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
                     

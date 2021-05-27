@@ -105,8 +105,9 @@ class EnvMonFrontEndUtilities {
             new Object[]{programName,}, 
             fieldsName, sortFields);
     JSONArray jArr = new JSONArray();
-    for (Object[] curRec: records){
-      jArr.add(LPJson.convertArrayRowToJSONObject(fieldsName, curRec));
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString())){
+        for (Object[] curRec: records)
+            jArr.add(LPJson.convertArrayRowToJSONObject(fieldsName, curRec));    
     }
     return jArr;
   }

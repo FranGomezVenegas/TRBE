@@ -182,7 +182,7 @@ public class TblsEnvMonitData {
         FLD_PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, LPDatabase.stringNotNull(100))
         ,
 
-        /**
+        /** 
          *
          */
         FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.string(200)),

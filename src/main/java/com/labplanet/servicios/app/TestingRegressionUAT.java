@@ -7,6 +7,7 @@ package com.labplanet.servicios.app;
 
 import databases.Rdbms;
 import databases.TblsTesting;
+import functionaljavaa.testingscripts.TestingAuditIds;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -140,8 +141,7 @@ public class TestingRegressionUAT extends HttpServlet {
 
                 if (scriptTblInfo[0][4]!=null && Boolean.valueOf(scriptTblInfo[0][4].toString()))
                     LPTestingOutFormat.setMessagesErrorIndexValues(schemaPrefix, scriptId, "completed");
-
-                    procReqInstance.killIt();
+                procReqInstance.killIt();
             }
         }
     }

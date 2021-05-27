@@ -11,11 +11,12 @@ import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.Token;
+import functionaljavaa.testingscripts.TestingAuditIds;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
-import functionaljavaa.parameter.Parameter;
+//import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
-import functionaljavaa.samplestructure.DataSampleAnalysis;
+//import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
@@ -64,8 +65,16 @@ public class TestingServer extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             
-            Object[] tableContent = FromInstanceToInstance.tableContent("config", TblsCnfg.UnitsOfMeasurement.TBL.getName(), "labplanet", "modules_trazit");
+            TestingAuditIds tstAuditObj = TestingAuditIds.getInstance();
+            tstAuditObj.AddObject("config", "tableName", 1, null, null);
+            tstAuditObj.AddObject("data", "tableName", 2, null, null);
+            tstAuditObj.killIt();
+            tstAuditObj = TestingAuditIds.getInstance();
+            tstAuditObj.AddObject("config", "tableName", 1, null, null);
+            
 if (1==1) return;
+            
+            Object[] tableContent = FromInstanceToInstance.tableContent("config", TblsCnfg.UnitsOfMeasurement.TBL.getName(), "labplanet", "modules_trazit");
 //        String tblCreateScript2=TblsProcedureAudit.Investigation.createTableScript("em-demo-a", new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
