@@ -928,7 +928,8 @@ if (1==1)return;
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])){
             if (schemaName.toUpperCase().contains("AUDIT")){
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
-                tstAuditId.AddObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis[1].toString()), fieldNames, fieldValues);
+                if (tstAuditId!=null)
+                    tstAuditId.AddObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis[1].toString()), fieldNames, fieldValues);
             }
             Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_CREATED.getErrorCode(), new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);

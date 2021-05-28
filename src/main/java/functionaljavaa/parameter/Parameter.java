@@ -5,6 +5,8 @@
  */
 package functionaljavaa.parameter;
 
+import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
+import functionaljavaa.testingscripts.TestingMessageCodeVisited;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +17,7 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -79,9 +82,16 @@ public class Parameter {
                         //new Object[]{className, classFullName, methodName, lineNumber}, 
                         callerInfo,
                         parameterName);
+                TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
+                if (testingMessageCodeVisitedObj!=null)
+                    testingMessageCodeVisitedObj.AddObject(procName, schemaSuffix, parameterName, "Not found!");
                 return "";
             } else {
-                return prop.getString(parameterName);
+                String parameterValue = prop.getString(parameterName);
+                TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
+                if (testingMessageCodeVisitedObj!=null)
+                    testingMessageCodeVisitedObj.AddObject(procName, schemaSuffix, parameterName, parameterValue);
+                return parameterValue;
             }
         } catch (Exception e) {            
             if (returnFalseIfMissing!=null && returnFalseIfMissing) 
@@ -92,6 +102,9 @@ public class Parameter {
                     //new Object[]{className, classFullName, methodName, lineNumber}, 
                     callerInfo,
                     parameterName);
+            TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
+            if (testingMessageCodeVisitedObj!=null)
+                testingMessageCodeVisitedObj.AddObject(procName, schemaSuffix, parameterName, "ERROR: Not Found!");            
             return "";
         }
     }
@@ -159,7 +172,14 @@ public class Parameter {
         className = className.replace(".java", "");
         }
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        return getBusinessRuleInAppFile("parameter.config."+procInstanceName+"-"+suffixFile, parameterName, callerInfo);
+        
+        String businessRuleInAppFile = getBusinessRuleInAppFile("parameter.config."+procInstanceName+"-"+suffixFile, parameterName, callerInfo);
+
+        TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
+        if (testingBusinessRulesVisitedObj!=null)
+            testingBusinessRulesVisitedObj.AddObject(procInstanceName, suffixFile, className, parameterName, businessRuleInAppFile);
+
+        return businessRuleInAppFile;
     }
     
     private static String getBusinessRuleInAppFile(String fileUrl, String parameterName, Object[] callerInfo) {

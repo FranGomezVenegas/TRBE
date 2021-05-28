@@ -11,13 +11,13 @@ import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.Token;
-import functionaljavaa.testingscripts.TestingAuditIds;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
 //import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
 //import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
+import functionaljavaa.testingscripts.TestingCoverage;
 import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,12 +65,13 @@ public class TestingServer extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             
-            TestingAuditIds tstAuditObj = TestingAuditIds.getInstance();
-            tstAuditObj.AddObject("config", "tableName", 1, null, null);
-            tstAuditObj.AddObject("data", "tableName", 2, null, null);
-            tstAuditObj.killIt();
-            tstAuditObj = TestingAuditIds.getInstance();
-            tstAuditObj.AddObject("config", "tableName", 1, null, null);
+            String schemaPrefix="em-air-allv2";
+            Rdbms.stablishDBConectionTester();
+        TestingCoverage tstCov=new TestingCoverage(schemaPrefix, 1);    
+        tstCov.calculateCoverage();
+//            String tblCreateScript = TblsTesting.ScriptsCoverage.createTableScript(schemaPrefix, new String[]{""});
+//        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        //jsonObj.put("TblsTesting.ScriptsCoverage", tblCreateScript);
             
 if (1==1) return;
             

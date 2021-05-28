@@ -201,6 +201,10 @@ public class DbObjects {
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTesting.ScriptSteps", tblCreateScript);
 
+        tblCreateScript=TblsTesting.ScriptsCoverage.createTableScript(schemaPrefix, new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        jsonObj.put("TblsTesting.ScriptsCoverage", tblCreateScript);
+
         return jsonObj;
     }    
     public static JSONObject createSchemas(String[] schemasNames, String dbName){

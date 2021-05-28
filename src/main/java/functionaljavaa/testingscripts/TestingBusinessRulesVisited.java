@@ -6,8 +6,6 @@
 package functionaljavaa.testingscripts;
 
 //import databases.Rdbms;
-import java.util.Arrays;
-import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -19,28 +17,28 @@ public class TestingBusinessRulesVisited {
     private TestingBusinessRulesVisited() { jsonContent=new JSONArray();}  
     
 
-    private static TestingBusinessRulesVisited auditInfo;
+    private static TestingBusinessRulesVisited busRuleInfo;
     private JSONArray jsonContent;
 
     public static synchronized TestingBusinessRulesVisited getInstance(){
-        if (auditInfo==null){
-            auditInfo=new TestingBusinessRulesVisited();
+        if (busRuleInfo==null){
+            busRuleInfo=new TestingBusinessRulesVisited();
         }
-        return auditInfo;
+        return busRuleInfo;
     }
     public void killIt(){
-        auditInfo=null;
+        busRuleInfo=null;
         jsonContent=new JSONArray();
     }
     public JSONArray getJsonContent(){return jsonContent;}
-    public void AddObject(String schemaName, String tableName, Integer auditId, String[] fldName, Object[] fldValue){
+    
+    public void AddObject(String schemaName, String suffix, String className, String ruleName, String ruleValue){
         JSONObject jObj=new JSONObject();
         jObj.put("schemaName", schemaName);
-        jObj.put("tableName", tableName);
-        jObj.put("auditId", auditId);
-        jObj.put("fldName", Arrays.toString(fldName));
-        jObj.put("fldValue", Arrays.toString(fldValue));
-        jObj.put("fieldsPretty", Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, ":")));
+        jObj.put("suffix", suffix);
+        jObj.put("className", className);
+        jObj.put("ruleName", ruleName);
+        jObj.put("ruleValue", ruleValue);
         this.jsonContent.add(jObj);
     }
     

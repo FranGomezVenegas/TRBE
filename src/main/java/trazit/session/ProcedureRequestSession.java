@@ -11,6 +11,8 @@ import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.TestingAuditIds;
+import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
+import functionaljavaa.testingscripts.TestingMessageCodeVisited;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
@@ -36,6 +38,8 @@ public class ProcedureRequestSession {
     private String errorMessage;
     private AuditAndUserValidation auditAndUsrValid;
     private TestingAuditIds tstAuditObj;
+    private TestingBusinessRulesVisited busRuleVisited;
+    private TestingMessageCodeVisited msgCodeVisited;
     
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName){
         try{
@@ -111,6 +115,8 @@ public class ProcedureRequestSession {
         }
         if (isForTesting){
             this.tstAuditObj = TestingAuditIds.getInstance();
+            this.busRuleVisited = TestingBusinessRulesVisited.getInstance();
+            this.msgCodeVisited = TestingMessageCodeVisited.getInstance();
         }
         this.isForQuery=isForQuery;
         this.hasErrors=false;
@@ -127,7 +133,12 @@ public class ProcedureRequestSession {
         this.actionName=null;
         this.isForTesting=null;
         this.procedureInstance=null;
-        tstAuditObj.killIt();
+        if (tstAuditObj!=null)
+            tstAuditObj.killIt();
+        if (busRuleVisited!=null)
+            busRuleVisited.killIt();
+        if (msgCodeVisited!=null)
+            msgCodeVisited.killIt();
         
         Rdbms.closeRdbms(); 
     }
@@ -165,7 +176,12 @@ public class ProcedureRequestSession {
     public TestingAuditIds getTestingAuditObj(){
         return this.tstAuditObj;
     }
-   
+    public TestingBusinessRulesVisited getTestingBusinessRulesVisitedObj(){
+        return this.busRuleVisited;
+    }
+    public TestingMessageCodeVisited getTestingMessageCodeVisitedObj(){
+        return this.msgCodeVisited;
+    }
     
     public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
         if (theSession==null || theSession.getTokenString()==null){

@@ -37,15 +37,6 @@ public class TblsTesting {
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #FLD_SCRIPT_ID_pkey PRIMARY KEY (#FLD_SCRIPT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
         FLD_ACTIVE("active", LPDatabase.booleanFld()),
         FLD_DATE_CREATION("date_creation", LPDatabase.dateTimeWithDefaultNow()),
         FLD_DATE_EXECUTION("date_execution", LPDatabase.dateTime()),
@@ -69,6 +60,9 @@ public class TblsTesting {
         FLD_DB_ERRORS_IDS_VALUES("db_error_ids_values", LPDatabase.string()),
         FLD_GET_MSG_ERRORS("get_msg_errors", LPDatabase.booleanFld()),
         FLD_MSG_ERRORS_IDS_VALUES("msg_error_ids_values", LPDatabase.string()),
+
+        FLD_BUSINESS_RULES_VISITED("business_rules_visited", LPDatabase.string()),
+        FLD_MESSAGES_VISITED("messages_visited", LPDatabase.string()),
         
         ;
         private Script(String dbObjName, String dbObjType){
@@ -231,5 +225,80 @@ public class TblsTesting {
         }              
     }
 
+    public enum ScriptsCoverage{
+        FLD_COVERAGE_ID("coverage_id", LPDatabase.integerNotNull()),
+        TBL("scripts_coverage", LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_COVERAGE_ID_pkey PRIMARY KEY (#FLD_COVERAGE_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
+        ,
+        FLD_ACTIVE("active", LPDatabase.booleanFld()),
+        FLD_DATE_CREATION("date_creation", LPDatabase.dateTimeWithDefaultNow()),
+        FLD_DATE_EXECUTION("date_execution", LPDatabase.dateTime()),
+        FLD_PURPOSE("purpose", LPDatabase.string()),
+        FLD_SCRIPT_IDS_LIST("script_ids_list", LPDatabase.string()),
+        FLD_BUS_RULES_COVERAGE("bus_rule_coverage", LPDatabase.real()),
+        FLD_BUS_RULES_COVERAGE_DETAIL("bus_rule_coverage_detail", LPDatabase.string()),
+        FLD_MSG_COVERAGE("msg_coverage", LPDatabase.real()),
+        FLD_MSG_COVERAGE_DETAIL("msg_coverage_detail", LPDatabase.string()),
+        ;
+        private ScriptsCoverage(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return entry name
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
+
+        /**
+         *
+         * @param schemaNamePrefix procedure prefix
+         * @param fields fields , ALL when this is null
+         * @return One Create-Table ScriptSteps for this given table, for this given procedure and for ALL or the given fields.
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = ScriptsCoverage.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.TESTING.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ScriptsCoverage obj: ScriptsCoverage.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.TESTING.getName()));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }  
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;  
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ScriptsCoverage obj: ScriptsCoverage.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }              
+    }
     
 }

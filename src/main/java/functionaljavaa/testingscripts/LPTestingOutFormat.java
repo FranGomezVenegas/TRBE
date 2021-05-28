@@ -199,15 +199,21 @@ public class LPTestingOutFormat {
                 updFldNames=LPArray.addValueToArray1D(updFldNames,TblsTesting.Script.FLD_RUN_SUMMARY.getName());
                 updFldValues=LPArray.addValueToArray1D(updFldValues, summaryPhrase);
                 
+
                 ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, null, true);
-                TestingAuditIds testingAuditObj = procReqInstance.getTestingAuditObj();
+
+/*                TestingAuditIds testingAuditObj = procReqInstance.getTestingAuditObj();
                 if (testingAuditObj!=null){
-                    JSONArray jsonContent = testingAuditObj.getJsonContent();
-                    
-                    updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.FLD_AUDIT_IDS_VALUES.getName());
-                    updFldValues=LPArray.addValueToArray1D(updFldValues, jsonContent.toJSONString());
+                JSONArray jsonContent = testingAuditObj.getJsonContent();
+                updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.FLD_AUDIT_IDS_VALUES.getName());
+                updFldValues=LPArray.addValueToArray1D(updFldValues, jsonContent.toJSONString());
                 }
-                
+                 */
+                Object[] fieldsForSessionObjects = getFieldsForSessionObjects();
+                if (fieldsForSessionObjects!=null && fieldsForSessionObjects.length>0)
+                    updFldNames=LPArray.addValueToArray1D(updFldNames, (String[]) fieldsForSessionObjects[0]);
+                if (fieldsForSessionObjects!=null && fieldsForSessionObjects.length>1)
+                    updFldValues=LPArray.addValueToArray1D(updFldValues, (Object[]) fieldsForSessionObjects[1]);
                 Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
                         updFldNames, updFldValues,
                         new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
@@ -216,7 +222,31 @@ public class LPTestingOutFormat {
         }
         return fileContentBuilder;
     }
-
+    public Object[] getFieldsForSessionObjects(){
+        String[] updFldNames=new String[]{};
+        Object[] updFldValues=new Object[]{};
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, true);
+        TestingAuditIds testingAuditObj = procReqInstance.getTestingAuditObj();
+        if (testingAuditObj!=null){
+            JSONArray jsonContent = testingAuditObj.getJsonContent();
+            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.FLD_AUDIT_IDS_VALUES.getName());
+            updFldValues=LPArray.addValueToArray1D(updFldValues, jsonContent.toJSONString());
+        }
+        TestingBusinessRulesVisited testingBusinessRulesVisitedObj = procReqInstance.getTestingBusinessRulesVisitedObj();
+        if (testingBusinessRulesVisitedObj!=null){
+            JSONArray jsonContent = testingBusinessRulesVisitedObj.getJsonContent();
+            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.FLD_BUSINESS_RULES_VISITED.getName());
+            updFldValues=LPArray.addValueToArray1D(updFldValues, jsonContent.toJSONString());
+        }
+        TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqInstance.getTestingMessageCodeVisitedObj();
+        if (testingMessageCodeVisitedObj!=null){
+            JSONArray jsonContent = testingMessageCodeVisitedObj.getJsonContent();
+            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.FLD_MESSAGES_VISITED.getName());
+            updFldValues=LPArray.addValueToArray1D(updFldValues, jsonContent.toJSONString());
+        }
+        return new Object[]{updFldNames, updFldValues};
+    }
+    
     /**
      *
      */
