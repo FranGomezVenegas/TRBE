@@ -6,6 +6,7 @@
 package com.labplanet.servicios.app;
 
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
+import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationErrorTrapping;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
@@ -93,7 +94,7 @@ public class AuthenticationAPI extends HttpServlet {
                     
                     Object[] personNameObj = UserAndRolesViews.getPersonByUser(dbUserName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personNameObj[0].toString())){               
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_PERSON_NOT_FOUND, null, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.PERSON_NOT_FOUND.getErrorCode(), null, language);              
                         return;                                                          
                     }      
                     String personName=personNameObj[0].toString();
@@ -101,7 +102,7 @@ public class AuthenticationAPI extends HttpServlet {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(validUserPassword[0].toString())){
                         validUserPassword = UserAndRolesViews.isValidUserPassword(dbUserName, dbUserPassword);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(validUserPassword[0].toString())){     
-                            LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_INVALID_USER_PSSWD, null, language);              
+                            LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.INVALID_USER_PWD.getErrorCode(), null, language);              
                             return;                               
                         }
                     }                                                          
@@ -143,7 +144,7 @@ public class AuthenticationAPI extends HttpServlet {
                     Object[] fieldsValue = new Object[]{token.getPersonName(), userRole};
                     Object[] newAppSession = LPSession.newAppSession(fieldsName, fieldsValue, request.getRemoteAddr());                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newAppSession[0].toString())){   
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_SESSION_ID_NOT_GENERATED, null, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.SESSION_ID_NOTGENERATED.getErrorCode(), null, language);              
                         return;                                                         
                     }                    
                     Integer sessionId = Integer.parseInt((String) newAppSession[newAppSession.length-1]);
@@ -155,7 +156,7 @@ public class AuthenticationAPI extends HttpServlet {
                             new String[]{Users.FLD_ESIGN.getName(), TblsApp.Users.FLD_TABS_ON_LOGIN.getName()});
                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userInfo[0][0].toString())){  
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_ESIGN_INFO_NOT_AVAILABLE, null, language);       
+                        LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.ESGININFO_NOTAVAILABLE.getErrorCode(), null, language);       
                         return;                                                                                
                     }                               
                     String myFinalToken = token.createToken(token.getUserName(), token.getUsrPw(), token.getPersonName(), 
@@ -189,14 +190,14 @@ public class AuthenticationAPI extends HttpServlet {
 
                     token = new Token(myToken);
                     if (token.geteSign().length()==0){               
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_TOKEN_ESIGN_VALUE_NULL, new Object[]{esignPhraseToCheck}, language);
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.TOKEN_ESIGN_ISNULL.getErrorCode(), new Object[]{esignPhraseToCheck}, language);
                         return;                             
                     }
                     if(esignPhraseToCheck.equals(token.geteSign())){   
                         LPFrontEnd.servletReturnSuccess(request, response);
                         return;                                             
                     }else{               
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_ESIGN_TO_CHECK_INVALID, new Object[]{esignPhraseToCheck}, language);
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck}, language);
                         return;                             
                     }                    
                 case TOKEN_VALIDATE_USER_CREDENTIALS:     
@@ -208,7 +209,7 @@ public class AuthenticationAPI extends HttpServlet {
                     if ( (userToCheck.equals(token.getUserName())) && (passwordToCheck.equals(token.getUsrPw())) ){
                         LPFrontEnd.servletReturnSuccess(request, response);
                     }else{                        
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_USER_PSSWD_TO_CHECK_INVALID, new Object[]{userToCheck}, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck}, language);              
                     }    
                     break;
                 case USER_CHANGE_PSWD:     
@@ -219,7 +220,7 @@ public class AuthenticationAPI extends HttpServlet {
                     token = new Token(finalToken);
                     Object[] newPwDiagn=setUserNewPassword(token.getUserName(), newPassword);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newPwDiagn[0].toString()))
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_USER_NEW_PSSWD_NOT_SET, new Object[]{token.getUserName()}, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USR_NEWPWD_NOT_SET.getErrorCode(), new Object[]{token.getUserName()}, language);              
                     String appStartedDate=null;
                     if (token.getAppSessionStartedDate()!=null) appStartedDate=token.getAppSessionStartedDate().toString();
                     Token newToken= new Token("");
@@ -254,7 +255,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     token = new Token(finalToken);
                     newPwDiagn=setUserNewPassword(token.getUserName(), newPassword);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newPwDiagn[0].toString()))
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_USER_NEW_PSSWD_NOT_SET, new Object[]{token.getUserName()}, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USR_NEWPWD_NOT_SET.getErrorCode(), new Object[]{token.getUserName()}, language);              
                     appStartedDate=null;
                     if (token.getAppSessionStartedDate()!=null) appStartedDate=token.getAppSessionStartedDate().toString();
                     newToken= new Token("");
@@ -282,7 +283,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     token = new Token(finalToken);
                     Object[] newEsignDiagn=setUserNewEsign(token.getUserName(), newEsign);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newEsignDiagn[0].toString()))
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_USER_NEW_PSSWD_NOT_SET, new Object[]{token.getUserName()}, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USR_NEWPWD_NOT_SET.getErrorCode(), new Object[]{token.getUserName()}, language);              
                     appStartedDate=null;
                     if (token.getAppSessionStartedDate()!=null) appStartedDate=token.getAppSessionStartedDate().toString();
                     newToken= new Token("");

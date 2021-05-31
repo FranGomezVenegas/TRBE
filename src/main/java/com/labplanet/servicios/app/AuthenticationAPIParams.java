@@ -94,16 +94,33 @@ public class AuthenticationAPIParams extends HttpServlet {
         private final  LPAPIArguments[] arguments;
 
     }
-    
-    /**
-     *
-     */
+public enum AuthenticationErrorTrapping{ 
+        INVALID_USER_PWD("authenticationAPI_invalidUserPsswd", "", ""),
+        SESSION_ID_NULLNOTALLOWED("authenticationAPI_sessionIdNullNotAllowed", "", ""),
+        SESSION_ID_NOTGENERATED("authenticationAPI_sessionIdNotGenerated", "", ""),
 
-    /**
-     *
-     */
-
+        ESGININFO_NOTAVAILABLE("authenticationAPI_esignInfoNotAvailable", "", ""),
+        PERSON_NOT_FOUND("authenticationAPI_personNotFound", "", ""),
+        USRPWD_TOCHECK_INVALID("authenticationAPI_userPsswdToCheckInvalid", "", ""),
+        ESIGN_TOCHECK_INVALID("authenticationAPI_esignToCheckInvalid", "", ""),
+        TOKEN_ESIGN_ISNULL("authenticationAPI_tokenEsignValueNull", "", ""),
         
+        USR_NEWPWD_NOT_SET("authenticationAPI_userNewPsswdNotSet", "", ""),
+        ;
+        private AuthenticationErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
     /**
      *
      */
@@ -130,47 +147,7 @@ public class AuthenticationAPIParams extends HttpServlet {
     public static final String RESPONSE_JSON_TAG_APP_SESSION_DATE = "appSessionStartDate";
     public static final String RESPONSE_JSON_TAG_APP_USER_TABS_ON_LOGIN = "userTabsOnLogin";
 
-    /**
-     *
-     */
-    public static final String ERROR_PROPERTY_INVALID_USER_PSSWD = "authenticationAPI_invalidUserPsswd";
-
-    /**
-     *
-     */
-    public static final String ERROR_PROPERTY_SESSION_ID_NULL_NOT_ALLOWED = "authenticationAPI_sessionIdNullNotAllowed";
-
-    /**
-     *
-     */
-    public static final String ERROR_PROPERTY_ESIGN_INFO_NOT_AVAILABLE = "authenticationAPI_esignInfoNotAvailable";
-
-    /**
-     *
-     */
-    public static final String ERROR_PROPERTY_PERSON_NOT_FOUND = "authenticationAPI_personNotFound";
-
-    /**
-     *
-     */
-    public static final String ERROR_PROPERTY_SESSION_ID_NOT_GENERATED = "authenticationAPI_sessionIdNotGenerated";
-
-    /**
-     *
-     */
-    public static final String ERROR_API_ERRORTRAPING_PROPERTY_USER_PSSWD_TO_CHECK_INVALID = "authenticationAPI_userPsswdToCheckInvalid";
-    public static final String ERROR_API_ERRORTRAPING_PROPERTY_USER_NEW_PSSWD_NOT_SET = "authenticationAPI_userNewPsswdNotSet";
-
-    /**
-     *
-     */
-    public static final String ERROR_API_ERRORTRAPING_PROPERTY_ALL_USER_PROCEDURE_PREFIX = "allUserProcedurePrefixReturnedFalse";
-
-    /**
-     *
-     */
-    public static final String ERROR_API_ERRORTRAPING_PROPERTY_ESIGN_TO_CHECK_INVALID = "authenticationAPI_esignToCheckInvalid";
-    public static final String ERROR_API_ERRORTRAPING_PROPERTY_TOKEN_ESIGN_VALUE_NULL = "authenticationAPI_tokenEsignValueNull";
+    
     
     /**
      *

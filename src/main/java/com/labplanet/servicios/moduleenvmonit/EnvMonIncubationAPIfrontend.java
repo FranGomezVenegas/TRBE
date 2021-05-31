@@ -126,9 +126,13 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrument);
                     Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading( currInstrument[0].toString(), 5);                    
                     JSONArray jReadingsArr = new JSONArray();
-                    for (Object[] curReading: instrReadings)
-                        jReadingsArr.add(LPJson.convertArrayRowToJSONObject(fieldsToRetrieveReadings, curReading));                    
-                    jObj.put("LAST_READINGS", jReadingsArr);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString()))
+                        jObj.put("LAST_READINGS", "No readings");
+                    else{
+                        for (Object[] curReading: instrReadings)
+                            jReadingsArr.add(LPJson.convertArrayRowToJSONObject(fieldsToRetrieveReadings, curReading));                    
+                        jObj.put("LAST_READINGS", jReadingsArr);
+                    }                    
                     jArr.add(jObj);
                 }
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
