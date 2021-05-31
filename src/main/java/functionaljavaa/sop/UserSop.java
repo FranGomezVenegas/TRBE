@@ -270,8 +270,8 @@ public class UserSop {
             return getUserProfileNEW;}       
                 
         StringBuilder query = new StringBuilder(0);
-        for(String currSchemaPrefix: procInstanceName){ 
-            Object[] viewExistInSchema= Rdbms.dbViewExists(currSchemaPrefix, GlobalVariables.Schemas.DATA.getName(), viewName);
+        for(String currProcInstanceName: procInstanceName){ 
+            Object[] viewExistInSchema= Rdbms.dbViewExists(currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())){
                 query.append("(select ");
                 for(String fRet: fieldsToReturn){
@@ -279,16 +279,16 @@ public class UserSop {
                 }
                 query.deleteCharAt(query.length() - 1);
 
-                if (currSchemaPrefix.contains(GlobalVariables.Schemas.DATA.getName())){
-                    query.append(" from \"").append(currSchemaPrefix).append("\".").append(viewName).append(" where 1=1");}
-                else{query.append(" from \"").append(currSchemaPrefix).append("-data\".").append(viewName).append(" where 1=1");}
+                if (currProcInstanceName.contains(GlobalVariables.Schemas.DATA.getName())){
+                    query.append(" from \"").append(currProcInstanceName).append("\".").append(viewName).append(" where 1=1");}
+                else{query.append(" from \"").append(currProcInstanceName).append("-data\".").append(viewName).append(" where 1=1");}
                 for(String fFN: filterFieldName){
                     query.append(" and ").append(fFN); 
                     if (!fFN.contains("null")){query.append("= ?");}
                 }
                 query.append(") union ");
             }else
-                LPPlatform.saveMessageInDbErrorLog("", new Object[]{currSchemaPrefix, GlobalVariables.Schemas.DATA.getName(), viewName}, 
+                LPPlatform.saveMessageInDbErrorLog("", new Object[]{currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName}, 
                         new Object[]{"UserSop", "UserSop", "getUserProfileFieldValues", 290}, "view not exist in this given schema", new Object[0]);
         }       
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}

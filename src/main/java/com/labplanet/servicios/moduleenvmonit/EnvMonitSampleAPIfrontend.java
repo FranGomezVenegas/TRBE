@@ -36,7 +36,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
      */                
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) {
         request=LPHttp.requestPreparation(request);

@@ -16,7 +16,7 @@ public class LPTestingParams {
     public static final String TESTING_SOURCE="testingSource";
     public static final String NUM_EVAL_ARGS="numEvalArgs";
     public static final String SCRIPT_ID="scriptId";
-    public static final String SCHEMA_PREFIX="schemaPrefix";
+    public static final String SCHEMA_PREFIX="procInstanceName";
     
     public enum TestingServletsConfig{
         NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT("/testing/config/testingConfigSpecQualitativeRuleFormat", "noDBSchema_config_SpecQualitativeRuleGeneratorChecker.txt", 1, "Rule;Text Spec;Separator"),

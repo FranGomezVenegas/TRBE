@@ -97,9 +97,9 @@ public class DBActions extends HttpServlet {
                 String actionName = null;
                 if (lineNumCols>=numEvaluationArguments)
                     {actionName=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments]);}
-                String schemaPrefix = null;
+                String procInstanceName = null;
                 if (lineNumCols>=numEvaluationArguments+1)
-                    schemaPrefix = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+1]);
+                    procInstanceName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+1]);
                 String tableName = null;
                 if (lineNumCols>=numEvaluationArguments+2)
                     tableName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+2]);
@@ -128,7 +128,7 @@ public class DBActions extends HttpServlet {
                 Object[] fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue);
                 if ( (fieldName!=null) && (fieldValue!=null) ){
                     for (int iFields=0; iFields<fieldName.length; iFields++){
-                        if (LPPlatform.isEncryptedField(schemaPrefix, "ZZZ", "sample", fieldName[iFields])){                
+                        if (LPPlatform.isEncryptedField(procInstanceName, "ZZZ", "sample", fieldName[iFields])){                
                             HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(fieldName[iFields], fieldValues[iFields].toString());
                             fieldName[iFields]= hm.keySet().iterator().next();    
                             if ( hm.get(fieldName[iFields]).length()!=fieldValues[iFields].toString().length()){
@@ -141,7 +141,7 @@ public class DBActions extends HttpServlet {
                 Object[] setFieldValues = null;
                 if (setFieldValue!=null){
                     setFieldValues = LPArray.convertStringWithDataTypeToObjectArray(setFieldValue);}
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, actionName, schemaPrefix, tableName,
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, actionName, procInstanceName, tableName,
                     Arrays.toString(fieldName), Arrays.toString(fieldValue), Arrays.toString(fieldsToRetrieve), 
                     Arrays.toString(setFieldName), Arrays.toString(setFieldValue), Arrays.toString(orderBy), Arrays.toString(groupBy)}));
                 
@@ -153,25 +153,25 @@ public class DBActions extends HttpServlet {
 
                 switch (actionName.toUpperCase()){
                     case ENDPOINTS_BEING_TESTED_EXISTSRECORD:   
-                        Object[] exRec =  Rdbms.existsRecord(schemaPrefix, tableName, fieldName, fieldValues);
+                        Object[] exRec =  Rdbms.existsRecord(procInstanceName, tableName, fieldName, fieldValues);
                         dataSample2D = LPArray.array1dTo2d(exRec, exRec.length);
                         break;
                     case ENDPOINTS_BEING_TESTED_INSERT:                    
-                        Object[] insRec = Rdbms.insertRecordInTable(schemaPrefix, tableName, fieldName, fieldValues);  
+                        Object[] insRec = Rdbms.insertRecordInTable(procInstanceName, tableName, fieldName, fieldValues);  
                         dataSample2D = LPArray.array1dTo2d(insRec, insRec.length);
                         break;
                     case ENDPOINTS_BEING_TESTED_GETRECORDFIELDSBYFILTER:              
                         if (orderBy!=null && orderBy.length>0){
-                            dataSample2D = Rdbms.getRecordFieldsByFilter(schemaPrefix, tableName, fieldName, fieldValues, fieldsToRetrieve, orderBy);
+                            dataSample2D = Rdbms.getRecordFieldsByFilter(procInstanceName, tableName, fieldName, fieldValues, fieldsToRetrieve, orderBy);
                         }else{
-                            dataSample2D = Rdbms.getRecordFieldsByFilter(schemaPrefix, tableName, fieldName, fieldValues, fieldsToRetrieve);
+                            dataSample2D = Rdbms.getRecordFieldsByFilter(procInstanceName, tableName, fieldName, fieldValues, fieldsToRetrieve);
                         }
                         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample2D[0][0].toString())){
                             dataSample2Din1D =  LPArray.array2dTo1d(dataSample2D);
                         }    
                         break;
                     case ENDPOINTS_BEING_TESTED_UPDATE:                    
-                        Object[] updRec = Rdbms.updateRecordFieldsByFilter(schemaPrefix, tableName, setFieldName, setFieldValues, fieldName, fieldValues);  
+                        Object[] updRec = Rdbms.updateRecordFieldsByFilter(procInstanceName, tableName, setFieldName, setFieldValues, fieldName, fieldValues);  
                         dataSample2D = LPArray.array1dTo2d(updRec, updRec.length);
                         break;                        
                     default:

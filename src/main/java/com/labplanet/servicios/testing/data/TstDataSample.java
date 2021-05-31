@@ -133,9 +133,9 @@ public class TstDataSample extends HttpServlet {
                 TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments);
 
                 Integer lineNumCols = csvFileContent[0].length-1;                                
-                String schemaPrefix = null;
+                String procInstanceName = null;
                 if (lineNumCols>=numEvaluationArguments)
-                    {schemaPrefix=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments]);}
+                    {procInstanceName=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments]);}
                 String userName = null;
                 if (lineNumCols>=numEvaluationArguments+1)
                     userName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+1]);
@@ -146,7 +146,7 @@ public class TstDataSample extends HttpServlet {
                 if (lineNumCols>=numEvaluationArguments+3)                
                     actionName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+3]);
                 
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, schemaPrefix, userName, userRole, actionName}));
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, procInstanceName, userName, userRole, actionName}));
                 SampleAPIEndpoints endPoint = null;
                 try{
                     endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
@@ -163,7 +163,7 @@ public class TstDataSample extends HttpServlet {
                             dataSample[0] = areMandatoryParamsInResponse[1].toString();
                             dataSample[1] = ""; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = "";                         
                     }else{
-                        Object[] actionEnabledForRole = LPPlatform.procUserRoleActionEnabled(schemaPrefix, userRole, actionName);
+                        Object[] actionEnabledForRole = LPPlatform.procUserRoleActionEnabled(procInstanceName, userRole, actionName);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabledForRole[0].toString())){
                             if (SampleAPIEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName)){                
                                     dataSample2D[0][0] = actionEnabledForRole[0];
@@ -339,7 +339,7 @@ public class TstDataSample extends HttpServlet {
                                     dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst, smp);
                                     break;   
                                 case GETSAMPLEINFO:                            
-                                    String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.DATA.getName());                     
+                                    String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());                     
                                     sampleId = 0;
                                     if (lineNumCols>=numEvaluationArguments+4)                
                                         sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);

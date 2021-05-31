@@ -62,7 +62,7 @@ public class TstDataBatchArr extends HttpServlet {
             for (Integer i=1;i<configSpecTestingArray.length;i++){
                 out.println("Line "+i.toString());
                 fileContentBuilder.append("<tr>");
-                String schemaPrefix=null;
+                String procInstanceName=null;
                 String tableName=null;
                 String[] fieldName=null;                    
                 String[] fieldValue=null;
@@ -75,7 +75,7 @@ public class TstDataBatchArr extends HttpServlet {
                 Object[] dataSample2Din1D = new Object[0];
 
                 if (configSpecTestingArray[i][1]!=null){actionName = LPNulls.replaceNull(configSpecTestingArray[i][1]);}
-                if (configSpecTestingArray[i][2]!=null){schemaPrefix = LPNulls.replaceNull(configSpecTestingArray[i][2]);}
+                if (configSpecTestingArray[i][2]!=null){procInstanceName = LPNulls.replaceNull(configSpecTestingArray[i][2]);}
                 if (configSpecTestingArray[i][3]!=null){tableName = LPNulls.replaceNull(configSpecTestingArray[i][3]);}
                 if (configSpecTestingArray[i][4]!=null){fieldName = configSpecTestingArray[i][4].split("\\|");}else{fieldName = new String[0];}              
                 if (configSpecTestingArray[i][5]!=null){fieldValue = configSpecTestingArray[i][5].split("\\|");}else{fieldValue = new String[0];}
@@ -90,7 +90,7 @@ public class TstDataBatchArr extends HttpServlet {
                     //whereFieldsNameArr=labArr.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
                     //whereFieldsValueArr = labArr.addValueToArray1D(whereFieldsValueArr, labArr.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                                              
                 }                         
-                Object[] rowContent = new Object[]{i, actionName, schemaPrefix, tableName, Arrays.toString(fieldName), "<b>"+Arrays.toString(fieldValue)+"</b>"
+                Object[] rowContent = new Object[]{i, actionName, procInstanceName, tableName, Arrays.toString(fieldName), "<b>"+Arrays.toString(fieldValue)+"</b>"
                         ,Arrays.toString(fieldsToRetrieve), Arrays.toString(setFieldName), "<b>"+Arrays.toString(setFieldValue)+"</b>", Arrays.toString(orderBy)
                         , Arrays.toString(groupBy)};
                 
@@ -106,25 +106,25 @@ public class TstDataBatchArr extends HttpServlet {
                 switch (actionName.toUpperCase()){
                     case "CREATEBATCHARRAY":   
                         //batch.dbCreateBatchArray();
-                        Object[] exRec =  Rdbms.existsRecord(schemaPrefix, tableName, fieldName, fieldValues);
+                        Object[] exRec =  Rdbms.existsRecord(procInstanceName, tableName, fieldName, fieldValues);
                         dataSample2D = LPArray.array1dTo2d(exRec, exRec.length);
                         break;
                     case "INSERT":                    
-                        Object[] insRec = Rdbms.insertRecordInTable(schemaPrefix, tableName, fieldName, fieldValues);  
+                        Object[] insRec = Rdbms.insertRecordInTable(procInstanceName, tableName, fieldName, fieldValues);  
                         dataSample2D = LPArray.array1dTo2d(insRec, insRec.length);
                         break;
                     case "GETRECORDFIELDSBYFILTER":              
                         if (orderBy.length>0){
-                            dataSample2D = Rdbms.getRecordFieldsByFilter(schemaPrefix, tableName, fieldName, fieldValues, fieldsToRetrieve, orderBy);
+                            dataSample2D = Rdbms.getRecordFieldsByFilter(procInstanceName, tableName, fieldName, fieldValues, fieldsToRetrieve, orderBy);
                         }else{
-                            dataSample2D = Rdbms.getRecordFieldsByFilter(schemaPrefix, tableName, fieldName, fieldValues, fieldsToRetrieve);
+                            dataSample2D = Rdbms.getRecordFieldsByFilter(procInstanceName, tableName, fieldName, fieldValues, fieldsToRetrieve);
                         }
                         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample2D[0][0].toString())){
                             dataSample2Din1D =  LPArray.array2dTo1d(dataSample2D);
                         }    
                         break;
                     case "UPDATE":                    
-                        Object[] updRec = Rdbms.updateRecordFieldsByFilter(schemaPrefix, tableName, setFieldName, setFieldValues, fieldName, fieldValues);  
+                        Object[] updRec = Rdbms.updateRecordFieldsByFilter(procInstanceName, tableName, setFieldName, setFieldValues, fieldName, fieldValues);  
                         dataSample2D = LPArray.array1dTo2d(updRec, updRec.length);
                         break;                        
                     default:

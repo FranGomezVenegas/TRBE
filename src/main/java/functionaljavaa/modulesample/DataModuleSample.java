@@ -38,8 +38,8 @@ public class DataModuleSample{
             String schemaDataNameProj = GlobalVariables.Schemas.DATA.getName();
             String schemaConfigNameProj = GlobalVariables.Schemas.CONFIG.getName();
             LPPlatform labPlat = new LPPlatform();
-            schemaDataNameProj = labPlat.buildSchemaName(schemaPrefix, schemaDataNameProj);
-            schemaConfigNameProj = labPlat.buildSchemaName(schemaPrefix, schemaConfigNameProj);
+            schemaDataNameProj = labPlat.buildSchemaName(procInstanceName, schemaDataNameProj);
+            schemaConfigNameProj = labPlat.buildSchemaName(procInstanceName, schemaConfigNameProj);
             newProjSample = rdbm.updateRecordFieldsByFilter(rdbm, schemaDataNameProj, "project_sample",
             new String[]{"project"}, new Object[]{projectName},
             new String[]{"sample_id"}, new Object[]{Integer.parseInt(newProjSample[newProjSample.length-1])});

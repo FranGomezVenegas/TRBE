@@ -42,7 +42,7 @@ public class ClassProcedureDefinition {
                 case ADD_USER:
                     String procedureName=argValues[0].toString();
                     Integer procedureVersion = (Integer) argValues[1];   
-                    String schemaPrefix=argValues[2].toString();
+                    String procInstanceName=argValues[2].toString();
                     String userName=argValues[3].toString();
                     Object[] personByUserObj = getPersonByUser(userName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())){
@@ -52,13 +52,13 @@ public class ClassProcedureDefinition {
                     actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUsers.TBL.getName(), 
                             new String[]{TblsReqs.ProcedureUsers.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.FLD_PROCEDURE_VERSION.getName(),
                                 TblsReqs.ProcedureUsers.FLD_SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUsers.FLD_USER_NAME.getName()}, 
-                            new Object[]{procedureName, procedureVersion, schemaPrefix, userName});
-                    JSONObject createDBProcedureUsers = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, schemaPrefix);
+                            new Object[]{procedureName, procedureVersion, procInstanceName, userName});
+                    JSONObject createDBProcedureUsers = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;
                 case ADD_ROLE_TO_USER:
                     procedureName=argValues[0].toString();
                     procedureVersion = (Integer) argValues[1];   
-                    schemaPrefix=argValues[2].toString();
+                    procInstanceName=argValues[2].toString();
                     String roleName=argValues[3].toString();
                     userName=argValues[4].toString();
                     personByUserObj = getPersonByUser(userName);
@@ -74,13 +74,13 @@ public class ClassProcedureDefinition {
                     actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUserRole.TBL.getName(), 
                             new String[]{TblsReqs.ProcedureUserRole.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_PROCEDURE_VERSION.getName(),
                                 TblsReqs.ProcedureUserRole.FLD_SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUserRole.FLD_USER_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_ROLE_NAME.getName()}, 
-                            new Object[]{procedureName, procedureVersion, schemaPrefix, userName, roleName});
-                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, schemaPrefix);
+                            new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
+                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;
                 case GET_UOM:
                     procedureName=argValues[0].toString();
                     procedureVersion = (Integer) argValues[1];   
-                    schemaPrefix=argValues[2].toString();
+                    procInstanceName=argValues[2].toString();
                     String uomName=argValues[3].toString();
                     String importType=argValues[4].toString();
                     UomImportType impTypeEnum=null;
@@ -96,9 +96,9 @@ public class ClassProcedureDefinition {
                 case DEPLOY_REQUIREMENTS:
                     procedureName=argValues[0].toString();
                     procedureVersion = (Integer) argValues[1];  
-                    schemaPrefix=argValues[2].toString();
+                    procInstanceName=argValues[2].toString();
                     request.setAttribute("procedureName", procedureName);
-                    request.setAttribute("schemaPrefix", schemaPrefix);
+                    request.setAttribute("procInstanceName", procInstanceName);
                     
                     //RequestDispatcher rd = request.getRequestDispatcher("/testing/platform/ProcedureDeployment");
                     RequestDispatcher rd = request.getRequestDispatcher("/ProcedureDefinitionToInstance");
@@ -112,22 +112,22 @@ public class ClassProcedureDefinition {
                     break;                    
 
                     //String procName = request.getParameter("procedureName"); //"process-us"; 
-                    //String schemaPrefix=request.getParameter("schemaPrefix"); //"process-us";
+                    //String procInstanceName=request.getParameter("procInstanceName"); //"process-us";
 
                     
-//                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, schemaPrefix);
+//                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
                      
 /*                    String programName=argValues[0].toString();
                     Integer correctiveActionId = (Integer) argValues[1];                    
-                    actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(schemaPrefix, token, correctiveActionId);
+                    actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(procInstanceName, token, correctiveActionId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){                        
-                        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
                             new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
                             new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName()});
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, correctiveActionInfo[0][0], schemaPrefix}); 
-                        this.messageDynamicData=new Object[]{correctiveActionId, correctiveActionInfo[0][0], schemaPrefix};   
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName}); 
+                        this.messageDynamicData=new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName};   
                     }else{
-                        this.messageDynamicData=new Object[]{correctiveActionId, schemaPrefix};                           
+                        this.messageDynamicData=new Object[]{correctiveActionId, procInstanceName};                           
                     }                    
                     break;
 */

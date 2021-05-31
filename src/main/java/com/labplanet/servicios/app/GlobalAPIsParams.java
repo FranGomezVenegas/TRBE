@@ -380,7 +380,7 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
-    public static final String REQUEST_PARAM_SCHEMA_PREFIX = "schemaPrefix";    
+    public static final String REQUEST_PARAM_PROCINSTANCENAME = "procInstanceName";    
 
     /**
      *

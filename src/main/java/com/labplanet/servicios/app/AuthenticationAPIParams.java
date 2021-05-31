@@ -152,7 +152,7 @@ public enum AuthenticationErrorTrapping{
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
     /**
      *

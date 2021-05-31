@@ -51,7 +51,7 @@ public class TestingConfigSop extends HttpServlet {
     /**
      *
      */
-    public static final String LBL_MSG_SCHEMAPREFIX="schemaPrefix";
+    public static final String LBL_MSG_PROC_INSTANCENAME="procInstanceName";
 
     /**
      *
@@ -116,13 +116,13 @@ public class TestingConfigSop extends HttpServlet {
             fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"getUserProfileFieldValues", "filterFieldName: "+Arrays.toString(filterFieldName),"filterFieldValue: "+Arrays.toString(filterFieldValue),
                 "fieldsToReturn: "+Arrays.toString(fieldsToReturn), Arrays.toString(userProfileField)}));
             
-            String[] schemaPrefix = new String[userProfileField.length];
+            String[] procInstanceName = new String[userProfileField.length];
             for(Integer i=0;i<userProfileField.length;i++){
-                schemaPrefix[i]=userProfileField[i].toString();
+                procInstanceName[i]=userProfileField[i].toString();
             }
             
             Object[] userSchemas = usProf.getAllUserProcedurePrefix( "1");
-            fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"getAllUserSchemaPrefix", LBL_MSG_USERINFOID+": 1", Arrays.toString(userSchemas)}));
+            fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"getAllUserProcInstanceName", LBL_MSG_USERINFOID+": 1", Arrays.toString(userSchemas)}));
             
             fieldsToReturn[0] = FIELDNAME_SOP_ID;
             fieldsToReturn[1] = FIELDNAME_SOP_NAME;
@@ -132,19 +132,19 @@ public class TestingConfigSop extends HttpServlet {
             filterFieldValue[1]="1";
             filterFieldName[2]="understood is null";            
             
-            Object[][] userSOP = UserSop.getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, schemaPrefix);
+            Object[][] userSOP = UserSop.getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, procInstanceName);
             fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"getUserProfileFieldValues", "filterFieldName: "+Arrays.toString(filterFieldName), "filterFieldValue: "+Arrays.toString(filterFieldValue),
-                "fieldsToReturn: "+Arrays.toString(fieldsToReturn), LBL_MSG_SCHEMAPREFIX+": "+Arrays.toString(schemaPrefix), Arrays.toString(LPArray.array2dTo1d(userSOP))}));
+                "fieldsToReturn: "+Arrays.toString(fieldsToReturn), LBL_MSG_PROC_INSTANCENAME+": "+Arrays.toString(procInstanceName), Arrays.toString(LPArray.array2dTo1d(userSOP))}));
 
             Object[][] userPendingSOPs = usSop.getNotCompletedUserSOP("1", "ALL", null);
             Object[] userPendingSOPs1D = LPArray.array2dTo1d(userPendingSOPs);
-            fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"getNotCompletedUserSOP", LBL_MSG_USERINFOID+": 1", "schemaPrefix: ALL", Arrays.toString(userPendingSOPs1D)}));
+            fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"getNotCompletedUserSOP", LBL_MSG_USERINFOID+": 1", "procInstanceName: ALL", Arrays.toString(userPendingSOPs1D)}));
             
             Object[] certificationStatus = usSop.userSopCertifiedBySopId(processName+"1", "1", "58");
-            fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"userSopCertifiedBySopId", LBL_MSG_SCHEMAPREFIX+": "+"oil-pl11", LBL_MSG_USERINFOID+": 1", "SopId: 58", Arrays.toString(certificationStatus)}));
+            fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"userSopCertifiedBySopId", LBL_MSG_PROC_INSTANCENAME+": "+"oil-pl11", LBL_MSG_USERINFOID+": 1", "SopId: 58", Arrays.toString(certificationStatus)}));
 
             certificationStatus = usSop.userSopCertifiedBySopId(processName, "1", "58");
-            fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"userSopCertifiedBySopId", LBL_MSG_SCHEMAPREFIX+": "+"oil-pl11", LBL_MSG_USERINFOID+": 1", "SopId: 58", Arrays.toString(certificationStatus)}));
+            fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"userSopCertifiedBySopId", LBL_MSG_PROC_INSTANCENAME+": "+"oil-pl11", LBL_MSG_USERINFOID+": 1", "SopId: 58", Arrays.toString(certificationStatus)}));
             
             String sopName = "Demo UAT";
             

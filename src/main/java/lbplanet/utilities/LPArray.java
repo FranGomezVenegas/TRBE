@@ -111,7 +111,7 @@ public class  LPArray {
     public static Object[] encryptTableFieldArray(String schemaName, String tableName, String[] fieldName, Object[] fieldValue){
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY; // 128 bit key
-        //? Should be by schemaPrefix? config or data???
+        //? Should be by procInstanceName? config or data???
         String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
 
         for (int iFields=0;iFields<fieldName.length;iFields++){

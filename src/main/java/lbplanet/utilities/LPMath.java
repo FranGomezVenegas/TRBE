@@ -40,7 +40,7 @@ public class LPMath {
     
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param volume
      * @param volumeUOM
      * @param volumeObjectId
@@ -49,7 +49,7 @@ public class LPMath {
      * @param portionObjectId
      * @return
      */
-    public static Object[] extractPortion(String schemaPrefix, BigDecimal volume, String volumeUOM, Integer volumeObjectId, BigDecimal portion, String portionUOM, Integer portionObjectId){
+    public static Object[] extractPortion(String procInstanceName, BigDecimal volume, String volumeUOM, Integer volumeObjectId, BigDecimal portion, String portionUOM, Integer portionObjectId){
         volumeUOM = volumeUOM == null ? "" : volumeUOM;
         String errorCode="";
         Object[] errorDetailVariables = new Object[0];
@@ -58,7 +58,7 @@ public class LPMath {
             errorCode = "DataSample_sampleAliquoting_volumeCannotBeNegativeorZero";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                 
         }
         UnitsOfMeasurement uom = new UnitsOfMeasurement(portion, portionUOM);
@@ -71,7 +71,7 @@ public class LPMath {
             errorCode = "DataSample_sampleAliquoting_volumeCannotBeNegativeorZero";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portion.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portionObjectId.toString());
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                 
         }        
        volume = volume.add(portion.negate());        
@@ -81,7 +81,7 @@ public class LPMath {
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, volume.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "subaliquoting");
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portion.toString());
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                          
         }        
        

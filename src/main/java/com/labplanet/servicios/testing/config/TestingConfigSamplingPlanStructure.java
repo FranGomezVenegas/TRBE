@@ -70,7 +70,7 @@ public class TestingConfigSamplingPlanStructure extends HttpServlet {
             if (inumTesting<numTesting){
                 String[] fieldName= new String[0];
                 Object[] fieldValue=new Object[0];
-                String schemaPrefix="oil-pl1";
+                String procInstanceName="oil-pl1";
                 String actionName="NEWSAMPLINGDETAIL";
                 String samplingPlan = "84";
                 fieldName = LPArray.addValueToArray1D(fieldName, "analysis");
@@ -79,7 +79,7 @@ public class TestingConfigSamplingPlanStructure extends HttpServlet {
                 fieldValue = LPArray.addValueToArray1D(fieldValue, "pH method");
                 fieldName = LPArray.addValueToArray1D(fieldName, "method_version");
                 fieldValue = LPArray.addValueToArray1D(fieldValue, 2);
-                configSamplingPlanTestingArray[inumTesting][0]=schemaPrefix;
+                configSamplingPlanTestingArray[inumTesting][0]=procInstanceName;
                 configSamplingPlanTestingArray[inumTesting][1]=samplingPlan;
                 configSamplingPlanTestingArray[inumTesting][2]=userName;
                 configSamplingPlanTestingArray[inumTesting][3]=fieldName;
@@ -102,21 +102,21 @@ out.println(Arrays.toString(configSamplingPlanTestingArray));
                 out.println("<tr>");
                 String[] fieldName=null;    
                 Object[] fieldValue=null;
-                String schemaPrefix=null;
+                String procInstanceName=null;
                 userName=null;                
                 String actionName=null;
                 Object[] dataSample = null;
 
-                if (configSamplingPlanTestingArray[i][0]!=null){schemaPrefix = (String) configSamplingPlanTestingArray[i][0];}
+                if (configSamplingPlanTestingArray[i][0]!=null){procInstanceName = (String) configSamplingPlanTestingArray[i][0];}
                 if (configSamplingPlanTestingArray[i][5]!=null){actionName = (String) configSamplingPlanTestingArray[i][5];}
                     
-                out.println(LPTestingOutFormat.fieldStart()+i+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+schemaPrefix+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+actionName+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+Arrays.toString(fieldName)+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+"<b>"+Arrays.toString(fieldValue)+"</b>"+LPTestingOutFormat.fieldEnd());
+                out.println(LPTestingOutFormat.fieldStart()+i+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+procInstanceName+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+actionName+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+Arrays.toString(fieldName)+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+"<b>"+Arrays.toString(fieldValue)+"</b>"+LPTestingOutFormat.fieldEnd());
 
                 switch (LPNulls.replaceNull((String) actionName).toUpperCase()){
                     case "NEWSAMPLINGDETAIL":
                         String sampleTemplate=null;
                         Integer sampleTemplateVersion=null;
-                        if (configSamplingPlanTestingArray[i][1]!=null){schemaPrefix = (String) configSamplingPlanTestingArray[i][0];}
+                        if (configSamplingPlanTestingArray[i][1]!=null){procInstanceName = (String) configSamplingPlanTestingArray[i][0];}
                         if (configSamplingPlanTestingArray[i][1]!=null){userName = (String) configSamplingPlanTestingArray[i][2];}
                         if (configSamplingPlanTestingArray[i][3]!=null){fieldName = (String[]) configSamplingPlanTestingArray[i][3];}              
                         if (configSamplingPlanTestingArray[i][4]!=null){fieldValue = (Object[]) configSamplingPlanTestingArray[i][4];}                         

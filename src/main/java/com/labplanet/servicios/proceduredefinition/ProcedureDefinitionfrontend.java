@@ -70,7 +70,7 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
         private final LPAPIArguments[] arguments;
     }
     
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     public static final String ERRORMSG_ERROR_STATUS_CODE="Error Status Code";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -102,7 +102,7 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);                        
+            String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);                        
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
             JSONArray mainArr = new JSONArray(); 
             JSONArray mainContentArr = new JSONArray(); 
@@ -116,7 +116,7 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
                     ProcBusinessRulesQueries.SAMPLE_INCUBATION.toString(),ProcBusinessRulesQueries.PROCEDURE_ALL_PROC_USERS_ROLES.toString(),
                     ProcBusinessRulesQueries.PROCEDURE_SAMPLE_STAGES.toString(),ProcBusinessRulesQueries.PROCEDURE_ENCRYPTION_TABLES_AND_FIELDS.toString()};
                 for (String currSection: sectionsArr)
-                    mainArr.add(getProcBusinessRulesQueriesInfo(schemaPrefix, currSection));
+                    mainArr.add(getProcBusinessRulesQueriesInfo(procInstanceName, currSection));
                 
                 schemaContentObj.put("definition", mainArr);
                 mainContentArr.add(schemaContentObj);
@@ -124,7 +124,7 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
                 return;                                
             case ENABLE_ACTIONS_AND_ROLES:  
                 LPFrontEnd.servletReturnSuccess(request, response, 
-                        getProcBusinessRulesQueriesInfo(schemaPrefix, ProcBusinessRulesQueries.PROCEDURE_ACTIONS_AND_ROLES.toString()));
+                        getProcBusinessRulesQueriesInfo(procInstanceName, ProcBusinessRulesQueries.PROCEDURE_ACTIONS_AND_ROLES.toString()));
                 return;
             default:                
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              

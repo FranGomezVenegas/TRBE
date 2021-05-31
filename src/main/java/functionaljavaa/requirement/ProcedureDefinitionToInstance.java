@@ -110,14 +110,14 @@ public class ProcedureDefinitionToInstance {
      *
      * @param procedure
      * @param procVersion
-     * @param schemaPrefix
+     * @param procInstanceName
      * @return
      */
-    public static final JSONObject createDBProcedureInfo(String procedure,  Integer procVersion, String schemaPrefix){
+    public static final JSONObject createDBProcedureInfo(String procedure,  Integer procVersion, String procInstanceName){
         JSONObject jsonObj = new JSONObject();
-        String schemaNameDestinationProc=LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName());
+        String schemaNameDestinationProc=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
          Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsProcedure.ProcedureInfo.TBL.getName(), 
-                new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName(), TblsProcedure.ProcedureInfo.FLD_VERSION.getName(),TblsProcedure.ProcedureInfo.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, schemaPrefix}, 
+                new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName(), TblsProcedure.ProcedureInfo.FLD_VERSION.getName(),TblsProcedure.ProcedureInfo.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procInfoRecordsSource[0]));
@@ -135,7 +135,7 @@ public class ProcedureDefinitionToInstance {
                     Object[] fldValue=curRow;
                     if (!LPArray.valueInArray(fldName, TblsProcedure.ProcedureInfo.FLD_SCHEMA_PREFIX.getName())){
                         fldName=LPArray.addValueToArray1D(fldName, TblsProcedure.ProcedureInfo.FLD_SCHEMA_PREFIX.getName());
-                        fldValue=LPArray.addValueToArray1D(fldValue, schemaPrefix);                        
+                        fldValue=LPArray.addValueToArray1D(fldValue, procInstanceName);                        
                     }
                     Object[] insertRecordInTable = Rdbms.insertRecordInTable(schemaNameDestinationProc, TblsProcedure.ProcedureInfo.TBL.getName(), fldName, fldValue);
                     jsonObj.put("Record in the instance inserted?", insertRecordInTable[0].toString());
@@ -150,22 +150,22 @@ public class ProcedureDefinitionToInstance {
      * 
      * @param procedure
      * @param procVersion
-     * @param schemaPrefix
+     * @param procInstanceName
      * @return
      */
-    public static final  JSONObject createDBProcedureEvents(String procedure,  Integer procVersion, String schemaPrefix){        
+    public static final  JSONObject createDBProcedureEvents(String procedure,  Integer procVersion, String procInstanceName){        
         Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, 
                 TblsReqs.ProcedureUserRequirementsEvents.getAllFieldNames(),
                     GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUserRequirementsEvents.TBL.getName(), 
                 new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_SCHEMA_PREFIX.getName()},
-                new Object[]{procedure, procVersion, schemaPrefix},
-                LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), 
+                new Object[]{procedure, procVersion, procInstanceName},
+                LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), 
                     TblsProcedure.ProcedureEvents.TBL.getName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
 
         JSONObject jsonObj = new JSONObject();
 //        jsonObj.put("Diagnostic from createDBProcedureEvents", insertRecordInTableFromTable[0].toString());
         String[] procEventFldNamesToGet=TblsProcedure.ProcedureEvents.getAllFieldNames();
-        Object[][] procEventRows = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(), 
+        Object[][] procEventRows = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(), 
                 new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName(), WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName()+" "+WHERECLAUSE_TYPES.LIKE}, 
                 new Object[]{"ALL", "%|%"}, 
                 procEventFldNamesToGet);
@@ -173,7 +173,7 @@ public class ProcedureDefinitionToInstance {
             Object[][] procRoles = new Object[][]{{}};
                 Object[][] procRolesAllRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureRoles.TBL.getName(), 
                     new String[]{TblsReqs.ProcedureRoles.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureRoles.FLD_SCHEMA_PREFIX.getName()},
-                    new Object[]{procedure, procVersion, schemaPrefix},
+                    new Object[]{procedure, procVersion, procInstanceName},
                     new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()});
             for (Object[] curProcEvent: procEventRows){
                 if ("ALL".equalsIgnoreCase(curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName())].toString()))
@@ -183,18 +183,18 @@ public class ProcedureDefinitionToInstance {
 
                 for (int i=0;i<procRoles.length;i++){
                     if (i==0){
-                        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(),
+                        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(),
                             new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName()}, new Object[]{procRoles[0][0].toString()},
                             new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.FLD_NAME.getName()}, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName())].toString(), curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.FLD_NAME.getName())]});
                 updateRecordFieldsByFilter=new Object[]{};
                     }else{
                     
                         curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName())]=procRoles[i][0].toString();
-                        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(), 
+                        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(), 
                                 procEventFldNamesToGet, curProcEvent);
                     }
                 }
-/*                Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(),
+/*                Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(),
                         new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName()}, new Object[]{procRoles[0][0].toString()},
                         new String[]{TblsProcedure.ProcedureEvents.FLD_NAME.getName()}, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.FLD_NAME.getName())]});
                 updateRecordFieldsByFilter=new Object[]{};
@@ -208,14 +208,14 @@ public class ProcedureDefinitionToInstance {
      *
      * @param procedure
      * @param procVersion
-     * @param schemaPrefix
+     * @param procInstanceName
      * @return
      */
-    public static final  JSONObject createDBPersonProfiles(String procedure,  Integer procVersion, String schemaPrefix){
+    public static final  JSONObject createDBPersonProfiles(String procedure,  Integer procVersion, String procInstanceName){
         JSONObject jsonObj = new JSONObject();
-        String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName());
+        String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
          Object[][] procUserRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUserRole.TBL.getName(), 
-                new String[]{TblsReqs.ProcedureUserRole.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureUserRole.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, schemaPrefix}, 
+                new String[]{TblsReqs.ProcedureUserRole.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureUserRole.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SOURCE.split("\\|"), FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SORT.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserRolesRecordsSource[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procUserRolesRecordsSource[0]));
@@ -238,11 +238,11 @@ public class ProcedureDefinitionToInstance {
             }                
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(existsAppUser[0]))){
                 Object[] existsAppUserProcess = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.UserProcess.TBL.getName(), 
-                        new String[]{TblsApp.UserProcess.FLD_USER_NAME.getName(), TblsApp.UserProcess.FLD_PROC_NAME.getName()}, new Object[]{curUserName.toString(), schemaPrefix});
+                        new String[]{TblsApp.UserProcess.FLD_USER_NAME.getName(), TblsApp.UserProcess.FLD_PROC_NAME.getName()}, new Object[]{curUserName.toString(), procInstanceName});
                 jsonObj.put("User was added to the Process at the App level?", existsAppUserProcess[0].toString());  
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUserProcess[0].toString())){
                     Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.UserProcess.TBL.getName(), 
-                            FIELDS_TO_INSERT_APP_USER_PROCESS.split("\\|"), new Object[]{curUserName.toString(), schemaPrefix, true});
+                            FIELDS_TO_INSERT_APP_USER_PROCESS.split("\\|"), new Object[]{curUserName.toString(), procInstanceName, true});
                     jsonObj.put("Added the User to the Process at the App level by running this utility?", insertRecordInTable[0].toString());                                                                
                 }
             }
@@ -262,15 +262,15 @@ public class ProcedureDefinitionToInstance {
      *
      * @param procedure
      * @param procVersion
-     * @param schemaPrefix
+     * @param procInstanceName
      * @return
      */
-    public static final  JSONObject createDBSopMetaDataAndUserSop(String procedure,  Integer procVersion, String schemaPrefix){
+    public static final  JSONObject createDBSopMetaDataAndUserSop(String procedure,  Integer procVersion, String procInstanceName){
         JSONObject jsonObj = new JSONObject();
-        String schemaNameDestination=LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName());
+        String schemaNameDestination=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         
          Object[][] procSopMetaDataRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureSopMetaData.TBL.getName(), 
-                new String[]{TblsReqs.ProcedureSopMetaData.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureSopMetaData.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureSopMetaData.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, schemaPrefix}, 
+                new String[]{TblsReqs.ProcedureSopMetaData.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureSopMetaData.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureSopMetaData.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SORT.split("\\|"));
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procSopMetaDataRecordsSource[0][0].toString())){
@@ -305,16 +305,16 @@ public class ProcedureDefinitionToInstance {
      *
      * @param procedure
      * @param procVersion
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param moduleName
      * @return
      */
-    public static final  JSONObject createDBModuleTablesAndFields(String procedure,  Integer procVersion, String schemaPrefix, String moduleName){
+    public static final  JSONObject createDBModuleTablesAndFields(String procedure,  Integer procVersion, String procInstanceName, String moduleName){
         JSONObject jsonObj = new JSONObject();
         
          Object[][] procModuleTablesAndFieldsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureModuleTablesAndFields.TBL.getName(), 
                 new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_ACTIVE.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_PREFIX.getName()}, 
-                new Object[]{true, procedure, procVersion, schemaPrefix}, 
+                new Object[]{true, procedure, procVersion, procInstanceName}, 
                 TblsReqs.ProcedureModuleTablesAndFields.getAllFieldNames(), new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_NAME.getName()});        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procModuleTablesAndFieldsSource[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procModuleTablesAndFieldsSource));
@@ -330,33 +330,33 @@ public class ProcedureDefinitionToInstance {
             switch (moduleName.toUpperCase()){
                 case "ENVIRONMENTAL_MONITORING":
                     if (GlobalVariables.Schemas.CONFIG.getName().equalsIgnoreCase(curSchemaName.toString()))
-                        tableCreationScriptTable = TblsEnvMonitConfig.getTableCreationScriptFromConfigTableEnvMonit(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                        tableCreationScriptTable = TblsEnvMonitConfig.getTableCreationScriptFromConfigTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
         //            if (GlobalVariables.Schemas.CONFIG_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))
-        //                tableCreationScriptFromCnfgTable = TblsEnvMonitCnfgaAduit.getTableCreationScriptFromCnfgTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+        //                tableCreationScriptFromCnfgTable = TblsEnvMonitCnfgaAduit.getTableCreationScriptFromCnfgTable(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     if (GlobalVariables.Schemas.DATA.getName().equalsIgnoreCase(curSchemaName.toString()))
-                        tableCreationScriptTable = TblsEnvMonitData.getTableCreationScriptFromDataTableEnvMonit(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                        tableCreationScriptTable = TblsEnvMonitData.getTableCreationScriptFromDataTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     if (GlobalVariables.Schemas.DATA_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))
-                        tableCreationScriptTable = TblsEnvMonitDataAudit.getTableCreationScriptFromDataAuditTableEnvMonit(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                        tableCreationScriptTable = TblsEnvMonitDataAudit.getTableCreationScriptFromDataAuditTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
-                        tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                        tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     break;
                 case "INSPECTION_LOT_RAW_MATERIAL":
                     if (GlobalVariables.Schemas.CONFIG.getName().equalsIgnoreCase(curSchemaName.toString())){
-                        Object[] tableExists=dbTableExists(schemaPrefix+"-"+GlobalVariables.Schemas.CONFIG.getName(), curTableName.toString());
+                        Object[] tableExists=dbTableExists(procInstanceName+"-"+GlobalVariables.Schemas.CONFIG.getName(), curTableName.toString());
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tableExists[0].toString()))
-                            tableCreationScriptTable=TblsInspLotRMConfig.getTableUpdateScriptFromConfigTableInspLotRM(curTableName.toString(), schemaPrefix+"-"+GlobalVariables.Schemas.CONFIG.getName(), curFieldName.toString().split("\\|"));
+                            tableCreationScriptTable=TblsInspLotRMConfig.getTableUpdateScriptFromConfigTableInspLotRM(curTableName.toString(), procInstanceName+"-"+GlobalVariables.Schemas.CONFIG.getName(), curFieldName.toString().split("\\|"));
                         else
-                            tableCreationScriptTable = TblsInspLotRMConfig.getTableCreationScriptFromConfigTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                            tableCreationScriptTable = TblsInspLotRMConfig.getTableCreationScriptFromConfigTableInspLotRM(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     }
 //                    if (GlobalVariables.Schemas.CONFIG_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))
-//                        tableCreationScriptFromCnfgTable = TblsInspLotRMCnfgAduit.getTableCreationScriptFromCnfgTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+//                        tableCreationScriptFromCnfgTable = TblsInspLotRMCnfgAduit.getTableCreationScriptFromCnfgTable(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     if (GlobalVariables.Schemas.DATA.getName().equalsIgnoreCase(curSchemaName.toString())){
-                        tableCreationScriptTable = TblsInspLotRMData.getTableCreationScriptFromDataTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                        tableCreationScriptTable = TblsInspLotRMData.getTableCreationScriptFromDataTableInspLotRM(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     }
                     if (GlobalVariables.Schemas.DATA_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))
-                        tableCreationScriptTable = TblsInspLotRMDataAudit.getTableCreationScriptFromDataAuditTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                        tableCreationScriptTable = TblsInspLotRMDataAudit.getTableCreationScriptFromDataAuditTableInspLotRM(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
-                        tableCreationScriptTable = TblsInspLotRMProcedure.getTableCreationScriptFromDataProcedureTableInspLotRM(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));                  
+                        tableCreationScriptTable = TblsInspLotRMProcedure.getTableCreationScriptFromDataProcedureTableInspLotRM(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));                  
                     break;
                 case "GENOME":
                     break;
@@ -366,15 +366,15 @@ public class ProcedureDefinitionToInstance {
             }
             if (tableCreationScriptTable.length()>0 && tableCreationScriptTable.contains(LPPlatform.LAB_FALSE)){
                 if (GlobalVariables.Schemas.CONFIG.getName().equalsIgnoreCase(curSchemaName.toString()))
-                    tableCreationScriptTable = TblsCnfg.getTableCreationScriptFromCnfgTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    tableCreationScriptTable = TblsCnfg.getTableCreationScriptFromCnfgTable(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
     //            if (GlobalVariables.Schemas.CONFIG_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))
-    //                tableCreationScriptFromCnfgTable = TblsCnfg.getTableCreationScriptFromCnfgTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+    //                tableCreationScriptFromCnfgTable = TblsCnfg.getTableCreationScriptFromCnfgTable(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                 if (GlobalVariables.Schemas.DATA.getName().equalsIgnoreCase(curSchemaName.toString()))
-                    tableCreationScriptTable = TblsData.getTableCreationScriptFromDataTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    tableCreationScriptTable = TblsData.getTableCreationScriptFromDataTable(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                 if (GlobalVariables.Schemas.DATA_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))
-                    tableCreationScriptTable = TblsDataAudit.getTableCreationScriptFromDataAuditTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    tableCreationScriptTable = TblsDataAudit.getTableCreationScriptFromDataAuditTable(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                 if (GlobalVariables.Schemas.TESTING.getName().equalsIgnoreCase(curSchemaName.toString()))
-                    tableCreationScriptTable = TblsTesting.getTableCreationScriptFromTestingTable(curTableName.toString(), schemaPrefix, curFieldName.toString().split("\\|"));
+                    tableCreationScriptTable = TblsTesting.getTableCreationScriptFromTestingTable(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
             } 
             if (tableCreationScriptTable.contains(LPPlatform.LAB_FALSE))
                 LPPlatform.saveMessageInDbErrorLog(tableCreationScriptTable, null, new Object[]{"ProcedureDefinitionToInstance >> createDBModuleTablesAndFields"}, "table not declared in switch", new Object[]{tableCreationScriptTable});
@@ -384,7 +384,7 @@ public class ProcedureDefinitionToInstance {
                     jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);
                     if (curSchemaName.toString().contains(GlobalVariables.Schemas.DATA.getName())){                    
                         String newSchemaName=Rdbms.suffixForTesting(curSchemaName.toString()); 
-                        tableCreationScriptTable=tableCreationScriptTable.replace(LPPlatform.buildSchemaName(schemaPrefix, curSchemaName.toString()), LPPlatform.buildSchemaName(schemaPrefix, newSchemaName));
+                        tableCreationScriptTable=tableCreationScriptTable.replace(LPPlatform.buildSchemaName(procInstanceName, curSchemaName.toString()), LPPlatform.buildSchemaName(procInstanceName, newSchemaName));
                         Rdbms.prepRdQuery(tableCreationScriptTable, new Object[]{});
                         jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);                    
                     }
@@ -397,12 +397,12 @@ public class ProcedureDefinitionToInstance {
      *
      * @param procedure
      * @param procVersion
-     * @param schemaPrefix
+     * @param procInstanceName
      * @return
      */
-    public static final  JSONObject addProcedureSOPtoUsers(String procedure,  Integer procVersion, String schemaPrefix){
+    public static final  JSONObject addProcedureSOPtoUsers(String procedure,  Integer procVersion, String procInstanceName){
         JSONObject jsonObj = new JSONObject();
-        String schemaNameDestinationProc=LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName());
+        String schemaNameDestinationProc=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
         Object[][] procEventSopsRecordsSource = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.ProcedureEvents.TBL.getName(), 
                 new String[]{TblsProcedure.ProcedureEvents.FLD_SOP.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{""}, 
                 FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), new String[]{"sop"});
@@ -435,7 +435,7 @@ public class ProcedureDefinitionToInstance {
                     String diagnosesForLog = (sopRolePosic==-1) ? JsonTags.NO.getTagValue() : JsonTags.YES.getTagValue();
                     jsSopRoleObj.put("SOP "+sopFromArr+" exists for role "+roleFromArr+" ?", diagnosesForLog);
                     if (sopRolePosic==-1){
-                        Object[][] procedureAddSopToUsersByRole = ProcedureDefinitionToInstanceUtility.procedureAddSopToUsersByRole(procedure, procVersion, schemaPrefix, 
+                        Object[][] procedureAddSopToUsersByRole = ProcedureDefinitionToInstanceUtility.procedureAddSopToUsersByRole(procedure, procVersion, procInstanceName, 
                                 roleFromArr, sopFromArr, null, null);                        
                     }
                     jsSopRoleArr.add(jsSopRoleObj);

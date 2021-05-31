@@ -39,7 +39,7 @@ public class SopUserAPIfrontend extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
     /**
      *
@@ -114,7 +114,7 @@ public class SopUserAPIfrontend extends HttpServlet {
     /**
      *
      */
-    public static final String JSON_TAG_SCHEMA_PREFIX="schemaPrefix";
+    public static final String JSON_TAG_SCHEMA_PREFIX="procInstanceName";
 
     /**
      *

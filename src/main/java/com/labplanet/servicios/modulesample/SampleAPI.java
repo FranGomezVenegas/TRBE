@@ -80,7 +80,7 @@ public class SampleAPI extends HttpServlet {
             Logger.getLogger(SampleAPI.class.getName()).log(Level.SEVERE, null, ex);
         }*/
 
-//        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.CONFIG.getName());    
+//        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
 //        Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
             SampleAPIEndpoints endPoint = null;

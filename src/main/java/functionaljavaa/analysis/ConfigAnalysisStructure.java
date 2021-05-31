@@ -270,7 +270,7 @@ if (1==1){return "ERROR";}
        } catch (IllegalArgumentException ex) {
            Logger.getLogger(ConfigAnalysisStructure.class.getName()).log(Level.SEVERE, null, ex);
        }  
-        String params = "SchemaPrefix: "+procInstanceName+"code"+code+"configVersion"+configVersion.toString()
+        String params = "ProcInstanceName: "+procInstanceName+"code"+code+"configVersion"+configVersion.toString()
                 +"specFieldName"+Arrays.toString(specFieldName)+"specFieldValue"+Arrays.toString(specFieldValue);
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, params);        
         return trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);

@@ -78,7 +78,7 @@ public class ProcedureDeployment extends HttpServlet {
         ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint = ProcedureDefinitionAPIEndpoints.DEPLOY_REQUIREMENTS;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                
         String procName = argValues[0].toString(); //request.getParameter("procedureName"); //"process-us";         
-        String schemaPrefix=argValues[2].toString(); //request.getParameter("schemaPrefix"); //"process-us";
+        String procInstanceName=argValues[2].toString(); //request.getParameter("procInstanceName"); //"process-us";
         
         String procInstanceSchemaConfigName=LPPlatform.buildSchemaName(procName, GlobalVariables.Schemas.CONFIG.getName());
         String procInstanceSchemaProcName=LPPlatform.buildSchemaName(procName, GlobalVariables.Schemas.PROCEDURE.getName());
@@ -176,8 +176,8 @@ public class ProcedureDeployment extends HttpServlet {
                         new String[][]{{"PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE", matching}});
             }
             fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(dataIntegrityInstanceTable);
-            if (PROC_DEPLOYMENT_DB_CREATE_SCHEMAS) ProcedureDefinitionToInstance.createDBProcessSchemas(schemaPrefix);            
-            if (PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES) createDBProcessTables(schemaPrefix, "", new String[]{});
+            if (PROC_DEPLOYMENT_DB_CREATE_SCHEMAS) ProcedureDefinitionToInstance.createDBProcessSchemas(procInstanceName);            
+            if (PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES) createDBProcessTables(procInstanceName, "", new String[]{});
             //if (PROC_DEPLOYMENT_ENTIRE_PROCEDURE){reqDep.procedureDeployment(procName, procVersion);}
             //if (PROC_DEPLOYMENT_ASSIGN_USER_SOPS){reqDep.procedureDeployment(procName, procVersion);}
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();

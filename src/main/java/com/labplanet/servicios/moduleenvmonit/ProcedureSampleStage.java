@@ -16,7 +16,7 @@ import lbplanet.utilities.LPPlatform;
  * @author User
  */
 public class ProcedureSampleStage {  
-    public String sampleStageSamplingNextChecker(String schemaPrefix, Integer sampleId, String sampleData) {   
+    public String sampleStageSamplingNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         JsonObject sampleStructure = LPJson.convertToJsonObjectStringedObject(sampleData);
         String samplingDate=sampleStructure.get("sampling_date").getAsString();
         if (samplingDate==null){
@@ -24,7 +24,7 @@ public class ProcedureSampleStage {
         return LPPlatform.LAB_TRUE;
     }  
 
-    public String sampleStageIncubationPreviousChecker(String schemaPrefix, Integer sampleId, String sampleData) {   
+    public String sampleStageIncubationPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         JsonObject sampleStructure = LPJson.convertToJsonObjectStringedObject(sampleData);
         Boolean incubationPassed=sampleStructure.get("incubation_passed").getAsBoolean();
         Boolean incubation2Passed=sampleStructure.get("incubation2_passed").getAsBoolean();
@@ -35,7 +35,7 @@ public class ProcedureSampleStage {
         return LPPlatform.LAB_TRUE;
     }  
 
-    public String sampleStageIncubationNextChecker(String schemaPrefix, Integer sampleId, String sampleData) {   
+    public String sampleStageIncubationNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         JsonObject sampleStructure = LPJson.convertToJsonObjectStringedObject(sampleData);
         Boolean incubationPassed=sampleStructure.get("incubation_passed").getAsBoolean();
         Boolean incubation2Passed=sampleStructure.get("incubation2_passed").getAsBoolean();
@@ -45,10 +45,10 @@ public class ProcedureSampleStage {
             return " Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
-    public String sampleStagePlateReadingPreviousChecker(String schemaPrefix, Integer sampleId, String sampleData) {   
+    public String sampleStagePlateReadingPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         return LPPlatform.LAB_TRUE;
     }
-    public String sampleStagePlateReadingNextChecker(String schemaPrefix, Integer sampleId, String sampleData) { 
+    public String sampleStagePlateReadingNextChecker(String procInstanceName, Integer sampleId, String sampleData) { 
         try{
         JsonObject sampleStructure = LPJson.convertToJsonObjectStringedObject(sampleData);
         JsonArray smpAna=sampleStructure.getAsJsonArray("sample_analysis");
@@ -69,13 +69,13 @@ public class ProcedureSampleStage {
             return LPPlatform.LAB_FALSE+e.getMessage();
         }
     }
-    public String sampleStageMicroorganismIdentificationPreviousChecker(String schemaPrefix, Integer sampleId, String sampleData) {   
+    public String sampleStageMicroorganismIdentificationPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         return LPPlatform.LAB_TRUE;
     }
-    public String sampleStageMicroorganismIdentificationNextChecker(String schemaPrefix, Integer sampleId, String sampleData) {   
+    public String sampleStageMicroorganismIdentificationNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         return LPPlatform.LAB_FALSE;
     }    
-    public String sampleStageENDPreviousChecker(String schemaPrefix, Integer sampleId, String sampleData) {   
+    public String sampleStageENDPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         return LPPlatform.LAB_TRUE;
     }    
 }

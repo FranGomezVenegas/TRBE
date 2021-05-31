@@ -77,7 +77,7 @@ public class BatchAPI extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
     /**
      *
@@ -147,7 +147,7 @@ public class BatchAPI extends HttpServlet {
                          LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                  return;          
              }              
-            String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
+            String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);            
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
                 
@@ -160,14 +160,14 @@ public class BatchAPI extends HttpServlet {
                 return;                   
             }
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
-            Rdbms.setTransactionId(schemaPrefix);
+            Rdbms.setTransactionId(procInstanceName);
             try (PrintWriter out = response.getWriter()) {
-                Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
+                Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                     return ;                
                 }            
-                actionEnabled = LPPlatform.procUserRoleActionEnabled(schemaPrefix, token.getUserRole(), actionName);
+                actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                     return ;                                
@@ -186,7 +186,7 @@ public class BatchAPI extends HttpServlet {
                         String numRowsStr = request.getParameter(PARAMS_BATCH_NUM_ROWS);                        
                         String numColsStr = request.getParameter(PARAMS_BATCH_NUM_COLS);       
 
-                        BatchArray bArray = new BatchArray(schemaPrefix,  batchTemplate,  Integer.valueOf(batchTemplateVersionStr),  batchName,  
+                        BatchArray bArray = new BatchArray(procInstanceName,  batchTemplate,  Integer.valueOf(batchTemplateVersionStr),  batchName,  
                                 token.getPersonName(),  Integer.valueOf(numRowsStr),  Integer.valueOf(numColsStr));
                         break;
                     case LOAD_BATCH_ARRAY:                        
@@ -197,7 +197,7 @@ public class BatchAPI extends HttpServlet {
                              return;          
                          }                                     
                         batchName = request.getParameter(PARAMS_BATCH_NAME);                          
-                        bArray = BatchArray.dbGetBatchArray(schemaPrefix, batchName);
+                        bArray = BatchArray.dbGetBatchArray(procInstanceName, batchName);
                         break;
                     default:
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              

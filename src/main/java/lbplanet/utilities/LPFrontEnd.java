@@ -256,10 +256,10 @@ public class LPFrontEnd {
      *
      * @param errorStructure
      * @param language
-     * @param schemaPrefix
+     * @param procInstanceName
      * @return
      */
-    public static Object[] responseError(Object[] errorStructure, String language, String schemaPrefix){
+    public static Object[] responseError(Object[] errorStructure, String language, String procInstanceName){
         Object[] responseObj = new Object[0];
         responseObj = LPArray.addValueToArray1D(responseObj, HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);
         if (errorStructure.length>0){

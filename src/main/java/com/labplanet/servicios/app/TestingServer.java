@@ -65,11 +65,11 @@ public class TestingServer extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             
-            String schemaPrefix="em-air-allv2";
+            String procInstanceName="em-air-allv2";
             Rdbms.stablishDBConectionTester();
-        TestingCoverage tstCov=new TestingCoverage(schemaPrefix, 1);    
+        TestingCoverage tstCov=new TestingCoverage(procInstanceName, 1);    
         tstCov.calculateCoverage();
-//            String tblCreateScript = TblsTesting.ScriptsCoverage.createTableScript(schemaPrefix, new String[]{""});
+//            String tblCreateScript = TblsTesting.ScriptsCoverage.createTableScript(procInstanceName, new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         //jsonObj.put("TblsTesting.ScriptsCoverage", tblCreateScript);
             
@@ -169,7 +169,7 @@ for (String[] curEntry: endpointArr){
         out.println(apiName+"."+endPointName+" >> "+Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString((String[]) docInfoForEndPoint[0], (Object[]) docInfoForEndPoint[1], ":")));
 }
 if (1==1) return;
-String procInstanceName="em-demo-a";
+procInstanceName="em-demo-a";
 /*
         String tblCreateScript=TblsTesting.Script.createTableScript(procInstanceName, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});

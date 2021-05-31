@@ -69,7 +69,7 @@ public class ProcedureRequestSession {
             this.actionName=actionNm;
         }else
             this.actionName=theActionName;
-        String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
+        String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);            
         if (!isForUAT){
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);   
             if (finalToken!=null){
@@ -194,7 +194,7 @@ public class ProcedureRequestSession {
 /*        if (isTesting){
             Boolean passCheckers=true;
             String actionNm = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String procInstanceName = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
+            String procInstanceName = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);            
             String finalToken = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             Token tokn = null;
             if (finalToken!=null){

@@ -60,7 +60,7 @@ public class FrontendDefinition extends HttpServlet {
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, arguments);                
         String procName = argValues[0].toString(); //request.getParameter("procedureName"); //"process-us";         
         Integer procVersion= (Integer) argValues[1];
-        String procInstanceName=argValues[2].toString(); //request.getParameter("schemaPrefix"); //"process-us";
+        String procInstanceName=argValues[2].toString(); //request.getParameter("procInstanceName"); //"process-us";
         String moduleName=argValues[3].toString();
         Integer moduleVersion= (Integer) argValues[4];
         String mainPath= argValues[5].toString();

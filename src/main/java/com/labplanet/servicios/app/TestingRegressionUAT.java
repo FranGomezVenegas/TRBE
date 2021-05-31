@@ -81,12 +81,12 @@ public class TestingRegressionUAT extends HttpServlet {
                         procReqInstance.getErrorMessage(), null, procReqInstance.getLanguage());              
                 return;
             }
-            //String schemaPrefix="em-demo-a";
+            //String procInstanceName="em-demo-a";
             //Integer scriptId=2;
-            String schemaPrefix=request.getParameter("schemaPrefix");
+            String procInstanceName=request.getParameter("procInstanceName");
             Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
 //            if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}     
-            scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
+            scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
                     new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
                     new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName(), TblsTesting.Script.FLD_AUDIT_IDS_TO_GET.getName(),
                                     TblsTesting.Script.FLD_GET_DB_ERRORS.getName(), TblsTesting.Script.FLD_GET_MSG_ERRORS.getName()},
@@ -96,8 +96,8 @@ public class TestingRegressionUAT extends HttpServlet {
                 return;
             }        
             
-            LPTestingOutFormat.cleanLastRun(schemaPrefix, scriptId);
-            LPTestingOutFormat.getIdsBefore(schemaPrefix, scriptId, scriptTblInfo[0]);
+            LPTestingOutFormat.cleanLastRun(procInstanceName, scriptId);
+            LPTestingOutFormat.getIdsBefore(procInstanceName, scriptId, scriptTblInfo[0]);
             
             String testerName = scriptTblInfo[0][0].toString();
             Integer numEvalArgs = 0;
@@ -107,7 +107,7 @@ public class TestingRegressionUAT extends HttpServlet {
             request.setAttribute(LPTestingParams.TESTING_SOURCE, "DB");
             request.setAttribute(LPTestingParams.NUM_EVAL_ARGS, numEvalArgs);
             request.setAttribute(LPTestingParams.SCRIPT_ID, scriptId);
-            request.setAttribute(LPTestingParams.SCHEMA_PREFIX, schemaPrefix);
+            request.setAttribute(LPTestingParams.SCHEMA_PREFIX, procInstanceName);
             request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, "eyJ1c2VyREIiOiJsYWJwbGFuZXQiLCJlU2lnbiI6ImhvbGEiLCJ1c2VyREJQYXNzd29yZCI6Imxhc2xlY2h1Z2FzIiwidXNlcl9wcm9jZWR1cmVzIjoiW2VtLWRlbW8tYSwgcHJvY2Vzcy11cywgcHJvY2Vzcy1ldSwgZ2Vub21hLTFdIiwidHlwIjoiSldUIiwiYXBwU2Vzc2lvbklkIjoiMjk4NiIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IlR1ZSBNYXIgMTcgMDI6Mzg6MTkgQ0VUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEifQ.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.xiT6CxNcoFKAiE2moGhMOsxFwYjeyugdvVISjUUFv0Y");         
             TestingServletsConfig endPoints = TestingServletsConfig.valueOf(testerName);
 
@@ -129,18 +129,18 @@ public class TestingRegressionUAT extends HttpServlet {
         }
         finally{
             String scriptIdStr=request.getParameter("scriptId");
-            String schemaPrefix=request.getParameter("schemaPrefix");
+            String procInstanceName=request.getParameter("procInstanceName");
             if (scriptTblInfo==null || scriptIdStr==null) return;
             Integer scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr)); 
             if ( (procReqInstance!=null) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())) ){
                 if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
-                    LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[0][2].toString(), "completed");
+                    LPTestingOutFormat.setAuditIndexValues(procInstanceName, scriptId, scriptTblInfo[0][2].toString(), "completed");
 
                 if (scriptTblInfo[0][3]!=null && Boolean.valueOf(scriptTblInfo[0][3].toString()))
-                    LPTestingOutFormat.setDbErrorIndexValues(schemaPrefix, scriptId, "completed");
+                    LPTestingOutFormat.setDbErrorIndexValues(procInstanceName, scriptId, "completed");
 
                 if (scriptTblInfo[0][4]!=null && Boolean.valueOf(scriptTblInfo[0][4].toString()))
-                    LPTestingOutFormat.setMessagesErrorIndexValues(schemaPrefix, scriptId, "completed");
+                    LPTestingOutFormat.setMessagesErrorIndexValues(procInstanceName, scriptId, "completed");
                 procReqInstance.killIt();
             }
         }

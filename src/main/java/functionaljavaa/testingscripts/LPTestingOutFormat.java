@@ -86,14 +86,14 @@ public class LPTestingOutFormat {
             TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_UNMATCH.getName(), TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_FALSE.getName()
         };
         Integer scriptId = null;
-        String schemaPrefix=null;
+        String procInstanceName=null;
         if (testingSource!=null && testingSource=="DB"){
             csvPathName ="";
             csvFileName ="";
             if (!LPFrontEnd.servletStablishDBConection(request, null)){return;}
             scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
-            schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
-            csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptSteps.TBL.getName(),
+            procInstanceName=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
+            csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptSteps.TBL.getName(),
                     new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_ACTIVE.getName()}, new Object[]{scriptId, true},
                     fieldsName,
                     new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName()});
@@ -117,7 +117,7 @@ public class LPTestingOutFormat {
             numEvalArgs = Integer.valueOf(headerTags.get(LPTestingOutFormat.FileHeaderTags.NUM_EVALUATION_ARGUMENTS.getTagValue().toString()).toString());
         }
         htmlStyleHdr = new StringBuilder(0);
-        htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(testerName, csvFileName, scriptId, schemaPrefix));
+        htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(testerName, csvFileName, scriptId, procInstanceName));
 
         this.testingContent=csvFileContent;
         this.inputMode=LPNulls.replaceNull(testingSource).toString();
@@ -140,7 +140,7 @@ public class LPTestingOutFormat {
         Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp()};
         if (numEvaluationArguments>0 && ("DB".equals(this.inputMode)) ){
             Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
-            String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
+            String procInstanceName=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
             if (evaluate==null || evaluate.length==0){
                 updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EVAL_SYNTAXIS.getName()});
                 updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{"EvaluateEmpty", tstAssert.getEvalSyntaxisDiagnostic()});                
@@ -154,7 +154,7 @@ public class LPTestingOutFormat {
                         functionRelatedObjects.toJSONString()});
                 }
             }
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptSteps.TBL.getName(),
+            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptSteps.TBL.getName(),
                     updFldNames, updFldValues,
                     new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()}, new Object[]{scriptId, stepId});
         }
@@ -187,7 +187,7 @@ public class LPTestingOutFormat {
                 }
                 if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}
                 Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
-                String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
+                String procInstanceName=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
                 updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(),
                             TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNMATCH.getName()});
                 updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{tstAssertSummary.getTotalSyntaxisMatch(), tstAssertSummary.getTotalSyntaxisUndefined(), tstAssertSummary.getTotalSyntaxisUnMatch()});
@@ -214,7 +214,7 @@ public class LPTestingOutFormat {
                     updFldNames=LPArray.addValueToArray1D(updFldNames, (String[]) fieldsForSessionObjects[0]);
                 if (fieldsForSessionObjects!=null && fieldsForSessionObjects.length>1)
                     updFldValues=LPArray.addValueToArray1D(updFldValues, (Object[]) fieldsForSessionObjects[1]);
-                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
+                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
                         updFldNames, updFldValues,
                         new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
                 procReqInstance.killIt();
@@ -915,7 +915,7 @@ public class LPTestingOutFormat {
         else
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{missingValues});
     }
-    public static void cleanLastRun(String schemaPrefix, Integer scriptId){
+    public static void cleanLastRun(String procInstanceName, Integer scriptId){
         String[] scriptFieldName=new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName(), 
             TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNMATCH.getName(), 
             TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(), TblsTesting.Script.FLD_EVAL_CODE_MATCH.getName(), 
@@ -923,59 +923,59 @@ public class LPTestingOutFormat {
             TblsTesting.Script.FLD_DATE_EXECUTION.getName(), TblsTesting.Script.FLD_DB_ERRORS_IDS_VALUES.getName(), TblsTesting.Script.FLD_MSG_ERRORS_IDS_VALUES.getName()};
         Object[] scriptFieldValue=new Object[]{"NULL>>>STRING","NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER","NULL>>>DATETIME", "NULL>>>STRING", "NULL>>>STRING"};
 
-        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
+        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
             scriptFieldName, scriptFieldValue,
             new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
-        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptSteps.TBL.getName(),
+        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptSteps.TBL.getName(),
             new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.FLD_EVAL_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EVAL_CODE.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()},
             new Object[]{"NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING","NULL>>>DATETIME"},
             new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
     }
-    public static void getIdsBefore(String schemaPrefix, Integer scriptId, Object[] scriptTblInfo){
+    public static void getIdsBefore(String procInstanceName, Integer scriptId, Object[] scriptTblInfo){
         if (scriptTblInfo[2]!=null && scriptTblInfo[2].toString().length()>0)
-            LPTestingOutFormat.setAuditIndexValues(schemaPrefix, scriptId, scriptTblInfo[2].toString(), "before");
+            LPTestingOutFormat.setAuditIndexValues(procInstanceName, scriptId, scriptTblInfo[2].toString(), "before");
 
         if (scriptTblInfo[3]!=null && Boolean.valueOf(scriptTblInfo[3].toString()))
-            LPTestingOutFormat.setDbErrorIndexValues(schemaPrefix, scriptId, "before");
+            LPTestingOutFormat.setDbErrorIndexValues(procInstanceName, scriptId, "before");
 
         if (scriptTblInfo[4]!=null && Boolean.valueOf(scriptTblInfo[4].toString()))
-            LPTestingOutFormat.setMessagesErrorIndexValues(schemaPrefix, scriptId, "before");
+            LPTestingOutFormat.setMessagesErrorIndexValues(procInstanceName, scriptId, "before");
     }
     
-    public static void setDbErrorIndexValues(String schemaPrefix, Integer scriptId, String moment){
+    public static void setDbErrorIndexValues(String procInstanceName, Integer scriptId, String moment){
         JSONArray auditIndexInfo=new JSONArray();       
-        auditIndexInfo.add(getScriptCurrentFldValue(schemaPrefix, scriptId, TblsTesting.Script.FLD_DB_ERRORS_IDS_VALUES.getName()));
-        auditIndexInfo.add(getScriptDbErrorIncrements(schemaPrefix, scriptId, moment));
+        auditIndexInfo.add(getScriptCurrentFldValue(procInstanceName, scriptId, TblsTesting.Script.FLD_DB_ERRORS_IDS_VALUES.getName()));
+        auditIndexInfo.add(getScriptDbErrorIncrements(procInstanceName, scriptId, moment));
         if (auditIndexInfo!=null){
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
+            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
                 new String[]{TblsTesting.Script.FLD_DB_ERRORS_IDS_VALUES.getName()},
                 new Object[]{auditIndexInfo.toJSONString()},
                 new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
         }
     }
 
-    public static void setMessagesErrorIndexValues(String schemaPrefix, Integer scriptId, String moment){
+    public static void setMessagesErrorIndexValues(String procInstanceName, Integer scriptId, String moment){
         JSONArray auditIndexInfo=new JSONArray();       
-        auditIndexInfo.add(getScriptCurrentFldValue(schemaPrefix, scriptId, TblsTesting.Script.FLD_MSG_ERRORS_IDS_VALUES.getName()));
-        auditIndexInfo.add(getScriptPropertiesErrorIncrements(schemaPrefix, scriptId, moment));
+        auditIndexInfo.add(getScriptCurrentFldValue(procInstanceName, scriptId, TblsTesting.Script.FLD_MSG_ERRORS_IDS_VALUES.getName()));
+        auditIndexInfo.add(getScriptPropertiesErrorIncrements(procInstanceName, scriptId, moment));
         if (auditIndexInfo!=null){
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
+            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
                 new String[]{TblsTesting.Script.FLD_MSG_ERRORS_IDS_VALUES.getName()},
                 new Object[]{auditIndexInfo.toJSONString()},
                 new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
         }
     }
     
-    public static void setAuditIndexValues(String schemaPrefix, Integer scriptId, String scriptAuditIds, String moment){
-        JSONArray auditIndexInfo=getScriptAuditIncrements(schemaPrefix, scriptId, scriptAuditIds, moment);
+    public static void setAuditIndexValues(String procInstanceName, Integer scriptId, String scriptAuditIds, String moment){
+        JSONArray auditIndexInfo=getScriptAuditIncrements(procInstanceName, scriptId, scriptAuditIds, moment);
         if (auditIndexInfo!=null){
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
+            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(),
                 new String[]{TblsTesting.Script.FLD_AUDIT_IDS_VALUES.getName()},
                 new Object[]{auditIndexInfo.toJSONString()},
                 new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});
         }
     }
-    private static JSONArray getScriptAuditIncrements(String schemaPrefix, Integer scriptId, String scriptAuditIds, String moment){
+    private static JSONArray getScriptAuditIncrements(String procInstanceName, Integer scriptId, String scriptAuditIds, String moment){
         if (scriptAuditIds==null) return null;
         if (moment==null) return null;
         String[] auditIds=scriptAuditIds.split("\\|");
@@ -983,7 +983,7 @@ public class LPTestingOutFormat {
         for (String curAuditId: auditIds){
             String[] auditIdInfo=curAuditId.split("\\*");
             if (auditIdInfo.length==2 && auditIdInfo[0].length()>0 && auditIdInfo[1].length()>0){
-                Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(schemaPrefix, auditIdInfo[0], auditIdInfo[1], null);
+                Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(procInstanceName, auditIdInfo[0], auditIdInfo[1], null);
                 JSONObject currIndxInfo=new JSONObject();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbGetIndexLastNumberInUse[0].toString()))
                     currIndxInfo.put(Arrays.toString(auditIdInfo).replace("\\*", "_")+"_"+moment, "error getting the value");
@@ -994,7 +994,7 @@ public class LPTestingOutFormat {
         }
         return indxInfo;
     }
-    private static JSONArray getScriptDbErrorIncrements(String schemaPrefix, Integer scriptId, String moment){
+    private static JSONArray getScriptDbErrorIncrements(String procInstanceName, Integer scriptId, String moment){
         if (moment==null) return null;
         JSONArray indxInfo=new JSONArray();
         String indexName="zzz_db_error_log_id_seq";
@@ -1007,7 +1007,7 @@ public class LPTestingOutFormat {
         indxInfo.add(currIndxInfo);
         return indxInfo;
     }
-    private static JSONArray getScriptPropertiesErrorIncrements(String schemaPrefix, Integer scriptId, String moment){
+    private static JSONArray getScriptPropertiesErrorIncrements(String procInstanceName, Integer scriptId, String moment){
         if (moment==null) return null;
         JSONArray indxInfo=new JSONArray();
         String indexName="zzz_properties_error_id_seq";
@@ -1020,9 +1020,9 @@ public class LPTestingOutFormat {
         indxInfo.add(currIndxInfo);
         return indxInfo;
     }
-    private static String getScriptCurrentFldValue(String schemaPrefix, Integer scriptId, String fieldName){
+    private static String getScriptCurrentFldValue(String procInstanceName, Integer scriptId, String fieldName){
         String fldInfo="";
-        Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
+        Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
             new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
             new String[]{fieldName});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString())){

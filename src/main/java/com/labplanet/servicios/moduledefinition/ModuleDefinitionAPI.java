@@ -35,7 +35,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         /**
          *
          */
-        PROCEDURE_NAME("procedureName"), PROCEDURE_VERSION("procedureVersion"), SCHEMA_PREFIX("schemaPrefix"), MODULE_NAME("moduleName"), USER_NAME("userName"), ROLE_NAME("roleName"),
+        PROCEDURE_NAME("procedureName"), PROCEDURE_VERSION("procedureVersion"), SCHEMA_PREFIX("procInstanceName"), MODULE_NAME("moduleName"), USER_NAME("userName"), ROLE_NAME("roleName"),
         UOM_NAME("uomName"),UOM_IMPORT_TYPE("importType")
         ;
         private ModuleDefinitionpParametersEndpoints(String name){
@@ -87,7 +87,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
     }
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

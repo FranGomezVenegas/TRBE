@@ -266,7 +266,7 @@ public enum SampleStageErrorTrapping{
         String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
-        String fileName = LOD_JAVASCRIPT_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, procInstanceName);
+        String fileName = LOD_JAVASCRIPT_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, procInstanceName);
         fileName=procInstanceName+"-sample-stage.js"; //"/procedure/"+
         String functionName="sampleStage"+currStage+moveDirection+"Checker";
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
@@ -279,14 +279,14 @@ public enum SampleStageErrorTrapping{
           }
         } catch (FileNotFoundException ex) {
           try{
-             fileName = LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, procInstanceName);
+             fileName = LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, procInstanceName);
              functionName="sampleStage"+currStage+moveDirection+"Checker";
              engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.eval(new FileReader(fileName));              
           } catch (FileNotFoundException ex2) {              
           Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex2);
           return new Object[]{LPPlatform.LAB_TRUE, "FileNotFoundException", labelMsgError+ex2.getMessage()
-                  +"(tried two paths: "+"/app/" + procInstanceName + "-sample-stage.js"+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, procInstanceName)+") "};          
+                  +"(tried two paths: "+"/app/" + procInstanceName + "-sample-stage.js"+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, procInstanceName)+") "};          
           }
         }
         Invocable invocable = (Invocable) engine;

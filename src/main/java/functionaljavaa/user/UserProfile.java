@@ -65,32 +65,32 @@ public class UserProfile {
         
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param personName
      * @return
      */
-    public Object[] getProcedureUserProfileFieldValues ( String schemaPrefix, String personName) {
+    public Object[] getProcedureUserProfileFieldValues ( String procInstanceName, String personName) {
             String[] filterFieldName = new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName(), FIELDVALUE_ACTIVE, TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
             Object[] filterFieldValue = new Object[]{personName, true};            
             
-            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.PersonProfile.TBL.getName(), 
+            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.PersonProfile.TBL.getName(), 
                     filterFieldName, filterFieldValue, new String[] {TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()});
             return LPArray.array2dTo1d(userProc);                         
         }
 
     /**
      *
-     * @param schemaPrefix
+     * @param procInstanceName
      * @param personName
      * @return
      */
-    public Object[] getProcedureUserProfileFieldValues ( Object[] schemaPrefix, String personName) {
+    public Object[] getProcedureUserProfileFieldValues ( Object[] procInstanceName, String personName) {
             Object[] totalProcUserProfiles  = new Object[0];          
         if ( (personName == null) || (personName.length()==0) ){
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "personNameIsEmpty", new Object[]{});
         }               
-        for (Object schemaPrefix1 : schemaPrefix) {
-            String currProcPrefix = schemaPrefix1.toString();
+        for (Object procInstanceName1 : procInstanceName) {
+            String currProcPrefix = procInstanceName1.toString();
             Object[] currProcUserProfiles =  getProcedureUserProfileFieldValues(currProcPrefix, personName);
             for (Object fn: currProcUserProfiles ){
                 if (!LPArray.valueInArray(totalProcUserProfiles, fn))
