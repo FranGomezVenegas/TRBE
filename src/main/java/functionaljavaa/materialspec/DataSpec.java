@@ -193,10 +193,13 @@ public class DataSpec {
                     Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.NULL_MANDATORY_FIELD.getErrorCode(), errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrorsErrorTrapping.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;
-                }else{
+                }else{                    
                     String[] textSpecArray = values.split(separator);
                     if (textSpecArray.length==0) textSpecArray=values.split("\\"+separator);
                     Boolean contained=values.contains("\\"+separator);
+                    if (!contained) contained=values.contains(separator);
+                    if (contained) 
+                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckSuccessErrorTrapping.QUALITATIVE_OUT_IS_ONE_OF.getErrorCode(), errorVariables);
                     if (textSpecArray.length==0 || !(values.contains("\\"+separator))) 
                         textSpecArray=LPArray.addValueToArray1D(textSpecArray, values);
                     for (Integer itextSpecArrayLen=0;itextSpecArrayLen<textSpecArray.length;itextSpecArrayLen++){
@@ -218,6 +221,10 @@ public class DataSpec {
                     diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrorsErrorTrapping.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;
                 }else{
+                    Boolean contained=values.contains("\\"+separator);
+                    if (!contained) contained=values.contains(separator);
+                    if (contained) 
+                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckSuccessErrorTrapping.QUALITATIVE_OUT_IS_NOT_ONE_OF.getErrorCode(), errorVariables);                    
                     String[] textSpecArray = values.split(separator);
                     if (textSpecArray.length==0) textSpecArray=values.split("\\"+separator);
                     if (textSpecArray.length==0) textSpecArray=LPArray.addValueToArray1D(textSpecArray, values);

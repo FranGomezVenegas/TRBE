@@ -145,7 +145,7 @@ Integer currentLine=0;
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));       
 */
 //testingContent.length
-//numHeaderLines=78;
+numHeaderLines=78;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
