@@ -175,7 +175,9 @@ public class ClassMasterData {
                             new String[]{TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_VERSION.getName(), TblsEnvMonitConfig.IncubBatch.FLD_NAME.getName(), TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName(), TblsEnvMonitConfig.IncubBatch.FLD_ACTIVE.getName(),
                             TblsEnvMonitConfig.IncubBatch.FLD_CREATED_ON.getName(), TblsEnvMonitConfig.IncubBatch.FLD_CREATED_BY.getName()},
                             new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName()).getAsInt(), 1, jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()).getAsString(), true, LPDate.getCurrentTimeStamp(), userCreator});
-                    }                    
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                    }    
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new batch templates", null);
                     break;   
                 case MD_MICROORGANISMS: 
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -183,7 +185,9 @@ public class ClassMasterData {
                         this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
                             new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()},
                             new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()).getAsString()});
-                    }
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                    }    
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new microorganisms", null);
                     break;
                 case MD_SAMPLES:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -192,7 +196,9 @@ public class ClassMasterData {
                             new String[]{TblsCnfg.Sample.FLD_CODE.getName(), TblsCnfg.Sample.FLD_CODE_VERSION.getName(),
                             TblsCnfg.Sample.FLD_CREATED_ON.getName(), TblsCnfg.Sample.FLD_CREATED_BY.getName()},
                             new Object[]{jO.getAsJsonObject().get(TblsCnfg.Sample.FLD_CODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.Sample.FLD_CODE_VERSION.getName()).getAsInt(), LPDate.getCurrentTimeStamp(), userCreator});
-                    }                    
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) break;
+                    }    
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new samples", null);
                     break;   
                 case MD_SAMPLE_RULES:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -319,7 +325,7 @@ sampleStagesFirst_es:Muestreo
                     
                     break;
             }    
-        this.diagnostic=actionDiagnoses;
+        //this.diagnostic=actionDiagnoses;
     }
     
     /**

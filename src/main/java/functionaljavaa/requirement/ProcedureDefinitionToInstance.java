@@ -711,17 +711,20 @@ public class ProcedureDefinitionToInstance {
                 new String[]{TblsReqs.ProcedureMasterData.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureMasterData.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureMasterData.FLD_INSTANCE_NAME.getName(), TblsReqs.ProcedureMasterData.FLD_ACTIVE.getName()}, 
                         new Object[]{procedure, procVersion, instanceName, true}, 
                 new String[]{TblsReqs.ProcedureMasterData.FLD_OBJECT_TYPE.getName(), TblsReqs.ProcedureMasterData.FLD_JSON_OBJ.getName()});
+        JSONArray jsonRowArr=new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procMasterDataObjs[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procMasterDataObjs[0]));
           jsonArr.add(jsonObj);
         }else{
-            jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procMasterDataObjs.length);
             jsonArr.add(jsonObj);
             for (Object[] curRow: procMasterDataObjs){
                 ClassMasterData clssMD= new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString());
-            }
+                JSONObject jsonRowObj = new JSONObject();
+                jsonRowObj.put(curRow[0], clssMD.getDiagnostic()[clssMD.getDiagnostic().length-1]);
+                jsonRowArr.add(jsonRowObj);
+            }            
         }
-        jsonObjSummary.put("summary", jsonObj);
+        jsonObjSummary.put("summary", jsonRowArr);
         return jsonObjSummary;
     }
 

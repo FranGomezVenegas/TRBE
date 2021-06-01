@@ -21,7 +21,7 @@ import trazit.globalvariables.GlobalVariables;
 public class DataProgramProductionLot{
     
     public enum ProductionLotErrorTrapping{ 
-        PRODUCTIONLOT_ALREADY_EXIST("incubatorBatchExist", "One production lot called <*1*> already exist in procedure <*2*>", "Un lote de producción con el nombre <*1*> ya existe en el proceso <*2*>"),
+        PRODUCTIONLOT_ALREADY_EXIST("productionLotAlreadyExist", "One production lot called <*1*> already exist in procedure <*2*>", "Un lote de producción con el nombre <*1*> ya existe en el proceso <*2*>"),
         PRODUCTIONLOT_FIELD_NOT_FOUND("productionLot_fieldNotFound", "", ""),
         ;
         private ProductionLotErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){

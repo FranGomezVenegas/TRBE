@@ -58,15 +58,15 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         String moduleName=argValues[3].toString();
         String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
                             , {"Process Name", procName}, {"Process Version", procVersion.toString()}, {"Instance", procInstanceName}
-                            , {"CREATE_SCHEMAS_AND_PROC_TBLS", CREATE_SCHEMAS_AND_PROC_TBLS.toString()}
-                            , {"PROC_DEPLOY_PROCEDURE_INFO", PROCDEPL_PROCEDURE_INFO.toString()}
-                            , {"PROC_DEPLOY_PROCEDURE_USER_ROLES", PROCDEPL_PROCEDURE_USER_ROLES.toString()}
-                            , {"PROC_DEPLOY_PROCEDURE_SOP_META_DATA", PROCDEPL_PROCEDURE_SOP_META_DATA.toString()}    
-                            , {"PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS", PROCDEPL_ASIGN_PROC_SOPS_TO_USERS.toString()}                
-//                            , {"PROC_DISPLAY_PROC_INSTANCE_SOPS", PROC_DISPLAY_PROC_INSTANCE_SOPS.toString()}                
-//                            , {"PROC_DEPLOYMENT_ENTIRE_PROCEDURE", PROC_DEPLOYMENT_ENTIRE_PROCEDURE.toString()}
-//                            , {"PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS", PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS.toString()}
-//                            , {"PROC_DEPLOYMENT_ASSIGN_USER_SOPS", PROC_DEPLOYMENT_ASSIGN_USER_SOPS.toString()}
+                            , {"CREATE_SCHEMAS_AND_PROC_TBLS", argValues[4].toString()}
+                            , {"PROC_DEPLOY_PROCEDURE_INFO", argValues[5].toString()}
+                            , {"PROC_DEPLOY_PROCEDURE_USER_ROLES", argValues[6].toString()}
+                            , {"PROC_DEPLOY_PROCEDURE_SOP_META_DATA", argValues[7].toString()}    
+                            , {"PROC_DEPLOY_PROC_EVENTS", argValues[8].toString()}                
+                            , {"PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS", argValues[9].toString()}                
+                            , {"PROC_DEPLOY_BUSINESS_RULES_PROPERTIES", argValues[10].toString()}
+                            , {"PROC_DEPLOY_TABLES_AND_FIELDS", argValues[11].toString()}
+                            , {"PROC_DEPLOY_MASTER_DATA", argValues[12].toString()}
                     };
         
         fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(businessVariablesHeader); 

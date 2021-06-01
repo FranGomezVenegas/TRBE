@@ -245,7 +245,7 @@ public class AuthenticationAPI extends HttpServlet {
 //                        null, null, new String[]{"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
 lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
         null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
-                    
+                    Rdbms.closeRdbms(); 
                     return;
                 case USER_CHANGE_PSWD_BY_MAIL:     
                     finalToken = argValues[0].toString();

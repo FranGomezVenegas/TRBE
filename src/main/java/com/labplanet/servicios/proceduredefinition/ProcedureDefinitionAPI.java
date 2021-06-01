@@ -211,6 +211,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
                 Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
 */            
+            procReqInstance.killIt();
             Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
@@ -218,6 +219,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
+                procReqInstance.killIt();
                 //con.close();
                 Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
