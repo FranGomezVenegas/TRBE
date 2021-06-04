@@ -644,6 +644,8 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
                 new String[]{"1"}, true);
             if (analysisMethods.length!=1)
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "analysis <*1*> with multiple methods, <*2*>, then the method should be specified", new Object[]{analysis, analysisMethods.length});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethods[0][0].toString()))
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "analysis <*1*> not found", new Object[]{analysis});
             methodName=(String)analysisMethods[0][0];
             methodVersion=(Integer)analysisMethods[0][1];
             if (fieldIndexMethodName>-1)

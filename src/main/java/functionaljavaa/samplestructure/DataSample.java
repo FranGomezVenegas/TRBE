@@ -328,6 +328,9 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             SampleAudit smpAudit = new SampleAudit();            
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_LOGGED.toString(), TblsData.Sample.TBL.getName(), sampleId, 
                                         sampleId, null, null, fieldsOnLogSample, null);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditAdd[0].toString()))
+                return sampleAuditAdd;
+            
             Integer transactionId = null;
             Integer preAuditId=Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString());
             this.smpAna.autoSampleAnalysisAdd(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), preAuditId);
