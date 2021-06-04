@@ -44,10 +44,10 @@ String labelMsgError="Error:";
     
 Boolean isSampleStagesEnable=false;
 Boolean isSampleStagesTimingCaptureEnable=false;
- String isSampleStagesTimingCaptureStages="";
- String sampleCurrentStage="";
- String sampleNextStage="";
- String previousStage="";
+String isSampleStagesTimingCaptureStages="";
+String sampleCurrentStage="";
+String sampleNextStage="";
+String previousStage="";
 Integer sampleId=-999;
 Object[][] firstStageData=new Object[0][0];
 
@@ -69,8 +69,9 @@ public enum SampleStageErrorTrapping{
     }
 
     public enum SampleStageBusinessRules{        
+        SAMPLE_STAGES_FIRST("sampleStagesFirst", GlobalVariables.Schemas.DATA.getName()),
+
         ACTION_AUTOMOVETONEXT("sampleStagesActionAutoMoveToNext", GlobalVariables.Schemas.PROCEDURE.getName()),
-        SAMPLE_STAGES_FIRST("sampleStagesFirst", GlobalVariables.Schemas.PROCEDURE.getName()),
         SAMPLE_STAGE_MODE("sampleStagesMode", GlobalVariables.Schemas.PROCEDURE.getName()),
         SAMPLE_STAGE_TYPE("sampleStagesLogicType", GlobalVariables.Schemas.PROCEDURE.getName()),
         SAMPLE_STAGE_TIMING_CAPTURE_MODE("sampleStagesTimingCaptureMode", GlobalVariables.Schemas.PROCEDURE.getName()),
@@ -117,8 +118,8 @@ public enum SampleStageErrorTrapping{
     String sampleStagesTimingCaptureStages = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_STAGES.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_STAGES.getTagName());
     if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
         this.isSampleStagesTimingCaptureStages=sampleStagesTimingCaptureStages;  
-    String statusFirst=Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getTagName());
-    this.firstStageData=new Object[][]{{TblsData.Sample.FLD_CURRENT_STAGE.getName(), statusFirst}};
+    String stageFirst=Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getTagName());
+    this.firstStageData=new Object[][]{{TblsData.Sample.FLD_CURRENT_STAGE.getName(), stageFirst}};
   }
 
     /**
