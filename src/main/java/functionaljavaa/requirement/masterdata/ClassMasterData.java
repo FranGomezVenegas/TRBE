@@ -32,7 +32,7 @@ public class ClassMasterData {
     private Object[] diagnostic=new Object[0];
     
     
-    public enum MasterDataObjectTypes{MD_ANALYSIS_PARAMS, MD_SPECS, MD_SPEC_LIMITS, MD_INCUBATORS, MD_BATCH_TEMPLATE, MD_MICROORGANISMS, MD_STAGES, MD_PROGRAMS, MD_PROGRAM_LOCATIONS, MD_SAMPLES, MD_SAMPLE_RULES}
+    public enum MasterDataObjectTypes{MD_ANALYSIS_PARAMS, MD_SPECS, MD_SPEC_LIMITS, MD_INCUBATORS, MD_INCUB_BATCHES, MD_MICROORGANISMS, MD_STAGES, MD_PROGRAMS, MD_PROGRAM_LOCATIONS, MD_SAMPLES, MD_SAMPLE_RULES}
 
     public ClassMasterData(String instanceName, String objectType, String jsonObj){
         String userCreator="PROCEDURE_DEPLOYMENT";
@@ -44,7 +44,13 @@ public class ClassMasterData {
             this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, ex.getMessage()};
             this.objectTypeExists=false;
         }        
-        JsonObject jsonObject = convertToJsonObjectStringedObject(jsonObj);
+        Object[] objToJsonObj = convertToJsonObjectStringedObject(jsonObj);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
+           this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, objToJsonObj[1].toString()+".Object: <*1*>", new Object[]{jsonObj});
+           return;
+        }
+        
+        JsonObject jsonObject=(JsonObject) objToJsonObj[1];
         String jsonObjType = jsonObject.get("object_type").getAsString();
         if (!objectType.toUpperCase().contains(jsonObjType.toUpperCase())){
             this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch"};
@@ -58,23 +64,24 @@ public class ClassMasterData {
                     for (JsonElement jO: asJsonArray){
                         String[] fldNames=new String[]{TblsCnfg.Analysis.FLD_ACTIVE.getName(), TblsCnfg.Analysis.FLD_CREATED_ON.getName(), TblsCnfg.Analysis.FLD_CREATED_BY.getName()};
                         Object[] fldValues=new Object[]{true, LPDate.getCurrentTimeStamp(), userCreator};
-                        Object[] analysisNew = cAna.analysisNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.FLD_CODE.getName()).getAsString(), 1,fldNames, fldValues);
+                        this.diagnostic = cAna.analysisNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.FLD_CODE.getName()).getAsString(), 1,fldNames, fldValues);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                        
                         fldNames=new String[]{TblsCnfg.AnalysisMethod.FLD_CREATED_ON.getName(), TblsCnfg.AnalysisMethod.FLD_CREATED_BY.getName(),
                             TblsCnfg.AnalysisMethodParams.FLD_PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.FLD_PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.FLD_UOM.getName(),
                             TblsCnfg.AnalysisMethodParams.FLD_MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.FLD_NUM_REPLICAS.getName()};
                         fldValues=new Object[]{LPDate.getCurrentTimeStamp(), userCreator,
                             jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.FLD_PARAM_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.FLD_PARAM_TYPE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.FLD_UOM.getName()).getAsString(),
                             jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.FLD_MANDATORY.getName()).getAsBoolean(), jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.FLD_NUM_REPLICAS.getName()).getAsInt()};
-                        cAna.analysisMethodParamsNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.FLD_CODE.getName()).getAsString(), 1, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName()).getAsString(), fldNames, fldValues);
+                        this.diagnostic=cAna.analysisMethodParamsNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.FLD_CODE.getName()).getAsString(), 1, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName()).getAsString(), fldNames, fldValues);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
 
                         String uom=jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.FLD_UOM.getName()).getAsString();
                         String currFld="Tipo Importación";
                         if (jO.getAsJsonObject().has(currFld) && uom.length()>0)
                             actionDiagnoses=getUomFromConfig(uom, jO.getAsJsonObject().get(currFld).getAsString());
                     }   
-                    
-                    
-                    this.diagnostic=new Object[]{LPPlatform.LAB_TRUE, ""};
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new analysis params", null);
                     break;
                 case MD_SPECS:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -88,13 +95,11 @@ public class ClassMasterData {
                             jO.getAsJsonObject().get(TblsCnfg.Spec.FLD_ANALYSES.getName()).getAsString()};
                         String[] specRulesFieldName=new String[]{TblsCnfg.SpecRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.FLD_ALLOW_MULTI_SPEC.getName()};
                         Object[] specRulesFldValues=new Object[]{jO.getAsJsonObject().get(TblsCnfg.SpecRules.FLD_ALLOW_OTHER_ANALYSIS.getName()).getAsBoolean(), jO.getAsJsonObject().get(TblsCnfg.SpecRules.FLD_ALLOW_MULTI_SPEC.getName()).getAsBoolean()};
-                        cSpec.specNew(jO.getAsJsonObject().get(TblsCnfg.Spec.FLD_CODE.getName()).getAsString(), 1, 
+                        this.diagnostic=cSpec.specNew(jO.getAsJsonObject().get(TblsCnfg.Spec.FLD_CODE.getName()).getAsString(), 1, 
                                 specFieldName, specFldValues, specRulesFieldName, specRulesFldValues);
-                        System.out.print("H");
+                        
                     }                    
-                    this.diagnostic=new Object[]{LPPlatform.LAB_TRUE, ""};
-                    
-                    System.out.print("H");
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new specs", null);
                     break;
                 case MD_SPEC_LIMITS:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -147,17 +152,14 @@ public class ClassMasterData {
                                curFldName=TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(); 
                                fieldName=LPArray.addValueToArray1D(fieldName, curFldName);
                                fieldValue=LPArray.addValueToArray1D(fieldValue, mSpec.getQuantitativeRuleValues());
-                               Object[] specLimitNew = cSpec.specLimitNew(jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_CODE.getName()).getAsString(), 1, fieldName, fieldValue);
-                               if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimitNew[0].toString()))
-                                   System.out.print("H");
+                               this.diagnostic=cSpec.specLimitNew(jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_CODE.getName()).getAsString(), 1, fieldName, fieldValue);
+                               if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                             }
                         }else if ("qualitative".equalsIgnoreCase(ruleType)){
                             
                         }
                     }                    
-                    this.diagnostic=new Object[]{LPPlatform.LAB_TRUE, ""};
-                    
-                    System.out.print("H");
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new spec limits", null);
                     break;
                 case MD_INCUBATORS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -166,9 +168,11 @@ public class ClassMasterData {
                             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_DESCRIPTION.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName(),
                             TblsEnvMonitConfig.InstrIncubator.FLD_CREATED_ON.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_CREATED_BY.getName()},
                             new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.FLD_DESCRIPTION.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()).getAsBoolean(), LPDate.getCurrentTimeStamp(), userCreator});
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }                    
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incubators", null);
                     break;   
-                case MD_BATCH_TEMPLATE:    
+                case MD_INCUB_BATCHES:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
                         this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.IncubBatch.TBL.getName(), 
@@ -177,7 +181,7 @@ public class ClassMasterData {
                             new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName()).getAsInt(), 1, jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()).getAsString(), true, LPDate.getCurrentTimeStamp(), userCreator});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }    
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new batch templates", null);
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incub batch", null);
                     break;   
                 case MD_MICROORGANISMS: 
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -211,19 +215,28 @@ public class ClassMasterData {
                                 jO.getAsJsonObject().get(TblsCnfg.SampleRules.FLD_ANALYST_ASSIGNMENT_MODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SampleRules.FLD_TEST_ANALYST_REQUIRED.getName()).getAsBoolean(),
                                 LPDate.getCurrentTimeStamp(), userCreator});
                     }                    
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new sample rules", null);
                     break;   
                 case MD_PROGRAMS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
                         String[] fldName=new String[]{TblsEnvMonitConfig.Program.FLD_PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.Program.FLD_PROGRAM_CONFIG_VERSION.getName(),
+                            TblsEnvMonitConfig.Program.FLD_SPEC_CODE.getName(),
                             TblsEnvMonitConfig.Program.FLD_CREATED_BY.getName(), TblsEnvMonitConfig.Program.FLD_CREATED_ON.getName()};
                         Object[] fldValue=new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.Program.FLD_PROGRAM_CONFIG_ID.getName()).getAsInt(), 1,
+                            jO.getAsJsonObject().get(TblsEnvMonitConfig.Program.FLD_SPEC_CODE.getName()).getAsString(),
                             userCreator, LPDate.getCurrentTimeStamp()};
                         String[] allFieldNames = TblsEnvMonitConfig.Program.getAllFieldNames();
                         for (String curFld:allFieldNames){
+                            
                             if (!LPArray.valueInArray(fldName, curFld) && jO.getAsJsonObject().has(curFld)){
                                 fldName=LPArray.addValueToArray1D(fldName, curFld);
-                                fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsString());
+                                if (TblsEnvMonitConfig.Program.FLD_SAMPLE_CONFIG_CODE_VERSION.getName().equalsIgnoreCase(curFld))
+                                    fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsInt());
+                                else if (TblsEnvMonitConfig.Program.FLD_SPEC_CONFIG_VERSION.getName().equalsIgnoreCase(curFld))
+                                    fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsInt());
+                                else
+                                    fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsString());
                             }
                         }
                         if (!LPArray.valueInArray(fldName, TblsEnvMonitConfig.Program.FLD_SAMPLE_CONFIG_CODE_VERSION.getName())){
@@ -236,7 +249,9 @@ public class ClassMasterData {
                         }
                         this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.Program.TBL.getName(), 
                             fldName, fldValue);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program", null);
                     break;
                 case MD_PROGRAM_LOCATIONS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -251,6 +266,8 @@ public class ClassMasterData {
                                 fldName=LPArray.addValueToArray1D(fldName, curFld);
                                 if (TblsEnvMonitConfig.ProgramLocation.FLD_REQUIRES_PERSON_ANA.getName().equalsIgnoreCase(curFld))
                                     fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsBoolean());
+                                else if (TblsEnvMonitConfig.ProgramLocation.FLD_SPEC_CODE_VERSION.getName().equalsIgnoreCase(curFld))
+                                    fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsInt());
                                 else
                                     fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsString());
                             }
@@ -261,7 +278,9 @@ public class ClassMasterData {
                         }
                         this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.ProgramLocation.TBL.getName(), 
                             fldName, fldValue);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }
+                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program locations", null);
                     break;
                 case MD_STAGES: 
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -295,6 +314,7 @@ public class ClassMasterData {
                                     instanceName+"-"+GlobalVariables.Schemas.DATA.getName(),  
                                     "sampleStage"+curStage+"Next", jO.getAsJsonObject().get(curFldName).getAsString());
                         }
+                        this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new stages", null);
                     }
                     parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
                         instanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_en", allStages+"|END");
