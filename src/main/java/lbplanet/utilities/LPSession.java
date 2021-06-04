@@ -79,6 +79,8 @@ public class LPSession {
                 new String[]{TblsDataAudit.Session.FLD_SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())){
             Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())) 
+                return appSession;
             if (!LPArray.valueInArray(fieldsNamesToInsert, TblsDataAudit.Session.FLD_SESSION_ID.getName())){
                 fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsDataAudit.Session.FLD_SESSION_ID.getName());
                 appSession = LPArray.addValueToArray1D(appSession, appSessionId);
