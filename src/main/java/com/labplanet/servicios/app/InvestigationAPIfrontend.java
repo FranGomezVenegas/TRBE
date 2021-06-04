@@ -134,7 +134,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     jArray.add(jObj);
                   }
                 }
-                Rdbms.closeRdbms();                    
+                // Rdbms.closeRdbms();                    
                 LPFrontEnd.servletReturnSuccess(request, response, jArray);
                 break;                
             case INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION:

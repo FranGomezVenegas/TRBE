@@ -283,14 +283,14 @@ public class InvestigationAPI extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){   
-            Rdbms.closeRdbms();                   
+            // Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             // release database resources
             try {                
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          

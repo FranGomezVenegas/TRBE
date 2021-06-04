@@ -253,12 +253,12 @@ public class AppProcedureListAPI extends HttpServlet {
             procFldNameArray = LPArray.addValueToArray1D(procFldNameArray, LABEL_PROC_SCHEMA);
             JSONObject proceduresList = new JSONObject();
             proceduresList.put(LABEL_ARRAY_PROCEDURES, procedures);
-            Rdbms.closeRdbms(); 
+//            Rdbms.closeRdbms(); 
             LPFrontEnd.servletReturnSuccess(request, response, proceduresList);
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       

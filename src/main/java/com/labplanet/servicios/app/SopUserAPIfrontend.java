@@ -449,11 +449,11 @@ public class SopUserAPIfrontend extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, "This call raised one unhandled exception. Error:"+errMessage);     
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);    
-            Rdbms.closeRdbms();        
+            // Rdbms.closeRdbms();        
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       

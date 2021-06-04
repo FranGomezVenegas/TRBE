@@ -157,14 +157,14 @@ public class ModuleDefinitionAPI extends HttpServlet {
                 Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
 */            
-            Rdbms.closeRdbms();                   
+            // Rdbms.closeRdbms();                   
             Object[] errMsg = LPFrontEnd.responseError(new String[]{e.getMessage()}, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             // release database resources
             try {
                 //con.close();
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }      }

@@ -281,7 +281,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       

@@ -211,7 +211,7 @@ public class TestingConfigSop extends HttpServlet {
                     fileWriter.write(fileContentBuilder.toString());
                     fileWriter.flush();
                 } 
-            Rdbms.closeRdbms();          
+            // Rdbms.closeRdbms();          
         } catch (Exception ex) {
             Logger.getLogger(TestingConfigSop.class.getName()).log(Level.SEVERE, null, ex);
             String exceptionMessage = ex.getMessage();     
@@ -219,7 +219,7 @@ public class TestingConfigSop extends HttpServlet {
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }           

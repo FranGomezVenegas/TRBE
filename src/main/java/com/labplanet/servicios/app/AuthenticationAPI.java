@@ -132,7 +132,7 @@ public class AuthenticationAPI extends HttpServlet {
                     JSONArray jArray= new JSONArray();
                     jArray.addAll(Arrays.asList(allUserProcedureRoles));        
                     response.getWriter().write(jArray.toJSONString()); 
-                    Rdbms.closeRdbms();    
+                    // Rdbms.closeRdbms();    
                     return;                                
                 case FINALTOKEN:   
                   if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
@@ -161,7 +161,7 @@ public class AuthenticationAPI extends HttpServlet {
                     }                               
                     String myFinalToken = token.createToken(token.getUserName(), token.getUsrPw(), token.getPersonName(), 
                             userRole, sessionIdStr, nowLocalDate.toString(), userInfo[0][0].toString(), token.getDbName());
-                    Rdbms.closeRdbms();                    
+                    // Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_SESSION_ID, sessionIdStr);
@@ -294,7 +294,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                             token.getAppSessionId(), 
                             appStartedDate, 
                             newEsign, token.getDbName());
-                    Rdbms.closeRdbms();                    
+                    // Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
                     rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
@@ -328,7 +328,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       

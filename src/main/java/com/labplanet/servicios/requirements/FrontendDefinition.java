@@ -108,7 +108,7 @@ public class FrontendDefinition extends HttpServlet {
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();
             out.println(fileContent);            
         }
-        Rdbms.closeRdbms();        
+        // Rdbms.closeRdbms();        
         
     }
 

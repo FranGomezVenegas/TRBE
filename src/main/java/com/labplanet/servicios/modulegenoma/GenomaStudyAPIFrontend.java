@@ -66,7 +66,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                         new String[]{TblsGenomaData.Project.FLD_ACTIVE.getName()}, new Object[]{true}, 
                         TblsGenomaData.Project.getAllFieldNames(), new String[]{TblsGenomaData.Project.FLD_NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectInfo[0][0].toString())){
-                        Rdbms.closeRdbms();                                           
+                        // Rdbms.closeRdbms();                                           
                         Object[] errMsg = LPFrontEnd.responseError(projectInfo, language, null);
                         response.sendError((int) errMsg[0], (String) errMsg[1]);    
                         return;
@@ -111,7 +111,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                         new String[]{TblsGenomaConfig.Variables.FLD_ACTIVE.getName()}, new Object[]{true}, 
                         TblsGenomaConfig.Variables.getAllFieldNames(), new String[]{TblsGenomaConfig.Variables.FLD_NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesInfo[0][0].toString())){
-                        Rdbms.closeRdbms();                                           
+                        // Rdbms.closeRdbms();                                           
                         Object[] errMsg = LPFrontEnd.responseError(variablesInfo, language, null);
                         response.sendError((int) errMsg[0], (String) errMsg[1]);    
                         return;
@@ -127,7 +127,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                         new String[]{TblsGenomaConfig.VariablesSet.FLD_ACTIVE.getName()}, new Object[]{true}, 
                         TblsGenomaConfig.VariablesSet.getAllFieldNames(), new String[]{TblsGenomaConfig.VariablesSet.FLD_NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesSetInfo[0][0].toString())){
-                        Rdbms.closeRdbms();                                           
+                        // Rdbms.closeRdbms();                                           
                         Object[] errMsg = LPFrontEnd.responseError(variablesSetInfo, language, null);
                         response.sendError((int) errMsg[0], (String) errMsg[1]);    
                         return;

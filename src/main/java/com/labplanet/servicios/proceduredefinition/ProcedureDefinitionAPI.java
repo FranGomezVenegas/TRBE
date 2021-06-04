@@ -212,7 +212,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
             }
 */            
             procReqInstance.killIt();
-            Rdbms.closeRdbms();                   
+            // Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
@@ -221,7 +221,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
             try {
                 procReqInstance.killIt();
                 //con.close();
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }      }

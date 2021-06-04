@@ -142,14 +142,14 @@ public class GenomaConfigVariableAPI extends HttpServlet {
             }
 */            
             response.setStatus(401);
-            Rdbms.closeRdbms();                   
+            // Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
                 procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

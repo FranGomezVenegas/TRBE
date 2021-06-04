@@ -283,7 +283,7 @@ public class LPFrontEnd {
   
     
     private static void servetInvokeResponseErrorServlet(HttpServletRequest request, HttpServletResponse response){
-        Rdbms.closeRdbms();      
+        //Rdbms.closeRdbms();      
         RequestDispatcher rd = request.getRequestDispatcher(GlobalVariables.ServletsResponse.ERROR.getServletName());
         try {   
             rd.forward(request,response);
@@ -292,7 +292,7 @@ public class LPFrontEnd {
         }
     }
     private static void servetInvokeResponseSuccessServlet(HttpServletRequest request, HttpServletResponse response){
-        Rdbms.closeRdbms();      
+        //Rdbms.closeRdbms();      
         
         RequestDispatcher rd = request.getRequestDispatcher(GlobalVariables.ServletsResponse.SUCCESS.getServletName());
         try {           

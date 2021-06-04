@@ -198,7 +198,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
             // release database resources
             try {
                 ProcedureRequestSession.getInstanceForActions(request, response, Boolean.TRUE).killIt();
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }               

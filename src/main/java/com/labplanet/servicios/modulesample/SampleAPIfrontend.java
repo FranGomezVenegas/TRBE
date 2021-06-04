@@ -492,7 +492,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     Object[][] analysisResultList = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
                             sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr, resultFieldToRetrieveArr, sortFieldsNameArr);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
-                        Rdbms.closeRdbms();                                          
+                        // Rdbms.closeRdbms();                                          
                         Object[] errMsg = LPFrontEnd.responseError(new String[] {Arrays.toString(LPArray.array2dTo1d(analysisResultList))}, language, null);
                         response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{                
@@ -507,7 +507,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         }
                         jArr.add(row);
                       }                        
-                    Rdbms.closeRdbms();                    
+                    // Rdbms.closeRdbms();                    
                       LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     }                    
                     return;  

@@ -197,7 +197,7 @@ public class ClassEnvMonSampleFrontend {
                         sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
                         sortFieldsNameArr);     
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
-                        Rdbms.closeRdbms();   
+                        // Rdbms.closeRdbms();   
                         this.isSuccess=false;
                         this.responseError=LPArray.array2dTo1d(analysisResultList);
                         //response.sendError((int) errMsg[0], (String) errMsg[1]);                            

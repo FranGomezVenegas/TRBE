@@ -565,7 +565,7 @@ GlobalAPIsParams.
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();                    
+                // Rdbms.closeRdbms();                    
                 procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

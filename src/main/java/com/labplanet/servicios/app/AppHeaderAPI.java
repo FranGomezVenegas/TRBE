@@ -123,7 +123,7 @@ public class AppHeaderAPI extends HttpServlet {
                 if (LPPlatform.LAB_FALSE.equals(personInfoArr[0][0].toString())){                                                                                                                                                   
                     Object[] errMsg = LPFrontEnd.responseError(LPArray.array2dTo1d(personInfoArr), language, null);
                     response.sendError((int) errMsg[0], (String) errMsg[1]);   
-                    Rdbms.closeRdbms();    
+                    // Rdbms.closeRdbms();    
                     return;
                 }
                 for (int iFields=0; iFields<personFieldsNameArr.length; iFields++ ){
@@ -140,7 +140,7 @@ public class AppHeaderAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms();   
+                // Rdbms.closeRdbms();   
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

@@ -112,7 +112,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
             }   
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();
             out.println(fileContent);            
-            Rdbms.closeRdbms();            
+            // Rdbms.closeRdbms();            
         }
         Rdbms.closeRdbms();
     }
