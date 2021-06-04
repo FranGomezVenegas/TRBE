@@ -817,7 +817,11 @@ public class LPTestingOutFormat {
         try{
             if (!value.toString().contains("step")) return specialTagFilter(LPNulls.replaceNull(value.toString()));
 
-            JsonObject jsonObject = LPJson.convertToJsonObjectStringedObject(value.toString());
+            Object[] objToJsonObj = LPJson.convertToJsonObjectStringedObject(value.toString());
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
+               return LPPlatform.LAB_FALSE;
+            JsonObject jsonObject=(JsonObject) objToJsonObj[1];
+
             int stepNumber = jsonObject.get("step").getAsInt();
             String stepObjectType = jsonObject.get("object_type").getAsString();
             int stepObjectPosic=getStepObjectPosic(jsonObject);
