@@ -11,6 +11,7 @@ import javax.sql.rowset.*;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.requirement.ProcedureDefinitionToInstance;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.sql.Array;
 import java.sql.Connection;
@@ -1616,12 +1617,13 @@ if (1==1)return;
         return schemaName;
     }
     public static String suffixForTesting(String schemaName){
-        //if (1!=1){
-           if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())){
-                if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
-                else schemaName=schemaName+"_testing";
-            }     
-        //}
+        if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())){
+             if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
+             else schemaName=schemaName+"_testing";
+         }     
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())){
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, schemaName)) schemaName=schemaName+"_testing";
+        }
         return schemaName;
     }
     

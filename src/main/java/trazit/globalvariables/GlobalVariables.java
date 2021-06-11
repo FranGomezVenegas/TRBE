@@ -13,7 +13,7 @@ public class GlobalVariables {
     
     public enum Schemas{APP("app"), APP_AUDIT("app-audit"), CONFIG("config"), CONFIG_AUDIT("config-audit"), REQUIREMENTS("requirements"),
         DATA("data"), DATA_AUDIT("data-audit"), TESTING("testing"), DATA_TESTING("data_testing"), DATA_AUDIT_TESTING("data-audit_testing"),
-        PROCEDURE("procedure"), PROCEDURE_AUDIT("procedure-audit"), MODULES_TRAZIT_TRAZIT("trazit")
+        PROCEDURE("procedure"), PROCEDURE_TESTING("procedure_testing"), PROCEDURE_AUDIT("procedure-audit"), MODULES_TRAZIT_TRAZIT("trazit")
         ;
         Schemas(String nm){
             this.name=nm;

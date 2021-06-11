@@ -166,7 +166,8 @@ public class DbObjects {
             LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), 
             LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
             LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_TESTING.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()), 
-            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName())};        
+            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()),        
+            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_TESTING.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName())};        
         JSONObject jsonObj=createSchemas(schemaNames, dbName);
 
         tblCreateScript=TblsProcedure.PersonProfile.createTableScript(procInstanceName, new String[]{""});

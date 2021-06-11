@@ -42,9 +42,13 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class ProcedureDefinitionToInstance {
+    
+    public static final String[] ProcedureSchema_TablesWithNoTestingClone=new String[]{TblsProcedure.PersonProfile.TBL.getName(), TblsProcedure.ProcedureEvents.TBL.getName(),
+        TblsProcedure.ProcedureInfo.TBL.getName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName()};
+    
     private ProcedureDefinitionToInstance(){    throw new IllegalStateException("Utility class");}
     
-   public enum JsonTags{
+    public enum JsonTags{
         NO("No"), YES("Yes"), ERROR("Error"), USERS("Users"), NUM_RECORDS_IN_DEFINITION("Num Records in definition")
         ;
         private JsonTags(String tgVal){
@@ -382,7 +386,7 @@ public class ProcedureDefinitionToInstance {
                 if (tableCreationScriptTable.length()>0){
                     Rdbms.prepRdQuery(tableCreationScriptTable, new Object[]{});
                     jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);
-                    if (curSchemaName.toString().contains(GlobalVariables.Schemas.DATA.getName())){                    
+                    if (curSchemaName.toString().contains(GlobalVariables.Schemas.DATA.getName()) || curSchemaName.toString().contains(GlobalVariables.Schemas.PROCEDURE.getName())){                    
                         String newSchemaName=Rdbms.suffixForTesting(curSchemaName.toString()); 
                         tableCreationScriptTable=tableCreationScriptTable.replace(LPPlatform.buildSchemaName(procInstanceName, curSchemaName.toString()), LPPlatform.buildSchemaName(procInstanceName, newSchemaName));
                         Rdbms.prepRdQuery(tableCreationScriptTable, new Object[]{});
@@ -457,7 +461,7 @@ public class ProcedureDefinitionToInstance {
      */
     public static final  JSONObject createDBProcessSchemas(String schemaNamePrefix){
         JSONObject jsonObj = new JSONObject();
-        
+
         String methodName = "createDataBaseSchemas";       
         String[] schemaNames = new String[]{GlobalVariables.Schemas.CONFIG.getName(), GlobalVariables.Schemas.CONFIG_AUDIT.getName(), GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_AUDIT.getName(), GlobalVariables.Schemas.PROCEDURE.getName()};
          jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), schemaNames.length);     
