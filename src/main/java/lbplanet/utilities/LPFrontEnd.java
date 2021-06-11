@@ -194,9 +194,11 @@ public class LPFrontEnd {
         String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en");
         String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es");
         if (msgCode!=null){
-            for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){
-                errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
-                errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
+            if (msgDynamicValues!=null){
+                for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){
+                    errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
+                    errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
+                }
             }        
             if (errorTextEn.length()==0){
                 errorTextEn=msgCode+ " (*** This MessageCode, "+msgCode+", has no entry defined in messages property file) ";
@@ -322,6 +324,8 @@ public class LPFrontEnd {
      * @param response
      */
     public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response){  
+        JSONObject errJSONMsg = LPFrontEnd.responseJSONError("successMsgCode",null);
+        request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());
         request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(),"");
         servetInvokeResponseSuccessServlet(request, response);
     }    

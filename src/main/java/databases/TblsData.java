@@ -2049,8 +2049,8 @@ public class TblsData {
                 "   INNER JOIN #SCHEMA.sample_analysis sa on sa.test_id = sar.test_id "+
                 "   INNER JOIN #SCHEMA.sample s on s.sample_id = sar.sample_id "+
                 "    left outer join #SCHEMA_CONFIG.spec_limits spcLim on sar.limit_id=spcLim.limit_id " +
-                "    left outer join #SCHEMA_PROCEDURE.program_corrective_action pca on pca.result_id=rsl.result_id " +
-                "    left outer join #SCHEMA_PROCEDURE.invest_objects io on io.object_id=rsl.result_id and io.object_type='sample_analysis_result' ;" +
+                "    left outer join #SCHEMA_PROCEDURE.program_corrective_action pca on pca.result_id=sar.result_id " +
+                "    left outer join #SCHEMA_PROCEDURE.invest_objects io on io.object_id=sar.result_id and io.object_type='sample_analysis_result' ;" +
                         
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;")
         ,
@@ -2137,7 +2137,7 @@ public class TblsData {
          *
          */
         FLD_RAW_VALUE("raw_value", "sar.raw_value"),
-        FLD_RAW_VALUE_NUM("raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end AS raw_value_num"),         
+        FLD_RAW_VALUE_NUM("raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end"),         
 
         /**
          *
@@ -2202,7 +2202,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_SAMPLE_CONFIG_CODE("sample_config_code", "s.config_code"),
+        FLD_SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.FLD_CONFIG_CODE.getName()),
         FLD_SAMPLE_STATUS("sample_status", "s.status"),
         FLD_CURRENT_STAGE("current_stage", "s.current_stage"),
         FLD_PROGRAM_NAME("program_name", "s.program_name"),
@@ -2323,9 +2323,12 @@ public class TblsData {
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
+//            tblCreateScript.append("CREATE OR REPLACE FUNCTION public.isnumeric(text)  RETURNS boolean  LANGUAGE plpgsql IMMUTABLE STRICT AS $function$ DECLARE x NUMERIC; BEGIN x = $1::NUMERIC; RETURN TRUE; EXCEPTION WHEN others THEN RETURN FALSE; END; $function$");
+
             String[] tblObj = ViewSampleAnalysisResultWithSpecLimits.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#SCHEMA_CONFIG", LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#SCHEMA_PROCEDURE", LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);

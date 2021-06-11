@@ -29,6 +29,7 @@ public class DataSpec {
         QUANT_OUT_MIN_CONTROL_IN_SPEC("resultCheck_quantitativeOutMinControlInSpec", "", ""),
         EVALUATION_WRONG_RULE("OUT_WRONG_RULE", "", ""),
         UNHANDLED_EXCEPTION("DataSpec_resultCheck_UnhandledException", "", ""),
+        SEPARATOR_FOUND_IN_RESULT("DataSpec_resultCheck_separatorValueFoundInResult", "", ""),
         ;
         private ResultCheckErrorsErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -196,10 +197,10 @@ public class DataSpec {
                 }else{                    
                     String[] textSpecArray = values.split(separator);
                     if (textSpecArray.length==0) textSpecArray=values.split("\\"+separator);
-                    Boolean contained=values.contains("\\"+separator);
-                    if (!contained) contained=values.contains(separator);
+                    Boolean contained=result.contains("\\"+separator);
+                    if (!contained) contained=result.contains(separator);
                     if (contained) 
-                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckSuccessErrorTrapping.QUALITATIVE_OUT_IS_ONE_OF.getErrorCode(), errorVariables);
+                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.SEPARATOR_FOUND_IN_RESULT.getErrorCode(), new Object[]{separator, result});
                     if (textSpecArray.length==0 || !(values.contains("\\"+separator))) 
                         textSpecArray=LPArray.addValueToArray1D(textSpecArray, values);
                     for (Integer itextSpecArrayLen=0;itextSpecArrayLen<textSpecArray.length;itextSpecArrayLen++){
@@ -221,10 +222,12 @@ public class DataSpec {
                     diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrorsErrorTrapping.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;
                 }else{
-                    Boolean contained=values.contains("\\"+separator);
-                    if (!contained) contained=values.contains(separator);
+                    Boolean contained=result.contains("\\"+separator);
+                    if (!contained) contained=result.contains(separator);
                     if (contained) 
-                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckSuccessErrorTrapping.QUALITATIVE_OUT_IS_NOT_ONE_OF.getErrorCode(), errorVariables);                    
+                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.SEPARATOR_FOUND_IN_RESULT.getErrorCode(), new Object[]{separator, result});                    
+                    values=values.toUpperCase();
+                    result=result.toUpperCase();
                     String[] textSpecArray = values.split(separator);
                     if (textSpecArray.length==0) textSpecArray=values.split("\\"+separator);
                     if (textSpecArray.length==0) textSpecArray=LPArray.addValueToArray1D(textSpecArray, values);

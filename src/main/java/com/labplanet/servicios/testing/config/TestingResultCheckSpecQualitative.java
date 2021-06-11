@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.testing.config;
 
-import databases.Rdbms;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPFrontEnd;
 import functionaljavaa.materialspec.DataSpec;
@@ -145,7 +144,7 @@ Integer currentLine=0;
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));       
 */
 //testingContent.length
-//numHeaderLines=78;
+//numHeaderLines=1;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                

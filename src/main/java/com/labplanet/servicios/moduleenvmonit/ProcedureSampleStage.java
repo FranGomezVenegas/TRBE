@@ -70,8 +70,19 @@ public class ProcedureSampleStage {
             jGet = asJsonArray.get(0);        
             asJsonObject = jGet.getAsJsonObject();
 
-            String rawValue=asJsonObject.get("raw_value").getAsString();
-            String paramName=asJsonObject.get("param_name").getAsString();
+            String rawValue="";
+            if (asJsonObject.get("Raw_value").isJsonNull())
+                return LPPlatform.LAB_FALSE+"Raw value not entered yet";
+            else
+                rawValue=asJsonObject.get("Raw_value").getAsString();
+
+            String paramName="";
+            if (asJsonObject.get("param_name").isJsonNull())
+                return LPPlatform.LAB_FALSE+"Parameter name is empty";
+            else
+                paramName=asJsonObject.get("param_name").getAsString();
+            
+            //String paramName=asJsonObject.get("param_name").getAsString();
             if ("Recuento".equals(paramName)){ 
                 if ("0".equals(rawValue)) return LPPlatform.LAB_TRUE+"|END";
                 else return LPPlatform.LAB_TRUE;

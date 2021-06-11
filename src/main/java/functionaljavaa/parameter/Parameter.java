@@ -15,6 +15,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
@@ -68,8 +69,8 @@ public class Parameter {
         ResourceBundle prop = null;
         if (parameterFolder==null){parameterFolder="config";}
         String filePath = "parameter."+parameterFolder+"."+procName;
-        if (schemaSuffix!=null){filePath=filePath+"-"+schemaSuffix;}
-        if (language != null) {filePath=filePath+"_" + language;}        
+        if (schemaSuffix!=null){filePath=filePath+"-"+LPNulls.replaceNull(schemaSuffix);}
+        if (language != null) {filePath=filePath+"_" +LPNulls.replaceNull(language);}        
         else{ 
             if (filePath.toLowerCase().contains("parameter.labplanet"))
                 filePath=filePath+"_" + GlobalVariables.Languages.EN.getName();

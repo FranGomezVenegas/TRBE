@@ -21,6 +21,7 @@ import functionaljavaa.instruments.incubator.DataIncubatorNoteBook.DataIncubator
 import functionaljavaa.inventory.InventoryGlobalVariables.DataInvRetErrorTrapping;
 import functionaljavaa.inventory.batch.DataBatchIncubator.BatchBusinessRules;
 import functionaljavaa.inventory.batch.DataBatchIncubator.IncubatorBatchErrorTrapping;
+import functionaljavaa.investigation.Investigation.InvestigationErrorTrapping;
 import functionaljavaa.materialspec.ConfigSpecStructure.ConfigSpecErrorTrapping;
 import functionaljavaa.materialspec.DataSpec.ResultCheckErrorsErrorTrapping;
 import functionaljavaa.materialspec.DataSpec.ResultCheckSuccessErrorTrapping;
@@ -303,6 +304,14 @@ public class PropertiesToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode()});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);
         }
+        InvestigationErrorTrapping[] investigationErrorTrapping = InvestigationErrorTrapping.values();
+        for (InvestigationErrorTrapping curBusRul: investigationErrorTrapping){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode()});
+            declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);
+        }
+
+                
         GenomaDataProjectErrorTrapping[] genomaDataProjectErrorTrapping = GenomaDataProjectErrorTrapping.values();
         for (GenomaDataProjectErrorTrapping curBusRul: genomaDataProjectErrorTrapping){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});

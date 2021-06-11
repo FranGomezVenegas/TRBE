@@ -450,7 +450,7 @@ public class ConfigSpecRule {
       switch (ruleType.toLowerCase()) {
         case "qualitative":
           this.ruleIsQualitative=true;
-          String[] qualitSpecTestingArray = ruleVariables.split(specArgumentsSeparator);
+          String[] qualitSpecTestingArray = ruleVariables.split("\\"+specArgumentsSeparator);
           this.qualitativeRule = qualitSpecTestingArray[0];
           this.qualitativeRuleValues = qualitSpecTestingArray[1];
           if (qualitSpecTestingArray.length == 3) {

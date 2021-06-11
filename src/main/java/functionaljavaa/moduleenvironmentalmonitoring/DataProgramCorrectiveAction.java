@@ -31,7 +31,7 @@ public class DataProgramCorrectiveAction {
     public enum DataProgramCorrectiveActionBusinessRules{
         STATUS_CLOSED("programCorrectiveAction_statusClosed", GlobalVariables.Schemas.DATA.getName()),
         STATUS_FIRST("programCorrectiveAction_statusFirst", GlobalVariables.Schemas.DATA.getName()),
-        ACTION_MODE("programCorrectiveActionMode", GlobalVariables.Schemas.CONFIG.getName()),
+        ACTION_MODE("programCorrectiveActionMode", GlobalVariables.Schemas.PROCEDURE.getName()),
         
         ;
         private DataProgramCorrectiveActionBusinessRules(String tgName, String areaNm){
@@ -199,7 +199,7 @@ public class DataProgramCorrectiveAction {
                 new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId});
     }  
     public static Boolean isProgramCorrectiveActionEnable(String procInstanceName){
-        return "ENABLE".equalsIgnoreCase(Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName()));
+        return "ENABLE".equalsIgnoreCase(Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
     }
     public static Object[] markAsAddedToInvestigation(Integer investId, String objectType, Object objectId){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

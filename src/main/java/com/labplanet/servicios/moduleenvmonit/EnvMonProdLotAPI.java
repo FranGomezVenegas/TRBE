@@ -134,9 +134,10 @@ public class EnvMonProdLotAPI extends HttpServlet {
             } 
             Object[] messageDynamicData=new Object[]{};
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+            String lotName="";
             switch (endPoint){
                 case EM_NEW_PRODUCTION_LOT:
-                    String lotName=argValues[0].toString();
+                    lotName=argValues[0].toString();
                     String fieldName=argValues[1].toString();
                     String fieldValue=argValues[2].toString();
                     String[] fieldNameArr=new String[0];
@@ -145,13 +146,13 @@ public class EnvMonProdLotAPI extends HttpServlet {
                     if (fieldValue!=null && fieldValue.length()>0) fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                     diagnostic=DataProgramProductionLot.newProgramProductionLot(lotName, fieldNameArr, fieldValueArr, Rdbms.getTransactionId());
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
-                        diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, procInstanceName});
+//                        diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, procInstanceName});
                         messageDynamicData=new Object[]{lotName};
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     }else{
-                        if (diagnostic[4]==DataProgramProductionLot.ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode())
+/*                        if (diagnostic[4]==DataProgramProductionLot.ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode())
                             messageDynamicData=new Object[]{diagnostic[diagnostic.length-2], diagnostic[diagnostic.length-1], procInstanceName};                                  
-                        else
+                        else*/
                             messageDynamicData=new Object[]{lotName, procInstanceName};
                     }
                     break;
@@ -172,18 +173,18 @@ public class EnvMonProdLotAPI extends HttpServlet {
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     rd.forward(request,response);  
             }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
+            if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), messageDynamicData);   
+                //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
+                //RelatedObjects rObj=RelatedObjects.getInstanceForActions();
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{lotName}, rObj.getRelatedObject());
                 rObj.killInstance();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);         
-            }                
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+            }           
         }catch(Exception e){      
+            rObj.killInstance();
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
@@ -191,6 +192,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
+                rObj.killInstance();
                 procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

@@ -37,7 +37,7 @@ public class TblsEnvMonitData {
             case "SAVED_QUERIES": return TblsData.SavedQueries.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_MICROORGANISM": return SampleMicroorganism.createTableScript(schemaNamePrefix, fields);
             case "PR_SCHEDULED_LOCATIONS_VIEW": return ViewProgramScheduledLocations.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_MICROORGANISM_LIST_VIEW": return ViewSampleMicroorganismList.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_MICROORGANISM_LIST_VW": return ViewSampleMicroorganismList.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_REVISION_TESTING_GROUP": return TblsData.SampleRevisionTestingGroup.createTableScript(schemaNamePrefix, fields);
             case "USER_ANALYSIS_METHOD_CERTIF": return TblsData.CertifUserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
@@ -790,7 +790,12 @@ public class TblsEnvMonitData {
          *
          */
         FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.string()),
-        FLD_AREA("area",LPDatabase.string())
+        FLD_AREA("area",LPDatabase.string()),
+        FLD_SHIFT("shift",LPDatabase.string()),
+        FLD_PROG_DAY_ID("program_day_id",LPDatabase.integer()),
+        FLD_PROG_DAY_DATE("program_day_date", dateTime())
+        
+        
         
         ;
         private Sample(String dbObjName, String dbObjType){
@@ -1475,9 +1480,9 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         TBL("pr_scheduled_locations",  LPDatabase.createView() +
                 " select  dpr.sample_config_code, dpr.sample_config_code_version, "+
                 "         cnfpcd.*, dpl.area, dpl.spec_code, dpl.spec_variation_name, dpl.spec_analysis_variation, dpl.spec_code_version, dpl.requires_person_ana, dpl.person_ana_definition "+
-                "   from #SCHEMA_DATA.program_calendar_date  cnfpcd"+
-                "  inner join #SCHEMA_DATA.program  dpr on dpr.name=cnfpcd.program_id "+
-                "  inner join #SCHEMA_DATA.program_location dpl on dpl.program_name=cnfpcd.program_id and dpl.location_name=cnfpcd.location_name;"+
+                "   from #SCHEMA_CONFIG.program_calendar_date  cnfpcd"+
+                "  inner join #SCHEMA_CONFIG.program  dpr on dpr.name=cnfpcd.program_id "+
+                "  inner join #SCHEMA_CONFIG.program_location dpl on dpl.program_name=cnfpcd.program_id and dpl.location_name=cnfpcd.location_name;"+
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;")
         ,
 

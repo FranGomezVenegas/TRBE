@@ -194,7 +194,9 @@ public class AuthenticationAPI extends HttpServlet {
                         return;                             
                     }
                     if(esignPhraseToCheck.equals(token.geteSign())){   
-                        LPFrontEnd.servletReturnSuccess(request, response);
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), null, null);
+                        
+                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                         return;                                             
                     }else{               
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck}, language);
@@ -207,7 +209,8 @@ public class AuthenticationAPI extends HttpServlet {
                     
                     token = new Token(myToken);
                     if ( (userToCheck.equals(token.getUserName())) && (passwordToCheck.equals(token.getUsrPw())) ){
-                        LPFrontEnd.servletReturnSuccess(request, response);
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), null, null);                        
+                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                     }else{                        
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck}, language);              
                     }    

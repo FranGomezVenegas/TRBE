@@ -54,8 +54,8 @@ public class DataProgramProductionLot{
         Object[] batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProductionLot.TBL.getName(), 
                 new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(batchExists[0].toString())){
-            Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode(), new Object[]{lotName, procInstanceName});
-            return LPArray.addValueToArray1D(trapMessage, new Object[]{lotName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode(), new Object[]{lotName, procInstanceName});
+            //return LPArray.addValueToArray1D(trapMessage, new Object[]{lotName, procInstanceName});
         }
         
         for (TblsEnvMonitData.ProductionLot obj: TblsEnvMonitData.ProductionLot.values()){

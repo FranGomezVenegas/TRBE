@@ -151,7 +151,7 @@ public enum SampleStageErrorTrapping{
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) return sampleAuditRevision;
         Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Next");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic; 
-        if (!javaScriptDiagnostic[0].toString().contains(LPPlatform.LAB_TRUE)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, javaScriptDiagnostic[0].toString(), null);
+        if (!javaScriptDiagnostic[0].toString().contains(LPPlatform.LAB_TRUE)) return javaScriptDiagnostic;
         
         String[] javaScriptDiagnosticArr=javaScriptDiagnostic[0].toString().split("\\|");
         if (javaScriptDiagnosticArr.length>1){
@@ -247,7 +247,7 @@ public enum SampleStageErrorTrapping{
                 return trapMessage(LPPlatform.LAB_FALSE, "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION", new Object[]{ex.getMessage()});
         }
         Object specialFunctionReturn=null;      
-        try { //
+        try { 
             if (method!=null){ specialFunctionReturn = method.invoke(procSampleStage, procInstanceName, sampleId, jsonarrayf);}
         } catch (IllegalAccessException | NullPointerException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
@@ -255,7 +255,7 @@ public enum SampleStageErrorTrapping{
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("ERROR")) )
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecialFunctionReturnedERROR", new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("FALSE")) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecialFunctionReturnedFALSE", new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{LPNulls.replaceNull(specialFunctionReturn).toString().replace(LPPlatform.LAB_FALSE, "")});
 
         return new Object[]{specialFunctionReturn};
         }

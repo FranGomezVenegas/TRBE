@@ -7,7 +7,6 @@ package com.labplanet.servicios.app;
 
 import databases.Rdbms;
 import databases.TblsTesting;
-import functionaljavaa.testingscripts.TestingAuditIds;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -75,16 +74,26 @@ public class TestingRegressionUAT extends HttpServlet {
                     "Error", null, procReqInstance.getLanguage());              
                 return;
             }
+            String sessionLang=procReqInstance.getLanguage();
+            String errMsg=procReqInstance.getErrorMessage();
             if (procReqInstance.getHasErrors()){
                 procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        procReqInstance.getErrorMessage(), null, procReqInstance.getLanguage());              
+                LPFrontEnd.servletReturnResponseError(request, response, errMsg, null, sessionLang);              
                 return;
             }
-            //String procInstanceName="em-demo-a";
-            //Integer scriptId=2;
+
             String procInstanceName=request.getParameter("procInstanceName");
+            if (procInstanceName==null){
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, "Argument procInstanceName not found in the call", null, sessionLang);                              
+                return;
+            }
             Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
+            if (scriptId==null){
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, sessionLang);                              
+                return;
+            }
 //            if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}     
             scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
                     new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
@@ -130,7 +139,7 @@ public class TestingRegressionUAT extends HttpServlet {
         finally{
             String scriptIdStr=request.getParameter("scriptId");
             String procInstanceName=request.getParameter("procInstanceName");
-            if (scriptTblInfo==null || scriptIdStr==null) return;
+            if (scriptTblInfo.length==0 || scriptIdStr==null) return;
             Integer scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr)); 
             if ( (procReqInstance!=null) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())) ){
                 if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)

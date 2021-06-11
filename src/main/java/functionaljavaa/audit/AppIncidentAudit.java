@@ -85,8 +85,9 @@ public final class AppIncidentAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        return Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_AUDIT.getName(), TblsAppAudit.Incident.TBL.getName(), 
+        Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_AUDIT.getName(), TblsAppAudit.Incident.TBL.getName(), 
                 fieldNames, fieldValues);
+        return insertRecordInTable;
     }    
     
 }

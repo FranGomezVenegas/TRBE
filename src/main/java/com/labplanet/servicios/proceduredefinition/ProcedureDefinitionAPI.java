@@ -6,7 +6,6 @@
 package com.labplanet.servicios.proceduredefinition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import databases.Rdbms;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;

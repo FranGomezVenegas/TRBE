@@ -5,9 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
-import databases.Rdbms;
 import databases.TblsApp;
-import databases.Token;
 import functionaljavaa.incident.AppIncident;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -26,6 +24,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -149,7 +148,7 @@ public class IncidentAPI extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
         
-        String language = LPFrontEnd.setLanguage(request); 
+/*        String language = LPFrontEnd.setLanguage(request); 
         String[] errObject = new String[]{"Servlet IncidentAPI at " + request.getServletPath()};   
 
         String[] mandatoryParams = new String[]{""};
@@ -179,6 +178,16 @@ public class IncidentAPI extends HttpServlet {
             }     
         }
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;} 
+*/
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            return;
+        }
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+
         try (PrintWriter out = response.getWriter()) {
 
             IncidentAPIEndpoints endPoint = null;
@@ -189,12 +198,13 @@ public class IncidentAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+/*            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
             }                
+*/            
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
             Integer incId=null;
             switch (endPoint){
@@ -236,12 +246,14 @@ public class IncidentAPI extends HttpServlet {
             }           
         }catch(Exception e){   
             // Rdbms.closeRdbms();                   
-            errObject = new String[]{e.getMessage()};
+            procReqInstance.killIt();
+            String[] errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             // release database resources
-            try {                
+            try {           
+                procReqInstance.killIt();
                 // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

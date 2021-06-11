@@ -22,25 +22,35 @@ enum InvestigationAuditEvents{NEW_INVESTIGATION_CREATED, OBJECT_ADDED_TO_INVESTI
 //CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT
 }
 
-enum InvestigationAPIErrorMessages{
-    AAA_FILE_NAME("errorTrapping"),
-//    INCIDENT_CURRENTLY_NOT_ACTIVE("incidentCurrentlyNotActive"),
-//    INCIDENT_ALREADY_ACTIVE("incidentAlreadyActive"),
-    ;
-    private InvestigationAPIErrorMessages(String sname){
-        name=sname;
-    } 
-    public String getErrorCode(){
-        return this.name;
-    }
-    private final String name;
-}
+
 
 /**
  *
  * @author User
  */
 public final class Investigation {
+    public enum InvestigationErrorTrapping{ 
+        AAA_FILE_NAME("errorTrapping", "", ""),
+        OBJECT_NOT_RECOGNIZED("objectNotRecognized", "ObjectNotRecognized <*1*>, should be two pieces of data separated by *", ""),
+        OBJECT_ALREADY_ADDED("objectAlreadyAdded", "Object <*1*> already added in <*2*>", ""),
+        NOT_FOUND("InvestigationNotFound","InvestigationNotFound <*1*>", ""),
+        IS_CLOSED("InvestigationIsClosed", "InvestigationIsClosed  <*1*>", ""),
+        IS_OPEN("investigationIsOpen", "investigation Is Open  <*1*>","")
+        ;
+        private InvestigationErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
     private Investigation() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
 
     public static Object[] newInvestigation(String[] fldNames, Object[] fldValues, String objectsToAdd){ 
@@ -94,7 +104,7 @@ public final class Investigation {
         for (String curObj: objectsToAdd.split("\\|")){
             String[] curObjDetail=curObj.split("\\*");
             if (curObjDetail.length!=2)
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ObjectNotRecognized <*1*>, should be two pieces of data separated by *", new Object[]{curObj});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED.getErrorCode(), new Object[]{curObj});
             String[] checkFieldName=new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName(), TblsProcedure.InvestObjects.FLD_OBJECT_TYPE.getName()};
             Object[] checkFieldValue=new Object[]{investId, curObjDetail[0]};
             if (LPMath.isNumeric(curObjDetail[1])){
@@ -107,7 +117,7 @@ public final class Investigation {
             Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.InvestObjects.TBL.getName(), 
                     checkFieldName, checkFieldValue);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Object <*1*> already added in <*2*>, should be two pieces of data separated by *", new Object[]{curObj, investId});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{curObj, investId});
         }
         for (String curObj: objectsToAdd.split("\\|")){
             String[] curObjDetail=curObj.split("\\*");
@@ -165,10 +175,10 @@ public final class Investigation {
         Object[][] investigationInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
             new String[]{TblsProcedure.Investigation.FLD_ID.getName()}, new Object[]{investId}, new String[]{TblsProcedure.Investigation.FLD_CLOSED.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "InvestigationNotFound <*1*>", new Object[]{investId});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{investId});
         if ("FALSE".equalsIgnoreCase(investigationInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "investigationIsOpen  <*1*>", new Object[]{investId});
-        else return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "investigationIsClosed  <*1*>", new Object[]{investId});
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, InvestigationErrorTrapping.IS_OPEN.getErrorCode(), new Object[]{investId});
+        else return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.IS_CLOSED.getErrorCode(), new Object[]{investId});
     }
     private static Object[] isCapaField(String[] fields){
         for (String curFld: fields){

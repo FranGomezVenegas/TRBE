@@ -793,7 +793,7 @@ public enum LpPlatformErrorTrapping{
         Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
         className = className.replace(".java", "");
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo);
+        return trapMessage(evaluation, msgCode, msgVariables, language, callerInfo);
     }
     public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language, Object[] callerInfo) {
         if (LPArray.valueInArray(breakPointArray, msgCode))
@@ -819,8 +819,9 @@ public enum LpPlatformErrorTrapping{
             propertiesFilePrefix=LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+className;
         else
             propertiesFilePrefix=CONFIG_FILES_ERRORTRAPING;
-        errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, className+"_"+msgCode, null, callerInfo, false);
-        if (errorCodeText.length()==0){errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, msgCode, null, callerInfo, true);}
+        if (language==null)language=GlobalVariables.DEFAULTLANGUAGE;
+        errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, className+"_"+msgCode, language, callerInfo, false);
+        if (errorCodeText.length()==0){errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, msgCode, language, callerInfo, true);}
         if (errorCodeText.length()==0){errorCodeText = msgCode; errorCodeFromBundle=false;}
         if (!errorCodeFromBundle){
             errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file) ";
@@ -897,14 +898,16 @@ public enum LpPlatformErrorTrapping{
      * @param msgVariables
      */
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables) {          
-    String procInstanceName = "";
-    //if (Rdbms.stablishDBConection(false)){
-      Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
-        new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
-          TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()}, 
-        new Object[]{LPDate.getCurrentTimeStamp(), query, Arrays.toString(queryParams), msgCode, Arrays.toString(callerInfo), false}                
-        );
-    //}
+        if (1==1) return;
+        if (!Rdbms.getRdbms().getIsStarted()){
+//            Logger.log(LogTag.JFR, LogLevel.TRACE, msgCode);
+            return;
+        }
+        String procInstanceName = "";
+        Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
+            new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
+            TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()}, 
+            new Object[]{LPDate.getCurrentTimeStamp(), query, Arrays.toString(queryParams), msgCode, Arrays.toString(callerInfo), false});
   }    
   
     /**
@@ -915,9 +918,11 @@ public enum LpPlatformErrorTrapping{
      * @param paramName
      */
     public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, Object[] callerInfo, String paramName) {          
-//if (1==1) return;
+        if (!Rdbms.getRdbms().getIsStarted()){
+            //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, paramName);
+            return;
+        }
         String procInstanceName = LPNulls.replaceNull(schemaName);
-        //if (Rdbms.stablishDBConection(false)){
         String[] fldNames=new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(),
             TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName(), TblsCnfg.zzzPropertiesMissing.FLD_CLASS_CALLER.getName()};
         Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName, Arrays.toString(callerInfo)};
@@ -927,7 +932,6 @@ public enum LpPlatformErrorTrapping{
         }
         Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName() , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
                 fldNames, fldValues);
-        //}
     }      
     public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){
         String[] enableRuleValues=new String[]{"ENABLE", "YES", "ACTIVE", "ACTIVADO", "SI", "ACTIVO"};

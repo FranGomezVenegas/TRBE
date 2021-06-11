@@ -10,7 +10,6 @@ import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN
 import databases.Rdbms;
 import databases.TblsProcedure;
 import databases.Token;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import functionaljavaa.parameter.Parameter;
@@ -79,6 +78,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
         }
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+        JSONArray jArray = new JSONArray(); 
 
         switch (endPoint){
             case OPEN_INVESTIGATIONS:              
@@ -113,13 +113,13 @@ public class InvestigationAPIfrontend extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
-                return;  
+                return;                  
             case INVESTIGATION_RESULTS_PENDING_DECISION:
                 String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
-                JSONArray jArray = new JSONArray(); 
                 if (!isProgramCorrectiveActionEnable(procInstanceName)){
                   JSONObject jObj=new JSONObject();
-                  jArray.add(jObj.put(TblsProcedure.ProgramCorrectiveAction.TBL.getName(), "program corrective action not active!"));
+                  jObj.put(TblsProcedure.ProgramCorrectiveAction.TBL.getName(), "program corrective action not active!");
+                  jArray.add(jObj);
                 }
                 else{
                   Object[][] investigationResultsPendingDecision = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
@@ -138,6 +138,12 @@ public class InvestigationAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, jArray);
                 break;                
             case INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION:
+                if (!isProgramCorrectiveActionEnable(procInstanceName)){
+                  JSONObject jObj=new JSONObject();
+                  jObj.put(TblsProcedure.ProgramCorrectiveAction.TBL.getName(), "program corrective action not active!");
+                  jArray.add(jObj);
+                  LPFrontEnd.servletReturnSuccess(request, response, jArray);
+                }
                 Integer investigationId=null;
                 String investigationIdStr=LPNulls.replaceNull(argValues[0]).toString();
                 if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);

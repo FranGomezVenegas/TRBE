@@ -518,6 +518,29 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
                 new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
                 new Object[] {specCode, specCodeVersion});        
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+            diagnoses = Rdbms.existsRecord(schemaConfigName, TblsCnfg.SpecRules.TBL.getName(), 
+                    new String[]{TblsCnfg.SpecRules.FLD_CODE.getName(), TblsCnfg.SpecRules.FLD_CONFIG_VERSION.getName()}, 
+                    new Object[] {specCode, specCodeVersion});        
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){
+                String[] specRulesFldNames=new String[]{TblsCnfg.SpecRules.FLD_CODE.getName(), TblsCnfg.SpecRules.FLD_CONFIG_VERSION.getName(),
+                            TblsCnfg.SpecRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.FLD_ALLOW_MULTI_SPEC.getName()};
+                Object[] specRulesFldValues=new Object[] {specCode, specCodeVersion, false, false};
+                if (specRulesFieldName!=null){
+                    for (int i=0;i<specRulesFieldName.length;i++){
+                        if (LPArray.valueInArray(specRulesFldNames, specRulesFieldName[i]))
+                            specRulesFldValues[LPArray.valuePosicInArray(specRulesFldNames, specRulesFieldName[i])]=specRulesFieldValue[i];
+                        else{
+                            LPArray.addValueToArray1D(specRulesFldNames, specRulesFieldName[i]);
+                            LPArray.addValueToArray1D(specRulesFldValues, specRulesFieldValue[i]);
+                        }    
+                    }
+                }
+                Object[] insertRecordInSpecRules = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.SpecRules.TBL.getName(), 
+                        specRulesFldNames,specRulesFldValues);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordInSpecRules[0].toString()))
+                    ConfigTablesAudit.specAuditAdd(SpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.SpecRules.TBL.getName(), specCode, 
+                        specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specRulesFldNames, specRulesFldValues, ":"), null);                
+            }
             errorCode = "specRecord_AlreadyExists";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specCode);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specCodeVersion.toString());

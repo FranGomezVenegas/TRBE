@@ -24,6 +24,7 @@ public class GlobalVariables {
         private final String name;        
     }
 
+    public static final String DEFAULTLANGUAGE="en";
     public static final String LANGUAGE_ALL_LANGUAGES="ALL";
     public enum Languages{EN("en"), ES("es")
         ;
