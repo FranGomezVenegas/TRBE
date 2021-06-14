@@ -21,9 +21,11 @@ public class ProcedureSampleStage {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
-        String samplingDate=sampleStructure.get("sampling_date").getAsString();
-        if (samplingDate==null){
-            return " Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+        if (sampleStructure.get("sampling_date").isJsonNull())
+            return LPPlatform.LAB_FALSE+" Fecha de muestreo es obligatoria para la muestra "+sampleId;
+        String samplingDate=sampleStructure.get("sampling_date").toString();
+        if (samplingDate==null || "null".equalsIgnoreCase(samplingDate)) {
+            return LPPlatform.LAB_FALSE+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
 
@@ -96,7 +98,7 @@ public class ProcedureSampleStage {
         return LPPlatform.LAB_TRUE;
     }
     public String sampleStageMicroorganismIdentificationNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
-        return LPPlatform.LAB_FALSE;
+        return LPPlatform.LAB_TRUE+""; // No falla pero habría que ver si queremos añadir reglas de negocio para hacer que la identificación sea obligatorio o no
     }    
     public String sampleStageENDPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         return LPPlatform.LAB_TRUE;

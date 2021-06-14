@@ -64,9 +64,9 @@ public class PropertiesToRequirements {
 
     public static void businessRulesDefinition(){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
-        String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
+//        String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
 
-        Rdbms.stablishDBConection(dbTrazitModules);   
+//        Rdbms.stablishDBConection(dbTrazitModules);   
 
         LpPlatformBusinessRules[] lpPlatformBusinessRules=LpPlatformBusinessRules.values();
         for (LpPlatformBusinessRules curBusRul: lpPlatformBusinessRules){
@@ -176,13 +176,13 @@ public class PropertiesToRequirements {
             declareBusinessRuleInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues);            
         }
         
-        Rdbms.closeRdbms();
+        // Rdbms.closeRdbms();
     }
     
     public static void messageDefinition(){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
-        String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
-        Rdbms.stablishDBConection(dbTrazitModules);    
+    //    String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
+    //    Rdbms.stablishDBConection(dbTrazitModules);    
         
         AuditAndUserValidationErrorTrapping[] auditAndUserValidationErrorTrapping = AuditAndUserValidationErrorTrapping.values();
         for (AuditAndUserValidationErrorTrapping curBusRul: auditAndUserValidationErrorTrapping){
@@ -336,7 +336,7 @@ public class PropertiesToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode()});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);
         }        
-        Rdbms.closeRdbms();
+        // Rdbms.closeRdbms();
     }    
     
 private static void declareBusinessRuleInDatabase(String apiName, String areaName, String tagName, String[] fieldNames, Object[] fieldValues){

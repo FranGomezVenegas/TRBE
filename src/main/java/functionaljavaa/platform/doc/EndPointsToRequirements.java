@@ -59,9 +59,7 @@ public final class EndPointsToRequirements {
     public static void endpointDefinition(){
         
     ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
-    String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
         
-        Rdbms.stablishDBConection(dbTrazitModules);    
         // *** Falta encontrar la manera de tomar la url de un servlet!
         //"api_url",
 
@@ -344,6 +342,8 @@ private static void declareInDatabase(String apiName, String endpointName, Strin
 
 public static Object[] getDocInfoForEndPoint(String apiName, String endpointName){
     Parameter parm=new Parameter();
+if ("RESULT_CHANGE_UOM".equalsIgnoreCase(endpointName))    
+    System.out.print(endpointName);
     try{
         String[] fldNames=new String[]{EndpointsDeclaration.FLD_BRIEF_SUMMARY_EN.getName(), EndpointsDeclaration.FLD_DOCUMENT_NAME_EN.getName(),
             EndpointsDeclaration.FLD_DOC_CHAPTER_ID_EN.getName(), EndpointsDeclaration.FLD_DOC_CHAPTER_NAME_EN.getName()};

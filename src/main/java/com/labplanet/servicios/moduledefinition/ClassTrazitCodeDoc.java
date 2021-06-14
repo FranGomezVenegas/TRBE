@@ -1,6 +1,7 @@
 package com.labplanet.servicios.moduledefinition;
 
 import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIEndpoints;
+import databases.Rdbms;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.platform.doc.PropertiesToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -20,7 +21,10 @@ public class ClassTrazitCodeDoc {
 
     public ClassTrazitCodeDoc(HttpServletRequest request, HttpServletResponse response, ModuleDefinitionAPIEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        
+//        String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
+
+//        Rdbms.stablishDBConection(dbTrazitModules);    
+
         Object[] actionDiagnoses = null;
         this.functionFound=true;
             switch (endPoint){

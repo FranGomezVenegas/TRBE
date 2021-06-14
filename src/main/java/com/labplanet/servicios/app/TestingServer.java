@@ -10,6 +10,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import databases.TblsCnfg;
+import databases.TblsData;
 import databases.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
@@ -66,7 +67,13 @@ public class TestingServer extends HttpServlet {
             out.println("</html>");
             
             String procInstanceName="em-air-allv2";
-            Rdbms.stablishDBConectionTester();
+            Rdbms.stablishDBConection("labplanet");
+            
+            
+        String tblCreateScript2=TblsData.ViewSampleTestingGroup.createTableScript("proc-deploy", new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+
+
         TestingCoverage tstCov=new TestingCoverage(procInstanceName, 1);    
         tstCov.calculateCoverage();
 //            String tblCreateScript = TblsTesting.ScriptsCoverage.createTableScript(procInstanceName, new String[]{""});

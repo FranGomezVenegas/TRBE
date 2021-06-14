@@ -2213,11 +2213,14 @@ public class TblsData {
         FLD_PRODUCTION_LOT("production_lot", "s.production_lot"),
         FLD_PROGRAM_DAY_ID("program_day_id", "s.program_day_id"),
         FLD_PROGRAM_DAY_DATE("program_day_date", "s.program_day_date"),
+        FLD_SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status"),
+        FLD_SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.Sample.FLD_READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.FLD_READY_FOR_REVISION.getName()),
         FLD_TESTING_GROUP("testing_group", "sa.testing_group"),
         FLD_LOGGED_ON("logged_on", "s.logged_on"),
         FLD_LIMIT_ID("limit_id", "spcLim.limit_id"),
         FLD_SAMPLER("sampler", "s.sampler"),
         FLD_SAMPLER_AREA("sampler_area", "s.sampler_area"),
+        FLD_READY_FOR_REVISION(TblsData.Sample.FLD_READY_FOR_REVISION.getName(), "s."+TblsData.Sample.FLD_READY_FOR_REVISION.getName()),
         /**
          *
          */
@@ -2468,5 +2471,101 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }        
-        
+
+    
+    public enum ViewSampleTestingGroup{
+
+        /**
+         *
+         */
+        TBL("sample_testing_group_view",  LPDatabase.createView() +
+                " SELECT #FLDS from #SCHEMA.sample s " +
+                "   INNER JOIN #SCHEMA.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
+
+                        
+                "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;")
+        ,
+
+        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, "s.sample_id")        ,
+        FLD_SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.FLD_CONFIG_CODE.getName()),
+        FLD_SAMPLE_STATUS("sample_status", "s.status"),
+        FLD_CURRENT_STAGE("current_stage", "s.current_stage"),
+        FLD_PROGRAM_NAME("program_name", "s.program_name"),
+        FLD_SAMPLING_DATE("sampling_date", "s.sampling_date"),
+        FLD_SHIFT("shift", "s.shift"),
+        FLD_AREA("area", "s.area"),
+        FLD_LOCATION_NAME("location_name", "s.location_name"),
+        FLD_PRODUCTION_LOT("production_lot", "s.production_lot"),
+        FLD_PROGRAM_DAY_ID("program_day_id", "s.program_day_id"),
+        FLD_PROGRAM_DAY_DATE("program_day_date", "s.program_day_date"),
+        FLD_TESTING_GROUP("testing_group", "stg.testing_group"),
+        FLD_READY_FOR_REVISION("ready_for_revision", "stg.ready_for_revision")        ,
+        FLD_REVIEWED("reviewed", "stg.reviewed")        ,
+        FLD_REVISION_ON("revision_on", "stg.revision_on")        ,
+        FLD_REVISION_BY("revision_by", "stg.revision_by")        
+        ;
+        private ViewSampleTestingGroup(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param schemaNamePrefix - Procedure Instance where it applies
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+//            tblCreateScript.append("CREATE OR REPLACE FUNCTION public.isnumeric(text)  RETURNS boolean  LANGUAGE plpgsql IMMUTABLE STRICT AS $function$ DECLARE x NUMERIC; BEGIN x = $1::NUMERIC; RETURN TRUE; EXCEPTION WHEN others THEN RETURN FALSE; END; $function$");
+
+            String[] tblObj = ViewSampleTestingGroup.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#SCHEMA_CONFIG", LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#SCHEMA_PROCEDURE", LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ViewSampleTestingGroup obj: ViewSampleTestingGroup.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        fieldsScript.append(currField[1]).append(" AS ").append(currField[0]);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }      
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ViewSampleTestingGroup obj: ViewSampleTestingGroup.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }             
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }        
+    
 }

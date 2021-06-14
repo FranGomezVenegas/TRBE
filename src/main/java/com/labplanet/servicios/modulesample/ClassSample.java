@@ -414,6 +414,8 @@ public class ClassSample {
                     String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getUserName());
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
+                        diagn=LPPlatform.trapMessage(diagn[0].toString(), endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                 }
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{diagn[diagn.length-1], procInstanceName};

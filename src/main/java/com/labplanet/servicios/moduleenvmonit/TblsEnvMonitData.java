@@ -40,6 +40,7 @@ public class TblsEnvMonitData {
             case "SAMPLE_MICROORGANISM_LIST_VW": return ViewSampleMicroorganismList.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_REVISION_TESTING_GROUP": return TblsData.SampleRevisionTestingGroup.createTableScript(schemaNamePrefix, fields);
             case "USER_ANALYSIS_METHOD_CERTIF": return TblsData.CertifUserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_TESTING_GROUP_VIEW": return TblsData.ViewSampleTestingGroup.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }    

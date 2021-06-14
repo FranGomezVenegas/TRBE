@@ -6,7 +6,6 @@
 package com.labplanet.servicios.moduledefinition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import databases.Rdbms;
 import databases.Token;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -87,7 +86,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
     }
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -160,6 +159,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
             // Rdbms.closeRdbms();                   
             Object[] errMsg = LPFrontEnd.responseError(new String[]{e.getMessage()}, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, e.getMessage(), null);   
         } finally {
             // release database resources
             try {
