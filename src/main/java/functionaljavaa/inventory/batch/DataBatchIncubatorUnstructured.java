@@ -63,7 +63,7 @@ public final class DataBatchIncubatorUnstructured {
         } else if (incubStage == 2) {
             batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName();
         } else {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.", new Object[]{incubStage, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED.getErrorCode(), new Object[]{incubStage, procInstanceName});
         }
         return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), new String[]{batchFldName}, new Object[]{batchName}, new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
     }
@@ -79,12 +79,12 @@ public final class DataBatchIncubatorUnstructured {
         String batchSamples = LPNulls.replaceNull(sampleInfo[0][0]).toString();
         Integer samplePosic = batchSamples.indexOf(sampleId.toString());
         if (samplePosic == -1) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Sample <*1*> not found in batch <*2*> for procedure <*3*>.", new Object[]{sampleId, batchName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.SAMPLE_NOTFOUND_IN_BATCH.getErrorCode(), new Object[]{sampleId, batchName, procInstanceName});
         }
         String samplePosicInfo = batchSamples.substring(samplePosic, samplePosic + sampleId.toString().length() + 2);
         String[] samplePosicInfoArr = samplePosicInfo.split("\\*");
         if (samplePosicInfoArr.length != 2) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " batchRemoveSampleUnstructured cannot parse the info for the Sample <*1*> when there are more than 2 pieces of info. Batch Samples info is <*2*> for procedure <*3*>.", new Object[]{samplePosicInfo, batchSamples, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.PARSE_ERROR_STRUCTUREDBATCH.getErrorCode(), new Object[]{"Removing Sample", samplePosicInfo, batchSamples, procInstanceName});
         }
         Integer incubStage = Integer.valueOf(samplePosicInfoArr[1]);
         if (samplePosic == 0) {
@@ -111,7 +111,7 @@ public final class DataBatchIncubatorUnstructured {
         } else if (incubStage == 2) {
             batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName();
         } else {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.", new Object[]{incubStage, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED.getErrorCode(), new Object[]{incubStage, procInstanceName});
         }
         return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), new String[]{batchFldName}, new Object[]{null}, new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});        
     }
@@ -125,13 +125,13 @@ public final class DataBatchIncubatorUnstructured {
         }
         String batchSamples = LPNulls.replaceNull(sampleInfo[0][0]).toString();
         if (batchSamples.length() == 0) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The batch <*1*> has no samples therefore cannot be started yet, procedure <*2*>", new Object[]{batchName, procInstanceName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.EMPTY_BATCH.getErrorCode(), new Object[]{batchName, procInstanceName});
         }
         String[] batchSamplesArr = batchSamples.split("\\|");
         for (String currSample : batchSamplesArr) {
             String[] currSampleArr = currSample.split("\\*");
             if (currSampleArr.length != 2) {
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " batchSampleIncubStartedUnstructured cannot parse the info for the Sample <*1*> when there are more than 2 pieces of info. Batch Samples info is <*2*> for procedure <*3*>.", new Object[]{currSample, batchSamples, procInstanceName});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.PARSE_ERROR_STRUCTUREDBATCH.getErrorCode(), new Object[]{"Starting Batch", currSample, batchSamples, procInstanceName});
             }
             Integer sampleId = Integer.valueOf(currSampleArr[0]);
             Integer incubStage = Integer.valueOf(currSampleArr[1]);
@@ -161,7 +161,7 @@ public final class DataBatchIncubatorUnstructured {
         for (String currSample : batchSamplesArr) {
             String[] currSampleArr = currSample.split("\\*");
             if (currSampleArr.length != 2) {
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " batchSampleIncubEndedUnstructured cannot parse the info for the Sample <*1*> when there are more than 2 pieces of info. Batch Samples info is <*2*> for procedure <*3*>.", new Object[]{currSample, batchSamples, procInstanceName});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.PARSE_ERROR_STRUCTUREDBATCH.getErrorCode(), new Object[]{"Ending Batch", currSample, batchSamples, procInstanceName});
             }
             Integer sampleId = Integer.valueOf(currSampleArr[0]);
             Integer incubStage = Integer.valueOf(currSampleArr[1]);

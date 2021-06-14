@@ -117,7 +117,7 @@ public final class Investigation {
             Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.InvestObjects.TBL.getName(), 
                     checkFieldName, checkFieldValue);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{curObj, investId});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{curObjDetail[1], investId});
         }
         for (String curObj: objectsToAdd.split("\\|")){
             String[] curObjDetail=curObj.split("\\*");

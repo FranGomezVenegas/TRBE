@@ -47,7 +47,9 @@ public class DataBatchIncubator {
         INCUBATORBATCH_TEMPLATE_NOT_ACTIVE("incubatorBatchTemplateNotActive","The Batch template <*1*> and version <*2*> is not active","The Batch template <*1*> and version <*2*> is not active"),
         BATCH_AVAILABLEFORCHANGES("batchAvailableForChanges", "The Batch <*1*> is available to alter its content", "The Batch <*1*> is available to alter its content"),
         INCUB_BATCH_NOT_ACTIVE_FOR_CHANGES("IncubatorBatchNotActiveToChangeItsContent", "", ""), 
+        EMPTY_BATCH("incubBatch_emptyBatch", "", ""),
         INCUB_BATCH_STARTED_CHANGEITSCONTENT("IncubatorBatchStartedToChangeItsContent", "", ""),
+        SAMPLE_NOTFOUND_IN_BATCH("incubBatch_sampleNotFoundInBatch"," Sample <*1*> not found in batch <*2*> for procedure <*3*>.", ""),
         SAMPLES_IN_BATCH_SET_AS_BATCHSTARTED("allSamplesInBatchSetAsBatchStarted", "", ""),
         SAMPLES_IN_BATCH_SET_AS_BATCHENDED("allSamplesInBatchSetAsBatchEnded", "", ""),
         CREATEBATCH_TYPECHECKER_SUCCESS("createBatchTypeCheckerSuccess", "", ""),
@@ -58,6 +60,11 @@ public class DataBatchIncubator {
         STAGE_NOT_RECOGNIZED("incubBatch_stageNotRecognized", " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.", " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>."),
         SAMPLE_ALREADYBATCHED("incubBatch_sampleAlreadyBatched", "The pending incubation stage is <*1*> and the sample <*2*>  is already batched in batch <*3*> for procedure <*3*>", "The pending incubation stage is <*1*> and the sample <*2*>  is already batched in batch <*3*> for procedure <*3*>"), 
         FIELD_NOT_FOUND("incubBatch_fieldNotFound","Field <*1*> not found in table <*2*> for procedure <*3*>", "Field <*1*> not found in table <*2*> for procedure <*3*>"),
+        STRUCTURED_BATCH_WRONGDIMENSION("incubBatchStructured_wrongDimensions", "", ""),
+        STRUCTURED_BATCH_POSITIONOCCUPIED("incubBatchStructured_positionOccupied", "", ""),
+        STRUCTURED_POSITION_OVER_DIMENSION("incubBatchStructured_positionOverDimenrsion", "", ""),
+        PARSE_ERROR_STRUCTUREDBATCH("incubBatchStructured_parseError", "", "")
+        
         ;
         private IncubatorBatchErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
