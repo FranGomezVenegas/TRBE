@@ -199,7 +199,10 @@ public class AuthenticationAPI extends HttpServlet {
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                         return;                                             
                     }else{               
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck}, language);
+                        
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck});
+                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+//                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck}, language);
                         return;                             
                     }                    
                 case TOKEN_VALIDATE_USER_CREDENTIALS:     
@@ -212,7 +215,9 @@ public class AuthenticationAPI extends HttpServlet {
                         JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), null, null);                        
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                     }else{                        
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck}, language);              
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck});
+                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+//                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck}, language);              
                     }    
                     break;
                 case USER_CHANGE_PSWD:     
