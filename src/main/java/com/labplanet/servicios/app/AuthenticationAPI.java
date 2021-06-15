@@ -200,8 +200,9 @@ public class AuthenticationAPI extends HttpServlet {
                         return;                                             
                     }else{               
                         
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck});
-                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+//                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck});
+                        Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck});
+                        LPFrontEnd.servletReturnResponseErrorLPTrueDiagnostic(request, response, trapMessage);
 //                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck}, language);
                         return;                             
                     }                    
@@ -215,8 +216,11 @@ public class AuthenticationAPI extends HttpServlet {
                         JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), null, null);                        
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                     }else{                        
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck});
-                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+//                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck});
+//                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                        Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck});
+                        LPFrontEnd.servletReturnResponseErrorLPTrueDiagnostic(request, response, trapMessage);
+
 //                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck}, language);              
                     }    
                     break;
