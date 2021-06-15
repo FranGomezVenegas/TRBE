@@ -181,8 +181,10 @@ public final class Investigation {
         else return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.IS_CLOSED.getErrorCode(), new Object[]{investId});
     }
     private static Object[] isCapaField(String[] fields){
+        String[] allFieldNames = TblsProcedure.Investigation.getAllFieldNames();
         for (String curFld: fields){
-            if (!curFld.toUpperCase().contains("CAPA")) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
+            if (!LPArray.valueInArray(allFieldNames, curFld)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
+            //if (!curFld.toUpperCase().contains("CAPA")) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllCapaFields:  <*1*>", new Object[]{Arrays.toString(fields)});
     }
