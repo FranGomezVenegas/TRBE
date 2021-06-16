@@ -416,9 +416,11 @@ public class ClassSample {
                     smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
                         diagn=LPPlatform.trapMessage(diagn[0].toString(), endPoint.getSuccessMessageCode(), new Object[]{sampleId});
-                }
+                    this.messageDynamicData=new Object[]{sampleId};                    
+                }else
+                    this.messageDynamicData=new Object[]{diagn[diagn.length-1].toString()};
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
-                this.messageDynamicData=new Object[]{diagn[diagn.length-1], procInstanceName};
+                //this.messageDynamicData=new Object[]{};
                 break;
             case SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED:
                 Integer auditId = (Integer) argValues[0];

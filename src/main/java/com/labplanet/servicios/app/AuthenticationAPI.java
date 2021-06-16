@@ -201,8 +201,8 @@ public class AuthenticationAPI extends HttpServlet {
                     }else{               
                         
 //                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck});
-                        Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck});
-                        LPFrontEnd.servletReturnResponseErrorLPTrueDiagnostic(request, response, trapMessage);
+//                        Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck});
+                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck});
 //                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.ESIGN_TOCHECK_INVALID.getErrorCode(), new Object[]{esignPhraseToCheck}, language);
                         return;                             
                     }                    
@@ -218,8 +218,8 @@ public class AuthenticationAPI extends HttpServlet {
                     }else{                        
 //                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck});
 //                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-                        Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck});
-                        LPFrontEnd.servletReturnResponseErrorLPTrueDiagnostic(request, response, trapMessage);
+//                        Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck});
+                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck});
 
 //                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck}, language);              
                     }    

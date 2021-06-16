@@ -63,20 +63,24 @@ public class ProcedureSampleStage {
         try{
             Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
-               return LPPlatform.LAB_FALSE;
+               return LPPlatform.LAB_FALSE+"Info not parse-able";
             JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
+            if (sampleStructure.get("sample_analysis").isJsonNull())
+                return LPPlatform.LAB_FALSE+"sample_analysis value not found";
             JsonArray smpAna=sampleStructure.getAsJsonArray("sample_analysis");
             JsonElement jGet = smpAna.get(0);        
             JsonObject asJsonObject = jGet.getAsJsonObject();
+            if (asJsonObject.getAsJsonArray("sample_analysis_result").isJsonNull())
+                return LPPlatform.LAB_FALSE+"sample_analysis_result value not found";
             JsonArray asJsonArray = asJsonObject.getAsJsonArray("sample_analysis_result"); //
             jGet = asJsonArray.get(0);        
             asJsonObject = jGet.getAsJsonObject();
 
             String rawValue="";
-            if (asJsonObject.get("Raw_value").isJsonNull())
-                return LPPlatform.LAB_FALSE+"Raw value not entered yet";
+            if (asJsonObject.get("raw_value").isJsonNull())
+                return LPPlatform.LAB_FALSE+"raw value not entered yet";
             else
-                rawValue=asJsonObject.get("Raw_value").getAsString();
+                rawValue=asJsonObject.get("raw_value").getAsString();
 
             String paramName="";
             if (asJsonObject.get("param_name").isJsonNull())
@@ -89,7 +93,7 @@ public class ProcedureSampleStage {
                 if ("0".equals(rawValue)) return LPPlatform.LAB_TRUE+"|END";
                 else return LPPlatform.LAB_TRUE;
             }        
-            return LPPlatform.LAB_FALSE;
+            return LPPlatform.LAB_FALSE+"You win! This logic is not handled";
         }catch(Exception e){
             return LPPlatform.LAB_FALSE+e.getMessage();
         }
