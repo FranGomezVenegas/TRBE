@@ -594,12 +594,15 @@ public class SampleAPIfrontend extends HttpServlet {
                 case SAMPLES_PENDING_SAMPLE_REVISION:   
                     sampleFieldToRetrieve = argValues[0].toString();
                     sampleFieldToRetrieveArr = new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()};
-                    if (sampleFieldToRetrieve!=null){
+                    
+                    if ((sampleFieldToRetrieve==null) || (sampleFieldToRetrieve.length()==0) || ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) )
+                        sampleFieldToRetrieveArr=TblsData.Sample.getAllFieldNames();
+                    else
                         sampleFieldToRetrieveArr=LPArray.addValueToArray1D(sampleFieldToRetrieveArr, sampleFieldToRetrieve.split("\\|"));
-                    }  
+                      
                     myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.Sample.TBL.getName(),
                             new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName()},new Object[]{true}, 
-                            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, 
+                            sampleFieldToRetrieveArr, 
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()});
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  

@@ -74,8 +74,9 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             }),
         GET_SAMPLE_MICROORGANISM_VIEW("GET_SAMPLE_MICROORGANISM_VIEW", new LPAPIArguments[]{
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8),
             }),
         GET_SAMPLE_STAGES_SUMMARY_REPORT("GET_SAMPLE_STAGES_SUMMARY_REPORT", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
@@ -256,9 +257,10 @@ public class ClassEnvMonSampleFrontend {
                     this.responseSuccessJArr=jArr;
                     return;  
                 case GET_SAMPLE_MICROORGANISM_VIEW:
-                    String whereFieldsName = argValues[0].toString(); 
+                    String fieldsNameToRetrieve = argValues[0].toString(); 
+                    String whereFieldsName = argValues[1].toString(); 
                     if (whereFieldsName==null){whereFieldsName="";}
-                    String whereFieldsValue = argValues[1].toString(); 
+                    String whereFieldsValue = argValues[2].toString(); 
                     String[] whereFieldsNameArr=new String[0];
                     Object[] whereFieldsValueArr=new Object[0];
                     if ( (whereFieldsName!=null && whereFieldsName.length()>0) && (whereFieldsValue!=null && whereFieldsValue.length()>0) ){
@@ -281,12 +283,10 @@ public class ClassEnvMonSampleFrontend {
                     whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_CURRENT_STAGE.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.FLD_RAW_VALUE.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()});
                     whereFieldsValueArr=LPArray.addValueToArray1D(whereFieldsValueArr, new Object[]{"MicroorganismIdentification"});
                     ViewSampleMicroorganismList[] fieldsList = TblsEnvMonitData.ViewSampleMicroorganismList.values();
-                    fieldsToRetrieve = new String[0];
-                    for (ViewSampleMicroorganismList fieldsList1 : fieldsList) {
-                      if (!"TBL".equalsIgnoreCase(fieldsList1.name())) {
-                        fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fieldsList1.getName());
-                      }                  
-                    }
+                    if (fieldsNameToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldsNameToRetrieve))
+                        fieldsToRetrieve = TblsEnvMonitData.ViewSampleMicroorganismList.getAllFieldNames();
+                    else 
+                        fieldsToRetrieve = fieldsNameToRetrieve.split("\\|");
                     list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ViewSampleMicroorganismList.TBL.getName(), 
                             whereFieldsNameArr, whereFieldsValueArr
                             , fieldsToRetrieve
@@ -294,6 +294,17 @@ public class ClassEnvMonSampleFrontend {
                     jArr=new JSONArray();
                     for (Object[] curRec: list){
                       JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
+                      Integer fldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewSampleMicroorganismList.FLD_MICROORGANISM_LIST.getName());
+                      if (fldPosic>-1){
+                          JSONArray jMicArr=new JSONArray();
+                          for (String curMic:curRec[fldPosic].toString().split(", ")){
+                              //jMicArr.add(curMic);
+                              JSONObject jmicObj=new JSONObject();
+                              jmicObj.put("name", curMic);
+                              jMicArr.add(jmicObj);
+                          }
+                          jObj.put("microorganism_list_array", jMicArr);
+                      }                      
                       jArr.add(jObj);
                     }
                     this.isSuccess=true;

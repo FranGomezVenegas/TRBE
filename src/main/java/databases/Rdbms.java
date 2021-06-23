@@ -1441,10 +1441,15 @@ if (1==1)return;
     }
 
     public static Object[] dbTableExists(String schemaName, String tableName){
+        return dbTableExists(schemaName, tableName, null);
+    }
+    public static Object[] dbTableExists(String schemaName, String tableName, String fieldName){
         String schema=schemaName.replace("\"", "");
         schemaName=addSuffixIfItIsForTesting(schemaName);                   
-        String query="select table_schema from INFORMATION_SCHEMA.TABLES " +
+        String query="select table_schema from INFORMATION_SCHEMA.COLUMNS " +
                      " where table_name=? " + " and table_schema=?";
+        if (fieldName!=null)
+            query=query+" and column_name=?";
         try{
             String[] filter=new String[]{tableName, schema};
             ResultSet res = Rdbms.prepRdQuery(query, filter);

@@ -511,7 +511,9 @@ GlobalAPIsParams.
                           specDefinition.put(TblsCnfg.Spec.TBL.getName(), specInfo);
                           JSONArray specLimitsInfo=SpecFrontEndUtilities.configSpecLimitsInfo((String) specCode, (Integer) specConfigVersion, 
                                   null, new String[]{TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), 
-                                  TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()});
+                                  TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(),
+                                  TblsCnfg.SpecLimits.FLD_SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_GREEN_AREA_EN.getName(),
+                                  TblsCnfg.SpecLimits.FLD_SPEC_TEXT_ES.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_RED_AREA_ES.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_YELLOW_AREA_ES.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_GREEN_AREA_ES.getName()});
                           specDefinition.put(TblsCnfg.SpecLimits.TBL.getName(), specLimitsInfo);
                         }
                         programJsonObj.put(JSON_TAG_SPEC_DEFINITION, specDefinition); 

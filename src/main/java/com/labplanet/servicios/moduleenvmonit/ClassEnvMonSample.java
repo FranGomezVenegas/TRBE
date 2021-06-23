@@ -162,6 +162,17 @@ public class ClassEnvMonSample {
                     dynamicDataObjects=new Object[]{argValues[1].toString().replace("\\|", ", "), sampleId};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), argValues[0]);                                                
                     break;
+                case REMOVE_SAMPLE_MICROORGANISM: 
+                    sampleId=(Integer) argValues[0];
+                    for (String orgName: (String[]) argValues[1].toString().split("\\|")){
+                        actionDiagnoses = DataProgramSample.removeSampleMicroorganism((Integer) argValues[0], orgName);
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), actionDiagnoses[actionDiagnoses.length-1]);
+                    }
+                    if (actionDiagnoses!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{argValues[0], argValues[1], procInstanceName});                    
+                    dynamicDataObjects=new Object[]{argValues[1].toString().replace("\\|", ", "), sampleId};
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), argValues[0]);                                                
+                    break;
                 case EM_BATCH_INCUB_ADD_SMP:
                     String batchName = argValues[0].toString();
                     Integer batchTemplateId = (Integer) argValues[1];

@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -105,7 +106,7 @@ public class DataProgramSample{
                 new Object[]{programName, programLocation}, 
                 new String[]{TblsEnvMonitData.ProgramLocation.FLD_REQUIRES_PERSON_ANA.getName(), TblsEnvMonitData.ProgramLocation.FLD_PERSON_ANA_DEFINITION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocationPersonalInfo[0][0].toString())) return new Object[]{LPPlatform.LAB_TRUE};
-        Boolean requiresPersonalAnalysis=(Boolean) programLocationPersonalInfo[0][0];
+        Boolean requiresPersonalAnalysis=Boolean.valueOf(LPNulls.replaceNull(programLocationPersonalInfo[0][0]).toString());
         if (!requiresPersonalAnalysis) return new Object[]{LPPlatform.LAB_TRUE};
         
         String samplerArea = programLocationPersonalInfo[0][1].toString();
@@ -153,6 +154,36 @@ public class DataProgramSample{
         SampleAudit smpAudit = new SampleAudit();
         String[] fieldsForAudit=new String[]{"Added microorganism "+microorganismName};
         smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.MICROORGANISM_ADDED.toString() , TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+      }
+      return diagnostic;
+    }
+    /**
+     *
+     * @param sampleId
+     * @param microorganismName
+     * @return
+     */
+    public static Object[] removeSampleMicroorganism(Integer sampleId, String microorganismName){
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Object[][] sampleMicroOrgRow=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.SampleMicroorganism.TBL.getName(),
+                new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName()},
+                new Object[]{sampleId, microorganismName},
+                new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_ID.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgRow[0][0].toString())) 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "microorganismNotFound", new  Object[]{microorganismName, sampleId});
+        Object[] diagnostic=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.SampleMicroorganism.TBL.getName(),
+                new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName(), TblsEnvMonitData.SampleMicroorganism.FLD_ID.getName()},
+                new Object[]{sampleId, microorganismName, sampleMicroOrgRow[0][0]});
+/*        Object[] diagnostic= Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
+            new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName(), 
+            TblsEnvMonitData.SampleMicroorganism.FLD_CREATED_BY.getName(), TblsEnvMonitData.SampleMicroorganism.FLD_CREATED_ON.getName()}, 
+            new Object[]{sampleId, microorganismName, token.getPersonName(), LPDate.getCurrentTimeStamp()});
+*/
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
+        SampleAudit smpAudit = new SampleAudit();
+        String[] fieldsForAudit=new String[]{"Removed microorganism "+microorganismName};
+        smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.MICROORGANISM_REMOVED.toString() , TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
       }
       return diagnostic;
     }

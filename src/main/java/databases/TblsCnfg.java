@@ -902,7 +902,16 @@ public class TblsCnfg {
         FLD_MAX_VAL_FOR_UNDETERMINED("max_undetermined", LPDatabase.real()),
         FLD_MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", LPDatabase.booleanFld(false)),
         FLD_MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", LPDatabase.booleanFld(false)),
-        FLD_TESTING_GROUP("testing_group",  LPDatabase.string()),        
+        FLD_TESTING_GROUP("testing_group",  LPDatabase.string()),    
+        FLD_SPEC_TEXT_EN("spec_text_en",  LPDatabase.string()),    
+        FLD_SPEC_TEXT_RED_AREA_EN("spec_text_red_area_en",  LPDatabase.string()),    
+        FLD_SPEC_TEXT_YELLOW_AREA_EN("spec_text_yellow_area_en",  LPDatabase.string()),    
+        FLD_SPEC_TEXT_GREEN_AREA_EN("spec_text_green_area_en",  LPDatabase.string()),    
+        FLD_SPEC_TEXT_ES("spec_text_es",  LPDatabase.string()),    
+        FLD_SPEC_TEXT_RED_AREA_ES("spec_text_red_area_es",  LPDatabase.string()),    
+        FLD_SPEC_TEXT_YELLOW_AREA_ES("spec_text_yellow_area_es",  LPDatabase.string()),    
+        FLD_SPEC_TEXT_GREEN_AREA_ES("spec_text_green_area_es",  LPDatabase.string()),    
+        
         ;
         private SpecLimits(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
