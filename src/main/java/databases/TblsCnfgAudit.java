@@ -143,6 +143,8 @@ public class TblsCnfgAudit {
         public String getName(){
             return this.dbObjName;
         }
+        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
+        
         /**
          *
          * @param schemaNamePrefix procedure prefix
@@ -154,14 +156,14 @@ public class TblsCnfgAudit {
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Spec.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = Analysis.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG_AUDIT.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (Spec obj: Spec.values()){
+            for (Analysis obj: Analysis.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
