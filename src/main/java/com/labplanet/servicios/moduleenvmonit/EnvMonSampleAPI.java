@@ -262,8 +262,9 @@ public class EnvMonSampleAPI extends HttpServlet {
     /*                Rdbms.rollbackWithSavePoint();
                     if (!con.getAutoCommit()){
                         con.rollback();
-                        con.setAutoCommit(true);}                */
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+                        con.setAutoCommit(true);}                */                   
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());               
+//                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
                 }else{
                     JSONObject dataSampleJSONMsg =new JSONObject();
                     if (endPoint!=null)

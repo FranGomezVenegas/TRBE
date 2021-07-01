@@ -1190,8 +1190,8 @@ public class TblsCnfg {
                 " SELECT a.code, " +
                 "    meth.method_name, " +
                 "    meth.method_version " +
-                "   FROM \"process-us-config\".analysis a, " +
-                "    \"process-us-config\".analysis_method meth " +
+                "   FROM #SCHEMA.analysis a, " +
+                "    #SCHEMA.analysis_method meth " +
                 "  WHERE meth.analysis::text = a.code::text AND a.active = true;" +
                 "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
                 "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;")

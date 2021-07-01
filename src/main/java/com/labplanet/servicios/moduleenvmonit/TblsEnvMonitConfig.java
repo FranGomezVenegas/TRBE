@@ -6,6 +6,7 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import databases.DbObjects;
+import databases.TblsCnfg;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPPlatform;
@@ -26,11 +27,13 @@ public class TblsEnvMonitConfig {
             case "INSTRUMENT_INCUBATOR": return InstrIncubator.createTableScript(schemaNamePrefix, fields);
             case "MICROORGANISM": return MicroOrganism.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM": return Program.createTableScript(schemaNamePrefix, fields);
+            // ??? case "PROGRAM_RULES": return ProgramRules.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_DAY": return ProgramDay.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_CALENDAR": return ProgramCalendar.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_CALENDAR_DATE": return ProgramCalendarDate.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_CALENDAR_RECURSIVE_ENTRY": return ProgramCalendarRecursiveEntries.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
+            case "ANALYSIS_METHODS_VIEW": return TblsCnfg.ViewAnalysisMethodsView.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSCNFGENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }

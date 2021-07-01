@@ -1452,6 +1452,8 @@ if (1==1)return;
             query=query+" and column_name=?";
         try{
             String[] filter=new String[]{tableName, schema};
+            if (fieldName!=null)
+                filter=LPArray.addValueToArray1D(filter, fieldName);
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(filter)});

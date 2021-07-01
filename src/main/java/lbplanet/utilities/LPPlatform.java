@@ -898,7 +898,7 @@ public enum LpPlatformErrorTrapping{
      * @param msgVariables
      */
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables) {          
-        if (1==1) return;
+    //    if (1==1) return;
         if (!Rdbms.getRdbms().getIsStarted()){
 //            Logger.log(LogTag.JFR, LogLevel.TRACE, msgCode);
             return;

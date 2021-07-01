@@ -94,15 +94,15 @@ public class InvestigationAPIfrontend extends HttpServlet {
                         Integer investFldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsProcedure.Investigation.FLD_ID.getName());
                         if (investFldPosic>-1){
                             Integer investigationId=Integer.valueOf(currInvestigation[investFldPosic].toString());
-                            fieldsToRetrieve=TblsProcedure.InvestObjects.getAllFieldNames();
+                            String[] fieldsToRetrieveInvestObj=TblsProcedure.InvestObjects.getAllFieldNames();
                             incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()),TblsProcedure.InvestObjects.TBL.getName(), 
                                     new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, 
                                     new Object[]{investigationId}, 
-                                    fieldsToRetrieve, new String[]{TblsProcedure.InvestObjects.FLD_ID.getName()});
+                                    fieldsToRetrieveInvestObj, new String[]{TblsProcedure.InvestObjects.FLD_ID.getName()});
                             JSONArray investObjectsJArr = new JSONArray();
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
                                 for (Object[] currInvestObject: incidentsNotClosed){
-                                    JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestObject);
+                                    JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveInvestObj, currInvestObject);
                                     investObjectsJArr.add(investObjectsJObj);
                                 }
                             }

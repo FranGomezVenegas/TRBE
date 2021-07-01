@@ -6,6 +6,7 @@
 package functionaljavaa.requirement;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfigAudit;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
@@ -21,6 +22,7 @@ import static databases.Rdbms.dbTableExists;
 import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp;
+import databases.TblsAppConfig;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
@@ -236,10 +238,26 @@ public class ProcedureDefinitionToInstance {
             Object[][] existsAppUser = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
                     new String[]{TblsApp.Users.FLD_USER_NAME.getName()}, new Object[]{curUserName.toString()}, new String[]{TblsApp.Users.FLD_PERSON_NAME.getName()});
             String diagnosesForLog = (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) ? JsonTags.NO.getTagValue() : JsonTags.YES.getTagValue();
-            jsUserRoleObj.put("User exists in the app?", diagnosesForLog); 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())){
+                String personId=curUserName+"z";
+                
+                Object[] insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
+                    new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName(), TblsAppConfig.Person.FLD_FIRST_NAME.getName(), 
+                        TblsAppConfig.Person.FLD_LAST_NAME.getName(), TblsAppConfig.Person.FLD_PHOTO.getName()}, 
+                    new Object[]{personId, "I'm a user demo", "for demos ", "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"});
+                insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
+                        new String[]{TblsApp.Users.FLD_USER_NAME.getName(), TblsApp.Users.FLD_EMAIL.getName(), TblsApp.Users.FLD_ESIGN.getName(),
+                            TblsApp.Users.FLD_PASSWORD.getName(), TblsApp.Users.FLD_PERSON_NAME.getName()},
+                        new Object[]{curUserName, "trazit.info@gmail.com", "firmademo", "1234", personId});
+                existsAppUser=LPArray.array1dTo2d(insertRecordInTable,1);
+                diagnosesForLog=diagnosesForLog+" trying to create, log for creation="+insertRecordInTable[0].toString();
+//                insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.UserProcess.TBL.getName(), 
+//                    new String[]{TblsApp.UserProcess.FLD_USER_NAME.getName(), TblsApp.UserProcess.FLD_PROC_NAME.getName(), TblsApp.UserProcess.FLD_ACTIVE.getName()}, 
+//                    new Object[]{curUserName, fakeProcName, true});
+                
                 // Place to create the user
             }                
+            jsUserRoleObj.put("User exists in the app?", diagnosesForLog); 
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(existsAppUser[0]))){
                 Object[] existsAppUserProcess = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.UserProcess.TBL.getName(), 
                         new String[]{TblsApp.UserProcess.FLD_USER_NAME.getName(), TblsApp.UserProcess.FLD_PROC_NAME.getName()}, new Object[]{curUserName.toString(), procInstanceName});
@@ -335,8 +353,8 @@ public class ProcedureDefinitionToInstance {
                 case "ENVIRONMENTAL_MONITORING":
                     if (GlobalVariables.Schemas.CONFIG.getName().equalsIgnoreCase(curSchemaName.toString()))
                         tableCreationScriptTable = TblsEnvMonitConfig.getTableCreationScriptFromConfigTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
-        //            if (GlobalVariables.Schemas.CONFIG_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))
-        //                tableCreationScriptFromCnfgTable = TblsEnvMonitCnfgaAduit.getTableCreationScriptFromCnfgTable(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
+                    if (GlobalVariables.Schemas.CONFIG_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))
+                        tableCreationScriptTable = TblsEnvMonitConfigAudit.getTableCreationScriptFromConfigAuditTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     if (GlobalVariables.Schemas.DATA.getName().equalsIgnoreCase(curSchemaName.toString()))
                         tableCreationScriptTable = TblsEnvMonitData.getTableCreationScriptFromDataTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                     if (GlobalVariables.Schemas.DATA_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))

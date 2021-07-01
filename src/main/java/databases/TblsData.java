@@ -2490,11 +2490,11 @@ public class TblsData {
          *
          */
         TBL("sample_testing_group_view",  LPDatabase.createView() +
-                " SELECT #FLDS from #SCHEMA.sample s " +
-                "   INNER JOIN #SCHEMA.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
+                " SELECT #FLDS from #SCHEMA_CONFIG.sample s " +
+                "   INNER JOIN #SCHEMA_CONFIG.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
 
                         
-                "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;")
+                "ALTER VIEW  #SCHEMA_CONFIG.#TBL  OWNER TO #OWNER;")
         ,
 
         FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, "s.sample_id")        ,

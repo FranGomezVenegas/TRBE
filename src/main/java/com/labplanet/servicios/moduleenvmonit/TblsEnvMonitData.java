@@ -34,6 +34,7 @@ public class TblsEnvMonitData {
             //case "PROGRAM_DAY": return ProgramDay.createTableScript(schemaNamePrefix, fields);
             //case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_ANALYSIS": return TblsData.SampleAnalysis.createTableScript(schemaNamePrefix, fields);
             case "SAVED_QUERIES": return TblsData.SavedQueries.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_MICROORGANISM": return SampleMicroorganism.createTableScript(schemaNamePrefix, fields);
             case "PR_SCHEDULED_LOCATIONS_VIEW": return ViewProgramScheduledLocations.createTableScript(schemaNamePrefix, fields);
@@ -41,6 +42,7 @@ public class TblsEnvMonitData {
             case "SAMPLE_REVISION_TESTING_GROUP": return TblsData.SampleRevisionTestingGroup.createTableScript(schemaNamePrefix, fields);
             case "USER_ANALYSIS_METHOD_CERTIF": return TblsData.CertifUserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_TESTING_GROUP_VIEW": return TblsData.ViewSampleTestingGroup.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW": return TblsData.ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }    
@@ -794,7 +796,8 @@ public class TblsEnvMonitData {
         FLD_AREA("area",LPDatabase.string()),
         FLD_SHIFT("shift",LPDatabase.string()),
         FLD_PROG_DAY_ID("program_day_id",LPDatabase.integer()),
-        FLD_PROG_DAY_DATE("program_day_date", dateTime())
+        FLD_PROG_DAY_DATE("program_day_date", dateTime()),
+        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),        
         
         
         
