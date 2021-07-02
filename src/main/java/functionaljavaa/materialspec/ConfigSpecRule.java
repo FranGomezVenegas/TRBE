@@ -187,6 +187,7 @@ public class ConfigSpecRule {
             case NOTEQUALTO: 
             case CONTAINS: 
             case NOTCONTAINS: 
+                this.qualitativeRuleValues=rule+specArgumentsSeparator+textSpec+specArgumentsSeparator;
                 return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, qualitRule.getSuccessCode(), errorDetailVariables);                                          
             case ISONEOF: 
                 if ((separator==null) || (separator.length()==0)){
@@ -201,6 +202,7 @@ public class ConfigSpecRule {
                         textSpecArray = textSpec.split("\\"+separator);
                     }
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, textSpecArray.length);          
+                    this.qualitativeRuleValues=rule+specArgumentsSeparator+textSpec+specArgumentsSeparator+separator;
                     return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, qualitRule.getSuccessCode(), errorDetailVariables);}                       
             case ISNOTONEOF: 
                 if ((separator==null) || (separator.length()==0)){
@@ -215,12 +217,15 @@ public class ConfigSpecRule {
                         textSpecArray = textSpec.split("\\"+separator);
                     }
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, textSpecArray.length);          
+                    this.qualitativeRuleValues=rule+specArgumentsSeparator+textSpec+specArgumentsSeparator+separator;
                     return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, qualitRule.getSuccessCode(), errorDetailVariables);}                          
             default: 
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, rule);          
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(qualitativeRules.getAllRules()));          
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED.getErrorCode(), errorDetailVariables);    
         }
+        
+        
     }
 /**
  * This method verify that the parameters provided to build one quantitative spec limit apply just one range are coherent accordingly to the different options:<br>

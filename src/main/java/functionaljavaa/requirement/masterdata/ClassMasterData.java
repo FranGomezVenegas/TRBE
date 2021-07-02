@@ -124,9 +124,11 @@ public class ClassMasterData {
                             }
                         }
                         String ruleType=jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName()).getAsString();
+                        Object[] resSpecEvaluation = new Object[0];                
+                        ConfigSpecRule mSpec = new ConfigSpecRule();
+                        String curFldName="";
                         if ("quantitative".equalsIgnoreCase(ruleType)){
-                            ConfigSpecRule mSpec = new ConfigSpecRule();
-                            String curFldName="MIN Acción";
+                            curFldName="MIN Acción";
                             Float minSpec = null;
                             if (jO.getAsJsonObject().has(curFldName))
                                 minSpec = jO.getAsJsonObject().get(curFldName).getAsFloat();
@@ -142,21 +144,34 @@ public class ClassMasterData {
                             Float maxSpec = null;
                             if (jO.getAsJsonObject().has(curFldName))
                                 maxSpec = jO.getAsJsonObject().get(curFldName).getAsFloat();
-                            Object[] resSpecEvaluation = new Object[0];                
                             if (minControl==null){
                                 resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
                             }else{
                                 resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
                             }        
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){
-                               curFldName=TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(); 
-                               fieldName=LPArray.addValueToArray1D(fieldName, curFldName);
-                               fieldValue=LPArray.addValueToArray1D(fieldValue, mSpec.getQuantitativeRuleValues());
-                               this.diagnostic=cSpec.specLimitNew(jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_CODE.getName()).getAsString(), 1, fieldName, fieldValue);
-                               if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
-                            }
+                           fieldValue=LPArray.addValueToArray1D(fieldValue, mSpec.getQuantitativeRuleValues());                            
                         }else if ("qualitative".equalsIgnoreCase(ruleType)){
-                            
+                            curFldName="rule";
+                            String rule = null;
+                            if (jO.getAsJsonObject().has(curFldName))
+                                rule = jO.getAsJsonObject().get(curFldName).getAsString();
+                            curFldName="value";
+                            String value = null;
+                            if (jO.getAsJsonObject().has(curFldName))
+                                value = jO.getAsJsonObject().get(curFldName).getAsString();
+                            curFldName="separator";
+                            String separator = null;
+                            if (jO.getAsJsonObject().has(curFldName))
+                                separator = jO.getAsJsonObject().get(curFldName).getAsString();
+                            resSpecEvaluation = mSpec.specLimitIsCorrectQualitative(rule,value, separator);
+                            fieldValue=LPArray.addValueToArray1D(fieldValue, mSpec.getQualitativeRuleValues());
+
+                        }
+                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){
+                           curFldName=TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(); 
+                           fieldName=LPArray.addValueToArray1D(fieldName, curFldName);
+                           this.diagnostic=cSpec.specLimitNew(jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_CODE.getName()).getAsString(), 1, fieldName, fieldValue);
+                           if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                         }
                     }                    
                     this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new spec limits", null);

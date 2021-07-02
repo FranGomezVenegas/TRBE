@@ -80,7 +80,7 @@ public class ConfigTablesAudit {
 
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
-        if (token.getAppSessionId() != null) {
+        if (token.getAppSessionId() != null && token.getAppSessionId().length()>0) {
             Object[] appSession = LPSession.addProcessSession(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
 
             //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
@@ -99,7 +99,7 @@ public class ConfigTablesAudit {
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }
         AuditAndUserValidation auditAndUsrValid = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
-        if (auditAndUsrValid.getAuditReasonPhrase() != null) {
+        if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase() != null && auditAndUsrValid.getAuditReasonPhrase().length()>0) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }
@@ -160,7 +160,7 @@ public class ConfigTablesAudit {
 
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
-        if (token.getAppSessionId() != null) {
+        if (token.getAppSessionId() != null && token.getAppSessionId().length()>0) {
             Object[] appSession = LPSession.addProcessSession(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
 
             //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
@@ -179,7 +179,7 @@ public class ConfigTablesAudit {
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }
         AuditAndUserValidation auditAndUsrValid = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
-        if (auditAndUsrValid.getAuditReasonPhrase() != null) {
+        if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase() != null && auditAndUsrValid.getAuditReasonPhrase().length()>0) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }
