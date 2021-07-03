@@ -41,9 +41,9 @@ public class ClassEnvMonSampleFrontendController {
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
             ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, endPoint);
             if (clss.getIsSuccess())
-                this.functionDiagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Frontend is not an action", null);
+                this.functionDiagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);
             else
-                this.functionDiagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Frontend is not an action", null);
+                this.functionDiagn=clss.getDiagnostic(); //LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "queriesHaveNoMsgCode", null);
             //this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject(); 
             

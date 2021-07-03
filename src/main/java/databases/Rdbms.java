@@ -821,6 +821,7 @@ if (1==1)return;
         }                    
     }
     public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy){
+        schemaName=addSuffixIfItIsForTesting(schemaName); 
         if (whereFieldNames.length==0){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
