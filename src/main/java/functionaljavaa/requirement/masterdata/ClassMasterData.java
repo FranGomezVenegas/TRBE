@@ -32,7 +32,7 @@ public class ClassMasterData {
     private Object[] diagnostic=new Object[0];
     
     
-    public enum MasterDataObjectTypes{MD_ANALYSIS_PARAMS, MD_SPECS, MD_SPEC_LIMITS, MD_INCUBATORS, MD_INCUB_BATCHES, MD_MICROORGANISMS, MD_STAGES, MD_PROGRAMS, MD_PROGRAM_LOCATIONS, MD_SAMPLES, MD_SAMPLE_RULES}
+    public enum MasterDataObjectTypes{MD_ANALYSIS_PARAMS, MD_SPECS, MD_SPEC_LIMITS, MD_SPEC_RULES, MD_INCUBATORS, MD_INCUB_BATCHES, MD_MICROORGANISMS, MD_STAGES, MD_PROGRAMS, MD_PROGRAM_LOCATIONS, MD_SAMPLES, MD_SAMPLE_RULES}
 
     public ClassMasterData(String instanceName, String objectType, String jsonObj){
         String userCreator="PROCEDURE_DEPLOYMENT";
