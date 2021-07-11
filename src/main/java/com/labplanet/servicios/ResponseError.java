@@ -35,6 +35,7 @@ public class ResponseError extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String errorDetail=(String) request.getAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName());
             response.getWriter().write(errorDetail);
+            request=null;
             response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
         } catch (IOException ex) {
             Logger.getLogger(ResponseError.class.getName()).log(Level.SEVERE, null, ex);

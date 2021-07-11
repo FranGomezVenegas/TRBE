@@ -194,7 +194,8 @@ public class EnvMonSampleAPI extends HttpServlet {
 //        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
         
         Object[] sampleAuditRevision=sampleAuditRevisionPassByAction(procInstanceName, actionName, sampleId, testId, resultId);     
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())){   
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())){  
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, sampleAuditRevision);
             //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, language);              
             return;                             
