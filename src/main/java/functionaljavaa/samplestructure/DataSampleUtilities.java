@@ -31,10 +31,9 @@ public class DataSampleUtilities {
      * @param language
      * @return
      */
-    public static Object[] getSchemaSampleStatusList(String language){      
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        if (procInstanceName==null)
-            procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
+    public static Object[] getSchemaSampleStatusList(String language){  
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
+        String procInstanceName=procReqInstance.getProcedureInstance();
         String stList = "";
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         if (language==null){language="en";}

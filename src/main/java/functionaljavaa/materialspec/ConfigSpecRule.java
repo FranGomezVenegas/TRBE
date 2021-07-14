@@ -442,7 +442,8 @@ public class ConfigSpecRule {
      * @return
      */
     public Object[] specLimitsRule(Integer limitId, String language){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
+        String procInstanceName=procReqInstance.getProcedureInstance();
         Object[] errorDetailVariables= new Object[0];      
       StringBuilder ruleBuilder = new StringBuilder(0);
       Object[][] specDef=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.SpecLimits.TBL.getName(), 

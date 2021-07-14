@@ -50,7 +50,8 @@ public class LPHttp {
         response.setHeader("CORS_ALLOW_CREDENTIALS", "True");                 //False
         response.setHeader("Access-Control-Allow-Methods", "GET");        
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Credentials", "True");  
+        response.setHeader("Access-Control-Allow-Credentials", "True"); 
+        response.setHeader("Set-Cookie", "key=value; HttpOnly; SameSite=strict");
         addSameSiteCookieAttribute(response); 
         return response;
     }    

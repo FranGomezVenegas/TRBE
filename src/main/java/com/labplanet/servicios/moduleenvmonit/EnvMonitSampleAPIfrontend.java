@@ -55,6 +55,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
             try{
                 endPoint = EnvMonSampleAPIFrontendEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
+                procReqInstance.killIt();
                 RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                 rd.forward(request, response);                                   
 //                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
@@ -71,6 +72,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, (Object[]) clss.getResponseError());              
         }catch(Exception e){      
             String exceptionMessage =e.getMessage();
+            procReqInstance.killIt();
             if (exceptionMessage==null){exceptionMessage="null exception";}
             response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);      

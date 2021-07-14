@@ -20,7 +20,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -295,12 +294,12 @@ GlobalAPIsParams.
         String language=procReqInstance.getLanguage();
         String procInstanceName = procReqInstance.getProcedureInstance();
 
-        try (PrintWriter out = response.getWriter()) {
-            
+        try (PrintWriter out = response.getWriter()) {            
             EnvMonAPIfrontendEndpoints endPoint = null;
             try{
                 endPoint = EnvMonAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
+                //procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
@@ -327,7 +326,7 @@ GlobalAPIsParams.
                     Object[] statusListEn = DataSampleUtilities.getSchemaSampleStatusList(GlobalVariables.Languages.EN.getName());
                     Object[] statusListEs = DataSampleUtilities.getSchemaSampleStatusList(GlobalVariables.Languages.ES.getName());
 
-                    Object[][] programInfo=getTableData(GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.Program.TBL.getName(), 
+                    Object[][] programInfo=getTableData(procReqInstance, GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.Program.TBL.getName(), 
                         argValues[0].toString(), TblsEnvMonitData.Program.getAllFieldNames(), 
                         new String[]{TblsEnvMonitData.Program.FLD_ACTIVE.getName()}, new Object[]{true}, programFldSortArray);        
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())) return;
@@ -345,7 +344,7 @@ GlobalAPIsParams.
                         programJsonObj.put(JSON_TAG_NAME_TOTAL, programSampleSummary.length); 
                         programJsonObj.put("KPI", getKPIInfoFromRequest(request, TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName(), curProgramName));   
                        
-                        Object[][] programLocations=getTableData(GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.ProgramLocation.TBL.getName(), 
+                        Object[][] programLocations=getTableData(procReqInstance, GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.ProgramLocation.TBL.getName(), 
                             argValues[2].toString(), TblsEnvMonitData.ProgramLocation.getAllFieldNames(), 
                             new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new Object[]{curProgramName}, programLocationFldSortArray);        
 /**/ 
@@ -506,10 +505,10 @@ GlobalAPIsParams.
                         Object specConfigVersion = templateProgramInfo.get(TblsEnvMonitData.Program.FLD_SPEC_CONFIG_VERSION.getName());                    
                         JSONObject specDefinition = new JSONObject();
                         if (!(specCode==null || specCode=="" || specConfigVersion==null || "".equals(specConfigVersion.toString()))){
-                          JSONObject specInfo=SpecFrontEndUtilities.configSpecInfo((String) specCode, (Integer) specConfigVersion, 
+                          JSONObject specInfo=SpecFrontEndUtilities.configSpecInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion, 
                                   null, null);
                           specDefinition.put(TblsCnfg.Spec.TBL.getName(), specInfo);
-                          JSONArray specLimitsInfo=SpecFrontEndUtilities.configSpecLimitsInfo((String) specCode, (Integer) specConfigVersion, 
+                          JSONArray specLimitsInfo=SpecFrontEndUtilities.configSpecLimitsInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion, 
                                   null, new String[]{TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), 
                                   TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(),
                                   TblsCnfg.SpecLimits.FLD_SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_GREEN_AREA_EN.getName(),
@@ -520,15 +519,14 @@ GlobalAPIsParams.
                     }          
                     JSONObject programsListObj = new JSONObject();
                     programsListObj.put(JSON_TAG_GROUP_NAME_CARD_PROGRAMS_LIST, programsJsonArr);
-                    response.getWriter().write(programsListObj.toString());
-                    Response.ok().build();
+                    LPFrontEnd.servletReturnSuccess(request, response, programsListObj);
                     return;  
                 case PROGRAMS_CORRECTIVE_ACTION_LIST:   
                     String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
                     String programName = argValues[0].toString();
                     String[] progCorrFldNameList = getFieldsListToRetrieve(argValues[1].toString(), TblsProcedure.ProgramCorrectiveAction.TBL.getAllFieldNames());
                     String[] progCorrFldSortArray=argValues[2].toString().split("\\|");
-                    Object[][] progCorrInfo=getTableData(GlobalVariables.Schemas.DATA.getName(),TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                    Object[][] progCorrInfo=getTableData(procReqInstance, GlobalVariables.Schemas.DATA.getName(),TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                         argValues[1].toString(), TblsProcedure.ProgramCorrectiveAction.getAllFieldNames(), 
                         new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                         new String[]{programName, statusClosed}, progCorrFldSortArray);        
@@ -544,7 +542,7 @@ GlobalAPIsParams.
                 case GET_ACTIVE_PRODUCTION_LOTS:
                     String[] prodLotFldToRetrieve = getFieldsListToRetrieve(argValues[0].toString(), TblsEnvMonitData.ProductionLot.TBL.getAllFieldNames());
                     String[] prodLotFldToSort = getFieldsListToRetrieve(argValues[1].toString(), new String[]{});                    
-                    programInfo=getTableData(GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.ProductionLot.TBL.getName(), 
+                    programInfo=getTableData(procReqInstance, GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.ProductionLot.TBL.getName(), 
                         argValues[0].toString(), TblsEnvMonitData.ProductionLot.getAllFieldNames(), 
                         new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()}, new Object[]{true}, prodLotFldToSort);        
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())) return;
@@ -560,7 +558,7 @@ GlobalAPIsParams.
                     rd.forward(request,response);   
             }
         }catch(Exception e){      
-            procReqInstance.killIt();
+            //procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);

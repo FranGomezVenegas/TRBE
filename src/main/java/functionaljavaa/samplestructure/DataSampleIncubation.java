@@ -170,12 +170,12 @@ public class DataSampleIncubation {
         
         if (sampleIncubationMode.contains(SampleIncubationObjects.SAMPLE.toString())){}
         else if (sampleIncubationMode.contains(SampleIncubationObjects.BATCH.toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker NOT IMPLEMENTED YET", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.NOT_IMPLEMENTED.getErrorCode(), null);
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker Object <*1*> NOT RECOGNIZED", new Object[]{sampleIncubationMode});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_OBJECT_NOTRECOGNIZED.getErrorCode(), new Object[]{sampleIncubationMode});
         
         if (!SampleIncubationMoment.contains(moment))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker Moment <*1*> NOT RECOGNIZED", new Object[]{moment});        
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), new Object[]{moment});        
         if (sampleIncubationMode.contains(SampleIncubationLevel.DATE.toString())){
             if (incubationStage == 2) {
                 if (moment.contains(SampleIncubationMoment.START.toString())){
@@ -195,11 +195,11 @@ public class DataSampleIncubation {
                 }                
             }
         }else if (sampleIncubationMode.contains(SampleIncubationLevel.INCUBATOR.toString())){
-            if (incubName==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker Incubator should be specified", null);
+            if (incubName==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED.getErrorCode(), null);
             Object[] incubInfo=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
                     new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{incubName});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubInfo[0].toString()))
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker Incubator <*1*> not found for schema <*2*>", new Object[]{incubName, procInstanceName});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED.getErrorCode(), new Object[]{incubName, procInstanceName});
             Integer tempReadingEvId=null;
             if (tempReading==null){
                 Object[][] incubLastTempReading=DataIncubatorNoteBook.getLastTemperatureReading(incubName, 1);
@@ -231,7 +231,7 @@ public class DataSampleIncubation {
                 }
             }
         }else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker Object <*1*> NOT RECOGNIZED", new Object[]{sampleIncubationMode});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_OBJECT_NOTRECOGNIZED.getErrorCode(), new Object[]{sampleIncubationMode});
                 
         return new Object[]{LPPlatform.LAB_TRUE, requiredFields, requiredFieldsValue};
     }
@@ -266,7 +266,7 @@ public class DataSampleIncubation {
                 long hours = ChronoUnit.HOURS.between(tempReadingDateDateTime, LPDate.getCurrentTimeStamp());
                 if (hours>Long.valueOf(currSampleIncubationTempReadingBusinessRulevalueArr[1])){
                     currDiagn=false;
-                    currDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The temperature reading is <*1*> and there are <*2*> hours what is greater than the set for procedure <*3*>", new Object[]{tempReadingDate.toString(), hours, procInstanceName} );                                    
+                    currDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUB_TEMP_READING_INTVL_EXPIRED.getErrorCode(), new Object[]{tempReadingDate.toString(), hours, procInstanceName} );                                    
                 }else{
                     currDiagn=true;
                 }
@@ -328,7 +328,10 @@ public class DataSampleIncubation {
         SAMPLEINCUBATION_ENDED_SUCCESS("SampleIncubationEndedSuccessfully", "", ""),
         TEMPERATUREREADYDAY_ISNOTTODAY("TemperatureReadingDayIsNotToday", "", ""),
         INCUBATION_STAGE_NOTRECOGNIZED("incubationStageNotRecognized", "", ""),
-        
+        INCUBATION_OBJECT_NOTRECOGNIZED("incubationObjectNotRecognized", "", ""),
+        NOT_IMPLEMENTED("incubationModuleCheckerLogicNotImplementedYet", "", ""),
+        INCUB_TEMP_READING_INTVL_EXPIRED("incubatorTempReadingIntervalExpired", "", ""),
+        INCUBATOR_NOT_ASSIGNED("incubatorNotAssignedToBatch", "", "")
         ;
         private DataSampleIncubationErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
