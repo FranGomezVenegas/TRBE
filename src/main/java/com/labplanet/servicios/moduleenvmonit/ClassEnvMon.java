@@ -86,10 +86,11 @@ public class ClassEnvMon {
                 case EM_BATCH_ASSIGN_INCUB: 
                     batchName = argValues[0].toString();
                     incubationName = argValues[1].toString();
+                    String incubStage=argValues[2].toString();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator", incubationName);                
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     this.messageDynamicData=new Object[]{incubationName, batchName};
-                    actionDiagnoses=DataBatchIncubator.batchAssignIncubator(batchName, incubationName);
+                    actionDiagnoses=DataBatchIncubator.batchAssignIncubator(batchName, incubationName, incubStage);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{incubationName, batchName, procInstanceName});
                     break;

@@ -220,10 +220,13 @@ public class ClassEnvMonSample {
                     break;
                 case EM_BATCH_INCUB_REMOVE_SMP:
                     batchName = argValues[0].toString();
-                    batchTemplateId = (Integer) argValues[1];
-                    batchTemplateVersion = (Integer) argValues[2];
                     sampleId = (Integer) argValues[3];
-                    actionDiagnoses=DataBatchIncubator.batchRemoveSample(batchName, batchTemplateId, batchTemplateVersion, sampleId);
+                    if (argValues[1]!=null && argValues[1].toString().length()>0){
+                        batchTemplateId = (Integer) argValues[1];                    
+                        batchTemplateVersion = (Integer) argValues[2];                                           
+                        actionDiagnoses=DataBatchIncubator.batchRemoveSample(batchName, batchTemplateId, batchTemplateVersion, sampleId);
+                    }else
+                        actionDiagnoses=DataBatchIncubator.batchRemoveSample(batchName, sampleId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, procInstanceName});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};

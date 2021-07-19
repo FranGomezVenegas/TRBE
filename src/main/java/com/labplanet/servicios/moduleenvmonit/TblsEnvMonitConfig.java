@@ -827,16 +827,14 @@ public class TblsEnvMonitConfig {
         FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY,  LPDatabase.string(200))
         ,
 
-        /**
-         *
-         */
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, "date NOT NULL")
-        ,
-
-        /**
-         *
-         */
-        FLD_ACTIVE("active", LPDatabase.booleanNotNull(Boolean.TRUE))
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, "date NOT NULL"),
+        FLD_ACTIVE("active", LPDatabase.booleanNotNull(Boolean.TRUE)),
+        
+        FLD_STAGE("stage", LPDatabase.stringNotNull()),        
+        FLD_MIN_STRICT("min", LPDatabase.real()),
+        FLD_IS_MIN_STRICT("is_min_strict", LPDatabase.booleanNotNull(Boolean.TRUE)),
+        FLD_MAX_STRICT("max", LPDatabase.real()),
+        FLD_IS_MAX_STRICT("is_max_strict", LPDatabase.booleanNotNull(Boolean.TRUE)),
         ;        
         private InstrIncubator(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -964,7 +962,7 @@ public class TblsEnvMonitConfig {
         FLD_STRUCT_TOTAL_POSITIONS("struct_total_positions", LPDatabase.integer()),
         FLD_STRUCT_ROWS_NAME("struct_rows_name", "character varying[] COLLATE pg_catalog.\"default\""),
         FLD_STRUCT_COLS_NAME("struct_cols_name", "character varying[] COLLATE pg_catalog.\"default\""),        
-
+        FLD_STAGE("stage", LPDatabase.stringNotNull()),   
         //, FLD_SENT_FOR_APPROVAL("sent_for_approval", LPDatabase.Boolean())
         // ...
         

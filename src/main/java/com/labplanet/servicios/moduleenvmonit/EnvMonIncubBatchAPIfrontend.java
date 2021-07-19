@@ -7,6 +7,8 @@ package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
+import databases.TblsData;
+import databases.Token;
 import functionaljavaa.inventory.batch.DataBatchIncubator.*;
 import functionaljavaa.inventory.batch.DataBatchIncubatorStructured;
 import java.io.IOException;
@@ -38,7 +40,12 @@ import trazit.globalvariables.GlobalVariables;
 public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
     
     public enum EnvMonIncubBatchAPIfrontendEndpoints{
-        ACTIVE_BATCH_LIST("ACTIVE_BATCH_LIST", "", new LPAPIArguments[]{}),
+        ACTIVE_BATCH_LIST("ACTIVE_BATCH_LIST", "", 
+            new LPAPIArguments[]{
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8) 
+            })        
         ;
         private EnvMonIncubBatchAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
@@ -108,18 +115,49 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                                         
             switch (endPoint){
             case ACTIVE_BATCH_LIST: 
-                String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_TYPE.getName()
-                    , TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_VERSION.getName()
-                    , TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()
-                    , TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_END.getName()
-                    , TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_ROWS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_COLS.getName()
-                    , TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_POSITIONS.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_OBJECTS.getName()
-                    , TblsEnvMonitData.IncubBatch.FLD_STRUCT_ROWS_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_STRUCT_COLS_NAME.getName() 
-                    , TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};
+                String[] fieldsToRetrieve=new String[]{};
+                String fieldsRetrieveStr = argValues[0].toString(); 
+                if (fieldsRetrieveStr.length()==0 || "ALL".equalsIgnoreCase(fieldsRetrieveStr))
+                    fieldsToRetrieve=TblsEnvMonitData.IncubBatch.getAllFieldNames();
+                else
+                    fieldsToRetrieve=fieldsRetrieveStr.split("\\|");
+                String[] whereFieldsNameArr = null;
+                Object[] whereFieldsValueArr = null;
+                String whereFieldsName = argValues[1].toString(); 
+                if (whereFieldsName==null){whereFieldsName="";}
+                String whereFieldsValue = argValues[2].toString();
+                if (whereFieldsValue==null){whereFieldsValue="";}
+                
+                if (whereFieldsName.length()>0)
+                    whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
+                else
+                    whereFieldsNameArr=new String[]{TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName()};
+                if (whereFieldsValue.length()>0)
+                    whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
+                else
+                    whereFieldsValueArr=new Object[]{true};
+                for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
+                    if (LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.Sample.TBL.getName(), whereFieldsNameArr[iFields])){                
+                        HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
+                        whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
+                        if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
+                            String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
+                            whereFieldsValueArr[iFields]=newWhereFieldValues;
+                        }
+                    }
+                    String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(), procReqInstance.getTokenString());
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
+                        whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
+                } 
+                if (!LPArray.valueInArray(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName())){
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName());
+                    whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, true);
+                }
                 Object[][] activeBatchesList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.IncubBatch.TBL.getName(), 
-                        new String[]{TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName()}, new Object[]{true}, 
+                        whereFieldsNameArr, whereFieldsValueArr, 
                         fieldsToRetrieve, new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()});
                 JSONArray jArr = new JSONArray();
                 for (Object[] currBatch: activeBatchesList){

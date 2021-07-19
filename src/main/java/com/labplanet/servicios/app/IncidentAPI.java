@@ -5,13 +5,17 @@
  */
 package com.labplanet.servicios.app;
 
+import com.google.gson.JsonObject;
 import databases.TblsApp;
 import functionaljavaa.incident.AppIncident;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Scanner;
+import org.json.simple.JSONArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServlet;
@@ -21,6 +25,8 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
@@ -147,6 +153,7 @@ public class IncidentAPI extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
+if (1==1)return;        
         
 /*        String language = LPFrontEnd.setLanguage(request); 
         String[] errObject = new String[]{"Servlet IncidentAPI at " + request.getServletPath()};   
@@ -205,6 +212,26 @@ public class IncidentAPI extends HttpServlet {
                 return;
             }                
 */            
+            JSONArray paramJArr=new JSONArray();
+            Enumeration params = request.getParameterNames();
+            String theBody="";
+            while(params.hasMoreElements()){
+                String paramName = (String)params.nextElement();
+                System.out.println(paramName + " = " + request.getParameter(paramName));
+                JSONObject jObj=new JSONObject();
+                jObj.put(paramName, request.getParameter(paramName));
+                paramJArr.add(jObj);
+                if (paramName.length()>0 && request.getParameter(paramName).length()==0)
+                    theBody=paramName;
+            }
+            Object[] objToJsonObj = convertToJsonObjectStringedObject(theBody);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response, ".Object: <*1*>", new Object[]{theBody}, language);                         
+               return;
+            }        
+            JsonObject jsonObject=(JsonObject) objToJsonObj[1];
+            String jsonObjType = jsonObject.get("object_type").getAsString();
+            
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
             Integer incId=null;
             switch (endPoint){
@@ -285,11 +312,63 @@ public class IncidentAPI extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+
+/*        JSONArray hdrJArr=new JSONArray();
+        Enumeration headerNames = request.getHeaderNames();
+        while(headerNames.hasMoreElements()) {
+            String headerName = (String)headerNames.nextElement();
+            System.out.println(headerName + " = " + request.getHeader(headerName));
+            JSONObject jObj=new JSONObject();
+            jObj.put(headerName, request.getHeader(headerName));
+            hdrJArr.add(jObj);
+        }
+        
+
+        System.out.println("\n\nParameters");
+
+        JSONArray paramJArr=new JSONArray();
+        Enumeration params = request.getParameterNames();
+        String theBody="";
+        while(params.hasMoreElements()){
+            String paramName = (String)params.nextElement();
+            System.out.println(paramName + " = " + request.getParameter(paramName));
+            JSONObject jObj=new JSONObject();
+            jObj.put(paramName, request.getParameter(paramName));
+            paramJArr.add(jObj);
+            if (paramName.length()>0 && request.getParameter(paramName).length()==0)
+                theBody=paramName;
+        }
+        JsonObject jsonObject=(JsonObject) objToJsonObj[1];
+        String jsonObjType = jsonObject.get("object_type").getAsString();
+        if (!objectType.toUpperCase().contains(jsonObjType.toUpperCase())){
+            this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch"};
+            return;
+        }
+*/
+        //HttpResponse.BodyHandler<String> ofString = HttpResponse.BodyHandlers.ofString();
+        //String ofStringStr=ofString.toString();
+        /*            String requestArgValue=request.getParameter("reduxState");
+        String firstNamev=request.getParameter("firstName");
+        String dataV=request.getParameter("data");
+        String dbNameV=request.getParameter("dbName");
+        Enumeration<String> attributeNames = request.getAttributeNames();
+        Enumeration<String> headerNames = request.getHeaderNames();
+        Enumeration<String> parameterNames = request.getParameterNames();
+        requestArgValue=LPNulls.replaceNull(request.getAttribute("reduxState")).toString();
+        firstNamev=LPNulls.replaceNull(request.getAttribute("firstName")).toString();
+        dataV=LPNulls.replaceNull(request.getAttribute("data")).toString();
+        //dbNameV=LPNulls.replaceNull(request.getAttribute("reduxState")).toString();
+        
+        Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\A");
+        String  s.hasNext() ? s.next() : ""; */
+        
         try {
             processRequest(request, response);
         } catch (IOException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
+        return;
+        
     }
 
     /**

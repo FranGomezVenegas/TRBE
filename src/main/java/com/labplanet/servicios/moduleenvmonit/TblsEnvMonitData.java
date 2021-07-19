@@ -1412,6 +1412,7 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         FLD_STRUCT_CONTENT("struct_content", LPDatabase.string()),
         FLD_STRUCT_ROWS_NAME("struct_rows_name", LPDatabase.string()),
         FLD_STRUCT_COLS_NAME("struct_cols_name", LPDatabase.string()),        
+        FLD_INCUB_STAGE("incub_stage", LPDatabase.string()),   
         // ...
         ;
         

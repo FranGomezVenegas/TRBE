@@ -39,7 +39,7 @@ public class EnvMonIncubationAPIfrontend extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),}),
         INCUBATORS_LIST("INCUBATORS_LIST", "", 
-                new LPAPIArguments[]{}),
+                new LPAPIArguments[]{new LPAPIArguments("incubStage", LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
         ;
         private EnvMonIncubationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
@@ -114,7 +114,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
         switch (endPoint){
             case INCUBATORS_LIST: 
-                String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()};
+                String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_STAGE.getName()};
                 String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};     
