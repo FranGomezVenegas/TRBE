@@ -1285,7 +1285,9 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         /**
          *
          */
-        FLD_TEMPERATURE("temperature", LPDatabase.real())
+        FLD_TEMPERATURE("temperature", LPDatabase.real()),
+        FLD_SPEC_EVAL("spec_eval",  LPDatabase.string()),
+        FLD_SPEC_EVAL_DETAIL("spec_eval_detail",  LPDatabase.string())
         ;        
         private InstrIncubatorNoteBook(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

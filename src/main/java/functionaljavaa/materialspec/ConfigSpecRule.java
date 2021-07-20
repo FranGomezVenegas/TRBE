@@ -353,7 +353,6 @@ public class ConfigSpecRule {
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(maxControl1).toString()); 
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_MAXCONTROL_NOTLOGIC.getErrorCode(), errorDetailVariables);              
     }    
-
 /**
  * This method verify that the parameters provided to build one quantitative spec limit apply one double level range are coherent accordingly to the different options:<br>
  * Basically when both peers, min-max, are not null then cannot be the same value even min cannot be greater than max. At the same time
@@ -370,6 +369,10 @@ public class ConfigSpecRule {
  * @return Object[] position 0 is a boolean to determine if the arguments are correct, when set to false then position 1 provides detail about the deficiency 
  */    
     public Object[] specLimitIsCorrectQuantitative(BigDecimal minSpec, BigDecimal maxSpec, BigDecimal minControl1, BigDecimal maxControl1){
+        return specLimitIsCorrectQuantitative(minSpec, false, maxSpec,false, minControl1, false, maxControl1, false);
+    }
+    
+    public Object[] specLimitIsCorrectQuantitative(BigDecimal minSpec, Boolean minSpecIsStrict, BigDecimal maxSpec, Boolean maxSpecIsStrict, BigDecimal minControl1, Boolean minControl1IsStrict, BigDecimal maxControl1, Boolean maxControl1IsStrict){
         Object[]  errorDetailVariables= new Object[0];        
         Object[] isCorrectMinMaxSpec = this.specLimitIsCorrectQuantitative(minSpec, maxSpec);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isCorrectMinMaxSpec[0].toString())){

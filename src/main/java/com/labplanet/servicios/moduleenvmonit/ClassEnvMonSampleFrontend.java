@@ -644,7 +644,7 @@ public class ClassEnvMonSampleFrontend {
                     else numPointsInt=20;
                     Object[][] instrReadings =new Object[0][0]; 
                     if (startDateStr==null && endDateStr==null) 
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(lotName, numPointsInt);                    
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(lotName, numPointsInt);
                     if (startDateStr!=null && endDateStr==null){ 
                         
                         startDateStr=startDateStr.replace ( " " , "T" );

@@ -831,9 +831,9 @@ public class TblsEnvMonitConfig {
         FLD_ACTIVE("active", LPDatabase.booleanNotNull(Boolean.TRUE)),
         
         FLD_STAGE("stage", LPDatabase.stringNotNull()),        
-        FLD_MIN_STRICT("min", LPDatabase.real()),
+        FLD_MIN("min", LPDatabase.real()),
         FLD_IS_MIN_STRICT("is_min_strict", LPDatabase.booleanNotNull(Boolean.TRUE)),
-        FLD_MAX_STRICT("max", LPDatabase.real()),
+        FLD_MAX("max", LPDatabase.real()),
         FLD_IS_MAX_STRICT("is_max_strict", LPDatabase.booleanNotNull(Boolean.TRUE)),
         ;        
         private InstrIncubator(String dbObjName, String dbObjType){

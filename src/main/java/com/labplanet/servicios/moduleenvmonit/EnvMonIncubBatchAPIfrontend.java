@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
+import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.inventory.batch.DataBatchIncubator.*;
 import functionaljavaa.inventory.batch.DataBatchIncubatorStructured;
 import java.io.IOException;
@@ -162,7 +163,35 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 JSONArray jArr = new JSONArray();
                 for (Object[] currBatch: activeBatchesList){
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
-
+                    Integer incubPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName());
+                    JSONArray instrLast10ReadingsjArr = new JSONArray();
+                    if (incubPosic>-1){
+                        String[] tempReadingFldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};
+                        if (procReqInstance.getProcedureInstance()==null)
+                            ProcedureRequestSession.getInstanceForQueries(request, response, false);
+                        Object[][] instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(currBatch[incubPosic].toString(), 10, tempReadingFldsToRetrieve);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
+                            ProcedureRequestSession.getInstanceForQueries(request, response, false);
+                            instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(currBatch[incubPosic].toString(), 10, tempReadingFldsToRetrieve);
+                        }
+                        for (String curTempReadingFld: tempReadingFldsToRetrieve){
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
+                                jObj.put("incubator_info_"+curTempReadingFld, "no_data");                            
+                            }else{
+                                jObj.put("incubator_info_"+curTempReadingFld, LPNulls.replaceNull(instrReadings[0][LPArray.valuePosicInArray(tempReadingFldsToRetrieve, curTempReadingFld)]).toString());
+                            }   
+                        }                            
+                        instrLast10ReadingsjArr = new JSONArray();
+                        for (Object[] curLastReading: instrReadings){
+                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
+                                JSONObject curLastReadingjObj=LPJson.convertArrayRowToJSONObject(tempReadingFldsToRetrieve, curLastReading);
+                                instrLast10ReadingsjArr.add(curLastReadingjObj);
+                            }
+                        }
+                    }                    
+                    jObj.put("incubator_last_temp_readings", instrLast10ReadingsjArr);
                     Object[] incubBatchContentInfo=incubBatchContentJson(fieldsToRetrieve, currBatch);
                     jObj.put("SAMPLES_ARRAY", incubBatchContentInfo[0]);
                     jObj.put("NUM_SAMPLES", incubBatchContentInfo[1]);                 
