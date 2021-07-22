@@ -49,7 +49,7 @@ public class PoolC3P0 {
         else
             dbUrlAndName=dbUrlAndName+"/"+dbName;
                     
-        cpds.setJdbcUrl(dbUrlAndName);
+        cpds.setJdbcUrl(dbUrlAndName);        
         //cpds.setJdbcUrl("jdbc:postgresql://51.75.202.142:5555/labplanet"); // prop.getString(BUNDLE_PARAMETER_DBURL);
         //cpds.setJdbcUrl(Rdbms.DbConnectionParams.DBURL.getParamValue()); // prop.getString(BUNDLE_PARAMETER_DBURL);
         //cpds.setJdbcUrl("jdbc:postgresql://51.75.202.142:5555/trazit"); // prop.getString(BUNDLE_PARAMETER_DBURL);
@@ -60,19 +60,30 @@ public class PoolC3P0 {
 
         // Configuramos el pool
         // Numero de conexiones con las que iniciara el pool
-        cpds.setInitialPoolSize(110);//0
+//disabled on:20210720        cpds.setInitialPoolSize(110);//0
+        cpds.setInitialPoolSize(0);//0
         // Minimo de conexiones que tendra el pool
-        cpds.setMinPoolSize(100);//0
+//disabled on:20210720        cpds.setMinPoolSize(100);//0
+        cpds.setMinPoolSize(0);//0
+//setMaxIdleTime added 20210720
+        cpds.setMaxIdleTime(180);
         // Numero de conexiones a crear cada incremento
+//disabled on:20210720        cpds.setAcquireIncrement(5);//1
         cpds.setAcquireIncrement(5);//1
         // Maximo numero de conexiones
-        cpds.setMaxPoolSize(1000);//50
+//disabled on:20210720        cpds.setMaxPoolSize(1000);//50
+        cpds.setMaxPoolSize(20);//50
         // Maximo de consultas
         cpds.setMaxStatements(580);//180
+//disabled on:20210720                cpds.setMaxStatements(180);//180
         // Maximo numero de reintentos para conectar a base de datos
         cpds.setAcquireRetryAttempts(5);//2
         // Que se genere una excepcion si no se puede conectar
-        cpds.setBreakAfterAcquireFailure(true);
+        cpds.setBreakAfterAcquireFailure(true); 
+//Added the ones below 20210720        
+//        cpds.setMaxStatementsPerConnection(250);
+//        cpds.setTestConnectionOnCheckout(true);
+        cpds.setPreferredTestQuery("select 1");        
      } catch (PropertyVetoException ex) {
          Logger.getLogger(PoolC3P0.class.getName()).log(Level.SEVERE, null, ex);
      }

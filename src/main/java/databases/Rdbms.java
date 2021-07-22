@@ -435,7 +435,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      *
      */
     public static void closeRdbms(){    
-if (1==1)return;        
+//if (1==1)return;        
         if(getConnection()!=null){
             try {
                 if (DB_CONNECTIVITY_POOLING_MODE){

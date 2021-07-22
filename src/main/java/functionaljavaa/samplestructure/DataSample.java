@@ -110,7 +110,7 @@ public class DataSample {
         SAMPLE_FIELDNOTFOUND("SampleFieldNotFound", "", ""),
         READY_FOR_REVISION("readyForRevision", "", ""),
         NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
-
+        SAMPLE_ALREADY_REVIEWED("sampleAlreadyReviewed", "", "")
         ;
         private DataSampleErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -125,7 +125,7 @@ public class DataSample {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
-    public enum SampleStatuses{LOGGED, RECEIVED, NOT_STARTED, STARTED, INCOMPLETE}
+    public enum SampleStatuses{LOGGED, RECEIVED, NOT_STARTED, STARTED, INCOMPLETE, REVIEWED, CANCELED}
     
     String classVersion = "0.1";
     String errorCode ="";

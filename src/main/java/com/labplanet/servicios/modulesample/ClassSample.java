@@ -75,6 +75,7 @@ public class ClassSample {
     
     public ClassSample(HttpServletRequest request, SampleAPIEndpoints endPoint){
         
+        String[] exceptionsToSampleReviewArr=new String[]{"UNCANCELSAMPLE", "UNREVIEWSAMPLE"};
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         String schemaDataName="";
@@ -87,7 +88,27 @@ public class ClassSample {
         Integer incubationStage=null;
         Integer sampleId = null;
         Object[] diagn = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
+        for (LPAPIArguments currArg: endPoint.getArguments()){
+            if (GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.equalsIgnoreCase(currArg.getName())){
+                sampleId = Integer.valueOf(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.toString()));
+            }
+        }
+        if (sampleId!=null || LPArray.valueInArray(exceptionsToSampleReviewArr, endPoint.getName())){
+            Object[][] sampleStatus=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, new String[]{TblsData.Sample.FLD_STATUS.getName()});
+            diagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSample.DataSampleErrorTrapping.SAMPLE_ALREADY_REVIEWED.getErrorCode(), null);
+            if ( (sampleStatus[0][0].toString().equalsIgnoreCase(DataSample.SampleStatuses.CANCELED.toString())) ||
+                 (sampleStatus[0][0].toString().equalsIgnoreCase(DataSample.SampleStatuses.REVIEWED.toString())) ){               
+                this.diagnostic=diagn;
+//                Object[] dynamicDataObjects = new Object[]{sampleId};
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), diagn[diagn.length-1]);
+                this.messageDynamicData=new Object[]{sampleId};
+                this.relatedObj=rObj;
+                rObj.killInstance();
+                return;
+            }
+        }
         this.functionFound=true;
         switch (endPoint){
             case LOGSAMPLE:

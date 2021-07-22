@@ -304,6 +304,7 @@ public class SampleAudit {
                 return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.ACTION_HAS_NO_SAMPLE_TEST_RESULT_LINKED.getErrorCode(), new Object[]{actionName});
         String[] auditRevisionModesRequired=new String[]{"ENABLE", "DISABLE"};
         String auditRevisionMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.REVISION_MODE.getAreaName(), SampleAuditBusinessRules.REVISION_MODE.getTagName());  
+        String auditChildRevisionMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getAreaName(), SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getTagName());  
         if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(), 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
@@ -333,8 +334,9 @@ public class SampleAudit {
             whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_RESULT_ID.getName());
             whereFieldValue=LPArray.addValueToArray1D(whereFieldValue, resultId);
         }
-//        if ("FALSE".equalsIgnoreCase(auditRevisionChildRequired))
-//            whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
+        
+        if ("FALSE".equalsIgnoreCase(auditChildRevisionMode))
+            whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
         Object[][] sampleAuditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.Sample.TBL.getName(), 
                 whereFieldName, whereFieldValue, 
                 new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()});
