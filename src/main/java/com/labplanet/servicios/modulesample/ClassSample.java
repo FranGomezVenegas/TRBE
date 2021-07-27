@@ -295,17 +295,18 @@ public class ClassSample {
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
+            case UNREVIEWTEST:
             case UNCANCELTEST:
                 testId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultUnCancel(null, testId, null);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
-                this.messageDynamicData=new Object[]{sampleId};
+                this.messageDynamicData=new Object[]{testId};
                 break;
             case UNCANCELRESULT:
                 resultId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultUnCancel(null, null, resultId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
-                this.messageDynamicData=new Object[]{sampleId};
+                this.messageDynamicData=new Object[]{resultId};
                 break;
             case TESTASSIGNMENT:
                 testId = (Integer) argValues[0];

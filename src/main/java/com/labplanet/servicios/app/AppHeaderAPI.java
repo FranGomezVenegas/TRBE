@@ -26,7 +26,6 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
-
 /**
  *
  * @author Administrator
@@ -38,9 +37,6 @@ public class AppHeaderAPI extends HttpServlet {
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     public static final String MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE="first_name|last_name|photo";
     public enum AppHeaderAPIfrontendEndpoints{
-        /**
-         *
-         */
         GETAPPHEADER("GETAPPHEADER", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),}),
         ;
         private AppHeaderAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
@@ -89,49 +85,7 @@ public class AppHeaderAPI extends HttpServlet {
         String language = LPFrontEnd.setLanguage(request); 
    
         try (PrintWriter out = response.getWriter()) {            
-
-            Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                return;          
-            }                  
-            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
-
-            JSONObject personInfoJsonObj = new JSONObject();
-            AppHeaderAPIfrontendEndpoints endPoint = null;
-            try{
-                endPoint = AppHeaderAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
-            }catch(Exception e){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
-                return;                   
-            }
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
-            if (actionName.toUpperCase().equalsIgnoreCase(AppHeaderAPIfrontendEndpoints.GETAPPHEADER.getName())){
-                String personFieldsName = LPNulls.replaceNull(argValues[0]).toString();
-                String[] personFieldsNameArr = new String[0];
-                if ( personFieldsName==null || personFieldsName.length()==0){
-                    personFieldsNameArr = MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE.split("\\|");                            
-                }else{
-                    personFieldsNameArr = personFieldsName.split("\\|");
-                }    
-                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-                Token token = new Token(finalToken);
-                Object[][] personInfoArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
-                     new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName()}, new String[]{token.getPersonName()}, personFieldsNameArr);             
-                if (LPPlatform.LAB_FALSE.equals(personInfoArr[0][0].toString())){                                                                                                                                                   
-                    Object[] errMsg = LPFrontEnd.responseError(LPArray.array2dTo1d(personInfoArr), language, null);
-                    response.sendError((int) errMsg[0], (String) errMsg[1]);   
-                    // Rdbms.closeRdbms();    
-                    return;
-                }
-                for (int iFields=0; iFields<personFieldsNameArr.length; iFields++ ){
-                    personInfoJsonObj.put(personFieldsNameArr[iFields], personInfoArr[0][iFields]);
-                }                                 
-                token=null;
-                LPFrontEnd.servletReturnSuccess(request, response, personInfoJsonObj);
-            }            
+            LPFrontEnd.servletReturnSuccess(request, response, AppHeaderAPI(request, response));
         }catch(Exception e){            
             String exceptionMessage = e.getMessage();           
             Object[] errMsg = LPFrontEnd.responseError(new String[]{exceptionMessage}, language, null);
@@ -147,6 +101,42 @@ public class AppHeaderAPI extends HttpServlet {
         }                                       
     }
 
+    public static JSONObject AppHeaderAPI(HttpServletRequest request, HttpServletResponse response){
+        String language = LPFrontEnd.setLanguage(request); 
+        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
+        if (finalToken==null || finalToken.length()==0)
+            finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
+
+        JSONObject personInfoJsonObj = new JSONObject();
+        AppHeaderAPIfrontendEndpoints endPoint = null;
+        try{
+            endPoint = AppHeaderAPIfrontendEndpoints.GETAPPHEADER;
+        }catch(Exception e){
+            return personInfoJsonObj;                   
+        }
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
+        String personFieldsName = LPNulls.replaceNull(argValues[0]).toString();
+        String[] personFieldsNameArr = new String[0];
+        if ( personFieldsName==null || personFieldsName.length()==0){
+            personFieldsNameArr = MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE.split("\\|");                            
+        }else{
+            personFieldsNameArr = personFieldsName.split("\\|");
+        }    
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return personInfoJsonObj;}   
+        Token token = new Token(finalToken);
+        Object[][] personInfoArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
+             new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName()}, new String[]{token.getPersonName()}, personFieldsNameArr);             
+        if (LPPlatform.LAB_FALSE.equals(personInfoArr[0][0].toString())){                                                                                                                                                   
+            Object[] errMsg = LPFrontEnd.responseError(LPArray.array2dTo1d(personInfoArr), language, null);
+            return personInfoJsonObj;
+        }
+        for (int iFields=0; iFields<personFieldsNameArr.length; iFields++ ){
+            personInfoJsonObj.put(personFieldsNameArr[iFields], personInfoArr[0][iFields]);
+        }                                 
+        token=null;            
+        return personInfoJsonObj;
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

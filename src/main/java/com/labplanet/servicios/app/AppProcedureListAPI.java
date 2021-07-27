@@ -18,7 +18,6 @@ import databases.Token;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.user.UserProfile;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,8 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import functionaljavaa.sop.UserSop;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import lbplanet.utilities.LPNulls;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -145,27 +143,32 @@ public class AppProcedureListAPI extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {   
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
-        String language = LPFrontEnd.setLanguage(request); 
+//            Rdbms.closeRdbms(); 
+            LPFrontEnd.servletReturnSuccess(request, response, procedureListInfo(request, response));
+    }
+    public static JSONObject procedureListInfo(HttpServletRequest request, HttpServletResponse response){
+        try{
+            String language = LPFrontEnd.setLanguage(request); 
             
-        try (PrintWriter out = response.getWriter()) {
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                  LPFrontEnd.servletReturnResponseError(request, response, 
                          LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                 return;          
+                 return new JSONObject();          
              }               
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);    
-                           
+            if (finalToken==null || finalToken.length()==0)
+                finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
             Token token = new Token(finalToken);
                         
-           if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}               
+           if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}               
          
             String rolName = token.getUserRole();
             UserProfile usProf = new UserProfile();
             Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(token.getUserName());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0].toString())){
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, allUserProcedurePrefix);
-                return;
+                return new JSONObject();
             }
             String[] procFldNameArray = PROC_FLD_NAME.split("\\|");
             
@@ -174,7 +177,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 JSONObject procedure = new JSONObject();
                 String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
 
-                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}           
+                if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}           
 
                 Object[][] procInfo = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.ProcedureInfo.TBL.getName(), 
                         new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_FLD_NAME.split("\\|"));
@@ -184,7 +187,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     procedure.put(UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName(), propValue);
                     procedure.put(LABEL_PROC_SCHEMA, curProc);
 
-                    if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
+                    if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}      
                     
                     procedure.put(LABEL_ARRAY_PROC_EVENTS, procedureDefinition(token, curProc));
                     procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_UP, procedureIconsUp(token, curProc));
@@ -195,15 +198,12 @@ public class AppProcedureListAPI extends HttpServlet {
             procFldNameArray = LPArray.addValueToArray1D(procFldNameArray, LABEL_PROC_SCHEMA);
             JSONObject proceduresList = new JSONObject();
             proceduresList.put(LABEL_ARRAY_PROCEDURES, procedures);
-//            Rdbms.closeRdbms(); 
-            LPFrontEnd.servletReturnSuccess(request, response, proceduresList);
-        } finally {
-            // release database resources
-            try {
-                // Rdbms.closeRdbms();   
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            }
-        }                                       
+            return proceduresList;
+        }catch(Exception e){
+            JSONObject proceduresList = new JSONObject();
+            proceduresList.put(LABEL_ARRAY_PROCEDURES, e.getMessage());
+            return proceduresList;            
+        }
     }
     /**
      *
@@ -215,7 +215,8 @@ public class AppProcedureListAPI extends HttpServlet {
      * @param procEvent1 not sure
      * @return the SOPs linked to the procedure Event (to confirm)
      */
-    public JSONObject procEventSops(String internalUserID, String curProc, JSONObject procedure, JSONObject procEventJson, String[] procEventFldNameArray, Object[] procEvent1){
+    public static JSONObject procEventSops(String internalUserID, String curProc, JSONObject procedure, JSONObject procEventJson, String[] procEventFldNameArray, Object[] procEvent1){
+    try{
         Object[][] notCompletedUserSOP = null;
         Object[] notCompletedUserSOP1D = null;
                     
@@ -225,6 +226,7 @@ public class AppProcedureListAPI extends HttpServlet {
         if (!isProcedureSopEnable) procedure.put(LABEL_SOP_CERTIFICATION, LBL_VAL_SOP_CERTIF_DISABLE);                 
         if (isProcedureSopEnable){
             notCompletedUserSOP = userSop.getNotCompletedUserSOP(internalUserID, curProc, new String[]{LABEL_SOP_NAME});
+            if (notCompletedUserSOP==null) return new JSONObject();
             notCompletedUserSOP1D = LPArray.array2dTo1d(notCompletedUserSOP);
         }        
         JSONObject procEventSopDetail = new JSONObject();
@@ -271,9 +273,16 @@ public class AppProcedureListAPI extends HttpServlet {
             procEventSopDetail.put(LABEL_ARRAY_SOP_LIST, procEventSopSummary);
         }        
         return procEventSopDetail;
+    }catch(Exception e){
+        JSONObject proceduresList = new JSONObject();
+        proceduresList.put(LABEL_ARRAY_PROCEDURES, e.getMessage());
+        return proceduresList;            
     }
+}
+
     
-    private JSONArray procedureIconsDown(Token token, Object curProc){
+    private static JSONArray procedureIconsDown(Token token, Object curProc){
+    try{
         String rolName = token.getUserRole();
         String[] procEventFldNameIconsDownArray = PROC_EVENT_ICONS_DOWN_FLD_NAME.split("\\|");
         String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
@@ -294,8 +303,14 @@ public class AppProcedureListAPI extends HttpServlet {
             }
         }  
         return procEventsIconsDown;
+    }catch(Exception e){
+        JSONArray proceduresList = new JSONArray();
+        proceduresList.add("Error:"+e.getMessage());
+        return proceduresList;            
     }
-    private JSONArray procedureIconsUp(Token token, Object curProc){
+    }
+    private static JSONArray procedureIconsUp(Token token, Object curProc){
+    try{
         String rolName = token.getUserRole();
         String[] procEventFldNameIconsUpArray = PROC_EVENT_ICONS_UP_FLD_NAME.split("\\|");
         String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
@@ -316,9 +331,14 @@ public class AppProcedureListAPI extends HttpServlet {
             }
         }
         return procEventsIconsUp;
+    }catch(Exception e){
+        JSONArray proceduresList = new JSONArray();
+        proceduresList.add("Error:"+e.getMessage());
+        return proceduresList;            
+    }
     }
     
-    private JSONArray procedureDefinition(Token token, Object curProc){
+    private static JSONArray procedureDefinition(Token token, Object curProc){
         JSONArray procEvents = new JSONArray(); 
         JSONObject procedure=new JSONObject();
         String rolName = token.getUserRole();

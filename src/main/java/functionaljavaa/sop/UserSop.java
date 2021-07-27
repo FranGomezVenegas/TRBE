@@ -275,7 +275,12 @@ public class UserSop {
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())){
                 query.append("(select ");
                 for(String fRet: fieldsToReturn){
-                    query.append(fRet).append(",");
+                    if (fRet!=null && fRet.length()>0){
+                        if ("procedure_name".equalsIgnoreCase(fRet))
+                            query.append("'"+currProcInstanceName+"'").append(",");
+                        else
+                            query.append(fRet).append(",");
+                    }
                 }
                 query.deleteCharAt(query.length() - 1);
 
@@ -306,6 +311,9 @@ public class UserSop {
             ResultSet res = Rdbms.prepRdQuery(query.toString(), filterFieldValueAllSchemas);         
             res.last();
             Integer numLines=res.getRow();
+            if (numLines==0)return null;
+                
+            
             Integer numColumns=fieldsToReturn.length;
             res.first();
             Object[][] getUserProfileNEW=new Object[numLines][numColumns];

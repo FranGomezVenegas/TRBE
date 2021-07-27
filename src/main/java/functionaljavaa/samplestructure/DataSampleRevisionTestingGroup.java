@@ -148,15 +148,15 @@ public class DataSampleRevisionTestingGroup{
                 new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()},
                 new Object[]{sampleId, testingGroup});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateReviewSampleTestingGroup[0].toString())){
-            markSampleAsReadyForRevision(sampleId);
             Object[] fieldsForAudit= new Object[]{TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()+":"+testingGroup};
             SampleAudit smpAudit = new SampleAudit();
-            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            Object[] sampleAudit = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            markSampleAsReadyForRevision(sampleId, SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), (Integer) sampleAudit[sampleAudit.length-1]);
         }
         return updateReviewSampleTestingGroup;        
     }
     
-    public static Object[] markSampleAsReadyForRevision(Integer sampleId){
+    public static Object[] markSampleAsReadyForRevision(Integer sampleId, String parentAction, Integer parentAuditId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         Object[][] pendingTestingGroupByRevisionValue= Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(),
@@ -166,7 +166,7 @@ public class DataSampleRevisionTestingGroup{
         if (pendingTestingGroupByRevisionValue.length==1 && pendingTestingGroupByRevisionValue[0][0].toString().equalsIgnoreCase("TRUE")){
             DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
             DataSample smp=new DataSample(smpAna);
-            DataSample.setReadyForRevision(sampleId);
+            DataSample.setReadyForRevision(sampleId, parentAction, parentAuditId);
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_PENDING_TESTINGGROUPREVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});

@@ -152,40 +152,9 @@ public class IncidentAPI extends HttpServlet {
     }
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
         request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);        
-if (1==1)return;        
-        
-/*        String language = LPFrontEnd.setLanguage(request); 
-        String[] errObject = new String[]{"Servlet IncidentAPI at " + request.getServletPath()};   
+        response=LPHttp.responsePreparation(response);     
 
-        String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-            return;          
-        }             
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
         
-        Token token = new Token(finalToken);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, language);              
-                return;                             
-        }
-        mandatoryParams = null;                        
-
-        if (mandatoryParams!=null){
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                       LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-               return;                   
-            }     
-        }
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;} 
-*/
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
         if (procReqInstance.getHasErrors()){
             procReqInstance.killIt();
@@ -205,13 +174,8 @@ if (1==1)return;
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-/*            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response,
-                        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
-                return;
-            }                
-*/            
+        JsonObject jsonObject=new JsonObject();
+        if (endPoint.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
             JSONArray paramJArr=new JSONArray();
             Enumeration params = request.getParameterNames();
             String theBody="";
@@ -223,20 +187,23 @@ if (1==1)return;
                 paramJArr.add(jObj);
                 if (paramName.length()>0 && request.getParameter(paramName).length()==0)
                     theBody=paramName;
-            }
+            }            
             Object[] objToJsonObj = convertToJsonObjectStringedObject(theBody);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response, ".Object: <*1*>", new Object[]{theBody}, language);                         
                return;
             }        
-            JsonObject jsonObject=(JsonObject) objToJsonObj[1];
-            String jsonObjType = jsonObject.get("object_type").getAsString();
+            jsonObject=(JsonObject) objToJsonObj[1];
+        }
             
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
             Integer incId=null;
             switch (endPoint){
                 case NEW_INCIDENT:
-                    actionDiagnoses = AppIncident.newIncident(argValues[0].toString(), argValues[1].toString(), "");
+                    if (procReqInstance.getToken()==null)
+                        procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
+                    
+                    actionDiagnoses = AppIncident.newIncident(argValues[0].toString(), argValues[1].toString(), jsonObject);
                     String incIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
                     if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
                     break;
@@ -347,7 +314,7 @@ if (1==1)return;
 */
         //HttpResponse.BodyHandler<String> ofString = HttpResponse.BodyHandlers.ofString();
         //String ofStringStr=ofString.toString();
-        /*            String requestArgValue=request.getParameter("reduxState");
+/*                    String requestArgValue=request.getParameter("reduxState");
         String firstNamev=request.getParameter("firstName");
         String dataV=request.getParameter("data");
         String dbNameV=request.getParameter("dbName");
@@ -358,9 +325,9 @@ if (1==1)return;
         firstNamev=LPNulls.replaceNull(request.getAttribute("firstName")).toString();
         dataV=LPNulls.replaceNull(request.getAttribute("data")).toString();
         //dbNameV=LPNulls.replaceNull(request.getAttribute("reduxState")).toString();
-        
-        Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\A");
-        String  s.hasNext() ? s.next() : ""; */
+  */      
+//        Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\A");
+//        String  s.hasNext() ? s.next() : ""; 
         
         try {
             processRequest(request, response);

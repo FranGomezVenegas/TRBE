@@ -596,7 +596,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
             for (Integer iResToCancel = 0; iResToCancel < resultInfo.length; iResToCancel++) {
                 String currResultStatus = (String) resultInfo[iResToCancel][0];
                 String statusPrevious = (String) resultInfo[iResToCancel][1];
-                resultId = (Integer) resultInfo[iResToCancel][2];
+                resultId = Integer.valueOf(resultInfo[iResToCancel][2].toString());
                 testId = (Integer) resultInfo[iResToCancel][3];
                 sampleId = (Integer) resultInfo[iResToCancel][4];
                 if (!(sampleAnalysisResultStatusCanceled.equalsIgnoreCase(currResultStatus))) {
@@ -953,8 +953,9 @@ if (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_RESULT_ID.get
                             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldExists[0].toString()))
                                 fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_READY_FOR_REVISION.getName() + ":" + "false");                     
                             SampleAudit smpAudit = new SampleAudit();
-                            smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysis.TBL.getName(), testId, sampleId, testId, null, fieldsForAudit, null);
-                            sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId);
+                            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysis.TBL.getName(), testId, sampleId, testId, null, fieldsForAudit, null);
+
+                            sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), (Integer) sampleAuditAdd[sampleAuditAdd.length-1]);
                         }
                     }
                 }

@@ -5,6 +5,7 @@
  */
 package functionaljavaa.incident;
 
+import com.google.gson.JsonObject;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsAppAudit;
@@ -55,7 +56,7 @@ public class AppIncident {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dbInfo[0][0].toString())) this.fieldValuesCorrect=true;
     }
     
-    public static Object[] newIncident(String incTitle, String incDetail, String sessionInfo){ 
+    public static Object[] newIncident(String incTitle, String incDetail, JsonObject sessionInfo){ 
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String[] updFieldName=new String[]{TblsApp.Incident.FLD_DATE_CREATION.getName(), TblsApp.Incident.FLD_PERSON_CREATION.getName(), TblsApp.Incident.FLD_TITLE.getName(), TblsApp.Incident.FLD_DETAIL.getName(),
                 TblsApp.Incident.FLD_USER_NAME.getName(), TblsApp.Incident.FLD_USER_ROLE.getName(), TblsApp.Incident.FLD_PERSON_NAME.getName(),

@@ -1268,9 +1268,15 @@ if (1==1){Rdbms.transactionId=1; return;}
                         break; 
                     case "class json.Na"://to skip fields
                         break;  
+                    case "class java.lang.String":
+                        prepsta.setString(indexval, (String) obj);
+                        break;
                     case "class [Ljava.lang.String;":
                         Array array = conn.createArrayOf("VARCHAR", (Object []) obj);
                         prepsta.setArray(indexval, array);
+                        break;
+                    case "class com.google.gson.JsonObject":    
+                        prepsta.setString(indexval, (String) obj.toString()); 
                         break;
                     case "class org.json.simple.JSONArray":
                     case "class org.json.simple.JSONObject":

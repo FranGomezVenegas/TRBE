@@ -110,6 +110,8 @@ public class SampleAPIParams extends HttpServlet {
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
         CANCELTEST("CANCELTEST", "cancelTest_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
+        UNREVIEWTEST("UNREVIEWTEST", "unreviewTest_success",
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
         UNCANCELTEST("UNCANCELTEST", "uncancelTest_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
         CANCELRESULT("CANCELRESULT", "cancelResult_success",

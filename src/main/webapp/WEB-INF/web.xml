@@ -286,6 +286,10 @@
         <servlet-name>FrontendDefinition</servlet-name>
         <servlet-class>com.labplanet.servicios.requirements.FrontendDefinition</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AppTrazitInitSession</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.AppTrazitInitSession</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DownloadFileServlet</servlet-name>
         <url-pattern>/DownloadFileServlet</url-pattern>
@@ -576,6 +580,10 @@
     <servlet-mapping>
         <servlet-name>FrontendDefinition</servlet-name>
         <url-pattern>/app/FrontendDefinitionAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AppTrazitInitSession</servlet-name>
+        <url-pattern>/AppTrazitInitSession</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

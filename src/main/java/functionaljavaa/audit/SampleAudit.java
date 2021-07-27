@@ -59,10 +59,10 @@ public class SampleAudit {
         LOG_SAMPLE_ALIQUOT, LOG_SAMPLE_SUBALIQUOT, SAMPLESTAGE_MOVETONEXT, SAMPLESTAGE_MOVETOPREVIOUS,
         UPDATE_LAST_ANALYSIS_USER_METHOD, CHAIN_OF_CUSTODY_STARTED, CHAIN_OF_CUSTODY_COMPLETED, MICROORGANISM_ADDED, MICROORGANISM_REMOVED, 
         SAMPLE_SET_INCUBATION_STARTED, SAMPLE_SET_INCUBATION_ENDED, SAMPLE_CANCELED, SAMPLE_UNCANCELED, SAMPLE_SET_READY_FOR_REVISION,
-        BATCH_SAMPLE_ADDED, BATCH_SAMPLE_REMOVED, BATCH_SAMPLE_MOVED_FROM, BATCH_SAMPLE_MOVED_TO}  
+        BATCH_SAMPLE_ADDED, BATCH_SAMPLE_REMOVED, BATCH_SAMPLE_MOVED_FROM, BATCH_SAMPLE_MOVED_TO, SAMPLE_AUTOAPPROVE}  
 
     public enum SampleAnalysisAuditEvents{ SAMPLE_ANALYSIS_REVIEWED, SAMPLE_ANALYSIS_EVALUATE_STATUS, SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, 
-        SAMPLE_ANALYSIS_ADDED, SAMPLE_ANALYSIS_CANCELED, SAMPLE_ANALYSIS_UNCANCELED, SAMPLE_ANALYSIS_SET_READY_FOR_REVISION}
+        SAMPLE_ANALYSIS_ADDED, SAMPLE_ANALYSIS_CANCELED, SAMPLE_ANALYSIS_UNCANCELED, SAMPLE_ANALYSIS_SET_READY_FOR_REVISION, SAMPLE_ANALYSIS_AUTOAPPROVE}
     
     public enum SampleAnalysisResultAuditEvents{BACK_FROM_CANCEL, SAMPLE_ANALYSIS_RESULT_ENTERED, UOM_CHANGED, 
         SAMPLE_ANALYSIS_RESULT_CANCELED, SAMPLE_ANALYSIS_RESULT_UNCANCELED, SAMPLE_ANALYSIS_RESULT_REVIEWED}
@@ -232,8 +232,7 @@ public class SampleAudit {
             new String[]{TblsDataAudit.Sample.FLD_REVIEWED.getName(), TblsDataAudit.Sample.FLD_REVIEWED_BY.getName(), TblsDataAudit.Sample.FLD_REVIEWED_ON.getName()}, 
             new Object[]{true, personName, LPDate.getCurrentTimeStamp()}, 
             new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()}, new Object[]{auditId});
-    }
-    
+    }    
     /**
      *
      * @param sampleId
@@ -307,6 +306,8 @@ public class SampleAudit {
         String auditChildRevisionMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getAreaName(), SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getTagName());  
         if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(), 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
+        if (auditRevisionMode.equalsIgnoreCase("DISABLE"))
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "auditRevisionModeDisabled", null);
         String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
         Boolean auditRevisionModeRecognized=false;
         for (String curModeRequired: auditRevisionModesRequired){
