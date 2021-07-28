@@ -5,6 +5,8 @@
  */
 package com.labplanet.servicios.app;
 
+import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPI;
+import static com.labplanet.servicios.app.AppProcedureListAPI.procedureListInfo;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
@@ -137,6 +139,7 @@ public class SopUserAPIfrontend extends HttpServlet {
         MY_PENDING_SOPS("MY_PENDING_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
         PROCEDURE_SOPS("PROCEDURE_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
         SOP_TREE_LIST_ELEMENT("SOP_TREE_LIST_ELEMENT", "",new LPAPIArguments[]{ }),
+        ALL_IN_ONE("ALL_IN_ONE", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
         ; 
         private SopUserAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
@@ -221,6 +224,18 @@ public class SopUserAPIfrontend extends HttpServlet {
             case SOP_TREE_LIST_ELEMENT:
                 LPFrontEnd.servletReturnSuccess(request, response, SopTreeListElements(request, response));
                 return;
+            case ALL_IN_ONE:
+                JSONObject jsonObj = new JSONObject();
+                //jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_USER_TABS_ON_LOGIN, jArr);
+                //request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
+                //jsonObj.put("header_info", AppHeaderAPI(request, response));
+                jsonObj.put("procedures_list", procedureListInfo(request, response));
+                jsonObj.put("all_my_sops", SopUserAPIfrontend.AllMySops(request, response));
+                jsonObj.put("my_pending_sops", SopUserAPIfrontend.MyPendingSops(request, response));
+                jsonObj.put("procedures_sops", SopUserAPIfrontend.ProceduresSops(request, response));
+                jsonObj.put("sop_tree_list_element", SopUserAPIfrontend.SopTreeListElements(request, response));                    
+                LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
+                return;                                                   
             default:                
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
             }

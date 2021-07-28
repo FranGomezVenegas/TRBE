@@ -151,7 +151,7 @@ public class DataSampleRevisionTestingGroup{
             Object[] fieldsForAudit= new Object[]{TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()+":"+testingGroup};
             SampleAudit smpAudit = new SampleAudit();
             Object[] sampleAudit = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
-            markSampleAsReadyForRevision(sampleId, SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), (Integer) sampleAudit[sampleAudit.length-1]);
+            markSampleAsReadyForRevision(sampleId, SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), Integer.valueOf(LPNulls.replaceNull(sampleAudit[sampleAudit.length-1]).toString()));
         }
         return updateReviewSampleTestingGroup;        
     }
