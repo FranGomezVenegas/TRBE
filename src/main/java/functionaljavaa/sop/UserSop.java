@@ -231,7 +231,9 @@ public class UserSop {
         filterFieldValue[1]=userSopStatuses.NOTPASS.getLightCode();
         if (fieldsToRetrieve!=null){            
             for (String fv: fieldsToRetrieve){
-                fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, fv);
+                if (!LPArray.valueInArray(fieldsToReturn, fv)){
+                    fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, fv);
+                }
             }
         }else{
             fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.UserSop.FLD_SOP_ID.getName());

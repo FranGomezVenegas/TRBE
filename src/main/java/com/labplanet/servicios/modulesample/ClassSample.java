@@ -233,7 +233,7 @@ public class ClassSample {
                 break;
             case REVIEWSAMPLE:
                 sampleId = (Integer) argValues[0];
-                diagn = smpAnaRes.sampleResultReview(sampleId, null, null);
+                diagn = smpAnaRes.sampleAnalysisResultReview(sampleId, null, null);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
@@ -246,14 +246,14 @@ public class ClassSample {
                 break;
             case REVIEWTEST:
                 Integer testId = (Integer) argValues[0];
-                diagn = smpAnaRes.sampleResultReview(null, testId, null);
+                diagn = smpAnaRes.sampleAnalysisResultReview(null, testId, null);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{testId};
                 break;
             case REVIEWTEST_BY_SAMPLE_ID_AND_ANALYSIS_NAME:
                 sampleId = (Integer) argValues[0];
                 analysisName = argValues[1].toString();
-                diagn = smpAnaRes.sampleResultReviewBySampleAndAnalysis(sampleId, analysisName);
+                diagn = smpAnaRes.sampleAnalysisResultReviewBySampleAndAnalysis(sampleId, analysisName);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId, analysisName};
                 break;
@@ -266,7 +266,7 @@ public class ClassSample {
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}
                 //diagn=smp.sampleReview(procInstanceName, token.getPersonName(), token.getUserRole(), sampleId, Integer.parseInt(token.getAppSessionId()));
-                diagn = smpAnaRes.sampleResultReview(sampleId, testId, resultId);
+                diagn = smpAnaRes.sampleAnalysisResultReview(sampleId, testId, resultId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
@@ -296,6 +296,11 @@ public class ClassSample {
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case UNREVIEWTEST:
+                testId = (Integer) argValues[0];
+                diagn = smpAnaRes.sampleAnalysisResultUnReview(null, testId, null);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{testId};
+                break;
             case UNCANCELTEST:
                 testId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultUnCancel(null, testId, null);

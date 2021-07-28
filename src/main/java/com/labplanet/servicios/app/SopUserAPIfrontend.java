@@ -269,7 +269,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
         }else
-            fieldsToRetrieve=TblsData.UserSop.getAllFieldNames();
+            fieldsToRetrieve=TblsData.ViewUserAndMetaDataSopView.getAllFieldNames();
         fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, "procedure_name");
         UserSop userSop = new UserSop();                               
         Object[][] userSops = UserSop.getUserProfileFieldValues( 
@@ -352,14 +352,15 @@ public class SopUserAPIfrontend extends HttpServlet {
             for (String fv: sopFieldsToRetrieveArr){
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
-        }
+        }else
+            fieldsToRetrieve=TblsData.ViewUserAndMetaDataSopView.getAllFieldNames();
+        
         JSONArray  myPendingSopsByProc = new JSONArray();                 
         UserSop userSop = new UserSop();      
         for (String currProc: allUserProcedurePrefix) {                   
 
             Object[][] userProcSops = userSop.getNotCompletedUserSOP(token.getPersonName(), currProc, fieldsToRetrieve);
-            if (userProcSops==null) return new JSONArray();
-            if (userProcSops.length>0){
+            if (userProcSops!=null && userProcSops.length>0){
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(userProcSops[0]))){
                     Object[] errMsg = LPFrontEnd.responseError(userProcSops, language, null);
                     Rdbms.closeRdbms();
@@ -381,7 +382,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                         if (LPArray.valueInArray(userSopTblAllFields, fieldsToRetrieve[iFlds])){
                             JSONObject jObjPieceOfInfo = new JSONObject();
                             jObjPieceOfInfo.put("field_name", fieldsToRetrieve[iFlds]);
-                            jObjPieceOfInfo.put("field_value", userProcSop[iFlds].toString());
+                            jObjPieceOfInfo.put("field_value", LPNulls.replaceNull(userProcSop[iFlds]).toString());
                             jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }

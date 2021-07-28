@@ -294,7 +294,7 @@ public class TstDataSample extends HttpServlet {
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId=objectId;}
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId=objectId;}
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId=objectId;}
-                                    dataSample = smpAnaRes.sampleResultReview(sampleId, testId, resultId);
+                                    dataSample = smpAnaRes.sampleAnalysisResultReview(sampleId, testId, resultId);
                                     break;                                     
                                 case CANCELRESULT:
                                     objectId = 0;
