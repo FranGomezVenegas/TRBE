@@ -9,8 +9,11 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubati
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
+import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorBusinessRules;
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorErrorTrapping;
+import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorLockingReason;
 import functionaljavaa.materialspec.DataSpec;
+import functionaljavaa.materialspec.DataSpec.ResultCheckSuccessErrorTrapping;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lbplanet.utilities.LPArray;
@@ -117,6 +120,8 @@ public class DataIncubatorNoteBook {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] dbMaxFldExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_MAX.getName());
         String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()};
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName())[0].toString()))
+            fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED_REASON.getName()});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbMaxFldExists[0].toString()))
             fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_MIN.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_IS_MIN_STRICT.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_MAX.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_IS_MAX_STRICT.getName()});
         Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
@@ -130,6 +135,8 @@ public class DataIncubatorNoteBook {
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};
         Object[] insFldsValue=new Object[]{instName, EventType.TEMPERATURE_READING.toString(), personName, LPDate.getCurrentTimeStamp(), temperature};
+        String specEval = "";
+        String specEvalDetail = "";
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbMaxFldExists[0].toString())){
             DataSpec dtSpec=new DataSpec();
             BigDecimal minVal=null;
@@ -146,14 +153,17 @@ public class DataIncubatorNoteBook {
                 maxIsStrict = Boolean.valueOf(instrInfo[0][LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.InstrIncubator.FLD_IS_MAX_STRICT.getName())].toString());
             Object[] resultCheck = dtSpec.resultCheck(temperature, minVal, maxVal, minIsStrict, maxIsStrict, null, null);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultCheck[0].toString())) return resultCheck;
-            String specEval = (String) resultCheck[resultCheck.length - 1];
-            String specEvalDetail = (String) resultCheck[resultCheck.length - 2];
+            specEval = (String) resultCheck[resultCheck.length - 1];
+            specEvalDetail = (String) resultCheck[resultCheck.length - 2];
             insFldsName=LPArray.addValueToArray1D(insFldsName, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_SPEC_EVAL.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_SPEC_EVAL_DETAIL.getName()});
             insFldsValue=LPArray.addValueToArray1D(insFldsValue, new Object[]{specEval, specEvalDetail});
         }        
         Object[] diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 insFldsName, insFldsValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
+        
+        incubatorLocking(instName, new Object[]{specEval, specEvalDetail}, fieldsToRetrieve, instrInfo[0]);
+        
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubationAPIEndpoints.EM_INCUBATION_ADD_TEMP_READING.getSuccessMessageCode(), new Object[]{instName, procInstanceName});
     }
     
@@ -231,5 +241,43 @@ public class DataIncubatorNoteBook {
         } 
         return LPArray.array1dTo2d(pointsFromLatestActivation, instrNotebook[0].length);
     }
-    
+    public static Object[] incubatorLocking(String instName, Object[] specEvalInfo, String[] incubFldNames, Object[] incubFldValues){
+        String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();     
+        Object[] procedureBusinessRuleEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, ConfigIncubatorBusinessRules.LOCK_WHEN_TEMP_OUT_OF_RANGE.getAreaName(), ConfigIncubatorBusinessRules.LOCK_WHEN_TEMP_OUT_OF_RANGE.getTagName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureBusinessRuleEnable[0].toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "incubationLockingNotEnabled", null);
+        if (!LPArray.valueInArray(incubFldNames, TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName())){
+            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName())[0].toString())) 
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lockedFieldNotPresentInIncubatorForProcedure", new Object[]{procInstanceName});
+            incubFldNames=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED_REASON.getName()};        
+            Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
+                new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
+                incubFldNames);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) return instrInfo[0];
+            incubFldValues=instrInfo[0];        
+        }
+        Object[] updateRecordFieldsByFilter=null;
+        String[] updFldName=null;
+        Object[] updFldValue=null;
+        if (ResultCheckSuccessErrorTrapping.EVALUATION_IN.getErrorCode().equalsIgnoreCase(specEvalInfo[0].toString())){
+            if ("TRUE".equalsIgnoreCase(LPNulls.replaceNull(incubFldValues[LPArray.valuePosicInArray(incubFldNames, TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName())].toString())) ){
+                updFldName=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED_REASON.getName()};
+                updFldValue=new Object[]{false,""};
+                updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(),
+                    updFldName, updFldValue, new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName});
+            }
+        }else{
+            if (specEvalInfo[0].toString().toUpperCase().contains("SPEC")){
+                if (!"TRUE".equalsIgnoreCase(LPNulls.replaceNull(incubFldValues[LPArray.valuePosicInArray(incubFldNames, TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName())].toString())) ){
+                    updFldName=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED_REASON.getName()};
+                    updFldValue=new Object[]{true,ConfigIncubatorLockingReason.TEMP_READING_OUT_OF_RANGE.getTagName()};
+                    updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(),
+                        updFldName, updFldValue, new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName});
+                }                
+            }
+        }
+        if (updateRecordFieldsByFilter==null) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "noChangesRequired", null);
+        return updateRecordFieldsByFilter;            
+        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "notImplementedYet", null);
+    }
 }

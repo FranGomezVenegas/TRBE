@@ -16,6 +16,7 @@ import functionaljavaa.audit.SampleAudit.SampleAuditErrorTrapping;
 import functionaljavaa.certification.AnalysisMethodCertif.CertificationAnalysisMethodBusinessRules;
 import functionaljavaa.changeofcustody.ChangeOfCustody.ChangeOfCustodyBusinessRules;
 import functionaljavaa.changeofcustody.ChangeOfCustody.ChangeOfCustodyErrorTrapping;
+import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorBusinessRules;
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorErrorTrapping;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook.DataIncubatorNoteBookErrorTrapping;
 import functionaljavaa.inventory.InventoryGlobalVariables.DataInvRetErrorTrapping;
@@ -153,6 +154,12 @@ public class PropertiesToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
             declareBusinessRuleInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues);            
         }
+        ConfigIncubatorBusinessRules[] configIncubatorBusinessRules=ConfigIncubatorBusinessRules.values();
+        for (ConfigIncubatorBusinessRules curBusRul: configIncubatorBusinessRules){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
+            declareBusinessRuleInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues);            
+        }                
         
         UserSopBusinessRules[] userSopBusinessRules=UserSopBusinessRules.values();
         for (UserSopBusinessRules curBusRul: userSopBusinessRules){

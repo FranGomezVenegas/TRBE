@@ -835,6 +835,8 @@ public class TblsEnvMonitConfig {
         FLD_IS_MIN_STRICT("is_min_strict", LPDatabase.booleanNotNull(Boolean.TRUE)),
         FLD_MAX("max", LPDatabase.real()),
         FLD_IS_MAX_STRICT("is_max_strict", LPDatabase.booleanNotNull(Boolean.TRUE)),
+        FLD_LOCKED("locked", LPDatabase.booleanFld()),
+        FLD_LOCKED_REASON("locked_reason", LPDatabase.booleanFld())
         ;        
         private InstrIncubator(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

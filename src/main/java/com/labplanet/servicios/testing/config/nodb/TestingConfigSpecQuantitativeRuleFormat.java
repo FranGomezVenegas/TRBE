@@ -6,7 +6,6 @@
 package com.labplanet.servicios.testing.config.nodb;
 
 import static com.labplanet.servicios.testing.config.TestingResultCheckSpecQuantitative.getprettyValue;
-import databases.Rdbms;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPFrontEnd;
 import functionaljavaa.materialspec.ConfigSpecRule;
@@ -106,7 +105,7 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
 //numHeaderLines=27;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
-                    
+//out.println(iLines.toString());
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
                 
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}

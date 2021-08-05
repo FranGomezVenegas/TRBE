@@ -81,6 +81,9 @@ public class ClassEnvMonSampleFrontend {
         GET_SAMPLE_STAGES_SUMMARY_REPORT("GET_SAMPLE_STAGES_SUMMARY_REPORT", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             }),
+        GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT("GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT", new LPAPIArguments[]{
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
+            }),
         GET_BATCH_REPORT("GET_BATCH_REPORT", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
@@ -381,6 +384,77 @@ public class ClassEnvMonSampleFrontend {
                     this.isSuccess=true;
                     this.responseSuccessJObj=jObjMainObject;
 //                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    return;
+                case GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT:
+                    sampleId = (Integer) argValues[0];
+                    sampleToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
+                    sampleToRetrieveArr=new String[0];
+                    if ((sampleToRetrieve!=null) && (sampleToRetrieve.length()>0))
+                        if ("ALL".equalsIgnoreCase(sampleToRetrieve)) sampleToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                        else sampleToRetrieveArr=sampleToRetrieve.split("\\|");
+                    sampleToRetrieveArr=LPArray.addValueToArray1D(sampleToRetrieveArr, TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName());
+                    sampleToDisplay = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY);
+                    sampleToDisplayArr=new String[0];
+                    if ((sampleToDisplay!=null) && (sampleToDisplay.length()>0))
+                        if ("ALL".equalsIgnoreCase(sampleToDisplay)) sampleToDisplayArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                        else sampleToDisplayArr=sampleToDisplay.split("\\|");
+
+                    sampleTblAllFields=TblsEnvMonitData.Sample.getAllFieldNames();
+                    sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), 
+                            new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                            sampleTblAllFields);                    
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
+                        this.isSuccess=false;
+                        this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", 
+                            new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName});                        
+                        return;}  
+                    jObjMainObject=new JSONObject();                    
+                    jObjSampleInfo=new JSONObject();
+                    jObjSampleInfo=LPJson.convertArrayRowToJSONObject(sampleTblAllFields, sampleInfo[0]);
+                    String[] testingGroupFldsArr=TblsData.SampleRevisionTestingGroup.getAllFieldNames();
+                    Object[][] testingGroupInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(), 
+                            new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                            testingGroupFldsArr);                    
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(testingGroupInfo[0][0].toString())){
+                        JSONArray tstGrpJsArr=new JSONArray();
+                        for (Object[] curTstGrp: testingGroupInfo){
+                            JSONObject curTstGrpJObj=LPJson.convertArrayRowToJSONObject(testingGroupFldsArr, curTstGrp);
+                            String curTstGrpName=LPNulls.replaceNull(curTstGrp[LPArray.valuePosicInArray(testingGroupFldsArr, TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName())]).toString();
+                            String[] testFldsArr=TblsData.SampleAnalysis.getAllFieldNames();
+                            Object[][] testInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(), 
+                                    new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()}, new Object[]{sampleId, curTstGrpName}, 
+                                    testFldsArr);                    
+                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(testInfo[0][0].toString())){
+                                JSONArray testJsArr=new JSONArray();
+                                for (Object[] curTest: testInfo){
+                                    JSONObject curTestJsObj=LPJson.convertArrayRowToJSONObject(testFldsArr, curTest);
+                                    Integer curTestId=Integer.valueOf(LPNulls.replaceNull(curTest[LPArray.valuePosicInArray(testFldsArr, TblsData.SampleAnalysis.FLD_TEST_ID.getName())]).toString());
+                                    String[] resultFldsArr=TblsData.SampleAnalysisResult.getAllFieldNames();
+                                    Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), 
+                                            new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.FLD_TEST_ID.getName()}, new Object[]{sampleId, curTestId}, 
+                                            resultFldsArr);                    
+                                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())){
+                                        JSONArray resultJsArr=new JSONArray();
+                                        for (Object[] curResult: resultInfo){
+                                            JSONObject curResultJsObj=LPJson.convertArrayRowToJSONObject(resultFldsArr, curResult);
+                                            resultJsArr.add(curResultJsObj);
+                                        }
+                                        curTestJsObj.put(TblsData.SampleAnalysisResult.TBL.getName(), resultJsArr);
+                                    }
+                                    
+                                    testJsArr.add(curTestJsObj);
+                                }
+                                curTstGrpJObj.put(TblsData.SampleAnalysis.TBL.getName(), testJsArr);
+                            }
+                            tstGrpJsArr.add(curTstGrpJObj);
+                        }
+                        jObjSampleInfo.put(TblsData.SampleRevisionTestingGroup.TBL.getName(), tstGrpJsArr);
+                    }
+                    
+                    this.isSuccess=true;
+                    jObjMainObject.put("sample_id", sampleId.toString());
+                    jObjMainObject.put("sample", jObjSampleInfo);
+                    this.responseSuccessJObj=jObjMainObject;                    
                     return;
                 case GET_BATCH_REPORT:
                     batchName = argValues[0].toString();

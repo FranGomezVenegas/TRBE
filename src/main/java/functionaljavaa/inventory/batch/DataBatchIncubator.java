@@ -7,12 +7,16 @@ package functionaljavaa.inventory.batch;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import functionaljavaa.audit.IncubBatchAudit;
+import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorBusinessRules;
+import functionaljavaa.moduleenvironmentalmonitoring.ProcedureDeviationIncubator;
 import functionaljavaa.parameter.Parameter;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -24,7 +28,9 @@ import trazit.globalvariables.GlobalVariables;
 public class DataBatchIncubator {
     
     public enum BatchBusinessRules{
-        START_MULTIPLE_BATCH_IN_PARALLEL("incubationBatch_startMultipleInParallelPerIncubator", GlobalVariables.Schemas.PROCEDURE.getName())
+        START_MULTIPLE_BATCH_IN_PARALLEL("incubationBatch_startMultipleInParallelPerIncubator", GlobalVariables.Schemas.PROCEDURE.getName()),
+        START_FOR_LOCKED_INCUBATOR_MODE("incubationBatch_startForLockedIncubatorMode", GlobalVariables.Schemas.PROCEDURE.getName())
+        
         ;
         private BatchBusinessRules(String tgName, String areaNm){
             this.tagName=tgName;
@@ -313,7 +319,7 @@ public class DataBatchIncubator {
      * @param bName
      * @param bTemplateId
      * @param bTemplateVersion
-     * @return
+     * @return 
      */
     public static Object[] batchStarted(String bName, Integer bTemplateId, Integer bTemplateVersion){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
@@ -333,6 +339,8 @@ public class DataBatchIncubator {
                 return LPArray.addValueToArray1D(diagn, batchIncubName);
             }                    
         }
+        Object[] incubIsLocked=incubatorIsLocked(bName, batchIncubName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubIsLocked[0].toString())) return incubIsLocked;
         return batchMomentMarked(bName, bTemplateId, bTemplateVersion, BatchIncubatorMoments.START.toString());
     }
     
@@ -525,4 +533,29 @@ public class DataBatchIncubator {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUB_BATCH_STARTED_CHANGEITSCONTENT.getErrorCode(), new Object[]{batchName}); 
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchErrorTrapping.BATCH_AVAILABLEFORCHANGES.getErrorCode(), new Object[]{batchName}); 
     }
+    public static Object[] incubatorIsLocked(String batchName, String instName){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
+        Object[] procedureBusinessRuleEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, ConfigIncubatorBusinessRules.LOCK_WHEN_TEMP_OUT_OF_RANGE.getAreaName(), ConfigIncubatorBusinessRules.LOCK_WHEN_TEMP_OUT_OF_RANGE.getTagName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureBusinessRuleEnable[0].toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "incubationLockingNotEnabled", null);
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName())[0].toString())) 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lockedFieldNotPresentInIncubatorForProcedure", new Object[]{procInstanceName});
+        String[] incubFldNames=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED_REASON.getName()};        
+        Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
+            new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
+            incubFldNames);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) return instrInfo[0];
+        if (!Boolean.valueOf(LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(incubFldNames, TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName())]).toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "incubationNotLocked", null);
+        String ruleValue=Parameter.getBusinessRuleProcedureFile(procInstanceName, BatchBusinessRules.START_FOR_LOCKED_INCUBATOR_MODE.getAreaName(), BatchBusinessRules.START_FOR_LOCKED_INCUBATOR_MODE.getTagName());
+        if (ruleValue.length()==0)
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "incubationLockingEnabledButModeNotDefined", null);
+        if (ruleValue.toUpperCase().contains("DEVIATION")){
+            Object[] createNew = ProcedureDeviationIncubator.createNew(instName, new String[]{TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_BATCH_NAME.getName()}, new Object[]{batchName});
+        }
+        if (ruleValue.toUpperCase().contains("STOP"))
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "StoppedByIncubationLockedBusinessRuleMode Rule:<*1*>, Value:<*2*>", new Object[]{BatchBusinessRules.START_FOR_LOCKED_INCUBATOR_MODE.getTagName(), ruleValue});
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ByPassedByIncubationLockedBusinessRuleMode Rule:<*1*>, Value:<*2*>", new Object[]{BatchBusinessRules.START_FOR_LOCKED_INCUBATOR_MODE.getTagName(), ruleValue});
+    }
+    
 }

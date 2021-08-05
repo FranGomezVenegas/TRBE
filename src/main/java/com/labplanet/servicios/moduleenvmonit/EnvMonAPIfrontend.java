@@ -338,7 +338,7 @@ GlobalAPIsParams.
 
                             String[] programSampleSummaryFldNameArray = new String[]{TblsEnvMonitData.Sample.FLD_STATUS.getName(), TblsEnvMonitData.Sample.FLD_LOCATION_NAME.getName()};
                             String[] programSampleSummaryFldSortArray = new String[]{TblsEnvMonitData.Sample.FLD_STATUS.getName()};
-                            Object[][] programSampleSummary = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.Sample.TBL.getName(), 
+                            Object[][] programSampleSummary = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), 
                                     new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), }, new String[]{curProgramName}, programSampleSummaryFldNameArray, programSampleSummaryFldSortArray);
                             programJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TREE_LIST); 
                             programJsonObj.put(JSON_TAG_NAME_TOTAL, programSampleSummary.length); 
@@ -378,7 +378,7 @@ GlobalAPIsParams.
                                     fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_DATE.getName()});
                             JSONArray programConfigScheduledPointsJsonArray=new JSONArray();
                             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString())){
-                                jObj.put("message", "Nothing pending in procedure "+procInstanceName+" for the filter "+LPNulls.replaceNull(programCalendarDatePending[6][0]).toString());
+                                jObj.put("message", "Nothing pending in procedure "+procInstanceName+" for the filter "+LPNulls.replaceNull(programCalendarDatePending[0][programCalendarDatePending.length-1]).toString());
                                 programConfigScheduledPointsJsonArray.add(jObj);
                             }else{
                                 for (Object[] curRecord: programCalendarDatePending){

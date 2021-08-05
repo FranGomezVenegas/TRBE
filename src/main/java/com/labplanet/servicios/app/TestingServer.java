@@ -14,10 +14,12 @@ import databases.TblsData;
 import databases.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
+import functionaljavaa.materialspec.ConfigSpecRule;
 //import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
 //import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.csvExtractFieldValueBigDecimal;
 import functionaljavaa.testingscripts.TestingCoverage;
 import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
@@ -65,7 +67,14 @@ public class TestingServer extends HttpServlet {
             out.println("<h1>Servlet testingServer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
-            
+ConfigSpecRule mSpec = new ConfigSpecRule();  
+Object[]  resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(
+        csvExtractFieldValueBigDecimal(-2.5), csvExtractFieldValueBigDecimal(5), csvExtractFieldValueBigDecimal(5), null);
+out.println(Arrays.toString(resSpecEvaluation));
+resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(
+        csvExtractFieldValueBigDecimal(-2.5),csvExtractFieldValueBigDecimal(5.1), csvExtractFieldValueBigDecimal(5), null);
+out.println(Arrays.toString(resSpecEvaluation));
+if (1==1) return;
             String procInstanceName="em-air-allv2";
             Rdbms.stablishDBConection("labplanet");
             

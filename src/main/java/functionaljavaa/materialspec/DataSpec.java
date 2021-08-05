@@ -268,7 +268,7 @@ public class DataSpec {
             Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.NULL_MANDATORY_FIELD.getErrorCode(), errorVariables);
             return LPArray.addValueToArray1D(diagnoses, ResultCheckErrorsErrorTrapping.EVALUATION_WRONG_RULE.getErrorCode());
         }
-        Object[] isCorrectMinMaxSpec = matQuant.specLimitIsCorrectQuantitative(minSpec, maxSpec);
+        Object[] isCorrectMinMaxSpec = matQuant.areStrictBoundsCorrect(minSpec, maxSpec);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isCorrectMinMaxSpec[0].toString())){
             return isCorrectMinMaxSpec;}
         int compareTo=0;

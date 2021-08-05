@@ -9,6 +9,8 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubati
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
 import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -35,6 +37,66 @@ public enum ConfigIncubatorErrorTrapping{
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
+
+    public enum ConfigIncubatorLockingReason{ 
+        TEMP_READING_OUT_OF_RANGE ("incubatorTempReadOutOfRange", GlobalVariables.Schemas.PROCEDURE.getName()),
+        ;
+        private ConfigIncubatorLockingReason(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    public enum ConfigIncubatorLockingModeValues{ 
+        STOP("STOP", "STOP, Not allow to start the incubation batch", "ALTO, No permitir iniciar tanda de incubación"),
+        STOP_AND_DEVIATION("STOP_AND_DEVIATION", "STOP, Not allow to start the incubation batch and create procedure deviation", "ALTO, No permitir iniciar tanda de incubación y crear desviación de proceso"),
+        BY_PASS("BY_PASS", "Allow to start the incubation batch", "permitir iniciar tanda de incubación"),
+        BY_PASS_AND_DEVIATION("BY_PASS_AND_DEVIATION", "Allow to start the incubation batch and create procedure deviation", "permitir iniciar tanda de incubación y crear desviación de proceso"),
+        ;
+        private ConfigIncubatorLockingModeValues(String valor, String descEn, String descEs){
+            this.value=valor;
+            this.descriptionEn=descEn;
+            this.descriptionEs=descEs;
+        }       
+        public String getValue(){return this.value;}
+        public String getDescriptionEn(){return this.descriptionEn;}
+        public String getDescriptionEs(){return this.descriptionEs;}
+        public JSONArray getValuesInOne(){
+            JSONArray jArr=new JSONArray();
+            for (ConfigIncubatorLockingModeValues obj: ConfigIncubatorLockingModeValues.values()){
+                JSONObject jObj=new JSONObject();
+                jObj.put("value", obj.value);
+                jObj.put("description_en", obj.descriptionEn);
+                jObj.put("description_es", obj.descriptionEs);
+                jArr.add(jObj);
+            }           
+            return jArr;
+        }
+        private final String value;
+        private final String descriptionEn;
+        private final String descriptionEs;
+    }
+    
+    public enum ConfigIncubatorBusinessRules{ 
+        LOCK_WHEN_TEMP_OUT_OF_RANGE ("incubator_LockWhenTempOutOfRange", GlobalVariables.Schemas.PROCEDURE.getName(), ConfigIncubatorLockingModeValues.BY_PASS.getValuesInOne()),
+        ;
+        private ConfigIncubatorBusinessRules(String tgName, String areaNm, JSONArray valuesList){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+            this.valuesList=valuesList;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+        private final JSONArray valuesList;        
+    }
+
 /*
     public enum ConfigIncubatorErrorCodes{NOT_EXISTS("incubatorDoesnotExist"),ALREADY_ACTIVE("incubatorAlreadyActive"), 
     CURRENTLY_DEACTIVE("incubatorCurrentlyDeactive"); 

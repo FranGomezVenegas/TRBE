@@ -790,7 +790,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
                 Object[] errorLog=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(whereFieldValues)});
-                return LPArray.array1dTo2d(errorLog, 1);
+                return LPArray.array1dTo2d(errorLog, errorLog.length);
             }               
             res.last();
 
