@@ -7,11 +7,12 @@ package trazit.session;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET;
+import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
-import databases.PoolC3P0;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
+import functionaljavaa.responsemessages.ResponseMessages;
 import functionaljavaa.testingscripts.TestingAuditIds;
 import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
 import functionaljavaa.testingscripts.TestingMessageCodeVisited;
@@ -22,6 +23,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
 
 /**
  *
@@ -43,31 +45,37 @@ public class ProcedureRequestSession {
     private TestingAuditIds tstAuditObj;
     private TestingBusinessRulesVisited busRuleVisited;
     private TestingMessageCodeVisited msgCodeVisited;
+    private ResponseMessages rspMessages;
     
-    private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform){
+    private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
         try{
         if (request==null) return;
         this.language = LPFrontEnd.setLanguage(request); 
         this.isForTesting=isForTesting;
-        
-        String dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);            
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);         
-        if (finalToken==null || finalToken.length()==0){
-            this.hasErrors=true;
-            this.errorMessage="No token provided";
-            return;            
+        String finalToken = "";
+        Token tokn = null;
+        String dbName = "";
+        if (!isForDocumentation){
+            dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);            
+            finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);         
+            if (finalToken==null || finalToken.length()==0){
+                this.hasErrors=true;
+                this.errorMessage="No token provided";
+                return;            
+            }
+            tokn = new Token(finalToken);
+            if ( (!LPNulls.replaceNull(dbName).equalsIgnoreCase(LPNulls.replaceNull(tokn.getDbName()))) ){
+                this.hasErrors=true;
+                this.errorMessage="This dbName does not match the one in the token.";
+                return;            
+            }
         }
-        Token tokn = new Token(finalToken);
-//        if ( (!(tokn.getDbName()==null && dbName==null)) && (!dbName.equalsIgnoreCase(tokn.getDbName())) ){
-        if ( (!LPNulls.replaceNull(dbName).equalsIgnoreCase(LPNulls.replaceNull(tokn.getDbName()))) ){
-            this.hasErrors=true;
-            this.errorMessage="This dbName does not match the one in the token.";
-            return;            
-        }
-        Object[] areMandatoryParamsInResponse = null;
+        Object[] areMandatoryParamsInResponse = null;        
         if (!isForTesting){
             if (isPlatform)
                 areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+            else if (isForDocumentation)
+                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION.split("\\|"));                                       
             else
                 areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -81,7 +89,7 @@ public class ProcedureRequestSession {
         }else
             this.actionName=theActionName;
         String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);            
-        if (!isForUAT){
+        if (!isForUAT && !isForDocumentation){
             finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);   
             if (finalToken!=null){
                 tokn = new Token(finalToken);
@@ -96,7 +104,7 @@ public class ProcedureRequestSession {
             }
             this.procedureInstance=procInstanceName;
         }
-        if (!isForTesting && !isForUAT && !isQuery && !isPlatform){  
+        if (!isForTesting && !isForUAT && !isQuery && !isPlatform && !isForDocumentation){  
             Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
@@ -112,7 +120,7 @@ public class ProcedureRequestSession {
                 return ;                           
             }                        
         }
-        if (!isForTesting && !isForUAT && !isQuery){            
+        if (!isForTesting && !isForUAT && !isQuery && !isForDocumentation){            
             AuditAndUserValidation auditAndUsrVal=AuditAndUserValidation.getInstanceForActions(request, null, language);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrVal.getCheckUserValidationPassesDiag()[0].toString())){
                 this.hasErrors=true;
@@ -143,7 +151,9 @@ public class ProcedureRequestSession {
             this.hasErrors=true;
             this.errorMessage="db connection not stablished";
             return;
-        }                
+        }   
+        rspMessages=ResponseMessages.getInstance();
+        markAsExpiredTheExpiredObjects(this.procedureInstance);
         }catch(Exception e){
             this.hasErrors=true;
             this.errorMessage=e.getMessage();
@@ -163,7 +173,7 @@ public class ProcedureRequestSession {
             busRuleVisited.killIt();
         if (msgCodeVisited!=null)
             msgCodeVisited.killIt();
-        
+        rspMessages.killInstance();
         Rdbms.closeRdbms(); 
     }
     
@@ -194,6 +204,10 @@ public class ProcedureRequestSession {
         if (this.errorMessage==null)return "";
         return this.errorMessage;
     }    
+    public ResponseMessages getMessages(){
+        if (this.rspMessages==null)return ResponseMessages.getInstance();
+        return this.rspMessages;
+    }
     public AuditAndUserValidation getAuditAndUsrValid(){
         return this.auditAndUsrValid;
     }
@@ -212,7 +226,13 @@ public class ProcedureRequestSession {
     }
     public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform){
         if (theSession==null || theSession.getTokenString()==null){
-            theSession=new ProcedureRequestSession(req, resp, isTesting, false, true, null, isPlatform);
+            theSession=new ProcedureRequestSession(req, resp, isTesting, false, true, null, isPlatform, false);
+        }            
+        return theSession;
+    }
+    public static ProcedureRequestSession getInstanceForDocumentation(HttpServletRequest req, HttpServletResponse resp){
+        if (theSession==null || theSession.getTokenString()==null){
+            theSession=new ProcedureRequestSession(req, resp, false, false, true, null, false, true);
         }            
         return theSession;
     }
@@ -248,7 +268,7 @@ public class ProcedureRequestSession {
         }
 */
         if (theSession==null || theSession.getTokenString()==null){
-            theSession=new ProcedureRequestSession(req, resp, isTesting, false, false, null, isPlatform);
+            theSession=new ProcedureRequestSession(req, resp, isTesting, false, false, null, isPlatform, false);
         }
         return theSession;
     }
@@ -256,7 +276,7 @@ public class ProcedureRequestSession {
     public static ProcedureRequestSession getInstanceForUAT(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, String theActionName){
 
         if (theSession==null || theSession.getTokenString()==null){
-            theSession=new ProcedureRequestSession(req, resp, isTesting, true, false, theActionName, false);
+            theSession=new ProcedureRequestSession(req, resp, isTesting, true, false, theActionName, false, false);
         }
         return theSession;
     }

@@ -5,10 +5,12 @@
  */
 package com.labplanet.servicios.app;
 
+
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
+import databases.TblsApp;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.Token;
@@ -31,12 +33,16 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
+
 
 
 /**
@@ -67,6 +73,46 @@ public class TestingServer extends HttpServlet {
             out.println("<h1>Servlet testingServer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
+            try{
+             javax.json.JsonObject empObject = Json.createObjectBuilder().add("empName", "Jai")
+                                 .add("empAge", "25")
+                                 .add("empSalary", "40000")
+                                 .add("empAddress",
+                                      Json.createObjectBuilder().add("street", "IDPL Colony")
+                                                           .add("city", "Hyderabad")
+                                                           .add("pinCode", "500072")
+                                                           .build()
+                                     )
+                                 .add("phoneNumber",
+                                      Json.createArrayBuilder().add("9959984000")
+                                                               .add("7702144400")
+                                                               .build()
+                                      )
+                                 .build();
+             out.println(empObject);
+            JsonArray build = Json.createArrayBuilder().add(Json.createObjectBuilder()//.add("repository", GlobalVariables.Schemas.APP.getName())
+                    .add("table", TblsApp.Incident.TBL.getName()).build()).build();
+            out.println(build);
+//if (1==1) return;  
+            Rdbms.stablishDBConection("tst");
+
+String functionCr=" CREATE OR REPLACE FUNCTION public.isnumeric(text) RETURNS boolean LANGUAGE plpgsql";
+functionCr=functionCr+" IMMUTABLE STRICT ";
+functionCr=functionCr+" AS $function$ DECLARE x NUMERIC; BEGIN x = $1::NUMERIC; RETURN TRUE; EXCEPTION WHEN others THEN RETURN FALSE; END; $function$ ";
+
+//Rdbms.prepRdQuery(functionCr, null);
+Rdbms.prepUpQuery(functionCr, null);
+//Rdbms.updateRecordFieldsByFilter(functionCr, functionCr, updateFieldNames, updateFieldValues, whereFieldNames, whereFieldValues)
+if (1==1) return;            
+
+Rdbms.stablishDBConection("labplanet");
+
+            markAsExpiredTheExpiredObjects("proc-deploy");            
+if (1==1) return;            
+            }catch(Exception e){
+                out.println(e.getMessage());
+                return;
+            }
 ConfigSpecRule mSpec = new ConfigSpecRule();  
 Object[]  resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(
         csvExtractFieldValueBigDecimal(-2.5), csvExtractFieldValueBigDecimal(5), csvExtractFieldValueBigDecimal(5), null);

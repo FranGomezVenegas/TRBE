@@ -11,11 +11,13 @@ import databases.SqlStatement;
 import databases.TblsData;
 import databases.TblsProcedure;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,7 +69,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
-                }),
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),
         QUERY_SAMPLER_SAMPLING_HISTORY("QUERY_SAMPLER_SAMPLING_HISTORY", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -85,7 +87,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
-                }),        
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),        
         QUERY_READING_OUT_OF_RANGE("QUERY_READING_OUT_OF_RANGE", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -103,7 +105,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
-                }),
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),
         KPI_PRODUCTION_LOT_SAMPLES("KPI_PRODUCTION_LOT_SAMPLES", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -122,7 +124,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 21),
-                }),        
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),        
         QUERY_INVESTIGATION("QUERY_INVESTIGATION", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -142,7 +144,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
 */ 
-                }),
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),
         KPIS("KPIS", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -151,11 +153,12 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),
-                }),        
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),        
         ;
-        private EnvMonAPIstatsEndpoints(String name, LPAPIArguments[] argums){
+        private EnvMonAPIstatsEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.arguments=argums;  
+            this.outputObjectTypes=outputObjectTypes;          
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -167,17 +170,12 @@ public class EnvMonAPIStats extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public LPAPIArguments[] getArguments() {return arguments;}
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         private final String name;
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;        
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response){

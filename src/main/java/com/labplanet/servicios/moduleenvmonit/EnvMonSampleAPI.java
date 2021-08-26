@@ -13,6 +13,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.ClassSample;
 import com.labplanet.servicios.modulesample.SampleAPI;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
+import databases.TblsData;
 import static functionaljavaa.audit.SampleAudit.sampleAuditRevisionPassByAction;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -20,12 +21,15 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -50,19 +54,38 @@ public class EnvMonSampleAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
-                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 11)} ),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 11)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build()).build()
+        ),
         ENTERRESULT("ENTERRESULT", "enterResult_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )} ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()
+        ),
         PLATE_READING_NUMBER("PLATE_READING_NUMBER", "plateReadingNumber_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6 ),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )} ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()
+        ),
         ADD_SAMPLE_MICROORGANISM("ADD_SAMPLE_MICROORGANISM", "MigroorganismAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ) }),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build()).build()
+        ),
         REMOVE_SAMPLE_MICROORGANISM("REMOVE_SAMPLE_MICROORGANISM", "MigroorganismRemoved_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ) }),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build()).build()
+        ),
         EM_BATCH_INCUB_ADD_SMP("EM_BATCH_INCUB_ADD_SMP", "batchIncubator_sampleAdded_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7), 
@@ -70,7 +93,12 @@ public class EnvMonSampleAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_ROW, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_COL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 11),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_OVERRIDE, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12)} ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_OVERRIDE, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsEnvMonitData.IncubBatch.TBL.getName()).build()).build()
+        ),
         EM_BATCH_INCUB_MOVE_SMP("EM_BATCH_INCUB_MOVE_SMP", "batchIncubator_sampleMoved_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7), 
@@ -78,19 +106,29 @@ public class EnvMonSampleAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_ROW, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_COL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 11),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_OVERRIDE, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12)}),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_OVERRIDE, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsEnvMonitData.IncubBatch.TBL.getName()).build()).build()
+        ),
         EM_BATCH_INCUB_REMOVE_SMP("EM_BATCH_INCUB_REMOVE_SMP", "batchIncubator_sampleRemoved_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7), 
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9)} )
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsEnvMonitData.IncubBatch.TBL.getName()).build()).build()
+        )
         ;      
-        private EnvMonSampleAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonSampleAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
-            this.arguments=argums;            
+            this.arguments=argums; 
+            this.outputObjectTypes=outputObjectTypes;            
         } 
-
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex, Integer auditReasonPosic){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
             Object[] argValues=new Object[0];
@@ -103,23 +141,14 @@ public class EnvMonSampleAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }
-     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
-
+        private final JsonArray outputObjectTypes;
     }
 
     /**

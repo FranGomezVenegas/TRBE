@@ -5,6 +5,7 @@
  */
 package databases;
 
+import static functionaljavaa.intervals.IntervalsUtilities.DBFIELDNAME_EXPIRY_INTERVAL_INFO;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPPlatform;
@@ -17,6 +18,7 @@ public class TblsCnfg {
     
     public static final String getTableCreationScriptFromCnfgTable(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
+            case "METHODS": return Methods.createTableScript(schemaNamePrefix, fields);
             case "ANALYSIS": return Analysis.createTableScript(schemaNamePrefix, fields);
             case "ANALYSIS_METHOD": return AnalysisMethod.createTableScript(schemaNamePrefix, fields);
             case "ANALYSIS_METHOD_PARAMS": return AnalysisMethodParams.createTableScript(schemaNamePrefix, fields);
@@ -62,42 +64,59 @@ public class TblsCnfg {
     /**
      *
      */
+    public enum Methods{
+        TBL("methods",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE) )" +
+            LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
+        FLD_CODE("code", LPDatabase.stringNotNull())        ,
+        FLD_CONFIG_VERSION("config_version", LPDatabase.integer())        ,
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())        ,
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())        ,        
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())  ,
+        FLD_EXPIRES("expires", LPDatabase.booleanFld()),
+        FLD_EXPIRY_INTERVAL_INFO(DBFIELDNAME_EXPIRY_INTERVAL_INFO, LPDatabase.string()),        
+
+        ;
+        private Methods(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+        public String getName(){            return this.dbObjName;        }
+        private String[] getDbFieldDefinitionPostgres(){            return new String[]{this.dbObjName, this.dbObjTypePostgres};        }
+
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = Methods.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (TblsCnfg.Methods obj: TblsCnfg.Methods.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        fieldsScript.append(currField[0]).append(" ").append(currField[1]);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }        
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }
     public enum Analysis{
-
-        /**
-         *
-         */
         TBL("analysis",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-        FLD_CODE("code", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_CONFIG_VERSION("config_version", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())
-        ,        
-
-        /**
-         *
-         */
+            LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
+        FLD_CODE("code", LPDatabase.stringNotNull())        ,
+        FLD_CONFIG_VERSION("config_version", LPDatabase.integer())        ,
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())        ,
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())        ,        
         FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())  ,
         FLD_TESTING_GROUP( LPDatabase.FIELDS_NAMES_TESTING_GROUP, LPDatabase.booleanFld())  ,
         ;
@@ -105,24 +124,9 @@ public class TblsCnfg {
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
+        public String getName(){            return this.dbObjName;        }
+        private String[] getDbFieldDefinitionPostgres(){            return new String[]{this.dbObjName, this.dbObjTypePostgres};        }
 
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
         public static String createTableScript(String schemaNamePrefix, String[] fields){
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
@@ -185,7 +189,8 @@ public class TblsCnfg {
          *
          */
         FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date()),
+        FLD_EXPIRY_INTERVAL_INFO(DBFIELDNAME_EXPIRY_INTERVAL_INFO, LPDatabase.string()),
         ;
         private AnalysisMethod(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -627,7 +632,8 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_AUTHOR("author", LPDatabase.string())
+        FLD_AUTHOR("author", LPDatabase.string()),
+        FLD_EXPIRY_INTERVAL_INFO(DBFIELDNAME_EXPIRY_INTERVAL_INFO, LPDatabase.string()),        
         
 /*        , FLD_ACTIVE_DATE("active_date", "Date")
         , FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())

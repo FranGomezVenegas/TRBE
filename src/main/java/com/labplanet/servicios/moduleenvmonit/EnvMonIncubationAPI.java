@@ -11,6 +11,8 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +23,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -34,17 +37,29 @@ public class EnvMonIncubationAPI extends HttpServlet {
          *
          */
         EM_INCUBATION_ACTIVATE("EM_INCUBATION_ACTIVATE", "incubator_activate_success", 
-            new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
+            new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
+                .add("table", TblsEnvMonitConfig.InstrIncubator.TBL.getName()).build()).build()
+        ),
         EM_INCUBATION_DEACTIVATE("EM_INCUBATION_DEACTIVATE", "incubator_deactivate_success", 
-            new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
+            new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
+                .add("table", TblsEnvMonitConfig.InstrIncubator.TBL.getName()).build()).build()
+        ),
         EM_INCUBATION_ADD_TEMP_READING("EM_INCUBATION_ADD_TEMP_READING", "incubator_add_temp_reading_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_TEMPERATURE, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), true, 7)}),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_TEMPERATURE, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), true, 7)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
+                .add("table", TblsEnvMonitConfig.InstrIncubator.TBL.getName()).build())
+                .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                    .add("table", TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName()).build()).build()
+        ),
         ;
-        private EnvMonIncubationAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonIncubationAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
-            this.arguments=argums;
+            this.arguments=argums; 
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -56,22 +71,14 @@ public class EnvMonIncubationAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode; 
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }    
 
     

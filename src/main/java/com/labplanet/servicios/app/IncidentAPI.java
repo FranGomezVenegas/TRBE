@@ -5,19 +5,19 @@
  */
 package com.labplanet.servicios.app;
 
-import com.google.gson.JsonObject;
 import databases.TblsApp;
 import functionaljavaa.incident.AppIncident;
+import functionaljavaa.incident.AppIncidentEnums.IncidentAPIEndpoints;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Scanner;
-import org.json.simple.JSONArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,12 +26,12 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
-import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 /**
  *
  * @author User
@@ -46,70 +46,20 @@ public class IncidentAPI extends HttpServlet {
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
     static final String COMMON_PARAMS="incidentId|note";
-    public enum IncidentAPIEndpoints{
-        /**
-         *
-         */
-        NEW_INCIDENT("NEW_INCIDENT", "incidentTitle|incidentDetail", "", "incidentNewIncident_success",  
-            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_TITLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments(ParamsList.INCIDENT_DETAIL.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ) }),
-        CONFIRM_INCIDENT("CONFIRM_INCIDENT", COMMON_PARAMS, "", "incidentConfirmIncident_success",  
-            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        CLOSE_INCIDENT("CLOSE_INCIDENT", COMMON_PARAMS, "", "incidentClosedIncident_success",  
-            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        REOPEN_INCIDENT("REOPEN_INCIDENT", COMMON_PARAMS, "", "incidentReopenIncident_success",  
-            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        ADD_NOTE_INCIDENT("ADD_NOTE_INCIDENT", COMMON_PARAMS, "", "incidentAddNoteToIncident_success",  
-            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-            new LPAPIArguments(ParamsList.NEW_STATUS.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7)}),
-        ;
-        private IncidentAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
-            this.name=name;
-            this.mandatoryParams=mandatoryParams;
-            this.optionalParams=optionalParams;
-            this.successMessageCode=successMessageCode;
-            this.arguments=argums;
-            
-        } 
-        public String getName(){
-            return this.name;
-        }
-        public String getMandatoryParams(){
-            return this.mandatoryParams;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-       /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
-        private final String name;
-        private final String mandatoryParams; 
-        private final String optionalParams; 
-        private final String successMessageCode;       
-        private final LPAPIArguments[] arguments;
-    }
 
     
     public enum IncidentAPIfrontendEndpoints{
         /**
          *
          */
-        USER_OPEN_INCIDENTS("USER_OPEN_INCIDENTS", "",new LPAPIArguments[]{}),
-        INCIDENT_DETAIL_FOR_GIVEN_INCIDENT("INCIDENT_DETAIL_FOR_GIVEN_INCIDENT", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}),
+        USER_OPEN_INCIDENTS("USER_OPEN_INCIDENTS", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        INCIDENT_DETAIL_FOR_GIVEN_INCIDENT("INCIDENT_DETAIL_FOR_GIVEN_INCIDENT", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private IncidentAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private IncidentAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -121,22 +71,14 @@ public class IncidentAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }
 
     public enum ParamsList{INCIDENT_ID("incidentId"),INCIDENT_TITLE("incidentTitle"),INCIDENT_DETAIL("incidentDetail"),
@@ -174,7 +116,7 @@ public class IncidentAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-        JsonObject jsonObject=new JsonObject();
+        JSONObject jsonObject=new JSONObject();
         if (endPoint.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
             JSONArray paramJArr=new JSONArray();
             Enumeration params = request.getParameterNames();
@@ -193,7 +135,7 @@ public class IncidentAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, ".Object: <*1*>", new Object[]{theBody}, language);                         
                return;
             }        
-            jsonObject=(JsonObject) objToJsonObj[1];
+            jsonObject=(JSONObject) objToJsonObj[1];
         }
             
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  

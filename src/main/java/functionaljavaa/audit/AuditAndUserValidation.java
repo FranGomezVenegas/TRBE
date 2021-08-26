@@ -17,6 +17,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -46,17 +47,26 @@ public class AuditAndUserValidation {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     public enum AuditAndUserValidationBusinessRules{     
-        PREFIX_AUDITREASONPHRASE ("AuditReasonPhrase", GlobalVariables.Schemas.CONFIG.getName()),
+        PREFIX_AUDITREASONPHRASE ("AuditReasonPhrase", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
         ;
-        private AuditAndUserValidationBusinessRules(String tgName, String areaNm){
+        private AuditAndUserValidationBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
+        private final JSONArray valuesList;  
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
     }
 
     private static AuditAndUserValidation auditUserVal;

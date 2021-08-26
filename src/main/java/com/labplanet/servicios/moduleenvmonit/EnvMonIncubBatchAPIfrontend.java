@@ -27,10 +27,12 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.inventory.batch.DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -46,12 +48,13 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8) 
-            })        
+            }, EndPointsToRequirements.endpointWithNoOutputObjects)        
         ;
-        private EnvMonIncubBatchAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonIncubBatchAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
-            this.arguments=argums;  
+            this.arguments=argums; 
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -63,22 +66,14 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }
     
     /**

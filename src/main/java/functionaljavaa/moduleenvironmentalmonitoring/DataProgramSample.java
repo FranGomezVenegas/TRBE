@@ -19,6 +19,7 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -28,19 +29,27 @@ import trazit.globalvariables.GlobalVariables;
 public class DataProgramSample{
     
     public enum DataProgramSampleBusinessRules{
-        SAMPLER_SAMPLE_TEMPLATE("samplerSampleTemplate", GlobalVariables.Schemas.PROCEDURE.getName())
+        SAMPLER_SAMPLE_TEMPLATE("samplerSampleTemplate", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
         ;
-        private DataProgramSampleBusinessRules(String tgName, String areaNm){
+        private DataProgramSampleBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
+        private final JSONArray valuesList;  
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
     }
-    
     /**
      *
      * @param programTemplate

@@ -5,7 +5,6 @@
  */
 package functionaljavaa.incident;
 
-import com.google.gson.JsonObject;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsAppAudit;
@@ -15,6 +14,7 @@ import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -56,7 +56,7 @@ public class AppIncident {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dbInfo[0][0].toString())) this.fieldValuesCorrect=true;
     }
     
-    public static Object[] newIncident(String incTitle, String incDetail, JsonObject sessionInfo){ 
+    public static Object[] newIncident(String incTitle, String incDetail, JSONObject sessionInfo){ 
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String[] updFieldName=new String[]{TblsApp.Incident.FLD_DATE_CREATION.getName(), TblsApp.Incident.FLD_PERSON_CREATION.getName(), TblsApp.Incident.FLD_TITLE.getName(), TblsApp.Incident.FLD_DETAIL.getName(),
                 TblsApp.Incident.FLD_USER_NAME.getName(), TblsApp.Incident.FLD_USER_ROLE.getName(), TblsApp.Incident.FLD_PERSON_NAME.getName(),

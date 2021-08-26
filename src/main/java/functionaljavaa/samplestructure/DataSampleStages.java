@@ -30,6 +30,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.trapMessage;
+import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 
@@ -69,24 +70,33 @@ public enum SampleStageErrorTrapping{
     }
 
     public enum SampleStageBusinessRules{        
-        SAMPLE_STAGES_FIRST("sampleStagesFirst", GlobalVariables.Schemas.DATA.getName()),
+        SAMPLE_STAGES_FIRST("sampleStagesFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
 
-        ACTION_AUTOMOVETONEXT("sampleStagesActionAutoMoveToNext", GlobalVariables.Schemas.PROCEDURE.getName()),
-        SAMPLE_STAGE_MODE("sampleStagesMode", GlobalVariables.Schemas.PROCEDURE.getName()),
-        SAMPLE_STAGE_TYPE("sampleStagesLogicType", GlobalVariables.Schemas.PROCEDURE.getName()),
-        SAMPLE_STAGE_TIMING_CAPTURE_MODE("sampleStagesTimingCaptureMode", GlobalVariables.Schemas.PROCEDURE.getName()),
-        SAMPLE_STAGE_TIMING_CAPTURE_STAGES("sampleStagesTimingCaptureStages", GlobalVariables.Schemas.PROCEDURE.getName()),
+        ACTION_AUTOMOVETONEXT("sampleStagesActionAutoMoveToNext", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SAMPLE_STAGE_MODE("sampleStagesMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SAMPLE_STAGE_TYPE("sampleStagesLogicType", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SAMPLE_STAGE_TIMING_CAPTURE_MODE("sampleStagesTimingCaptureMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SAMPLE_STAGE_TIMING_CAPTURE_STAGES("sampleStagesTimingCaptureStages", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         
         ;
-        private SampleStageBusinessRules(String tgName, String areaNm){
+        private SampleStageBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
+        private final JSONArray valuesList;  
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
     }
     public enum SampleStageTimingCapturePhases{START, END}
     /**

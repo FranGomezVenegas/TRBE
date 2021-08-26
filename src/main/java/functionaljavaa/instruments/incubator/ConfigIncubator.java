@@ -82,19 +82,27 @@ public enum ConfigIncubatorErrorTrapping{
     }
     
     public enum ConfigIncubatorBusinessRules{ 
-        LOCK_WHEN_TEMP_OUT_OF_RANGE ("incubator_LockWhenTempOutOfRange", GlobalVariables.Schemas.PROCEDURE.getName(), ConfigIncubatorLockingModeValues.BY_PASS.getValuesInOne()),
+        LOCK_WHEN_TEMP_OUT_OF_RANGE ("incubator_LockWhenTempOutOfRange", GlobalVariables.Schemas.PROCEDURE.getName(), ConfigIncubatorLockingModeValues.BY_PASS.getValuesInOne(), null, '|'),
         ;
-        private ConfigIncubatorBusinessRules(String tgName, String areaNm, JSONArray valuesList){
+        private ConfigIncubatorBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
-            this.valuesList=valuesList;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;        
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
+        
     }
 
 /*

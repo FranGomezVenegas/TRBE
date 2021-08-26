@@ -15,15 +15,18 @@ import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsProcedure;
 import databases.Token;
+import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStages;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.Arrays;
 import java.util.HashMap;
+import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
@@ -69,53 +72,49 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                 //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
-                }),
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_MICROORGANISM_LIST("GET_MICROORGANISM_LIST", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            }),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_SAMPLE_MICROORGANISM_VIEW("GET_SAMPLE_MICROORGANISM_VIEW", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8),
-            }),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_SAMPLE_STAGES_SUMMARY_REPORT("GET_SAMPLE_STAGES_SUMMARY_REPORT", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            }),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT("GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            }),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_BATCH_REPORT("GET_BATCH_REPORT", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
-            }),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_PRODLOT_REPORT("GET_PRODLOT_REPORT", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
-            }),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_INCUBATOR_REPORT("GET_INCUBATOR_REPORT", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
-            }),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         STATS_SAMPLES_PER_STAGE("STATS_SAMPLES_PER_STAGE", new LPAPIArguments[]{
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_STAGES_TO_INCLUDE, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_STAGES_TO_EXCLUDE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-            }),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         STATS_PROGRAM_LAST_RESULTS("STATS_PROGRAM_LAST_RESULTS", new LPAPIArguments[]{
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_TOTAL_OBJECTS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-            }),
-
-        
-        
-        
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         KPIS("KPIS", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -124,11 +123,12 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),
-                }),        
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),        
         ;
-        private EnvMonSampleAPIFrontendEndpoints(String name, LPAPIArguments[] argums){
+        private EnvMonSampleAPIFrontendEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
-            this.arguments=argums;  
+            this.arguments=argums; 
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -140,17 +140,12 @@ public class ClassEnvMonSampleFrontend {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }
     
     public ClassEnvMonSampleFrontend(HttpServletRequest request, EnvMonSampleAPIFrontendEndpoints endPoint){
@@ -953,7 +948,21 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
         Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
         
-        if (!isProgramCorrectiveActionEnable(procInstanceName)) return new Object[]{fldNameArr, fldValueArr};
+        Object[] lockedByCorrectiveAction = isLockedByCorrectiveAction(procInstanceName, resultFieldToRetrieveArr, curRow);
+        if (lockedByCorrectiveAction[0]!=null) return lockedByCorrectiveAction;
+
+        Object[] isLockedByUserCertification = isLockedByCorrectiveAction(procInstanceName, resultFieldToRetrieveArr, curRow);
+        if (lockedByCorrectiveAction[0]!=null) return lockedByCorrectiveAction;
+        
+        return new Object[]{fldNameArr, fldValueArr};
+    }
+
+    static Object[] isLockedByCorrectiveAction(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow){
+        String[] fldNameArr=null;
+        Object[] fldValueArr=null;
+        Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
+        Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
+        if (!isProgramCorrectiveActionEnable(procInstanceName)) return new Object[]{null, null};
         Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                 new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                 new Object[]{resultId,DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()}, 
@@ -969,10 +978,42 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
                     EnvMonSampleAPI.class.getSimpleName(),
                     "resultLockedByProgramCorrectiveAction", notClosedProgramCorrreciveAction[0], null);                                
             fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
+            return new Object[]{fldNameArr, fldValueArr};
         }
+        return new Object[]{null, null};
+    }
+    
+    static Object[] isLockedByUserCertification(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow){
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String[] fldNameArr=null;
+        Object[] fldValueArr=null;
+        Integer fldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_METHOD_NAME.getName());
+        String methodName=curRow[fldPosic].toString();
+        fldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_METHOD_VERSION.getName());
+        Integer methodVersion=Integer.valueOf(curRow[fldPosic].toString());
+
+        Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())) return new Object[]{null, null};
+        
+        Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
+        if (Boolean.valueOf(userCertified[0].toString())) return new Object[]{null, null};
+                
+
+        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
+        fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
+        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
+        fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsCnfg.Methods.TBL.getName());
+        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
+            
+        JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPTrue(
+                EnvMonSampleAPI.class.getSimpleName(),
+                AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode(), new Object[]{methodName}, null);                                
+        fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
         return new Object[]{fldNameArr, fldValueArr};
     }
 
+    
+    
     static Object[] getObjectsId(String[] headerFlds, Object[][] analysisResultList, String separator){
         if (analysisResultList==null || analysisResultList.length==0)
             return new Object[]{};

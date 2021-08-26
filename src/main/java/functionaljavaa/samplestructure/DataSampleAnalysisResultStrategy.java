@@ -5,6 +5,7 @@
  */
 package functionaljavaa.samplestructure;
 
+import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -14,21 +15,29 @@ import trazit.globalvariables.GlobalVariables;
 public interface DataSampleAnalysisResultStrategy {
 
     public enum DataSampleAnalysisResultStrategyBusinessRules{
-        SAMPLE_ACTION_WHENUPONCONTROL_MODE("sampleActionWhenUponControlMode", GlobalVariables.Schemas.PROCEDURE.getName()),
-        SAMPLE_ACTION_WHENOOS_MODE("sampleActionWhenOOSMode", GlobalVariables.Schemas.PROCEDURE.getName())
+        SAMPLE_ACTION_WHENUPONCONTROL_MODE("sampleActionWhenUponControlMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SAMPLE_ACTION_WHENOOS_MODE("sampleActionWhenOOSMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
         
         ;
-        private DataSampleAnalysisResultStrategyBusinessRules(String tgName, String areaNm){
+        private DataSampleAnalysisResultStrategyBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
+        private final JSONArray valuesList;  
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
     }
-    
     /**
      *
      */

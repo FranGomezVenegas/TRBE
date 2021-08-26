@@ -8,6 +8,7 @@ package functionaljavaa.sop;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsData;
+import static functionaljavaa.intervals.IntervalsUtilities.applyExpiryInterval;
 import functionaljavaa.user.UserProfile;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
@@ -17,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
+import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -69,30 +71,35 @@ public class UserSop {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     public enum UserSopBusinessRules{
-        ACTIONENABLED_USERSOP_CERTIFICATION("actionEnabledUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName()),        
-        WINDOWOPENABLE_WHENNOTSOPCERTIFIED("windowOpenableWhenNotSopCertifiedUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName()),
-        CERTIF_LEVEL_IMAGE_ERROR("userSopCertificationLevelImage_ERROR", GlobalVariables.Schemas.PROCEDURE.getName()),
-        CERTIF_LEVEL_IMAGE_NOTASSIGNED("userSopCertificationLevelImage_NotAssigned", GlobalVariables.Schemas.PROCEDURE.getName()),
-        CERTIF_LEVEL_IMAGE_CERTIFIED("userSopCertificationLevelImage_Certified", GlobalVariables.Schemas.PROCEDURE.getName()),
-        CERTIF_LEVEL_IMAGE_NOTCERTIFIED("userSopCertificationLevelImage_NotCertified", GlobalVariables.Schemas.PROCEDURE.getName()),
+        ACTIONENABLED_USERSOP_CERTIFICATION("actionEnabledUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),        
+        WINDOWOPENABLE_WHENNOTSOPCERTIFIED("windowOpenableWhenNotSopCertifiedUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        CERTIF_LEVEL_IMAGE_ERROR("userSopCertificationLevelImage_ERROR", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        CERTIF_LEVEL_IMAGE_NOTASSIGNED("userSopCertificationLevelImage_NotAssigned", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        CERTIF_LEVEL_IMAGE_CERTIFIED("userSopCertificationLevelImage_Certified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        CERTIF_LEVEL_IMAGE_NOTCERTIFIED("userSopCertificationLevelImage_NotCertified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
 
-        USERSOP_INITIAL_STATUS("userSopInitialStatus", GlobalVariables.Schemas.CONFIG.getName()),
-        USERSOP_INITIAL_LIGHT("userSopInitialLight", GlobalVariables.Schemas.CONFIG.getName()),
+        USERSOP_INITIAL_STATUS("userSopInitialStatus", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
+        USERSOP_INITIAL_LIGHT("userSopInitialLight", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
         ;
-        private UserSopBusinessRules(String tgName, String areaNm){
+        private UserSopBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
+        private final JSONArray valuesList;  
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
     }
-    
-
-    
-    
     /**
      *
      * @param procInstanceName
@@ -111,7 +118,7 @@ public class UserSop {
         String[] filterFieldName =new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()};
         Object[] filterFieldValue =new Object[]{sopName, userName};        
         Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{procInstanceName});   
-        if (getUserProfileFieldValues.length<=0){
+        if (getUserProfileFieldValues==null || getUserProfileFieldValues.length<=0){
             Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopName, userName, procInstanceName});
             return LPArray.array1dTo2d(diagnoses, diagnoses.length);
         }        
@@ -433,9 +440,19 @@ public class UserSop {
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING.getErrorCode(), new Object[]{sopName, procInstanceName});
         }
+        String[] updFldNames=new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}; 
+        Object[] updFldValues=new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()};
+        Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.SopMetaData.TBL.getName(), 
+                new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
+        else{
+            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName());
+            updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
+        }
+        
         Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.UserSop.TBL.getName(), 
-                new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}, new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()},
-                new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()}, new Object[]{sopName, userName} );
+            updFldNames, updFldValues,     
+            new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()}, new Object[]{sopName, userName} );
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userSopDiagnostic[0].toString())){
             userSopDiagnostic[userSopDiagnostic.length-1]="Sop assigned";
         }

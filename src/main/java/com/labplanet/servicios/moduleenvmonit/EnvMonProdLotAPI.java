@@ -9,11 +9,13 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramProductionLot;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -41,33 +43,29 @@ public class EnvMonProdLotAPI extends HttpServlet {
         EM_NEW_PRODUCTION_LOT("EM_NEW_PRODUCTION_LOT", "productionLot_newLotCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)} ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)},
+                EndPointsToRequirements.endpointWithNoOutputObjects),
         EM_ACTIVATE_PRODUCTION_LOT("EM_ACTIVATE_PRODUCTION_LOT", "productionLot_activate_success",
-                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
+                EndPointsToRequirements.endpointWithNoOutputObjects),
         EM_DEACTIVATE_PRODUCTION_LOT("EM_DEACTIVATE_PRODUCTION_LOT", "productionLot_deactivate_success",
-                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
+                EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private EnvMonProdLotAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonProdLotAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
+            this.outputObjectTypes=outputObjectTypes;            
         } 
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;       
         private  LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;        
     }    
   
   /**

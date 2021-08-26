@@ -10,12 +10,14 @@ import databases.Token;
 import static functionaljavaa.certification.CertifyQueries.CertificationsHistory;
 import static functionaljavaa.certification.CertifyQueries.CertificationsInProgress;
 import static functionaljavaa.certification.CertifyQueries.objectsUponCertificationProcedure;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,28 +41,29 @@ public class CertifyAPIfrontend extends HttpServlet {
         CERTIFICATIONS_IN_PROGRESS("CERTIFICATIONS_IN_PROGRESS", "",new LPAPIArguments[]{
             new LPAPIArguments("areasToInclude", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
             new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7)},
-            new LPAPIEndPointdocumentation("certify-frontend", "CERTIFICATIONS_IN_PROGRESS", "", -1,"")
-        ),
+            new LPAPIEndPointdocumentation("certify-frontend", "CERTIFICATIONS_IN_PROGRESS", "", -1,""),
+            EndPointsToRequirements.endpointWithNoOutputObjects),        
         USER_CERTIFICATIONS_HISTORY("USER_CERTIFICATIONS_HISTORY", "",new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments("areasToInclude", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
             new LPAPIArguments(TblsData.CertifUserAnalysisMethod.FLD_CERTIFICATION_DATE.getName().toLowerCase()+"_start", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
             new LPAPIArguments(TblsData.CertifUserAnalysisMethod.FLD_CERTIFICATION_DATE.getName().toLowerCase()+"_end", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
             new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 10)},
-            new LPAPIEndPointdocumentation("certify-frontend", "USER_CERTIFICATIONS_HISTORY", "", -1,"")                
-        ),
+            new LPAPIEndPointdocumentation("certify-frontend", "USER_CERTIFICATIONS_HISTORY", "", -1,""),
+            EndPointsToRequirements.endpointWithNoOutputObjects),
         OBJECTS_UPON_CERTIFICATION("OBJECTS_UPON_CERTIFICATION", "",new LPAPIArguments[]{},
-            new LPAPIEndPointdocumentation("certify-frontend", "OBJECTS_UPON_CERTIFICATION", "", -1,"")
-        ),
+            new LPAPIEndPointdocumentation("certify-frontend", "OBJECTS_UPON_CERTIFICATION", "", -1,""),
+            EndPointsToRequirements.endpointWithNoOutputObjects),
         OBJECTS_ENABLED_CERTIFICATION("OBJECTS_ENABLED_CERTIFICATION", "",new LPAPIArguments[]{},
-            new LPAPIEndPointdocumentation("certify-frontend", "OBJECTS_ENABLED_CERTIFICATION", "", -1,"")
-        ),
+            new LPAPIEndPointdocumentation("certify-frontend", "OBJECTS_ENABLED_CERTIFICATION", "", -1,""),
+            EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private CertifyAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, LPAPIEndPointdocumentation docInfo){
+        private CertifyAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, LPAPIEndPointdocumentation docInfo, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
             this.endPointDocumentation=docInfo;
+            this.outputObjectTypes=outputObjectTypes;                        
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -72,23 +75,15 @@ public class CertifyAPIfrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
         private final LPAPIEndPointdocumentation endPointDocumentation;
+        private final JsonArray outputObjectTypes;        
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {

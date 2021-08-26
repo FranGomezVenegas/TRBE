@@ -11,6 +11,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.TblsData;
 import databases.Token;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.sop.UserSop;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -19,6 +20,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -34,12 +37,13 @@ import trazit.globalvariables.GlobalVariables;
 public class SopUserAPI extends HttpServlet {
 
     public enum SopUserAPIEndpoints{
-        SOP_MARK_AS_COMPLETED("SOP_MARK_AS_COMPLETED", "appSop_markAsCompleted_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
+        SOP_MARK_AS_COMPLETED("SOP_MARK_AS_COMPLETED", "appSop_markAsCompleted_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private SopUserAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private SopUserAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
+            this.outputObjectTypes=outputObjectTypes;
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -51,12 +55,9 @@ public class SopUserAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
 
         /**
          * @return the arguments
@@ -67,6 +68,7 @@ public class SopUserAPI extends HttpServlet {
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }
     
     /**
@@ -83,6 +85,31 @@ public class SopUserAPI extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
+        response=LPHttp.responsePreparation(response);        
+        
+        String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);  
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            return;
+        }
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+
+        try (PrintWriter out = response.getWriter()) {
+            SopUserAPIEndpoints endPoint = null;
+            Object[] actionDiagnoses = null;
+        
+            try{
+                endPoint = SopUserAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
+            Integer incId=null;
+        /*        request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
         String language = LPFrontEnd.setLanguage(request); 
@@ -140,7 +167,12 @@ public class SopUserAPI extends HttpServlet {
             Object[] messageDynamicData=new Object[]{};
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         Object[] userSopDiagnostic=new Object[0];
-        try (PrintWriter out = response.getWriter()) {        
+        try (PrintWriter out = response.getWriter()) {  
+*/            
+        Token token=procReqInstance.getToken();
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
+        Object[] userSopDiagnostic=new Object[0];
+        Object[] messageDynamicData=new Object[]{};
             switch (endPoint){
             case SOP_MARK_AS_COMPLETED:
                 String sopName = argValues[0].toString();

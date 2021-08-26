@@ -51,7 +51,7 @@ public class ClassEnvMonQueries {
                             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, sampleInfo[sampleInfo.length-1][0].toString(), new Object[]{sampleId});
                         else{
                             for (Object[] curSample: sampleInfo){
-                                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), curSample[0], fieldsToRetrieve, curSample); 
+                                rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), curSample[0], fieldsToRetrieve, curSample); 
                             }
                             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         }
@@ -79,7 +79,7 @@ public class ClassEnvMonQueries {
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) actionDiagnoses=resultInfo[0];
                         else{
                             for (Object[] curResult: resultInfo){
-                                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), curResult[0]); 
+                                rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), curResult[0]); 
                             }
                             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         }

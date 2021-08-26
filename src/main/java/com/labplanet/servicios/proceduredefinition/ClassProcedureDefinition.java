@@ -2,6 +2,7 @@ package com.labplanet.servicios.proceduredefinition;
 
 import databases.Rdbms;
 import databases.TblsReqs;
+import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.procedureRolesList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomImportType;
@@ -39,10 +40,22 @@ public class ClassProcedureDefinition {
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
             switch (endPoint){
+                case SET_PROCEDURE_BUSINESS_RULES:
+                    String procInstanceName=argValues[0].toString();
+                    String suffixName=argValues[1].toString();
+                    String propName=argValues[2].toString();
+                    String propValue=argValues[3].toString();
+                    Parameter parm=new Parameter();
+//                    parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
+//                    procInstanceName+"-"+suffixName);  
+                    String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
+                        procInstanceName+"-"+suffixName, propName, propValue);
+
+                    break;
                 case ADD_USER:
                     String procedureName=argValues[0].toString();
                     Integer procedureVersion = (Integer) argValues[1];   
-                    String procInstanceName=argValues[2].toString();
+                    procInstanceName=argValues[2].toString();
                     String userName=argValues[3].toString();
                     Object[] personByUserObj = getPersonByUser(userName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())){

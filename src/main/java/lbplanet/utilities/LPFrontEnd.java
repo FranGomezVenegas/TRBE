@@ -10,6 +10,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.responsemessages.ResponseMessages;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.LANGUAGE_ALL_LANGUAGES;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -157,8 +159,17 @@ public class LPFrontEnd {
     public static JSONObject responseJSONDiagnosticLPFalse(String errorCode, Object[] msgVariables){
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_FALSE);
-        Object [] errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
-        Object [] errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+        Object[][] mainMessage = messages.getMainMessage();
+        Object [] errorMsgEn=null;
+        Object [] errorMsgEs=null;
+        if (mainMessage!=null && mainMessage.length>0){
+            errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "en");
+            errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "es");
+        }else{
+            errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
+            errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
+        }
         String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
         String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString(); 
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);

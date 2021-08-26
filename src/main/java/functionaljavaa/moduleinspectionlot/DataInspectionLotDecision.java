@@ -13,7 +13,7 @@ import databases.Token;
 import functionaljavaa.audit.LotAudit;
 import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotErrorTrapping;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.samplestructure.DataSample.DataSampleBusinessRules;
+import functionaljavaa.samplestructure.DataSampleEnums.DataSampleBusinessRules;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;

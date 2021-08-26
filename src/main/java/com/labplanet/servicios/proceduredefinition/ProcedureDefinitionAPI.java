@@ -6,12 +6,14 @@
 package com.labplanet.servicios.proceduredefinition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -72,7 +74,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_EVENTS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 15),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_BUSINESS_RULES_PROP_FILES.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 16),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_MODULE_TABLES_AND_FIELDS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17),
-                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_MASTER_DATA.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17)}),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_MASTER_DATA.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         DEPLOY_FRONTEND("DEPLOY_FRONTEND", "deployFrontend_success", 
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -84,29 +86,35 @@ public class ProcedureDefinitionAPI extends HttpServlet {
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.NEW_FILE_CAMEL.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 13),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.NEW_FILE_PROC_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 14),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.NEW_FILE_ALIAS_UNDERSCORE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 15),
-                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.CREATE_FILES.getName(), LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 16)}),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.CREATE_FILES.getName(), LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 16)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        SET_PROCEDURE_BUSINESS_RULES("SET_PROCEDURE_BUSINESS_RULES", "setProcedureBusinessRules_success", 
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments("suffixName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                new LPAPIArguments("propName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments("propValue", LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ADD_USER("ADD_USER", "addUserToProcedure_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.USER_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.USER_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ADD_ROLE_TO_USER("ADD_ROLE_TO_USER", "addRoleToUser_success", 
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.ROLE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
-                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.USER_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.USER_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_UOM("GET_UOM", "addRoleToUser_success", 
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.UOM_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
-                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.UOM_IMPORT_TYPE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.UOM_IMPORT_TYPE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private ProcedureDefinitionAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private ProcedureDefinitionAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -118,22 +126,14 @@ public class ProcedureDefinitionAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;        
     }
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     

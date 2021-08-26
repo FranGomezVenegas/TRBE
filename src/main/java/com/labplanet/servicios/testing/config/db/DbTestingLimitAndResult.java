@@ -11,6 +11,7 @@ import databases.Rdbms;
 import databases.TblsCnfg;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.DataSpec;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -24,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -51,29 +53,24 @@ public class DbTestingLimitAndResult extends HttpServlet {
                 new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 13),
                 new LPAPIArguments("resultValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 14),
                 new LPAPIArguments("resultUomName", LPAPIArguments.ArgumentType.STRING.toString(), false, 15),
-        } ),                
+        }, EndPointsToRequirements.endpointWithNoOutputObjects ),                
         ;
-        private TestingLimitAndResult(String name, String successMessageCode, LPAPIArguments[] argums){
+        private TestingLimitAndResult(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
+            this.outputObjectTypes=outputObjectTypes;            
         } 
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
+        
         private final String name;
         private final String successMessageCode;       
         private  LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
+
     }    
     
     /**

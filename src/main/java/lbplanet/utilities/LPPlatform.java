@@ -23,6 +23,7 @@ import org.json.simple.JSONObject;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.Token;
+import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -77,31 +78,41 @@ public class LPPlatform {
         private final String name;           
     }
    public enum LpPlatformBusinessRules{
-        PROCEDURE_ACTIONS("procedureActions", GlobalVariables.Schemas.PROCEDURE.getName()),
-        ACTION_ENABLED_ROLES("actionEnabled", GlobalVariables.Schemas.PROCEDURE.getName()),
-        ESIGN_REQUIRED("eSignRequired", GlobalVariables.Schemas.PROCEDURE.getName()),
-        VERIFYUSER_REQUIRED("verifyUserRequired", GlobalVariables.Schemas.PROCEDURE.getName()),
-        AUDITREASON_PHRASE("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName()),
-        TABLE_MANDATORYFIELDS_ACTIONNAME("_mandatoryFields", GlobalVariables.Schemas.PROCEDURE.getName()),
-        SUFFIX_CONFIGTABLENAME("_configTableName", GlobalVariables.Schemas.CONFIG.getName()),
-        SUFFIX_CONFIGTABLEKEYFIELDS("_configTableKeyFields", GlobalVariables.Schemas.CONFIG.getName()),
-        SUFFIX_SPECIALFIELDNAME("_specialFieldsCheck", GlobalVariables.Schemas.CONFIG.getName()),
-        SUFFIX_SPECIALFIELDMETHODNAME("_specialFieldsCheck_methodName", GlobalVariables.Schemas.CONFIG.getName()),
-        PREFIX_ENCRYPTED_TABLENAME("encrypted_", ""),
-        MIDDLEOF_FIELDSADDINGMANDATORY("_fieldsAddingMandatory", ""),
-        
-
+        PROCEDURE_ACTIONS("procedureActions", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        ACTION_ENABLED_ROLES("actionEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        ESIGN_REQUIRED("eSignRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        VERIFYUSER_REQUIRED("verifyUserRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        AUDITREASON_PHRASE("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        TABLE_MANDATORYFIELDS_ACTIONNAME("_mandatoryFields", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SUFFIX_CONFIGTABLENAME("_configTableName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
+        SUFFIX_CONFIGTABLEKEYFIELDS("_configTableKeyFields", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
+        SUFFIX_SPECIALFIELDNAME("_specialFieldsCheck", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
+        SUFFIX_SPECIALFIELDMETHODNAME("_specialFieldsCheck_methodName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
+        PREFIX_ENCRYPTED_TABLENAME("encrypted_", "", null, null, '|'),
+        MIDDLEOF_FIELDSADDINGMANDATORY("_fieldsAddingMandatory", "", null, null, '|'),
+        MARK_EXPIRED_OBJECTS("markExpiredObjects", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        MARK_EXPIRED_OBJECTS_LAST_RUN("markExpiredObjectsLastRun", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),        
         ;
-        private LpPlatformBusinessRules(String tgName, String areaNm){
+        private LpPlatformBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
+        private final JSONArray valuesList;  
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
     }
+
 public enum LpPlatformErrorTrapping{ 
         RULE_NAME_VALUE("LpPlatform_ruleNameValue", "Rule name = <*1*>", "Nombre de la regla = <*1*>"),
         BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND("LpPlatform_BusinessRulesampleTestingByGroup_ReviewByTestingGroupNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
@@ -145,9 +156,9 @@ public enum LpPlatformErrorTrapping{
     public static final String REQUEST_PARAM_FILE_NAME = "fileName";
     public static final String REQUEST_PARAM_LANGUAGE = "language";
 
-    public static final String CONFIG_PROC_CONFIG_FILE_NAME = "-config";
-    public static final String CONFIG_PROC_DATA_FILE_NAME = "-data";
-    public static final String CONFIG_PROC_FILE_NAME = "-procedure";
+    public static final String CONFIG_PROC_CONFIG_FILE_NAME = "config";
+    public static final String CONFIG_PROC_DATA_FILE_NAME = "data";
+    public static final String CONFIG_PROC_FILE_NAME = "procedure";
     private static final String ENCRYPTION_KEY = "Bar12345Bar12345";
 
     /**
@@ -899,11 +910,15 @@ public enum LpPlatformErrorTrapping{
      */
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables) {          
     //    if (1==1) return;
+    String procInstanceName = "";
         if (!Rdbms.getRdbms().getIsStarted()){
 //            Logger.log(LogTag.JFR, LogLevel.TRACE, msgCode);
             return;
         }
-        String procInstanceName = "";
+        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+            return;
+        
         Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
             new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
             TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()}, 

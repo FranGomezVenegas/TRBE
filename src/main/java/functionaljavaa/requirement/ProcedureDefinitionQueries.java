@@ -136,7 +136,7 @@ public class ProcedureDefinitionQueries {
                 procedureActionsObj.put("auto_move_to_next", "NO");           
             
             procActionAndRolesArr.add(procedureActionsObj);
-            String[] curActionRoles = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+curProcAction).split("\\|");
+            String[] curActionRoles = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "actionEnabled"+curProcAction).split("\\|");
             for (Object curActionRole: curActionRoles){ 
                 JSONObject currActionRolObj = convertArrayRowToJSONObject(new String[]{"rol"}, new Object[]{curActionRole});                
                 procedureActionsObj.put("rol", currActionRolObj);
@@ -172,15 +172,15 @@ public class ProcedureDefinitionQueries {
         return mainObj;
     }
     public static JSONObject sampleStages(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        String[] sampleStagesTimingCaptureStages = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "sampleStagesTimingCaptureStages").split("\\|");
-        String[] sampleStagesListEn = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_DATA_FILE_NAME, "sampleStagesList_en").split("\\|");
+        String[] sampleStagesTimingCaptureStages = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "sampleStagesTimingCaptureStages").split("\\|");
+        String[] sampleStagesListEn = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_DATA_FILE_NAME, "sampleStagesList_en").split("\\|");
         JSONArray sampleStagesDataArr=new JSONArray();
         for (String curSampleStage: sampleStagesListEn){
             JSONObject stageDetailObj = new JSONObject();
             stageDetailObj.put("stage_name", curSampleStage);
             String[] directionNames=new String[]{"Previous", "Next"};
             for (String curDirection: directionNames){
-                String[] propValuePrevious = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_DATA_FILE_NAME, "sampleStage"+curSampleStage+curDirection).split("\\|");
+                String[] propValuePrevious = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_DATA_FILE_NAME, "sampleStage"+curSampleStage+curDirection).split("\\|");
                 if (propValuePrevious[0].length()==0)
                     stageDetailObj.put(curDirection.toLowerCase()+"_stages_total", 0);
                 else{
@@ -203,7 +203,7 @@ public class ProcedureDefinitionQueries {
     }
 
     public static JSONObject sampleIncubation(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        String[] sampleIncubationTempReadingBusinessRule = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "sampleIncubationTempReadingBusinessRule").split("\\|");
+        String[] sampleIncubationTempReadingBusinessRule = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "sampleIncubationTempReadingBusinessRule").split("\\|");
         JSONArray incubRulesArr = new JSONArray();
         for (String curIncubRule: sampleIncubationTempReadingBusinessRule){
             JSONObject incubRulesObj = new JSONObject();

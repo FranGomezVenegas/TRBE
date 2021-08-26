@@ -37,6 +37,7 @@ public class TblsTrazitDocTrazit {
         FLD_ENDPOINT_VERSION("endpoint_version", LPDatabase.integer()),
         FLD_ARGUMENTS("arguments", LPDatabase.stringNotNull()),
         FLD_ARGUMENTS_ARRAY("arguments_array", LPDatabase.string()),
+        FLD_OUTPUT_OBJECT_TYPES("output_object_types", LPDatabase.string()),        
         FLD_CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
         FLD_LAST_UPDATE("last_update", LPDatabase.dateTime()),
         FLD_BRIEF_SUMMARY_EN("brief_summary_en", LPDatabase.string()),
@@ -47,6 +48,7 @@ public class TblsTrazitDocTrazit {
         FLD_DOCUMENT_NAME_ES("document_name_es", LPDatabase.string()),
         FLD_DOC_CHAPTER_NAME_ES("doc_chapter_name_es", LPDatabase.string()),
         FLD_DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string()),
+        FLD_NUM_ENDPOINTS_IN_API("num_endpoints_in_api", LPDatabase.integer()),        
         ;
         private EndpointsDeclaration(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -119,6 +121,9 @@ public class TblsTrazitDocTrazit {
         FLD_API_NAME("api_name", LPDatabase.stringNotNull()),
         FLD_API_VERSION("api_version", LPDatabase.integer()),
         FLD_PROPERTY_NAME("property_name", LPDatabase.stringNotNull()),
+        FLD_VALUES_LIST("values_list", LPDatabase.string()),
+        FLD_ALLOW_MULTI_VALUES("allow_multi_values", LPDatabase.booleanFld()),
+        FLD_VALUES_SEPARATOR("values_separator", LPDatabase.string(1)),
         FLD_FILE_AREA("file_area", LPDatabase.stringNotNull()),
 //        FLD_ENDPOINT_VERSION("endpoint_version", LPDatabase.integer()),
 //        FLD_ARGUMENTS("arguments", LPDatabase.stringNotNull()),

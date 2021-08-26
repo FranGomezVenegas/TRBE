@@ -9,13 +9,14 @@ import com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPIfrontendEndpoints;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
 import com.labplanet.servicios.app.CertifyAPIfrontend.CertifyAPIfrontendEndpoints;
 import com.labplanet.servicios.app.CertifyAnalysisMethodAPI.CertifyAnalysisMethodAPIEndpoints;
-import com.labplanet.servicios.app.IncidentAPI.IncidentAPIEndpoints;
+import functionaljavaa.incident.AppIncidentEnums.IncidentAPIEndpoints;
 import com.labplanet.servicios.app.IncidentAPI.IncidentAPIfrontendEndpoints;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIEndpoints;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIfrontendEndpoints;
 import com.labplanet.servicios.app.ModulesConfigMasterDataAPI.ConfigMasterDataAPIEndpoints;
 import com.labplanet.servicios.app.SopUserAPI.SopUserAPIEndpoints;
 import com.labplanet.servicios.app.SopUserAPIfrontend.SopUserAPIfrontendEndpoints;
+import com.labplanet.servicios.doc.functionality.EndpointsDocAPIqueries.EndpointsDocAPIqueriesEndpoints;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonQueriesAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPIStats.EnvMonAPIstatsEndpoints;
@@ -38,6 +39,8 @@ import databases.TblsTrazitDocTrazit.EndpointsDeclaration;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.parameter.Parameter.PropertyFilesType;
 import java.util.ResourceBundle;
+import javax.json.Json;
+import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -54,14 +57,32 @@ import trazit.globalvariables.GlobalVariables.Languages;
 public final class EndPointsToRequirements {
     private EndPointsToRequirements() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
+    public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", "no output for testing")
+                    .add("table", "no output for testing").build()).build();
     // Endpoints 'antiguos': AppHeaderAPIEndpoints, IncidentAPIfrontendEndpoints, BatchAPIEndpoints, GenomaVariableAPIEndPoints y todos los de Genoma!
 
     public static void endpointDefinition(){
         
     ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
-        
+
+    String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
+    Boolean startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
         // *** Falta encontrar la manera de tomar la url de un servlet!
         //"api_url",
+        SampleAPIEndpoints[] valuesSample2 = SampleAPIEndpoints.values();
+        for (SampleAPIEndpoints curApi: valuesSample2){
+            if ("CANCELSAMPLE".equalsIgnoreCase(curApi.getName()))
+                System.out.print("h");
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), SampleAPIEndpoints.values().length);
+        }
+        
+    Rdbms.closeRdbms();
+    startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
 
         TestingLimitAndResult[] valuesDBSpecLimitAndResult = TestingLimitAndResult.values();
         for (TestingLimitAndResult curApi: valuesDBSpecLimitAndResult){
@@ -69,7 +90,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), TestingLimitAndResult.values().length);
         }
 
         AuthenticationAPIEndpoints[] valuesAuth = AuthenticationAPIEndpoints.values();
@@ -78,7 +99,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), AuthenticationAPIEndpoints.values().length);
         }
         
         AppHeaderAPIfrontendEndpoints[] valuesHeaderFrontend = AppHeaderAPIfrontendEndpoints.values();
@@ -87,7 +108,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), AppHeaderAPIfrontendEndpoints.values().length);
         }
         ProcedureDefinitionAPIEndpoints[] valuesProcedureDefinition = ProcedureDefinitionAPIEndpoints.values();
         for (ProcedureDefinitionAPIEndpoints curApi: valuesProcedureDefinition){
@@ -95,7 +116,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), ProcedureDefinitionAPIEndpoints.values().length);
         }          
         ProcedureDefinitionAPIfrontendEndpoints[] valuesProcedureDefinitionfrontend = ProcedureDefinitionAPIfrontendEndpoints.values();
         for (ProcedureDefinitionAPIfrontendEndpoints curApi: valuesProcedureDefinitionfrontend){
@@ -103,7 +124,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), ProcedureDefinitionAPIfrontendEndpoints.values().length);
         }  
         IncidentAPIEndpoints[] valuesInc = IncidentAPIEndpoints.values();
         for (IncidentAPIEndpoints curApi: valuesInc){
@@ -111,7 +132,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), IncidentAPIEndpoints.values().length);
         }
         IncidentAPIfrontendEndpoints[] valuesIncFrontEnd = IncidentAPIfrontendEndpoints.values();
         for (IncidentAPIfrontendEndpoints curApi: valuesIncFrontEnd){
@@ -119,7 +140,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), IncidentAPIfrontendEndpoints.values().length);
         }
         InvestigationAPIEndpoints[] valuesInvest = InvestigationAPIEndpoints.values();
         for (InvestigationAPIEndpoints curApi: valuesInvest){
@@ -127,7 +148,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), InvestigationAPIEndpoints.values().length);
         }
         InvestigationAPIfrontendEndpoints[] valuesInvestFrontEnd = InvestigationAPIfrontendEndpoints.values();
         for (InvestigationAPIfrontendEndpoints curApi: valuesInvestFrontEnd){
@@ -135,7 +156,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), InvestigationAPIfrontendEndpoints.values().length);
         }
 
         SopUserAPIEndpoints[] valuesSop = SopUserAPIEndpoints.values();
@@ -144,7 +165,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), SopUserAPIEndpoints.values().length);
         }
         CertifyAnalysisMethodAPIEndpoints[] certifAnaMeth = CertifyAnalysisMethodAPIEndpoints.values();
         for (CertifyAnalysisMethodAPIEndpoints curApi: certifAnaMeth){
@@ -152,7 +173,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), CertifyAnalysisMethodAPIEndpoints.values().length);
         }
         CertifyAPIfrontendEndpoints[] certifEndpoints = CertifyAPIfrontendEndpoints.values();
         for (CertifyAPIfrontendEndpoints curApi: certifEndpoints){
@@ -160,17 +181,15 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), CertifyAPIfrontendEndpoints.values().length);
         }
-        
-        
         SopUserAPIfrontendEndpoints[] valuesSopFrontend = SopUserAPIfrontendEndpoints.values();
         for (SopUserAPIfrontendEndpoints curApi: valuesSopFrontend){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), SopUserAPIfrontendEndpoints.values().length);
         }
         ConfigMasterDataAPIEndpoints[] valuesConfigMasterData = ConfigMasterDataAPIEndpoints.values();
         for (ConfigMasterDataAPIEndpoints curApi: valuesConfigMasterData){
@@ -178,23 +197,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
-        }
-        SampleAPIEndpoints[] valuesSample = SampleAPIEndpoints.values();
-        for (SampleAPIEndpoints curApi: valuesSample){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
-            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
-            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
-            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
-        }
-        SampleAPIfrontendEndpoints[] valuesSampleFE = SampleAPIfrontendEndpoints.values();
-        for (SampleAPIfrontendEndpoints curApi: valuesSampleFE){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
-            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
-            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
-            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), ConfigMasterDataAPIEndpoints.values().length);
         }
         EnvMonAPIEndpoints[] valuesEnvMon = EnvMonAPIEndpoints.values();
         for (EnvMonAPIEndpoints curApi: valuesEnvMon){
@@ -202,7 +205,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonAPIEndpoints.values().length);
         }        
         EnvMonAPIfrontendEndpoints[] valuesEnvMonFrontend = EnvMonAPIfrontendEndpoints.values();
         for (EnvMonAPIfrontendEndpoints curApi: valuesEnvMonFrontend){
@@ -210,7 +213,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonAPIfrontendEndpoints.values().length);
         }
         EnvMonQueriesAPIEndpoints[] valuesEnvMonQueries = EnvMonQueriesAPIEndpoints.values();
         for (EnvMonQueriesAPIEndpoints curApi: valuesEnvMonQueries){
@@ -218,7 +221,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonQueriesAPIEndpoints.values().length);
         }
         EnvMonAPIstatsEndpoints[] valuesEnvMonStats = EnvMonAPIstatsEndpoints.values();
         for (EnvMonAPIstatsEndpoints curApi: valuesEnvMonStats){
@@ -226,7 +229,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonAPIstatsEndpoints.values().length);
         }
         EnvMonIncubBatchAPIfrontendEndpoints[] valuesEnvMonIncubFrontend = EnvMonIncubBatchAPIfrontendEndpoints.values();
         for (EnvMonIncubBatchAPIfrontendEndpoints curApi: valuesEnvMonIncubFrontend){
@@ -234,7 +237,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonIncubBatchAPIfrontendEndpoints.values().length);
         }        
         EnvMonIncubationAPIEndpoints[] valuesEnvMonIncub = EnvMonIncubationAPIEndpoints.values();
         for (EnvMonIncubationAPIEndpoints curApi: valuesEnvMonIncub){
@@ -242,7 +245,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonIncubationAPIEndpoints.values().length);
         }            
         EnvMonIncubationAPIfrontendEndpoints[] valuesEnvMonIncubFE = EnvMonIncubationAPIfrontendEndpoints.values();
         for (EnvMonIncubationAPIfrontendEndpoints curApi: valuesEnvMonIncubFE){
@@ -250,7 +253,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonIncubationAPIfrontendEndpoints.values().length);
         }    
         EnvMonProdLotAPIEndpoints[] valuesEnvMonProdLot = EnvMonProdLotAPIEndpoints.values();
         for (EnvMonProdLotAPIEndpoints curApi: valuesEnvMonProdLot){
@@ -258,7 +261,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonProdLotAPIEndpoints.values().length);
         }
         EnvMonSampleAPIEndpoints[] valuesEnvMonSample = EnvMonSampleAPIEndpoints.values();
         for (EnvMonSampleAPIEndpoints curApi: valuesEnvMonSample){
@@ -266,7 +269,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonSampleAPIEndpoints.values().length);
         }
         EnvMonSampleAPIFrontendEndpoints[] valuesEnvMonSampleFE = EnvMonSampleAPIFrontendEndpoints.values();
         for (EnvMonSampleAPIFrontendEndpoints curApi: valuesEnvMonSampleFE){
@@ -274,7 +277,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EnvMonSampleAPIFrontendEndpoints.values().length);
         }
         InspLotRMAPIEndpoints[] valuesInspLotRM = InspLotRMAPIEndpoints.values();
         for (InspLotRMAPIEndpoints curApi: valuesInspLotRM){
@@ -282,7 +285,7 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), InspLotRMAPIEndpoints.values().length);
         }
         InspLotRMQueriesAPIEndpoints[] valuesInspLotRMQueries = InspLotRMQueriesAPIEndpoints.values();
         for (InspLotRMQueriesAPIEndpoints curApi: valuesInspLotRMQueries){
@@ -290,7 +293,31 @@ public final class EndPointsToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), InspLotRMQueriesAPIEndpoints.values().length);
+        }        
+        EndpointsDocAPIqueriesEndpoints[] endpointsDocAPIqueriesEndpoints = EndpointsDocAPIqueriesEndpoints.values();
+        for (EndpointsDocAPIqueriesEndpoints curApi: endpointsDocAPIqueriesEndpoints){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), EndpointsDocAPIqueriesEndpoints.values().length);
+        }
+        SampleAPIfrontendEndpoints[] valuesSampleFE = SampleAPIfrontendEndpoints.values();
+        for (SampleAPIfrontendEndpoints curApi: valuesSampleFE){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), SampleAPIfrontendEndpoints.values().length);
+        }
+        SampleAPIEndpoints[] valuesSample = SampleAPIEndpoints.values();
+        for (SampleAPIEndpoints curApi: valuesSample){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), SampleAPIEndpoints.values().length);
         }
         Rdbms.closeRdbms();
 }
@@ -304,12 +331,11 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
     }
     return argsJsonArr;
 }
-
-private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues){
+//private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues){
+//    declareInDatabase(apiName, endpointName, fieldNames, fieldValues, null);
+//}
+private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi){
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
-    ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
-    String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
-    Rdbms.getRdbms().startRdbms(dbTrazitModules);
     Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(), 
             new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()},
             new Object[]{apiName, endpointName}, new String[]{EndpointsDeclaration.FLD_ID.getName(), EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
@@ -324,19 +350,34 @@ private static void declareInDatabase(String apiName, String endpointName, Strin
             return;
         }else{
             String[] flds=(String[]) docInfoForEndPoint[0];
-            if (flds.length>0)
-                Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(),
-                        (String[]) docInfoForEndPoint[0],
-                        (String[]) docInfoForEndPoint[1],
-                        new String[]{EndpointsDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
+            String[] fldNames=new String[]{};
+            Object[] fldValues=new Object[]{};
+            if (flds.length>0){
+                fldNames=(String[]) docInfoForEndPoint[0];
+                fldValues=(Object[]) docInfoForEndPoint[1];
+            }
+            fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.FLD_OUTPUT_OBJECT_TYPES.getName());
+            if (outputObjectTypes==null) fldValues=LPArray.addValueToArray1D(fldValues, "TBD");
+            else
+                fldValues=LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());                
+            fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.FLD_NUM_ENDPOINTS_IN_API.getName());
+                fldValues=LPArray.addValueToArray1D(fldValues, numEndpointsInApi);                
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(),
+                    fldNames, fldValues,
+                    new String[]{EndpointsDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});            
             return;
         }
     }else{
-        fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.FLD_CREATION_DATE.getName());
-        fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
+        fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_CREATION_DATE.getName(), EndpointsDeclaration.FLD_NUM_ENDPOINTS_IN_API.getName()});
+        fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{LPDate.getCurrentTimeStamp(), numEndpointsInApi});
         fieldNames=LPArray.addValueToArray1D(fieldNames, (String[]) docInfoForEndPoint[0]);
-        fieldValues=LPArray.addValueToArray1D(fieldValues, (String[]) docInfoForEndPoint[1]);
-        Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
+        fieldValues=LPArray.addValueToArray1D(fieldValues, (Object[]) docInfoForEndPoint[1]);
+        fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.FLD_OUTPUT_OBJECT_TYPES.getName());
+        if (outputObjectTypes==null) fieldValues=LPArray.addValueToArray1D(fieldValues, "TBD");
+        else
+            fieldValues=LPArray.addValueToArray1D(fieldValues, outputObjectTypes.toString());
+        Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
+        return;
     }
 }
 

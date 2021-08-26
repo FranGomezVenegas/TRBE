@@ -12,6 +12,8 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,29 +34,40 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TRAINING_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10 ),}),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TRAINING_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10 ),},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
         CERTIFY_START_USER_METHOD("CERTIFY_START_USER_METHOD", "startCertification_success", "CERTIF_STARTED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )}),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
         CERTIFY_COMPLETE_CERTIFIED_USER_METHOD("CERTIFY_COMPLETE_CERTIFIED_USER_METHOD", "completeCertifiedCertification_success", "CERTIF_COMPLETED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )}),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
         CERTIFY_COMPLETE_NOT_CERTIFIED_USER_METHOD("CERTIFY_COMPLETE_NOT_CERTIFIED_USER_METHOD", "completeNotCertifiedCertification_success", "CERTIF_COMPLETED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )}),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
         CERTIFY_REVOKE_USER_METHOD("CERTIFY_REVOKE_USER_METHOD", "revokeCertification_success", "CERTIF_REVOKED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )}),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
         ;
-        private CertifyAnalysisMethodAPIEndpoints(String name, String successMessageCode, String audtEv, LPAPIArguments[] argums){
+        private CertifyAnalysisMethodAPIEndpoints(String name, String successMessageCode, String audtEv, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.auditEvent=audtEv;
             this.arguments=argums;  
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -66,26 +79,18 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
         public String getAuditEvent(){
             return this.auditEvent;
         }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final String auditEvent;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;        
     }
     
     /**

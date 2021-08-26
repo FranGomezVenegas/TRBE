@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package functionaljavaa.samplestructure;
 
 import lbplanet.utilities.LPNulls;
@@ -20,6 +15,8 @@ import databases.TblsDataAudit;
 import databases.Token;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.samplestructure.DataSampleEnums.DataSampleBusinessRules;
+import functionaljavaa.samplestructure.DataSampleEnums.DataSampleErrorTrapping;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -48,13 +45,8 @@ public class DataSample {
     static String SAMPLE_STATUSES_LABEL_EN_WHEN_NO_PROPERTY="Logged|RECEIVED|INCOMPLETE|COMPLETE|CANCELED";
     static String SAMPLE_STATUSES_LABEL_ES_WHEN_NO_PROPERTY="Registrada|RECEIVED|INCOMPLETE|COMPLETE|CANCELED";
     
-    /**
-     *
-     */
     public static final String SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS="ALL";
-    /**
-     *
-     */
+
     public static final String PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED="revisionSampleAnalysisRequired";
     public static final String PROCEDURE_SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO="sampleAnalysisAuthorCanBeReviewerToo";
     /**
@@ -63,71 +55,8 @@ public class DataSample {
     public static final String DIAGNOSES_SUCCESS = "SUCCESS";
     
     
-    public enum DataSampleBusinessRules{ 
-        STATUSES ("sample_statuses", GlobalVariables.Schemas.DATA.getName()),
-        STATUSES_LABEL_EN ("sample_statuses_label_en", GlobalVariables.Schemas.DATA.getName()),
-        STATUSES_LABEL_ES ("sample_statuses_label_es", GlobalVariables.Schemas.DATA.getName()),
-        SUFFIX_STATUS_FIRST ("_statusFirst", GlobalVariables.Schemas.DATA.getName()),
-        STATUS_REVIEWED ("sample_statusReviewed", GlobalVariables.Schemas.DATA.getName()),
-        STATUS_CANCELED ("sample_statusCanceled", GlobalVariables.Schemas.DATA.getName()),
-        
-        SUFFIX_SAMPLESTRUCTURE ("_sampleStructure", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLE_STATUS_FIRST ("sample_statusFirst", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLE_STATUS_RECEIVED ("sample_statusReceived", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLE_STATUS_INCOMPLETE ("sample_statusIncomplete", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLE_STATUS_COMPLETE ("sample_statusComplete", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLE_STATUS_REVIEWED ("sample_statusReviewed", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLE_STATUS_CANCELED ("sample_statusCanceled", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLEALIQUOTING_VOLUME_REQUIRED ("sampleAliquot_volumeRequired", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLEASUBLIQUOTING_VOLUME_REQUIRED ("sampleSubAliquot_volumeRequired", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLE_GENERICAUTOAPPROVEENABLED("sampleGenericAutoApproveEnabled", GlobalVariables.Schemas.PROCEDURE.getName())
-        ;
-        private DataSampleBusinessRules(String tgName, String areaNm){
-            this.tagName=tgName;
-            this.areaName=areaNm;
-        }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        
-        private final String tagName;
-        private final String areaName;
-    }
 
-    public enum DataSampleErrorTrapping{ 
-        SAMPLING_DATE_CHANGED ("SamplingDateChangedSuccessfully", "", ""),
-        SAMPLE_RECEPTION_COMMENT_ADDED ("SampleReceptionCommentAdd", "", ""),
-        SAMPLE_RECEPTION_COMMENT_REMOVED ("SampleReceptionCommentRemoved", "", ""),
-        SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
-        ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
-        SAMPLE_STATUS_MANDATORY("SampleStatusMandatory", "", ""),
-        MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "", ""),
-        MISSING_CONFIG_CODE("MissingConfigCode", "", ""),        
-        MISSING_SPEC_CONFIG_CODE("MissingSpecConfigCode", "Spec Config code <*1*> version <*2*> Not found for the procedure <*3*>", ""),        
-        SAMPLE_ALREADY_RECEIVED("SampleAlreadyReceived", "", ""),
-        SAMPLE_NOT_REVIEWABLE("SampleNotReviewable", "", ""),
-        VOLUME_SHOULD_BE_GREATER_THAN_ZERO("sampleAliquoting_volumeCannotBeNegativeorZero", "", ""),
-        ALIQUOT_CREATED_BUT_ID_NOT_GOT("AliquotCreatedButIdNotGotToContinueApplyingAutomatisms", "Object created but aliquot id cannot be get back to continue with the logic", ""),
-        SAMPLEASUBLIQUOTING_VOLUME_AND_UOM_REQUIRED ("sampleSubAliquoting_volumeAndUomMandatory", "", ""),        
-        SAMPLE_FIELDNOTFOUND("SampleFieldNotFound", "", ""),
-        READY_FOR_REVISION("readyForRevision", "", ""),
-        NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
-        SAMPLE_ALREADY_REVIEWED("sampleAlreadyReviewed", "", "")
-        ;
-        private DataSampleErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
-            this.errorCode=errCode;
-            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
-            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
-        }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
-    
-        private final String errorCode;
-        private final String defaultTextWhenNotInPropertiesFileEn;
-        private final String defaultTextWhenNotInPropertiesFileEs;
-    }
     public enum SampleStatuses{LOGGED, RECEIVED, NOT_STARTED, STARTED, INCOMPLETE, REVIEWED, CANCELED}
-    
     String classVersion = "0.1";
     String errorCode ="";
     Object[] errorDetailVariables= new Object[0];
@@ -150,7 +79,6 @@ public class DataSample {
         this.classVersion="0.1";
         this.smpAna=smpAna;
     }   
-
     /**
      *
      * @param sampleTemplate
@@ -591,7 +519,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                                             new Object[]{sampleId, statuses});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){smpNewStatus=sampleStatusIncomplete;}
         else{smpNewStatus=sampleStatusComplete;}
-
+        if (sampleInfo[0][0].toString().equalsIgnoreCase(smpNewStatus))
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "noChangeRequired", null);
         diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
                 new String[]{TblsData.Sample.FLD_STATUS.getName()}, new Object[]{smpNewStatus},
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
@@ -637,7 +566,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      */
     public Object[] sampleReview(Integer sampleId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
+        
+        Object[] rulesDiagn=sampleReviewAboutToRules(sampleId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesDiagn[0].toString())) return rulesDiagn;
+        
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
         Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(sampleId);
@@ -668,6 +600,13 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                     new Object[]{LPNulls.replaceNull(sampleId), schemaDataName, currStatus});                       
         }
         return diagnoses;        
+    }
+        
+    public static Object[] sampleReviewAboutToRules(Integer sampleId){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String reviewerMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_REVIEW_REVIEWER_MODE.getAreaName(), DataSampleBusinessRules.SAMPLE_REVIEW_REVIEWER_MODE.getTagName());        
+        
+        return new Object[]{LPPlatform.LAB_TRUE, "notImplementedYet", null};
     }
     /**
      *

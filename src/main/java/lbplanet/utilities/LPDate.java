@@ -11,12 +11,13 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
-
 /**
  *
  * @author Administrator
  */
 public class LPDate {
+    public enum IntervalTypes{DAYS, MONTHS, YEARS};
+
     private LPDate(){    throw new IllegalStateException("Utility class");}    
 /**
  * Add some days to this given date
@@ -124,6 +125,10 @@ public class LPDate {
         return LocalDate.parse(text, ISO_LOCAL_DATE_TIME);
     }
 
+    public static Date getCurrentDateWithNoTime(){
+        return new Date();
+    }
+
     /**
      *
      * @return
@@ -163,5 +168,23 @@ public class LPDate {
         if (Calendar.getInstance().before(dateToCompare)) return true;
         return false;
     }
-
+    public static Date addIntervalToGivenDate(Date startDay, String itemsMeasurement, int scheduleSize){    
+        IntervalTypes iTypes=null;
+        try{
+            iTypes = IntervalTypes.valueOf(itemsMeasurement.toUpperCase());
+        }catch(Exception e){
+            return null;
+        }
+        switch (iTypes){
+            case DAYS:
+                return LPDate.addDays(startDay, scheduleSize);
+            case MONTHS:
+                return LPDate.addMonths(startDay, scheduleSize);
+            case YEARS:
+                return LPDate.addYears(startDay, scheduleSize);
+            default:                
+                return null;
+        }
+    }
+    
 }

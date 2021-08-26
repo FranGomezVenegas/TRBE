@@ -13,6 +13,7 @@ import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
+import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -29,19 +30,27 @@ public class ChangeOfCustody {
      *
      */
     public enum ChangeOfCustodyBusinessRules{
-        CUSTODIAN_FUNCTIONALITY_MODE("custodianFunctionalityMode", GlobalVariables.Schemas.PROCEDURE.getName())
+        CUSTODIAN_FUNCTIONALITY_MODE("custodianFunctionalityMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
         ;
-        private ChangeOfCustodyBusinessRules(String tgName, String areaNm){
+        private ChangeOfCustodyBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
+        private final JSONArray valuesList;  
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
     }
-    
 public enum ChangeOfCustodyErrorTrapping{ 
         REQUEST_COMPLETED("ChainOfCustody_requestCompleted", "", ""),
         NO_CUSTODIAN_CANDIDATE("ChainOfCustody_noCustodianCandidate", "", ""),

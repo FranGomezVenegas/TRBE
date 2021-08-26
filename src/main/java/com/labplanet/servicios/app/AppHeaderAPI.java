@@ -18,10 +18,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import databases.Token;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONObject;
@@ -37,12 +39,13 @@ public class AppHeaderAPI extends HttpServlet {
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     public static final String MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE="first_name|last_name|photo";
     public enum AppHeaderAPIfrontendEndpoints{
-        GETAPPHEADER("GETAPPHEADER", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),}),
+        GETAPPHEADER("GETAPPHEADER", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private AppHeaderAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private AppHeaderAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
+            this.outputObjectTypes=outputObjectTypes;                        
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -54,22 +57,14 @@ public class AppHeaderAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;        
     }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.

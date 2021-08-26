@@ -29,10 +29,12 @@ import databases.TblsProcedure;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import trazit.session.ProcedureRequestSession;
@@ -229,20 +231,21 @@ GlobalAPIsParams.
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),                    
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
-                }),
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),
         PROGRAMS_CORRECTIVE_ACTION_LIST("PROGRAMS_CORRECTIVE_ACTION_LIST", "", 
             new LPAPIArguments[]{new LPAPIArguments("programName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments("programCorrectiveActionFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
-                new LPAPIArguments("programCorrectiveActionFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),}),
+                new LPAPIArguments("programCorrectiveActionFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_ACTIVE_PRODUCTION_LOTS("GET_ACTIVE_PRODUCTION_LOTS", "", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_SORT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)
-            }),            
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),            
         ;
-        private EnvMonAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
-            this.arguments=argums;  
+            this.arguments=argums; 
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -254,22 +257,14 @@ GlobalAPIsParams.
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }
     
     /**

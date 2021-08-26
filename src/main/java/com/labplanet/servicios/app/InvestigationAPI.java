@@ -7,6 +7,7 @@ package com.labplanet.servicios.app;
 
 import databases.TblsApp;
 import functionaljavaa.investigation.Investigation;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -14,6 +15,8 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,45 +50,45 @@ public class InvestigationAPI extends HttpServlet {
         NEW_INVESTIGATION("NEW_INVESTIGATION", "investigationCreated_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 7 ),
-                new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )}),
+                new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TblsApp.Incident.TBL.getName()).build()).build()),
         CLOSE_INVESTIGATION("CLOSE_INVESTIGATION", "investigationClosed_success",  
-            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),}),
+            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TblsApp.Incident.TBL.getName()).build()).build()),
         INVESTIGATION_TAKEN_DECISION("INVESTIGATION_CAPA_DECISION", "investigationDescisionTaken_success",  
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(ParamsList.CAPA_REQUIRED.getParamName(), LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7 ),
                 new LPAPIArguments(ParamsList.CAPA_FIELD_NAME.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8 ),
                 new LPAPIArguments(ParamsList.CAPA_FIELD_VALUE.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9 ),
-                new LPAPIArguments(ParamsList.CLOSE_INVESTIGATION.getParamName(), LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10 ),}),
+                new LPAPIArguments(ParamsList.CLOSE_INVESTIGATION.getParamName(), LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10 ),},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TblsApp.Incident.TBL.getName()).build()).build()),
         ADD_INVEST_OBJECTS("ADD_INVEST_OBJECTS", "investObjectsAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
+                new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TblsApp.Incident.TBL.getName()).build()).build()),
 /*        ADD_NOTE_INVESTIGATION("ADD_NOTE_INVESTIGATION", "investigationNoteAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
             new LPAPIArguments(ParamsList.NEW_STATUS.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7)}),*/
         ;
-        private InvestigationAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private InvestigationAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;
-            
+            this.outputObjectTypes=outputObjectTypes;                        
         } 
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-       /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;       
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }
 
     
@@ -93,14 +96,15 @@ public class InvestigationAPI extends HttpServlet {
         /**
          *
          */
-        OPEN_INVESTIGATIONS("OPEN_INVESTIGATIONS", "",new LPAPIArguments[]{}),
-        INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "",new LPAPIArguments[]{}),
-        INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}),
+        OPEN_INVESTIGATIONS("OPEN_INVESTIGATIONS", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+        INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+        INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private InvestigationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private InvestigationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
+            this.outputObjectTypes=outputObjectTypes;  
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -112,22 +116,14 @@ public class InvestigationAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }
 
     public enum ParamsList{INVESTIGATION_ID("investigationId"), OBJECTS_TO_ADD("objectsToAdd"),    

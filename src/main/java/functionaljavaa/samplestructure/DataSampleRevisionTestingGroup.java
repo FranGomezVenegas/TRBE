@@ -11,11 +11,13 @@ import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import static functionaljavaa.samplestructure.DataSample.PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED;
+import static functionaljavaa.samplestructure.DataSampleStructureRevisionRules.reviewTestingGroupRulesAllowed;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 
@@ -25,19 +27,28 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class DataSampleRevisionTestingGroup{
     public enum DataSampleRevisionTestingGroupBusinessRules{
-        SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP("sampleTestingByGroup_ReviewByTestingGroup", GlobalVariables.Schemas.PROCEDURE.getName()),
-        SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED("sampleTestingGroupGenericAutoApproveEnabled", GlobalVariables.Schemas.PROCEDURE.getName()),
+        SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP("sampleTestingByGroup_ReviewByTestingGroup", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED("sampleTestingGroupGenericAutoApproveEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         ;
-        private DataSampleRevisionTestingGroupBusinessRules(String tgName, String areaNm){
+        private DataSampleRevisionTestingGroupBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
-    }    
+        private final JSONArray valuesList;  
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
+    }
             
     public enum DataSampleRevisionTestingGroupErrorTrapping{ 
         SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP_NOT_ACTIVE("sampleTestingByGroup_ReviewByTestingGroupNotActive", "sampleTestingByGroup_ReviewByTestingGroup Not Active", "sampleTestingByGroup_ReviewByTestingGroup No Activo"),
@@ -120,6 +131,7 @@ public class DataSampleRevisionTestingGroup{
         //return diagnoses;
     }  
     
+    
     public static Object[] reviewSampleTestingGroup(Integer sampleId, String testingGroup){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
@@ -142,6 +154,9 @@ public class DataSampleRevisionTestingGroup{
         }
         Object[] readyForRevision = isReadyForRevision(sampleId, testingGroup);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(readyForRevision[0].toString())) return readyForRevision;
+        
+        Object[] reviewTstGgpRules = reviewTestingGroupRulesAllowed(sampleId, testingGroup);        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(reviewTstGgpRules[0].toString())) return reviewTstGgpRules;
         
         Object[] updateReviewSampleTestingGroup = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(),
                 new String[]{TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_BY.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_ON.getName()},
@@ -181,7 +196,6 @@ public class DataSampleRevisionTestingGroup{
     public static Object[] setReadyForRevision(Integer sampleId, String testingGroup){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-
         
         String[] sampleFieldName=new String[]{TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName()};
         Object[] sampleFieldValue=new Object[]{true};

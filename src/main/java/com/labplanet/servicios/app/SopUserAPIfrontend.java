@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.app;
 
-import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPI;
 import static com.labplanet.servicios.app.AppProcedureListAPI.procedureListInfo;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPArray;
@@ -16,6 +15,7 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.Token;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -31,6 +31,7 @@ import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValu
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 /**
@@ -135,16 +136,22 @@ public class SopUserAPIfrontend extends HttpServlet {
     public static final String JSON_TAG_VALUE_WINDOWS_URL_HOME="Modulo1/home.js";
      
     public enum SopUserAPIfrontendEndpoints{
-        ALL_MY_SOPS("ALL_MY_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
-        MY_PENDING_SOPS("MY_PENDING_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
-        PROCEDURE_SOPS("PROCEDURE_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
-        SOP_TREE_LIST_ELEMENT("SOP_TREE_LIST_ELEMENT", "",new LPAPIArguments[]{ }),
-        ALL_IN_ONE("ALL_IN_ONE", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
+        ALL_MY_SOPS("ALL_MY_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        MY_PENDING_SOPS("MY_PENDING_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        PROCEDURE_SOPS("PROCEDURE_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        SOP_TREE_LIST_ELEMENT("SOP_TREE_LIST_ELEMENT", "",new LPAPIArguments[]{ },
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        ALL_IN_ONE("ALL_IN_ONE", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
+            EndPointsToRequirements.endpointWithNoOutputObjects),
         ; 
-        private SopUserAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private SopUserAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -156,22 +163,14 @@ public class SopUserAPIfrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }
                            
 

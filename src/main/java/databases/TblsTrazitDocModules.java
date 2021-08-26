@@ -991,7 +991,11 @@ public class TblsTrazitDocModules {
         FLD_FILE_SUFFIX("file_suffix", LPDatabase.string()),
         FLD_RULE_NAME("rule_name", LPDatabase.string()),
         FLD_RULE_VALUE("rule_value", LPDatabase.string()),
-        FLD_ACTIVE("active", LPDatabase.booleanFld())
+        FLD_ACTIVE("active", LPDatabase.booleanFld()),
+        FLD_VALUES_LIST("values_list", LPDatabase.string()),
+        FLD_ALLOW_MULTI_VALUES("allow_multi_values", LPDatabase.booleanFld()),
+        FLD_VALUES_SEPARATOR("values_separator", LPDatabase.string(1)),
+        
 
         ;
         private ProcedureBusinessRules(String dbObjName, String dbObjType){

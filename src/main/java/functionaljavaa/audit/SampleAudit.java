@@ -19,6 +19,7 @@ import java.util.Arrays;
 import functionaljavaa.requirement.Requirement;
 import functionaljavaa.samplestructure.DataSampleStages;
 import lbplanet.utilities.LPDate;
+import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
 import static trazit.session.ProcedureRequestSession.getInstanceForActions;
 import trazit.globalvariables.GlobalVariables;
@@ -68,25 +69,29 @@ public class SampleAudit {
         SAMPLE_ANALYSIS_RESULT_CANCELED, SAMPLE_ANALYSIS_RESULT_UNCANCELED, SAMPLE_ANALYSIS_RESULT_REVIEWED}
       
     public enum SampleAuditBusinessRules{
-        REVISION_MODE("sampleAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName()),
-        AUTHOR_CAN_REVIEW_AUDIT_TOO("sampleAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName()),
-        CHILD_REVISION_REQUIRED("sampleAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName())
+        REVISION_MODE("sampleAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        AUTHOR_CAN_REVIEW_AUDIT_TOO("sampleAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        CHILD_REVISION_REQUIRED("sampleAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
         ;
-        private SampleAuditBusinessRules(String tgName, String areaNm){
+        private SampleAuditBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.valuesList=valuesList;  
+            this.allowMultiValue=allowMulti;
+            this.multiValueSeparator=separator;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public JSONArray getValuesList(){return this.valuesList;}
+        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
+        private final JSONArray valuesList;  
+        private final Boolean allowMultiValue;
+        private final char multiValueSeparator;        
     }
-    
-    
-    
-    
-
 /**
  * Add one record in the audit table when altering any of the levels belonging to the sample structure when not linked to any other statement.
  *      @param action String - Action being performed

@@ -84,6 +84,11 @@ public class PlatformDefinitionToInstance extends HttpServlet {
                 //fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBTbl);
                 Rdbms.closeRdbms();
                 Rdbms.stablishDBConection(platfName);
+                String functionCr=" CREATE OR REPLACE FUNCTION public.isnumeric(text) RETURNS boolean LANGUAGE plpgsql";
+                functionCr=functionCr+" IMMUTABLE STRICT ";
+                functionCr=functionCr+" AS $function$ DECLARE x NUMERIC; BEGIN x = $1::NUMERIC; RETURN TRUE; EXCEPTION WHEN others THEN RETURN FALSE; END; $function$ ";
+                Rdbms.prepRdQuery(functionCr, null);
+
                 String[] schemaNames = new String[]{GlobalVariables.Schemas.CONFIG.getName()};
                 String tblCreateScript="";
                 JSONObject jsonObj=new JSONObject();

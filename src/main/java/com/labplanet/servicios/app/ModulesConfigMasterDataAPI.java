@@ -10,7 +10,6 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_CONFIG_
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_PARAMETER;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FIELD_NAME;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FIELD_VALUE;
-import databases.Rdbms;
 import databases.TblsCnfg;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
 import functionaljavaa.materialspec.ConfigSpecStructure;
@@ -21,6 +20,8 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -42,29 +43,34 @@ import trazit.session.ProcedureRequestSession;
 public class ModulesConfigMasterDataAPI extends HttpServlet {
     
     public enum ConfigMasterDataAPIEndpoints{
-        /**
-         *
-         */
         ANALYSIS_NEW("ANALYSIS_NEW", "analysisNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
-                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )}),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
+                .add("table", TblsCnfg.Analysis.TBL.getName()).build()).build()),
         ANALYSIS_UPDATE("ANALYSIS_UPDATE", "analysisNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
-                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )}),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
+                .add("table", TblsCnfg.Analysis.TBL.getName()).build()).build()),
         SPEC_NEW("SPEC_NEW", "specNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
-                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )}),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
+                .add("table", TblsCnfg.Spec.TBL.getName()).build()).build()),
         SPEC_UPDATE("SPEC_UPDATE", "specUpdate_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8 ),
-                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9 )}),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
+                .add("table", TblsCnfg.Spec.TBL.getName()).build()).build()),
         SPEC_LIMIT_NEW("SPEC_LIMIT_NEW", "specLimitNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
@@ -76,12 +82,15 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 new LPAPIArguments("ruleType", LPAPIArguments.ArgumentType.STRING.toString(), true, 12 ),
                 new LPAPIArguments("ruleVariables", LPAPIArguments.ArgumentType.STRING.toString(), true, 13 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 14 ),
-                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 15 )}),
+                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 15 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
+                .add("table", TblsCnfg.Spec.TBL.getName()).build()).build()),
         ;
-        private ConfigMasterDataAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private ConfigMasterDataAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -93,22 +102,14 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }
         
      public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
@@ -161,7 +162,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case SPEC_UPDATE:

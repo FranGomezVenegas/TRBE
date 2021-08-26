@@ -19,96 +19,18 @@ import functionaljavaa.analysis.UserMethod;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.samplestructure.DataSampleAnalysisEnums.DataSampleAnalysisBusinessRules;
+import functionaljavaa.samplestructure.DataSampleAnalysisEnums.DataSampleAnalysisErrorTrapping;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import functionaljavaa.samplestructure.DataSampleEnums.DataSampleErrorTrapping;
 /**
  *
  * @author Administrator
  */
 public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
-    static String SAMPLEANALYSIS_STATUS_FIRST_WHEN_NO_PROPERTY="NOT_STARTED";
-    static String SAMPLEANALYSIS_STATUS_INCOMPLETE_WHEN_NO_PROPERTY="INCOMPLETE";
-    static String SAMPLEANALYSIS_STATUS_COMPLETE_WHEN_NO_PROPERTY="COMPLETE";
-    static String SAMPLEANALYSIS_STATUS_CANCELED_WHEN_NO_PROPERTY="CANCELED";
-    static String SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY="REVIEWED";
-    
-/*
-  @Override
-  public Object[] autoSampleAnalysisAdd(String procInstanceName, Integer sampleId, Token token, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer transactionId) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-*/
-
-    /**
-     *
-     */
-    public enum DataSampleAnalysisBusinessRules{
-        MARK_READYFORREVISION_WHENALLRESULTSENTERED("revisionSampleAnalysis_markAsReadyForRevisionWhenAllResultsEntered", GlobalVariables.Schemas.PROCEDURE.getName()),
-        SAMPLEANALYSIS_STATUSFIRST("sampleAnalysis_statusFirst", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLEANALYSIS_STATUSINCOMPLETE("sampleAnalysis_statusIncomplete", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLEANALYSIS_STATUSCOMPLETE("sampleAnalysis_statusComplete", GlobalVariables.Schemas.DATA.getName()),
-
-        SAMPLEANALYSIS_STATUSCANCELED("sampleAnalysis_statusCanceled", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLEANALYSIS_STATUSREVIEWED("sampleAnalysis_statusReviewed", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLEANALYSIS_ANALYSTASSIGNMENTMODE("sampleAnalysis_analystAssigmentMode", GlobalVariables.Schemas.DATA.getName()),
-        SAMPLEANALYSIS_ANALYSTASSIGNMENTMODES("sampleAnalysis_analystAssigmentModes", GlobalVariables.Schemas.DATA.getName()),
-        REVISION_TESTINGGROUP_REQUIRED("revisionTestinGroupRequired", GlobalVariables.Schemas.PROCEDURE.getName()),
-
-        SAMPLEANALYSIS_GENERICAUTOAPPROVEENABLED("sampleAnalysisGenericAutoApproveEnabled", GlobalVariables.Schemas.PROCEDURE.getName()),
-        
-        
-        ;
-        private DataSampleAnalysisBusinessRules(String tgName, String areaNm){
-            this.tagName=tgName;
-            this.areaName=areaNm;
-        }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        
-        private final String tagName;
-        private final String areaName;
-    }
-    public enum DataSampleAnalysisErrorTrapping{ 
-        MARK_READYFORREVISION_WHENALLRESULTSENTERED_NOTACTIVE_SUCCESS("markAsReadyForRevisionWhenAllResultsEnteredNotActive", "", ""),
-        SAMPLE_ANALYSIS_ADDED_SUCCESS("SampleAnalysisAddedSuccessfully", "", ""),
-        ALREADY_READYFORREVISION("alreadyReadyForRevision", "", ""),
-        ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS("DataSample_sampleAnalaysisAddToSample_MissingMandatoryFields", "", ""),
-        ANALYSISMETHOD_PARAMSNOTFOUND("DataSample_AnalysisMethodParamsNotFound", "", ""),
-        PENDING_REVISION("SampleAnalysisPendingRevision", "", ""),
-        SPECLIMIT_NOTFOUND("DataSample_SpecLimitNotFound", "", ""),
-        SPECRULE_NOTFOUND("DataSample_SpecRuleNotFound", "", ""),
-        SAMPLEANALYSISASSIGNED_MODENOTRECOGNIZED("DataSample_SampleAnalysisAssignment_AssignmentModeNotRecognized", "", ""),
-        SAMPLEANALYSISASSIGNED_MODENOTIMPLEMENTED("DataSample_SampleAnalysisAssignment_AssignmentModeNotImplemented", "", ""),
-        SAMPLEANALYSISASSIGNED_SUCCESS("DataSample_SampleAnalysisAssignment_Successfully", "", ""),
-        DB_RETURNEDERROR("DataSample_SampleAnalysisAssignment_databaseReturnedError", "", ""),
-        ESCAPE_UNHANDLEDEXCEPTION("DataSample_SampleAnalysisAssignment_EscapeByUnhandledException", "", ""),
-        SAMPLEANALYSIS_NOTFOUND("DataSample_SampleAnalysisNotFound", "", ""),
-        SAME_ANALYST("DataSample_SampleAnalysisAssignment_SameAnalyst", "", ""),
-        SAMPLEANALYSIS_LOCKED("DataSample_SampleAnalysisAssignment_SampleAnalysisLocked", "", ""),
-        READY_FOR_REVISION("readyForRevision", "", ""),
-        NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
-        RESULT_NOT_REVIEWABLE("DataSample_SampleAnalysisResultNotReviewable", "", ""),
-        
-  
-          
-
-        ;
-        
-        private DataSampleAnalysisErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
-            this.errorCode=errCode;
-            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
-            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
-        }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
-    
-        private final String errorCode;
-        private final String defaultTextWhenNotInPropertiesFileEn;
-        private final String defaultTextWhenNotInPropertiesFileEs;
-    }
 
     
     public enum DataSampleAnalyisAutoAddLevel{    
@@ -142,9 +64,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         String sampleAnalysisStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getTagName());
-        if (sampleAnalysisStatusCanceled.length()==0)sampleAnalysisStatusCanceled=SAMPLEANALYSIS_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        if (sampleAnalysisStatusCanceled.length()==0)sampleAnalysisStatusCanceled=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_CANCELED_WHEN_NO_PROPERTY;
         String sampleAnalysisStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getTagName());
-        if (sampleAnalysisStatusReviewed.length()==0)sampleAnalysisStatusReviewed=SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;
+        if (sampleAnalysisStatusReviewed.length()==0)sampleAnalysisStatusReviewed=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;
         Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
                 new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
                 new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName(), TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName(), TblsData.SampleAnalysis.FLD_TEST_ID.getName(), TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
@@ -277,9 +199,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             auditActionName = parentAuditAction + ":" + auditActionName;
         }
         String sampleAnalysisStatusIncomplete = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSINCOMPLETE.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSINCOMPLETE.getTagName());
-        if (sampleAnalysisStatusIncomplete.length()==0)sampleAnalysisStatusIncomplete=SAMPLEANALYSIS_STATUS_INCOMPLETE_WHEN_NO_PROPERTY;
+        if (sampleAnalysisStatusIncomplete.length()==0)sampleAnalysisStatusIncomplete=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_INCOMPLETE_WHEN_NO_PROPERTY;
         String sampleAnalysisStatusComplete = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCOMPLETE.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCOMPLETE.getTagName());
-        if (sampleAnalysisStatusComplete.length()==0)sampleAnalysisStatusComplete=SAMPLEANALYSIS_STATUS_COMPLETE_WHEN_NO_PROPERTY;        
+        if (sampleAnalysisStatusComplete.length()==0)sampleAnalysisStatusComplete=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_COMPLETE_WHEN_NO_PROPERTY;        
         String smpAnaNewStatus = "";
         Object[] diagnoses = Rdbms.existsRecord(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
                 new String[]{TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_MANDATORY.getName()}, 
@@ -298,7 +220,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS.getName() + ":" + smpAnaNewStatus);
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(auditActionName, TblsData.SampleAnalysis.TBL.getName(), testId, sampleId, testId, null, fieldsForAudit, parentAuditId);
-            if (SAMPLEANALYSIS_STATUS_COMPLETE_WHEN_NO_PROPERTY.equalsIgnoreCase(smpAnaNewStatus))
+            if (DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_COMPLETE_WHEN_NO_PROPERTY.equalsIgnoreCase(smpAnaNewStatus))
                 sampleAnalysisEvaluateStatusAutomatismForAutoApprove(sampleId, testId, parentAuditAction, parentAuditId);
         }        
         DataSample.sampleEvaluateStatus(sampleId, parentAuditAction, parentAuditId);
@@ -325,7 +247,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleAnalysisGenericAutoApproveEnabled[0].toString()))
             return;
         String sampleAnalysisStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getTagName());
-        if (sampleAnalysisStatusReviewed.length()==0)sampleAnalysisStatusReviewed=SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;        
+        if (sampleAnalysisStatusReviewed.length()==0)sampleAnalysisStatusReviewed=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;        
         String[] updFldsNames=new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName()};
         Object[] updFldsValues=new Object[]{sampleAnalysisStatusReviewed};
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(), 
@@ -353,9 +275,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         Boolean assignTestAnalyst = false;
         String testStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getTagName());
-        if (testStatusReviewed.length()==0)testStatusReviewed=SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;
+        if (testStatusReviewed.length()==0)testStatusReviewed=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;
         String testStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSCANCELED.getTagName());
-        if (testStatusCanceled.length()==0)testStatusCanceled=SAMPLEANALYSIS_STATUS_CANCELED_WHEN_NO_PROPERTY;
+        if (testStatusCanceled.length()==0)testStatusCanceled=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_CANCELED_WHEN_NO_PROPERTY;
         String assignmentModes = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_ANALYSTASSIGNMENTMODES.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_ANALYSTASSIGNMENTMODES.getAreaName());
         Object[][] testData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
                 new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, 
@@ -513,7 +435,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         }
         // set first status. Begin
         String firstStatus = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSFIRST.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSFIRST.getTagName());
-        if (firstStatus.length()==0) firstStatus=SAMPLEANALYSIS_STATUS_FIRST_WHEN_NO_PROPERTY;
+        if (firstStatus.length()==0) firstStatus=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_FIRST_WHEN_NO_PROPERTY;
         Integer specialFieldIndex = Arrays.asList(fieldName).indexOf(TblsData.Sample.FLD_STATUS.getName());
         if (specialFieldIndex == -1) {
             fieldName = LPArray.addValueToArray1D(fieldName, TblsData.Sample.FLD_STATUS.getName());
@@ -526,7 +448,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleData[0][0].toString())) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSample.DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{sampleId, schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{sampleId, schemaDataName});
         }
         String sampleSpecCode = "";
         Integer sampleSpecCodeVersion = null;
@@ -668,7 +590,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         specialFieldIndex = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.FLD_STATUS.getName());
         if (specialFieldIndex == -1) {
             firstStatus = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSFIRST.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSFIRST.getTagName());
-            if (firstStatus.length()==0)firstStatus=SAMPLEANALYSIS_STATUS_FIRST_WHEN_NO_PROPERTY;
+            if (firstStatus.length()==0)firstStatus=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_FIRST_WHEN_NO_PROPERTY;
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, firstStatus);
             getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.FLD_STATUS.getName());
         }
@@ -695,7 +617,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             }
         }
         if (resultMandatoryFieldsMissingBuilder.length() > 0) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSample.DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
         }
         fieldName = LPArray.addValueToArray1D(fieldName, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysis.FLD_ADDED_ON.getName(), TblsData.SampleAnalysis.FLD_ADDED_BY.getName()});
         fieldValue = LPArray.addValueToArray1D(fieldValue, new Object[]{sampleId, Rdbms.getCurrentDate(), token.getUserName()});
@@ -780,7 +702,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
     public static Object[] isAllsampleAnalysisReviewed(Integer sampleId, String[] whereFieldName, Object[] whereFieldValue) {    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String sampleAnalysisStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_STATUSREVIEWED.getTagName());        
-        if (sampleAnalysisStatusReviewed.length()==0)sampleAnalysisStatusReviewed=SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;
+        if (sampleAnalysisStatusReviewed.length()==0)sampleAnalysisStatusReviewed=DataSampleAnalysisEnums.SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY;
         if (whereFieldName==null) whereFieldName=new String[0];
         if (whereFieldValue==null) whereFieldValue=new String[0];
         whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName());

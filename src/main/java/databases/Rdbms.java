@@ -1042,11 +1042,15 @@ if (1==1){Rdbms.transactionId=1; return;}
                     }
                 }
                 buildPreparedStatement(filteredValoresConInterrogaciones, prepareStatement);
-                ResultSet res = prepareStatement.executeQuery();
+                ResultSet res;
+                res = prepareStatement.executeQuery();
                 crs.populate(res);
                 return crs;
             }
-        }catch(SQLException ex){
+        }catch(Exception ex){
+            
+//        }catch(SQLException ex){
+            //if (ex.getCause().)
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
             String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
             String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
@@ -1060,7 +1064,7 @@ if (1==1){Rdbms.transactionId=1; return;}
     }
   
 
-    private static Integer prepUpQuery(String consultaconinterrogaciones, Object [] valoresinterrogaciones) {
+    public static Integer prepUpQuery(String consultaconinterrogaciones, Object [] valoresinterrogaciones) {
         try (PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones)){
             //PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones);            
             setTimeout(rdbms.getTimeout());            

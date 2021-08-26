@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,14 +38,15 @@ public class EnvMonIncubationAPIfrontend extends HttpServlet {
     public enum EnvMonIncubationAPIfrontendEndpoints{
         INCUBATOR_TEMP_READINGS("INCUBATOR_TEMP_READINGS", "", 
                 new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),}),
+                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),}, null),
         INCUBATORS_LIST("INCUBATORS_LIST", "", 
-                new LPAPIArguments[]{new LPAPIArguments("incubStage", LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
+                new LPAPIArguments[]{new LPAPIArguments("incubStage", LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, null),
         ;
-        private EnvMonIncubationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonIncubationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
-            this.arguments=argums;  
+            this.arguments=argums; 
+            this.outputObjectTypes=outputObjectTypes;            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -56,22 +58,14 @@ public class EnvMonIncubationAPIfrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        public String getName(){return this.name;}
+        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
     }    
     /**
      *

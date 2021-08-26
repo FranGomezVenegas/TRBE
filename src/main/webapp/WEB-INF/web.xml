@@ -290,6 +290,10 @@
         <servlet-name>AppTrazitInitSession</servlet-name>
         <servlet-class>com.labplanet.servicios.app.AppTrazitInitSession</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EndpointsDocAPIqueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.doc.functionality.EndpointsDocAPIqueries</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DownloadFileServlet</servlet-name>
         <url-pattern>/DownloadFileServlet</url-pattern>
@@ -584,6 +588,10 @@
     <servlet-mapping>
         <servlet-name>AppTrazitInitSession</servlet-name>
         <url-pattern>/AppTrazitInitSession</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EndpointsDocAPIqueries</servlet-name>
+        <url-pattern>/Doc/EndpointsDocAPIqueries</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

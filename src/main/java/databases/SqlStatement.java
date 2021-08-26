@@ -18,7 +18,7 @@ import lbplanet.utilities.LPPlatform;
  * @author Administrator
  */
 public class SqlStatement {
-    enum WHERE_FLDVALUES_ARRAY_TYPES{NUMBER, INTEGER, BOOLEAN}
+    public enum WHERE_FLDVALUES_ARRAY_TYPES{NUMBER, INTEGER, BOOLEAN, STRING}
     
     public enum WHERECLAUSE_TYPES{IS_NULL(" is null"), IS_NOT_NULL(" is not null"), NULL("NULL"), IN("IN"), NOT_IN("NOT IN"), EQUAL("="), LIKE("LIKE"), BETWEEN("BETWEEN"),
         LESS_THAN_STRICT("<"), LESS_THAN("<="), GREATER_THAN_STRICT(">"), GREATER_THAN(">="),
@@ -221,6 +221,7 @@ public class SqlStatement {
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*")) return Float.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*", ""));
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*")) return Integer.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*", ""));
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.BOOLEAN.toString()+"*")) return Boolean.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.BOOLEAN.toString()+"*", ""));
+        if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.STRING.toString()+"*")) return String.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.BOOLEAN.toString()+"*", ""));
         
         return f;
     }

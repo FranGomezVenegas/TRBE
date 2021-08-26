@@ -161,22 +161,8 @@ public class ConfigProgramCalendar {
         this.itemsMeasurement =itemsMeasurement;
         this.scheduleSize=scheduleSize;
         this.firstDay=startDay;
-        
-        switch (itemsMeasurement.toUpperCase()){
-            case "DAYS":
-                endDayLocal = LPDate.addDays(startDay, scheduleSize);
-                break;
-            case "MONTHS":
-                endDayLocal = LPDate.addMonths(startDay, scheduleSize);
-                break;
-            case "YEARS":
-                endDayLocal = LPDate.addYears(startDay, scheduleSize);
-                break;                
-            default:                
-                break;
-        }
+        endDayLocal=LPDate.addIntervalToGivenDate(startDay, itemsMeasurement, scheduleSize);
         this.endDay=endDayLocal;                        
-        
     }
 
         /**
