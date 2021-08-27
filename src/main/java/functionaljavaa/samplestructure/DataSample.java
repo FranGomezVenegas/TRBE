@@ -17,6 +17,8 @@ import functionaljavaa.changeofcustody.ChangeOfCustody;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSampleEnums.DataSampleBusinessRules;
 import functionaljavaa.samplestructure.DataSampleEnums.DataSampleErrorTrapping;
+import static functionaljavaa.samplestructure.DataSampleStructureRevisionRules.sampleReviewRulesAllowed;
+import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -35,20 +37,12 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class DataSample {    
-    String SAMPLE_STATUS_FIRST_WHEN_NO_PROPERTY="LOGGED";
-    String SAMPLE_STATUS_RECEIVED_WHEN_NO_PROPERTY="RECEIVED";
-    String SAMPLE_STATUS_INCOMPLETE_WHEN_NO_PROPERTY="INCOMPLETE";
-    static String SAMPLE_STATUS_COMPLETE_WHEN_NO_PROPERTY="COMPLETE";
-    static String SAMPLE_STATUS_CANCELED_WHEN_NO_PROPERTY="CANCELED";
-    static String SAMPLE_STATUS_REVIEWED_WHEN_NO_PROPERTY="REVIEWED";
     static String SAMPLE_STATUSES_WHEN_NO_PROPERTY="LOGGED|RECEIVED|INCOMPLETE|COMPLETE|CANCELED";
     static String SAMPLE_STATUSES_LABEL_EN_WHEN_NO_PROPERTY="Logged|RECEIVED|INCOMPLETE|COMPLETE|CANCELED";
     static String SAMPLE_STATUSES_LABEL_ES_WHEN_NO_PROPERTY="Registrada|RECEIVED|INCOMPLETE|COMPLETE|CANCELED";
     
     public static final String SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS="ALL";
 
-    public static final String PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED="revisionSampleAnalysisRequired";
-    public static final String PROCEDURE_SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO="sampleAnalysisAuthorCanBeReviewerToo";
     /**
      *
      */
@@ -56,7 +50,6 @@ public class DataSample {
     
     
 
-    public enum SampleStatuses{LOGGED, RECEIVED, NOT_STARTED, STARTED, INCOMPLETE, REVIEWED, CANCELED}
     String classVersion = "0.1";
     String errorCode ="";
     Object[] errorDetailVariables= new Object[0];
@@ -131,10 +124,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
 
         mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel, actionName);
         
-        String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), sampleLevel+DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName());     
-        sampleStatusFirst=SAMPLE_STATUS_FIRST_WHEN_NO_PROPERTY;
-        if (sampleStatusFirst.length()==0)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_STATUS_MANDATORY.getErrorCode(), new Object[]{TblsData.Sample.FLD_SPEC_CODE.getName()});    
+        String sampleStatusFirst = SampleStatuses.getStatusFirstCode(sampleLevel);
+
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_STATUS.getName());
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, sampleStatusFirst);
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
@@ -262,9 +253,9 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             
             Integer transactionId = null;
             Integer preAuditId=Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString());
-            this.smpAna.autoSampleAnalysisAdd(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), preAuditId);
+            this.smpAna.autoSampleAnalysisAdd(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.getStatusCode(sampleLevel), preAuditId);
             
-            autoSampleAliquoting(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), transactionId, preAuditId);            
+            autoSampleAliquoting(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.getStatusCode(sampleLevel), transactionId, preAuditId);            
         }
         return diagnoses;  
     }
@@ -277,7 +268,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     public Object[] sampleReception(Integer sampleId) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String receptionStatus = SampleStatuses.RECEIVED.toString();        
+        String receptionStatus = SampleStatuses.RECEIVED.getStatusCode(classVersion);        
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
     
         Object[][] currSampleStatus = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, 
@@ -492,7 +483,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     public static Object[] sampleEvaluateStatus(Integer sampleId, String parentAuditAction, Integer preAuditId){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String statuses=SampleStatuses.NOT_STARTED.toString()+"|"+SampleStatuses.STARTED.toString()+"|"+SampleStatuses.INCOMPLETE.toString();
+        String statuses=SampleStatuses.NOT_STARTED.getStatusCode("")+"|"+SampleStatuses.STARTED.getStatusCode("")+"|"+SampleStatuses.INCOMPLETE.getStatusCode("");
         String auditActionName = SampleAudit.SampleAuditEvents.SAMPLE_EVALUATE_STATUS.toString();
         if (parentAuditAction!=null){auditActionName = parentAuditAction + ":"+auditActionName;}
 
@@ -530,7 +521,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             SampleAudit smpAudit = new SampleAudit();        
             smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, preAuditId);        
         }      
-        if (SAMPLE_STATUS_COMPLETE_WHEN_NO_PROPERTY.equalsIgnoreCase(smpNewStatus))
+        if (SampleStatuses.COMPLETE.getStatusCode("").equalsIgnoreCase(smpNewStatus))
             sampleEvaluateStatusAutomatismForAutoApprove(sampleId, parentAuditAction, preAuditId);        
         return diagnoses;
     }
@@ -544,7 +535,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleGenericAutoApproveEnabled[0].toString()))
             return isSampleGenericAutoApproveEnabled;
         String sampleStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
-        if (sampleStatusReviewed.length()==0)sampleStatusReviewed=SAMPLE_STATUS_REVIEWED_WHEN_NO_PROPERTY;        
+        if (sampleStatusReviewed.length()==0)sampleStatusReviewed=SampleStatuses.REVIEWED.getStatusCode("");        
         String[] updFldsNames=new String[]{TblsData.Sample.FLD_STATUS.getName()};
         Object[] updFldsValues=new Object[]{sampleStatusReviewed};
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
@@ -566,26 +557,23 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      */
     public Object[] sampleReview(Integer sampleId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String sampleStatusCanceled = SampleStatuses.CANCELED.getStatusCode("");
+        String sampleStatusReviewed = SampleStatuses.REVIEWED.getStatusCode("");
         
-        Object[] rulesDiagn=sampleReviewAboutToRules(sampleId);
+        Object[] rulesDiagn=sampleReviewRulesAllowed(sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesDiagn[0].toString())) return rulesDiagn;
         
         Object[] diagnoses = new Object[7];
-        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
         Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;
-        String sampleStatusCanceled = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_CANCELED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_CANCELED.getTagName());
-        if (sampleStatusCanceled.length()==0)sampleStatusCanceled=SAMPLE_STATUS_CANCELED_WHEN_NO_PROPERTY;
-        String sampleStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
-        if (sampleStatusReviewed.length()==0)sampleStatusReviewed=SAMPLE_STATUS_REVIEWED_WHEN_NO_PROPERTY;
         Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) return sampleAuditRevision;
-        Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+        Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
                                         new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId},
                                         new String[]{TblsData.Sample.FLD_STATUS.getName(), TblsData.Sample.FLD_STATUS_PREVIOUS.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName()});
         String currStatus = (String) objectInfo[0][0];               
         if ( (!(sampleStatusCanceled.equalsIgnoreCase(currStatus))) && (!(sampleStatusReviewed.equalsIgnoreCase(currStatus))) && (sampleId!=null) ){
-            diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+            diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
                                                                 new String[]{TblsData.Sample.FLD_STATUS.getName(), TblsData.Sample.FLD_STATUS_PREVIOUS.getName()}, new Object[]{sampleStatusReviewed, currStatus}, 
                                                                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});                                                        
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
@@ -597,17 +585,11 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             }                        
         }else{
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_REVIEWABLE.getErrorCode(), 
-                    new Object[]{LPNulls.replaceNull(sampleId), schemaDataName, currStatus});                       
+                    new Object[]{LPNulls.replaceNull(sampleId), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), currStatus});                       
         }
         return diagnoses;        
     }
         
-    public static Object[] sampleReviewAboutToRules(Integer sampleId){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String reviewerMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_REVIEW_REVIEWER_MODE.getAreaName(), DataSampleBusinessRules.SAMPLE_REVIEW_REVIEWER_MODE.getTagName());        
-        
-        return new Object[]{LPPlatform.LAB_TRUE, "notImplementedYet", null};
-    }
     /**
      *
      * @param procInstanceName

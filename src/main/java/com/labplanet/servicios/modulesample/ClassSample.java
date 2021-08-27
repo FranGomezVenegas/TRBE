@@ -23,6 +23,7 @@ import functionaljavaa.samplestructure.DataSampleEnums.DataSampleErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleIncubation;
 import static functionaljavaa.samplestructure.DataSampleRevisionTestingGroup.reviewSampleTestingGroup;
 import functionaljavaa.samplestructure.DataSampleStages;
+import functionaljavaa.samplestructure.DataSampleStructureStatuses;
 import java.math.BigDecimal;
 import java.sql.Date;
 import javax.servlet.http.HttpServletRequest;
@@ -99,8 +100,8 @@ public class ClassSample {
             Object[][] sampleStatus=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, new String[]{TblsData.Sample.FLD_STATUS.getName()});
             diagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_REVIEWED.getErrorCode(), null);
-            if ( (sampleStatus[0][0].toString().equalsIgnoreCase(DataSample.SampleStatuses.CANCELED.toString())) ||
-                 (sampleStatus[0][0].toString().equalsIgnoreCase(DataSample.SampleStatuses.REVIEWED.toString())) ){               
+            if ( (sampleStatus[0][0].toString().equalsIgnoreCase(DataSampleStructureStatuses.SampleStatuses.CANCELED.getStatusCode(""))) ||
+                 (sampleStatus[0][0].toString().equalsIgnoreCase(DataSampleStructureStatuses.SampleStatuses.REVIEWED.getStatusCode(""))) ){               
                 this.diagnostic=diagn;
 //                Object[] dynamicDataObjects = new Object[]{sampleId};
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), diagn[diagn.length-1]);

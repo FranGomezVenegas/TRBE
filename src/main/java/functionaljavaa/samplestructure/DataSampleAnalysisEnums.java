@@ -5,12 +5,12 @@ import trazit.globalvariables.GlobalVariables;
 
 public class DataSampleAnalysisEnums {
     
-    static String SAMPLEANALYSIS_STATUS_FIRST_WHEN_NO_PROPERTY="NOT_STARTED";
+/*    static String SAMPLEANALYSIS_STATUS_FIRST_WHEN_NO_PROPERTY="NOT_STARTED";
     static String SAMPLEANALYSIS_STATUS_INCOMPLETE_WHEN_NO_PROPERTY="INCOMPLETE";
     static String SAMPLEANALYSIS_STATUS_COMPLETE_WHEN_NO_PROPERTY="COMPLETE";
     static String SAMPLEANALYSIS_STATUS_CANCELED_WHEN_NO_PROPERTY="CANCELED";
     static String SAMPLEANALYSIS_STATUS_REVIEWED_WHEN_NO_PROPERTY="REVIEWED";
-    
+*/    
 
     
     public enum DataSampleAnalysisBusinessRules{

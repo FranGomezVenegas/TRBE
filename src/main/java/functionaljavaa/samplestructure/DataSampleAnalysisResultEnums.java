@@ -13,14 +13,11 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class DataSampleAnalysisResultEnums {
-    static String SAMPLEANALYSISRESULT_STATUS_FIRST_WHEN_NO_PROPERTY="BLANK";
-    static String SAMPLEANALYSISRESULT_STATUS_CANCELED_WHEN_NO_PROPERTY="CANCELED";
-    static String SAMPLEANALYSISRESULT_STATUS_REVIEWED_WHEN_NO_PROPERTY="REVIEWED";
-    static String SAMPLEANALYSISRESULT_STATUS_SPEC_EVAL_NOSPEC_WHEN_NO_PROPERTY="NO SPEC";
-    static String SAMPLEANALYSISRESULT_STATUS_EVAL_NOSPECPARAMLIMIT_WHEN_NO_PROPERTY="NO SPEC LIMIT";
     
     public enum DataSampleAnalysisResultBusinessRules{        
         STATUS_FIRST("sampleAnalysisResult_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
+        STATUS_ENTERED("sampleAnalysisResult_statusEntered", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
+        STATUS_REENTERED("sampleAnalysisResult_statusReEntered", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
         STATUS_REVIEWED("sampleAnalysisResult_statusReviewed", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
         STATUS_CANCELED("sampleAnalysisResult_statusCanceled", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
         STATUS_SPEC_EVAL_NOSPEC("sampleAnalysisResult_statusSpecEvalNoSpec", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),

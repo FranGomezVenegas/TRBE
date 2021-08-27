@@ -8,6 +8,8 @@ package functionaljavaa.samplestructure;
 
 import databases.Rdbms;
 import databases.TblsData;
+import databases.Token;
+import functionaljavaa.parameter.Parameter;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
@@ -22,7 +24,12 @@ import trazit.session.ProcedureRequestSession;
 public class DataSampleStructureRevisionRules {
 
     public enum DataSampleStructureRevisionRls{
+        SAMPLE_REVIEW_REVIEWER_MODE("sampleReviewReviewerMode",GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleEnums.sampleReviewReviewerModeValues.getValuesInOne(), null, '|'),
+
         TESTING_GROUP_REVIEWER_CANBE_TEST_REVIEWER("testingGroupReviewer_canBeTestReviewer", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO("sampleAnalysisAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        REVISION_SAMPLEANALYSIS_REQUIRED("revisionSampleAnalysisRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        
         ;
         private DataSampleStructureRevisionRls(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
@@ -44,6 +51,24 @@ public class DataSampleStructureRevisionRules {
         private final char multiValueSeparator;       
     }
     
+    public static Object[] sampleReviewRulesAllowed(Integer sampleId){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String reviewerMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleStructureRevisionRls.SAMPLE_REVIEW_REVIEWER_MODE.getAreaName(), DataSampleStructureRevisionRls.SAMPLE_REVIEW_REVIEWER_MODE.getTagName());        
+        
+        return new Object[]{LPPlatform.LAB_TRUE, "notImplementedYet", null};
+    }
+    
+    
+    public static Object[] reviewSampleAnalysisRulesAllowed(Integer testId, String[] tstFldName, Object[][] tstFldValues){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        Object[] isSampleAnalysisAuthorCanReviewEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleStructureRevisionRls.SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO.getAreaName(), DataSampleStructureRevisionRls.SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO.getTagName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleAnalysisAuthorCanReviewEnable[0].toString())){
+            if (LPArray.valueInArray(LPArray.getColumnFromArray2D(tstFldValues, LPArray.valuePosicInArray(tstFldName, TblsData.SampleAnalysis.FLD_ANALYST.getName())), token.getPersonName()))
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleAnalysisAuthorCannotBeReviewer", null);
+        }       
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleAnalysisAuthorCannotBeReviewer", null);        
+    }
 
     public static Object[] reviewTestingGroupRulesAllowed(Integer sampleId, String testingGroup){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
