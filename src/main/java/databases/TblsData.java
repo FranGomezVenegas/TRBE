@@ -329,6 +329,8 @@ public class TblsData {
          */
         FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.string()),
         FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),        
+        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string()), 
+        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime())        
         ;
         private Sample(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -2331,6 +2333,8 @@ public class TblsData {
         FLD_HAS_INVEST("has_invest", "CASE WHEN io.id IS NULL THEN 'NO' ELSE 'YES' END"),
         FLD_INVEST_ID("invest_id", "io.invest_id"),
         FLD_INVEST_OBJECT_ID("invest_object_id", "io.id"),
+        FLD_SAMPLE_REVIEWER("sample_reviewer", "s.reviewer"),
+        FLD_TEST_REVIEWER("test_reviewer", "sa.reviewer"),
         ;
         private ViewSampleAnalysisResultWithSpecLimits(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

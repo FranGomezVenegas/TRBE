@@ -17,10 +17,11 @@ import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.DataSpec;
-import functionaljavaa.responsemessages.ResponseMessages;
-import functionaljavaa.samplestructure.DataSampleEnums.DataSampleErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
 import static functionaljavaa.samplestructure.DataSampleAnalysis.isReadyForRevision;
 import static functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisEvaluateStatusAutomatismForReview;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStructureRevisionRules.DataSampleStructureRevisionRls;
 import static functionaljavaa.samplestructure.DataSampleStructureRevisionRules.reviewSampleAnalysisRulesAllowed;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
@@ -37,8 +38,6 @@ import trazit.globalvariables.GlobalVariables;
 public class DataSampleAnalysisResult {
     
     
-    String[] mandatoryFields = null;
-    Object[] mandatoryFieldsValue = null;
     DataDataIntegrity labIntChecker = new DataDataIntegrity(); 
     String errorCode ="";
     Object[] errorDetailVariables= new Object[0];
@@ -87,9 +86,9 @@ public class DataSampleAnalysisResult {
         if (objectInfo.length == 0) {
             String[] filter = new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName() + ":" + sampleId.toString() + 
                     TblsData.SampleAnalysisResult.FLD_TEST_ID.getName()+":" + testId.toString() + TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()+":" + resultId.toString()};
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotFound", new Object[]{Arrays.toString(filter), schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(filter), schemaDataName});
 //        } else if (LPArray.valueInArray(, objectInfo[0][0].toString()))
-//            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotFound", new Object[]{Arrays.toString(filter), schemaDataName});            
+//            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(filter), schemaDataName});            
         } else {
             for (Integer iResToCancel = 0; iResToCancel < objectInfo.length; iResToCancel++) {
                 String currStatus = (String) objectInfo[iResToCancel][0];
@@ -110,7 +109,7 @@ public class DataSampleAnalysisResult {
                             smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.BACK_FROM_CANCEL.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, null);
                         }
                     } else {
-                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The <*1*> <*2*> has status <*3*> then cannot be canceled in schema <*4*>", 
+                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.RESULT_CANNOT_BE_CANCELLED.getErrorCode(), 
                             new Object[]{TblsData.SampleAnalysisResult.TBL.getName(), resultId, currStatus,schemaDataName});
                     }
                 }
@@ -142,7 +141,7 @@ public class DataSampleAnalysisResult {
                         smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.BACK_FROM_CANCEL.toString(), TblsData.SampleAnalysis.TBL.getName(), currTest, sampleId, currTest, null, fieldsForAudit, null);
                     }
                 } else 
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The <*1*> <*2*> has status <*3*> then cannot be canceled in schema <*4*>", 
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.RESULT_CANNOT_BE_CANCELLED.getErrorCode(), 
                         new Object[]{TblsData.SampleAnalysisResult.TBL.getName(), resultId, currStatus,schemaDataName});
             }
         }
@@ -180,7 +179,7 @@ public class DataSampleAnalysisResult {
                 new Object[]{sampleId, analysisNameArr[i]}, 
                 new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) return LPArray.array2dTo1d(resultInfo);
-            if (resultInfo.length>1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "This analysis has more than one parameter to enter result", null);
+            if (resultInfo.length>1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.ANALYSIS_HAS_SOME_PARAMETERS.getErrorCode(), null);
             diagn=sampleAnalysisResultEntry(Integer.valueOf(resultInfo[0][0].toString()), resultValueArr[i],dataSample);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
         }
@@ -207,9 +206,11 @@ public class DataSampleAnalysisResult {
         String specEvalNoSpec = DataSampleStructureStatuses.SampleAnalysisResultSpecEvalStatuses.NO_SPEC.getStatusCode("");
         String specEvalNoSpecParamLimit = DataSampleStructureStatuses.SampleAnalysisResultSpecEvalStatuses.NO_SPEC_LIMIT.getStatusCode("");
 
-        String resultStatusDefault = DataSampleStructureStatuses.SampleAnalysisResultStatuses.getStatusFirstCode(errorCode);
+        String resultStatusDefault = DataSampleStructureStatuses.SampleAnalysisResultStatuses.getStatusFirstCode("");
         String resultStatusCanceled = DataSampleStructureStatuses.SampleAnalysisResultStatuses.CANCELED.getStatusCode("");
         String resultStatusReviewed = DataSampleStructureStatuses.SampleAnalysisResultStatuses.REVIEWED.getStatusCode("");
+        String resultStatusEntered = DataSampleStructureStatuses.SampleAnalysisResultStatuses.ENTERED.getStatusCode("");
+        String resultStatusReEntered = DataSampleStructureStatuses.SampleAnalysisResultStatuses.REENTERED.getStatusCode("");
 
         String[] fieldsName = new String[0];
         Object[] fieldsValue = new Object[0];
@@ -222,7 +223,7 @@ public class DataSampleAnalysisResult {
                     TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName(), TblsData.SampleAnalysisResult.FLD_UOM.getName(), 
                     TblsData.SampleAnalysisResult.FLD_UOM_CONVERSION_MODE.getName()});
         if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString())) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getSimpleName()+"_SampleAnalysisResultNotFound", new Object[]{resultId.toString(), schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{resultId.toString(), schemaDataName});
         Integer sampleId = (Integer) resultData[0][0];
         Integer testId = (Integer) resultData[0][1];
         String analysis = (String) resultData[0][2];
@@ -232,7 +233,6 @@ public class DataSampleAnalysisResult {
         String currResultStatus = (String) resultData[0][6];
         String currRawValue = (String) resultData[0][7];
         String resultUomName = (String) resultData[0][8];
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         
         Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())){
@@ -240,9 +240,9 @@ public class DataSampleAnalysisResult {
             if (!Boolean.valueOf(userCertified[0].toString())) return (Object[]) userCertified[1];
         }        
         if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getSimpleName()+"_SampleAnalysisResultLocked", new Object[]{currResultStatus, resultId.toString(), schemaConfigName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.RESULT_LOCKED.getErrorCode(), new Object[]{currResultStatus, resultId.toString(), schemaConfigName});
         if ((currRawValue != null) && (currRawValue.equalsIgnoreCase(resultValue.toString()))) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getSimpleName()+"_SampleAnalysisResultSampleValue", new Object[]{resultId.toString(), schemaDataName, currRawValue});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.SAME_RESULT_VALUE.getErrorCode(), new Object[]{resultId.toString(), schemaDataName, currRawValue});
         Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_CONFIG_CODE.getName(), TblsData.Sample.FLD_CONFIG_CODE_VERSION.getName()});
@@ -250,12 +250,8 @@ public class DataSampleAnalysisResult {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{sampleId.toString(), schemaDataName});
         String sampleConfigCode = (String) sampleData[0][1];
         Integer sampleConfigCodeVersion = (Integer) sampleData[0][2];
-sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_SAMPLE_ID.getName());
-sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleId);
-sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_CONFIG_CODE.getName());
-sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleConfigCode);
-sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_CONFIG_CODE_VERSION.getName());
-sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleConfigCodeVersion);
+        sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_CONFIG_CODE.getName(), TblsData.Sample.FLD_CONFIG_CODE_VERSION.getName()});
+        sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, new Object[]{sampleId, sampleConfigCode, sampleConfigCodeVersion});
 
         Object[][] sampleSpecData = Rdbms.getRecordFieldsByFilter(schemaDataName,  TblsData.Sample.TBL.getName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
@@ -268,18 +264,14 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleConfigCodeVer
             sampleSpecCode = sampleSpecData[0][0].toString();
             sampleSpecCodeVersion = Integer.valueOf(sampleSpecData[0][1].toString());
             sampleSpecVariationName = sampleSpecData[0][2].toString();
-sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_SPEC_CODE.getName());
-sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecCode);
-sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_SPEC_CODE_VERSION.getName());
-sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecCodeVersion);
-sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_SPEC_VARIATION_NAME.getName());
-sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariationName);            
+            sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.Sample.FLD_SPEC_CODE.getName(), TblsData.Sample.FLD_SPEC_CODE_VERSION.getName(), TblsData.Sample.FLD_SPEC_VARIATION_NAME.getName()});
+            sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName});
         }
         Object[][] sampleRulesData = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SampleRules.TBL.getName(), 
                 new String[]{TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName()}, 
                 new Object[]{sampleConfigCode, sampleConfigCodeVersion}, new String[]{TblsCnfg.SampleRules.FLD_TEST_ANALYST_REQUIRED.getName()});        
         if ( (sampleRulesData[0][0]!=null) && (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRulesData[0][0].toString())) ) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleRulesNotFound", 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_RULES_NOT_FOUND.getErrorCode(), 
                 new Object[]{TblsCnfg.SampleRules.FLD_ANALYST_ASSIGNMENT_MODE.getName(), sampleConfigCode, sampleConfigCodeVersion, schemaConfigName});
         Boolean analystRequired=false;
         if (sampleRulesData[0][0]!=null){analystRequired = Boolean.valueOf(sampleRulesData[0][0].toString());}
@@ -288,22 +280,22 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                     new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
                     new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName(), TblsData.SampleAnalysis.FLD_ANALYST.getName(), TblsData.SampleAnalysis.FLD_ANALYST_ASSIGNED_ON.getName()});
             if ( (sampleRulesData[0][0]!=null) && (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRulesData[0][0].toString())) ) {
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisNotFound", new Object[]{testId.toString(), schemaDataName});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND.getErrorCode(), new Object[]{testId.toString(), schemaDataName});
             }
             String testAnalyst = (String) testData[0][1];
             if (testAnalyst == null) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisRuleAnalystNotAssigned", new Object[]{testId.toString(), sampleConfigCode, sampleConfigCodeVersion.toString(), schemaDataName});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.RULE_ANALYST_NOT_ASSIGNED.getErrorCode(), new Object[]{testId.toString(), sampleConfigCode, sampleConfigCodeVersion.toString(), schemaDataName});
             if (!testAnalyst.equalsIgnoreCase(token.getPersonName())) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisRuleOtherAnalystEnterResult", new Object[]{testId.toString(), testAnalyst, token.getPersonName(), schemaDataName});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.RULE_OTHERANALYSIS_ENTER_RESULT.getErrorCode(), new Object[]{testId.toString(), testAnalyst, token.getPersonName(), schemaDataName});
         }
         String newResultStatus = currResultStatus;
         if (currResultStatus == null) {
             newResultStatus = resultStatusDefault;
         }
-        if ((newResultStatus.equalsIgnoreCase("NOT_STARTED")) || (newResultStatus.equalsIgnoreCase(resultStatusDefault))){
-            newResultStatus = "ENTERED";
+        if ((newResultStatus.equalsIgnoreCase(DataSampleStructureStatuses.SampleAnalysisResultStatuses.BLANK.getStatusCode(""))) || (newResultStatus.equalsIgnoreCase(resultStatusDefault))){
+            newResultStatus=resultStatusEntered;
         } else {
-            newResultStatus = "RE-ENTERED";
+            newResultStatus=resultStatusReEntered;
         }
         if (sampleSpecCode == null) {
             Object[] prettyValue = sarRawToPrettyResult(resultValue);
@@ -325,10 +317,10 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, analysis, methodName, methodVersion, paramName, 
                 new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(), TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), 
                     TblsCnfg.SpecLimits.FLD_UOM.getName(), TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName()});
-        if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && (!"Rdbms_NoRecordsFound".equalsIgnoreCase(specLimits[0][4].toString()))) {
+        if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && (!Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode().equalsIgnoreCase(specLimits[0][4].toString()))) {
             return LPArray.array2dTo1d(specLimits);
         }
-        if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && ("Rdbms_NoRecordsFound".equalsIgnoreCase(specLimits[0][4].toString()))) {
+        if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && (Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode().equalsIgnoreCase(specLimits[0][4].toString()))) {
             Object[] prettyValue = sarRawToPrettyResult(resultValue);
             fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.FLD_SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.FLD_ENTERED_BY.getName()
                 , TblsData.SampleAnalysisResult.FLD_ENTERED_ON.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_PRETTY_VALUE.getName()});
@@ -355,7 +347,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         resultUomName = LPNulls.replaceNull(resultUomName);
         if (resultUomName.length()>0) {
             if ((!resultUomName.equalsIgnoreCase(specUomName)) && (specUomConversionMode == null || specUomConversionMode.equalsIgnoreCase("DISABLED") || ((!specUomConversionMode.contains(resultUomName)) && !specUomConversionMode.equalsIgnoreCase("ALL")))) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConversionNotAllowed", new Object[]{specUomConversionMode, specUomName, resultUomName,  limitId.toString(), schemaDataName});            
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERSION_NOT_ALLOWED.getErrorCode(), new Object[]{specUomConversionMode, specUomName, resultUomName,  limitId.toString(), schemaDataName});            
             if (resultUomName.equalsIgnoreCase(specUomName)){
                 requiresUnitsConversion = false;
                 resultConverted=new BigDecimal(resultValue.toString());
@@ -364,7 +356,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                 UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue.toString()), resultUomName);
                 uom.convertValue(specUomName);
                 if (!uom.getConvertedFine()) 
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERTER_RETURNED_FALSE.getErrorCode(), new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
                 resultConverted = uom.getConvertedQuantity();
             }
         }
@@ -407,7 +399,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                 try{
                     resultValue= new BigDecimal(resultValue.toString());
                 }catch(Exception e){
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSampleAnalysisResult_ValueNotNumericForQuantitativeParam", new Object[]{resultValue, specRule.getRuleRepresentation(), limitId.toString(), schemaDataName});            
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_NUMERIC_VALUE.getErrorCode(), new Object[]{resultValue, specRule.getRuleRepresentation(), limitId.toString(), schemaDataName});            
                 }
                 if (specRule.getQuantitativeHasControl()){
                     if (requiresUnitsConversion) {
@@ -453,7 +445,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
 //                UserMethod.newUserMethodEntry(procInstanceName, userName, userRole, analysis, methodName, methodVersion, sampleId, testId, appSessionId);
                 return diagnoses;
         }
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_SpecRuleNotImplemented", new Object[]{resultId.toString(), schemaDataName, ruleType});
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.SPECRULE_NOTIMPLEMENTED.getErrorCode(), new Object[]{resultId.toString(), schemaDataName, ruleType});
     }
     
     /**
@@ -480,11 +472,11 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         Integer sampleId = Integer.valueOf(resultInfo[0][5].toString());
         String specUomConversionMode = resultInfo[0][6].toString();
         if (specUomConversionMode == null || specUomConversionMode.equalsIgnoreCase("DISABLED") || ((!specUomConversionMode.contains(newuom)) && !specUomConversionMode.equalsIgnoreCase("ALL"))) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConversionNotAllowed", new Object[]{specUomConversionMode, newuom, curruom, resultId.toString(), schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERSION_NOT_ALLOWED.getErrorCode(), new Object[]{specUomConversionMode, newuom, curruom, resultId.toString(), schemaDataName});
         UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(currValue), curruom);
         uom.convertValue(newuom);
         if (!uom.getConvertedFine()) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERTER_RETURNED_FALSE.getErrorCode(), new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
         BigDecimal resultConverted = uom.getConvertedQuantity();
         String[] updFieldNames = new String[]{TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName(), TblsData.SampleAnalysisResult.FLD_UOM.getName()};
         Object[] updFieldValues = new Object[]{resultConverted.toString(), newuom};
@@ -550,7 +542,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                 testId = (Integer) resultInfo[iResToCancel][3];
                 sampleId = (Integer) resultInfo[iResToCancel][4];
                 if (!(sampleAnalysisResultStatusCanceled.equalsIgnoreCase(currResultStatus))) {
-                    diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleUnCancel_StatusNotExpected", new Object[]{resultInfo[0][0].toString(), sampleAnalysisResultStatusCanceled, schemaDataName});
+                    diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.FORRESULTUNCANCEL_STATUS_NOT_EXPECTED.getErrorCode(), new Object[]{resultInfo[0][0].toString(), sampleAnalysisResultStatusCanceled, schemaDataName});
                     diagPerResult = LPArray.addValueToArray1D(diagPerResult, TblsData.SampleAnalysisResult.TBL.getName()+" " + resultId.toString() + " not uncanceled because current status is " + currResultStatus);
                 } else {
                     resultId = (Integer) resultInfo[iResToCancel][2];
@@ -664,7 +656,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                 testId = (Integer) resultInfo[iResToReview][3];
                 sampleId = (Integer) resultInfo[iResToReview][4];
                 if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currResultStatus))) {
-                    diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleUnReviewed_StatusNotExpected", new Object[]{resultInfo[0][0].toString(), sampleAnalysisResultStatusReviewed, schemaDataName});
+                    diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.FORRESULTUNREVIEW_STATUS_NOT_EXPECTED.getErrorCode(), new Object[]{resultInfo[0][0].toString(), sampleAnalysisResultStatusReviewed, schemaDataName});
                     diagPerResult = LPArray.addValueToArray1D(diagPerResult, TblsData.SampleAnalysisResult.TBL.getName()+" " + resultId.toString() + " not unreviewed because current status is " + currResultStatus);
                 } else {
                     diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
@@ -799,7 +791,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                                 smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_CANCELED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, null);
                             }
                         } else 
-                            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultCancelation_StatusNotExpected", new Object[]{resultId.toString(), currStatus, schemaDataName});
+                            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.FORRESULTCANCELATION_STATUS_NOT_EXPECTED.getErrorCode(), new Object[]{resultId.toString(), currStatus, schemaDataName});
                     }
                     if ((cancelScope.equalsIgnoreCase(TblsData.Sample.FLD_SAMPLE_ID.getName())) && (!LPArray.valueInArray(samplesToCancel, sampleId)))
                         samplesToCancel = LPArray.addValueToArray1D(samplesToCancel, sampleId);
@@ -829,7 +821,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                     smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_CANCELED.toString(), TblsData.SampleAnalysis.TBL.getName(), currTest, sampleId, currTest, null, fieldsForAudit, null);
                 }
             } else 
-                diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisCancelation_StatusNotExpected", new Object[]{LPNulls.replaceNull(currTest), currStatus, schemaDataName});            
+                diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.FORRESULTCANCELATION_STATUS_NOT_EXPECTED.getErrorCode(), new Object[]{LPNulls.replaceNull(currTest), currStatus, schemaDataName});            
         }
         if (samplesToCancel.length==0 && cancelScope.equalsIgnoreCase(TblsData.Sample.FLD_SAMPLE_ID.getName()))
             samplesToCancel = LPArray.addValueToArray1D(samplesToCancel, cancelScopeId);
@@ -851,7 +843,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                     smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_CANCELED.toString(), TblsData.Sample.TBL.getName(), currSample, currSample, null, null, fieldsForAudit, null);
                 }
             }else 
-                diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisCancelation_StatusNotExpected", new Object[]{LPNulls.replaceNull(currSample), currStatus, schemaDataName});
+                diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.FORRESULTCANCELATION_STATUS_NOT_EXPECTED.getErrorCode(), new Object[]{LPNulls.replaceNull(currSample), currStatus, schemaDataName});
         }
         return diagnoses;
     }
@@ -868,7 +860,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         for (String analysisNameArr1 : analysisNameArr) {
             Object[][] testInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(), new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysis.FLD_ANALYSIS.getName()}, new Object[]{sampleId, analysisNameArr1}, new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testInfo[0][0].toString())) return LPArray.array2dTo1d(testInfo);
-            if (testInfo.length>1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "This analysis has more than one parameter to enter result", null);
+            if (testInfo.length>1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.ANALYSIS_HAS_SOME_PARAMETERS.getErrorCode(), null);
             diagn=sampleAnalysisResultReview(null, Integer.valueOf(testInfo[0][0].toString()), null);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
                 return diagn;            
@@ -903,15 +895,15 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         Object[][] objectInfoForRevisionCheck = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), reviewScopeTable, 
                 new String[]{reviewScope}, new Object[]{reviewScopeId}, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfoForRevisionCheck[0][0].toString()) || objectInfoForRevisionCheck.length == 0)             
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotFound", new Object[]{LPNulls.replaceNull(resultId).toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{LPNulls.replaceNull(resultId).toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
         if (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName())){
             if (sampleAnalysisResultStatusReviewed.equalsIgnoreCase(objectInfoForRevisionCheck[0][0].toString()))
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_AlreadyReviewed", new Object[]{reviewScope, reviewScopeId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_REVIEWED.getErrorCode(), new Object[]{reviewScope, reviewScopeId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
         }
         Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), 
                 new String[]{reviewScope}, new Object[]{reviewScopeId}, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfo[0][0].toString()) || objectInfo.length == 0)             
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotFound", new Object[]{LPNulls.replaceNull(resultId).toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});            
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{LPNulls.replaceNull(resultId).toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});            
         reviewSampleAnalysisRulesAllowed(testId, fieldsToRetrieve, objectInfo);
         
         Object[] testsToReview = reviewSamplesAnalysisResultToReview(objectInfo);
@@ -945,7 +937,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                     new String[]{TblsData.Sample.FLD_STATUS.getName()});
             if (sampleInfo.length == 0) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleNotFound", new Object[]{sampleId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{sampleId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
 
             Object[] isRevisionSampleAnalysisRequired=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleStructureRevisionRls.REVISION_SAMPLEANALYSIS_REQUIRED.getAreaName(), DataSampleStructureRevisionRls.REVISION_SAMPLEANALYSIS_REQUIRED.getTagName());
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisRequired[0].toString())){            
@@ -990,7 +982,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                     new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
                     new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName()});
             if (testInfo.length == 0) {            
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisNotFound", new Object[]{testId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND.getErrorCode(), new Object[]{testId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
             } else {
                 String currStatus=testInfo[0][0].toString();                
                 if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {

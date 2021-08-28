@@ -7,7 +7,7 @@ package functionaljavaa.samplestructure;
 
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.samplestructure.DataSampleEnums.DataSampleBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleBusinessRules;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;

@@ -19,7 +19,7 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.samplestructure.DataSampleAnalysisResult;
-import functionaljavaa.samplestructure.DataSampleEnums.DataSampleErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleIncubation;
 import static functionaljavaa.samplestructure.DataSampleRevisionTestingGroup.reviewSampleTestingGroup;
 import functionaljavaa.samplestructure.DataSampleStages;

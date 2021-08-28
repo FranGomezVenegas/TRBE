@@ -200,7 +200,7 @@ currentLine=iLines;
                             new Object[]{specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName}, 
                             new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(),TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(),TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), 
                                 TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), TblsCnfg.SpecLimits.FLD_UOM.getName(), TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName()});
-                        if ( (LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) ){ //&& (!"Rdbms_NoRecordsFound".equalsIgnoreCase(specLimits[0][4].toString())) ){
+                        if ( (LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) ){ //&& (!RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode().equalsIgnoreCase(specLimits[0][4].toString())) ){
                             resSpecEvaluation=specLimits[0];
                             resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla No encontrada ");                    
                         }else{

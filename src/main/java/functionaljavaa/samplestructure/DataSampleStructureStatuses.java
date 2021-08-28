@@ -6,9 +6,9 @@
 package functionaljavaa.samplestructure;
 
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.samplestructure.DataSampleAnalysisEnums.DataSampleAnalysisBusinessRules;
-import functionaljavaa.samplestructure.DataSampleAnalysisResultEnums.DataSampleAnalysisResultBusinessRules;
-import functionaljavaa.samplestructure.DataSampleEnums.DataSampleBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleBusinessRules;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -30,7 +30,7 @@ public class DataSampleStructureStatuses {
         }
         public static String getStatusFirstCode(String sampleLevel){
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), sampleLevel+DataSampleEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName());     
+            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), sampleLevel+DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName());     
             if (sampleStatusFirst==null || sampleStatusFirst.length()==0) return LOGGED.toString();
             return sampleStatusFirst;        
         }
@@ -55,7 +55,7 @@ public class DataSampleStructureStatuses {
         }
         public static String getStatusFirstCode(String sampleLevel){
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), sampleLevel+DataSampleEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName());     
+            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), sampleLevel+DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName());     
             if (sampleStatusFirst==null || sampleStatusFirst.length()==0) return NOT_STARTED.toString();
             return sampleStatusFirst;        
         }
@@ -80,7 +80,7 @@ public class DataSampleStructureStatuses {
         }
         public static String getStatusFirstCode(String sampleLevel){
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), sampleLevel+DataSampleEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName());     
+            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), sampleLevel+DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName());     
             if (sampleStatusFirst==null || sampleStatusFirst.length()==0) return BLANK.toString();
             return sampleStatusFirst;        
         }

@@ -37,17 +37,19 @@ import functionaljavaa.moduleinspectionlot.DataInspectionLot.DataInspectionLotBu
 import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotErrorTrapping;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
-import functionaljavaa.samplestructure.DataSampleEnums.DataSampleBusinessRules;
-import functionaljavaa.samplestructure.DataSampleEnums.DataSampleErrorTrapping;
-import functionaljavaa.samplestructure.DataSampleAnalysisEnums.DataSampleAnalysisBusinessRules;
-import functionaljavaa.samplestructure.DataSampleAnalysisEnums.DataSampleAnalysisErrorTrapping;
-import functionaljavaa.samplestructure.DataSampleAnalysisResultEnums.DataSampleAnalysisResultBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleAnalysisResultStrategy.DataSampleAnalysisResultStrategyBusinessRules;
 import functionaljavaa.samplestructure.DataSampleIncubation.DataSampleIncubationBusinessRules;
 import functionaljavaa.samplestructure.DataSampleIncubation.DataSampleIncubationErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules;
 import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStages.SampleStageBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureRevisionRules.DataSampleStructureRevisionRls;
 import functionaljavaa.sop.UserSop.UserSopBusinessRules;
 import functionaljavaa.sop.UserSop.UserSopErrorTrapping;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomErrorTrapping;
@@ -109,12 +111,6 @@ public class PropertiesToRequirements {
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
             declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
         }        
-        DataSampleRevisionTestingGroupBusinessRules[] dataSampleRevisionTestingGroupBusinessRules=DataSampleRevisionTestingGroupBusinessRules.values();
-        for (DataSampleRevisionTestingGroupBusinessRules curBusRul: dataSampleRevisionTestingGroupBusinessRules){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
-            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
-            declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
-        }
         SampleStageBusinessRules[] sampleStageBusinessRules=SampleStageBusinessRules.values();
         for (SampleStageBusinessRules curBusRul: sampleStageBusinessRules){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
@@ -123,6 +119,18 @@ public class PropertiesToRequirements {
         }        
         DataSampleBusinessRules[] dataSampleBusinessRules=DataSampleBusinessRules.values();
         for (DataSampleBusinessRules curBusRul: dataSampleBusinessRules){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
+            declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
+        }
+        DataSampleStructureRevisionRls[] dataSampleStructureRevisionRls=DataSampleStructureRevisionRls.values();
+        for (DataSampleStructureRevisionRls curBusRul: dataSampleStructureRevisionRls){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
+            declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
+        }        
+        DataSampleRevisionTestingGroupBusinessRules[] dataSampleRevisionTestingGroupBusinessRules=DataSampleRevisionTestingGroupBusinessRules.values();
+        for (DataSampleRevisionTestingGroupBusinessRules curBusRul: dataSampleRevisionTestingGroupBusinessRules){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
             declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
@@ -269,6 +277,12 @@ public class PropertiesToRequirements {
         }
         DataSampleAnalysisErrorTrapping[] dataSampleAnalysisErrorTrapping = DataSampleAnalysisErrorTrapping.values();
         for (DataSampleAnalysisErrorTrapping curBusRul: dataSampleAnalysisErrorTrapping){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode()});
+            declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);
+        }
+        DataSampleAnalysisResultErrorTrapping[] dataSampleAnalysisResultErrorTrapping = DataSampleAnalysisResultErrorTrapping.values();
+        for (DataSampleAnalysisResultErrorTrapping curBusRul: dataSampleAnalysisResultErrorTrapping){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode()});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);

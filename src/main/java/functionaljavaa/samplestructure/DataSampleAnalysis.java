@@ -19,13 +19,14 @@ import functionaljavaa.analysis.UserMethod;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.samplestructure.DataSampleAnalysisEnums.DataSampleAnalysisBusinessRules;
-import functionaljavaa.samplestructure.DataSampleAnalysisEnums.DataSampleAnalysisErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisBusinessRules;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisErrorTrapping;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-import functionaljavaa.samplestructure.DataSampleEnums.DataSampleErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysisResultStatuses;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysisStatuses;
 /**
  *
@@ -203,7 +204,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String smpAnaNewStatus = "";
         Object[] diagnoses = Rdbms.existsRecord(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
                 new String[]{TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_MANDATORY.getName()}, 
-                new Object[]{testId, "BLANK", true});
+                new Object[]{testId, SampleAnalysisResultStatuses.BLANK.getStatusCode(""), true});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
             smpAnaNewStatus = sampleAnalysisStatusIncomplete;
         } else {
