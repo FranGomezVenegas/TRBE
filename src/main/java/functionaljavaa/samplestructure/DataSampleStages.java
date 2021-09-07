@@ -223,7 +223,7 @@ public enum SampleStageErrorTrapping{
                     sampleFieldName, 
                     sampleFieldValue,
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
-                    String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getUserName());               
+                    String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);               
                 dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());                         
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(actionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);        

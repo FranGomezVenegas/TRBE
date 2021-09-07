@@ -228,7 +228,7 @@ for (String[] curEntry: endpointArr){
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(docInfoForEndPoint[0].toString()))
         out.println("No doc info for "+apiName+"."+endPointName);         
     else
-        out.println(apiName+"."+endPointName+" >> "+Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString((String[]) docInfoForEndPoint[0], (Object[]) docInfoForEndPoint[1], ":")));
+        out.println(apiName+"."+endPointName+" >> "+Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString((String[]) docInfoForEndPoint[0], (Object[]) docInfoForEndPoint[1], LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)));
 }
 if (1==1) return;
 procInstanceName="em-demo-a";
@@ -379,11 +379,11 @@ out.println("Bye");
             }
             Object[] firstArray=new Object[]{"A", "B"};
             Object[] secondArray=new Object[]{"1", "2", 3};
-                String[] myJoinedArray=LPArray.joinTwo1DArraysInOneOf1DString(firstArray, secondArray, ":");
-                out.println("joining two arrays of "+Arrays.toString(firstArray)+" and "+Arrays.toString(secondArray)+" with the separator "+":"+" I obtained "+Arrays.toString(myJoinedArray));
+                String[] myJoinedArray=LPArray.joinTwo1DArraysInOneOf1DString(firstArray, secondArray, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
+                out.println("joining two arrays of "+Arrays.toString(firstArray)+" and "+Arrays.toString(secondArray)+" with the separator "+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+" I obtained "+Arrays.toString(myJoinedArray));
             firstArray=new Object[]{"A", "B","c", "Z"};
-                myJoinedArray=LPArray.joinTwo1DArraysInOneOf1DString(firstArray, secondArray, ":");
-                out.println("joining two arrays of "+Arrays.toString(firstArray)+" and "+Arrays.toString(secondArray)+" with the separator "+":"+" I obtained "+Arrays.toString(myJoinedArray));
+                myJoinedArray=LPArray.joinTwo1DArraysInOneOf1DString(firstArray, secondArray, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
+                out.println("joining two arrays of "+Arrays.toString(firstArray)+" and "+Arrays.toString(secondArray)+" with the separator "+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+" I obtained "+Arrays.toString(myJoinedArray));
             
             out.println("The name for the table Session in db is "+ TblsApp.AppSession.valueOf("TBL").getName());
             out.println("The name for the field Session_id in db is "+TblsApp.AppSession.valueOf("FLD_SESSION_ID").getName());

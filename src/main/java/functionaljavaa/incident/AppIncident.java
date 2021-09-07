@@ -69,7 +69,7 @@ public class AppIncident {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){
             String incIdStr=diagnostic[diagnostic.length-1].toString();
             AppIncidentAudit.incidentAuditAdd(IncidentAuditEvents.NEW_INCIDENT_CREATED.toString(), TblsAppAudit.Incident.TBL.getName(), Integer.valueOf(incIdStr),   
-                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, null);
+                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
         }
         return diagnostic;        
     }
@@ -90,7 +90,7 @@ public class AppIncident {
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
             AppIncidentAudit.incidentAuditAdd(IncidentAuditEvents.CONFIRMED_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, 
-                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, note);
+                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }
         return diagnostic;    
     }
@@ -111,7 +111,7 @@ public class AppIncident {
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
             AppIncidentAudit.incidentAuditAdd(IncidentAuditEvents.CLOSED_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, 
-                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, note);
+                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }
         return diagnostic;    
     }    
@@ -136,7 +136,7 @@ public class AppIncident {
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
             AppIncidentAudit.incidentAuditAdd(IncidentAuditEvents.REOPENED_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, 
-                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, note);
+                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }
         return diagnostic;    
     }    
@@ -164,7 +164,7 @@ public class AppIncident {
             String auditStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
             if (newStatus!=null) auditStatus=newStatus;
             AppIncidentAudit.incidentAuditAdd(IncidentAuditEvents.ADD_NOTE_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, 
-                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, note);
+                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }
         return diagnostic;    
     }    

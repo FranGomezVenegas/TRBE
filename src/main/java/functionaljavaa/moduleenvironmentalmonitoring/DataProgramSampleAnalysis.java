@@ -11,6 +11,7 @@ import databases.TblsData;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.samplestructure.DataSampleAnalysisStrategy;
+import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPParadigm;
@@ -89,11 +90,16 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
             default:
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "autoSampleAnalysisAdd_caseNotDetected", new String[]{autoAddAnalysisLevel+" not implemented yet."});
         }
-
         StringBuilder analysisAdded = new StringBuilder();
         for (Object[] anaName1 : anaName) {
-            String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName(), TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()};
-            Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2], (String) anaName1[3]};
+            String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName()};
+            Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2]};
+            Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())){
+                fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName());
+                fieldsValue= LPArray.addValueToArray1D(fieldsValue, (String) anaName1[3]);
+            }
+            
             DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue, preAuditId);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        

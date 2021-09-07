@@ -8,6 +8,7 @@ package functionaljavaa.testingscripts;
 //import databases.Rdbms;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -40,7 +41,7 @@ public class TestingAuditIds {
         jObj.put("auditId", auditId);
         jObj.put("fldName", Arrays.toString(fldName));
         jObj.put("fldValue", Arrays.toString(fldValue));
-        jObj.put("fieldsPretty", Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, ":")));
+        jObj.put("fieldsPretty", Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)));
         this.jsonContent.add(jObj);
     }
     

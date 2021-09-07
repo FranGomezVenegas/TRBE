@@ -61,10 +61,11 @@ public final class EndPointsToRequirements {
                     .add("table", "no output for testing").build()).build();
     // Endpoints 'antiguos': AppHeaderAPIEndpoints, IncidentAPIfrontendEndpoints, BatchAPIEndpoints, GenomaVariableAPIEndPoints y todos los de Genoma!
 
-    public static void endpointDefinition(){
+    public static Object[] endpointDefinition(){
         
+    Object[] logMsg=new Object[]{};
     ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
-
+    logMsg=LPArray.addValueToArray1D(logMsg, "Begin");
     String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
     Boolean startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
         // *** Falta encontrar la manera de tomar la url de un servlet!
@@ -82,6 +83,7 @@ public final class EndPointsToRequirements {
         }
         
     Rdbms.closeRdbms();
+
     startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
 
         TestingLimitAndResult[] valuesDBSpecLimitAndResult = TestingLimitAndResult.values();
@@ -319,7 +321,9 @@ public final class EndPointsToRequirements {
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
             declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), SampleAPIEndpoints.values().length);
         }
+        logMsg=LPArray.addValueToArray1D(logMsg, "End");        
         Rdbms.closeRdbms();
+        return logMsg;
 }
     
 private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
@@ -332,10 +336,12 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
     return argsJsonArr;
 }
 //private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues){
-//    declareInDatabase(apiName, endpointName, fieldNames, fieldValues, null);
+//     declareInDatabase(apiName, endpointName, fieldNames, fieldValues, null);
 //}
 private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi){
+//if (1==1)return;
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
+    try{
     Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(), 
             new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()},
             new Object[]{apiName, endpointName}, new String[]{EndpointsDeclaration.FLD_ID.getName(), EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
@@ -378,6 +384,9 @@ private static void declareInDatabase(String apiName, String endpointName, Strin
             fieldValues=LPArray.addValueToArray1D(fieldValues, outputObjectTypes.toString());
         Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
         return;
+    }
+    }catch(Exception e){
+      return;      
     }
 }
 

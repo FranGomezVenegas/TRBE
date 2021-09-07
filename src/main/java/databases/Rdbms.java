@@ -859,7 +859,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                     }else{                        
                         entireArr[icurrLine][fieldsToGroupAltered.length]=
                                 LPArray.convertArrayToString(
-                                LPArray.joinTwo1DArraysInOneOf1DString(fieldsToGroup, fieldsToGroupValues, ": "),  ", ", "");
+                                LPArray.joinTwo1DArraysInOneOf1DString(fieldsToGroup, fieldsToGroupValues, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR),  ", ", "");
                     }
                     res.next();
                     icurrLine++;

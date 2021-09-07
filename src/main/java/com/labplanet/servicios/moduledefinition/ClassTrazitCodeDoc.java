@@ -1,12 +1,13 @@
 package com.labplanet.servicios.moduledefinition;
 
 import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIEndpoints;
-import databases.Rdbms;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.platform.doc.PropertiesToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPPlatform;
 
 /**
  *
@@ -29,7 +30,8 @@ public class ClassTrazitCodeDoc {
         this.functionFound=true;
             switch (endPoint){
                 case DOC_API_ENDPOINTS_IN_DB:                    
-                    EndPointsToRequirements.endpointDefinition();
+                    actionDiagnoses = EndPointsToRequirements.endpointDefinition();
+                    this.messageDynamicData=new Object[]{Arrays.toString(actionDiagnoses)};                    
                     break;
                 case DOC_API_MESSAGE_CODES_IN_DB:
                     PropertiesToRequirements.messageDefinition();
@@ -38,7 +40,10 @@ public class ClassTrazitCodeDoc {
                     PropertiesToRequirements.businessRulesDefinition();
                     break;
             }    
-        this.diagnostic=actionDiagnoses;
+        if (actionDiagnoses!=null)
+            this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "<*1*>", new Object[]{actionDiagnoses[0]});
+        else
+            this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "no return", null);
         this.relatedObj=rObj;
         rObj.killInstance();
     }

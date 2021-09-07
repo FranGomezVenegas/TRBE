@@ -7,8 +7,10 @@ package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.JSON_TAG_NAME_SAMPLE_RESULTS;
+import static com.labplanet.servicios.moduleenvmonit.EnvMonIncubBatchAPIfrontend.getActiveBatchData;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewSampleMicroorganismList;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
+import static com.labplanet.servicios.modulesample.SampleAPIfrontend.samplesByStageData;
 import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
@@ -124,6 +126,40 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),
                 }, EndPointsToRequirements.endpointWithNoOutputObjects),        
+        GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES("GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES", new LPAPIArguments[]{
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8),
+new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 9),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 15),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 20),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 21),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 22),            
+new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 23),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 24),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 25),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 26),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 27),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 28),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 29),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 30),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 31),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 32),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 33),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 34),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 35),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 36)}, EndPointsToRequirements.endpointWithNoOutputObjects)
+            
+        
         ;
         private EnvMonSampleAPIFrontendEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -149,6 +185,7 @@ public class ClassEnvMonSampleFrontend {
     }
     
     public ClassEnvMonSampleFrontend(HttpServletRequest request, EnvMonSampleAPIFrontendEndpoints endPoint){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
@@ -862,7 +899,89 @@ public class ClassEnvMonSampleFrontend {
                     this.isSuccess=true;
                     this.responseSuccessJArr=jArr;  
 //                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                    return;                     
+                    return; 
+                case GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES:                    
+                    fieldsToRetrieve=new String[]{};
+                    String fieldsRetrieveStr = argValues[0].toString(); 
+                    if (fieldsRetrieveStr.length()==0 || "ALL".equalsIgnoreCase(fieldsRetrieveStr))
+                        fieldsToRetrieve=TblsEnvMonitData.IncubBatch.getAllFieldNames();
+                    else
+                        fieldsToRetrieve=fieldsRetrieveStr.split("\\|");
+                    whereFieldsNameArr = null;
+                    whereFieldsValueArr = null;
+                    whereFieldsName = argValues[1].toString(); 
+                    if (whereFieldsName==null){whereFieldsName="";}
+                    whereFieldsValue = argValues[2].toString();
+                    if (whereFieldsValue==null){whereFieldsValue="";}
+
+                    if (whereFieldsName.length()>0)
+                        whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
+                    else
+                        whereFieldsNameArr=new String[]{TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName()};
+                    if (whereFieldsValue.length()>0)
+                        whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
+                    else
+                        whereFieldsValueArr=new Object[]{true};
+                    for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
+                        if (LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.Sample.TBL.getName(), whereFieldsNameArr[iFields])){                
+                            HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
+                            whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
+                            if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
+                                String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
+                                whereFieldsValueArr[iFields]=newWhereFieldValues;
+                            }
+                        }
+                        procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
+                        String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(), procReqInstance.getTokenString());
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
+                            whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
+                    } 
+                    if (!LPArray.valueInArray(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName())){
+                        whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName());
+                        whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, true);
+                    }
+                    jArr=getActiveBatchData(fieldsToRetrieve, whereFieldsNameArr, whereFieldsValueArr);
+                    jObj=new JSONObject();
+                    jObj.put("active_batches", jArr);
+                    int j=3;
+                    for (int i=1;i<3;i++){
+                        whereFieldsName=argValues[j].toString();j++;
+                        whereFieldsValue=argValues[j].toString();j++;
+                        sampleFieldToRetrieve=argValues[j].toString();j++;
+                        if (sampleFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve))
+                            sampleFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                        else 
+                            sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
+                        String sampleAnalysisFieldToRetrieve=argValues[j].toString();j++;
+                        String sampleLastLevel=argValues[j].toString();j++;
+                        String addSampleAnalysis=argValues[j].toString();j++;
+                        sampleAnalysisFieldToRetrieve=argValues[j].toString();j++;
+                        String[] sampleAnalysisFieldToRetrieveArr=null;
+                        if (sampleAnalysisFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleAnalysisFieldToRetrieve))
+                            sampleAnalysisFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                        else 
+                            sampleAnalysisFieldToRetrieveArr=sampleAnalysisFieldToRetrieve.split("\\|");
+                        sampleAnalysisWhereFieldsName=argValues[j].toString();j++;
+                        sampleAnalysisWhereFieldsValue=argValues[j].toString();j++;
+                        String addSampleAnalysisResult=argValues[j].toString();j++;
+                        String sampleAnalysisResultFieldToRetrieve=argValues[j].toString();j++;
+                        String[] sampleAnalysisResultFieldToRetrieveArr=null;
+                        if (sampleAnalysisResultFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleAnalysisResultFieldToRetrieve))
+                            sampleAnalysisResultFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                        else 
+                            sampleAnalysisResultFieldToRetrieveArr=sampleAnalysisResultFieldToRetrieve.split("\\|");
+                        String sampleAnalysisResultWhereFieldsName=argValues[j].toString();j++;
+                        String sampleAnalysisResultWhereFieldsValue=argValues[j].toString();j++;
+                        sortFieldsName=argValues[j].toString();j++;
+                        JSONArray samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName, 
+                                whereFieldsValue, sortFieldsName,
+                                addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
+                                addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue);
+                        jObj.put("incub_"+String.valueOf(i), samplesArray);                    
+                    } 
+                    this.isSuccess=true;
+                    this.responseSuccessJObj=jObj;
+                    return; 
                 default:      
 //                  RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
 //                  rd.forward(request, null);                                   

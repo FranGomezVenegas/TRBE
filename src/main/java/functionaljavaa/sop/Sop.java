@@ -153,7 +153,7 @@ public class Sop {
         if (LPPlatform.LAB_FALSE.equals(diagnoses[0].toString() )){
             errorCode = "Sop_SopMetaData_recordNotCreated";
             String[] fieldForInserting = LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName(), TblsCnfg.SopMetaData.FLD_SOP_VERSION.getName(), TblsCnfg.SopMetaData.FLD_SOP_REVISION.getName()}, 
-                    new Object[]{sopName, 1, 1}, ":");
+                    new Object[]{sopName, 1, 1}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{fieldForInserting, schemaConfigName} );
             return diagnoses;            
         }else{           

@@ -152,48 +152,9 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                     whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName());
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, true);
                 }
-                Object[][] activeBatchesList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.IncubBatch.TBL.getName(), 
-                        whereFieldsNameArr, whereFieldsValueArr, 
-                        fieldsToRetrieve, new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()});
-                JSONArray jArr = new JSONArray();
-                for (Object[] currBatch: activeBatchesList){
-                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
-                    Integer incubPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName());
-                    JSONArray instrLast10ReadingsjArr = new JSONArray();
-                    if (incubPosic>-1){
-                        String[] tempReadingFldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
-                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};
-                        if (procReqInstance.getProcedureInstance()==null)
-                            ProcedureRequestSession.getInstanceForQueries(request, response, false);
-                        Object[][] instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(currBatch[incubPosic].toString(), 10, tempReadingFldsToRetrieve);
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
-                            ProcedureRequestSession.getInstanceForQueries(request, response, false);
-                            instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(currBatch[incubPosic].toString(), 10, tempReadingFldsToRetrieve);
-                        }
-                        for (String curTempReadingFld: tempReadingFldsToRetrieve){
-                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
-                                jObj.put("incubator_info_"+curTempReadingFld, "no_data");                            
-                            }else{
-                                jObj.put("incubator_info_"+curTempReadingFld, LPNulls.replaceNull(instrReadings[0][LPArray.valuePosicInArray(tempReadingFldsToRetrieve, curTempReadingFld)]).toString());
-                            }   
-                        }                            
-                        instrLast10ReadingsjArr = new JSONArray();
-                        for (Object[] curLastReading: instrReadings){
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
-                                JSONObject curLastReadingjObj=LPJson.convertArrayRowToJSONObject(tempReadingFldsToRetrieve, curLastReading);
-                                instrLast10ReadingsjArr.add(curLastReadingjObj);
-                            }
-                        }
-                    }                    
-                    jObj.put("incubator_last_temp_readings", instrLast10ReadingsjArr);
-                    Object[] incubBatchContentInfo=incubBatchContentJson(fieldsToRetrieve, currBatch);
-                    jObj.put("SAMPLES_ARRAY", incubBatchContentInfo[0]);
-                    jObj.put("NUM_SAMPLES", incubBatchContentInfo[1]);                 
-                    jArr.add(jObj);
-                }
-                procReqInstance.killIt();              
+                JSONArray jArr=getActiveBatchData(fieldsToRetrieve, whereFieldsNameArr, whereFieldsValueArr);
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                procReqInstance.killIt();       
                 break;        
             default:      
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);                                                                  
@@ -211,6 +172,53 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
        }
     }              
+    }
+    
+    
+    public static JSONArray getActiveBatchData(String[] fieldsToRetrieve, String[] whereFieldsNameArr, Object[] whereFieldsValueArr){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);  
+        String procInstanceName= procReqInstance.getProcedureInstance();
+        Object[][] activeBatchesList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                whereFieldsNameArr, whereFieldsValueArr, 
+                fieldsToRetrieve, new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()});
+        JSONArray jArr = new JSONArray();
+        for (Object[] currBatch: activeBatchesList){
+            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
+            Integer incubPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName());
+            JSONArray instrLast10ReadingsjArr = new JSONArray();
+            if (incubPosic>-1){
+                String[] tempReadingFldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};
+                if (procReqInstance.getProcedureInstance()==null)
+                    ProcedureRequestSession.getInstanceForQueries(null, null, false);
+                Object[][] instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(currBatch[incubPosic].toString(), 10, tempReadingFldsToRetrieve);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
+                    ProcedureRequestSession.getInstanceForQueries(null, null, false);
+                    instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(currBatch[incubPosic].toString(), 10, tempReadingFldsToRetrieve);
+                }
+                for (String curTempReadingFld: tempReadingFldsToRetrieve){
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
+                        jObj.put("incubator_info_"+curTempReadingFld, "no_data");                            
+                    }else{
+                        jObj.put("incubator_info_"+curTempReadingFld, LPNulls.replaceNull(instrReadings[0][LPArray.valuePosicInArray(tempReadingFldsToRetrieve, curTempReadingFld)]).toString());
+                    }   
+                }                            
+                instrLast10ReadingsjArr = new JSONArray();
+                for (Object[] curLastReading: instrReadings){
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
+                        JSONObject curLastReadingjObj=LPJson.convertArrayRowToJSONObject(tempReadingFldsToRetrieve, curLastReading);
+                        instrLast10ReadingsjArr.add(curLastReadingjObj);
+                    }
+                }
+            }                    
+            jObj.put("incubator_last_temp_readings", instrLast10ReadingsjArr);
+            Object[] incubBatchContentInfo=incubBatchContentJson(fieldsToRetrieve, currBatch);
+            jObj.put("SAMPLES_ARRAY", incubBatchContentInfo[0]);
+            jObj.put("NUM_SAMPLES", incubBatchContentInfo[1]);                 
+            jArr.add(jObj);
+        }
+        return jArr;
     }
     
     public static Object[] incubBatchContentJson(String[] batchFields, Object[] batchValues){

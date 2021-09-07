@@ -18,9 +18,9 @@ import trazit.session.ProcedureRequestSession;
 public class DataSampleStructureStatuses {
     public enum SampleStatuses{LOGGED(DataSampleBusinessRules.SUFFIX_STATUS_FIRST),
         RECEIVED(DataSampleBusinessRules.SAMPLE_STATUS_RECEIVED), 
-        NOT_STARTED(DataSampleBusinessRules.SAMPLE_STATUS_RECEIVED), 
+//        NOT_STARTED(DataSampleBusinessRules.SAMPLE_STATUS_RECEIVED), 
         STARTED(DataSampleBusinessRules.SAMPLE_STATUS_INCOMPLETE), 
-        INCOMPLETE(DataSampleBusinessRules.SAMPLE_STATUS_INCOMPLETE), 
+//        INCOMPLETE(DataSampleBusinessRules.SAMPLE_STATUS_INCOMPLETE), 
         COMPLETE(DataSampleBusinessRules.SAMPLE_STATUS_COMPLETE), 
         REVIEWED(DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED), 
         CANCELED(DataSampleBusinessRules.SAMPLE_STATUS_CANCELED)

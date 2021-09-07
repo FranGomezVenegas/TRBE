@@ -213,7 +213,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD.getErrorCode(), new Object[]{diagnoses[diagnoses.length-2]});
             }                                
 
-            Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ":");
+            Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             diagnoses = LPArray.addValueToArray1D(diagnoses, diagnoses[diagnoses.length-1]);
 
             if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){return diagnoses;}
@@ -265,10 +265,11 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, 
                                                 new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
+            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
 
             SampleAudit smpAudit = new SampleAudit();       
-            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_RECEIVED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_RECEIVED.toString(), TblsData.Sample.TBL.getName(), 
+                    sampleId, sampleId, null, null, fieldsForAudit, null);
         }    
         return diagnoses;
     }
@@ -314,10 +315,11 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, 
                     new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
+                String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
 
             SampleAudit smpAudit = new SampleAudit();       
-            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_READY_FOR_REVISION.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_READY_FOR_REVISION.toString(), TblsData.Sample.TBL.getName(), 
+                    sampleId, sampleId, null, null, fieldsForAudit, null);
             }    
         }
         return diagnoses;
@@ -344,10 +346,11 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.SAMPLING_DATE_CHANGED.getErrorCode(), new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
 
-            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
+            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
 
             SampleAudit smpAudit = new SampleAudit();
-            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SET_SAMPLING_DATE.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SET_SAMPLING_DATE.toString(), TblsData.Sample.TBL.getName(), 
+                    sampleId, sampleId, null, null, fieldsForAudit, null);
         }    
         return diagnoses;
     }
@@ -372,10 +375,11 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.SAMPLING_DATE_CHANGED.getErrorCode(), 
                     new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
 
-            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
+            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
 
             SampleAudit smpAudit = new SampleAudit();
-            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_CHANGE_SAMPLING_DATE.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_CHANGE_SAMPLING_DATE.toString(), TblsData.Sample.TBL.getName(), 
+                    sampleId, sampleId, null, null, fieldsForAudit, null);
         }    
         return diagnoses;
     }
@@ -400,9 +404,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.SAMPLE_RECEPTION_COMMENT_ADDED.getErrorCode(), 
                 new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});                
 
-            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
+            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             SampleAudit smpAudit = new SampleAudit();
-            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_RECEPTION_COMMENT_ADD.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_RECEPTION_COMMENT_ADD.toString(), TblsData.Sample.TBL.getName(), 
+                    sampleId, sampleId, null, null, fieldsForAudit, null);
         } 
         return diagnoses;
     }
@@ -426,9 +431,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.SAMPLE_RECEPTION_COMMENT_REMOVED.getErrorCode(), 
                 new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});                
 
-            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
+            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             SampleAudit smpAudit = new SampleAudit();
-            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_RECEPTION_COMMENT_REMOVE.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_RECEPTION_COMMENT_REMOVE.toString(), TblsData.Sample.TBL.getName(), 
+                    sampleId, sampleId, null, null, fieldsForAudit, null);
         } 
         return diagnoses;
     }
@@ -455,9 +461,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     public static Object[] sampleEvaluateStatus(Integer sampleId, String parentAuditAction, Integer preAuditId){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String statuses=SampleStatuses.NOT_STARTED.getStatusCode("")+"|"+SampleStatuses.STARTED.getStatusCode("")+"|"+SampleStatuses.INCOMPLETE.getStatusCode("");
+        String statuses=//SampleStatuses.NOT_STARTED.getStatusCode("")+"|"+
+                SampleStatuses.STARTED.getStatusCode("");//+"|"+SampleStatuses.INCOMPLETE.getStatusCode("");
         String auditActionName = SampleAudit.SampleAuditEvents.SAMPLE_EVALUATE_STATUS.toString();
-        if (parentAuditAction!=null){auditActionName = parentAuditAction + ":"+auditActionName;}
+        if (parentAuditAction!=null){auditActionName = parentAuditAction + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+auditActionName;}
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
 
@@ -468,7 +475,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 new Object[]{sampleId}, new String[]{TblsData.Sample.FLD_STATUS.getName()});
         if ( (sampleStatusFirst.equalsIgnoreCase(sampleInfo[0][0].toString())) || (sampleStatusInReceived.equalsIgnoreCase(sampleInfo[0][0].toString()))){
             String[] fieldsForAudit = new String[0];
-            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS.getName()+": keep status "+sampleInfo[0][0].toString());
+            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS.getName()+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+" keep status "+sampleInfo[0][0].toString());
             SampleAudit smpAudit = new SampleAudit();        
             smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, preAuditId);              
             return new Object[]{LPPlatform.LAB_TRUE};
@@ -484,12 +491,12 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         else{smpNewStatus=sampleStatusComplete;}
         if (sampleInfo[0][0].toString().equalsIgnoreCase(smpNewStatus))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "noChangeRequired", null);
-        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+            diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
                 new String[]{TblsData.Sample.FLD_STATUS.getName()}, new Object[]{smpNewStatus},
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
             String[] fieldsForAudit = new String[0];
-            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS.getName()+":"+smpNewStatus);
+            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS.getName()+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+smpNewStatus);
             SampleAudit smpAudit = new SampleAudit();        
             smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, preAuditId);        
         }      
@@ -501,7 +508,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String auditActionName = SampleAudit.SampleAuditEvents.SAMPLE_AUTOAPPROVE.toString();
         if (parentAuditAction != null) {
-            auditActionName = parentAuditAction + ":" + auditActionName;
+            auditActionName = parentAuditAction + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + auditActionName;
         }
         Object[] isSampleGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleBusinessRules.SAMPLE_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleBusinessRules.SAMPLE_GENERICAUTOAPPROVEENABLED.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleGenericAutoApproveEnabled[0].toString()))
@@ -515,7 +522,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
             String[] fieldsForAudit = new String[0];
-            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS.getName() + ":" + sampleStatusReviewed);
+            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS.getName() +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ sampleStatusReviewed);
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, parentAuditId);
         }        
@@ -554,7 +561,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 String[] fieldsForAudit = new String[0];
                 for (int i=0;i<updFldName.length;i++){
-                    fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, updFldName[i]+":"+updFldValue[i]);
+                    fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, updFldName[i]+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+updFldValue[i]);
                 }
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);                            
@@ -709,7 +716,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.LOG_SAMPLE_ALIQUOT.toString(), TblsData.Sample.TBL.getName(), sampleId, 
                     sampleId, null, null, 
-                    LPArray.joinTwo1DArraysInOneOf1DString(smpVolFldName, smpVolFldValue, ":"),  null);        
+                    LPArray.joinTwo1DArraysInOneOf1DString(smpVolFldName, smpVolFldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR),  null);        
         }
         smpAliqFieldName = LPArray.addValueToArray1D(smpAliqFieldName, new String[]{TblsData.SampleAliq.FLD_SAMPLE_ID.getName(),
             TblsData.SampleAliq.FLD_VOLUME_FOR_ALIQ.getName(), TblsData.SampleAliq.FLD_VOLUME_FOR_ALIQ_UOM.getName(),
@@ -724,7 +731,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ALIQUOT_CREATED_BUT_ID_NOT_GOT.getErrorCode(), new Object[]{});
         }
         Integer aliquotId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
-        Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(smpAliqFieldName, smpAliqFieldValue, ":");
+        Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(smpAliqFieldName, smpAliqFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
         SampleAudit smpAudit = new SampleAudit();
 
         smpAudit.sampleAliquotingAuditAdd(SampleAudit.SampleAuditEvents.LOG_SAMPLE_ALIQUOT.toString(), TblsData.SampleAliq.TBL.getName(), aliquotId, null, aliquotId,
@@ -788,7 +795,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAliquotingAuditAdd(SampleAudit.SampleAuditEvents.LOG_SAMPLE_SUBALIQUOT.toString(), TblsData.SampleAliq.TBL.getName(), aliquotId, null, aliquotId, 
                     sampleId, null, null, 
-                    LPArray.joinTwo1DArraysInOneOf1DString(smpVolFldName, smpVolFldValue, ":"));        
+                    LPArray.joinTwo1DArraysInOneOf1DString(smpVolFldName, smpVolFldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR));        
         }
         if (!actionEnabledSampleSubAliquotVolumeRequired.toUpperCase().contains(LPPlatform.BUSINESS_RULES_VALUE_ENABLED)){
             Object[][] aliquotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAliq.TBL.getName(), new String[] {TblsData.SampleAliq.FLD_ALIQUOT_ID.getName()}, new Object[]{aliquotId}, mandatoryAliquotFields);
@@ -804,7 +811,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD.getErrorCode(), new Object[]{diagnoses[diagnoses.length-2]});
         }
         Integer subaliquotId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
-        Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(smpSubAliqFieldName, smpSubAliqFieldValue, ":");
+        Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(smpSubAliqFieldName, smpSubAliqFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
         SampleAudit smpAudit = new SampleAudit();
         smpAudit.sampleAliquotingAuditAdd(SampleAudit.SampleAuditEvents.LOG_SAMPLE_SUBALIQUOT.toString(), TblsData.SampleAliqSub.TBL.getName(), subaliquotId, subaliquotId, aliquotId,
                 sampleId, null, null, 

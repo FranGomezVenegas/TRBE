@@ -74,7 +74,7 @@ public class PoolC3P0 {
 //disabled on:20210720        cpds.setMaxPoolSize(1000);//50
         cpds.setMaxPoolSize(20);//50
         // Maximo de consultas
-        cpds.setMaxStatements(580);//180
+        cpds.setMaxStatements(1580);//180
 //disabled on:20210720                cpds.setMaxStatements(180);//180
         // Maximo numero de reintentos para conectar a base de datos
         cpds.setAcquireRetryAttempts(5);//2

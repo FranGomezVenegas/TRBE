@@ -65,7 +65,7 @@ public final class Investigation {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
         String investIdStr=diagnostic[diagnostic.length-1].toString();
         Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(InvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsProcedure.Investigation.TBL.getName(), Integer.valueOf(investIdStr), investIdStr,  
-                LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, null);
+                LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationAuditAdd[0].toString())) return diagnostic; 
             String investAuditIdStr=investigationAuditAdd[investigationAuditAdd.length-1].toString();
         if (objectsToAdd!=null && objectsToAdd.length()>0)
@@ -88,7 +88,7 @@ public final class Investigation {
         ProcedureInvestigationAudit.investigationAuditAdd(
                 InvestigationAuditEvents.CLOSED_INVESTIGATION.toString(), TblsProcedure.Investigation.TBL.getName(), 
                 investId, investId.toString(),  
-                LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, null);
+                LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
         return diagnostic;               
     }
 
@@ -142,7 +142,7 @@ public final class Investigation {
 
                 String incIdStr=diagnostic[diagnostic.length-1].toString();
                 ProcedureInvestigationAudit.investigationAuditAdd(InvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.InvestObjects.TBL.getName(), investId, incIdStr,  
-                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), parentAuditId, null);
+                        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), parentAuditId, null);
             }
         }
         return diagnostic;        
@@ -166,7 +166,7 @@ public final class Investigation {
         ProcedureInvestigationAudit.investigationAuditAdd(
                 InvestigationAuditEvents.CAPA_DECISION.toString(), TblsProcedure.Investigation.TBL.getName(), 
                 investId, investId.toString(),  
-                LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, null);
+                LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
         return diagnostic;               
     }
     

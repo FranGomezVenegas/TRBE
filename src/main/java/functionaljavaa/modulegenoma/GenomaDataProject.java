@@ -205,7 +205,7 @@ public Object[] createProject(String projectName, String[] fieldsName, Object[] 
         diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, tableName, fieldsName, fieldsValue);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
             GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.NEW_PROJECT.toString(), tableName, projectName, 
-                projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
+                projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;  
     }    
     if (devMode){
@@ -234,7 +234,7 @@ public Object[] projectActivate(String projectName){
             fieldsName, fieldsValue, new String[]{TblsGenomaData.Project.FLD_NAME.getName()}, new Object[]{projectName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.ACTIVATE_PROJECT.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
-            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
+            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }    
 
@@ -251,7 +251,7 @@ public Object[] projectDeActivate(String projectName){
             fieldsName, fieldsValue, new String[]{TblsGenomaData.Project.FLD_NAME.getName()}, new Object[]{projectName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.DEACTIVATE_PROJECT.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
-            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
+            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }   
 
@@ -267,7 +267,7 @@ public Object[] projectUpdate(String projectName, String[] fieldsName, Object[] 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.Project.FLD_NAME.getName()}, new Object[]{projectName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.ACTIVATE_PROJECT.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
-            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
+            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 } 
 
@@ -288,7 +288,7 @@ public Object[] projectUserManagement(String actionName, String projectName, Str
                 fieldsName, fieldsValue);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
                 GenomaDataAudit.projectAuditAdd(actionName, TblsGenomaData.Project.TBL.getName(), projectName, 
-                    projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);    
+                    projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);    
             break;
         case "PROJECT_USER_ACTIVATE":
             diagnosesProj = projectUserActivate(projectName, userName, userRole);
@@ -312,7 +312,7 @@ public Object[] projectUserActivate(String projectName, String userName, String 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.ProjectUsers.FLD_PROJECT.getName(), TblsGenomaData.ProjectUsers.FLD_PERSON.getName(), TblsGenomaData.ProjectUsers.FLD_ROLES.getName()}, new Object[]{projectName, userName, userRole});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.PROJECT_USER_ACTIVATE.toString(), TblsGenomaData.ProjectUsers.TBL.getName(), projectName, 
-            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
+            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }    
 
@@ -328,7 +328,7 @@ public Object[] projectUserDeActivate(String projectName, String userName, Strin
             fieldsName, fieldsValue, new String[]{TblsGenomaData.ProjectUsers.FLD_PROJECT.getName(), TblsGenomaData.ProjectUsers.FLD_PERSON.getName(), TblsGenomaData.ProjectUsers.FLD_ROLES.getName()}, new Object[]{projectName, userName, userRole});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.PROJECT_USER_DEACTIVATE.toString(), TblsGenomaData.ProjectUsers.TBL.getName(), projectName, 
-            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
+            projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }    
 

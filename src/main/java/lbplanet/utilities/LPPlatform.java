@@ -32,7 +32,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class LPPlatform {
     String classVersion = "0.1";
-    
+    public static final String AUDIT_FIELDS_UPDATED_SEPARATOR=":";
     /**
      *
      */
@@ -701,7 +701,7 @@ public enum LpPlatformErrorTrapping{
         }       
         Object[] diagnosis = Rdbms.existsRecord(procInstanceName, configTableName, configTableKeyFieldName, configTableKeyFielValue);
         if (!LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){            
-           String[] configTableFilter = LPArray.joinTwo1DArraysInOneOf1DString(configTableKeyFieldName, configTableKeyFielValue, ":");
+           String[] configTableFilter = LPArray.joinTwo1DArraysInOneOf1DString(configTableKeyFieldName, configTableKeyFielValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MISSINGTABLECONFIGCODE.getErrorCode(), new Object[]{tableName, Arrays.toString(configTableFilter), procInstanceName, diagnosis[5]});
         }    
 

@@ -441,7 +441,7 @@ public class ClassSample {
                             sampleFieldName, 
                             sampleFieldValue,
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
-                    String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getUserName());
+                    String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))

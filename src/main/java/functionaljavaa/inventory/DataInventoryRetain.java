@@ -161,7 +161,7 @@ public final class DataInventoryRetain {
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString())){
             LotAudit lotAudit = new LotAudit();            
             lotAudit.lotAuditAdd(auditActionName, TblsInspLotRMData.InventoryRetain.TBL.getName(), recId, lotName, 
-                    LPArray.joinTwo1DArraysInOneOf1DString(updFldName, updFldValue, ":"), null);
+                    LPArray.joinTwo1DArraysInOneOf1DString(updFldName, updFldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             lotAudit=null;
         }
         return updateRecordFieldsByFilter;                

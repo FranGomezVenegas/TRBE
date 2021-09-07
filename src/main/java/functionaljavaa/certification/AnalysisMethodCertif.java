@@ -151,7 +151,7 @@ public class AnalysisMethodCertif {
         Object[] diagnAudit=CertifTablesAudit.CertifTablesAudit(TblsData.CertifUserAnalysisMethod.TBL.getName(), certifId, 
             CertifyAnalysisMethodAPIEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getAuditEvent(), userIdObj[0].toString(), userName, 
             TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), methodVersion, 
-            LPArray.joinTwo1DArraysInOneOf1DString(fldsName, fldsValue, ":"), trainingId, null, null);
+            LPArray.joinTwo1DArraysInOneOf1DString(fldsName, fldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), trainingId, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return diagnAudit;
         return diagn;
     }
@@ -179,7 +179,7 @@ public class AnalysisMethodCertif {
             CertifyAnalysisMethodAPIEndpoints.CERTIFY_START_USER_METHOD.getAuditEvent(), userIdObj[0].toString(), userName, 
             TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), null, 
             LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIF_STARTED.getFieldsName(), 
-                    CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIF_STARTED.getFieldsValue(), ":"), null, null, null);
+                    CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIF_STARTED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return diagnAudit;
         return diagn;
     }
@@ -228,7 +228,7 @@ public class AnalysisMethodCertif {
             auditEvent, userIdObj[0].toString(), userName, 
             TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), null, 
             LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIFIED.getFieldsName(), 
-                    CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIFIED.getFieldsValue(), ":"), null, null, null);
+                    CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIFIED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return diagnAudit;
         return diagn;        
     }
@@ -254,7 +254,7 @@ public class AnalysisMethodCertif {
             CertifyAnalysisMethodAPIEndpoints.CERTIFY_REVOKE_USER_METHOD.getAuditEvent(), userIdObj[0].toString(), userName, 
             TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), null, 
             LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.REVOKED.getFieldsName(), 
-            CertifGlobalVariables.CertifEventUpdateFieldsAndValues.REVOKED.getFieldsValue(), ":"), null, null, null);
+            CertifGlobalVariables.CertifEventUpdateFieldsAndValues.REVOKED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return diagnAudit;
         return diagn;        
     }
@@ -296,7 +296,7 @@ public class AnalysisMethodCertif {
                     CertifyAnalysisMethodAPIEndpoints.CERTIFY_REVOKE_USER_METHOD.getAuditEvent(), null, null, 
                     TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), null, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), null, 
                     LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsName(), 
-                    CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsValue(), ":"), null, null, null);
+                    CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return;
             }
             return;        
