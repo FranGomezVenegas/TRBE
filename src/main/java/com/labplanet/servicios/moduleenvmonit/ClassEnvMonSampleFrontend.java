@@ -1070,8 +1070,8 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         Object[] lockedByCorrectiveAction = isLockedByCorrectiveAction(procInstanceName, resultFieldToRetrieveArr, curRow);
         if (lockedByCorrectiveAction[0]!=null) return lockedByCorrectiveAction;
 
-        Object[] isLockedByUserCertification = isLockedByCorrectiveAction(procInstanceName, resultFieldToRetrieveArr, curRow);
-        if (lockedByCorrectiveAction[0]!=null) return lockedByCorrectiveAction;
+        Object[] isLockedByUserCertification = isLockedByUserCertification(procInstanceName, resultFieldToRetrieveArr, curRow);
+        if (isLockedByUserCertification[0]!=null) return isLockedByUserCertification;
         
         return new Object[]{fldNameArr, fldValueArr};
     }
