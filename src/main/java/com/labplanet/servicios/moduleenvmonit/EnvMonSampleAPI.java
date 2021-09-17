@@ -66,6 +66,14 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()
         ),
+        REENTERRESULT("REENTERRESULT", "reEnterResult_success",   
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()
+        ),
         PLATE_READING_NUMBER("PLATE_READING_NUMBER", "plateReadingNumber_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
@@ -75,6 +83,12 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()
         ),
         ADD_SAMPLE_MICROORGANISM("ADD_SAMPLE_MICROORGANISM", "MigroorganismAdded_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.Sample.TBL.getName()).build()).build()
+        ),
+        ADD_ADHOC_SAMPLE_MICROORGANISM("ADD_ADHOC_SAMPLE_MICROORGANISM", "MigroorganismAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
@@ -200,6 +214,7 @@ public class EnvMonSampleAPI extends HttpServlet {
 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
         if (procReqInstance.getHasErrors()){
+//            procReqInstance.killIt();
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
             return;
@@ -224,7 +239,7 @@ public class EnvMonSampleAPI extends HttpServlet {
         
         Object[] sampleAuditRevision=sampleAuditRevisionPassByAction(procInstanceName, actionName, sampleId, testId, resultId);     
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())){  
-            procReqInstance.killIt();
+//            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, sampleAuditRevision);
             //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, language);              
             return;                             
@@ -292,8 +307,10 @@ public class EnvMonSampleAPI extends HttpServlet {
     /*                Rdbms.rollbackWithSavePoint();
                     if (!con.getAutoCommit()){
                         con.rollback();
-                        con.setAutoCommit(true);}                */                   
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());               
+                        con.setAutoCommit(true);}                */     
+                    String errorCode =diagnostic[4].toString();
+                    Object[] msgVariables=clss.getMessageDynamicData();
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, errorCode, msgVariables);               
 //                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
                 }else{
                     JSONObject dataSampleJSONMsg =new JSONObject();
