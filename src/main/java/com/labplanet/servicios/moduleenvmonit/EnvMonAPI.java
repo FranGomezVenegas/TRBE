@@ -68,6 +68,11 @@ public class EnvMonAPI extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments("programName", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8)}, null),
+        EM_MD_ADD_ADHOC_MICROORGANISM("EM_LOGSAMPLE_SCHEDULER", "programScheduler_logScheduledSamples", 
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, null)
+        
+        
+        
         ;
         private EnvMonAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
