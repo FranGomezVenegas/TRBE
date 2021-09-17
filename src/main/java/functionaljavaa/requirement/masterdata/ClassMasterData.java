@@ -23,6 +23,7 @@ import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author User
@@ -62,8 +63,16 @@ public class ClassMasterData {
                     JsonArray asJsonArray = jsonObject.get("values").getAsJsonArray();
                     ConfigAnalysisStructure cAna = new ConfigAnalysisStructure();
                     for (JsonElement jO: asJsonArray){
-                        String[] fldNames=new String[]{TblsCnfg.Analysis.FLD_ACTIVE.getName(), TblsCnfg.Analysis.FLD_CREATED_ON.getName(), TblsCnfg.Analysis.FLD_CREATED_BY.getName()};
-                        Object[] fldValues=new Object[]{true, LPDate.getCurrentTimeStamp(), userCreator};
+                        String methodName = jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName()).getAsString();
+                        ProcedureRequestSession procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null);
+                        String[] fldNames=new String[]{TblsCnfg.Methods.FLD_CODE.getName(), TblsCnfg.Methods.FLD_CONFIG_VERSION.getName()
+                                , TblsCnfg.Methods.FLD_CREATED_ON.getName(), TblsCnfg.Methods.FLD_CREATED_BY.getName()};
+                        Object[] fldValues=new Object[]{methodName, 1, LPDate.getCurrentTimeStamp(), userCreator};
+                        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), 
+                            TblsCnfg.Methods.TBL.getName(), fldNames, fldValues);
+                        
+                        fldNames=new String[]{TblsCnfg.Analysis.FLD_ACTIVE.getName(), TblsCnfg.Analysis.FLD_CREATED_ON.getName(), TblsCnfg.Analysis.FLD_CREATED_BY.getName()};
+                        fldValues=new Object[]{true, LPDate.getCurrentTimeStamp(), userCreator};
                         this.diagnostic = cAna.analysisNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.FLD_CODE.getName()).getAsString(), 1,fldNames, fldValues);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                         
