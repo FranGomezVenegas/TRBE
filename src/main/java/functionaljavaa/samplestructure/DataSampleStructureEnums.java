@@ -14,6 +14,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class DataSampleStructureEnums {
     public enum DataSampleErrorTrapping{ 
+        SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE ("SetSamplingDate_notAllowChangePreviousValue", "", ""),
         SAMPLING_DATE_CHANGED ("SamplingDateChangedSuccessfully", "", ""),
         SAMPLE_RECEPTION_COMMENT_ADDED ("SampleReceptionCommentAdd", "", ""),
         SAMPLE_RECEPTION_COMMENT_REMOVED ("SampleReceptionCommentRemoved", "", ""),
