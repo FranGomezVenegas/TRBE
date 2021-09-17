@@ -160,7 +160,7 @@ public class SqlStatement {
         return hm;
     }
     
-    private Object[] buildWhereClause(String[] whereFieldNames, Object[] whereFieldValues){
+    public static Object[] buildWhereClause(String[] whereFieldNames, Object[] whereFieldValues){
         StringBuilder queryWhere = new StringBuilder(0);
         Object[] whereFieldValuesNew = new Object[0];
         for (int iwhereFieldNames=0; iwhereFieldNames<whereFieldNames.length; iwhereFieldNames++){
@@ -217,7 +217,7 @@ public class SqlStatement {
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
     }
-    Object whereFldValuesGetCurrArrValue(String textSpecs, String f){
+    static Object whereFldValuesGetCurrArrValue(String textSpecs, String f){
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*")) return Float.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*", ""));
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*")) return Integer.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*", ""));
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.BOOLEAN.toString()+"*")) return Boolean.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.BOOLEAN.toString()+"*", ""));
@@ -317,7 +317,7 @@ public class SqlStatement {
      * @param fn
      * @return
      */
-    public String inNotInSeparator(String fn){
+    public static String inNotInSeparator(String fn){
         Integer posicNOTINClause = fn.toUpperCase().indexOf(" NOT IN");        
         Integer posicINClause = fn.toUpperCase().indexOf(" IN");
         String separator = fn;
