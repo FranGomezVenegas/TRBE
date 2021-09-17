@@ -155,7 +155,7 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());                                                
             fileContentTable2Builder.append(LPTestingOutFormat.tableEnd());                                                
             if (numEvaluationArguments>0){
-                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
+                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, null);
                 fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder).append(fileContentTable2Builder);
             }
             fileContentBuilder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());

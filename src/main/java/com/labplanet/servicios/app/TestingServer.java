@@ -40,7 +40,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPFilesTools;
 import lbplanet.utilities.LPPlatform;
+import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
 
 
@@ -93,9 +95,16 @@ public class TestingServer extends HttpServlet {
             JsonArray build = Json.createArrayBuilder().add(Json.createObjectBuilder()//.add("repository", GlobalVariables.Schemas.APP.getName())
                     .add("table", TblsApp.Incident.TBL.getName()).build()).build();
             out.println(build);
+LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            
 //if (1==1) return;  
-            Rdbms.stablishDBConection("tst");
+Rdbms.closeRdbms();
+Rdbms.stablishDBConection("labplanet");
+                Object[][] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror("em-demo-a", GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName());
 
+                Object[][] dbSchemaAndTestingSchemaTablesAndFieldsIsMirrorAudit = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror("em-demo-a", GlobalVariables.Schemas.DATA_AUDIT.getName(), GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName());
+Rdbms.closeRdbms();
+Rdbms.stablishDBConection("tst");
+                
 String functionCr=" CREATE OR REPLACE FUNCTION public.isnumeric(text) RETURNS boolean LANGUAGE plpgsql";
 functionCr=functionCr+" IMMUTABLE STRICT ";
 functionCr=functionCr+" AS $function$ DECLARE x NUMERIC; BEGIN x = $1::NUMERIC; RETURN TRUE; EXCEPTION WHEN others THEN RETURN FALSE; END; $function$ ";
@@ -163,7 +172,7 @@ if (1==1) return;
 //        null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
 //lbplanet.utilities.LPMailing.otroMailViaSSL();
 //LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
-//LPFilesTools.toCsvFromArray("D:\\LP\\Postgresql Backups\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});
+//LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});
 //TblsReqs.ProcedureUserRequirements.
 //            List<String[]> fromCsvToArray = LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
 //Rdbms.stablishDBConectionTester();

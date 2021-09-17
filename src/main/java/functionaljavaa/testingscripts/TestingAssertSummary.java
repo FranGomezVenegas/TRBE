@@ -16,7 +16,7 @@ public class TestingAssertSummary {
         private Integer totalSyntaxisUndefined=0;
         private Integer totalCodeMatch=0;
         private Integer totalCodeUnMatch=0;
-        private Integer totalCodeUndefined=0;    
+        private Integer totalCodeUndefined=0;            
         
     /**
      *

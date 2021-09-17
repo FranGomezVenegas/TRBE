@@ -122,7 +122,7 @@ public class TestingUOMFamilyTable extends HttpServlet {
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
             fileContentBuilder.append(fileContentTable1Builder);
             if (numEvaluationArguments>0){
-                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
+                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, null);
                 fileContentBuilder.append(fileContentSummary);
             }
             fileContentBuilder.append(LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd());

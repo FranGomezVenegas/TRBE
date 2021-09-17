@@ -170,8 +170,6 @@ public class LPTestingOutFormat {
         String[] updFldNames=new String[]{TblsTesting.Script.FLD_DATE_EXECUTION.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName()};
         Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp(), tstAssertSummary.getTotalTests()};
         if (numEvaluationArguments>0){
-            String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
-            fileContentBuilder.append(fileContentSummary);
             if ("DB".equals(this.inputMode)){
                 if (summaryPhrase==null){
                     if (numEvaluationArguments==0) summaryPhrase="COMPLETED ALL STEPS";
@@ -185,6 +183,9 @@ public class LPTestingOutFormat {
                         }
                     }
                 }
+                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, summaryPhrase);
+                fileContentBuilder.append(fileContentSummary);
+                
                 if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}
                 Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
                 String procInstanceName=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
@@ -654,9 +655,11 @@ public class LPTestingOutFormat {
      * @param numArguments
      * @return
      */
-    public static String createSummaryTable(TestingAssertSummary tstAssert, Integer numArguments){
+    public static String createSummaryTable(TestingAssertSummary tstAssert, Integer numArguments, String scriptSummaryPhrase){
         String fileContentHeaderSummary = LPTestingOutFormat.tableStart("summary")+rowStart();
         String fileContentSummary =rowStart();
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Execution Summary");
+            fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull(scriptSummaryPhrase));
         if (numArguments>0){
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total Tests");
             fileContentSummary = fileContentSummary +rowAddField(tstAssert.getTotalTests().toString());
