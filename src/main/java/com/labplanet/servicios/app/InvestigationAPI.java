@@ -57,7 +57,7 @@ public class InvestigationAPI extends HttpServlet {
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.Incident.TBL.getName()).build()).build()),
-        INVESTIGATION_TAKEN_DECISION("INVESTIGATION_CAPA_DECISION", "investigationDescisionTaken_success",  
+        INVESTIGATION_CAPA_DECISION("INVESTIGATION_CAPA_DECISION", "investigationDescisionTaken_success",  
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(ParamsList.CAPA_REQUIRED.getParamName(), LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7 ),
                 new LPAPIArguments(ParamsList.CAPA_FIELD_NAME.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8 ),
@@ -178,7 +178,7 @@ public class InvestigationAPI extends HttpServlet {
                     investigationIdStr=argValues[0].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
                     break;
-                case INVESTIGATION_TAKEN_DECISION:
+                case INVESTIGATION_CAPA_DECISION:
                     String[] capaFldName=null;
                     String[] capaFldValue=null;
                     if (argValues[1]==null) LPFrontEnd.servletReturnResponseError(request, response,
