@@ -331,14 +331,22 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] setSamplingDate(Integer sampleId){
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Token token=procReqSession.getToken();
+        String procInstanceName=procReqSession.getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());         
 
         String[] sampleFieldName = new String[]{TblsData.Sample.FLD_SAMPLING_DATE.getName()};
         Object[] sampleFieldValue = new Object[]{LPDate.getCurrentTimeStamp()};
 
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(),  
+                new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))return LPArray.array2dTo1d(sampleInfo);
+        if (LPNulls.replaceNull(sampleInfo[0][0]).toString().length()>0){
+            procReqSession.getMessages().addMain(DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
+        }
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.Sample.FLD_SAMPLER.getName(), TblsData.Sample.FLD_SAMPLE_ID_RELATED.getName()});
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, new Object[]{token.getUserName(), sampleId});
 
@@ -473,7 +481,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
 
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()},
                 new Object[]{sampleId}, new String[]{TblsData.Sample.FLD_STATUS.getName()});
-        if ( (sampleStatusFirst.equalsIgnoreCase(sampleInfo[0][0].toString())) || (sampleStatusInReceived.equalsIgnoreCase(sampleInfo[0][0].toString()))){
+        if ( !(sampleStatusFirst.equalsIgnoreCase(sampleInfo[0][0].toString())) ){ // || (sampleStatusInReceived.equalsIgnoreCase(sampleInfo[0][0].toString()))){
             String[] fieldsForAudit = new String[0];
             fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS.getName()+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+" keep status "+sampleInfo[0][0].toString());
             SampleAudit smpAudit = new SampleAudit();        

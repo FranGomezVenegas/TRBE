@@ -5,10 +5,13 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.TblsData;
+import databases.Token;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
+import static functionaljavaa.moduleenvironmentalmonitoring.ConfigMicroorganisms.adhocMicroorganismAdd;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
@@ -17,6 +20,7 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysisResult;
 import functionaljavaa.samplestructure.DataSampleStages;
+import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,7 +72,10 @@ public class ClassEnvMonSample {
     private Object[] diagnostic=new Object[0];
     
     public ClassEnvMonSample(HttpServletRequest request, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint){
-        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Boolean isForTesting = procReqSession.getIsForTesting();
+        String procInstanceName = procReqSession.getProcedureInstance();
+        Token token=procReqSession.getToken();
 
         Object[] dynamicDataObjects=new Object[]{};        
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
@@ -110,8 +117,31 @@ public class ClassEnvMonSample {
                     }
                     break;
                 case ENTERRESULT:
+                    
+                case REENTERRESULT:
                     resultId = (Integer) argValues[0];
                     String rawValueResult = argValues[1].toString();
+                    Object[][] resultData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), 
+                            new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, 
+                            new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_ANALYSIS.getName(), 
+                                TblsData.SampleAnalysisResult.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysisResult.FLD_METHOD_VERSION.getName(), TblsData.SampleAnalysisResult.FLD_PARAM_NAME.getName(), 
+                                TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName(), TblsData.SampleAnalysisResult.FLD_UOM.getName(), 
+                                TblsData.SampleAnalysisResult.FLD_UOM_CONVERSION_MODE.getName()});
+                    if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                    else{            
+                        String currRawValue = (String) resultData[0][7];
+                        if (currRawValue!=null && EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
+                            procReqSession.killIt();
+                            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTERRESULT.getName());
+                            procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
+                            if (procReqSession.getHasErrors()){
+                                procReqSession.killIt();
+                                actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, procReqSession.getErrorMessage(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                                break;
+                            }
+                        }
+                    }
                     actionDiagnoses = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), resultId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
@@ -123,7 +153,7 @@ public class ClassEnvMonSample {
                         dynamicDataObjects=new Object[]{resultInfo[0][0].toString()};
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), resultInfo[0][0]);
                     }
-                    break; 
+                    break;
                 case PLATE_READING_NUMBER:
                     sampleId = (Integer) argValues[0];
                     rawValueResult = argValues[1].toString();
@@ -152,10 +182,16 @@ public class ClassEnvMonSample {
                     }
                     break;
                 case ADD_SAMPLE_MICROORGANISM: 
+                case ADD_ADHOC_SAMPLE_MICROORGANISM:
                     sampleId=(Integer) argValues[0];
                     for (String orgName: (String[]) argValues[1].toString().split("\\|")){
                         actionDiagnoses = DataProgramSample.addSampleMicroorganism((Integer) argValues[0], orgName);
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), actionDiagnoses[actionDiagnoses.length-1]);
+                    }
+                    if (EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ADD_ADHOC_SAMPLE_MICROORGANISM.getName().equalsIgnoreCase(endPoint.getName()) && actionDiagnoses!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                        for (String orgName: (String[]) argValues[1].toString().split("\\|")){                        
+                            adhocMicroorganismAdd(orgName);
+                        }
                     }
                     if (actionDiagnoses!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{argValues[0], argValues[1], procInstanceName});                    

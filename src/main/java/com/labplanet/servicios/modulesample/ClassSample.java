@@ -23,6 +23,7 @@ import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorT
 import functionaljavaa.samplestructure.DataSampleIncubation;
 import static functionaljavaa.samplestructure.DataSampleRevisionTestingGroup.reviewSampleTestingGroup;
 import functionaljavaa.samplestructure.DataSampleStages;
+import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -78,7 +79,9 @@ public class ClassSample {
     public ClassSample(HttpServletRequest request, SampleAPIEndpoints endPoint){
         
         String[] exceptionsToSampleReviewArr=new String[]{"UNCANCELSAMPLE", "UNREVIEWSAMPLE"};
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Boolean isForTesting = procReqSession.getIsForTesting();
+        String procInstanceName=procReqSession.getProcedureInstance();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         String schemaDataName="";
         String language="";
@@ -93,7 +96,11 @@ public class ClassSample {
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
         for (LPAPIArguments currArg: endPoint.getArguments()){
             if (GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.equalsIgnoreCase(currArg.getName())){
-                sampleId = Integer.valueOf(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.toString()));
+                String sampleIdStr = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.toString());
+                if (sampleIdStr==null)
+                    sampleIdStr = (String) request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.toString());
+                if (sampleIdStr!=null) 
+                    sampleId = Integer.valueOf(sampleIdStr);
             }
         }
         if (sampleId!=null || LPArray.valueInArray(exceptionsToSampleReviewArr, endPoint.getName())){
@@ -153,7 +160,7 @@ public class ClassSample {
                 Date newDate=(Date) argValues[1];
                 diagn = smp.changeSamplingDate(sampleId, newDate);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
-                this.messageDynamicData=new Object[]{sampleId};
+                this.messageDynamicData=new Object[]{newDate, sampleId};
                 break;
             case SAMPLINGCOMMENTADD:
                 sampleId = (Integer) argValues[0];
@@ -218,9 +225,32 @@ public class ClassSample {
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
+            case REENTERRESULT:
             case ENTERRESULT:
                 Integer resultId = (Integer) argValues[0];
                 String rawValueResult = argValues[1].toString();
+                    Object[][] resultData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), 
+                            new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, 
+                            new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_ANALYSIS.getName(), 
+                                TblsData.SampleAnalysisResult.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysisResult.FLD_METHOD_VERSION.getName(), TblsData.SampleAnalysisResult.FLD_PARAM_NAME.getName(), 
+                                TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName(), TblsData.SampleAnalysisResult.FLD_UOM.getName(), 
+                                TblsData.SampleAnalysisResult.FLD_UOM_CONVERSION_MODE.getName()});
+                    if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString()))
+                        diagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                    else{            
+                        String currRawValue = (String) resultData[0][7];
+                        if (currRawValue!=null && SampleAPIParams.SampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
+                            procReqSession.killIt();
+                            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, SampleAPIParams.SampleAPIEndpoints.REENTERRESULT.getName());
+                            procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
+                            if (procReqSession.getHasErrors()){
+                                procReqSession.killIt();
+                                diagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, procReqSession.getErrorMessage(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                                break;
+                            }
+                        }
+                    }
+                
                 diagn = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), resultId);
