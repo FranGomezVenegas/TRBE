@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,7 +66,7 @@ public final class LPFilesTools {
         List<String[]> fileContent=null;
         if (!cleanFileIfExist)
             fileContent=fromCsvToArray(fileName, ','); 
-        if (fileContent==null) return;
+        if (fileContent==null) fileContent=new ArrayList<String[]>();
         fileContent.add(entries);
         //entries=LPArray.addValueToArray1D(fileContent, entries);
         try (FileOutputStream fos = new FileOutputStream(fileName); 
