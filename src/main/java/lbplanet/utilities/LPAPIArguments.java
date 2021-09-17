@@ -52,8 +52,8 @@ public class LPAPIArguments {
         if (argsDef==null) return new Object[0];
         Object[] returnArgsDef=new Object[0];
         for (LPAPIArguments currArg: argsDef){
-            String requestArgValue=request.getParameter(currArg.getName());
-                if (requestArgValue==null) requestArgValue=LPNulls.replaceNull(request.getAttribute(currArg.getName())).toString();
+            String requestArgValue=(String) request.getAttribute(currArg.getName());
+                if (requestArgValue==null) requestArgValue=LPNulls.replaceNull(request.getParameter(currArg.getName())).toString();
             try{
                 ArgumentType argType=ArgumentType.valueOf(currArg.getType().toUpperCase());                
                 switch (argType){
