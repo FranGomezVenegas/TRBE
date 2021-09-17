@@ -19,7 +19,6 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ProcedureRequestSession;
 
     
 
@@ -31,7 +30,7 @@ public class AuditAndUserValidation {
     public enum AuditAndUserValidationErrorTrapping{ 
         CHECK_SUCCESS ("checkUserValidationPassesSuccess", "", ""),
         WRONG_PHRASE ("wrongAuditReasonPhrase", "", ""),
-      
+        PROC_INSTANCE_NAME_NULL ("procInstanceNameNull", "", ""),
         ;
         private AuditAndUserValidationErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -47,7 +46,7 @@ public class AuditAndUserValidation {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     public enum AuditAndUserValidationBusinessRules{     
-        PREFIX_AUDITREASONPHRASE ("AuditReasonPhrase", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
+        PREFIX_AUDITREASONPHRASE ("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         ;
         private AuditAndUserValidationBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
@@ -122,7 +121,7 @@ public class AuditAndUserValidation {
             return;
         }      
         if (actionName==null){
-            this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+            this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "notActionPassed", null);
             return;
         }
                     
@@ -148,7 +147,7 @@ public class AuditAndUserValidation {
 
         if (LPArray.valueInArray(mandatoryParams , GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE)){
             this.auditReasonPhrase=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE); 
-            if (!isValidAuditPhrase(actionName, this.auditReasonPhrase)) return;                
+            if (!isValidAuditPhrase(procInstanceName, actionName, this.auditReasonPhrase)) return;                
         }
 
         if ( (procActionRequiresUserConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)) &&     
@@ -164,8 +163,12 @@ public class AuditAndUserValidation {
         }
         this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_TRUE, AuditAndUserValidationErrorTrapping.CHECK_SUCCESS.getErrorCode(), null);
     }
-    private Boolean isValidAuditPhrase(String actionName, String auditReasonPhrase){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
+    private Boolean isValidAuditPhrase(String procInstanceName, String actionName, String auditReasonPhrase){
+//        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
+        if (procInstanceName==null){
+            this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.PROC_INSTANCE_NAME_NULL.getErrorCode(), null);
+            return false;
+        }
         String[] actionAuditReasonInfo = Parameter.getBusinessRuleProcedureFile(procInstanceName.replace("\"", ""), AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getAreaName(), actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
         if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (!LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase)) ){
             this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.WRONG_PHRASE.getErrorCode(), new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
