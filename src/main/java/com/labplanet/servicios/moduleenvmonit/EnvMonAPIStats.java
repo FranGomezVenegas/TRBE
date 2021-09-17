@@ -28,6 +28,7 @@ import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import static lbplanet.utilities.LPKPIs.getKPIs;
+import static lbplanet.utilities.LPKPIs.getRecoveryRate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
@@ -154,6 +155,17 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),
                 }, EndPointsToRequirements.endpointWithNoOutputObjects),        
+        RECOVERY_RATE("RECOVERY_RATE", new LPAPIArguments[]{
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+                new LPAPIArguments("showAbsence", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 9),
+                new LPAPIArguments("showPresence", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10),
+                new LPAPIArguments("showIN", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 11),
+                new LPAPIArguments("showOUT", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12),
+                new LPAPIArguments("percNumDecimals", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 13),
+                
+                }, EndPointsToRequirements.endpointWithNoOutputObjects),                            
         ;
         private EnvMonAPIstatsEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -261,7 +273,13 @@ public class EnvMonAPIStats extends HttpServlet {
                         }
                         jObjMainObject.put(TblsEnvMonitData.ProductionLot.TBL.getName(), jObj);
                     }
+                    JSONObject jObjRecoveryData = getRecoveryRate(new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PRODUCTION_LOT.getName()}, 
+                        new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PRODUCTION_LOT.getName()},
+                        new String[]{prodLotName},
+                        true, true, true, true, 2);
+                    jObjMainObject.put("recovery_rate", jObjRecoveryData);
                     break; 
+ 
                 case QUERY_INVESTIGATION:
                     getSampleInfo=false;
                     getInvestigationInfo=true;                    
@@ -283,6 +301,35 @@ public class EnvMonAPIStats extends HttpServlet {
                     jObjMainObject=getKPIs(objGroupName, tblCategory, tblName, whereFieldsNameArr, whereFieldsValueArr, 
                         fldToRetrieve, dataGrouped);
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                case RECOVERY_RATE:
+/*                    
+                String creationDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START);
+                String creationDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END);
+                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.FLD_CREATED_ON.getName(), creationDayStart, creationDayEnd);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
+                if (buildDateRangeFromStrings.length>=2){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, buildDateRangeFromStrings[1].toString());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[2]);
+                }
+                if (buildDateRangeFromStrings.length==4)
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[3]);
+*/                    
+                    objGroupName=LPNulls.replaceNull(argValues[0]).toString().split("\\|");
+                    whereFieldsNameArr=LPNulls.replaceNull(argValues[1]).toString().split("\\|");
+                    whereFieldsValueArr=LPNulls.replaceNull(argValues[2]).toString().split("\\|");
+                    Boolean showAbsence=Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());
+                    Boolean showPresence=Boolean.valueOf(LPNulls.replaceNull(argValues[4]).toString());
+                    Boolean showIN=Boolean.valueOf(LPNulls.replaceNull(argValues[5]).toString());
+                    Boolean showOUT=Boolean.valueOf(LPNulls.replaceNull(argValues[6]).toString());
+                    Integer percNumDecimals=null;
+                    if (LPNulls.replaceNull(argValues[7]).toString().length()>0)
+                        percNumDecimals=Integer.valueOf(argValues[7].toString());
+                    jObjRecoveryData=getRecoveryRate(objGroupName, whereFieldsNameArr, whereFieldsValueArr, 
+                        showAbsence, showPresence, showIN, showOUT, percNumDecimals);
+                    jObjMainObject.put("recovery_rate", jObjRecoveryData);
+                    getSampleInfo=true;
+                    //LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
             }
             JSONObject jObj=new JSONObject();
             Object[][] sampleInfo=new Object[0][0];
@@ -308,9 +355,9 @@ public class EnvMonAPIStats extends HttpServlet {
                 String samplingDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START);
                 String samplingDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END);
                 Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLING_DATE.getName(), samplingDayStart, samplingDayEnd);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
-                if (buildDateRangeFromStrings.length>=2){
+                //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
+                    //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()) && (buildDateRangeFromStrings.length>=2)){
                     filterFieldName=LPArray.addValueToArray1D(filterFieldName, buildDateRangeFromStrings[1].toString());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[2]);
                 }
@@ -320,9 +367,9 @@ public class EnvMonAPIStats extends HttpServlet {
                 String loginDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START);
                 String loginDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END);
                 buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOGGED_ON.getName(), loginDayStart, loginDayEnd);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
-                if (buildDateRangeFromStrings.length>=2){
+                //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
+                //    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()) && (buildDateRangeFromStrings.length>=2)){
                     filterFieldName=LPArray.addValueToArray1D(filterFieldName, buildDateRangeFromStrings[1].toString());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[2]);
                 }
