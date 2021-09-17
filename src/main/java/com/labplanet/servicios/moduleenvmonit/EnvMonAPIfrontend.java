@@ -12,6 +12,7 @@ import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
+import databases.SqlStatement;
 import functionaljavaa.samplestructure.DataSampleUtilities;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -236,6 +237,10 @@ GlobalAPIsParams.
             new LPAPIArguments[]{new LPAPIArguments("programName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments("programCorrectiveActionFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments("programCorrectiveActionFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        GET_ALL_PRODUCTION_LOTS("GET_ALL_PRODUCTION_LOTS", "", 
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_SORT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),            
         GET_ACTIVE_PRODUCTION_LOTS("GET_ACTIVE_PRODUCTION_LOTS", "", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_SORT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)
@@ -538,11 +543,18 @@ GlobalAPIsParams.
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;                    
                 case GET_ACTIVE_PRODUCTION_LOTS:
+                case GET_ALL_PRODUCTION_LOTS:                    
+                    String[] whereFldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
+                    Object[] whereFldValue=new Object[]{"s"};
+                    if ("GET_ACTIVE_PRODUCTION_LOTS".equalsIgnoreCase(endPoint.getName())){
+                        whereFldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()};
+                        whereFldValue=new Object[]{true};                   
+                    }
                     String[] prodLotFldToRetrieve = getFieldsListToRetrieve(argValues[0].toString(), TblsEnvMonitData.ProductionLot.TBL.getAllFieldNames());
                     String[] prodLotFldToSort = getFieldsListToRetrieve(argValues[1].toString(), new String[]{});                    
                     programInfo=getTableData(procReqInstance, GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.ProductionLot.TBL.getName(), 
                         argValues[0].toString(), TblsEnvMonitData.ProductionLot.getAllFieldNames(), 
-                        new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()}, new Object[]{true}, prodLotFldToSort);        
+                        whereFldName, whereFldValue, prodLotFldToSort);        
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())) return;
                     jArr=new JSONArray();   
                     for (Object[] curProgram: programInfo){
