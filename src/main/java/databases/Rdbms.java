@@ -1482,6 +1482,44 @@ if (1==1){Rdbms.transactionId=1; return;}
         }  
     }
     
+    public static Object[][] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(String procInstanceName, String schemaName1, String schemaName2){
+        String schema=LPPlatform.buildSchemaName(procInstanceName, schemaName1);
+        String schemaTesting=LPPlatform.buildSchemaName(procInstanceName, schemaName2);
+        String[] fieldsToRetrieve=new String[]{"table_name", "column_name", "counter"};
+// ('em-demo-a-data-audit', 'em-demo-a-data-audit_testing')
+        String query="select * from ( " +
+                     " SELECT table_name, column_name, count(*) as counter FROM information_schema.COLUMNS WHERE table_schema in (?, ?)";
+        query=query+" group by table_name, column_name) as match";// where counter <>2";
+        try{
+            String[] filter=new String[]{schema, schemaTesting};
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res==null){
+                return LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}), 7);
+            }            
+            res.first();
+            Integer numRows=res.getRow();
+            if (numRows>0){
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;                
+                    Object[][] diagnoses2 = new Object[totalLines][fieldsToRetrieve.length];
+                    while(icurrLine<=totalLines-1) {
+                       for (Integer icurrCol=0;icurrCol<fieldsToRetrieve.length;icurrCol++){
+                           Object currValue = res.getObject(icurrCol+1);
+                           diagnoses2[icurrLine][icurrCol] =  LPNulls.replaceNull(currValue);
+                       }        
+                       res.next();
+                       icurrLine++;
+                    }         
+                    return diagnoses2;
+            }else{
+                return LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",procInstanceName, schemaName1}), 7);                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query}), 7);
+        }  
+    }
     /**
     *   This method will return one 1D Array of Strings with the fields names list and one 2D Array of Objects with more fields attributes (table_schema, table_name, column_name, data_type)
     * @return
@@ -1643,6 +1681,49 @@ if (1==1){Rdbms.transactionId=1; return;}
             if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, schemaName)) schemaName=schemaName+"_testing";
         }
         return schemaName;
+    }
+    public static Object[][] resultSetToArray(ResultSet res, String[] fieldsToGroupAltered){
+        try {
+            if (res==null || fieldsToGroupAltered==null){
+                Object[] errorLog=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, 
+                    RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), fieldsToGroupAltered});
+                return LPArray.array1dTo2d(errorLog, 1);
+            }               
+            res.last();
+            if (res.getRow()>0){
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;
+                Object[][] entireArr = new Object[totalLines][fieldsToGroupAltered.length+1];
+                while(icurrLine<=totalLines-1) {
+                    for (Integer icurrCol=0;icurrCol<fieldsToGroupAltered.length;icurrCol++){
+                        Object currValue = res.getObject(icurrCol+1);
+                        entireArr[icurrLine][icurrCol] =  LPNulls.replaceNull(currValue);
+//                        if (icurrCol<fieldsToGroupContItem) fieldsToGroupValues[icurrCol]=LPNulls.replaceNull(currValue);
+                    }
+/*                    if (fieldsToGroupContItem==1){
+                        entireArr[icurrLine][fieldsToGroupAltered.length]=entireArr[icurrLine][0];
+                    }else{                        
+                        entireArr[icurrLine][fieldsToGroupAltered.length]=
+                                LPArray.convertArrayToString(
+                                        LPArray.joinTwo1DArraysInOneOf1DString(fieldsToGroup, fieldsToGroupValues, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR),  ", ", "");
+                    }
+*/                    
+                    res.next();
+                    icurrLine++;
+                }
+//                fieldsToGroupAltered=LPArray.addValueToArray1D(fieldsToGroupAltered, "GROUPER");
+//                entireArr = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToGroupAltered, entireArr);
+                return entireArr;
+            }else{
+                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(fieldsToGroupAltered)});
+                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Rdbms.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(fieldsToGroupAltered)});
+        return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                        
     }
     
 /*
