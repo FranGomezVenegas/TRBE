@@ -163,7 +163,7 @@ public class LPFrontEnd {
         Object[][] mainMessage = messages.getMainMessage();
         Object [] errorMsgEn=null;
         Object [] errorMsgEs=null;
-        if (mainMessage!=null && mainMessage.length>0){
+        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
             errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "en");
             errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "es");
         }else{
@@ -207,8 +207,8 @@ public class LPFrontEnd {
         if (msgCode!=null){
             if (msgDynamicValues!=null){
                 for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){
-                    errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
-                    errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
+                    errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
+                    errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
                 }
             }        
             if (errorTextEn.length()==0){
@@ -246,8 +246,8 @@ public class LPFrontEnd {
         if (errorTextEn==null || errorTextEn.length()==0)
             errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "en");
         if (errorPropertyValue!=null){
-            for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){
-                errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", errorPropertyValue[iVarValue-1].toString());
+            for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){                
+                errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(errorPropertyValue[iVarValue-1]).toString());
             }        
         }
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
@@ -257,7 +257,7 @@ public class LPFrontEnd {
             errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "es");
         if (errorPropertyValue!=null){
             for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){
-                errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", errorPropertyValue[iVarValue-1].toString());
+                errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(errorPropertyValue[iVarValue-1]).toString());
             }         
         }
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
@@ -446,6 +446,12 @@ public class LPFrontEnd {
         servetInvokeResponseErrorServlet(request, response);
     }    
     public static final void servletReturnResponseErrorLPFalseDiagnosticBilingue(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] msgVariables){       
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Object[][] mainMessage = procReqSession.getMessages().getMainMessage();
+        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>=2){
+            errorCode=(String) mainMessage[0][0];
+            msgVariables=(Object[]) mainMessage[0][1];
+        }
         JSONObject errJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(errorCode, msgVariables);
         request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());          
         servetInvokeResponseErrorServlet(request, response);
