@@ -67,7 +67,8 @@ public class LPPlatform {
      */
     public enum ApiErrorTraping{EXCEPTION_RAISED("exceptionRaised"), PROPERTY_DATABASE_NOT_CONNECTED("databaseConnectivityError"),
         MANDATORY_PARAMS_MISSING("MissingMandatoryParametersInRequest"), PROPERTY_ENDPOINT_NOT_FOUND("endPointNotFound"),
-        INVALID_TOKEN("invalidToken"), INVALID_USER_VERIFICATION("invalidUserVerification"), INVALID_ESIGN("invalidEsign")
+        INVALID_TOKEN("invalidToken"), INVALID_USER_VERIFICATION("invalidUserVerification"), INVALID_ESIGN("invalidEsign"),
+        REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC("regressionTesting_actionsNotAllowedOrDeclaredAsPartOfThisProcedure")
         ;
         ApiErrorTraping(String nm){
             this.name=nm;
@@ -122,6 +123,7 @@ public enum LpPlatformErrorTrapping{
         USRROLACTIONENABLED_DENIED("userRoleActionEnabled_denied", "", ""),
         USRROLACTIONENABLED_ENABLED("userRoleActionEnabled_enabled", "", ""),
         USRROLACTIONENABLED_ENABLED_BYALL("userRoleActionEnabled_ALL", "", ""),
+        USRROLACTIONENABLED_ACTIONENABLEDFORROLES_BUSRULE_NOTFOUND("userRoleActionEnabled_actionEnabledForRolesBusRuleNotFound", "", ""),
         USRROLACTIONENABLED_MISSEDPARAMETER("userRoleActionEnabled_missedParameter", "", ""),
         USRROLACTIONENABLED_ROLENOTINCLUDED("userRoleActionEnabled_roleNotIncluded", "", ""),
         VERIFYUSERREQUIRED_ENABLED_BY_ALL("VERIFY_USER_REQUIRED_BY_ALL", "", ""),
@@ -230,7 +232,7 @@ public enum LpPlatformErrorTrapping{
             return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new Object[]{procInstanceName});                    
         }
         if ( (procedureActionsUserRoles.length==1 && "".equals(procedureActionsUserRoles[0])) ){
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER.getErrorCode(), new Object[]{procInstanceName, procedureActionsUserRoles});        
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER.getErrorCode(), new Object[]{procInstanceName, actionName});        
         }else if(!LPArray.valueInArray(procedureActionsUserRoles, userRole)){    
             return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ROLENOTINCLUDED.getErrorCode(), new Object[]{procInstanceName, actionName, userRole, Arrays.toString(procedureActionsUserRoles)});        
         }else{
@@ -246,7 +248,7 @@ public enum LpPlatformErrorTrapping{
      */ 
     public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName){        
         actionName = actionName.toUpperCase();
-        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()+actionName).toString().split("\\|");
+        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).toString().split("\\|");
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
         if (LPArray.valueInArray(procedureActions, "ALL")){
             return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
@@ -268,7 +270,7 @@ public enum LpPlatformErrorTrapping{
      */
     public static Object[] procActionRequiresEsignConfirmation(String procInstanceName, String actionName){
         actionName = actionName.toUpperCase();
-        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()+actionName).toString().split("\\|");
+        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL"))
