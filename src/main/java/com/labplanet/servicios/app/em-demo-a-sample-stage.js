@@ -3,7 +3,7 @@ var sampleStageSamplingNextChecker = function(sampleId, sampleData) {
     var samplingDate = sampleStructure.sampling_date;
 //	var testId=sampleStructure.sample_analysis[0].analysis	
     if (samplingDate==null){
-        return testId+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+        return "stagesCheckerSamplingDataIsMandatory"+"@"+sampleId;} //" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
     return "LABPLANET_TRUE";
 };
 
@@ -12,9 +12,9 @@ var sampleStageIncubationPreviousChecker = function(sampleId, sampleData) {
     var incubationPassed = sampleStructure.incubation_passed;
     var incubation2Passed = sampleStructure.incubation2_passed;
     if (incubationPassed!=true){
-        return " Pendiente 1a Incubacion para la muestra "+sampleId;}
+        return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} // Pendiente 1a Incubacion para la muestra "+sampleId;}
     if (incubation2Passed!=true){
-        return " Pendiente 2a Incubacion para la muestra "+sampleId;}
+        return "stagesCheckerPendingsecondIncubation"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
     return "LABPLANET_TRUE";
 };
 
@@ -23,9 +23,9 @@ var sampleStageIncubationNextChecker = function(sampleId, sampleData) {
     var incubationPassed = sampleStructure.incubation_passed;
     var incubation2Passed = sampleStructure.incubation2_passed;
     if (!incubationPassed){
-        return " Pendiente 1a Incubacion para la muestra "+sampleId;}
+        return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
     if (!incubation2Passed){
-        return " Pendiente 2a Incubacion para la muestra "+sampleId;}
+        return "stagesCheckerPendingSecondIncubation"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
     return "LABPLANET_TRUE";
 };
 
