@@ -8,13 +8,15 @@ package lbplanet.utilities;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
+import java.time.LocalDateTime;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 /**
  *
  * @author User
  */
 public class LPAPIArguments {
     
-    public enum ArgumentType{STRING, INTEGER, BIGDECIMAL, STRINGARR, STRINGOFOBJECTS, DATE, BOOLEAN, BOOLEANARR}
+    public enum ArgumentType{STRING, INTEGER, BIGDECIMAL, STRINGARR, STRINGOFOBJECTS, DATE, DATETIME, BOOLEAN, BOOLEANARR}
     private final String name;
     private String type=ArgumentType.STRING.toString();
     private final Boolean mandatory;
@@ -37,9 +39,7 @@ public class LPAPIArguments {
         if (tpe!=null) this.type=tpe;
         this.mandatory=true;
         this.testingArgPosic=-1;
-    }
-
-    
+    }   
     public LPAPIArguments(String nme, String tpe, Boolean mandatry){
         this.name=nme;
         this.type=tpe;
@@ -74,6 +74,15 @@ public class LPAPIArguments {
                         Date valueConvertedDate=null;
                         if (requestArgValue.length()>0) valueConvertedDate=Date.valueOf(requestArgValue);
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedDate);
+                        break;
+                    case DATETIME:     
+                        LocalDateTime valueConvertedDateTime=null;
+                        try{
+                            if (requestArgValue.length()>0) valueConvertedDateTime=LocalDateTime.parse(requestArgValue, ISO_LOCAL_DATE_TIME);
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedDateTime);
+                        }catch(Exception e){
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, null);    
+                        }
                         break;
                     case BOOLEAN:     
                         Boolean valueConvertedBoolean=null;

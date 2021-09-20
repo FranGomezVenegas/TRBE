@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -707,7 +708,10 @@ public class LPTestingOutFormat {
      */
     public static String createTableWithHeader(String table1Header, Integer numEvaluationArguments){
         String fileContentTable = LPTestingOutFormat.tableStart("");
-        fileContentTable=fileContentTable+headerAddFields(addUATColumns(table1Header.split(TESTING_FILES_FIELD_SEPARATOR), numEvaluationArguments));
+        if (numEvaluationArguments==0)
+            fileContentTable=fileContentTable+rowStart()+headerAddFields(table1Header.split(TESTING_FILES_FIELD_SEPARATOR))+rowEnd();
+        else
+            fileContentTable=fileContentTable+headerAddFields(addUATColumns(table1Header.split(TESTING_FILES_FIELD_SEPARATOR), numEvaluationArguments));
         fileContentTable=fileContentTable+rowStart();
         return fileContentTable;
     }
@@ -795,6 +799,14 @@ public class LPTestingOutFormat {
         try{
             return Date.valueOf(value.toString());
         }catch(NumberFormatException e){return null;}
+    }
+
+    public static LocalDateTime csvExtractFieldValueDateTime(Object value){
+        if (value==null) return null;
+        try{
+            return LocalDateTime.parse(value.toString());
+            //return LocalDateTime.valueOf(value.toString());
+        }catch(Exception e){return null;}
     }
 
     /**
