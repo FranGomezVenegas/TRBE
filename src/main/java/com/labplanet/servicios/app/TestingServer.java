@@ -10,7 +10,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
-import databases.TblsApp;
+import static databases.Rdbms.dbTableExists;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.Token;
@@ -33,14 +33,11 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import javax.json.Json;
-import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
-import lbplanet.utilities.LPFilesTools;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
@@ -76,7 +73,7 @@ public class TestingServer extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             try{
-             javax.json.JsonObject empObject = Json.createObjectBuilder().add("empName", "Jai")
+/*             javax.json.JsonObject empObject = Json.createObjectBuilder().add("empName", "Jai")
                                  .add("empAge", "25")
                                  .add("empSalary", "40000")
                                  .add("empAddress",
@@ -91,20 +88,37 @@ public class TestingServer extends HttpServlet {
                                                                .build()
                                       )
                                  .build();
-             out.println(empObject);
+             out.println(empObject); 
             JsonArray build = Json.createArrayBuilder().add(Json.createObjectBuilder()//.add("repository", GlobalVariables.Schemas.APP.getName())
                     .add("table", TblsApp.Incident.TBL.getName()).build()).build();
-            out.println(build);
-LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            
+            out.println(build); 
+LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
 //if (1==1) return;  
 Rdbms.closeRdbms();
-Rdbms.stablishDBConection("labplanet");
-                Object[][] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror("em-demo-a", GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName());
+//Rdbms.stablishDBConection("labplanet");
 
-                Object[][] dbSchemaAndTestingSchemaTablesAndFieldsIsMirrorAudit = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror("em-demo-a", GlobalVariables.Schemas.DATA_AUDIT.getName(), GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName());
+                Object[] isConnected = Rdbms.stablishDBConectionTester();
+                //isConnected = Rdbms.getRdbms().startRdbms(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);      
+
+out.println("Hello");
+out.println(Rdbms.dbViewExists("em-demo-a", "data", "pr_scheduled_locations")[0].toString());
+                Object[] dbTableExists = dbTableExists("em-demo-a-data", "sample");
+String procInstanceName="em-demo-a";
+    Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName());
+    Object[][] mismatches= (Object[][]) dbSchemaAndTestingSchemaTablesAndFieldsIsMirror[0];
+    if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatches[0][0].toString())){
+        out.println("the schemas "+procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName()
+            +" and "+procInstanceName+"-"+GlobalVariables.Schemas.DATA_TESTING.getName()+" are not mirror, see below the mismatches ("+dbSchemaAndTestingSchemaTablesAndFieldsIsMirror.length+"):");    
+        out.print("<table><tr><th>Table</th><th>Field</th></tr></table>");
+        for (Object[] curRow:mismatches){
+            out.print("TBL: "+curRow[0].toString()+"+FLD: "+curRow[1].toString()+";    ");
+        }
+        return;
+    }
 Rdbms.closeRdbms();
+if (1==1) return;            
 Rdbms.stablishDBConection("tst");
-                
+               
 String functionCr=" CREATE OR REPLACE FUNCTION public.isnumeric(text) RETURNS boolean LANGUAGE plpgsql";
 functionCr=functionCr+" IMMUTABLE STRICT ";
 functionCr=functionCr+" AS $function$ DECLARE x NUMERIC; BEGIN x = $1::NUMERIC; RETURN TRUE; EXCEPTION WHEN others THEN RETURN FALSE; END; $function$ ";
