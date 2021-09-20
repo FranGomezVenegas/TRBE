@@ -26,12 +26,13 @@ import functionaljavaa.samplestructure.DataSampleStages;
 import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses;
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -157,10 +158,13 @@ public class ClassSample {
                 break;
             case CHANGESAMPLINGDATE:
                 sampleId = (Integer) argValues[0];
-                Date newDate=(Date) argValues[1];
-                diagn = smp.changeSamplingDate(sampleId, newDate);
+                LocalDateTime newDate=(LocalDateTime) argValues[1];
+                if (newDate==null)
+                    diagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "newDateNullOrWrongFormat", new Object[]{LPNulls.replaceNull(newDate)});
+                else
+                    diagn = smp.changeSamplingDate(sampleId, newDate);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
-                this.messageDynamicData=new Object[]{newDate, sampleId};
+                this.messageDynamicData=new Object[]{LPNulls.replaceNull(newDate), sampleId};
                 break;
             case SAMPLINGCOMMENTADD:
                 sampleId = (Integer) argValues[0];
