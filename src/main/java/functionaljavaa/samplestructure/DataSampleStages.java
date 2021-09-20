@@ -14,6 +14,7 @@ import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.responsemessages.ResponseMessages;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
@@ -239,8 +240,9 @@ public enum SampleStageErrorTrapping{
         else return moveStageCheckerJavaScript(sampleId, currStage, moveDirection);
     }
     private Object[] moveStageCheckerJava(Integer sampleId, String currStage, String moveDirection){
-      //try {
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    //try {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=instanceForActions.getProcedureInstance();
         String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
@@ -264,9 +266,18 @@ public enum SampleStageErrorTrapping{
         }
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("ERROR")) )
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecialFunctionReturnedERROR", new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
-        if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("FALSE")) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{LPNulls.replaceNull(specialFunctionReturn).toString().replace(LPPlatform.LAB_FALSE, "")});
-
+        if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("FALSE")) ){
+            String errorCode=specialFunctionReturn.toString();
+            errorCode=LPNulls.replaceNull(specialFunctionReturn).toString().replace(LPPlatform.LAB_FALSE, "");
+            String[] errorCodeArr=errorCode.split("@");
+            Object[] msgVariables=null;
+            if (errorCodeArr.length>1)
+                msgVariables=new Object[]{errorCodeArr[1]};
+            ResponseMessages messages = instanceForActions.getMessages();
+            messages.addMain(errorCodeArr[0], msgVariables);
+            
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{errorCode});
+        }
         return new Object[]{specialFunctionReturn};
         }
 
