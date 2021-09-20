@@ -22,10 +22,10 @@ public class ProcedureSampleStage {
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
         if (sampleStructure.get("sampling_date").isJsonNull())
-            return LPPlatform.LAB_FALSE+" Fecha de muestreo es obligatoria para la muestra "+sampleId;
+            return LPPlatform.LAB_FALSE+"stagesCheckerSamplingDateIsMandatory"+"@"+sampleId; //" Fecha de muestreo es obligatoria para la muestra "+sampleId;
         String samplingDate=sampleStructure.get("sampling_date").toString();
         if (samplingDate==null || "null".equalsIgnoreCase(samplingDate)) {
-            return LPPlatform.LAB_FALSE+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+            return LPPlatform.LAB_FALSE+"stagesCheckerSamplingDateIsMandatory"+"@"+sampleId;} // Fecha de muestreo es obligatoria para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
 
@@ -37,9 +37,9 @@ public class ProcedureSampleStage {
         Boolean incubationPassed=sampleStructure.get("incubation_passed").getAsBoolean();
         Boolean incubation2Passed=sampleStructure.get("incubation2_passed").getAsBoolean();
         if (!incubationPassed){
-            return " Pendiente 1a Incubacion para la muestra "+sampleId;}
+            return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (!incubation2Passed){
-            return " Pendiente 2a Incubacion para la muestra "+sampleId;}
+            return "stagesCheckerPendingSecondIncubation"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
 
@@ -51,9 +51,9 @@ public class ProcedureSampleStage {
         Boolean incubationPassed=sampleStructure.get("incubation_passed").getAsBoolean();
         Boolean incubation2Passed=sampleStructure.get("incubation2_passed").getAsBoolean();
         if (!incubationPassed){
-            return " Pendiente 1a Incubacion para la muestra "+sampleId;}
+            return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (!incubation2Passed){
-            return " Pendiente 2a Incubacion para la muestra "+sampleId;}
+            return "stagesCheckerPendingSecondIncubation"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
     public String sampleStagePlateReadingPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
@@ -78,13 +78,13 @@ public class ProcedureSampleStage {
 
             String rawValue="";
             if (asJsonObject.get("raw_value").isJsonNull())
-                return LPPlatform.LAB_FALSE+"raw value not entered yet";
+                return LPPlatform.LAB_FALSE+"stagesCheckerSampleWithNoResult"+"@"+sampleId; //"raw value not entered yet";
             else
                 rawValue=asJsonObject.get("raw_value").getAsString();
 
             String paramName="";
             if (asJsonObject.get("param_name").isJsonNull())
-                return LPPlatform.LAB_FALSE+"Parameter name is empty";
+                return LPPlatform.LAB_FALSE+"stagesParamNameEmpty"+"@"+sampleId; //+"Parameter name is empty";
             else
                 paramName=asJsonObject.get("param_name").getAsString();
             
