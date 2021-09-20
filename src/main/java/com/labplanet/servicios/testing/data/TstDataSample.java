@@ -26,7 +26,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -207,9 +208,9 @@ public class TstDataSample extends HttpServlet {
                                     sampleId = null;
                                     if (lineNumCols>=numEvaluationArguments+4)                
                                         sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                                    Date newDate = null;
+                                    LocalDateTime newDate = null;
                                     if (lineNumCols>=numEvaluationArguments+5)                
-                                        newDate = LPTestingOutFormat.csvExtractFieldValueDate(csvFileContent[iLines][numEvaluationArguments+5]);                            
+                                        newDate = LPTestingOutFormat.csvExtractFieldValueDateTime(csvFileContent[iLines][numEvaluationArguments+5]);                            
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, userName, newDate", 
                                             LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+LPNulls.replaceNull(newDate).toString()}));                              
