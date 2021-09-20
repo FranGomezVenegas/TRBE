@@ -222,6 +222,7 @@ public class EnvMonSampleAPI extends HttpServlet {
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
         String procInstanceName = procReqInstance.getProcedureInstance();
+        
 
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
@@ -319,7 +320,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                     
                     LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                 }            
-/*            }else{
+            }else{
                 SampleAPIEndpoints endPointSmp = null;
                 try{
                     endPointSmp = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
@@ -327,7 +328,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                     return;                   
                 }                
-                ClassSample clssSmp=new ClassSample(request, token, procInstanceName, endPointSmp);
+                ClassSample clssSmp=new ClassSample(request, endPointSmp);
                 if (clssSmp.getEndpointExists()){
                     Object[] diagnostic=clssSmp.getDiagnostic();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
@@ -340,7 +341,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                         JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                     } 
-                }*/
+                }
             }
         }catch(Exception e){   
  /*           try {
