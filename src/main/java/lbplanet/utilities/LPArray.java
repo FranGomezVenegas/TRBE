@@ -720,12 +720,14 @@ if (1==1) return fieldValue;
     }
 
     /**
-     *
+     *  Join two arrays, in case any of both is null then returns the other one.
      * @param arrayOne
      * @param arrayTwo
      * @return
      */
     public static Object[][] joinTwo2DArrays (Object[][] arrayOne, Object[][] arrayTwo){
+         if (arrayOne==null) return arrayTwo;
+         if (arrayTwo==null) return arrayOne;
          Object[] newArray = LPArray.array2dTo1d(arrayOne);
          newArray = LPArray.addValueToArray1D(newArray, LPArray.array2dTo1d(arrayTwo));         
          return LPArray.array1dTo2d(newArray, arrayOne[0].length);
