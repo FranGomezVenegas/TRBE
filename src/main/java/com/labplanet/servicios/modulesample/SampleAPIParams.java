@@ -132,7 +132,7 @@ public class SampleAPIParams extends HttpServlet {
                 .add("table", TblsData.Sample.TBL.getName()).build()).build() ),                
         CHANGESAMPLINGDATE("CHANGESAMPLINGDATE", "changeSamplingDate_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_DATE, LPAPIArguments.ArgumentType.DATE.toString(), true, 7)}, 
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_DATE, LPAPIArguments.ArgumentType.DATETIME.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
         SAMPLINGCOMMENTADD("SAMPLINGCOMMENTADD", "samplingCommentAdd_success",
