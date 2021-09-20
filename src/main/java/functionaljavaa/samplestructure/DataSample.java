@@ -23,7 +23,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -368,8 +368,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @param sampleId
      * @param newDate
      * @return
-     */
-    public Object[] changeSamplingDate(Integer sampleId, Date newDate){
+     */    
+    public Object[] changeSamplingDate(Integer sampleId, LocalDateTime newDate){
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
@@ -378,7 +378,18 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String[] sampleFieldName = new String[]{TblsData.Sample.FLD_SAMPLING_DATE.getName()};
         Object[] sampleFieldValue = new Object[]{newDate};
 
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        Object[][] sampleCurrentInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+                new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString())) return sampleCurrentInfo;
+        String currentDateStr=LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString();
+        if (currentDateStr==null || currentDateStr.length()==0)
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDate_cannotBeAppliedForNullValue", new Object[]{sampleId, newDate});
+        if (currentDateStr!=null && currentDateStr.length()>0){
+            if (newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T"))))
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDate_sameSamplingDate", new Object[]{sampleId, newDate});
+        }
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, 
+            new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){            
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.SAMPLING_DATE_CHANGED.getErrorCode(), 
                     new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
