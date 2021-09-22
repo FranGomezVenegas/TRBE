@@ -5,10 +5,12 @@
  */
 package com.labplanet.servicios.app;
 
+import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import databases.TblsApp;
 import functionaljavaa.incident.AppIncident;
 import functionaljavaa.incident.AppIncidentEnums.IncidentAPIEndpoints;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
+import functionaljavaa.responsemessages.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -116,7 +119,13 @@ public class IncidentAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-        JSONObject jsonObject=new JSONObject();
+        JsonObject jsonObject=null;
+        String[] argList=new String[]{};
+        LPAPIArguments[] arguments = endPoint.getArguments();
+        for (LPAPIArguments curArg: arguments){
+            argList=LPArray.addValueToArray1D(argList, curArg.getName());
+        }
+        argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
         if (endPoint.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
             JSONArray paramJArr=new JSONArray();
             Enumeration params = request.getParameterNames();
@@ -127,15 +136,19 @@ public class IncidentAPI extends HttpServlet {
                 JSONObject jObj=new JSONObject();
                 jObj.put(paramName, request.getParameter(paramName));
                 paramJArr.add(jObj);
-                if (paramName.length()>0 && request.getParameter(paramName).length()==0)
-                    theBody=paramName;
+                String parameterVal = request.getParameter(paramName);
+                if ((!LPArray.valueInArray(argList, paramName))) // || paramName.length()>0 && parameterVal.length()==0) || (paramName.equalsIgnoreCase(parameterVal)))
+                    theBody=paramName+parameterVal;
             }            
             Object[] objToJsonObj = convertToJsonObjectStringedObject(theBody);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, ".Object: <*1*>", new Object[]{theBody}, language);                         
+                ResponseMessages messages = procReqInstance.getMessages();
+                messages.addMain("problemsGettingReduxState", new Object[]{theBody, objToJsonObj[1]});
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, null, null);
+                //LPFrontEnd.servletReturnResponseError(request, response, ".Object: <*1*>", new Object[]{theBody}, language);                         
                return;
             }        
-            jsonObject=(JSONObject) objToJsonObj[1];
+            jsonObject=(JsonObject) objToJsonObj[1];
         }
             
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
