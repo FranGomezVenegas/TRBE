@@ -1028,6 +1028,14 @@ if (1==1){Rdbms.transactionId=1; return;}
     public  static CachedRowSet prepRdQuery(String consultaconinterrogaciones, Object [] valoresinterrogaciones) {
         try{ //try(CachedRowSet  crs = RowSetProvider.newFactory().createCachedRowSet()){
             CachedRowSet  crs = RowSetProvider.newFactory().createCachedRowSet();
+            
+            if (!rdbms.getIsStarted()){
+                String dbName=ProcedureRequestSession.getInstanceForActions(null, null, null).getDbName();
+                rdbms.startRdbms(dbName);
+            }
+/*            String dbName=ProcedureRequestSession.getInstanceForActions(null, null, null).getDbName();
+            if (dbName!=null) rdbms.startRdbms(dbName);
+            else rdbms.startRdbms(); */
             try(PreparedStatement prepareStatement = conn.prepareStatement(consultaconinterrogaciones)){
                 Object[] filteredValoresConInterrogaciones = new Object[0];
                 //PreparedStatement prepareStatement = conn.prepareStatement(consultaconinterrogaciones);
@@ -1482,21 +1490,34 @@ if (1==1){Rdbms.transactionId=1; return;}
         }  
     }
     
-    public static Object[][] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(String procInstanceName, String schemaName1, String schemaName2){
-        String schema=LPPlatform.buildSchemaName(procInstanceName, schemaName1);
-        String schemaTesting=LPPlatform.buildSchemaName(procInstanceName, schemaName2);
+    public static Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(String procInstanceName, String schemaName1, String schemaName2){
+        return dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, schemaName1, schemaName2, null);
+    }
+    public static Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(String procInstanceName, String schemaName1, String schemaName2, Object[] tablesToCheck){
+        String schema=LPPlatform.buildSchemaName(procInstanceName, schemaName1).replace("\"", "");
+        String schemaTesting=LPPlatform.buildSchemaName(procInstanceName, schemaName2).replace("\"", "");
         String[] fieldsToRetrieve=new String[]{"table_name", "column_name", "counter"};
-// ('em-demo-a-data-audit', 'em-demo-a-data-audit_testing')
+        String[] filter=new String[]{schema, schemaTesting};
+
         String query="select * from ( " +
-                     " SELECT table_name, column_name, count(*) as counter FROM information_schema.COLUMNS WHERE table_schema in (?, ?)";
-        query=query+" group by table_name, column_name) as match";// where counter <>2";
+                     " SELECT  table_name, column_name, count(*) as counter FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema in (?, ?)";
+        if (tablesToCheck!=null && tablesToCheck.length>0){
+            query=query+" and table_name in (";
+            for (Object curTblChck: tablesToCheck){
+                query=query+"?,";
+                filter=LPArray.addValueToArray1D(filter, curTblChck.toString());
+            }
+            query=query.substring(0, query.length()-1);
+            query=query+")";
+            //filter=LPArray.addValueToArray1D(filter, tablesToCheck);
+        }
+        query=query+" group by table_name, column_name) as match where counter <>2";
         try{
-            String[] filter=new String[]{schema, schemaTesting};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}), 7);
+                return new Object[]{LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}), 7), fieldsToRetrieve};
             }            
-            res.first();
+            res.last();
             Integer numRows=res.getRow();
             if (numRows>0){
                 Integer totalLines = res.getRow();
@@ -1511,13 +1532,13 @@ if (1==1){Rdbms.transactionId=1; return;}
                        res.next();
                        icurrLine++;
                     }         
-                    return diagnoses2;
+                    return new Object[]{diagnoses2, fieldsToRetrieve};
             }else{
-                return LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"",procInstanceName, schemaName1}), 7);                
+                return new Object[]{LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}), 7), fieldsToRetrieve};
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
-            return LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query}), 7);
+            return new Object[]{LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query}), 7), fieldsToRetrieve};
         }  
     }
     /**
