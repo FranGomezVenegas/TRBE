@@ -81,8 +81,6 @@ public class ProcedureRequestSession {
             else
                 areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                 this.hasErrors=true;
                 this.errorMessage=LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName()+areMandatoryParamsInResponse[1].toString();                
                 return;          
@@ -99,8 +97,6 @@ public class ProcedureRequestSession {
             if (finalToken!=null){
                 tokn = new Token(finalToken);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, language);              
                         this.hasErrors=true;
                         this.errorMessage=LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName();
                         return;                             
@@ -113,7 +109,6 @@ public class ProcedureRequestSession {
         if (!isForTesting && !isForUAT && !isQuery && !isPlatform && !isForDocumentation){ 
             Object[] theProcActionEnabled = isTheProcActionEnabled(tokn, procInstanceName, actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, theProcActionEnabled);
                 this.hasErrors=true;
                 this.errorMessage=theProcActionEnabled[theProcActionEnabled.length-1].toString();
                 return ;                           
@@ -123,7 +118,6 @@ public class ProcedureRequestSession {
         if (!isForTesting && !isForUAT && !isQuery && !isPlatform && !isForDocumentation){  
             Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 this.hasErrors=true;
                 this.errorMessage=actionEnabled[actionEnabled.length-1].toString();
                 return ;                           
@@ -132,7 +126,6 @@ public class ProcedureRequestSession {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
                 this.hasErrors=true;
                 this.errorMessage=actionEnabled[actionEnabled.length-1].toString();
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, actionEnabled);
                 return ;                           
             }                        
         }
@@ -141,7 +134,6 @@ public class ProcedureRequestSession {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
                 this.hasErrors=true;
                 this.errorMessage=this.auditAndUsrValid.getCheckUserValidationPassesDiag()[this.auditAndUsrValid.getCheckUserValidationPassesDiag().length-1].toString();
-                //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrVal.getCheckUserValidationPassesDiag());              
                 return;          
             }     
             String schemaConfigName=null;
