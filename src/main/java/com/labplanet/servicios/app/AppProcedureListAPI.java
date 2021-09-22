@@ -193,6 +193,9 @@ public class AppProcedureListAPI extends HttpServlet {
                     procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_UP, procedureIconsUp(token, curProc));
                     procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_DOWN, procedureIconsDown(token, curProc));
                 }
+                 
+                procedure.put("actions_with_esign", procActionsWithESign(curProc.toString()));
+                procedure.put("actions_with_confirm_user", procActionsWithConfirmUser(curProc.toString()));
                 procedures.add(procedure);
             }
             procFldNameArray = LPArray.addValueToArray1D(procFldNameArray, LABEL_PROC_SCHEMA);
@@ -204,6 +207,43 @@ public class AppProcedureListAPI extends HttpServlet {
             proceduresList.put(LABEL_ARRAY_PROCEDURES, e.getMessage());
             return proceduresList;            
         }
+    } 
+    public static JSONArray procActionsWithESign(String procInstanceName){
+        JSONArray jArr = new JSONArray();   
+        String[] eSignRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
+        for (String curAction: eSignRequired){
+            JSONObject jActionObj = new JSONObject();  
+            jActionObj.put(curAction, actionDetail(procInstanceName, curAction));
+            jArr.add(jActionObj);
+            jArr.add(curAction);
+        }
+        return jArr;
+    }
+    public static JSONArray procActionsWithConfirmUser(String procInstanceName){
+        JSONArray jArr = new JSONArray();   
+        String[] verifyUserRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).toString().split("\\|");
+        for (String curAction: verifyUserRequired){
+            JSONObject jActionObj = new JSONObject();  
+            jActionObj.put(curAction, actionDetail(procInstanceName, curAction));
+            jArr.add(jActionObj);
+            jArr.add(curAction);
+        }
+        return jArr;
+    }
+    
+    private static JSONObject actionDetail(String procInstanceName, String actionName){
+        JSONObject jObj = new JSONObject();
+        String[] actionDetail = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), actionName+"AuditReasonPhrase").toString().split("\\|");
+        jObj.put("name", actionName);
+        jObj.put("type", actionDetail[0]);
+        if (actionDetail[0].toUpperCase().contains("LIST")){
+            JSONArray jObjListEntries = new JSONArray();
+            for (int i=1;i<actionDetail.length;i++){
+                jObjListEntries.add(actionDetail[i]);
+            }
+            jObj.put("list_entries", jObjListEntries);
+        }
+        return jObj;
     }
     /**
      *
