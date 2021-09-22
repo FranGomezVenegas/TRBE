@@ -14,6 +14,7 @@ import functionaljavaa.audit.IncubBatchAudit;
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorBusinessRules;
 import functionaljavaa.moduleenvironmentalmonitoring.ProcedureDeviationIncubator;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.responsemessages.ResponseMessages;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
@@ -61,8 +62,8 @@ public class DataBatchIncubator {
         INCUBATORBATCH_NOT_ACTIVE("incubatorBatchNotActive","The Batch <*1*> is not active","The Batch <*1*> is not active"),
         INCUBATORBATCH_TEMPLATE_NOT_ACTIVE("incubatorBatchTemplateNotActive","The Batch template <*1*> and version <*2*> is not active","The Batch template <*1*> and version <*2*> is not active"),
         BATCH_AVAILABLEFORCHANGES("batchAvailableForChanges", "The Batch <*1*> is available to alter its content", "The Batch <*1*> is available to alter its content"),
-        INCUB_BATCH_NOT_ACTIVE_FOR_CHANGES("incubationBatchStart_StoppedByIncubationLockedBusinessRuleMode", "", ""), 
-        INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE("StoppedByIncubationLockedBusinessRuleMode", "", ""),
+        INCUB_BATCH_NOT_ACTIVE_FOR_CHANGES("incubationBatchStart_StoppedByNotActiveForChanges", "", ""), 
+        INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE("incubationBatchStart_StoppedByIncubationLockedBusinessRuleMode", "", ""),
         
         EMPTY_BATCH("incubBatch_emptyBatch", "", ""),
         INCUB_BATCH_STARTED_CHANGEITSCONTENT("IncubatorBatchStartedToChangeItsContent", "", ""),
@@ -545,7 +546,8 @@ public class DataBatchIncubator {
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchErrorTrapping.BATCH_AVAILABLEFORCHANGES.getErrorCode(), new Object[]{batchName}); 
     }
     public static Object[] incubatorIsLocked(String batchName, String instName){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=instanceForActions.getProcedureInstance();        
         Object[] procedureBusinessRuleEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, ConfigIncubatorBusinessRules.LOCK_WHEN_TEMP_OUT_OF_RANGE.getAreaName(), ConfigIncubatorBusinessRules.LOCK_WHEN_TEMP_OUT_OF_RANGE.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureBusinessRuleEnable[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "incubationLockingNotEnabled", null);
@@ -564,8 +566,11 @@ public class DataBatchIncubator {
         if (ruleValue.toUpperCase().contains("DEVIATION")){
             Object[] createNew = ProcedureDeviationIncubator.createNew(instName, new String[]{TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_BATCH_NAME.getName()}, new Object[]{batchName});
         }
-        if (ruleValue.toUpperCase().contains("STOP"))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE.getErrorCode(), new Object[]{BatchBusinessRules.START_FOR_LOCKED_INCUBATOR_MODE.getTagName(), ruleValue});
+        if (ruleValue.toUpperCase().contains("STOP")){
+            ResponseMessages messages = instanceForActions.getMessages();
+            messages.addMain(IncubatorBatchErrorTrapping.INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE.getErrorCode(), new Object[]{instrInfo[0][1].toString(), ruleValue});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE.getErrorCode(), new Object[]{instrInfo[0][1].toString(), ruleValue});
+        }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ByPassedByIncubationLockedBusinessRuleMode Rule:<*1*>, Value:<*2*>", new Object[]{BatchBusinessRules.START_FOR_LOCKED_INCUBATOR_MODE.getTagName(), ruleValue});
     }
     
