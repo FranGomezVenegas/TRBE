@@ -6,9 +6,13 @@
 package com.labplanet.servicios.app;
 
 import databases.Rdbms;
+import databases.TblsReqs;
+import static databases.TblsReqs.ProcedureModuleTablesAndFields.TBL;
 import databases.TblsTesting;
 import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.rowAddFields;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import java.io.IOException;
@@ -49,8 +53,16 @@ public class TestingRegressionUAT extends HttpServlet {
         ProcedureRequestSession procReqInstance = null;
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
-
+        StringBuilder fileContentBuilder = new StringBuilder(0);        
         String language = LPFrontEnd.setLanguage(request); 
+
+        Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
+        if (scriptId==null){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, language);                              
+            return;
+        }
+
             String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
             Object[][] scriptTblInfo=new Object[0][0];            
         try (PrintWriter out = response.getWriter()) {   
@@ -104,12 +116,58 @@ public class TestingRegressionUAT extends HttpServlet {
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, "Argument procInstanceName not found in the call", null, sessionLang);                              
                 return;
+            }            
+            String[][] schemasToCheck=new String[][]{{GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName()}, 
+                {GlobalVariables.Schemas.DATA_AUDIT.getName(), GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()}, 
+                {GlobalVariables.Schemas.PROCEDURE_AUDIT.getName(), GlobalVariables.Schemas.PROCEDURE_TESTING.getName()}};
+            Object[][] allMismatches=null;
+            Object[] mirrorCheckDiagn =null;
+            for (String[] curSchToCheck:schemasToCheck){
+                Object[][] tablesToCheckQry=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureModuleTablesAndFields.TBL.getName(), 
+                        new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_ACTIVE.getName()},
+                        new Object[]{procInstanceName, curSchToCheck[0], true}, 
+                        new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_TABLE_NAME.getName()});
+                Object[] tablesToCheck=new String[]{"sample"};
+                tablesToCheck=LPArray.getColumnFromArray2D(tablesToCheckQry, 0);
+                
+                mirrorCheckDiagn = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, curSchToCheck[0], curSchToCheck[1], tablesToCheck);
+                Object[][] mismatchesArr=(Object[][]) mirrorCheckDiagn[0];
+                if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatchesArr[0][0].toString()))
+                    if (allMismatches==null || (allMismatches[0].length==mismatchesArr[0].length)){
+                        allMismatches=LPArray.joinTwo2DArrays(allMismatches, new Object[][]{{"schema family",curSchToCheck[0].toString(), ""}});
+                        allMismatches=LPArray.joinTwo2DArrays(allMismatches, mismatchesArr);
+                    }
             }
-            Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
-            if (scriptId==null){
-                procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, sessionLang);                              
-                return;
+            if (allMismatches!=null && allMismatches.length>0){
+                fileContentBuilder.append(procInstanceName+" has mirror mismatches, "+allMismatches.length+", further detail below:");    
+
+                StringBuilder htmlStyleHdr = new StringBuilder(0);
+                htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), "", scriptId, procInstanceName));
+                fileContentBuilder.append(htmlStyleHdr);
+                
+                //out.println(fileContentBuilder.toString());        
+                
+                StringBuilder fileContentTable1Builder = new StringBuilder(0);
+                fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(LPArray.convertArrayToString((String[]) mirrorCheckDiagn[1], TESTING_FILES_FIELD_SEPARATOR, ""), 0));
+                for (Object[] curRow:allMismatches){
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowStart()).append(rowAddFields(curRow));
+/*                    for (Object[] curMismatchRow:mismatchesArr){
+                        
+                    }*/
+                    //out.print("SCH: "+curRow[0].toString()+"TBL: "+curRow[1].toString()+"+FLD: "+curRow[2].toString()+";    ");
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
+                }
+                
+                fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+                fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+                out.println(fileContentBuilder.toString());
+return;                
+/*                out.println(procInstanceName+" has mirror mismatches, "+allMismatches.length+", further detail below:");    
+                out.print("<table><tr><th>Table</th><th>Field</th></tr></table>");
+                for (Object[] curRow:allMismatches){
+                    out.print("SCH: "+curRow[0].toString()+"TBL: "+curRow[1].toString()+"+FLD: "+curRow[2].toString()+";    ");
+                }
+                return;*/
             }
 //            if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}     
             scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
@@ -186,7 +244,7 @@ public class TestingRegressionUAT extends HttpServlet {
             String scriptIdStr=request.getParameter("scriptId");
             String procInstanceName=request.getParameter("procInstanceName");
             if (scriptTblInfo.length==0 || scriptIdStr==null) return;
-            Integer scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr)); 
+            scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr)); 
             if ( (procReqInstance!=null) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())) ){
                 if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
                     LPTestingOutFormat.setAuditIndexValues(procInstanceName, scriptId, scriptTblInfo[0][2].toString(), "completed");
