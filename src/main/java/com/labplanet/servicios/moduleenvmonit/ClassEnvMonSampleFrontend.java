@@ -1124,9 +1124,8 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsCnfg.Methods.TBL.getName());
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
             
-        JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPTrue(
-                EnvMonSampleAPI.class.getSimpleName(),
-                AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode(), new Object[]{methodName}, null);                                
+        JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPFalse(                
+                AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode(), new Object[]{methodName});
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
         return new Object[]{fldNameArr, fldValueArr};
     }

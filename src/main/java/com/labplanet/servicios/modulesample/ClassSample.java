@@ -243,7 +243,7 @@ public class ClassSample {
                         diagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                     else{            
                         String currRawValue = (String) resultData[0][7];
-                        if (currRawValue!=null && SampleAPIParams.SampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
+                        if (currRawValue!=null && currRawValue.length()>0 && SampleAPIParams.SampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
                             procReqSession.killIt();
                             request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, SampleAPIParams.SampleAPIEndpoints.REENTERRESULT.getName());
                             procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);

@@ -131,7 +131,7 @@ public class ClassEnvMonSample {
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                     else{            
                         String currRawValue = (String) resultData[0][7];
-                        if (currRawValue!=null && EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
+                        if (currRawValue!=null && currRawValue.length()>0 && EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
                             procReqSession.killIt();
                             request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTERRESULT.getName());
                             procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
