@@ -30,8 +30,8 @@ public class AnalysisMethodCertif {
     public enum CertificationAnalysisMethodErrorTrapping{ 
         USER_CERTIFICATION_ENABLED ("isUserCertificationEnabled", "", ""),
         USER_CERTIFICATION_NOT_ENABLED ("isUserCertificationEnabledNotEnabled", "", ""),
-        USER_IS_CERTIFIED ("userIsCertified", "", ""),
-        USER_NOT_CERTIFIED ("userNotCertified", "", ""),
+        USER_IS_CERTIFIED ("userIsCertifiedForAnalysisMethod", "", ""),
+        USER_NOT_CERTIFIED ("userNotCertifiedForAnalysisMethod", "", ""),
         CERTIF_RECORD_ALREADY_EXISTS ("certifyRecordAlreadyExists", "", ""),
         USER_NOT_INVOLVED_IN_THIS_CERTIFICATION ("userNotInvolvedInThisProcedure", "", ""),
         ;
