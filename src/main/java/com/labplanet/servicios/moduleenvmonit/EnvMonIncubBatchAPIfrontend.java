@@ -182,6 +182,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 whereFieldsNameArr, whereFieldsValueArr, 
                 fieldsToRetrieve, new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()});
         JSONArray jArr = new JSONArray();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(activeBatchesList[0][0].toString())) return jArr;
         for (Object[] currBatch: activeBatchesList){
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
             Integer incubPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName());
