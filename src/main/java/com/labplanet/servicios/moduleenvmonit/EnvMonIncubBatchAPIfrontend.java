@@ -188,6 +188,11 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
             Integer incubPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName());
             JSONArray instrLast10ReadingsjArr = new JSONArray();
             if (incubPosic>-1){
+                String[] incubatorFldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED_REASON.getName()};
+                whereFieldsNameArr=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()};
+                whereFieldsValueArr=new Object[]{currBatch[incubPosic].toString()};
+                Object[][] instrIncubatorInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
+                        whereFieldsNameArr, whereFieldsValueArr, incubatorFldsToRetrieve);
                 String[] tempReadingFldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};
@@ -197,6 +202,11 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
                     ProcedureRequestSession.getInstanceForQueries(null, null, false);
                     instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(currBatch[incubPosic].toString(), 10, tempReadingFldsToRetrieve);
+                }
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrIncubatorInfo[0][0].toString())){
+                    for (int i=0;i<incubatorFldsToRetrieve.length;i++){
+                        jObj.put("incubator_info_"+incubatorFldsToRetrieve[i], instrIncubatorInfo[0][i]);                            
+                    }
                 }
                 for (String curTempReadingFld: tempReadingFldsToRetrieve){
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
