@@ -13,6 +13,7 @@ import lbplanet.utilities.LPJson;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIfrontendEndpoints;
 import databases.Rdbms;
+import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp;
 import databases.TblsCnfg;
@@ -438,9 +439,10 @@ public class SampleAPIfrontend extends HttpServlet {
                         fieldToRetrieveArr=fieldToRetrieve.split("\\|");
                     
                     myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.ViewSampleTestingGroup.TBL.getName(),
-                            new String[]{TblsData.ViewSampleTestingGroup.FLD_READY_FOR_REVISION.getName(), TblsData.ViewSampleTestingGroup.FLD_TESTING_GROUP.getName()},new Object[]{true, testingGroup}, 
-                            fieldToRetrieveArr,
-                            new String[]{TblsData.ViewSampleTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.FLD_TESTING_GROUP.getName()});
+                        new String[]{TblsData.ViewSampleTestingGroup.FLD_READY_FOR_REVISION.getName(), TblsData.ViewSampleTestingGroup.FLD_REVIEWED.getName(), TblsData.ViewSampleTestingGroup.FLD_TESTING_GROUP.getName()},
+                        new Object[]{true, false, testingGroup}, 
+                        fieldToRetrieveArr,
+                        new String[]{TblsData.ViewSampleTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.FLD_TESTING_GROUP.getName()});
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
                         Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
@@ -459,7 +461,8 @@ public class SampleAPIfrontend extends HttpServlet {
                         sampleFieldToRetrieveArr=LPArray.addValueToArray1D(sampleFieldToRetrieveArr, sampleFieldToRetrieve.split("\\|"));
                       
                     myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.Sample.TBL.getName(),
-                            new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName()},new Object[]{true}, 
+                            new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName(), TblsData.Sample.FLD_REVIEWED.getName()+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()},
+                            new Object[]{true, true}, 
                             sampleFieldToRetrieveArr, 
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()});
                     Rdbms.closeRdbms();
@@ -571,7 +574,7 @@ public class SampleAPIfrontend extends HttpServlet {
                    sampleId=Integer.valueOf(sampleIdStr);
                    sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_RETRIEVE);
                    sampleFieldToRetrieveArr=new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName(), TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName()
-                    , TblsDataAudit.Sample.FLD_REVIEWED.getName(), TblsDataAudit.Sample.FLD_REVIEWED_ON.getName(), TblsDataAudit.Sample.FLD_DATE.getName(), TblsDataAudit.Sample.FLD_PERSON.getName()};
+                    , TblsDataAudit.Sample.FLD_REVIEWED.getName(), TblsDataAudit.Sample.FLD_REVIEWED_ON.getName(), TblsDataAudit.Sample.FLD_DATE.getName(), TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_REASON.getName()};
                    Object[][] sampleAuditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.Sample.TBL.getName(), 
                            new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName(), TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{sampleId}, 
                            sampleFieldToRetrieveArr, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
@@ -584,7 +587,7 @@ public class SampleAPIfrontend extends HttpServlet {
                                 sampleFieldToRetrieveArr, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
                         JSONArray jArrLvl2 = new JSONArray();
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfoLvl2[0][0].toString())){
-                            JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, new Object[]{null, null, "No child", "", "", "", null, ""}); 
+                            JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, new Object[]{null, null, "No child", "", "", "", null, "", ""}); 
                             jArrLvl2.add(jObjLvl2);
                         }else{
                             for (Object[] curRowLvl2: sampleAuditInfoLvl2){
