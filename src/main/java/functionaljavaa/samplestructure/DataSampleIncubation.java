@@ -127,7 +127,8 @@ public class DataSampleIncubation {
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
         
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+                sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
             diagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_ENDED_SUCCESS.getErrorCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
@@ -236,8 +237,8 @@ public class DataSampleIncubation {
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp(), incubName, tempReadingEvId, tempReading, false});
                 }else if (moment.contains(SampleIncubationMoment.END.toString())){
                     requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION_END.getName(), 
-                        TblsData.Sample.FLD_INCUBATION_INCUBATOR.getName(), TblsData.Sample.FLD_INCUBATION_END_TEMP_EVENT_ID.getName(), TblsData.Sample.FLD_INCUBATION_END_TEMPERATURE.getName(), TblsData.Sample.FLD_INCUBATION_PASSED.getName()});
-                    requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp(), incubName, tempReadingEvId, tempReading, true});                
+                        TblsData.Sample.FLD_INCUBATION_END_TEMP_EVENT_ID.getName(), TblsData.Sample.FLD_INCUBATION_END_TEMPERATURE.getName(), TblsData.Sample.FLD_INCUBATION_PASSED.getName()});
+                    requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp(), tempReadingEvId, tempReading, true});                
                 }
             }
         }else
