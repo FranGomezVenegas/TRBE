@@ -150,9 +150,22 @@ public class LPFrontEnd {
      */
     public static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
         JSONObject errJsObj = new JSONObject();
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+        Object[][] mainMessage = messages.getMainMessage();
+        Object [] errorMsgEn=null;
+        Object [] errorMsgEs=null;
+        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
+            errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "en");
+            errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "es");
+            String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
+            String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
+            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
+            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
+        }else{
+            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpFalseStructure[lpFalseStructure.length-1]);
+            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpFalseStructure[lpFalseStructure.length-1]);
+        }
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpFalseStructure[0]);
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpFalseStructure[lpFalseStructure.length-1]);
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpFalseStructure[lpFalseStructure.length-1]);
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
         return errJsObj;
     }
@@ -171,7 +184,7 @@ public class LPFrontEnd {
             errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
         }
         String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
-        String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString(); 
+        String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
@@ -202,26 +215,40 @@ public class LPFrontEnd {
      * @return
      */
     public static JSONObject responseJSONDiagnosticLPTrue(String apiName, String msgCode, Object[] msgDynamicValues, JSONArray relatedObjects){
-        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en");
-        String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es");
-        if (msgCode!=null){
-            if (msgDynamicValues!=null){
-                for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){
-                    errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
-                    errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
+
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+        Object[][] mainMessage = messages.getMainMessage();
+        Object [] errorMsgEn=null;
+        Object [] errorMsgEs=null;
+        String errorTextEn = "";
+        String errorTextEs = "";
+        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
+            errorMsgEn=LPPlatform.trapMessage(mainMessage[0][0].toString(), LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), (Object[]) mainMessage[0][2], "en");
+            errorMsgEs=LPPlatform.trapMessage(mainMessage[0][0].toString(), LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), (Object[]) mainMessage[0][2], "es");
+            errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
+            errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();                        
+        }else{
+            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en");
+            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es");
+            if (msgCode!=null){
+                if (msgDynamicValues!=null){
+                    for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){
+                        errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
+                        errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
+                    }
+                }        
+                if (errorTextEn.length()==0){
+                    errorTextEn=msgCode+ " (*** This MessageCode, "+msgCode+", has no entry defined in messages property file) ";
+                    if (msgDynamicValues!=null)
+                        errorTextEn=errorTextEn+Arrays.toString(msgDynamicValues);
                 }
-            }        
-            if (errorTextEn.length()==0){
-                errorTextEn=msgCode+ " (*** This MessageCode, "+msgCode+", has no entry defined in messages property file) ";
-                if (msgDynamicValues!=null)
-                    errorTextEn=errorTextEn+Arrays.toString(msgDynamicValues);
-            }
-            if (errorTextEs.length()==0){
-                errorTextEs=msgCode+ " (*** Este CódigoDeMensaje, "+msgCode+", no está definido en los archivos de mensajes) ";
-                if (msgDynamicValues!=null)
-                    errorTextEs=errorTextEs+Arrays.toString(msgDynamicValues);
-            }
-        }      
+                if (errorTextEs.length()==0){
+                    errorTextEs=msgCode+ " (*** Este CódigoDeMensaje, "+msgCode+", no está definido en los archivos de mensajes) ";
+                    if (msgDynamicValues!=null)
+                        errorTextEs=errorTextEs+Arrays.toString(msgDynamicValues);
+                }
+            }      
+        }
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_TRUE);
         errJsObj.put(ResponseTags.CATEGORY.getLabelName(), apiName.toUpperCase().replace("API", ""));
