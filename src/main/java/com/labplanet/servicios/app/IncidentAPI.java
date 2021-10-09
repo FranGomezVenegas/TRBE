@@ -142,13 +142,14 @@ public class IncidentAPI extends HttpServlet {
             }            
             Object[] objToJsonObj = convertToJsonObjectStringedObject(theBody);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
-                ResponseMessages messages = procReqInstance.getMessages();
+                JSONObject jObj=new JSONObject();
+/*                ResponseMessages messages = procReqInstance.getMessages();
                 messages.addMain("problemsGettingReduxState", new Object[]{theBody, objToJsonObj[1]});
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, null, null);
                 //LPFrontEnd.servletReturnResponseError(request, response, ".Object: <*1*>", new Object[]{theBody}, language);                         
-               return;
-            }        
-            jsonObject=(JsonObject) objToJsonObj[1];
+               return;*/
+            }else        
+                jsonObject=(JsonObject) objToJsonObj[1];
         }
             
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
