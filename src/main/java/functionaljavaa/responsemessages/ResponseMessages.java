@@ -57,7 +57,10 @@ public class ResponseMessages {
         LPArray.addValueToArray1D(array2dTo1d, msgCodeVariables);
         mainStructureObject.messages=LPArray.array1dTo2d(array2dTo1d, 2);
     }
-    public void addMain(String messageCode, Object[] msgCodeVariables){
+    public void addMainForSuccess(String className, String messageCode, Object[] msgCodeVariables){
+        mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{className, messageCode, msgCodeVariables}, 3);
+    }
+    public void addMainForError(String messageCode, Object[] msgCodeVariables){
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables}, 2);
     }
     
