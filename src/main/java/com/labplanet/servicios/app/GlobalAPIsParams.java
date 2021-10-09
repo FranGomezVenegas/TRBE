@@ -167,6 +167,7 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_NEW_DATE = "newDate";
+    public static final String REQUEST_PARAM_NEW_DATETIME = "newDateTime";
 
     /**
      *
