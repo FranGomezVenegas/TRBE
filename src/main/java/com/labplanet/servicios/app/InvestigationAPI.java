@@ -6,6 +6,7 @@
 package com.labplanet.servicios.app;
 
 import databases.TblsApp;
+import databases.TblsProcedure;
 import functionaljavaa.investigation.Investigation;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -51,25 +52,25 @@ public class InvestigationAPI extends HttpServlet {
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 7 ),
                 new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
-            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsApp.Incident.TBL.getName()).build()).build()),
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.PROCEDURE.getName())
+                .add("table", TblsProcedure.Investigation.TBL.getName()).build()).build()),
         CLOSE_INVESTIGATION("CLOSE_INVESTIGATION", "investigationClosed_success",  
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),},
-            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsApp.Incident.TBL.getName()).build()).build()),
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.PROCEDURE.getName())
+                .add("table", TblsProcedure.Investigation.TBL.getName()).build()).build()),
         INVESTIGATION_CAPA_DECISION("INVESTIGATION_CAPA_DECISION", "investigationDescisionTaken_success",  
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(ParamsList.CAPA_REQUIRED.getParamName(), LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7 ),
                 new LPAPIArguments(ParamsList.CAPA_FIELD_NAME.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8 ),
                 new LPAPIArguments(ParamsList.CAPA_FIELD_VALUE.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9 ),
                 new LPAPIArguments(ParamsList.CLOSE_INVESTIGATION.getParamName(), LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10 ),},
-            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsApp.Incident.TBL.getName()).build()).build()),
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.PROCEDURE.getName())
+                .add("table", TblsProcedure.Investigation.TBL.getName()).build()).build()),
         ADD_INVEST_OBJECTS("ADD_INVEST_OBJECTS", "investObjectsAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)},
-            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsApp.Incident.TBL.getName()).build()).build()),
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.PROCEDURE.getName())
+                .add("table", TblsProcedure.Investigation.TBL.getName()).build()).build()),
 /*        ADD_NOTE_INVESTIGATION("ADD_NOTE_INVESTIGATION", "investigationNoteAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -165,7 +166,9 @@ public class InvestigationAPI extends HttpServlet {
             switch (endPoint){
                 case NEW_INVESTIGATION:                    
                     actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|"))), argValues[2].toString());
-                    String investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
+                    String investigationIdStr="";
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                        investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
                     break;
                 case ADD_INVEST_OBJECTS:
