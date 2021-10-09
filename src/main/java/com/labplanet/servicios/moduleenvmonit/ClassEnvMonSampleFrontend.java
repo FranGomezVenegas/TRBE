@@ -393,13 +393,13 @@ new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, L
                     JSONArray jArrMainObj=new JSONArray();
                     jObjPieceOfInfo=new JSONObject();
                     DataSampleStages smpStage= new DataSampleStages();
-                    String[] sampleStageTimingCaptureAllFlds=TblsEnvMonitProcedure.SampleStageTimingCapture.getAllFieldNames();
+                    String[] sampleStageTimingCaptureAllFlds=TblsProcedure.SampleStageTimingCapture.getAllFieldNames();
                     JSONObject jObjMainObject2=new JSONObject();                    
                     
                     if (smpStage.isSampleStagesEnable()){
-                        Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
-                                new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                                sampleStageTimingCaptureAllFlds, new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ID.getName()});                    
+                        Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.SampleStageTimingCapture.TBL.getName(), 
+                                new String[]{TblsProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                                sampleStageTimingCaptureAllFlds, new String[]{TblsProcedure.SampleStageTimingCapture.FLD_ID.getName()});                    
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleStageInfo[0][0].toString())){
                             this.isSuccess=false;
                             this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName});              
@@ -993,8 +993,8 @@ new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, L
 
 private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
     if (sampleStageFldValue==null) return null;
-    if (!LPArray.valueInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
-    String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())].toString();
+    if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
+    String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())].toString();
     JSONObject jObj= new JSONObject();
     JSONArray jArrMainObj=new JSONArray();
     JSONArray jArrMainObj2=new JSONArray();
