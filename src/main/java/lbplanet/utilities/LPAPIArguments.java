@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import java.time.format.DateTimeParseException;
 /**
  *
  * @author User
@@ -76,13 +77,7 @@ public class LPAPIArguments {
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedDate);
                         break;
                     case DATETIME:     
-                        LocalDateTime valueConvertedDateTime=null;
-                        try{
-                            if (requestArgValue.length()>0) valueConvertedDateTime=LocalDateTime.parse(requestArgValue, ISO_LOCAL_DATE_TIME);
-                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedDateTime);
-                        }catch(Exception e){
-                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, null);    
-                        }
+                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, LPDate.stringFormatToLocalDateTime(requestArgValue));    
                         break;
                     case BOOLEAN:     
                         Boolean valueConvertedBoolean=null;
