@@ -7,7 +7,6 @@ package com.labplanet.servicios.app;
 
 import databases.Rdbms;
 import databases.TblsReqs;
-import static databases.TblsReqs.ProcedureModuleTablesAndFields.TBL;
 import databases.TblsTesting;
 import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
@@ -119,7 +118,9 @@ public class TestingRegressionUAT extends HttpServlet {
             }            
             String[][] schemasToCheck=new String[][]{{GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName()}, 
                 {GlobalVariables.Schemas.DATA_AUDIT.getName(), GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()}, 
-                {GlobalVariables.Schemas.PROCEDURE_AUDIT.getName(), GlobalVariables.Schemas.PROCEDURE_TESTING.getName()}};
+                {GlobalVariables.Schemas.PROCEDURE.getName(), GlobalVariables.Schemas.PROCEDURE_TESTING.getName()},
+                {GlobalVariables.Schemas.PROCEDURE_AUDIT.getName(), GlobalVariables.Schemas.PROCEDURE_AUDIT_TESTING.getName()}};
+
             Object[][] allMismatches=null;
             Object[] mirrorCheckDiagn =null;
             for (String[] curSchToCheck:schemasToCheck){
@@ -129,6 +130,10 @@ public class TestingRegressionUAT extends HttpServlet {
                         new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_TABLE_NAME.getName()});
                 Object[] tablesToCheck=new String[]{"sample"};
                 tablesToCheck=LPArray.getColumnFromArray2D(tablesToCheckQry, 0);
+
+//        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())){
+//            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) 
+
                 
                 mirrorCheckDiagn = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, curSchToCheck[0], curSchToCheck[1], tablesToCheck);
                 Object[][] mismatchesArr=(Object[][]) mirrorCheckDiagn[0];
@@ -151,32 +156,23 @@ public class TestingRegressionUAT extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(LPArray.convertArrayToString((String[]) mirrorCheckDiagn[1], TESTING_FILES_FIELD_SEPARATOR, ""), 0));
                 for (Object[] curRow:allMismatches){
                     fileContentTable1Builder.append(LPTestingOutFormat.rowStart()).append(rowAddFields(curRow));
-/*                    for (Object[] curMismatchRow:mismatchesArr){
-                        
-                    }*/
-                    //out.print("SCH: "+curRow[0].toString()+"TBL: "+curRow[1].toString()+"+FLD: "+curRow[2].toString()+";    ");
                     fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
                 }
                 
                 fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
                 fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
                 out.println(fileContentBuilder.toString());
-return;                
-/*                out.println(procInstanceName+" has mirror mismatches, "+allMismatches.length+", further detail below:");    
-                out.print("<table><tr><th>Table</th><th>Field</th></tr></table>");
-                for (Object[] curRow:allMismatches){
-                    out.print("SCH: "+curRow[0].toString()+"TBL: "+curRow[1].toString()+"+FLD: "+curRow[2].toString()+";    ");
-                }
-                return;*/
+                return;                
             }
-//            if (!LPFrontEnd.servletStablishDBConection(request, response, true)){return;}     
             scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
                     new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
                     new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName(), TblsTesting.Script.FLD_AUDIT_IDS_TO_GET.getName(),
                                     TblsTesting.Script.FLD_GET_DB_ERRORS.getName(), TblsTesting.Script.FLD_GET_MSG_ERRORS.getName()},
                     new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
-                Logger.getLogger("Script "+scriptId.toString()+" Not found"); 
+                String msgStr=" Script "+scriptId.toString()+" Not found in procedure "+procInstanceName;
+                Logger.getLogger(msgStr); 
+                out.println(msgStr);
                 return;
             }        
 
