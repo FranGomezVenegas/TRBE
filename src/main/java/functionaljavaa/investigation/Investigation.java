@@ -6,10 +6,13 @@
 package functionaljavaa.investigation;
 
 import databases.Rdbms;
+import databases.TblsData;
 import databases.TblsProcedure;
 import databases.Token;
 import functionaljavaa.audit.ProcedureInvestigationAudit;
+import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
+import functionaljavaa.responsemessages.ResponseMessages;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -32,7 +35,7 @@ public final class Investigation {
     public enum InvestigationErrorTrapping{ 
         AAA_FILE_NAME("errorTrapping", "", ""),
         OBJECT_NOT_RECOGNIZED("objectNotRecognized", "ObjectNotRecognized <*1*>, should be two pieces of data separated by *", ""),
-        OBJECT_ALREADY_ADDED("objectAlreadyAdded", "Object <*1*> already added in <*2*>", ""),
+        OBJECT_ALREADY_ADDED("Investigation_objectAlreadyAdded", "<*1*> <*2*> already added in the investigation <*3*>", ""),
         NOT_FOUND("InvestigationNotFound","InvestigationNotFound <*1*>", ""),
         IS_CLOSED("InvestigationIsClosed", "InvestigationIsClosed  <*1*>", ""),
         IS_OPEN("investigationIsOpen", "investigation Is Open  <*1*>","")
@@ -54,9 +57,15 @@ public final class Investigation {
     private Investigation() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
 
     public static Object[] newInvestigation(String[] fldNames, Object[] fldValues, String objectsToAdd){ 
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=instanceForActions.getProcedureInstance();
+        Token token=instanceForActions.getToken();
 
+        Object[] newInvestigationChecks = newInvestigationChecks(fldNames, fldValues, objectsToAdd);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newInvestigationChecks[0].toString())){
+            return newInvestigationChecks;
+        } 
+        
         String[] updFieldName=new String[]{TblsProcedure.Investigation.FLD_CREATED_ON.getName(), TblsProcedure.Investigation.FLD_CREATED_BY.getName(), TblsProcedure.Investigation.FLD_CLOSED.getName()};
         Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), false};
         
@@ -89,35 +98,35 @@ public final class Investigation {
                 InvestigationAuditEvents.CLOSED_INVESTIGATION.toString(), TblsProcedure.Investigation.TBL.getName(), 
                 investId, investId.toString(),  
                 LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
+        Object[][] investObjects = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.InvestObjects.TBL.getName(), 
+                new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, new Object[]{investId}, 
+                new String[]{TblsProcedure.InvestObjects.FLD_OBJECT_TYPE.getName(), TblsProcedure.InvestObjects.FLD_OBJECT_ID.getName(), TblsProcedure.InvestObjects.FLD_OBJECT_NAME.getName() });
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investObjects[0][0].toString())) return LPArray.array2dTo1d(investObjects,7); 
+        for (Object[] curInvObj: investObjects){
+            String curObj=curInvObj[0].toString()+"*";
+            if (curInvObj[1]!=null && curInvObj[1].toString().length()>0) curObj=curObj+curInvObj[1].toString();
+            else curObj=curObj+curInvObj[2].toString();
+            addAuditRecordForObject(curObj, investId, SampleAudit.SampleAuditEvents.INVESTIGATION_CLOSED.toString());                        
+        }
         return diagnostic;               
     }
 
     public static Object[] addInvestObjects(Integer investId, String objectsToAdd, Integer parentAuditId){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        Object[] investigationClosed = isInvestigationClosed(investId);
+        Object[] investigationClosed = isInvestigationClosed(investId); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
         String[] baseFieldName=new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName(), TblsProcedure.InvestObjects.FLD_ADDED_ON.getName(), TblsProcedure.InvestObjects.FLD_ADDED_BY.getName()};
         Object[] baseFieldValue=new Object[]{investId, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         Object[] diagnostic=new Object[0];
         
         for (String curObj: objectsToAdd.split("\\|")){
-            String[] curObjDetail=curObj.split("\\*");
-            if (curObjDetail.length!=2)
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED.getErrorCode(), new Object[]{curObj});
-            String[] checkFieldName=new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName(), TblsProcedure.InvestObjects.FLD_OBJECT_TYPE.getName()};
-            Object[] checkFieldValue=new Object[]{investId, curObjDetail[0]};
-            if (LPMath.isNumeric(curObjDetail[1])){
-                checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_OBJECT_ID.getName());
-                checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, Integer.valueOf(curObjDetail[1]));
-            }else{
-                checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_OBJECT_NAME.getName());
-                checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[1]);
+            Object[] decodeObjectDetail=decodeObjectInfo(curObj);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decodeObjectDetail[0].toString())) return decodeObjectDetail;
+            Object[] objectAlreadyInInvestigation = isObjectAlreadyInInvestigation(curObj, investId);            
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(objectAlreadyInInvestigation[0].toString())) {
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{curObj, investId});                
             }
-            Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.InvestObjects.TBL.getName(), 
-                    checkFieldName, checkFieldValue);
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{curObjDetail[1], investId});
         }
         for (String curObj: objectsToAdd.split("\\|")){
             String[] curObjDetail=curObj.split("\\*");
@@ -143,11 +152,68 @@ public final class Investigation {
                 String incIdStr=diagnostic[diagnostic.length-1].toString();
                 ProcedureInvestigationAudit.investigationAuditAdd(InvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.InvestObjects.TBL.getName(), investId, incIdStr,  
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), parentAuditId, null);
+                addAuditRecordForObject(curObj, investId, SampleAudit.SampleAuditEvents.ADDED_TO_INVESTIGATION.toString());                
             }
         }
         return diagnostic;        
     }
-    
+    public static Object[] newInvestigationChecks(String[] fldNames, Object[] fldValues, String objectsToAdd){
+        for (String curObj: objectsToAdd.split("\\|")){
+            Object[] objectAlreadyInInvestigation = isObjectAlreadyInInvestigation(curObj);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(objectAlreadyInInvestigation[0].toString())){  
+                objectAlreadyInInvestigation[0]=LPPlatform.LAB_FALSE;
+                return objectAlreadyInInvestigation;
+            }              
+        }
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllWell", null);
+    }
+
+    public static Object[] isObjectAlreadyInInvestigation(String objectToAdd){
+        return isObjectAlreadyInInvestigation(objectToAdd, null);
+    }
+    public static Object[] isObjectAlreadyInInvestigation(String objectToAdd, Integer investId){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        String procInstanceName=instanceForActions.getProcedureInstance();
+        Object[] decodeObjectDetail=decodeObjectInfo(objectToAdd);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decodeObjectDetail[0].toString())) return decodeObjectDetail;
+        String[] checkFieldName=(String[]) decodeObjectDetail[0];
+        Object[] checkFieldValue=(Object[]) decodeObjectDetail[1];
+        if (investId!=null){
+            checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_INVEST_ID.getName());
+            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, investId);
+        }
+        String[] fldsToRetrieve=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_INVEST_ID.getName());
+        Object[][] invObjectInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), 
+                TblsProcedure.InvestObjects.TBL.getName(), 
+                checkFieldName, checkFieldValue, fldsToRetrieve);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invObjectInfo[0][0].toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "objectNotInInvestigationYet", checkFieldValue);
+        else{
+            ResponseMessages messages = instanceForActions.getMessages();
+            messages.addMainForError(InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{checkFieldValue[0], checkFieldValue[1], investId});
+            investId=(Integer) invObjectInfo[0][LPArray.valuePosicInArray(fldsToRetrieve, TblsProcedure.InvestObjects.FLD_INVEST_ID.getName())];
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{checkFieldValue[0], checkFieldValue[1], investId});        
+        }
+    }    
+    private static Object[] decodeObjectInfo(String objInfo){
+        String[] checkFieldName=new String[]{};
+        Object[] checkFieldValue=new Object[]{};
+
+        String[] curObjDetail=objInfo.split("\\*");
+        if (curObjDetail.length!=2)
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED.getErrorCode(), new Object[]{objInfo});
+        checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_OBJECT_TYPE.getName());
+        checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[0]);
+
+        if (LPMath.isNumeric(curObjDetail[1])){
+            checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_OBJECT_ID.getName());
+            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, Integer.valueOf(curObjDetail[1]));
+        }else{
+            checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_OBJECT_NAME.getName());
+            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[1]);
+        }  
+        return new Object[]{checkFieldName, checkFieldValue};
+    }
     public static Object[] capaDecision(Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
@@ -187,5 +253,41 @@ public final class Investigation {
             //if (!curFld.toUpperCase().contains("CAPA")) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllCapaFields:  <*1*>", new Object[]{Arrays.toString(fields)});
+    }
+    
+    public static void addAuditRecordForObject(String curObj, Integer investId, String auditActionName){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Integer sampleId=null;
+        Integer testId=null;
+        Integer resultId=null;
+        SampleAudit smpAudit = new SampleAudit();            
+        Object[] decodeObjectDetail=decodeObjectInfo(curObj);
+        switch (((Object[])decodeObjectDetail[1])[0].toString().toUpperCase()){
+            case "SAMPLE":
+                sampleId=(Integer)((Object[])decodeObjectDetail[1])[1];
+                smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), sampleId, 
+                    sampleId, null, null, new Object[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+investId.toString()}, null);
+                return;
+            case "SAMPLE_ANALYSIS":
+                testId=(Integer)((Object[])decodeObjectDetail[1])[1];
+                Object[][] objInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(), 
+                    new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, 
+                    new Object[]{testId}, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
+                sampleId=Integer.valueOf(objInfo[0][0].toString());
+                smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), testId, 
+                    sampleId, testId, null, new Object[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+investId.toString()}, null);
+                return;
+            case "SAMPLE_ANALYSIS_RESULT":
+                resultId=(Integer)((Object[])decodeObjectDetail[1])[1];
+                objInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), 
+                    new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, 
+                    new Object[]{resultId}, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
+                sampleId=Integer.valueOf(objInfo[0][0].toString());
+                smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), resultId, 
+                    sampleId, null, resultId, new Object[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+investId.toString()}, null);
+                return;
+            default:
+        }
+
     }
 }
