@@ -100,7 +100,7 @@ public class ClassEnvMonSample {
                     if (LPNulls.replaceNull(argValues[2]).toString().length()>0){
                         fieldNames=argValues[2].toString().split("\\|");
                         fieldValues=LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|"));
-                    }
+                    }                   
                     if (argValues[5]==null){
                         actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV, 
                             fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
@@ -108,7 +108,8 @@ public class ClassEnvMonSample {
                         actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV,  
                             fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
                     }
-                    //logProgramSamplerSample(procInstanceName, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
+
+                    //actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", argValues);
                     dynamicDataObjects=new Object[]{actionDiagnoses[actionDiagnoses.length-1]};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), actionDiagnoses[actionDiagnoses.length-1]);                                                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
@@ -142,9 +143,15 @@ public class ClassEnvMonSample {
                             }
                         }
                     }
-                    actionDiagnoses = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
+                    Object[] diagn = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
+                    actionDiagnoses=(Object[]) diagn[0];
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), resultId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                        if (diagn.length>1){
+                            Object[] auditDiagn=(Object[]) diagn[1];
+                            String pAuditId=(String)auditDiagn[auditDiagn.length-1];
+                            smp.setParentAuditId(Integer.valueOf(pAuditId));
+                        }
                         Object[][] resultInfo=new Object[0][0];
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});                    
                         resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), 
@@ -168,10 +175,16 @@ public class ClassEnvMonSample {
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Encontrado varios parámetros 'Recuento' en la muestra "+sampleId.toString()+", en este caso se debe entrar resultado por su Id y la acción ENTERRESULT.", null);
                     if (actionDiagnoses==null){    
                         resultId=Integer.valueOf(sampleAnaResultInfo[0][0].toString());
-                        actionDiagnoses = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
+                        diagn = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
+                        actionDiagnoses=(Object[]) diagn[0];
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), resultId);
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        Object[][] resultInfo=new Object[0][0];
+                            if (diagn.length>1){
+                                Object[] auditDiagn=(Object[]) diagn[1];
+                                String pAuditId=(String)auditDiagn[auditDiagn.length-1];
+                                smp.setParentAuditId(Integer.valueOf(pAuditId));
+                            }
+                            Object[][] resultInfo=new Object[0][0];
                             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});                    
                             resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), 
                                     new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()});
@@ -277,7 +290,7 @@ public class ClassEnvMonSample {
             }             
             if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                 DataSampleStages smpStage = new DataSampleStages();
-                smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
+                smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId, smp.getParentAuditId(),null);
             }           
             this.diagnostic=actionDiagnoses;
             this.relatedObj=rObj;
@@ -286,7 +299,7 @@ public class ClassEnvMonSample {
             Logger.getLogger(ClassEnvMonSample.class.getName()).log(Level.SEVERE, null, ex);
         } finally{
             rObj.killInstance();
-        }
+        }        
     }
     
 }
