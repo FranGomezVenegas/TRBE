@@ -5,12 +5,14 @@
  */
 package functionaljavaa.moduleenvironmentalmonitoring;
 
+import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.responsemessages.ResponseMessages;
 import lbplanet.utilities.LPArray;
 import functionaljavaa.samplestructure.DataSample;
 import java.time.LocalDateTime;
@@ -61,7 +63,9 @@ public class DataProgramSample{
      * @return
      */
     public Object[] logProgramSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation) {
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=instanceForActions.getProcedureInstance();
+        ResponseMessages messages = instanceForActions.getMessages();
         Object[] newProjSample = new Object[0];
         try {
             DataProgramSampleAnalysis dsProgramAna = new DataProgramSampleAnalysis();
@@ -97,6 +101,10 @@ public class DataProgramSample{
                     fieldValue[fieldPosic] = diagnosis[0][i];
             }
             newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
+                return newProjSample=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, ":"));
+            messages.addMainForSuccess("ClassEnvMonSample", EnvMonSampleAPIEndpoints.LOGSAMPLE.getSuccessMessageCode(), 
+                new Object[]{newProjSample[newProjSample.length-1], programName, programLocation});            
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataProgram.class.getName()).log(Level.SEVERE, null, ex);
         }
