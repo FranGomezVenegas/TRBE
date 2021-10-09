@@ -27,7 +27,8 @@ import trazit.session.ProcedureRequestSession;
 public class Parameter {
     public enum PropertyFilesType{TRANSLATION_DIR_PATH("translationDirPath", "="),
         PROCEDURE_BUSINESS_RULES_DIR_PATH("procedureBusinessRulesDirPath", ":"),
-        ENDPOINTDOCUMENTATION("EndPointDocumentation", ":")
+        ENDPOINTDOCUMENTATION("EndPointDocumentation", ":"),
+        AUDITEVENTS("AUDITEVENTS", ":")
         ;
         private PropertyFilesType(String appConfigParamName, String appConfigSeparator){
             this.appConfigParamName=appConfigParamName;
