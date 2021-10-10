@@ -529,7 +529,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      * @return
      */
     public static Object[] existsRecord(String schemaName, String tableName, String[] keyFieldNames, Object[] keyFieldValues){
-        schemaName=addSuffixIfItIsForTesting(schemaName);           
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
         String[] errorDetailVariables = new String[0];
         Object[] filteredValues = new Object[0];
         
@@ -574,7 +574,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      */
     public static String getRecordFieldsByFilterJSON(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] fieldsSortBy){
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
-        schemaName=addSuffixIfItIsForTesting(schemaName);           
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
         
         if (whereFieldNames.length==0){
            LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
@@ -627,7 +627,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         }          
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
         if (excludeTestingSuffix==null || !excludeTestingSuffix)
-            schemaName=addSuffixIfItIsForTesting(schemaName);           
+            schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
 
         if ( (whereFieldNames==null) || (whereFieldNames.length==0) ){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
@@ -684,7 +684,6 @@ if (1==1){Rdbms.transactionId=1; return;}
      * @return
      */
     public static Object[][] getRecordFieldsByFilter(String schemaName, String[] tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve){
-        schemaName=addSuffixIfItIsForTesting(schemaName);           
         if (whereFieldNames.length==0){
            String[] errorDetailVariables = new String[]{Arrays.toString(tableName), schemaName};
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), errorDetailVariables);                         
@@ -698,6 +697,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         query.append("select ").append(fieldsToRetrieveStr).append(" from ");
         Integer i=1;
         for (String tbl: tableName){
+            schemaName=addSuffixIfItIsForTesting(schemaName, tbl);           
             if (i>1){query.append(" , ");}
             query.append(" ").append(schemaName).append(".").append(tbl);
             i++;
@@ -774,7 +774,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      * @return
      */
     public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct){
-        schemaName=addSuffixIfItIsForTesting(schemaName);           
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
         if (whereFieldNames.length==0){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
@@ -821,7 +821,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         }                    
     }
     public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy){
-        schemaName=addSuffixIfItIsForTesting(schemaName); 
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName); 
         if (whereFieldNames.length==0){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
@@ -886,7 +886,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      * @return
      */
     public static Object[] removeRecordInTable(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues){
-        schemaName=addSuffixIfItIsForTesting(schemaName);
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
         SqlStatement sql = new SqlStatement(); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("DELETE", schemaName, tableName,
                 whereFieldNames, whereFieldValues, null, null, null,
@@ -912,7 +912,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         }*/
     }
     public static Object[] insertRecordInTable(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
-        schemaName=addSuffixIfItIsForTesting(schemaName);
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
         if (fieldNames.length==0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
         }
@@ -996,7 +996,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      * @return
      */
     public static Object[] updateRecordFieldsByFilter(String schemaName, String tableName, String[] updateFieldNames, Object[] updateFieldValues, String[] whereFieldNames, Object[] whereFieldValues) {
-        schemaName=addSuffixIfItIsForTesting(schemaName);
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
         updateFieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues);        
         if (whereFieldNames.length==0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
@@ -1131,7 +1131,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      * @return
      */
     public static String [] getTableFieldsArrayEj(String schema, String table) {
-        schema=addSuffixIfItIsForTesting(schema);                   
+        schema=addSuffixIfItIsForTesting(schema, table);                   
         String query = "select array(SELECT column_name || ''  FROM information_schema.columns WHERE table_schema = ? AND table_name   = ?) fields";
         CachedRowSet res;
         try {
@@ -1158,7 +1158,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      * @return
      */
     public static String getTableFieldsArrayEj(String schema, String table, String separator, Boolean addTableName) {
-        schema=addSuffixIfItIsForTesting(schema);                           
+        schema=addSuffixIfItIsForTesting(schema, table);                           
         try {
             String query = "select array(SELECT column_name || ''  FROM information_schema.columns WHERE table_schema = ? AND table_name   = ?) fields";
             CachedRowSet res;
@@ -1464,7 +1464,7 @@ if (1==1){Rdbms.transactionId=1; return;}
     }
     public static Object[] dbTableExists(String schemaName, String tableName, String fieldName){
         String schema=schemaName.replace("\"", "");
-        schemaName=addSuffixIfItIsForTesting(schemaName);                   
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);                   
         String query="select table_schema from INFORMATION_SCHEMA.COLUMNS " +
                      " where table_name=? " + " and table_schema=?";
         if (fieldName!=null)
@@ -1546,7 +1546,7 @@ if (1==1){Rdbms.transactionId=1; return;}
     * @return
     */
     public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName){
-        schemaName=addSuffixIfItIsForTesting(schemaName);           
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
         HashMap<String[], Object[][]> hm = new HashMap<>();          
         String[] fieldsToRetrieve=new String[]{"table_schema", "table_name", "column_name", "data_type"};
         String[] keyFieldValueNew=new String[]{schemaName, tableName};
@@ -1599,7 +1599,7 @@ if (1==1){Rdbms.transactionId=1; return;}
     
     public static Object[] dbViewExists(String schemaName, String viewCategory, String viewName){
         String schema=schemaName;
-        schemaName=addSuffixIfItIsForTesting(schemaName);                   
+        schemaName=addSuffixIfItIsForTesting(schemaName, viewName);                   
         if (viewCategory.length()>0){
             schema=schema+"-"+viewCategory;
         }
@@ -1687,19 +1687,20 @@ if (1==1){Rdbms.transactionId=1; return;}
         }  
     }
 
-    public static String addSuffixIfItIsForTesting(String schemaName){
+    public static String addSuffixIfItIsForTesting(String schemaName, String tableName){
         //if (Rdbms.getIsTesting()){
         if (ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting())
-            return suffixForTesting(schemaName);        
+            return suffixForTesting(schemaName, tableName);        
         return schemaName;
     }
-    public static String suffixForTesting(String schemaName){
+    public static String suffixForTesting(String schemaName, String tableName){
         if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())){
              if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
              else schemaName=schemaName+"_testing";
          }     
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())){
-            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, schemaName)) schemaName=schemaName+"_testing";
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) 
+                schemaName=schemaName+"_testing";
         }
         return schemaName;
     }
