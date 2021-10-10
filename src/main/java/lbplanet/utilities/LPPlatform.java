@@ -800,7 +800,11 @@ public enum LpPlatformErrorTrapping{
         return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo);
     }
     public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language) {
-        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        return trapMessage(null, evaluation, msgCode, msgVariables, language);
+    }
+    public static Object[] trapMessage(String className, String evaluation, String msgCode, Object[] msgVariables, String language) {
+        if (className==null)
+            className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
         String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
         String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
         Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
@@ -841,7 +845,7 @@ public enum LpPlatformErrorTrapping{
             if (msgVariables!=null)errorDetail=errorDetail+Arrays.toString(msgVariables);
             if ( (msgVariables!=null) &&  msgVariables.length>0){
                 for (int iVarValue=1; iVarValue<=msgVariables.length; iVarValue++){
-                    errorDetail = errorDetail.replace("<*"+iVarValue+"*>", msgVariables[iVarValue-1].toString());
+                    errorDetail = errorDetail.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgVariables[iVarValue-1]).toString());
                 }
             }            
         }else{
@@ -853,7 +857,7 @@ public enum LpPlatformErrorTrapping{
             }else{
                 if (msgVariables!=null){
                     for (int iVarValue=1; iVarValue<=msgVariables.length; iVarValue++){
-                        errorDetail = errorDetail.replace("<*"+iVarValue+"*>", msgVariables[iVarValue-1].toString());
+                        errorDetail = errorDetail.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgVariables[iVarValue-1]).toString());
                     }
                 }
             }
