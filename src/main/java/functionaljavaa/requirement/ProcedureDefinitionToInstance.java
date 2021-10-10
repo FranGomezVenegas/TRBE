@@ -405,7 +405,7 @@ public class ProcedureDefinitionToInstance {
                     Rdbms.prepUpQuery(tableCreationScriptTable, new Object[]{});
                     jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);
                     if (curSchemaName.toString().contains(GlobalVariables.Schemas.DATA.getName()) || curSchemaName.toString().contains(GlobalVariables.Schemas.PROCEDURE.getName())){                    
-                        String newSchemaName=Rdbms.suffixForTesting(curSchemaName.toString()); 
+                        String newSchemaName=Rdbms.suffixForTesting(curSchemaName.toString(), tableCreationScriptTable); 
                         tableCreationScriptTable=tableCreationScriptTable.replace(LPPlatform.buildSchemaName(procInstanceName, curSchemaName.toString()), LPPlatform.buildSchemaName(procInstanceName, newSchemaName));
                         Rdbms.prepUpQuery(tableCreationScriptTable, new Object[]{});
                         jsonObj.put(curSchemaName.toString()+"-"+curTableName.toString(), tableCreationScriptTable);                    
