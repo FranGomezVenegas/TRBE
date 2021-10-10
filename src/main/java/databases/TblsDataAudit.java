@@ -172,149 +172,32 @@ public enum OtherEnumClass {
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_AUDIT_ID_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_TABLE_NAME("table_name", " character varying COLLATE pg_catalog.\"default\"")
-        ,
-
-        /**
-         *
-         */
-        FLD_TRANSACTION_ID("transaction_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_TABLE_ID("table_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_DATE("date", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_PERSON("person", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ACTION_NAME("action_name", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_SAMPLE_ID("sample_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_TEST_ID("test_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_RESULT_ID("result_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_USER_ROLE("user_role", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_PROCEDURE("procedure", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_APP_SESSION_ID("app_session_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_ALIQUOT_ID("aliquot_id", LPDatabase.integer())
-        ,        
-
-        /**
-         *
-         */
-        FLD_SUBALIQUOT_ID("subaliquot_id", LPDatabase.integer())        
-        ,
-
-        /**
-         *
-         */
-        FLD_PICTURE_BEFORE("picture_before", "json")
-        ,
-
-        /**
-         *
-         */
-        FLD_PICTURE_AFTER("picture_after", "json")
-        ,
-
-        /**
-         *
-         */
-        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(false))
-        ,
-
-        /**
-         *
-         */
-        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_REVIEWED_ON("reviewed_on", dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_REVISION_NOTE("revision_note", LPDatabase.string())
-        ,        
-
-        /**
-         *
-         */
+        FLD_TABLE_NAME("table_name", " character varying COLLATE pg_catalog.\"default\""),
+        FLD_TRANSACTION_ID("transaction_id", LPDatabase.integer())        ,
+        FLD_TABLE_ID("table_id", LPDatabase.integer())        ,
+        FLD_DATE("date", LPDatabase.dateTime())        ,
+        FLD_PERSON("person", LPDatabase.string())        ,
+        FLD_ACTION_NAME("action_name", LPDatabase.string())        ,
+        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.string())        ,
+        FLD_SAMPLE_ID("sample_id", LPDatabase.integer())        ,
+        FLD_TEST_ID("test_id", LPDatabase.integer())        ,
+        FLD_RESULT_ID("result_id", LPDatabase.integer())        ,
+        FLD_USER_ROLE("user_role", LPDatabase.string())        ,
+        FLD_PROCEDURE("procedure", LPDatabase.string())        ,
+        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.integer())        ,
+        FLD_APP_SESSION_ID("app_session_id", LPDatabase.integer())        ,
+        FLD_ALIQUOT_ID("aliquot_id", LPDatabase.integer())        ,        
+        FLD_SUBALIQUOT_ID("subaliquot_id", LPDatabase.integer())                ,
+        FLD_PICTURE_BEFORE("picture_before", "json")        ,
+        FLD_PICTURE_AFTER("picture_after", "json")        ,
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(false))        ,
+        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string())        ,
+        FLD_REVIEWED_ON("reviewed_on", dateTime())        ,
+        FLD_REVISION_NOTE("revision_note", LPDatabase.string())        ,        
         FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer()),
         FLD_REASON("reason", LPDatabase.string()),        
+        FLD_ACTION_PRETTY_EN("action_pretty_en", LPDatabase.string()),
+        FLD_ACTION_PRETTY_ES("action_pretty_es", LPDatabase.string()),
         ;
         private Sample(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
