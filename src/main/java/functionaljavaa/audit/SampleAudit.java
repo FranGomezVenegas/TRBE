@@ -61,7 +61,7 @@ public class SampleAudit {
         LOG_SAMPLE_ALIQUOT, LOG_SAMPLE_SUBALIQUOT, SAMPLESTAGE_MOVETONEXT, SAMPLESTAGE_MOVETOPREVIOUS,
         UPDATE_LAST_ANALYSIS_USER_METHOD, CHAIN_OF_CUSTODY_STARTED, CHAIN_OF_CUSTODY_COMPLETED, MICROORGANISM_ADDED, MICROORGANISM_REMOVED, 
         SAMPLE_SET_INCUBATION_STARTED, SAMPLE_SET_INCUBATION_ENDED, SAMPLE_CANCELED, SAMPLE_UNCANCELED, SAMPLE_UNREVIEWED, SAMPLE_SET_READY_FOR_REVISION,
-        BATCH_SAMPLE_ADDED, BATCH_SAMPLE_REMOVED, BATCH_SAMPLE_MOVED_FROM, BATCH_SAMPLE_MOVED_TO, SAMPLE_AUTOAPPROVE}  
+        BATCH_SAMPLE_ADDED, BATCH_SAMPLE_REMOVED, BATCH_SAMPLE_MOVED_FROM, BATCH_SAMPLE_MOVED_TO, SAMPLE_AUTOAPPROVE, ADDED_TO_INVESTIGATION, INVESTIGATION_CLOSED}  
 
     public enum SampleAnalysisAuditEvents{ SAMPLE_ANALYSIS_REVIEWED, SAMPLE_ANALYSIS_EVALUATE_STATUS, SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, 
         SAMPLE_ANALYSIS_ADDED, SAMPLE_ANALYSIS_CANCELED, SAMPLE_ANALYSIS_UNCANCELED, SAMPLE_ANALYSIS_UNREVIEWED, SAMPLE_ANALYSIS_SET_READY_FOR_REVISION, SAMPLE_ANALYSIS_AUTOAPPROVE}
@@ -107,6 +107,8 @@ public class SampleAudit {
  */    
     public Object[] sampleAuditAdd(String action, String tableName, Integer tableId, 
                         Integer sampleId, Integer testId, Integer resultId, Object[] auditlog, Integer parentAuditId) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
@@ -146,7 +148,19 @@ public class SampleAudit {
         if (parentAuditId!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
-        }    
+        }  
+        for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
+            Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
+                    TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
+                String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
+                    "SampleAuditEvents", null, action, curLang.getName(), false);
+                if (propValue==null || propValue.length()==0)propValue=action;
+                fieldNames = LPArray.addValueToArray1D(fieldNames, 
+                        TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+                fieldValues = LPArray.addValueToArray1D(fieldValues, propValue);            
+            }
+        }
         AuditAndUserValidation auditAndUsrValid=getInstanceForActions(null, null, null).getAuditAndUsrValid();
         if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_REASON.getName());
@@ -167,7 +181,7 @@ public class SampleAudit {
      * @param resultId
      * @param auditlog
      */
-    public void sampleAliquotingAuditAdd(String action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
+    public Object[] sampleAliquotingAuditAdd(String action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         
@@ -212,7 +226,7 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.Sample.TBL.getName(),
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.Sample.TBL.getName(),
             fieldNames, fieldValues);
     }
     /**
