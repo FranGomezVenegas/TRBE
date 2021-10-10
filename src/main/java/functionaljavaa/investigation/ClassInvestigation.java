@@ -1,0 +1,120 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package functionaljavaa.investigation;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+import com.labplanet.servicios.app.InvestigationAPI;
+import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIEndpoints;
+import databases.TblsProcedure;
+import databases.Token;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
+import javax.servlet.http.HttpServletRequest;
+import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPPlatform;
+import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
+/**
+ *
+ * @author User
+ */
+public class ClassInvestigation {
+
+    /**
+     * @return the messageDynamicData
+     */
+    public Object[] getMessageDynamicData() {
+        return this.messageDynamicData;
+    }
+
+    /**
+     * @return the rObj
+     */
+    public RelatedObjects getRelatedObj() {
+        return this.relatedObj;
+    }
+
+    /**
+     * @return the endpointExists
+     */
+    public Boolean getEndpointExists() {
+        return this.endpointExists;
+    }
+
+    /**
+     * @return the diagnostic
+     */
+    public Object[] getDiagnostic() {
+        return this.diagnostic;
+    }
+    private Object[] messageDynamicData=new Object[]{};
+    private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
+    private Boolean endpointExists=true;
+    private Object[] diagnostic=new Object[0];
+    
+    public ClassInvestigation(HttpServletRequest request, InvestigationAPIEndpoints endPoint){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Boolean isForTesting = procReqSession.getIsForTesting();
+        String procInstanceName = procReqSession.getProcedureInstance();
+        Token token=procReqSession.getToken();
+
+        Object[] actionDiagnoses=null;
+        Object[] dynamicDataObjects=new Object[]{};        
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
+        Integer investigationId=null;
+        switch (endPoint){
+            case NEW_INVESTIGATION:
+                actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|"))), argValues[2].toString());
+                String investigationIdStr="";
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                    investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
+                if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+                break;
+            case ADD_INVEST_OBJECTS:
+                actionDiagnoses = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), argValues[1].toString(), null);
+                investigationIdStr=argValues[0].toString();
+                if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+                break;
+            case CLOSE_INVESTIGATION:
+                actionDiagnoses = Investigation.closeInvestigation(Integer.valueOf(argValues[0].toString()));
+                investigationIdStr=argValues[0].toString();
+                if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+                break;
+            case INVESTIGATION_CAPA_DECISION:
+                String[] capaFldName=null;
+                String[] capaFldValue=null;
+                if (argValues[1]==null){
+                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE,LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{InvestigationAPI.ParamsList.CAPA_REQUIRED.getParamName()});
+                }else{
+                    if (argValues[2]!=null && argValues[2].toString().length()>0) capaFldName=argValues[2].toString().split("\\|");
+                    if (argValues[3]!=null && argValues[3].toString().length()>0) capaFldValue=argValues[3].toString().split("\\|");
+                    actionDiagnoses = Investigation.capaDecision(Integer.valueOf(argValues[0].toString()),
+                            Boolean.valueOf(argValues[1].toString()), capaFldName, capaFldValue);
+                    investigationIdStr=argValues[0].toString();
+                    if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+                }
+                break;
+        }
+        if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
+            
+        }else{
+            rObj=RelatedObjects.getInstanceForActions();
+            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsProcedure.Investigation.TBL.getName(), TblsProcedure.Investigation.TBL.getName(), investigationId);                
+//            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
+            rObj.killInstance();
+//            LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+        }           
+        this.diagnostic=actionDiagnoses;
+        this.relatedObj=rObj;
+        this.messageDynamicData=dynamicDataObjects;
+        rObj.killInstance();        
+    }
+    
+}

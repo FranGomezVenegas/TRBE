@@ -5,11 +5,9 @@
  */
 package com.labplanet.servicios.app;
 
-import databases.TblsApp;
 import databases.TblsProcedure;
-import functionaljavaa.investigation.Investigation;
+import functionaljavaa.investigation.ClassInvestigation;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
-import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -82,6 +80,16 @@ public class InvestigationAPI extends HttpServlet {
             this.arguments=argums;
             this.outputObjectTypes=outputObjectTypes;                        
         } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
         public String getName(){return this.name;}
         public String getSuccessMessageCode(){return this.successMessageCode;}           
         public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
@@ -141,6 +149,7 @@ public class InvestigationAPI extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
+        String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
         
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
         if (procReqInstance.getHasErrors()){
@@ -161,64 +170,50 @@ public class InvestigationAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
-            Integer incId=null;
-            switch (endPoint){
-                case NEW_INVESTIGATION:                    
-                    actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|"))), argValues[2].toString());
-                    String investigationIdStr="";
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
-                    if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
-                    break;
-                case ADD_INVEST_OBJECTS:
-                    actionDiagnoses = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), argValues[1].toString(), null);
-                    investigationIdStr=argValues[0].toString();
-                    if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
-                    break;
-                case CLOSE_INVESTIGATION:
-                    actionDiagnoses = Investigation.closeInvestigation(Integer.valueOf(argValues[0].toString()));
-                    investigationIdStr=argValues[0].toString();
-                    if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
-                    break;
-                case INVESTIGATION_CAPA_DECISION:
-                    String[] capaFldName=null;
-                    String[] capaFldValue=null;
-                    if (argValues[1]==null) LPFrontEnd.servletReturnResponseError(request, response,
-                        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{ParamsList.CAPA_REQUIRED.getParamName()}, language);
-                            
-                    if (argValues[2]!=null && argValues[2].toString().length()>0) capaFldName=argValues[2].toString().split("\\|");
-                    if (argValues[3]!=null && argValues[3].toString().length()>0) capaFldValue=argValues[3].toString().split("\\|");
-                    actionDiagnoses = Investigation.capaDecision(Integer.valueOf(argValues[0].toString()), 
-                            Boolean.valueOf(argValues[1].toString()), capaFldName, capaFldValue);
-                    investigationIdStr=argValues[0].toString();
-                    if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
-                    break;
-            }    
-            if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
-            }else{
-                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), "investigation", incId);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
-                rObj.killInstance();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }           
+                ClassInvestigation clssInv=new ClassInvestigation(request, endPoint);
+                if (clssInv.getEndpointExists()){
+                    Object[] diagnostic=clssInv.getDiagnostic();
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+        /*                Rdbms.rollbackWithSavePoint();
+                        if (!con.getAutoCommit()){
+                            con.rollback();
+                            con.setAutoCommit(true);}                */     
+                        String errorCode =diagnostic[4].toString();
+                        Object[] msgVariables=clssInv.getMessageDynamicData();
+                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, errorCode, msgVariables);               
+    //                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+                    }else{
+                        JSONObject dataSampleJSONMsg =new JSONObject();
+                        if (endPoint!=null)
+                            dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clssInv.getMessageDynamicData(), clssInv.getRelatedObj().getRelatedObject());                
+
+                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
+                    }            
+                }else{
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
+                    return;                                       
+                }
         }catch(Exception e){   
-            procReqInstance.killIt();            
-            // Rdbms.closeRdbms();                   
-            String[] errObject = new String[]{e.getMessage()};
+ /*           try {
+                con.rollback();
+                con.setAutoCommit(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+*/            
+            procReqInstance.killIt();
+            errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
-            procReqInstance.killIt();
             // release database resources
-            try {                
-                // Rdbms.closeRdbms();   
+            try {
+//                con.close();
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
-        }          
-
+        }                
+  
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
