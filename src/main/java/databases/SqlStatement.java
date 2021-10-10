@@ -6,6 +6,7 @@
 package databases;
 
 import functionaljavaa.parameter.Parameter;
+import java.util.Date;
 import lbplanet.utilities.LPArray;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -29,21 +30,37 @@ public class SqlStatement {
             return clause;
         }
     }
+    public static Object[] buildDateRangeFromStrings(String fieldName, Date startStr, Object endStr){
+        if (startStr==null)
+            return new Object[]{LPPlatform.LAB_FALSE};
+        Object[] diagn=giveMeFieldSqlStatement(fieldName, startStr, endStr);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
+        if (startStr!=null) 
+            diagn=LPArray.addValueToArray1D(diagn, startStr);
+        if (endStr!=null) 
+            diagn=LPArray.addValueToArray1D(diagn, endStr);            
+        return diagn;// LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DateRange filter NotImplementedYet", null);
+    }
+    
+    private static Object[] giveMeFieldSqlStatement(String fieldName, Object startStr, Object endStr){
+        Object[] diagn=new Object[]{LPPlatform.LAB_TRUE};
+        if (startStr.toString().length()>0 && endStr.toString().length()>0)
+            return LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.BETWEEN.getSqlClause());
+        else if (startStr.toString().length()>0)
+            return LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause());
+        else if (endStr.toString().length()>0)
+            return LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.LESS_THAN.getSqlClause());
+        else
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DateRange filter NotRecognized for start <*1*> and end <*2*>", new Object[]{startStr, endStr});                
+    }
     
     public static Object[] buildDateRangeFromStrings(String fieldName, String startStr, String endStr){
         if ((startStr==null || startStr.length()==0) && (endStr==null || endStr.length()==0) )
             return new Object[]{LPPlatform.LAB_FALSE};
         startStr=LPNulls.replaceNull(startStr);
         endStr=LPNulls.replaceNull(endStr);
-        Object[] diagn=new Object[]{LPPlatform.LAB_TRUE};
-        if (startStr.length()>0 && endStr.length()>0)
-            diagn=LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.BETWEEN.getSqlClause());
-        else if (startStr.length()>0)
-            diagn=LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause());
-        else if (endStr.length()>0)
-            diagn=LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.LESS_THAN.getSqlClause());
-        else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DateRange filter NotRecognized for start <*1*> and end <*2*>", new Object[]{startStr, endStr});
+        Object[] diagn=giveMeFieldSqlStatement(fieldName, startStr, endStr);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String[] dateTodayTranslation = prop.getString("dateToday").split("\\|");
         if (startStr.length()>0) 
@@ -165,6 +182,7 @@ public class SqlStatement {
         Object[] whereFieldValuesNew = new Object[0];
         for (int iwhereFieldNames=0; iwhereFieldNames<whereFieldNames.length; iwhereFieldNames++){
             String fn = whereFieldNames[iwhereFieldNames];
+            if (fn==null || fn.length()==0) break;
             if (iwhereFieldNames > 0) {
                 if (!fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))
 //                    queryWhere.append(" or ");
