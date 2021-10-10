@@ -706,12 +706,6 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ADDED.toString(), sampleLevel + TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, parentAuditId);
             }
         }
-/* //fgv 2021-09-07 decide that perform this evaluation makes no sense as the sample was initially logged so re-evaluate not applies.
-        Object[] diagnoses3 = DataSample.sampleEvaluateStatus(sampleId, SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ADDED.toString(), parentAuditId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses3[0].toString())) {
-            return diagnoses3;
-        }
-*/
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())){
             Object[] addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup[0].toString())) return addSampleRevisionByTestingGroup;
