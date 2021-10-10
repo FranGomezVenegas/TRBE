@@ -7,14 +7,17 @@ package functionaljavaa.samplestructure;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.ProcedureSampleStage;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsData;
+import databases.TblsProcedure;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
+import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.platform.doc.PropertiesToRequirements;
 import functionaljavaa.responsemessages.ResponseMessages;
+import static functionaljavaa.samplestructure.ProcedureSampleStages.procedureSampleStagesTimingEvaluateDeviation;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
@@ -78,7 +81,7 @@ public enum SampleStageErrorTrapping{
         SAMPLE_STAGE_TYPE("sampleStagesLogicType", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         SAMPLE_STAGE_TIMING_CAPTURE_MODE("sampleStagesTimingCaptureMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         SAMPLE_STAGE_TIMING_CAPTURE_STAGES("sampleStagesTimingCaptureStages", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        
+        SAMPLE_STAGE_TIMING_PROCEDURE_CONFIG_ENABLED("sampleStagesTimingProcedureConfigEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), PropertiesToRequirements.valuesListForEnableDisable(), false, '|'),
         ;
         private SampleStageBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
@@ -100,23 +103,12 @@ public enum SampleStageErrorTrapping{
         private final char multiValueSeparator;        
     }
     public enum SampleStageTimingCapturePhases{START, END}
-    /**
-     *
-     */
     public static final String SAMPLE_STAGES_MODE_ENABLING_STATUSES="ENABLE";
-
-    /**
-     *
-     */
-    
     public enum SampleStagesTypes{JAVA, JAVASCRIPT}
     public static final String LOD_JAVASCRIPT_FORMULA="procInstanceName-sample-stage.js"; // "WEB-INF/classes/JavaScript/"+"procInstanceName-sample-stage.js";
     public static final String LOD_JAVASCRIPT_LOCAL_FORMULA="D:\\LP\\LabPLANETAPI_20200113_beforeRefactoring\\src\\main\\resources\\JavaScript\\"+"procInstanceName-sample-stage.js";
     
 
-    /**
-     *
-     */
     public DataSampleStages() {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
@@ -133,29 +125,12 @@ public enum SampleStageErrorTrapping{
     this.firstStageData=new Object[][]{{TblsData.Sample.FLD_CURRENT_STAGE.getName(), stageFirst}};
   }
 
-    /**
-     *
-     * @return
-     */
     public Object[][] getFirstStage(){
         return this.firstStageData;
     }  
-
-    /**
-     *
-     * @return
-     */
     public Boolean isSampleStagesEnable(){
         return this.isSampleStagesEnable;
     }
-
-    /**
-     *
-     * @param sampleId
-     * @param currStage
-     * @param nextStageFromPull
-     * @return
-     */
     public Object[] moveToNextStage(Integer sampleId, String currStage, String nextStageFromPull){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(sampleId);
@@ -202,7 +177,7 @@ public enum SampleStageErrorTrapping{
         return new Object[]{LPPlatform.LAB_TRUE, previousStageFromPull};
     }
 
-    public Object[] dataSampleActionAutoMoveToNext(String actionName, Integer sampleId) {
+    public Object[] dataSampleActionAutoMoveToNext(String actionName, Integer sampleId, Integer parentAuditId, String actionAuditName) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
@@ -221,13 +196,18 @@ public enum SampleStageErrorTrapping{
             Object[] sampleFieldValue=new Object[]{moveDiagn[moveDiagn.length-1], sampleCurrStage};
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
                 Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
-                    sampleFieldName, 
-                    sampleFieldValue,
+                    sampleFieldName, sampleFieldValue,
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
                     String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);               
-                dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());                         
+                dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(actionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);        
+                if (actionAuditName==null)actionAuditName=actionName;
+                smpAudit.sampleAuditAdd(actionAuditName+":"+SampleAudit.SampleAuditEvents.SAMPLESTAGE_MOVETONEXT.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, parentAuditId);        
+            }
+            if ("END".equalsIgnoreCase(sampleCurrStage)){
+                DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
+                DataSample smp=new DataSample(smpAna);
+                smp.sampleReview(sampleId);
             }
         }
         return moveDiagn;
@@ -274,7 +254,7 @@ public enum SampleStageErrorTrapping{
             if (errorCodeArr.length>1)
                 msgVariables=new Object[]{errorCodeArr[1]};
             ResponseMessages messages = instanceForActions.getMessages();
-            messages.addMain(errorCodeArr[0], msgVariables);
+            messages.addMainForError(errorCodeArr[0], msgVariables);
             
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{errorCode});
         }
@@ -329,14 +309,16 @@ public enum SampleStageErrorTrapping{
         if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, procInstanceName});
         if (SampleStageTimingCapturePhases.START.toString().equalsIgnoreCase(phase)){
-            return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
-                    new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()}, 
+            return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.SampleStageTimingCapture.TBL.getName(), 
+                    new String[]{TblsProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()}, 
                     new Object[]{sampleId, currStage, LPDate.getCurrentTimeStamp()});            
         }else if (SampleStageTimingCapturePhases.END.toString().equalsIgnoreCase(phase)){            
-           return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
-                new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()}, new Object[]{LPDate.getCurrentTimeStamp()}, 
-                new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
-                new Object[]{sampleId, currStage });            
+            procedureSampleStagesTimingEvaluateDeviation(sampleId, currStage);
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.SampleStageTimingCapture.TBL.getName(), 
+                    new String[]{TblsProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()}, new Object[]{LPDate.getCurrentTimeStamp()},
+                    new String[]{TblsProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                    new Object[]{sampleId, currStage });            
+            return updateRecordFieldsByFilter;
         }else{
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The phase <*1*> is not one of the recognized by the system, <*2*>", 
                 new Object[]{phase, Arrays.toString(new String[]{SampleStageTimingCapturePhases.START.toString(), SampleStageTimingCapturePhases.END.toString()})});
