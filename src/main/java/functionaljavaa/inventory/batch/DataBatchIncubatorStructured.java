@@ -307,7 +307,7 @@ public final class DataBatchIncubatorStructured {
             Integer sampleId = Integer.valueOf(currSampleArr[0]);
             Integer incubStage = Integer.valueOf(currSampleArr[1]);
             BigDecimal tempReading = null;
-            Object[] setSampleIncubStarted = DataSampleIncubation.setSampleStartIncubationDateTime(sampleId, incubStage, incubName, tempReading);
+            Object[] setSampleIncubStarted = DataSampleIncubation.setSampleStartIncubationDateTime(sampleId, incubStage, incubName, tempReading, batchName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(setSampleIncubStarted[0].toString())) {
                 return setSampleIncubStarted;
             }
@@ -333,7 +333,8 @@ public final class DataBatchIncubatorStructured {
             Integer sampleId = Integer.valueOf(currSampleArr[0]);
             Integer incubStage = Integer.valueOf(currSampleArr[1]);
             BigDecimal tempReading = null;
-            Object[] setSampleIncubEnded = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, incubStage, incubName, tempReading);
+            Object[] setSampleIncubEnded = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, incubStage, incubName, tempReading, batchName);
+            setSampleIncubEnded=(Object[])setSampleIncubEnded[0];
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(setSampleIncubEnded[0].toString())) {
                 return setSampleIncubEnded;
             }

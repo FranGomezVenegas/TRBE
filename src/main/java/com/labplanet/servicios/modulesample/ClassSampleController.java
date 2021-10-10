@@ -25,42 +25,23 @@ public class ClassSampleController {
         
         Object[] argsForLogFiles=new Object[0];
         SampleAPIParams.SampleAPIEndpoints endPoint = null;
-                try{
-                    endPoint = SampleAPIParams.SampleAPIEndpoints.valueOf(actionName.toUpperCase());
-                    HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
-                    HttpServletRequest query= hmQuery.keySet().iterator().next();   
-                    argsForLogFiles = hmQuery.get(query);                    
-/*                    endPoint = SampleAPIParams.SampleAPIEndpoints.valueOf(actionName.toString().toUpperCase());
-                    switch (endPoint){
-                        case LOGSAMPLE:
-                            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE, LPTestingOutFormat.getAttributeValue(testingContent[iLines][6], testingContent) );
-                            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION, LPTestingOutFormat.getAttributeValue(testingContent[iLines][7], testingContent) );
-                            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPTestingOutFormat.getAttributeValue(testingContent[iLines][8], testingContent) );
-                            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPTestingOutFormat.getAttributeValue(testingContent[iLines][9], testingContent) );                    
-                            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG, LPTestingOutFormat.getAttributeValue(testingContent[iLines][12], testingContent));   
-                            argsForLogFiles=new Object[]{GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE+":"+LPNulls.replaceNull(testingContent[iLines][6]).toString(), GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION+":"+LPNulls.replaceNull(testingContent[iLines][7]).toString(), 
-                                GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME+":"+LPNulls.replaceNull(testingContent[iLines][8]).toString(), GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE+":"+LPNulls.replaceNull(testingContent[iLines][9]).toString(), 
-                                GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG+":"+LPNulls.replaceNull(testingContent[iLines][10]).toString()    
-                            };
-                            break;
-                        case SETSAMPLINGDATE:
-                            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPTestingOutFormat.getAttributeValue(testingContent[iLines][6], testingContent) );
-                            argsForLogFiles=new Object[]{GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID+":"+LPNulls.replaceNull(testingContent[iLines][6]).toString()};
-                            break;
-                    } 
-*/                    
-                    for (int inumArg=argsForLogFiles.length+4;inumArg<table1NumArgs;inumArg++){
-                        argsForLogFiles=LPArray.addValueToArray1D(argsForLogFiles, "");
-                    }
-                    this.functionFound=true;
-                    this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-                    ClassSample clss=new ClassSample(request, endPoint);
-                    this.functionDiagn=clss.getDiagnostic();
-                    this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
-                }catch(Exception e){
-                    //Object[] diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()});                    
-                }    
-
+        try{
+            endPoint = SampleAPIParams.SampleAPIEndpoints.valueOf(actionName.toUpperCase());            
+            HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
+            HttpServletRequest query= hmQuery.keySet().iterator().next();   
+            argsForLogFiles = hmQuery.get(query);                    
+            for (int inumArg=argsForLogFiles.length+4;inumArg<table1NumArgs;inumArg++){
+                argsForLogFiles=LPArray.addValueToArray1D(argsForLogFiles, "");
+            }
+            this.functionFound=true;
+            this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
+            ClassSample clss=new ClassSample(request, endPoint);
+            this.functionDiagn=clss.getDiagnostic();
+            this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
+        }catch(Exception e){
+            //Object[] diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()});                    
+        }finally{
+        }
     }
 
     /**

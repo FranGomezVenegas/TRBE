@@ -116,13 +116,16 @@ public class DataSampleIncubation {
      * @return
      */
     public static Object[] setSampleEndIncubationDateTime(Integer sampleId, Integer incubationStage, String incubName, BigDecimal tempReading) {
+        return setSampleEndIncubationDateTime(sampleId, incubationStage, incubName, tempReading, null);
+    }
+    public static Object[] setSampleEndIncubationDateTime(Integer sampleId, Integer incubationStage, String incubName, BigDecimal tempReading, String batchName) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.END.toString(), incubName, tempReading);
+        Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.END.toString(), incubName, tempReading, batchName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleIncubatorModeCheckerInfo[0].toString())) return sampleIncubatorModeCheckerInfo;
         if ((incubationStage < 1) || (incubationStage > 2)) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null);
+            return new Object[]{LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null)};
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
@@ -134,9 +137,10 @@ public class DataSampleIncubation {
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             SampleAudit smpAudit = new SampleAudit();
-            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_ENDED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_ENDED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            return new Object[]{diagnoses, sampleAuditAdd};
         }
-        return diagnoses;
+        return new Object[]{diagnoses};
     }
 
     /**
@@ -148,28 +152,32 @@ public class DataSampleIncubation {
      * @return
      */
     public static Object[] setSampleStartIncubationDateTime(Integer sampleId, Integer incubationStage, String incubName, BigDecimal tempReading) {
+        return setSampleStartIncubationDateTime(sampleId, incubationStage, incubName, tempReading, null);
+    }
+    public static Object[] setSampleStartIncubationDateTime(Integer sampleId, Integer incubationStage, String incubName, BigDecimal tempReading, String batchName) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.START.toString(), incubName, tempReading);
+        Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.START.toString(), incubName, tempReading, batchName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleIncubatorModeCheckerInfo[0].toString())) return sampleIncubatorModeCheckerInfo;
         if ((incubationStage < 1) || (incubationStage > 2)) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null);
+            return new Object[]{LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null)};
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
-
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_STARTED_SUCCESS.getErrorCode(), 
-                    new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
+                    new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});           
+            
             String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             SampleAudit smpAudit = new SampleAudit();
-            smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_STARTED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_STARTED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            return new Object[]{diagnoses, sampleAuditAdd};            
         }
-        return diagnoses;
+        return new Object[]{diagnoses};
     }
     
-    private static Object[] sampleIncubatorModeChecker(Integer incubationStage, String moment, String incubName, BigDecimal tempReading){        
+    private static Object[] sampleIncubatorModeChecker(Integer incubationStage, String moment, String incubName, BigDecimal tempReading, String batchName){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String sampleIncubationMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleIncubationBusinessRules.SAMPLE_INCUBATION_MODE.getAreaName(), DataSampleIncubationBusinessRules.SAMPLE_INCUBATION_MODE.getTagName());
@@ -190,6 +198,10 @@ public class DataSampleIncubation {
         if (sampleIncubationMode.contains(SampleIncubationLevel.DATE.toString())){
             if (incubationStage == 2) {
                 if (moment.contains(SampleIncubationMoment.START.toString())){
+                    if (batchName!=null){
+                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.FLD_INCUBATION2_BATCH.getName());
+                        requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, batchName);                
+                    }
                     requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION2_START.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp()});                
                 }else{
@@ -198,6 +210,10 @@ public class DataSampleIncubation {
                 }
             }else{
                 if (moment.contains(SampleIncubationMoment.START.toString())){
+                    if (batchName!=null){
+                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.FLD_INCUBATION_BATCH.getName());
+                        requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, batchName);                
+                    }
                     requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION_START.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp()});                
                 }else{
@@ -222,6 +238,10 @@ public class DataSampleIncubation {
             }
             if (incubationStage == 2) {
                 if (moment.contains(SampleIncubationMoment.START.toString())){
+                    if (batchName!=null){
+                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.FLD_INCUBATION2_BATCH.getName());
+                        requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, batchName);                
+                    }                    
                     requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION2_START.getName(), 
                         TblsData.Sample.FLD_INCUBATION2_INCUBATOR.getName(), TblsData.Sample.FLD_INCUBATION2_START_TEMP_EVENT_ID.getName(), TblsData.Sample.FLD_INCUBATION2_START_TEMPERATURE.getName(), TblsData.Sample.FLD_INCUBATION2_PASSED.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp(), incubName, tempReadingEvId, tempReading, false});
@@ -232,6 +252,10 @@ public class DataSampleIncubation {
                     }
             } else {
                 if (moment.contains(SampleIncubationMoment.START.toString())){
+                    if (batchName!=null){
+                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.FLD_INCUBATION_BATCH.getName());
+                        requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, batchName);                
+                    }                    
                     requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION_START.getName(), 
                         TblsData.Sample.FLD_INCUBATION_INCUBATOR.getName(), TblsData.Sample.FLD_INCUBATION_START_TEMP_EVENT_ID.getName(), TblsData.Sample.FLD_INCUBATION_START_TEMPERATURE.getName(), TblsData.Sample.FLD_INCUBATION_PASSED.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp(), incubName, tempReadingEvId, tempReading, false});
