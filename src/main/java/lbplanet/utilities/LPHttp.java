@@ -5,6 +5,7 @@
  */
 package lbplanet.utilities;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -12,6 +13,8 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
+
+
 
 /**
  *
@@ -28,10 +31,12 @@ public class LPHttp {
      */
     
     public static HttpServletRequest requestPreparation(HttpServletRequest request){
-        try {
-            request.setCharacterEncoding(LPPlatform.LAB_ENCODER_UTF8);                    
+        try {            
+            request.setCharacterEncoding(LPPlatform.LAB_ENCODER_UTF8);    
             return request;
         } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(LPHttp.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
             Logger.getLogger(LPHttp.class.getName()).log(Level.SEVERE, null, ex);
         }
         return request;
@@ -45,9 +50,11 @@ public class LPHttp {
     public static HttpServletResponse responsePreparation(HttpServletResponse response){
         response.setContentType("application/json");
         response.setCharacterEncoding(LPPlatform.LAB_ENCODER_UTF8);
-
+        
+        
+        
         response.setHeader("CORS_ORIGIN_ALLOW_ALL", "True");                
-        response.setHeader("CORS_ALLOW_CREDENTIALS", "True");                 //False
+        response.setHeader("CORS_ALLOW_CREDENTIALS", "true");                 //False
         response.setHeader("Access-Control-Allow-Methods", "GET");        
         response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Access-Control-Allow-Credentials", "True"); 
