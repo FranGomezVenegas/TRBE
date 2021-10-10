@@ -109,7 +109,7 @@ public class LPFrontEnd {
         String passwordToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
             if (passwordToVerify==null) passwordToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK)).toString();
         if ( (!userToVerify.equalsIgnoreCase(dbUserName)) || (!passwordToVerify.equalsIgnoreCase(dbUserPassword)) ){
-            servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_USER_VERIFICATION.getName(), null, null);           
+            //servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_USER_VERIFICATION.getName(), null, null);           
             return false;                                
         }            
         return true;
@@ -126,7 +126,7 @@ public class LPFrontEnd {
         String eSignToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);      
             if (eSignToVerify==null) eSignToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK)).toString();
         if (!eSignToVerify.equalsIgnoreCase(eSign)) {  
-            servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_ESIGN.getName(), null, null);           
+            //servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_ESIGN.getName(), null, null);           
             return false;                                
         }            
         return true;
