@@ -568,7 +568,7 @@ public class DataBatchIncubator {
         }
         if (ruleValue.toUpperCase().contains("STOP")){
             ResponseMessages messages = instanceForActions.getMessages();
-            messages.addMain(IncubatorBatchErrorTrapping.INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE.getErrorCode(), new Object[]{instrInfo[0][1].toString(), ruleValue});
+            messages.addMainForError(IncubatorBatchErrorTrapping.INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE.getErrorCode(), new Object[]{instrInfo[0][1].toString(), ruleValue});
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE.getErrorCode(), new Object[]{instrInfo[0][1].toString(), ruleValue});
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ByPassedByIncubationLockedBusinessRuleMode Rule:<*1*>, Value:<*2*>", new Object[]{BatchBusinessRules.START_FOR_LOCKED_INCUBATOR_MODE.getTagName(), ruleValue});
