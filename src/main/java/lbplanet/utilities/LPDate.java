@@ -5,8 +5,10 @@
  */
 package lbplanet.utilities;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
@@ -152,6 +154,15 @@ public class LPDate {
     public static Date stringFormatToDate(String dateStr){ 
         if (!dateStr.toUpperCase().contains("T")) dateStr=dateStr+"T00:00:00";
         Calendar cal = Calendar.getInstance();    
+        Integer Tposic=dateStr.indexOf(":");
+        Tposic=Tposic-3;
+        char TposicValue=dateStr.charAt(Tposic);
+        
+        if (" ".equalsIgnoreCase(String.valueOf(TposicValue))){
+            String dateStr1=dateStr.substring(0, Tposic)+"T";
+            String dateStr2=dateStr.substring(Tposic+1, dateStr.length()-Tposic);        
+            dateStr=dateStr1+dateStr2;
+        }
         int y=LocalDateTime.parse(dateStr).getYear();
         int m=LocalDateTime.parse(dateStr).getMonthValue();
         int d=LocalDateTime.parse(dateStr).getDayOfMonth();
@@ -161,6 +172,23 @@ public class LPDate {
         return cal.getTime();
     }
     
+    public static LocalDateTime stringFormatToLocalDateTime(String dateStr){ 
+        try{                            
+        Integer Tposic=dateStr.indexOf(":");
+        Tposic=Tposic-3;
+        char TposicValue=dateStr.charAt(Tposic);
+        
+        if (" ".equalsIgnoreCase(String.valueOf(TposicValue))){
+            String dateStr1=dateStr.substring(0, Tposic)+"T";
+            String dateStr2=dateStr.substring(Tposic+1);        
+            dateStr=dateStr1+dateStr2;
+        }            
+        if (dateStr.length()>0) return LocalDateTime.parse(dateStr, ISO_LOCAL_DATE_TIME);
+            return null;
+        }catch(DateTimeParseException e){
+            return null;
+        }
+    }
 //    public static LocalDateTime convertSqlDateTimeToLocalDateTime(java.sql.Date dateSql){
 //    }
     
@@ -185,6 +213,11 @@ public class LPDate {
             default:                
                 return null;
         }
+    }
+    public static long SecondsInDateRange(LocalDateTime startDate, LocalDateTime endDate){
+        Period between = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
+        Duration duration = Duration.between(startDate, endDate);
+        return duration.getSeconds();
     }
     
 }
