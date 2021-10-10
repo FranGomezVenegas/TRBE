@@ -171,6 +171,7 @@ public class TblsData {
         /**
          *
          */
+        FLD_INCUBATION_BATCH("incubation_batch", LPDatabase.string()),
         FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string())
         ,
 
@@ -219,6 +220,7 @@ public class TblsData {
         /**
          *
          */
+        FLD_INCUBATION2_BATCH("incubation2_batch", LPDatabase.string()),
         FLD_INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.string())
         ,
 
@@ -329,6 +331,7 @@ public class TblsData {
          */
         FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.string()),
         FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),        
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld()), 
         FLD_REVIEWED_BY("reviewed_by", LPDatabase.string()), 
         FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime())        
         ;
@@ -604,7 +607,11 @@ public class TblsData {
         /**
          *
          */
-        FLD_SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer())
+        FLD_SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer()),
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld()),
+        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime()),
+        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string()),
+
         //, FLD_UNDER_DEVIATION("under_deviation", LPDatabase.Boolean()) Desviaciones aún no implementadas
 /*     Este bloque de campos está a nivel de Sample, es posible que pueda ser interesante tb en sample_analysis   
         , FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.Real())
@@ -847,7 +854,10 @@ public class TblsData {
         /**
          *
          */
-        FLD_LIMIT_ID("limit_id", LPDatabase.integer())
+        FLD_LIMIT_ID("limit_id", LPDatabase.integer()),
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld()),
+        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime()),
+        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string()),
         
         /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
         , FLD_REVIEWER("reviewer", LPDatabase.String())
@@ -1373,7 +1383,8 @@ public class TblsData {
         FLD_CERTIF_STARTED("certif_started", LPDatabase.booleanFld())        ,
         FLD_CERTIF_COMPLETED("certif_completed", LPDatabase.booleanFld())        ,
         FLD_SOP_NAME(FIELDS_NAMES_SOP_NAME, LPDatabase.string())        ,
-        FLD_USER_NAME(FIELDS_NAMES_USER_NAME, LPDatabase.string())        ,
+        //user_name is mandatory due to its involved in the analysis method certification evaluation instead of the user_id one.
+        FLD_USER_NAME(FIELDS_NAMES_USER_NAME, LPDatabase.stringNotNull())        ,
         FLD_LIGHT(FIELDS_NAMES_LIGHT, LPDatabase.stringNotNull()),
         FLD_TRAINING_ID("training_id", LPDatabase.integer()),        
         ;
