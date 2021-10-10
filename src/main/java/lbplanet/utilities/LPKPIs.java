@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsData;
+import java.util.Date;
 import javax.sql.rowset.CachedRowSet;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import org.json.simple.JSONArray;
@@ -22,52 +23,54 @@ import trazit.session.ProcedureRequestSession;
  */
 public final class LPKPIs {
     private LPKPIs() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
-
-public static JSONObject getKPIs(String[] objGroupName, String[] tblCategory, String[] tblName, String[] whereFieldsNameArr, String[] whereFieldsValueArr, 
-                    String[] fldToRetrieve, String[] dataGrouped){
-    ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+    
+    public static JSONObject getKPIs(String[] objGroupName, String[] tblCategory, String[] tblName, String[] whereFieldsNameArr, String[] whereFieldsValueArr, 
+        String[] fldToRetrieve, String[] dataGrouped){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         
-    JSONObject jObjMainObject=new JSONObject();
-    if (objGroupName.length!=fldToRetrieve.length && objGroupName.length!=whereFieldsNameArr.length 
-            && objGroupName.length!=whereFieldsValueArr.length){
-        jObjMainObject.put("is_error", true);
-        jObjMainObject.put("error", "KPI Definition is wrong");
-    }
-    for (int i=0;i<objGroupName.length;i++){
-        String curgrouperName=giveMeString(objGroupName[i]); 
-        String curtblCategory=giveMeString(tblCategory[i]);
-        String curtblName=giveMeString(tblName[i]);
-        String[] curWhereFieldsNameArr=giveMeStringArr(whereFieldsNameArr[i]);
-        Object[] curWhereFieldsValueArr=giveMeObjectArr(whereFieldsValueArr[i]);                        
-        String[] curFldsToRetrieveArr=giveMeStringArr(fldToRetrieve[i]);
-        String curdataGrouped=giveMeString(dataGrouped[i]);
-
-        if (curgrouperName.length()==0)curgrouperName="grouper_"+i;
-        Object[][] dataInfo = new Object[][]{{}};
-        if (Boolean.valueOf(curdataGrouped)){
-            dataInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
-                curFldsToRetrieveArr, curWhereFieldsNameArr, curWhereFieldsValueArr, 
-                null);
-            curFldsToRetrieveArr=LPArray.addValueToArray1D(curFldsToRetrieveArr, "count");
-        }else{
-            dataInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
-                curWhereFieldsNameArr, curWhereFieldsValueArr, curFldsToRetrieveArr);
+        JSONObject jObjMainObject=new JSONObject();
+        if (objGroupName.length!=fldToRetrieve.length && objGroupName.length!=whereFieldsNameArr.length 
+                && objGroupName.length!=whereFieldsValueArr.length){
+            jObjMainObject.put("is_error", true);
+            jObjMainObject.put("error", "KPI Definition is wrong");
         }
-        JSONObject jObj = new JSONObject();
-        JSONArray dataJSONArr = new JSONArray();
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())){
-            jObj= noRecordsInTableMessage();
-        }else{
-            for (Object[] curRec: dataInfo){
-                jObj= LPJson.convertArrayRowToJSONObject(curFldsToRetrieveArr, curRec);
-                dataJSONArr.add(jObj);
+        for (int i=0;i<objGroupName.length;i++){
+            String curgrouperName=giveMeString(objGroupName[i]); 
+            String curtblCategory=giveMeString(tblCategory[i]);
+            String curtblName=giveMeString(tblName[i]);
+            Object[] diagn=giveMeObjectArr(whereFieldsNameArr[i], whereFieldsValueArr[i]);                        
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return (JSONObject) diagn[1];
+            String[] curWhereFieldsNameArr=(String[]) diagn[1];
+            Object[]curWhereFieldsValueArr=(Object[]) diagn[2];
+            String[] curFldsToRetrieveArr=giveMeStringArr(fldToRetrieve[i]);
+            String curdataGrouped=giveMeString(dataGrouped[i]);
+
+            if (curgrouperName.length()==0)curgrouperName="grouper_"+i;
+            Object[][] dataInfo = new Object[][]{{}};
+            if (Boolean.valueOf(curdataGrouped)){
+                dataInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
+                    curFldsToRetrieveArr, curWhereFieldsNameArr, curWhereFieldsValueArr, 
+                    null);
+                curFldsToRetrieveArr=LPArray.addValueToArray1D(curFldsToRetrieveArr, "count");
+            }else{
+                dataInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
+                    curWhereFieldsNameArr, curWhereFieldsValueArr, curFldsToRetrieveArr);
             }
-        } 
-        jObjMainObject.put(curgrouperName, dataJSONArr);
-    }     
-    return jObjMainObject;
-}
-    public static JSONObject getRecoveryRate(String[] fldToRetrieve, String[] whereFieldsNameArr, String[] whereFieldsValueArr,
+            JSONObject jObj = new JSONObject();
+            JSONArray dataJSONArr = new JSONArray();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())){
+                jObj= noRecordsInTableMessage();
+            }else{
+                for (Object[] curRec: dataInfo){
+                    jObj= LPJson.convertArrayRowToJSONObject(curFldsToRetrieveArr, curRec);
+                    dataJSONArr.add(jObj);
+                }
+            } 
+            jObjMainObject.put(curgrouperName, dataJSONArr);
+        }     
+        return jObjMainObject;
+    }
+    public static JSONObject getRecoveryRate(String[] fldToRetrieve, String whereFieldsName, String whereFieldsValue,
         Boolean showAbsence, Boolean showPresence, Boolean showIN, Boolean showOUT, Integer numDecPlaces){
         String subQryAlias="vw";
         if (numDecPlaces==null) numDecPlaces=2;
@@ -112,8 +115,13 @@ public static JSONObject getKPIs(String[] objGroupName, String[] tblCategory, St
         }
         subQry=subQry+" from "+LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())+"."+TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName();
         subQry=subQry+" where raw_value_num is not null"; 
-        if (whereFieldsNameArr!=null && whereFieldsNameArr[0].length()>0){
-            Object[] buildWhereClause = SqlStatement.buildWhereClause(whereFieldsNameArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValueArr));            
+        if (whereFieldsName!=null && whereFieldsName.length()>0){
+            Object[] diagn=giveMeObjectArr(whereFieldsName, whereFieldsValue);                        
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return (JSONObject) diagn[1];
+            String[] whereFieldsNameArr=(String[]) diagn[1];
+            Object[] whereFieldsValueArr=(Object[]) diagn[2];
+            
+            Object[] buildWhereClause = SqlStatement.buildWhereClause(whereFieldsNameArr, whereFieldsValueArr);            
             subQry=subQry+" and "+buildWhereClause[0];
             wherefldsValues=(Object[]) buildWhereClause[1];
         }
@@ -154,10 +162,38 @@ public static JSONObject getKPIs(String[] objGroupName, String[] tblCategory, St
             return new String[]{};
         return value.split("\\|");
     }    
-
-    private static Object[] giveMeObjectArr(String value){
-        if (value==null || GlobalAPIsParams.REQUEST_PARAM_IGNORE_ARGUMENT_WORD.equalsIgnoreCase(value))
+    
+    private static Object[] giveMeObjectArr(String names, String values){
+        if (values==null || GlobalAPIsParams.REQUEST_PARAM_IGNORE_ARGUMENT_WORD.equalsIgnoreCase(values))
             return new Object[]{};
-        return LPArray.convertStringWithDataTypeToObjectArray(value.split("\\|"));
+        String[] curWhereFieldsNameArr=giveMeStringArr(names);
+        Object[] curWhereFieldsValueArr=LPArray.convertStringWithDataTypeToObjectArray(values.split("\\|"));
+        for (int j=0;j<curWhereFieldsNameArr.length;j++){
+            String curFldName=curWhereFieldsNameArr[j];
+            if (curFldName.contains("*START")){
+                Integer startPosic=LPArray.valuePosicInArray(curWhereFieldsNameArr, curFldName);                    
+                Integer endPosic=LPArray.valuePosicInArray(curWhereFieldsNameArr, curFldName.replace("*START", "*END"));
+                Object endDateValue=null;
+                if (endPosic>-1){                         
+                    endDateValue=curWhereFieldsValueArr[j]; 
+
+                }
+                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(
+                    curFldName.replace("*START", ""), (Date) curWhereFieldsValueArr[startPosic], endDateValue);                    
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())){
+                    JSONObject jObjMainObject=new JSONObject();
+                    jObjMainObject.put("is_error", true);
+                    jObjMainObject.put("error", "KPI Definition is wrong");
+                    return new Object[]{LPPlatform.LAB_FALSE, jObjMainObject};
+                }
+                if (endPosic>-1){                         
+                    curWhereFieldsNameArr[endPosic]="";
+                    curWhereFieldsValueArr[endPosic]=curWhereFieldsValueArr[endPosic];
+                }
+                curWhereFieldsNameArr[j]=buildDateRangeFromStrings[1].toString();                    
+            }
+            if (curFldName.contains("*END")){}
+        }        
+        return new Object[]{LPPlatform.LAB_TRUE, curWhereFieldsNameArr, curWhereFieldsValueArr};
     }    
 }
