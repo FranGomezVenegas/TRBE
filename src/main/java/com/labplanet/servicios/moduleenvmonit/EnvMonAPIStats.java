@@ -154,6 +154,13 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),
+                new LPAPIArguments("addRecoveryRate", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 12),
+                new LPAPIArguments("rr_"+GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 13),
+                new LPAPIArguments("showAbsence", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 14),
+                new LPAPIArguments("showPresence", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 15),
+                new LPAPIArguments("showIN", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 16),
+                new LPAPIArguments("showOUT", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 17),
+                new LPAPIArguments("percNumDecimals", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 }, EndPointsToRequirements.endpointWithNoOutputObjects),        
         RECOVERY_RATE("RECOVERY_RATE", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
@@ -229,6 +236,17 @@ public class EnvMonAPIStats extends HttpServlet {
             String samplerSmpTemplate=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "samplerSampleTemplate");  
             Boolean getSampleInfo=false;
             Boolean getInvestigationInfo=false;
+            Boolean getRecoveryRate=false;
+            Boolean showAbsence=true;
+            Boolean showPresence=true;
+            Boolean showIN=true;
+            Boolean showOUT=true;
+            String[] RRobjGroupName=new String[]{};
+            String RRwhereFieldsName="";
+            String RRwhereFieldsValue="";
+            String[] whereFieldsNameArr=new String[]{};
+            String[] whereFieldsValueArr=new String[]{};
+            Integer percNumDecimals=null;
             switch (endPoint){
                 case QUERY_SAMPLING_HISTORY: 
                     getSampleInfo=true;
@@ -274,8 +292,8 @@ public class EnvMonAPIStats extends HttpServlet {
                         jObjMainObject.put(TblsEnvMonitData.ProductionLot.TBL.getName(), jObj);
                     }
                     JSONObject jObjRecoveryData = getRecoveryRate(new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PRODUCTION_LOT.getName()}, 
-                        new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PRODUCTION_LOT.getName()},
-                        new String[]{prodLotName},
+                        TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PRODUCTION_LOT.getName(),
+                        prodLotName,
                         true, true, true, true, 2);
                     jObjMainObject.put("recovery_rate", jObjRecoveryData);
                     break; 
@@ -289,20 +307,41 @@ public class EnvMonAPIStats extends HttpServlet {
                 case KPIS: 
                     getSampleInfo=true;                    
                     getInvestigationInfo=false;
+                    getRecoveryRate=true;
                     jObjMainObject=new JSONObject();
                     String[] objGroupName = LPNulls.replaceNull(argValues[0]).toString().split("\\/");
                     String[] tblCategory=argValues[1].toString().split("\\/");
                     String[] tblName=argValues[2].toString().split("\\/");
-                    String[] whereFieldsNameArr=argValues[3].toString().split("\\/");
-                    String[] whereFieldsValueArr=argValues[4].toString().split("\\/");
+                    whereFieldsNameArr=argValues[3].toString().split("\\/");
+                    whereFieldsValueArr=argValues[4].toString().split("\\/");
                     String[] fldToRetrieve=argValues[5].toString().split("\\/");
                     String[] dataGrouped=argValues[6].toString().split("\\/");
+                    getRecoveryRate=Boolean.valueOf(argValues[7].toString());
+                    RRobjGroupName = LPNulls.replaceNull(argValues[8]).toString().split("\\|");
+                    RRwhereFieldsName=argValues[3].toString();
+                    RRwhereFieldsValue=argValues[4].toString();
+                    showAbsence=Boolean.valueOf(LPNulls.replaceNull(argValues[9]).toString());
+                    showPresence=Boolean.valueOf(LPNulls.replaceNull(argValues[10]).toString());
+                    showIN=Boolean.valueOf(LPNulls.replaceNull(argValues[11]).toString());
+                    showOUT=Boolean.valueOf(LPNulls.replaceNull(argValues[12]).toString());
+                    if (LPNulls.replaceNull(argValues[13]).toString().length()>0)
+                        percNumDecimals=Integer.valueOf(argValues[13].toString());
 
                     jObjMainObject=getKPIs(objGroupName, tblCategory, tblName, whereFieldsNameArr, whereFieldsValueArr, 
                         fldToRetrieve, dataGrouped);
-                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    break;
+                    //LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                 case RECOVERY_RATE:
-/*                    
+                    RRobjGroupName = LPNulls.replaceNull(argValues[0]).toString().split("\\|");
+                    RRwhereFieldsName = LPNulls.replaceNull(argValues[1]).toString();
+                    RRwhereFieldsValue = LPNulls.replaceNull(argValues[2]).toString();
+                    showAbsence=Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());
+                    showPresence=Boolean.valueOf(LPNulls.replaceNull(argValues[4]).toString());
+                    showIN=Boolean.valueOf(LPNulls.replaceNull(argValues[5]).toString());
+                    showOUT=Boolean.valueOf(LPNulls.replaceNull(argValues[6]).toString());
+                    if (LPNulls.replaceNull(argValues[7]).toString().length()>0)
+                        percNumDecimals=Integer.valueOf(argValues[7].toString());
+                    /*                    
                 String creationDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START);
                 String creationDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END);
                 Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.FLD_CREATED_ON.getName(), creationDayStart, creationDayEnd);
@@ -315,23 +354,20 @@ public class EnvMonAPIStats extends HttpServlet {
                 if (buildDateRangeFromStrings.length==4)
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[3]);
 */                    
-                    objGroupName=LPNulls.replaceNull(argValues[0]).toString().split("\\|");
-                    whereFieldsNameArr=LPNulls.replaceNull(argValues[1]).toString().split("\\|");
-                    whereFieldsValueArr=LPNulls.replaceNull(argValues[2]).toString().split("\\|");
-                    Boolean showAbsence=Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());
-                    Boolean showPresence=Boolean.valueOf(LPNulls.replaceNull(argValues[4]).toString());
-                    Boolean showIN=Boolean.valueOf(LPNulls.replaceNull(argValues[5]).toString());
-                    Boolean showOUT=Boolean.valueOf(LPNulls.replaceNull(argValues[6]).toString());
-                    Integer percNumDecimals=null;
-                    if (LPNulls.replaceNull(argValues[7]).toString().length()>0)
-                        percNumDecimals=Integer.valueOf(argValues[7].toString());
-                    jObjRecoveryData=getRecoveryRate(objGroupName, whereFieldsNameArr, whereFieldsValueArr, 
-                        showAbsence, showPresence, showIN, showOUT, percNumDecimals);
-                    jObjMainObject.put("recovery_rate", jObjRecoveryData);
-                    getSampleInfo=true;
                     //LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    getRecoveryRate=true;
+                    getSampleInfo=true;
+
+
+
+
             }
             JSONObject jObj=new JSONObject();
+            if (getRecoveryRate){
+                    JSONObject jObjRecoveryData = getRecoveryRate(RRobjGroupName, RRwhereFieldsName, RRwhereFieldsValue, 
+                        showAbsence, showPresence, showIN, showOUT, percNumDecimals);
+                    jObjMainObject.put("recovery_rate", jObjRecoveryData);
+            }
             Object[][] sampleInfo=new Object[0][0];
             if (getSampleInfo){
                 String areaName = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_AREA);
