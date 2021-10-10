@@ -26,7 +26,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -253,7 +252,8 @@ public class TstDataSample extends HttpServlet {
                                         new Object[]{"sampleId, userName", LPNulls.replaceNull(sampleId).toString()+", "+userName})); 
                                     incubName=null;
                                     tempReading=null;
-                                    dataSample = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, 1, incubName, tempReading);
+                                    dataSample = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, 1, incubName, tempReading, null);
+                                    dataSample=(Object[])dataSample[0];
                                     break;       
                                 case SAMPLEANALYSISADD:
                                     sampleId=null;
@@ -279,8 +279,14 @@ public class TstDataSample extends HttpServlet {
                                     if (lineNumCols>=numEvaluationArguments+5)                
                                         rawValueResult=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                        new Object[]{"resultId, userName, fieldNames, rawValueResult", resultId.toString()+", "+userName+", "+rawValueResult}));                              
-                                    dataSample = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
+                                        new Object[]{"resultId, userName, fieldNames, rawValueResult", resultId.toString()+", "+userName+", "+rawValueResult}));  
+                                    Object[] actionDiagnoses = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
+                                    dataSample=(Object[]) actionDiagnoses[0]; 
+                                    if (actionDiagnoses.length>1){
+                                        Object[] auditDiagn=(Object[]) actionDiagnoses[1];
+                                        String pAuditId=(String)auditDiagn[auditDiagn.length-1];
+                                        smp.setParentAuditId(Integer.valueOf(pAuditId));
+                                    }
                                     break;  
                                 case REVIEWRESULT:
                                     Integer objectId = 0;
