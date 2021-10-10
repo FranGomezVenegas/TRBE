@@ -33,12 +33,13 @@ public class ClassEnvMonSampleController {
         EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint = null;
         try{
 //            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
-                AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, "en");
+/*                AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, "en");
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, auditAndUsrValid.getCheckUserValidationPassesDiag());              
+                    auditAndUsrValid.killInstance();
                     return;          
                 }                  
-            
+*/            
             endPoint = EnvMonSampleAPI.EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines, auditReasonPosic);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
@@ -51,7 +52,7 @@ public class ClassEnvMonSampleController {
             ClassEnvMonSample clss=new ClassEnvMonSample(request, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
-            auditAndUsrValid.killInstance();
+//            auditAndUsrValid.killInstance();
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }
