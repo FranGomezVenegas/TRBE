@@ -39,6 +39,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static lbplanet.utilities.LPDate.stringFormatToLocalDateTime;
 import static lbplanet.utilities.LPPlatform.trapMessage;
 
 /**
@@ -253,6 +254,15 @@ if (1==1) return fieldValue;
                     case "BOOLEAN":               
                         myObjectsArray[i]=Boolean.valueOf((String) rowParse[0]);
                         break;               
+                    case "DATETIME":       
+                        myObjectsArray[i]= stringFormatToLocalDateTime((String) rowParse[0]);
+/*                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-ddT00:00:00");
+                            try {
+                                myObjectsArray[i]= format.parse((String) rowParse[0]);
+                            } catch (ParseException ex) {
+                                Logger.getLogger(LPArray.class.getName()).log(Level.SEVERE, null, ex);
+                            }*/
+                        break;                                                            
                     case "DATE":        
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                             try {
