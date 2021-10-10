@@ -13,8 +13,10 @@ import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
 import databases.TblsCnfg;
 import databases.TblsData;
+import databases.TblsProcedure;
 import databases.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
+import functionaljavaa.intervals.IntervalsUtilities;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
 import functionaljavaa.materialspec.ConfigSpecRule;
 //import functionaljavaa.parameter.Parameter;
@@ -32,12 +34,14 @@ import java.net.URL;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
+import static lbplanet.utilities.LPDate.SecondsInDateRange;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
@@ -93,10 +97,26 @@ public class TestingServer extends HttpServlet {
                     .add("table", TblsApp.Incident.TBL.getName()).build()).build();
             out.println(build); 
 LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
-//if (1==1) return;  
-Rdbms.closeRdbms();
-//Rdbms.stablishDBConection("labplanet");
+LocalDateTime startDate=LocalDateTime.now();        
+int[] plusDays=new int[]{0, 1, 2, 200, 400};
+for (int curPlusDays: plusDays){
+    LocalDateTime endDate=LocalDateTime.now().plusDays(curPlusDays);
+    out.println("Days difference="+String.valueOf(curPlusDays)+" "+SecondsInDateRange(startDate, endDate));
+    long[] intervals=new long[]{-1, 0, 172000, 173000, 15280008, 18280008, 24560009, 34560009, 94560009};
+    for (long interval:intervals){
+        out.println("interval:"+interval+" "+Arrays.toString(IntervalsUtilities.isTheIntervalIntoTheDatesRange(interval, startDate, endDate)));
+    }
+}
+Rdbms.stablishDBConection("labplanet");
+String tblCreateScript2=TblsProcedure.SampleStageTimingIntervalDeviation.createTableScript("em-demo-a", new String[]{""});
+Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
+
+if (1==1) return;  
+Rdbms.closeRdbms();
+Rdbms.stablishDBConection("labplanet");
+markAsExpiredTheExpiredObjects("proc-deploy");
+if (1==1) return;  
                 Object[] isConnected = Rdbms.stablishDBConectionTester();
                 //isConnected = Rdbms.getRdbms().startRdbms(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);      
 
