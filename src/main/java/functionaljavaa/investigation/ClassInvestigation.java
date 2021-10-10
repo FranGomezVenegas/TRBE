@@ -13,6 +13,7 @@ import com.labplanet.servicios.app.InvestigationAPI;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIEndpoints;
 import databases.TblsProcedure;
 import databases.Token;
+import functionaljavaa.responsemessages.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
@@ -63,7 +64,7 @@ public class ClassInvestigation {
         Boolean isForTesting = procReqSession.getIsForTesting();
         String procInstanceName = procReqSession.getProcedureInstance();
         Token token=procReqSession.getToken();
-
+        ResponseMessages messages = procReqSession.getMessages();
         Object[] actionDiagnoses=null;
         Object[] dynamicDataObjects=new Object[]{};        
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
@@ -76,16 +77,26 @@ public class ClassInvestigation {
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                     investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
                 if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+                messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId, argValues[2].toString()});
+                dynamicDataObjects=new Object[]{investigationId, argValues[2].toString()};
                 break;
             case ADD_INVEST_OBJECTS:
                 actionDiagnoses = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), argValues[1].toString(), null);
                 investigationIdStr=argValues[0].toString();
                 if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                    messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId, argValues[1].toString()});
+                    dynamicDataObjects=new Object[]{investigationId, argValues[1].toString()};
+                }
                 break;
             case CLOSE_INVESTIGATION:
                 actionDiagnoses = Investigation.closeInvestigation(Integer.valueOf(argValues[0].toString()));
                 investigationIdStr=argValues[0].toString();
                 if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                    messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId});
+                    dynamicDataObjects=new Object[]{investigationId};
+                }
                 break;
             case INVESTIGATION_CAPA_DECISION:
                 String[] capaFldName=null;
@@ -99,9 +110,16 @@ public class ClassInvestigation {
                             Boolean.valueOf(argValues[1].toString()), capaFldName, capaFldValue);
                     investigationIdStr=argValues[0].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                        messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId});
+                        dynamicDataObjects=new Object[]{investigationId};
+                    }
                 }
                 break;
         }
+        if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+            actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), dynamicDataObjects);
+        
         if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
             
         }else{

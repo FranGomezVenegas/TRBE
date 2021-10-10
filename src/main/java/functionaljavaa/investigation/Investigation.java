@@ -75,7 +75,7 @@ public final class Investigation {
         String investIdStr=diagnostic[diagnostic.length-1].toString();
         Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(InvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsProcedure.Investigation.TBL.getName(), Integer.valueOf(investIdStr), investIdStr,  
                 LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationAuditAdd[0].toString())) return diagnostic; 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationAuditAdd[0].toString())) return investigationAuditAdd; 
             String investAuditIdStr=investigationAuditAdd[investigationAuditAdd.length-1].toString();
         if (objectsToAdd!=null && objectsToAdd.length()>0)
             addInvestObjects(Integer.valueOf(investIdStr), objectsToAdd, Integer.valueOf(investAuditIdStr));
