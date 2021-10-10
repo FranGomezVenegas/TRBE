@@ -6,9 +6,12 @@
 package functionaljavaa.intervals;
 
 import databases.Rdbms;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import static lbplanet.utilities.LPDate.SecondsInDateRange;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
@@ -50,5 +53,15 @@ public class IntervalsUtilities {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "wrongIntervalType <*1*>, Accepted values: <*2*>", 
                 new Object[]{LPPlatform.LAB_FALSE,valArr[0], Arrays.toString(LPDate.IntervalTypes.values())});
         }        
+    }
+    public static Object[] isTheIntervalIntoTheDatesRange(long interval, LocalDateTime startDate, LocalDateTime endDate){
+        if (interval<=0) return LPArray.addValueToArray1D(LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "intervalValueIsNegativeOrZero", null), -1);
+        long seconds = SecondsInDateRange(startDate, endDate);               
+        int compareTo = Integer.valueOf((int) seconds).compareTo((int) interval);
+        //if (secondsInDateRange.interval);
+        if (compareTo==1)
+            return LPArray.addValueToArray1D(LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not", null), seconds);
+        else
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "yes", null);
     }
 }
