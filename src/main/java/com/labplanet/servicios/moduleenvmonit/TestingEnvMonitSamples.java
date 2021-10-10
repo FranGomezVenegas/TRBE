@@ -8,6 +8,7 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
+import functionaljavaa.investigation.ClassInvestigationController;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -102,7 +103,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                         functionRelatedObjects=clssEnvMonSampleFrontendController.getFunctionRelatedObjects();
                         functionEvaluation=(Object[]) clssEnvMonSampleFrontendController.getFunctionDiagn();
                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                        fileContentTable1Builder.append(clssEnvMonSampleFrontendController.getRowArgsRows());
+                        fileContentTable1Builder.append(clssEnvMonSampleFrontendController.getRowArgsRows());                        
                     }else{
                         ClassEnvMonController clssEnvMonController=new ClassEnvMonController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                         if (clssEnvMonController.getFunctionFound()){
@@ -132,14 +133,28 @@ public class TestingEnvMonitSamples extends HttpServlet {
                                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                         fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
                                     }else{
-                                        functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
-                                        testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                        fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                        ClassInvestigationController clssInvestigationController=new ClassInvestigationController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                                        if (clssInvestigationController.getFunctionFound()){
+                                            functionRelatedObjects=clssInvestigationController.getFunctionRelatedObjects();
+                                            functionEvaluation=(Object[]) clssInvestigationController.getFunctionDiagn();
+                                            testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                            fileContentTable1Builder.append(clssInvestigationController.getRowArgsRows());                
+                                        }else{
+                                            functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
+                                            testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                            fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                        }
+                                        clssInvestigationController=null;
                                     }
+                                    clssSampleController=null;
                                 }
+                                clssEnvMonQueriesController=null;
                             }
+                            clssEnvMonIncubController=null;
                         }
+                        clssEnvMonSampleFrontendController=null;
                     }
+                    clssEnvMonSampleController=null;
                 }
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
@@ -193,7 +208,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
             tstAssertSummary=null; 
             String exceptionMessage = error.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
-        } finally {
+        } finally {    
             // release database resources
             try {
                 ProcedureRequestSession.getInstanceForActions(request, response, Boolean.TRUE).killIt();
