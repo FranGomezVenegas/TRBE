@@ -56,7 +56,6 @@ public class DataSampleRevisionTestingGroup{
         SAMPLETESTINGBYGROUP_PENDING_TESTINGGROUPREVISION("DataSampleRevision_PendingTestingGroupRevision", "There are pending testing group, <*1*>, for the sample <*2*> in procedure <*3*>", "There are pending testing group, <*1*>, for the sample <*2*> in procedure <*3*>"),
         SAMPLETESTINGBYGROUP_NOPENDING_TESTINGGROUPREVISION("DataSampleRevision_NoPendingTestingGroupRevision", "No testing group revision pending for sample <*1*> in procedure <*2*>", "No testing group revision pending for sample <*1*> in procedure <*2*>"),
         SAMPLETESTINGBYGROUP_ALREADY_READYFORREVISION("DataSampleRevision_alreadyReadyForRevision", "Already ready for revision", "Ya está marcado para revisión"),
-        SAMPLETESTINGBYGROUP_ALREADY_REVIEWED("DataSampleRevision_alreadyReviewer", "Already reviewed", "Ya está revisado"),
         READY_FOR_REVISION("DataSampleRevision_readyForRevision", "Ready for revision", "Listo para la revisión"),
         NOT_READY_FOR_REVISION("DataSampleRevision_notReadyForRevision", "Not ready for revision", "No listo para la revisión"),
         SAMPLETESTINGBYGROUP_PENDINGRESULTSINTESTINGGROUP("DataSampleRevision_PendingResultsInTestingGroup","There are pending results for the testing group <*1*> for the sample <*2*> in procedure <*3*>","There are pending results for the testing group <*1*> for the sample <*2*> in procedure <*3*>")
@@ -133,17 +132,7 @@ public class DataSampleRevisionTestingGroup{
         //return diagnoses;
     }  
     
-    public static Object[] isAllsampleTestingGroupReviewed(Integer sampleId){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String[] whereFieldName= new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()};
-        Object[] whereFieldValue=new Object[]{sampleId};
-        Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(), 
-            new String[]{TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName()}, whereFieldName, whereFieldValue, null);
-        if (grouper.length!=1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisErrorTrapping.PENDING_REVISION.getErrorCode(), null);
-        if (!grouper[0][0].toString().equalsIgnoreCase("TRUE"))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisErrorTrapping.PENDING_REVISION.getErrorCode(), null);
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);        
-    }
+    
     public static Object[] reviewSampleTestingGroup(Integer sampleId, String testingGroup){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
@@ -218,7 +207,7 @@ public class DataSampleRevisionTestingGroup{
                 new String[] {TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(),TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()}, new Object[]{sampleId, testingGroup}, sampleFieldName);
         if ("TRUE".equalsIgnoreCase(sampleRevisionTestingGroupInfo[0][0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_ALREADY_READYFORREVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
-        Object[] isSampleTestingGroupGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getTagName());
+        Object[] isSampleTestingGroupGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getAreaName(), DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isSampleTestingGroupGenericAutoApproveEnabled[0].toString())){
             sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_ON.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_BY.getName()});
             sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, new Object[]{true,LPDate.getCurrentTimeStamp(), "AUTO_APPROVE"});

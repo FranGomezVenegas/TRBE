@@ -49,7 +49,6 @@ import functionaljavaa.samplestructure.DataSampleIncubation.DataSampleIncubation
 import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules;
 import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStages.SampleStageBusinessRules;
-import functionaljavaa.samplestructure.DataSampleStructureRevisionRules.DataSampleStructureRevisionErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStructureRevisionRules.DataSampleStructureRevisionRls;
 import functionaljavaa.sop.UserSop.UserSopBusinessRules;
 import functionaljavaa.sop.UserSop.UserSopErrorTrapping;
@@ -290,12 +289,6 @@ public class PropertiesToRequirements {
         }
         DataSampleRevisionTestingGroupErrorTrapping[] dataSampleRevisionTestingGroupErrorTrapping = DataSampleRevisionTestingGroupErrorTrapping.values();
         for (DataSampleRevisionTestingGroupErrorTrapping curBusRul: dataSampleRevisionTestingGroupErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
-            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode()});
-            declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);
-        }        
-        DataSampleStructureRevisionErrorTrapping[] dataSampleStructureRevisionErrorTrapping = DataSampleStructureRevisionErrorTrapping.values();
-        for (DataSampleStructureRevisionErrorTrapping curBusRul: dataSampleStructureRevisionErrorTrapping){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode()});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);

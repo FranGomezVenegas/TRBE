@@ -143,8 +143,7 @@ public class DataSampleStructureEnums {
         RESULT_NOT_REVIEWABLE("DataSample_SampleAnalysisResultNotReviewable", "", ""),
         RULE_ANALYST_NOT_ASSIGNED("DataSample_SampleAnalysisRuleAnalystNotAssigned", "", ""),
         RULE_OTHERANALYSIS_ENTER_RESULT("DataSample_SampleAnalysisRuleOtherAnalystEnterResult", "", ""),
-        SAMPLEANALYSIS_CANCELED("DataSample_SampleAnalysisCanceled", "", ""),
-        ALREADY_REVIEWED("DataSample_SampleAnalysisAlreadyReviewed","", "")
+
         ;
         
         private DataSampleAnalysisErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){

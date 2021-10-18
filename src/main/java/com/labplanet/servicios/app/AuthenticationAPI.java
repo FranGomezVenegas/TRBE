@@ -41,7 +41,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.user.UserAndRolesViews.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author Administrator
@@ -350,7 +349,6 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
         } finally {
             // release database resources
             try {
-                Rdbms.closeRdbms(); 
                 // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

@@ -23,10 +23,8 @@ import org.json.simple.JSONObject;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.Token;
-import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
 import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ProcedureRequestSession;
 
 /**
  * LPPlatform is a library for methods solving topics that are specifically part of the LabPLANET Paradigm.
@@ -918,18 +916,15 @@ public enum LpPlatformErrorTrapping{
      */
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables) {          
     //    if (1==1) return;
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    String procInstanceName = "";
         if (!Rdbms.getRdbms().getIsStarted()){
 //            Logger.log(LogTag.JFR, LogLevel.TRACE, msgCode);
             return;
         }
         Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())){
-            procInstanceName = "";
-            dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName());
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
-                return;
-        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+            return;
+        
         Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
             new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
             TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()}, 
@@ -949,14 +944,6 @@ public enum LpPlatformErrorTrapping{
             return;
         }
         String procInstanceName = LPNulls.replaceNull(schemaName);
-        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzPropertiesMissing.TBL.getName());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
-            procInstanceName = "";
-        else{
-            dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzPropertiesMissing.TBL.getName());
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
-                return;
-        }        
         String[] fldNames=new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(),
             TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName(), TblsCnfg.zzzPropertiesMissing.FLD_CLASS_CALLER.getName()};
         Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName, Arrays.toString(callerInfo)};
@@ -964,12 +951,11 @@ public enum LpPlatformErrorTrapping{
             fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_PROCEDURE.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, procInstanceName);
         }
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
+        Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName() , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
                 fldNames, fldValues);
     }      
     public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){
-        String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues"); 
-        String[] enableRuleValues=enableValuesStr.split("\\|");
+        String[] enableRuleValues=new String[]{"ENABLE", "YES", "ACTIVE", "ACTIVADO", "SI", "ACTIVO", "TRUE"};
         String ruleValue=Parameter.getBusinessRuleProcedureFile(procName, fileSchemaRepository, ruleName);
         if (ruleValue.length()==0) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND.getErrorCode(), null);

@@ -1447,16 +1447,6 @@ public class TblsData {
             }           
             return tableFields;            
         }
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (CertifUserAnalysisMethod obj: CertifUserAnalysisMethod.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }        
 
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
@@ -1614,7 +1604,6 @@ public class TblsData {
         private final String dbObjTypePostgres;                     
     }           
     private static final java.lang.String FIELDS_NAMES_ASSIGNED_ON = "assigned_on";
-    private static final java.lang.String FIELDS_NAMES_ASSIGNED_BY = "assigned_by";
     private static final java.lang.String FIELDS_NAMES_MANDATORY_LEVEL = "mandatory_level";
     private static final java.lang.String FIELDS_NAMES_EXPIRATION_DATE = "expiration_date";
     private static final java.lang.String FIELDS_NAMES_SOP_NAME = "sop_name";
@@ -2093,113 +2082,6 @@ public class TblsData {
         
     }        
 
-    public enum ViewUserAndAnalysisMethodCertificationView{
-
-        /**
-         *
-         */
-        TBL("user_and_analysis_method_certification_vw",  LPDatabase.createView() +
-                " SELECT '#SCHEMA_CONFIG'::text AS procedure, usr.id, usr.user_id, metadata.code, usr.method_name, usr.method_version, "+
-                "   usr.assigned_on, usr.assigned_by, usr.status, usr.certification_date, usr.certif_expiry_date," +
-                "   usr.certif_started, usr.certif_completed, usr.sop_name, usr.user_name, usr.light, , usr.training_id,"+
-                "   metadata.active, metadata.expires, metadata.expiry_interval_info " +
-                "   FROM #SCHEMA.certif_user_analysis_method usr," +
-                "    #SCHEMA_CONFIG.methods metadata" +
-                "  WHERE usr.method_name::text = metadata.code::text "+
-                "    and usr.method_version::integer =metadata.config_version::integer;"+
-                    "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
-                    "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;")
-        ,
-
-        /**
-         *
-         */
-        FLD_PROCEDURE("procedure", ""),
-        FLD_ID("id", ""),
-        FLD_USER_ID(FIELDS_NAMES_USER_ID, "")        ,
-        FLD_METHOD_CODE("code", ""),
-        FLD_METHOD_NAME("method_name", ""),
-        FLD_METHOD_VERSION("method_version", ""),
-        FLD_ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, ""),
-        FLD_ASSIGNED_BY(FIELDS_NAMES_ASSIGNED_BY, ""),
-        FLD_STATUS(FIELDS_NAMES_STATUS, ""),
-        FLD_CERTIFICATION_DATE("certification_date", "")        ,
-        FLD_CERTIF_EXPIRY_DATE("certif_expiry_date", "")        ,
-        FLD_CERTIF_STARTED("certif_started",""),
-        FLD_CERTIF_COMPLETED("certif_completed", ""),
-        FLD_SOP_NAME(FIELDS_NAMES_SOP_NAME, ""),
-        FLD_USER_NAME(FIELDS_NAMES_USER_NAME, ""),
-        FLD_LIGHT(FIELDS_NAMES_LIGHT, ""),
-        FLD_TRAINING_ID("training_id", "")        ,
-        FLD_METHOD_IS_ACTIVE("active", "method_is_active"),
-        FLD_METHOD_EXPIRES("expires", "method_expires"),
-        FLD_METHOD_EXPIRY_INTERVAL_INFO("expiry_interval_info", "method_expiry_interval_info")
-        ;
-        private ViewUserAndAnalysisMethodCertificationView(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = ViewUserAndAnalysisMethodCertificationView.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#SCHEMA_CONFIG", LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (ViewUserAndAnalysisMethodCertificationView obj: ViewUserAndAnalysisMethodCertificationView.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }        
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (ViewUserAndAnalysisMethodCertificationView obj: ViewUserAndAnalysisMethodCertificationView.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }    
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-        
-    }        
-    
     /**
      *
      */

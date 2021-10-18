@@ -72,8 +72,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
                 new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName(), TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName(), TblsData.SampleAnalysis.FLD_TEST_ID.getName(), TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
         String currStatus = (String) objectInfo[0][0];
-        if (sampleId==null)
-            sampleId = (Integer) objectInfo[0][3];
+        sampleId = (Integer) objectInfo[0][3];
         if ((!(sampleAnalysisStatusCanceled.equalsIgnoreCase(currStatus))) && (!(sampleAnalysisStatusReviewed.equalsIgnoreCase(currStatus))) && (testId != null)) {
             Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
                     new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName(), TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName()}, 
@@ -100,14 +99,12 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         Object[] isRevisionTestinGroupRequired = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.REVISION_TESTINGGROUP_REQUIRED.getAreaName(), DataSampleAnalysisBusinessRules.REVISION_TESTINGGROUP_REQUIRED.getTagName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionTestinGroupRequired[0].toString())){
             testInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(),
-                new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
-                new String[]{TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName(), TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
+                new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, new String[]{TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testInfo[0][0].toString())) return LPArray.array2dTo1d(testInfo);
             whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName());
             whereFieldValue=LPArray.addValueToArray1D(whereFieldValue, testInfo[0][0].toString());
         }
-        if (sampleId==null)
-            sampleId= (Integer) testInfo[0][1];
+        
         Object[] areAllsampleAnalysisReviewed = isAllsampleAnalysisReviewed(sampleId, whereFieldName, whereFieldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areAllsampleAnalysisReviewed[0].toString())) return areAllsampleAnalysisReviewed;            
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionTestinGroupRequired[0].toString()))
@@ -155,19 +152,10 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
 
     public static Object[] isReadyForRevision(Integer testId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String sampleAnalysisStatusCanceled = SampleAnalysisStatuses.CANCELED.getStatusCode("");
-        String sampleAnalysisStatusReviewed = SampleAnalysisStatuses.REVIEWED.getStatusCode("");
 
         Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(),  
                 new String[] {TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
-                new String[] {TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysis.FLD_STATUS.getName()});
-        String sampleIdStr=sampleAnalysisInfo[0][0].toString();
-        String currStatus=sampleAnalysisInfo[0][1].toString();
-        if (sampleAnalysisStatusCanceled.equalsIgnoreCase(currStatus))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_CANCELED.getErrorCode(), new Object[]{testId, Integer.valueOf(sampleIdStr), procInstanceName});            
-        if (sampleAnalysisStatusReviewed.equalsIgnoreCase(currStatus)) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ALREADY_REVIEWED.getErrorCode(), new Object[]{testId, Integer.valueOf(sampleIdStr), procInstanceName});            
-             
+                new String[] {TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
             return LPArray.array2dTo1d(sampleAnalysisInfo);
         return isReadyForRevision((Integer) sampleAnalysisInfo[0][0], testId);

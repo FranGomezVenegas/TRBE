@@ -5,7 +5,6 @@
  */
 package functionaljavaa.parameter;
 
-import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
 import functionaljavaa.testingscripts.TestingMessageCodeVisited;
 import java.io.File;
@@ -163,12 +162,6 @@ public class Parameter {
     }
 
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName) {
-        BusinessRules brTesting=ProcedureRequestSession.getInstanceForActions(null, null, null).getBusinessRulesTesting();
-        //BusinessRules br=new BusinessRules(procInstanceName);
-        if (brTesting!=null){
-            String brValue=brTesting.getProcedureBusinessRule(parameterName);
-            if (brValue.length()>0) return brValue;
-        }
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
         String methodName = "NO TRACE"; 

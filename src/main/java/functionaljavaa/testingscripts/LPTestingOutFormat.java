@@ -65,7 +65,6 @@ public class LPTestingOutFormat {
     private Integer stepIdPosic = -1;
     private Integer stopSyntaxisUnmatchPosic = -1;
     private Integer stopSyntaxisFalsePosic = -1;
-    private Integer alternativeTokenFldPosic = -1;
 
     public LPTestingOutFormat(HttpServletRequest request, String testerName, String testerFileName){
         String csvPathName ="";
@@ -85,8 +84,7 @@ public class LPTestingOutFormat {
             TblsTesting.ScriptSteps.FLD_ARGUMENT_07.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_08.getName(),
             TblsTesting.ScriptSteps.FLD_ARGUMENT_09.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_10.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName(),
             TblsTesting.ScriptSteps.FLD_AUDIT_REASON.getName(),
-            TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_UNMATCH.getName(), TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_FALSE.getName(),
-            TblsTesting.ScriptSteps.FLD_ALTERNATIVE_TOKEN.getName()
+            TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_UNMATCH.getName(), TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_FALSE.getName()
         };
         Integer scriptId = null;
         String procInstanceName=null;
@@ -134,8 +132,6 @@ public class LPTestingOutFormat {
         this.stepIdPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STEP_ID.getName());
         this.stopSyntaxisUnmatchPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_UNMATCH.getName());
         this.stopSyntaxisFalsePosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_FALSE.getName());
-        this.alternativeTokenFldPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_ALTERNATIVE_TOKEN.getName());
-        
     }
 
     public StringBuilder publishEvalStep(HttpServletRequest request, Integer stepId, Object[] evaluate, JSONArray functionRelatedObjects, TestingAssert tstAssert){
@@ -909,10 +905,6 @@ public class LPTestingOutFormat {
     public Integer getStopSyntaxisFalsePosic() {
         return stopSyntaxisFalsePosic;
     }
-    public Integer getAlternativeTokenFldPosic() {
-        return alternativeTokenFldPosic;
-    }
-    
 
     /**
      * @return the htmlStyleHeader

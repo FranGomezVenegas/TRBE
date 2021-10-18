@@ -17,13 +17,11 @@ import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.DataSpec;
-import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
 import static functionaljavaa.samplestructure.DataSampleAnalysis.isReadyForRevision;
 import static functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisEvaluateStatusAutomatismForReview;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping;
-import functionaljavaa.samplestructure.DataSampleStructureRevisionRules.DataSampleStructureRevisionErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStructureRevisionRules.DataSampleStructureRevisionRls;
 import static functionaljavaa.samplestructure.DataSampleStructureRevisionRules.reviewSampleAnalysisRulesAllowed;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
@@ -239,7 +237,7 @@ public class DataSampleAnalysisResult {
         Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())){
             Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-            if (!Boolean.valueOf(userCertified[0].toString())) return (Object[]) new Object[]{userCertified[1]};
+            if (!Boolean.valueOf(userCertified[0].toString())) return (Object[]) userCertified[1];
         }        
         if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)) 
             return new Object[]{LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.RESULT_LOCKED.getErrorCode(), new Object[]{currResultStatus, resultId.toString(), schemaConfigName})};
@@ -849,30 +847,21 @@ public class DataSampleAnalysisResult {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String sampleAnalysisResultStatusCanceled = DataSampleStructureStatuses.SampleAnalysisResultStatuses.CANCELED.getStatusCode("");
         String sampleAnalysisResultStatusReviewed = DataSampleStructureStatuses.SampleAnalysisResultStatuses.REVIEWED.getStatusCode("");        
-        String[] fieldsToRetrieve = new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), 
-            TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), 
-            TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(),
+        String[] fieldsToRetrieve = new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(),
             TblsData.SampleAnalysisResult.FLD_ENTERED_BY.getName()};        
         Object[] scopeInfo=getScope(sampleId, testId, resultId);
         String reviewScope=scopeInfo[0].toString();
         Integer reviewScopeId=(Integer) scopeInfo[1];
         String reviewScopeTable=scopeInfo[2].toString();        
         if (sampleId != null) {
-            Object[] sampleReviewable=checkIfSampleIsReadyForRevision(sampleId);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleReviewable[0].toString())) return sampleReviewable;
-            reviewScopeTable = TblsData.Sample.TBL.getName();            
-//            Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(sampleId);
-//            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;            
-            DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
-            DataSample smp=new DataSample(smpAna);
-            return smp.sampleReview(sampleId);
+            Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(sampleId);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;            
         }
         if (testId != null) {
-            reviewScopeTable = TblsData.SampleAnalysis.TBL.getName();
             Object[] readyForRevision = isReadyForRevision(testId);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(readyForRevision[0].toString())) return readyForRevision;
         }
-        //if (resultId != null) 
+        if (resultId != null) {}
         reviewScopeTable = TblsData.SampleAnalysisResult.TBL.getName();
         Object[][] objectInfoForRevisionCheck = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), reviewScopeTable, 
                 new String[]{reviewScope}, new Object[]{reviewScopeId}, fieldsToRetrieve);
@@ -886,46 +875,15 @@ public class DataSampleAnalysisResult {
                 new String[]{reviewScope}, new Object[]{reviewScopeId}, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfo[0][0].toString()) || objectInfo.length == 0)             
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{LPNulls.replaceNull(resultId).toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});            
-        Object[] reviewSampleAnalysisRulesAllowed = reviewSampleAnalysisRulesAllowed(testId, fieldsToRetrieve, objectInfo);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(reviewSampleAnalysisRulesAllowed[0].toString())) return reviewSampleAnalysisRulesAllowed;
+        reviewSampleAnalysisRulesAllowed(testId, fieldsToRetrieve, objectInfo);
         Object[] testsToReview = reviewSamplesAnalysisResultToReview(objectInfo);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testsToReview[0].toString()))
-                return testsToReview;
-        Object[] sampleToReview = reviewSamplesAnalysisFromSampleToReview(sampleId, new Object[]{testId});
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(sampleToReview[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "testNotReviewed", new Object[]{testId});
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "testReviewed", new Object[]{testId});
+        Object[] sampleToReview =null;
+        if (testsToReview[1]!=null)
+            sampleToReview = reviewSamplesAnalysisFromSampleToReview((Integer) testsToReview[2], (Object[]) testsToReview[1]);        
+        if (sampleToReview[1]!=null)                
+            reviewSampleToReview(sampleToReview);
+        return new Object[]{LPPlatform.LAB_FALSE, "notImplementedYet"};
     }    
-    
-/*    private Object[] nextForSampleAnalysisReview(Integer sampleId, Integer testId, String parentAuditAction, Integer parentAuditId){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName());
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
-            isReadyForRevision(Integer sampleId, String testingGroup);
-            setReadyForRevision(Integer sampleId, String testingGroup);
-        }else{
-            setReadyForRevision(Integer sampleId, parentAuditAction, parentAuditId);
-        }
-    }
-  */  
-    public static Object[] checkIfSampleIsReadyForRevision(Integer sampleId) {    
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] sampleReadyForRevisionFldExists=Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
-                 TblsData.Sample.FLD_READY_FOR_REVISION.getName());
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(sampleReadyForRevisionFldExists[0].toString())){
-            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
-                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName()});
-            if (!Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][0]).toString())) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleNotSetAsReadyForRevision", new Object[]{sampleId});
-        }            
-        Object[] allsampleAnalysisReviewed = DataSampleAnalysis.isAllsampleAnalysisReviewed(sampleId, null, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allsampleAnalysisReviewed[0].toString())) return allsampleAnalysisReviewed;
-        Object[] allsampleTestGroupReviewed = DataSampleRevisionTestingGroup.isAllsampleTestingGroupReviewed(sampleId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allsampleTestGroupReviewed[0].toString())) return allsampleTestGroupReviewed;
-        
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "OK", new Object[]{sampleId});
-    }
     private Object[] getScope(Integer sampleId, Integer testId, Integer resultId){
         if (sampleId != null) return new Object[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(), sampleId, TblsData.Sample.TBL.getName()};
         if (testId != null) return new Object[]{TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), testId, TblsData.SampleAnalysis.TBL.getName()};   
@@ -933,6 +891,7 @@ public class DataSampleAnalysisResult {
         return new Object[]{LPPlatform.LAB_FALSE, "notRecognizedLevel <*1*>", null};
     }
 
+    
     private Object[] reviewSampleToReview(Object[] samplesToReview){
         if (samplesToReview==null) return new Object[]{LPPlatform.LAB_TRUE,null};
         Object[] samplesFinallyReviewed=null;
@@ -963,8 +922,7 @@ public class DataSampleAnalysisResult {
                 Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
                         updFieldName, updFieldValue,
                         new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName()+" not in-"}, new Object[]{sampleId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});                    
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {    
-                    samplesFinallyReviewed=new Object[]{sampleId};
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {                    
                     String[] fieldsForAudit = new String[0];
                     fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + sampleAnalysisResultStatusReviewed);
                     fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS_PREVIOUS.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + currStatus);
@@ -1004,7 +962,6 @@ public class DataSampleAnalysisResult {
                             updFieldName, updFieldValue,
                             new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName(), TblsData.SampleAnalysis.FLD_STATUS.getName()+" not in-"}, new Object[]{testId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                        sampleAnalysisFinallyReviewed=new Object[]{sampleId};
                         String[] fieldsForAudit = new String[0];
                         fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + sampleAnalysisResultStatusReviewed);
                         fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + currStatus);
@@ -1041,7 +998,6 @@ public class DataSampleAnalysisResult {
                         new Object[]{sampleAnalysisResultStatusReviewed, currStatus}, 
                         new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName()+" not in-"}, new Object[]{resultId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                        sampleAnalysisResultFinallyReviewed=LPArray.addValueToArray1D(sampleAnalysisResultFinallyReviewed, resultId);
                         String[] fieldsForAudit = new String[0];
                         fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + sampleAnalysisResultStatusReviewed);
                         fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + currStatus);
