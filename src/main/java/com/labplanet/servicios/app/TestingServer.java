@@ -45,6 +45,9 @@ import static lbplanet.utilities.LPDate.SecondsInDateRange;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
+import functionaljavaa.businessrules.BusinessRules;
+import functionaljavaa.parameter.Parameter;
+import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
 
 
 
@@ -97,6 +100,17 @@ public class TestingServer extends HttpServlet {
                     .add("table", TblsApp.Incident.TBL.getName()).build()).build();
             out.println(build); 
 LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
+/*String procName="proc-deploy";
+BusinessRules br=new BusinessRules(procName, 999);
+String brName="sampleReviewer_canBeAnyTestingGroupReviewer";
+String brValue=br.getProcedureBusinessRule(brName);
+out.println(brName+" Business rule value="+brValue);
+String ruleValue=Parameter.getBusinessRuleProcedureFile(procName, "procedure", brName);
+out.println("ruleValue using Parameter.getBusinessRuleProcedureFile = "+ruleValue);
+if (1==1) return;*/
+Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable("proc-deploy", "procedure", 
+        "sampleGenericAutoApproveEnabled");            
+out.println(Arrays.toString(isReviewByTestingGroupEnable));
 LocalDateTime startDate=LocalDateTime.now();        
 int[] plusDays=new int[]{0, 1, 2, 200, 400};
 for (int curPlusDays: plusDays){

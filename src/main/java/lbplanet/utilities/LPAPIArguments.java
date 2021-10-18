@@ -8,9 +8,6 @@ package lbplanet.utilities;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
-import java.time.LocalDateTime;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import java.time.format.DateTimeParseException;
 /**
  *
  * @author User

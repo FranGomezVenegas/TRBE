@@ -98,6 +98,10 @@
         <servlet-class>com.labplanet.servicios.app.SopUserAPIfrontend</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>AnalysisMethodCertifUserAPIfrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.AnalysisMethodCertifUserAPIfrontend</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>SampleAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.modulesample.SampleAPI</servlet-class>
     </servlet>
@@ -409,6 +413,10 @@
         <servlet-name>SopUserAPIfrontend</servlet-name>
         <url-pattern>/frontend/SopUserAPIfrontend</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AnalysisMethodCertifUserAPIfrontend</servlet-name>
+        <url-pattern>/frontend/AnalysisMethodCertifUserAPIfrontend</url-pattern>
+    </servlet-mapping>       
     <servlet-mapping>
         <servlet-name>TstDataBatchArr</servlet-name>
         <url-pattern>/testing/db/TstDataBatchArr</url-pattern>

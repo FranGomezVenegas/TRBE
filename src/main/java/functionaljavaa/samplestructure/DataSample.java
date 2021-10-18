@@ -156,8 +156,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), new Object[]{mandatoryFieldsMissingBuilder.toString()});    
-        }               
-        
+        }                       
         Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.Sample.TBL.getName(), 
                 new String[]{TblsCnfg.Sample.FLD_CODE.getName(), TblsCnfg.Sample.FLD_CODE_VERSION.getName()}, new Object[]{sampleTemplate, sampleTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))

@@ -8,7 +8,9 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
+import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
 import functionaljavaa.investigation.ClassInvestigationController;
+import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -68,6 +70,11 @@ public class TestingEnvMonitSamples extends HttpServlet {
         String stopPhrase=null;
         
         try (PrintWriter out = response.getWriter()) {
+            String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+/*            String brName="sampleReviewer_canBeAnyTestingGroupReviewer";
+            String ruleValue=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", brName);
+            out.println("ruleValue using Parameter.getBusinessRuleProcedureFile = "+ruleValue);
+            if (1==1) return;*/
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
                 out.println(fileContentBuilder.toString()); 
@@ -80,10 +87,14 @@ public class TestingEnvMonitSamples extends HttpServlet {
             
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
+                
+                //LPTestingParams.handleAlternativeToken(tstOut, iLines);
+                
                 tstAssertSummary.increaseTotalTests();                    
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
+
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
                 if (tstOut.getAuditReasonPosic()!=-1)
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
@@ -91,6 +102,28 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
 
+                if (actionName.toString().equalsIgnoreCase(ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints.SET_PROCEDURE_BUSINESS_RULES.getName())){
+                    procInstanceName=LPNulls.replaceNull(testingContent[iLines][6]).toString();
+                    fileContentTable1Builder.append(procInstanceName);                    
+                    String suffixName=LPNulls.replaceNull(testingContent[iLines][7]).toString();
+                    fileContentTable1Builder.append(suffixName);                    
+                    String propName=LPNulls.replaceNull(testingContent[iLines][8]).toString();
+                    fileContentTable1Builder.append(propName);                    
+                    String propValue=LPNulls.replaceNull(testingContent[iLines][9]).toString();
+                    fileContentTable1Builder.append(propValue);                    
+                    Parameter parm=new Parameter();
+//                    parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
+//                    procInstanceName+"-"+suffixName);  
+                    String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
+                        procInstanceName+"-"+suffixName, propName, propValue);
+                    functionRelatedObjects=new JSONArray();                      
+                    if (diagn.toUpperCase().contains("CREATED"))
+                        functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "propertyCreated <*1*>", new Object[]{diagn});
+                    else
+                        functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "propertyNOTCreated <*1*>", new Object[]{diagn});
+                    testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                    
+                }else{    
                 ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
                 if (clssEnvMonSampleController.getFunctionFound()){
                     functionRelatedObjects=clssEnvMonSampleController.getFunctionRelatedObjects();
@@ -156,6 +189,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                     }
                     clssEnvMonSampleController=null;
                 }
+                }
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
                                     
@@ -216,8 +250,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }               
-    }
-
+    }   
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

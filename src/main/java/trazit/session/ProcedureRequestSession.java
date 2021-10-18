@@ -12,6 +12,7 @@ import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATO
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
+import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.responsemessages.ResponseMessages;
 import functionaljavaa.testingscripts.TestingAuditIds;
 import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
@@ -36,6 +37,7 @@ public class ProcedureRequestSession {
     private String actionName;
     private String dbName;
     private Token token;
+    private Token previousToken;
     private String tokenStr;
     private String language;
     private Boolean isForTesting;
@@ -47,6 +49,7 @@ public class ProcedureRequestSession {
     private TestingBusinessRulesVisited busRuleVisited;
     private TestingMessageCodeVisited msgCodeVisited;
     private ResponseMessages rspMessages;
+    private BusinessRules busRulesTesting;
     
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
         try{
@@ -102,6 +105,7 @@ public class ProcedureRequestSession {
                         return;                             
                 }
                 this.token=tokn;
+                this.previousToken=tokn;
                 this.tokenStr=finalToken;
             }
             this.procedureInstance=procInstanceName;
@@ -170,7 +174,10 @@ public class ProcedureRequestSession {
     public void killIt(){
 //        if (!this.isForQuery) 
             this.theSession=null;
-        if (this.isForQuery!=null && !this.isForQuery) this.token=null;
+        if (this.isForQuery!=null && !this.isForQuery){
+            this.token=null;
+            this.previousToken=null;
+        }
         this.actionName=null;
         this.dbName=null;
         this.isForTesting=null;
@@ -197,6 +204,9 @@ public class ProcedureRequestSession {
     }
     public Token getToken(){
         return this.token;
+    }
+    public Token getPreviousToken(){
+        return this.previousToken;
     }
     public String getTokenString(){
         return this.tokenStr;
@@ -232,6 +242,10 @@ public class ProcedureRequestSession {
     public TestingMessageCodeVisited getTestingMessageCodeVisitedObj(){
         return this.msgCodeVisited;
     }
+    public BusinessRules getBusinessRulesTesting(){
+        return this.busRulesTesting;
+    }
+    
     
     public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
         return getInstanceForQueries(req, resp, isTesting, false);
@@ -296,6 +310,18 @@ public class ProcedureRequestSession {
             return null;                             
         }                        */
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allFine", null);
+    }
+    public void setBusinessRulesTesting(BusinessRules br){
+        this.busRulesTesting=br;
+        return;
+    }
+    public void setAlternativeToken(Token newToken){
+        this.previousToken=new Token(this.tokenStr);
+        this.token=new Token(this.tokenStr);//newToken;
+    }
+    public void setMainToken(){        
+        this.token=new Token(this.tokenStr);
+        this.previousToken=new Token(this.tokenStr);
     }
 
 }

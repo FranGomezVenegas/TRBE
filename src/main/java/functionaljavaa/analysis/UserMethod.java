@@ -8,9 +8,16 @@ package functionaljavaa.analysis;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
+import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.sop.UserSop.userSopStatuses;
+import functionaljavaa.user.UserProfile;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Arrays;
+import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -170,6 +177,120 @@ public class UserMethod {
         }
         return diagnoses;        
     }
+    
+    public static final Object[][] getUserAnalysisMethodCerttifByProcess(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName){                
+        String viewName = TblsData.ViewUserAndAnalysisMethodCertificationView.TBL.getName();
+       String DIAGNOSES_ERROR_CODE = "DIAGNOSES_ERROR_CODE";
+        
+        if (fieldsToReturn.length<=0){
+            String[][] getUserProfileNEW = new String[1][2];
+            getUserProfileNEW[0][0]=DIAGNOSES_ERROR_CODE;
+            getUserProfileNEW[0][1]="No fields specified for fieldsToReturn";
+            return getUserProfileNEW;}
+                    
+        if ((filterFieldName==null) || (filterFieldValue==null) || (procInstanceName==null)){
+            String[][] getUserProfileNEW = new String[1][4];
+            getUserProfileNEW[0][0]=DIAGNOSES_ERROR_CODE;
+            getUserProfileNEW[0][1]="filterFieldName and/or filterFieldValue and/or procInstanceName are null and this is not expected";
+            if (filterFieldName==null){getUserProfileNEW[0][2]="filterFieldName is null";}else{getUserProfileNEW[0][2]="filterFieldName="+Arrays.toString(filterFieldName);}
+            if (filterFieldValue==null){getUserProfileNEW[0][3]="filterFieldValue is null";}else{getUserProfileNEW[0][3]="filterFieldValue="+Arrays.toString(filterFieldValue);}
+            return getUserProfileNEW;}       
+                
+        StringBuilder query = new StringBuilder(0);
+        for(String currProcInstanceName: procInstanceName){ 
+            Object[] viewExistInSchema= Rdbms.dbViewExists(currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())){
+                query.append("(select ");
+                for(String fRet: fieldsToReturn){
+                    if (fRet!=null && fRet.length()>0){
+                        if ("procedure_name".equalsIgnoreCase(fRet))
+                            query.append("'"+currProcInstanceName+"'").append(",");
+                        else
+                            query.append(fRet).append(",");
+                    }
+                }
+                query.deleteCharAt(query.length() - 1);
+
+                if (currProcInstanceName.contains(GlobalVariables.Schemas.DATA.getName())){
+                    query.append(" from \"").append(currProcInstanceName).append("\".").append(viewName).append(" where 1=1");}
+                else{query.append(" from \"").append(currProcInstanceName).append("-data\".").append(viewName).append(" where 1=1");}
+                for(String fFN: filterFieldName){
+                    query.append(" and ").append(fFN); 
+                    if (!fFN.contains("null")){query.append("= ?");}
+                }
+                query.append(") union ");
+            }else
+                LPPlatform.saveMessageInDbErrorLog("", new Object[]{currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName}, 
+                        new Object[]{viewName, viewName, "getUserAnalysisMethodCerttifByProcess", 290}, "view not exist in this given schema", new Object[0]);
+        }       
+        for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
+        
+        
+        Object[] filterFieldValueAllSchemas = new Object[filterFieldValue.length*procInstanceName.length];
+        Integer iFldValue=0;
+        for(String sPref: procInstanceName){
+            for(Object fVal: filterFieldValue){
+                filterFieldValueAllSchemas[iFldValue]=fVal;    
+                iFldValue++;
+            }
+        }               
+        try{
+            ResultSet res = Rdbms.prepRdQuery(query.toString(), filterFieldValueAllSchemas);         
+            res.last();
+            Integer numLines=res.getRow();
+            if (numLines==0)return null;
+                
+            
+            Integer numColumns=fieldsToReturn.length;
+            res.first();
+            Object[][] getUserProfileNEW=new Object[numLines][numColumns];
+            for (Integer inumLines=0;inumLines<numLines;inumLines++){
+                for (Integer inumColumns=0;inumColumns<numColumns;inumColumns++)
+                    getUserProfileNEW[inumLines][inumColumns]=res.getObject(inumColumns+1);                
+                res.next();
+            }
+            return getUserProfileNEW;                
+        }catch(SQLException ex){
+            Object[] trpErr=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new String[]{ex.getMessage()});
+            return LPArray.array1dTo2d(trpErr, trpErr.length);            
+        }
+    }
+    public static Object[][] getNotCertifAnaMethCertif( String userInfoId, String procInstanceNameName, String[] fieldsToRetrieve) {
+        Object[] userSchemas = null;
+        if (procInstanceNameName.contains("ALL")){
+            UserProfile usProf = new UserProfile();
+            userSchemas = usProf.getAllUserProcedurePrefix(userInfoId);
+        }
+        else{
+            userSchemas = new String[1];
+            userSchemas[0]=procInstanceNameName;
+        }
+
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSchemas[0].toString())){
+            return LPArray.array1dTo2d(userSchemas, userSchemas.length);
+        }
+        String[] filterFieldName = new String[2];
+        Object[] filterFieldValue = new Object[2];
+        String[] fieldsToReturn = new String[0];
+
+        filterFieldName[0]=TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName();
+        filterFieldValue[0]=userInfoId;
+        filterFieldName[1]=TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName();
+        filterFieldValue[1]=userSopStatuses.NOTPASS.getLightCode();
+        if (fieldsToRetrieve!=null){            
+            for (String fv: fieldsToRetrieve){
+                if (!LPArray.valueInArray(fieldsToReturn, fv)){
+                    fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, fv);
+                }
+            }
+        }else{
+            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName());
+            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName());
+        }
+        return getUserAnalysisMethodCerttifByProcess(filterFieldName, filterFieldValue, fieldsToReturn, (String[]) userSchemas);     
+    }
+    
+    
 }
 
 
