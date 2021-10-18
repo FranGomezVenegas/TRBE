@@ -461,8 +461,8 @@ public class SampleAPIfrontend extends HttpServlet {
                         sampleFieldToRetrieveArr=LPArray.addValueToArray1D(sampleFieldToRetrieveArr, sampleFieldToRetrieve.split("\\|"));
                       
                     myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.Sample.TBL.getName(),
-                            new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName(), TblsData.Sample.FLD_REVIEWED.getName()+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()},
-                            new Object[]{true, true}, 
+                            new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName(), "("+TblsData.Sample.FLD_REVIEWED.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsData.Sample.FLD_REVIEWED.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+")"},
+                            new Object[]{true, false, null}, 
                             sampleFieldToRetrieveArr, 
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()});
                     Rdbms.closeRdbms();
@@ -626,7 +626,7 @@ public class SampleAPIfrontend extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);      
          } finally {
             // release database resources
-            try {
+            try {                
                 procReqInstance.killIt();
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

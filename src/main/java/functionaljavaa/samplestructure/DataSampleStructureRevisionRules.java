@@ -54,6 +54,34 @@ public class DataSampleStructureRevisionRules {
         private final char multiValueSeparator;       
     }
     
+    public enum DataSampleStructureRevisionErrorTrapping{ 
+        SAMPLEANALYSIS_AUTHOR_CANNOTBE_ITSREVIEWER("SampleAnalysisAuthorCannotBeReviewer", "", ""),
+        SAMPLEANALYSIS_AUTHOR_CANNOTBE_SAMPLEREVIEWER("SampleAnalysisAuthorCannotBeSampleReviewer", "", ""),
+        SAMPLEANALYSIS_REVIEWER_CANNOTBE_SAMPLEREVIEWER("SampleAnalysisReviewerCannotBeSampleReviewer", "", ""),
+        SAMPLEANALYSIS_REVIEWER_CANNOTBE_TESTINGROUPREVIEWER("SampleAnalysisReviewerCannotBeTestingGroupReviewer", "", ""),
+        SAMPLEANALYSIS_ALREADYRVIEWED("sampleAnalysisAlreadyReviewed", "", ""),
+        SAMPLE_REVIEWER_CANNOTBE_TESTINGROUPREVIEWER("SampleReviewerCannotBeTestingGroupReviewer", "", ""),
+        
+
+
+        ;
+        private DataSampleStructureRevisionErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
+    
+    
+    
     public static Object[] sampleReviewRulesAllowed(Integer sampleId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
@@ -73,19 +101,20 @@ public class DataSampleStructureRevisionRules {
                 new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyAuthorIsEnable[0].toString())){
                 if (LPArray.valueInArray(LPArray.getColumnFromArray2D(sampleInfo, 0), token.getPersonName()))
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleAnalysisAuthorCannotBeSampleReviewer", null);    
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureRevisionErrorTrapping.SAMPLEANALYSIS_AUTHOR_CANNOTBE_SAMPLEREVIEWER.getErrorCode(), null);    
             }
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyTestReviewerIsEnable[0].toString())){
                 if (LPArray.valueInArray(LPArray.getColumnFromArray2D(sampleInfo, 1), token.getPersonName()))
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleAnalysisReviewerCannotBeSampleReviewer", null);    
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureRevisionErrorTrapping.SAMPLEANALYSIS_REVIEWER_CANNOTBE_SAMPLEREVIEWER.getErrorCode(), null);    
             }            
         }
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyTestingGroupReviewerIsEnable[0].toString())){
             String[] fieldsToRetrieve=new String[]{TblsData.SampleRevisionTestingGroup.FLD_REVISION_BY.getName()};
             Object[][] testingGroupInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(),
                 new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToRetrieve);
-            if (LPArray.valueInArray(LPArray.getColumnFromArray2D(testingGroupInfo, 1), token.getPersonName()))
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleAnalysisReviewerCannotBeTestingGroupReviewer", null);    
+            Object[] testingGroupInfo1D=LPArray.getColumnFromArray2D(testingGroupInfo, 0);
+            if (LPArray.valueInArray(testingGroupInfo1D, token.getPersonName()))
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureRevisionErrorTrapping.SAMPLE_REVIEWER_CANNOTBE_TESTINGROUPREVIEWER.getErrorCode(), null);    
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "OK", null);
         
@@ -95,12 +124,12 @@ public class DataSampleStructureRevisionRules {
     public static Object[] reviewSampleAnalysisRulesAllowed(Integer testId, String[] tstFldName, Object[][] tstFldValues){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        Object[] isSampleAnalysisAuthorCanReviewEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleStructureRevisionRls.SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO.getAreaName(), DataSampleStructureRevisionRls.SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO.getTagName());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleAnalysisAuthorCanReviewEnable[0].toString())){
+        Object[] isSampleAnalysisAuthorCanBeReviewerTooEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleStructureRevisionRls.SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO.getAreaName(), DataSampleStructureRevisionRls.SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO.getTagName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleAnalysisAuthorCanBeReviewerTooEnable[0].toString())){
             if (LPArray.valueInArray(LPArray.getColumnFromArray2D(tstFldValues, LPArray.valuePosicInArray(tstFldName, TblsData.SampleAnalysis.FLD_ANALYST.getName())), token.getPersonName()))
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleAnalysisAuthorCannotBeReviewer", null);
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureRevisionErrorTrapping.SAMPLEANALYSIS_AUTHOR_CANNOTBE_ITSREVIEWER.getErrorCode(), null);
         }       
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleAnalysisAuthorCannotBeReviewer", null);        
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "OK", null);        
     }
 
     public static Object[] reviewTestingGroupRulesAllowed(Integer sampleId, String testingGroup){
