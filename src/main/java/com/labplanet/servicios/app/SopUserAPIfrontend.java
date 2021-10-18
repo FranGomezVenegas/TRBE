@@ -33,6 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 /**
  *
@@ -302,9 +303,9 @@ public class SopUserAPIfrontend extends HttpServlet {
         JSONObject columns = new JSONObject();        
         for (Object[] curSop: userSops){
             JSONObject sop = new JSONObject();
+            sop=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curSop);
             Boolean columnsCreated =false;
             for (int yProc=0; yProc<userSops[0].length; yProc++){
-                sop.put(fieldsToRetrieve[yProc], curSop[yProc]);
                 if (!columnsCreated){
                     columns.put("column_"+yProc, fieldsToRetrieve[yProc]);
                 }                       
