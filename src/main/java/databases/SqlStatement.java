@@ -21,7 +21,7 @@ import lbplanet.utilities.LPPlatform;
 public class SqlStatement {
     public enum WHERE_FLDVALUES_ARRAY_TYPES{NUMBER, INTEGER, BOOLEAN, STRING}
     
-    public enum WHERECLAUSE_TYPES{IS_NULL(" is null"), IS_NOT_NULL(" is not null"), NULL("NULL"), IN("IN"), NOT_IN("NOT IN"), EQUAL("="), LIKE("LIKE"), BETWEEN("BETWEEN"),
+    public enum WHERECLAUSE_TYPES{IS_NULL(" is null"), IS_NOT_NULL(" is not null"), NULL("NULL"), IN("IN"), NOT_IN("NOT IN"), EQUAL("="), NOT_EQUAL("<>"), LIKE("LIKE"), BETWEEN("BETWEEN"),
         LESS_THAN_STRICT("<"), LESS_THAN("<="), GREATER_THAN_STRICT(">"), GREATER_THAN(">="),
         OR("or");
         private final String clause;
@@ -218,6 +218,9 @@ public class SqlStatement {
                 }
                 queryWhere.deleteCharAt(queryWhere.length() - 1);
                 queryWhere.append(")");
+            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause())) {
+                queryWhere.append(fn).append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
                 queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
