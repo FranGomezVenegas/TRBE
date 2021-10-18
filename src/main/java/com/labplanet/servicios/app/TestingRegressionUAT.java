@@ -9,6 +9,7 @@ import databases.Rdbms;
 import databases.TblsReqs;
 import databases.TblsTesting;
 import databases.Token;
+import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.rowAddFields;
@@ -29,6 +30,8 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import static lbplanet.utilities.LPPlatform.LAB_FALSE;
+import static lbplanet.utilities.LPPlatform.trapMessage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
@@ -175,7 +178,8 @@ public class TestingRegressionUAT extends HttpServlet {
                 out.println(msgStr);
                 return;
             }        
-
+            BusinessRules bi=new BusinessRules(procInstanceName, scriptId);
+            procReqInstance.setBusinessRulesTesting(bi);
             LPTestingOutFormat.cleanLastRun(procInstanceName, scriptId);
             LPTestingOutFormat.getIdsBefore(procInstanceName, scriptId, scriptTblInfo[0]);
             
@@ -205,6 +209,14 @@ public class TestingRegressionUAT extends HttpServlet {
                     Logger.getLogger("Active script steps for the script "+scriptId.toString()+" Not found"); 
                     return;
                 }        
+                String userProceduresList=token.getUserProcedures();
+                userProceduresList=userProceduresList.replace("[", "");
+                userProceduresList=userProceduresList.replace("]", "");        
+                if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName)){
+                    out.println(Arrays.toString(trapMessage(LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE.getErrorCode(), 
+                        new String[]{token.getUserName(), procInstanceName, userProceduresList})));
+                    return;                    
+                }                
                 String[] actionsList=null;
                 for (Object[] curStep: scriptStepsTblInfo){
                     Object[] theProcActionEnabled = null;
