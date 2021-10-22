@@ -101,12 +101,12 @@ public class ClassEnvMonSample {
                         fieldNames=argValues[2].toString().split("\\|");
                         fieldValues=LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|"));
                     }                   
-                    if (argValues[5]==null){
+                    if (argValues[6]==null){
                         actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV, 
                             fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
                     }else{
                         actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV,  
-                            fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
+                            fieldNames, fieldValues, (String) argValues[4], (String) argValues[5], (Integer) argValues[6]);
                     }
 
                     //actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", argValues);
