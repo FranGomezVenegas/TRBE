@@ -189,9 +189,11 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put("header_info", AppHeaderAPI(request, response));
                     jsonObj.put("procedures_list", procedureListInfo(request, response));
                     jsonObj.put("all_my_sops", SopUserAPIfrontend.AllMySops(request, response));
-                    jsonObj.put("my_pending_sops", SopUserAPIfrontend.MyPendingSops(request, response));
+//                    jsonObj.put("my_pending_sops", SopUserAPIfrontend.MyPendingSops(request, response));
                     jsonObj.put("procedures_sops", SopUserAPIfrontend.ProceduresSops(request, response));
                     jsonObj.put("sop_tree_list_element", SopUserAPIfrontend.SopTreeListElements(request, response));                    
+                    jsonObj.put("all_my_analysis_methods", AnalysisMethodCertifUserAPIfrontend.AllMyAnalysisMethodCertif(request, response));
+//                    jsonObj.put("my_pending_analysis_methods", AnalysisMethodCertifUserAPIfrontend.MyPendingAnalysisMethodCertif(request, response));
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;                                   
                 case TOKEN_VALIDATE_ESIGN_PHRASE:     
