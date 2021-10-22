@@ -5,6 +5,7 @@
  */
 package lbplanet.utilities;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -218,6 +219,18 @@ public class LPDate {
         Period between = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
         Duration duration = Duration.between(startDate, endDate);
         return duration.getSeconds();
+    }
+    public static BigDecimal SecondsInDateRange(LocalDateTime startDate, LocalDateTime endDate, Boolean includeMilis){
+        //Period between = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
+        BigDecimal durSecs = new BigDecimal(Duration.between(startDate, endDate).getSeconds());
+        if (!includeMilis) return durSecs;
+        BigDecimal durMillis=new BigDecimal(Duration.between(startDate, endDate).getNano());
+        durMillis=durMillis.divide(new BigDecimal(1000000));
+        durMillis=durMillis.divide(new BigDecimal(1000));
+        durMillis=durMillis.add(durSecs);
+        //long durMillis = Duration.between(startDate, endDate).getNano()/1000000/100;
+        return durMillis;
+                
     }
     
 }
