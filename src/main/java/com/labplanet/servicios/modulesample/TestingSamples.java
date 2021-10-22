@@ -14,6 +14,7 @@ import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
@@ -76,6 +78,7 @@ public class TestingSamples extends HttpServlet {
             
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
+                LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 tstAssertSummary.increaseTotalTests();                    
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
                 
@@ -107,7 +110,7 @@ public class TestingSamples extends HttpServlet {
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
                     Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert));
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                 }
                 fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                

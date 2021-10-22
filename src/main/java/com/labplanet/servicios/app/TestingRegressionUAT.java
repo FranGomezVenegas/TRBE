@@ -193,8 +193,15 @@ public class TestingRegressionUAT extends HttpServlet {
             request.setAttribute(LPTestingParams.SCRIPT_ID, scriptId);
             request.setAttribute(LPTestingParams.SCHEMA_PREFIX, procInstanceName);
             request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, "eyJ1c2VyREIiOiJsYWJwbGFuZXQiLCJlU2lnbiI6ImhvbGEiLCJ1c2VyREJQYXNzd29yZCI6Imxhc2xlY2h1Z2FzIiwidXNlcl9wcm9jZWR1cmVzIjoiW2VtLWRlbW8tYSwgcHJvY2Vzcy11cywgcHJvY2Vzcy1ldSwgZ2Vub21hLTFdIiwidHlwIjoiSldUIiwiYXBwU2Vzc2lvbklkIjoiMjk4NiIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IlR1ZSBNYXIgMTcgMDI6Mzg6MTkgQ0VUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEifQ.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.xiT6CxNcoFKAiE2moGhMOsxFwYjeyugdvVISjUUFv0Y");         
-            TestingServletsConfig endPoints = TestingServletsConfig.valueOf(testerName);
-
+            TestingServletsConfig endPoints=null;
+            try{
+            endPoints = TestingServletsConfig.valueOf(testerName);
+            }catch(Exception e){
+                String msgStr="Tester name ("+LPNulls.replaceNull(testerName)+") not recognized. The script cannot be started";
+                Logger.getLogger(msgStr); 
+                out.println(msgStr);
+                return;
+            }
             // The first endpoints block are regression testing and requires to check that the actions are enable for the process instance that it applies.
             //      This code below the cases should be considered as the checker
             // The dispatcher for both is exactly the same, there is not one for regression and another for unit testing.
@@ -206,7 +213,9 @@ public class TestingRegressionUAT extends HttpServlet {
                         new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_01.getName()},
                         new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())){
-                    Logger.getLogger("Active script steps for the script "+scriptId.toString()+" Not found"); 
+                    String msgStr=" Not found ANY active step for the script "+scriptId.toString();
+                    Logger.getLogger(msgStr); 
+                    out.println(msgStr);
                     return;
                 }        
                 String userProceduresList=token.getUserProcedures();
@@ -245,7 +254,9 @@ public class TestingRegressionUAT extends HttpServlet {
                 rd.forward(request,response);   
                 return;                       
             default:
-                Logger.getLogger("Tester name not recognized, "+testerName+". The tester cannot be completed"); 
+                String msgStr="Tester name ("+LPNulls.replaceNull(testerName)+") not recognized. The tester cannot be completed";
+                Logger.getLogger(msgStr); 
+                out.println(msgStr);
             }
         }
         finally{

@@ -16,6 +16,7 @@ import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
@@ -47,7 +49,8 @@ public class TestingInspLotRM extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String table1Header = TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTablesHeaders();
         Integer table1NumArgs=13;
-        
+        LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
+
         Object[] functionEvaluation=new Object[0];
         JSONArray functionRelatedObjects=new JSONArray();        
 
@@ -79,7 +82,7 @@ public class TestingInspLotRM extends HttpServlet {
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
                 stopPhrase=null;
-
+                LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 tstAssertSummary.increaseTotalTests();                    
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
 
@@ -141,7 +144,7 @@ public class TestingInspLotRM extends HttpServlet {
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
                         
                     Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert));
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                     if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString()) &&
                             !TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic()) ){
@@ -165,7 +168,7 @@ public class TestingInspLotRM extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase)).append("<br>");
+            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>");
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
 
             out.println(fileContentBuilder.toString());            

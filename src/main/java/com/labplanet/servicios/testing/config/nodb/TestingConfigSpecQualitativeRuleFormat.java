@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.testing.config.nodb;
 
-import databases.Rdbms;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPFrontEnd;
 import functionaljavaa.materialspec.ConfigSpecRule;
@@ -16,6 +15,7 @@ import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 
@@ -74,6 +75,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
 //if (iLines==42)
 //    System.out.print("h");
+                LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 tstAssertSummary.increaseTotalTests();
                     
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
@@ -103,7 +105,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
                     Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, new JSONArray(), tstAssert));
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, new JSONArray(), tstAssert, timeStartedStep));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
 
                     if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString()) &&

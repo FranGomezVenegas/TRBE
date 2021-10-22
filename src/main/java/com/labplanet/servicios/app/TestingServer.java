@@ -99,7 +99,18 @@ public class TestingServer extends HttpServlet {
             JsonArray build = Json.createArrayBuilder().add(Json.createObjectBuilder()//.add("repository", GlobalVariables.Schemas.APP.getName())
                     .add("table", TblsApp.Incident.TBL.getName()).build()).build();
             out.println(build); 
-LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
+
+                
+    LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
+String procInstanceName2="proc-deploy";
+Object[] isSampleTestingGroupGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName2, DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getTagName());
+out.println(Arrays.toString(isSampleTestingGroupGenericAutoApproveEnabled));
+
+
+LocalDateTime startDate=LocalDateTime.now();       
+LocalDateTime endDate=LocalDateTime.now().plusSeconds(2).plusNanos(514);
+out.println("Seconds difference="+" "+SecondsInDateRange(startDate, endDate, true));
+if (1==1) return;
 /*String procName="proc-deploy";
 BusinessRules br=new BusinessRules(procName, 999);
 String brName="sampleReviewer_canBeAnyTestingGroupReviewer";
@@ -108,14 +119,15 @@ out.println(brName+" Business rule value="+brValue);
 String ruleValue=Parameter.getBusinessRuleProcedureFile(procName, "procedure", brName);
 out.println("ruleValue using Parameter.getBusinessRuleProcedureFile = "+ruleValue);
 if (1==1) return;*/
+
 Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable("proc-deploy", "procedure", 
         "sampleGenericAutoApproveEnabled");            
 out.println(Arrays.toString(isReviewByTestingGroupEnable));
-LocalDateTime startDate=LocalDateTime.now();        
+startDate=LocalDateTime.now();        
 int[] plusDays=new int[]{0, 1, 2, 200, 400};
 for (int curPlusDays: plusDays){
-    LocalDateTime endDate=LocalDateTime.now().plusDays(curPlusDays);
-    out.println("Days difference="+String.valueOf(curPlusDays)+" "+SecondsInDateRange(startDate, endDate));
+    endDate=LocalDateTime.now().plusDays(curPlusDays);
+    out.println("Days difference="+String.valueOf(curPlusDays)+" "+SecondsInDateRange(startDate, endDate, false));
     long[] intervals=new long[]{-1, 0, 172000, 173000, 15280008, 18280008, 24560009, 34560009, 94560009};
     for (long interval:intervals){
         out.println("interval:"+interval+" "+Arrays.toString(IntervalsUtilities.isTheIntervalIntoTheDatesRange(interval, startDate, endDate)));

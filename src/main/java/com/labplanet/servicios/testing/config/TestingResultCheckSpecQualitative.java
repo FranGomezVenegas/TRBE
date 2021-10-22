@@ -175,7 +175,7 @@ Integer currentLine=0;
             tstAssertSummary.notifyResults();
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
             fileContentTable1Builder.append(tstOut.getFilePathName());
-            fileContentBuilder.append(LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, null)).append(fileContentTable1Builder)
+            fileContentBuilder.append(LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, null, null)).append(fileContentTable1Builder)
                     .append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
