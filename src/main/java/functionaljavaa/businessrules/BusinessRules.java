@@ -6,6 +6,8 @@
 package functionaljavaa.businessrules;
 
 import databases.Rdbms;
+import databases.SqlStatement;
+import databases.TblsProcedure;
 import databases.TblsTesting;
 import java.util.ArrayList;
 import lbplanet.utilities.LPPlatform;
@@ -21,10 +23,16 @@ public class BusinessRules {
         this.procedure=new ArrayList<RuleInfo>();
         this.data=new ArrayList<RuleInfo>();
         this.config=new ArrayList<RuleInfo>();
-        if (scriptId==null || procedureInstanceName==null) return;
-        Object[][] testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptBusinessRules.TBL.getName(), 
-            new String[]{TblsTesting.ScriptBusinessRules.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptBusinessRules.FLD_ACTIVE.getName()}, new Object[]{scriptId, true}, 
-            new String[]{TblsTesting.ScriptBusinessRules.FLD_REPOSITORY.getName(), TblsTesting.ScriptBusinessRules.FLD_RULE_NAME.getName(), TblsTesting.ScriptBusinessRules.FLD_RULE_VALUE.getName()});
+        //if (scriptId==null || procedureInstanceName==null) return;
+        Object[][] testingBusRulsInfo = null;
+        if (scriptId!=null && scriptId>0)
+            testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptBusinessRules.TBL.getName(), 
+                new String[]{TblsTesting.ScriptBusinessRules.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptBusinessRules.FLD_ACTIVE.getName()}, new Object[]{scriptId, true}, 
+                new String[]{TblsTesting.ScriptBusinessRules.FLD_REPOSITORY.getName(), TblsTesting.ScriptBusinessRules.FLD_RULE_NAME.getName(), TblsTesting.ScriptBusinessRules.FLD_RULE_VALUE.getName()});
+        else
+            testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_AREA.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_AREA.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testingBusRulsInfo[0][0].toString())) return;
         for (Object[] curObj: testingBusRulsInfo){
             if ("PROCEDURE".equalsIgnoreCase(curObj[0].toString()))
@@ -42,6 +50,20 @@ public class BusinessRules {
     ArrayList<RuleInfo> config;
     public String getProcedureBusinessRule(String ruleName){
         for (RuleInfo curElement : this.procedure) {
+            if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
+                return curElement.getRuleValue();
+        }
+        return "";
+    }
+    public String getConfigBusinessRule(String ruleName){
+        for (RuleInfo curElement : this.config) {
+            if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
+                return curElement.getRuleValue();
+        }
+        return "";
+    }
+    public String getDataBusinessRule(String ruleName){
+        for (RuleInfo curElement : this.data) {
             if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
                 return curElement.getRuleValue();
         }

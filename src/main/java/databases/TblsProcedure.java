@@ -363,6 +363,64 @@ public class TblsProcedure {
         private final String dbObjName;             
         private final String dbObjTypePostgres;           
     } 
+
+    public enum ProcedureBusinessRules{
+        TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_AREA, #FLD_RULE_NAME) )" +
+                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
+        FLD_AREA("area", LPDatabase.stringNotNull())        ,
+        FLD_RULE_NAME("rule_name", LPDatabase.stringNotNull())        ,
+        FLD_RULE_VALUE("rule_value", LPDatabase.string())        ,
+        ;
+        private ProcedureBusinessRules(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+        public String getName(){
+            return this.dbObjName;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param schemaNamePrefix - Procedure Instance where it applies
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = ProcedureInfo.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ProcedureInfo obj: ProcedureInfo.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        fieldsScript.append(currField[0]).append(" ").append(currField[1]);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;           
+    } 
+
     // Esta no tiene sentido a este nivel porque business rules a nivel de proceso son archivos, no tabla.
     //  La que tiene sentido está en TblsReqs porque es la declaración de cuales son las reglas de negocio del proceso
     //      según se definen en el Excel.
