@@ -5,6 +5,10 @@
  */
 package functionaljavaa.testingscripts;
 
+import databases.Token;
+import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
+
 /**
  *
  * @author User
@@ -18,6 +22,27 @@ public class LPTestingParams {
     public static final String SCRIPT_ID="scriptId";
     public static final String SCHEMA_PREFIX="procInstanceName";
     
+    public static void handleAlternativeToken(LPTestingOutFormat tstOut, Integer lineNumber){
+        ProcedureRequestSession reqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Object[][]  testingContent =tstOut.getTestingContent();
+        Integer alternativeTokenFldPosic = tstOut.getAlternativeTokenFldPosic();
+        if (alternativeTokenFldPosic==null) return;
+        if (alternativeTokenFldPosic==-1) return;
+        Token token = reqSession.getToken();
+        String userName = token.getUserName();
+        Object altTokenValue=null;
+        if (testingContent[0].length>=alternativeTokenFldPosic)
+            altTokenValue=testingContent[lineNumber][alternativeTokenFldPosic];
+        if (altTokenValue==null || altTokenValue.toString().length()==0)
+            reqSession.setMainToken();
+        else{
+            Token nwTokn = new Token(altTokenValue.toString());
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(nwTokn.getUserName()))
+                return;
+            reqSession.setAlternativeToken(nwTokn);
+        }
+        return;
+    }
     public enum TestingServletsConfig{
         NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT("/testing/config/testingConfigSpecQualitativeRuleFormat", "noDBSchema_config_SpecQualitativeRuleGeneratorChecker.txt", 1, "Rule;Text Spec;Separator"),
         NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK("/testing/config/ResultCheckSpecQualitative", "noDBSchema_config_specQualitative_resultCheck.txt", 1, "Result; rule; rule value(s); separator; list name"),
