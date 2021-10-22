@@ -286,10 +286,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      */
     public static Object[] isReadyForRevision(Integer sampleId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(), TblsData.Sample.FLD_READY_FOR_REVISION.getName());
+        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_READY_FOR_REVISION.getName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
             String[] sampleAnalysisFieldName=new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName()};
-            Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(),  
+            Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(),  
                     new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleAnalysisFieldName);
             if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
                 return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.READY_FOR_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});            
@@ -306,9 +306,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        Object[] sampleEvaluateStatusAutomatismForAutoApprove = sampleEvaluateStatusAutomatismForAutoApprove(sampleId, parentAuditAction, parentAuditId);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(sampleEvaluateStatusAutomatismForAutoApprove[0].toString())) 
-            return sampleEvaluateStatusAutomatismForAutoApprove;        
         Object[] diagnoses = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_READY_FOR_REVISION.getName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
             String[] sampleFieldName=new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName()};
@@ -322,7 +319,11 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                     new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
-
+//fgv 2021-10-21
+            Object[] sampleEvaluateStatusAutomatismForAutoApprove = sampleEvaluateStatusAutomatismForAutoApprove(sampleId, parentAuditAction, parentAuditId);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(sampleEvaluateStatusAutomatismForAutoApprove[0].toString())) 
+                return sampleEvaluateStatusAutomatismForAutoApprove;        
+//fgv 2021-10-21
             SampleAudit smpAudit = new SampleAudit();       
             smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_READY_FOR_REVISION.toString(), TblsData.Sample.TBL.getName(), 
                     sampleId, sampleId, null, null, fieldsForAudit, null);
@@ -542,6 +543,11 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Object[] isSampleGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleBusinessRules.SAMPLE_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleBusinessRules.SAMPLE_GENERICAUTOAPPROVEENABLED.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleGenericAutoApproveEnabled[0].toString()))
             return isSampleGenericAutoApproveEnabled;
+
+        Object[] readyForRevision = isReadyForRevision(sampleId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(readyForRevision[0].toString()))
+            return readyForRevision;
+        
         String sampleStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
         if (sampleStatusReviewed.length()==0)sampleStatusReviewed=SampleStatuses.REVIEWED.getStatusCode("");        
         String[] updFldsNames=new String[]{TblsData.Sample.FLD_STATUS.getName()};
@@ -598,7 +604,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             }                        
         }else{
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_REVIEWABLE.getErrorCode(), 
-                    new Object[]{LPNulls.replaceNull(sampleId), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), currStatus});                       
+                new Object[]{LPNulls.replaceNull(sampleId), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), currStatus});                       
         }
         return diagnoses;        
     }
