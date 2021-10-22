@@ -102,7 +102,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureEventsDiagnostic);                
             }
             if (Boolean.valueOf(argValues[10].toString()) || PROCDEPL_BUSINESS_RULES_PROPTS_FILS){
-                JSONArray createPropBusinessRules = functionaljavaa.requirement.ProcedureDefinitionToInstance.createPropBusinessRules(procName, procVersion, procInstanceName);
+                JSONArray createPropBusinessRules = functionaljavaa.requirement.ProcedureDefinitionToInstance.createBusinessRules(procName, procVersion, procInstanceName);
                 String[][] createPropBusinessRulesTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_SOP_META_DATA"},{createPropBusinessRules.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createPropBusinessRulesTbl);                
             }

@@ -162,13 +162,18 @@ public class Parameter {
         return getBusinessRuleInAppFile("parameter.config." + configFile + "_" + language, parameterName, callerInfo);
     }
 
-    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName) {
-        BusinessRules brTesting=ProcedureRequestSession.getInstanceForActions(null, null, null).getBusinessRulesTesting();
-        //BusinessRules br=new BusinessRules(procInstanceName);
-        if (brTesting!=null){
-            String brValue=brTesting.getProcedureBusinessRule(parameterName);
-            if (brValue.length()>0) return brValue;
+    private static String returnBusinessRuleValue(String valueToReturn, String procInstanceName, String area, String parameterName, Object[] callerInfo){        
+        if (valueToReturn==null || valueToReturn.length()==0)
+            LPPlatform.saveParameterPropertyInDbErrorLog("", procInstanceName+"-"+area, 
+                callerInfo, parameterName);
+        if (ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting()){
+            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
+            if (testingBusinessRulesVisitedObj!=null)
+                testingBusinessRulesVisitedObj.AddObject(procInstanceName, area, callerInfo[0].toString(), parameterName, valueToReturn);        
         }
+        return valueToReturn;
+    }
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
         String methodName = "NO TRACE"; 
@@ -181,14 +186,23 @@ public class Parameter {
         className = className.replace(".java", "");
         }
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        
-        String businessRuleInAppFile = getBusinessRuleInAppFile("parameter.config."+procInstanceName+"-"+suffixFile, parameterName, callerInfo);
 
-        TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
-        if (testingBusinessRulesVisitedObj!=null)
-            testingBusinessRulesVisitedObj.AddObject(procInstanceName, suffixFile, className, parameterName, businessRuleInAppFile);
-
-        return businessRuleInAppFile;
+        BusinessRules brTesting=ProcedureRequestSession.getInstanceForActions(null, null, null).getBusinessRulesTesting();
+        BusinessRules brProcInstance=ProcedureRequestSession.getInstanceForActions(null, null, null).getBusinessRulesProcInstance();
+        //BusinessRules br=new BusinessRules(procInstanceName);
+        if (brTesting!=null){
+            String brValue=brTesting.getProcedureBusinessRule(parameterName);
+            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo);
+        }
+        if (brProcInstance!=null){
+            String brValue=brProcInstance.getConfigBusinessRule(parameterName);
+            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo);
+            brValue=brProcInstance.getDataBusinessRule(parameterName);
+            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo);
+            brValue=brProcInstance.getProcedureBusinessRule(parameterName);
+            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo);
+        }
+        return returnBusinessRuleValue("", procInstanceName, suffixFile, parameterName, callerInfo);
     }
     
     private static String getBusinessRuleInAppFile(String fileUrl, String parameterName, Object[] callerInfo) {
