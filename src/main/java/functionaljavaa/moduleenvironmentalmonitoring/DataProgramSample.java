@@ -63,6 +63,10 @@ public class DataProgramSample{
      * @return
      */
     public Object[] logProgramSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation) {
+        return logProgramSample(programTemplate, programTemplateVersion, fieldName, fieldValue, programName, programLocation, null); 
+    }
+
+    public Object[] logProgramSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer numSamplesToLog) {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=instanceForActions.getProcedureInstance();
         ResponseMessages messages = instanceForActions.getMessages();
@@ -100,7 +104,10 @@ public class DataProgramSample{
                 }else
                     fieldValue[fieldPosic] = diagnosis[0][i];
             }
-            newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue);
+            if (numSamplesToLog!=null)
+                newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue, numSamplesToLog); 
+            else
+                newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
                 return newProjSample; //newProjSample=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, ":"));
             messages.addMainForSuccess("ClassEnvMonSample", EnvMonSampleAPIEndpoints.LOGSAMPLE.getSuccessMessageCode(), 
