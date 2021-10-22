@@ -21,6 +21,7 @@ import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
@@ -118,7 +120,8 @@ Integer currentLine=0;
             LPAPIArguments[] arguments = TestingLimitAndResult.DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT.getArguments();
 //numHeaderLines=testingContent.length-1;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
-currentLine=iLines;  
+                LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
+                currentLine=iLines;  
 //out.println(iLines);
 //if (currentLine==34) 
 //    out.println("parate aqui");
@@ -180,7 +183,7 @@ currentLine=iLines;
                 resSpecEvaluation=tstOut.checkMissingMandatoryParamValuesByCall(arguments, testingContent[iLines]);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){                    
                     Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert, timeStartedStep));
                 }else{
                     String schemaConfigName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.CONFIG.getName());
                     String schemaDataName=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
@@ -256,7 +259,7 @@ currentLine=iLines;
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
                     Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert, timeStartedStep));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
                 }
             } 
