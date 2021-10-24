@@ -943,6 +943,23 @@ new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, L
                     jArr=getActiveBatchData(fieldsToRetrieve, whereFieldsNameArr, whereFieldsValueArr);
                     jObj=new JSONObject();
                     jObj.put("active_batches", jArr);
+                    
+                    
+                    sampleFieldToRetrieve=argValues[6].toString();
+                    if (sampleFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve))
+                        sampleFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                    else 
+                        sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
+                    jArr=new JSONArray();
+                    Object[][] smpArr=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+                            new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_INCUBATION_PASSED.getName(), TblsData.Sample.FLD_INCUBATION2_PASSED.getName()}, 
+                            new Object[]{"Incubation", true, true}, sampleFieldToRetrieveArr);
+                    for (Object[] curSmp: smpArr){
+                        jArr.add(LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp));
+                    }
+                    jObj.put("samples_stillIncubationStageAndBothIncubCompleted", jArr);
+                    
+                    
                     int j=3;
                     for (int i=1;i<3;i++){
                         whereFieldsName=argValues[j].toString();j++;
