@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
+import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.investigation.ClassInvestigationController;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
@@ -235,6 +236,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.businessRulesTable());
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>");
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
 

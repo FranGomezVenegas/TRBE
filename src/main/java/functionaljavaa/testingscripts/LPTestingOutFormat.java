@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import databases.Rdbms;
 import static databases.Rdbms.dbGetIndexLastNumberInUse;
 import databases.TblsTesting;
+import functionaljavaa.businessrules.BusinessRules;
 import lbplanet.utilities.LPHashMap;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
@@ -1091,5 +1092,20 @@ public class LPTestingOutFormat {
             return recordFieldsByFilter[0][0].toString();
         }
         return fldInfo;
+    }
+    public static StringBuilder businessRulesTable(){
+        StringBuilder fileContentTable1Builder=new StringBuilder(0);
+        fileContentTable1Builder.append(LPTestingOutFormat.tableStart(""));            
+        fileContentTable1Builder.append(LPTestingOutFormat.headerStart()).append("Rule Name").append(LPTestingOutFormat.headerEnd());
+        fileContentTable1Builder.append(LPTestingOutFormat.headerStart()).append("Rule Value").append(LPTestingOutFormat.headerEnd());
+        Object[][] SessionBusinessRulesList = BusinessRules.SessionBusinessRulesList(); 
+        for (Object[] curRl: SessionBusinessRulesList){
+            fileContentTable1Builder.append(LPTestingOutFormat.rowStart()).append(LPTestingOutFormat.fieldStart())
+                    .append(curRl[0]).append(LPTestingOutFormat.fieldEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.fieldStart()).append(curRl[1]).append(LPTestingOutFormat.fieldEnd())
+                    .append(LPTestingOutFormat.rowEnd());
+        }
+        fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+        return fileContentTable1Builder;
     }
 }

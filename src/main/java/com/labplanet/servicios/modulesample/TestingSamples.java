@@ -6,7 +6,6 @@
 package com.labplanet.servicios.modulesample;
 
 import com.labplanet.servicios.app.TestingRegressionUAT;
-import databases.Rdbms;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -116,6 +115,7 @@ public class TestingSamples extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.businessRulesTable());            
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
 

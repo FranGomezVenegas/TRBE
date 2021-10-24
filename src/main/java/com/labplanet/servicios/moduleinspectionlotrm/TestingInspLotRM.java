@@ -168,6 +168,7 @@ public class TestingInspLotRM extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.businessRulesTable());            
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>");
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
 

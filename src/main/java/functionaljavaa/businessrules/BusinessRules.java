@@ -12,6 +12,7 @@ import databases.TblsTesting;
 import java.util.ArrayList;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -74,6 +75,80 @@ public class BusinessRules {
      .collect(Collectors.toList());
         return result.get(0).getRuleValue();
     }*/
+    public static Object[][] SessionBusinessRulesList(){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false);
+        BusinessRules bRProcInstance = procReqInstance.getBusinessRulesProcInstance();
+        BusinessRules bRTesting = procReqInstance.getBusinessRulesTesting();
+        Object[][] valsArr=new Object[][]{{}};
+        if (bRProcInstance!=null){
+            Integer totalRules=bRProcInstance.config.size()+bRProcInstance.data.size()+bRProcInstance.procedure.size();
+            valsArr=new Object[totalRules][2];                        
+        }        
+        int curBusRul=0;
+        if (bRTesting!=null){
+            for (int i=0;i<bRTesting.config.size();i++){
+                String brValue=bRProcInstance.getProcedureBusinessRule(bRTesting.config.get(i).getRuleName());
+                if (brValue.length()>0){
+                    valsArr[curBusRul][0]=" *** "+bRTesting.config.get(i).getRuleName();
+                    valsArr[curBusRul][1]=bRTesting.config.get(i).getRuleValue()+" ("+brValue+")";
+                }else{                    
+                    valsArr[curBusRul][0]=bRTesting.config.get(i).getRuleName();
+                    valsArr[curBusRul][1]=bRTesting.config.get(i).getRuleValue();
+                }
+                curBusRul++;
+            }
+            for (int i=0;i<bRTesting.data.size();i++){
+                String brValue=bRProcInstance.getProcedureBusinessRule(bRTesting.data.get(i).getRuleName());
+                if (brValue.length()>0){
+                    valsArr[curBusRul][0]=" *** "+bRTesting.data.get(i).getRuleName();
+                    valsArr[curBusRul][1]=bRTesting.data.get(i).getRuleValue()+" ("+brValue+")";
+                }else{                    
+                    valsArr[curBusRul][0]=bRTesting.data.get(i).getRuleName();
+                    valsArr[curBusRul][1]=bRTesting.data.get(i).getRuleValue();
+                }
+                curBusRul++;
+            }
+            for (int i=0;i<bRTesting.procedure.size();i++){
+                String brValue=bRProcInstance.getProcedureBusinessRule(bRTesting.procedure.get(i).getRuleName());
+                if (brValue.length()>0){
+                    valsArr[curBusRul][0]=" *** "+bRTesting.procedure.get(i).getRuleName();
+                    valsArr[curBusRul][1]=bRTesting.procedure.get(i).getRuleValue()+" ("+brValue+")";
+                }else{                    
+                    valsArr[curBusRul][0]=bRTesting.procedure.get(i).getRuleName();
+                    valsArr[curBusRul][1]=bRTesting.procedure.get(i).getRuleValue();
+                }
+                curBusRul++;
+            }
+           //for (RuleInfo curR: bRTesting.config.)
+        }
+        if (bRProcInstance!=null){
+            for (int i=0;i<bRProcInstance.config.size();i++){
+                String brValue=bRTesting.getProcedureBusinessRule(bRProcInstance.config.get(i).getRuleName());
+                if (brValue.length()==0){                
+                    valsArr[curBusRul][0]=bRProcInstance.config.get(i).getRuleName();
+                    valsArr[curBusRul][1]=bRProcInstance.config.get(i).getRuleValue();
+                    curBusRul++;
+                }
+            }
+            for (int i=0;i<bRProcInstance.data.size();i++){
+                String brValue=bRTesting.getProcedureBusinessRule(bRProcInstance.data.get(i).getRuleName());
+                if (brValue.length()==0){                
+                    valsArr[curBusRul][0]=bRProcInstance.data.get(i).getRuleName();
+                    valsArr[curBusRul][1]=bRProcInstance.data.get(i).getRuleValue();
+                    curBusRul++;
+                }
+            }
+            for (int i=0;i<bRProcInstance.procedure.size();i++){
+                String brValue=bRTesting.getProcedureBusinessRule(bRProcInstance.procedure.get(i).getRuleName());
+                if (brValue.length()==0){                
+                    valsArr[curBusRul][0]=bRProcInstance.procedure.get(i).getRuleName();
+                    valsArr[curBusRul][1]=bRProcInstance.procedure.get(i).getRuleValue();
+                    curBusRul++;
+                }
+            }
+        }
+        return valsArr;
+    }
 }
 class RuleInfo{
     public RuleInfo(String ruleName, String ruleValue){
@@ -83,6 +158,5 @@ class RuleInfo{
     public String getRuleValue(){return this.ruleValue;}
     public String getRuleName(){return this.ruleName;}
     String ruleName;
-    String ruleValue;
-    
+    String ruleValue;    
 }
