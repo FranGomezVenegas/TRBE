@@ -154,7 +154,7 @@ public class SampleAudit {
                     TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
                 String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-                    "SampleAuditEvents", null, action, curLang.getName(), false);
+                    "dataSampleAuditEvents", null, action, curLang.getName(), false);
                 if (propValue==null || propValue.length()==0)propValue=action;
                 fieldNames = LPArray.addValueToArray1D(fieldNames, 
                         TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));

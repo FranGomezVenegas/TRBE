@@ -50,6 +50,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         DOC_API_ENDPOINTS_IN_DB("DOC_API_ENDPOINTS_IN_DB", "documentedApiEndpointsInDb_success: <*1*>", new LPAPIArguments[]{}),
         DOC_API_BUSINESS_RULES_IN_DB("DOC_API_BUSINESS_RULES_IN_DB", "documentedApiBusinessRulesInDb_success", new LPAPIArguments[]{}),
         DOC_API_MESSAGE_CODES_IN_DB("DOC_API_MESSAGE_CODES_IN_DB", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{}),
+        DOC_API_AUDIT_EVENTS_IN_DB("DOC_API_AUDIT_EVENTS_IN_DB", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{}),
         ;
         private ModuleDefinitionAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;

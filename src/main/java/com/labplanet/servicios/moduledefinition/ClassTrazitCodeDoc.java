@@ -1,6 +1,7 @@
 package com.labplanet.servicios.moduledefinition;
 
 import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIEndpoints;
+import functionaljavaa.platform.doc.AuditEventsDoc;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.platform.doc.PropertiesToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -38,6 +39,9 @@ public class ClassTrazitCodeDoc {
                     break;
                 case DOC_API_BUSINESS_RULES_IN_DB:
                     PropertiesToRequirements.businessRulesDefinition();
+                    break;
+                case DOC_API_AUDIT_EVENTS_IN_DB:
+                    AuditEventsDoc.AuditEventsDefinition();
                     break;
             }    
         if (actionDiagnoses!=null)

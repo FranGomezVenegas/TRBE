@@ -31,7 +31,7 @@ public class AppIncident {
     public enum IncidentStatuses{
         LOGGED, CONFIRMED, INPROGRESS, WAIT_USER_CONFIRMATION, CLOSED
     }
-    enum IncidentAuditEvents{NEW_INCIDENT_CREATED, CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT}
+    public enum IncidentAuditEvents{NEW_INCIDENT_CREATED, CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT}
     
     enum IncidentAPIErrorMessages{
         AAA_FILE_NAME("errorTrapping"),

@@ -113,7 +113,7 @@ public class DataBatchIncubator {
          */
         UNSTRUCTURED}
     enum BatchIncubatorMoments{START, END}
-    enum BatchAuditEvents{BATCH_CREATED, BATCH_UPDATED, BATCH_STARTED, BATCH_ENDED, BATCH_SAMPLE_ADDED, BATCH_SAMPLE_MOVED, BATCH_SAMPLE_REMOVED, BATCH_SAMPLE_REMOVED_BY_OVERRIDE, BATCH_ASSIGN_INCUBATOR}
+    public enum BatchAuditEvents{BATCH_CREATED, BATCH_UPDATED, BATCH_STARTED, BATCH_ENDED, BATCH_SAMPLE_ADDED, BATCH_SAMPLE_MOVED, BATCH_SAMPLE_REMOVED, BATCH_SAMPLE_REMOVED_BY_OVERRIDE, BATCH_ASSIGN_INCUBATOR}
 //    enum BatchIncubatorUpdateFieldsNotAllowed{a("f"), b("f")};//    enum BatchIncubatorUpdateFieldsNotAllowed{a("f"), b("f")};
 
     /**
