@@ -9,7 +9,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
-import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.investigation.ClassInvestigationController;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
@@ -56,7 +55,6 @@ public class TestingEnvMonitSamples extends HttpServlet {
         String table1Header = TestingServletsConfig.DB_SCHEMADATA_ENVMONIT_SAMPLES.getTablesHeaders();
         Integer table1NumArgs=13;
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
-        
         Object[] functionEvaluation=new Object[0];
         JSONArray functionRelatedObjects=new JSONArray();        
 
@@ -68,6 +66,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
         HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        
+
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());
         Object[][]  testingContent =tstOut.getTestingContent();
         testingContent=LPArray.addColumnToArray2D(testingContent, new JSONArray());
@@ -100,6 +99,10 @@ public class TestingEnvMonitSamples extends HttpServlet {
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
+//out.println(iLines+" "+actionName);      
+//if (iLines==41){
+//    out.println("stop here");
+//}
                 if (tstOut.getAuditReasonPosic()!=-1)
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
 

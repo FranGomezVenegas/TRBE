@@ -1101,9 +1101,9 @@ public class LPTestingOutFormat {
         Object[][] SessionBusinessRulesList = BusinessRules.SessionBusinessRulesList(); 
         for (Object[] curRl: SessionBusinessRulesList){
             fileContentTable1Builder.append(LPTestingOutFormat.rowStart()).append(LPTestingOutFormat.fieldStart())
-                    .append(curRl[0]).append(LPTestingOutFormat.fieldEnd());
+                .append(curRl[0]).append(LPTestingOutFormat.fieldEnd());
             fileContentTable1Builder.append(LPTestingOutFormat.fieldStart()).append(curRl[1]).append(LPTestingOutFormat.fieldEnd())
-                    .append(LPTestingOutFormat.rowEnd());
+                .append(LPTestingOutFormat.rowEnd());
         }
         fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
         return fileContentTable1Builder;
