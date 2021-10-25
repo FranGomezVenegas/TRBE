@@ -29,7 +29,7 @@ public class Parameter {
     public enum PropertyFilesType{TRANSLATION_DIR_PATH("translationDirPath", "="),
         PROCEDURE_BUSINESS_RULES_DIR_PATH("procedureBusinessRulesDirPath", ":"),
         ENDPOINTDOCUMENTATION("EndPointDocumentation", ":"),
-        AUDITEVENTS("AUDITEVENTS", ":")
+        AUDITEVENTS("AuditEventsDirPath", ":")
         ;
         private PropertyFilesType(String appConfigParamName, String appConfigSeparator){
             this.appConfigParamName=appConfigParamName;
@@ -364,6 +364,9 @@ public class Parameter {
             case ENDPOINTDOCUMENTATION:
                 fileDir = propConfig.getString(PropertyFilesType.ENDPOINTDOCUMENTATION.getAppConfigParamName());
                 break;
+            case AUDITEVENTS:
+                fileDir = propConfig.getString(PropertyFilesType.AUDITEVENTS.getAppConfigParamName());
+                break;                
             default:
                 return LPPlatform.LAB_FALSE+"argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE, ENDPOINT_DOC_FOLDER";
         }
