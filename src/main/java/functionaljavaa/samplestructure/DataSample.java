@@ -36,7 +36,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author Administrator
  */
-public class DataSample {    
+public class DataSample {
+    static String AUTO_APPROVE_USER="AUTO_APPROVE";
     static String SAMPLE_STATUSES_WHEN_NO_PROPERTY="LOGGED|RECEIVED|INCOMPLETE|COMPLETE|CANCELED";
     static String SAMPLE_STATUSES_LABEL_EN_WHEN_NO_PROPERTY="Logged|RECEIVED|INCOMPLETE|COMPLETE|CANCELED";
     static String SAMPLE_STATUSES_LABEL_ES_WHEN_NO_PROPERTY="Registrada|RECEIVED|INCOMPLETE|COMPLETE|CANCELED";
