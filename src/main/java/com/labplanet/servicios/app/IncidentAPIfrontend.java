@@ -28,6 +28,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -72,6 +73,7 @@ public class IncidentAPIfrontend extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }
+        ProcedureRequestSession.getInstanceForActions(request, response, false);
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
