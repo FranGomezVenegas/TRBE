@@ -46,7 +46,7 @@ import trazit.globalvariables.GlobalVariables;
 public class ProcedureDefinitionToInstance {
     
     public static final String[] ProcedureSchema_TablesWithNoTestingClone=new String[]{TblsProcedure.PersonProfile.TBL.getName(), TblsProcedure.ProcedureEvents.TBL.getName(),
-        TblsProcedure.ProcedureInfo.TBL.getName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName()};
+        TblsProcedure.ProcedureInfo.TBL.getName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName(), TblsProcedure.ProcedureBusinessRules.TBL.getName()};
     
     private ProcedureDefinitionToInstance(){    throw new IllegalStateException("Utility class");}
     

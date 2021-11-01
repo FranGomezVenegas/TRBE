@@ -10,6 +10,7 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
 import functionaljavaa.parameter.Parameter;
+import static functionaljavaa.parameter.Parameter.getBusinessRuleProcedureFile;
 import functionaljavaa.samplestructure.DataSampleStages.SampleStageBusinessRules;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -136,7 +137,9 @@ public class ProcedureDefinitionQueries {
                 procedureActionsObj.put("auto_move_to_next", "NO");           
             
             procActionAndRolesArr.add(procedureActionsObj);
-            String[] curActionRoles = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "actionEnabled"+curProcAction).split("\\|");
+            String[] curActionRoles = getBusinessRuleProcedureFile(procInstanceName, CONFIG_PROC_FILE_NAME, "actionEnabled"+curProcAction).split("\\|");
+                   
+           //         Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "actionEnabled"+curProcAction).split("\\|");
             for (Object curActionRole: curActionRoles){ 
                 JSONObject currActionRolObj = convertArrayRowToJSONObject(new String[]{"rol"}, new Object[]{curActionRole});                
                 procedureActionsObj.put("rol", currActionRolObj);
@@ -172,15 +175,18 @@ public class ProcedureDefinitionQueries {
         return mainObj;
     }
     public static JSONObject sampleStages(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        String[] sampleStagesTimingCaptureStages = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "sampleStagesTimingCaptureStages").split("\\|");
-        String[] sampleStagesListEn = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_DATA_FILE_NAME, "sampleStagesList_en").split("\\|");
+        String[] sampleStagesTimingCaptureStages = getBusinessRuleProcedureFile(procInstanceName, CONFIG_PROC_FILE_NAME, "sampleStagesTimingCaptureStages").split("\\|");
+//Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "sampleStagesTimingCaptureStages").split("\\|");
+        String[] sampleStagesListEn = getBusinessRuleProcedureFile(procInstanceName, CONFIG_PROC_DATA_FILE_NAME, "sampleStagesList_en").split("\\|");
+//Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_DATA_FILE_NAME, "sampleStagesList_en").split("\\|");
         JSONArray sampleStagesDataArr=new JSONArray();
         for (String curSampleStage: sampleStagesListEn){
             JSONObject stageDetailObj = new JSONObject();
             stageDetailObj.put("stage_name", curSampleStage);
             String[] directionNames=new String[]{"Previous", "Next"};
             for (String curDirection: directionNames){
-                String[] propValuePrevious = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_DATA_FILE_NAME, "sampleStage"+curSampleStage+curDirection).split("\\|");
+                String[] propValuePrevious = getBusinessRuleProcedureFile(procInstanceName, CONFIG_PROC_DATA_FILE_NAME, "sampleStage"+curSampleStage+curDirection).split("\\|");
+                //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_DATA_FILE_NAME, "sampleStage"+curSampleStage+curDirection).split("\\|");
                 if (propValuePrevious[0].length()==0)
                     stageDetailObj.put(curDirection.toLowerCase()+"_stages_total", 0);
                 else{
@@ -203,7 +209,8 @@ public class ProcedureDefinitionQueries {
     }
 
     public static JSONObject sampleIncubation(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        String[] sampleIncubationTempReadingBusinessRule = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "sampleIncubationTempReadingBusinessRule").split("\\|");
+        String[] sampleIncubationTempReadingBusinessRule = getBusinessRuleProcedureFile(procInstanceName, CONFIG_PROC_FILE_NAME, "sampleIncubationTempReadingBusinessRule").split("\\|");
+        //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "sampleIncubationTempReadingBusinessRule").split("\\|");
         JSONArray incubRulesArr = new JSONArray();
         for (String curIncubRule: sampleIncubationTempReadingBusinessRule){
             JSONObject incubRulesObj = new JSONObject();
@@ -223,7 +230,8 @@ public class ProcedureDefinitionQueries {
         for (String curSchema: schemasArr){
             JSONObject curSchemaMainObj = new JSONObject();
             JSONObject curSchemaObj=new JSONObject();
-            String[] encryptedTables = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+curSchema, "encrypted_tables").split("\\|");
+            String[] encryptedTables = getBusinessRuleProcedureFile(procInstanceName, curSchema, "encrypted_tables").split("\\|");
+            //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+curSchema, "encrypted_tables").split("\\|");
             if (encryptedTables[0].length()==0)
                 curSchemaMainObj.put(totalTables, 0);
             else
@@ -234,7 +242,8 @@ public class ProcedureDefinitionQueries {
                     encrypTableFldsObjArr.add("Nothing");
                 }else{
                     encrypTableFldsObjArr=new JSONArray();
-                    String[] encryptedTableFlds = Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+curSchema, "encrypted_"+currEncrypTable).split("\\|");
+                    String[] encryptedTableFlds = getBusinessRuleProcedureFile(procInstanceName, curSchema, "encrypted_"+currEncrypTable).split("\\|");
+                    //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+curSchema, "encrypted_"+currEncrypTable).split("\\|");
                     JSONObject encrypTableFldsObj = new JSONObject();
                     if (encryptedTables[0].length()==0)
                         encrypTableFldsObj.put(totalFields, 0);

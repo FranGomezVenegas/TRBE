@@ -178,7 +178,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 out.println(msgStr);
                 return;
             }        
-            BusinessRules bi=new BusinessRules(procInstanceName, scriptId);
+            BusinessRules bi=new BusinessRules(procInstanceName, null);
             procReqInstance.setBusinessRulesTesting(bi);
             LPTestingOutFormat.cleanLastRun(procInstanceName, scriptId);
             LPTestingOutFormat.getIdsBefore(procInstanceName, scriptId, scriptTblInfo[0]);
@@ -229,7 +229,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 String[] actionsList=null;
                 for (Object[] curStep: scriptStepsTblInfo){
                     Object[] theProcActionEnabled = null;
-                    theProcActionEnabled = isTheProcActionEnabled(token, procInstanceName, (String) LPNulls.replaceNull(curStep[1]));
+                    theProcActionEnabled = isTheProcActionEnabled(token, procInstanceName, (String) LPNulls.replaceNull(curStep[1]), bi);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())){
                         actionsList=LPArray.addValueToArray1D(actionsList, "Step "+curStep[0].toString()+", Action:"+curStep[1].toString());
                         Logger.getLogger("In the script "+scriptId+" and step "+LPNulls.replaceNull(curStep[0]).toString()+"the action"+LPNulls.replaceNull(curStep[0]).toString()+" is not enabled"); 
