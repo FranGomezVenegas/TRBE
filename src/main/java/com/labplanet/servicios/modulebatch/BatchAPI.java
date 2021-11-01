@@ -12,6 +12,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.batch.BatchArray;
+import functionaljavaa.businessrules.BusinessRules;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -162,12 +163,13 @@ public class BatchAPI extends HttpServlet {
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
             Rdbms.setTransactionId(procInstanceName);
             try (PrintWriter out = response.getWriter()) {
-                Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName);
+                BusinessRules bi=new BusinessRules(procInstanceName, null);
+                Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName, bi);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                     return ;                
                 }            
-                actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName);
+                actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, bi);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                     return ;                                

@@ -112,24 +112,10 @@ public class Parameter {
         }
     }
   
-    /**
-     *  Check if a parameter is part or not of a properties file
-     * @param parameterFolder - The directoy name LabPLANET (api messages/error trapping)/config (procedure business rules) (if null then config)
-     * @param schemaName - procedureName
-     * @param areaName - The procedure schema: config/data/procedure. 
-     * @param parameterName - Tag name
-     * @param language - Language
-     * @return
-     */
-    public Boolean parameterInFile(String parameterFolder, String schemaName, String areaName, String parameterName, String language){
+    private Boolean parameterInFile(String parameterFolder, String schemaName, String areaName, String parameterName, String language){
         return !"".equals(getMessageCodeValue(parameterFolder, schemaName, areaName, parameterName, language));
     }
 
-    /**
-     *
-     * @param parameterName
-     * @return
-     */
     public static String getBusinessRuleAppFile(String parameterName) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
@@ -146,7 +132,7 @@ public class Parameter {
         return getBusinessRuleInAppFile("parameter.config.app", parameterName, callerInfo);
     }
 
-    public static String getBusinessRuleInConfigFile(String configFile, String parameterName, String language) {
+    private static String getBusinessRuleInConfigFile(String configFile, String parameterName, String language) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
         String methodName = "NO TRACE"; 
@@ -166,13 +152,14 @@ public class Parameter {
         if (valueToReturn==null || valueToReturn.length()==0)
             LPPlatform.saveParameterPropertyInDbErrorLog("", procInstanceName+"-"+area, 
                 callerInfo, parameterName);
-        if (ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting()){
+        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
                 testingBusinessRulesVisitedObj.AddObject(procInstanceName, area, callerInfo[0].toString(), parameterName, valueToReturn);        
         }
         return valueToReturn;
     }
+    
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
@@ -229,13 +216,7 @@ public class Parameter {
         }
     }
     
-    /**
-     *
-     * @param configFile
-     * @param parameterName
-     * @return
-     */
-    public static String getMessageCodeValue(String configFile, String parameterName) {
+    private static String getMessageCodeValue(String configFile, String parameterName) {
         /*StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         String className = Thread.currentThread().toString();
                 Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
@@ -263,14 +244,6 @@ public class Parameter {
         }
     }
 
-    /**
-     * Not in use
-     * @param type
-     * @param fileName
-     * @param entryName
-     * @param entryValue
-     * @return
-     */
     public String addTagInPropertiesFile(String type, String fileName, String entryName, String entryValue){
         StringBuilder newEntryBuilder = new StringBuilder(0);
         String fileDir=getFileDirByPropertyFileType(type);
@@ -340,7 +313,7 @@ public class Parameter {
         }
     }
             
-    public String getFileDirByPropertyFileType(String type){
+    private String getFileDirByPropertyFileType(String type){
         PropertyFilesType endPoint = null;
         try{
             endPoint = PropertyFilesType.valueOf(type.toUpperCase());

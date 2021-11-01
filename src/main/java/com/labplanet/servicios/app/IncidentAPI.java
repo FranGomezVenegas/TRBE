@@ -10,7 +10,6 @@ import databases.TblsApp;
 import functionaljavaa.incident.AppIncident;
 import functionaljavaa.incident.AppIncidentEnums.IncidentAPIEndpoints;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
-import functionaljavaa.responsemessages.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;

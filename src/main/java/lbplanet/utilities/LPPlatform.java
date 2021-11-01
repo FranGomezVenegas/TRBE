@@ -23,7 +23,9 @@ import org.json.simple.JSONObject;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.Token;
+import functionaljavaa.businessrules.BusinessRules;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
+import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
 import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
@@ -197,7 +199,7 @@ public enum LpPlatformErrorTrapping{
      * @param actionName
      * @return
      */
-    public static Object[] procActionEnabled(String procInstanceName, Token token, String actionName){
+    public static Object[] procActionEnabled(String procInstanceName, Token token, String actionName, BusinessRules procBusinessRules){
         
         String userProceduresList=token.getUserProcedures();
         userProceduresList=userProceduresList.replace("[", "");
@@ -205,8 +207,13 @@ public enum LpPlatformErrorTrapping{
         if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName))
             return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE.getErrorCode(), new String[]{token.getUserName(), procInstanceName, userProceduresList});
         
-        actionName = actionName.toUpperCase();
-        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(), LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).toString().split("\\|");
+        actionName = actionName.toUpperCase();        
+        String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).split("\\|");
+        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
+            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
+            if (testingBusinessRulesVisitedObj!=null)
+                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), Arrays.toString(procedureActions));        
+        }
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
             return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new String[]{procInstanceName, actionName});
@@ -226,9 +233,15 @@ public enum LpPlatformErrorTrapping{
      * @param actionName
      * @return
      */
-    public static Object[] procUserRoleActionEnabled(String procInstanceName, String userRole, String actionName){
-        String[] procedureActionsUserRoles = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getAreaName(), LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+actionName).toString().split("\\|");
-                //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
+    public static Object[] procUserRoleActionEnabled(String procInstanceName, String userRole, String actionName, BusinessRules procBusinessRules){
+        String[] procedureActionsUserRoles = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+actionName).split("\\|"); //Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getAreaName(), LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+actionName).toString().split("\\|");
+        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
+            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
+            if (testingBusinessRulesVisitedObj!=null)
+                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+actionName, Arrays.toString(procedureActionsUserRoles));        
+        }
+
+        //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
         
         if (LPArray.valueInArray(procedureActionsUserRoles, "ALL")){
             return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new Object[]{procInstanceName});                    
@@ -248,17 +261,23 @@ public enum LpPlatformErrorTrapping{
      * @param actionName
      * @return
      */ 
-    public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName){        
+    public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules){        
         actionName = actionName.toUpperCase();
-        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).toString().split("\\|");
-                //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
-        if (LPArray.valueInArray(procedureActions, "ALL")){
+        String[] actionRequiresUserConfirmationRuleValue = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).split("\\|"); // Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).toString().split("\\|");
+        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
+            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
+            if (testingBusinessRulesVisitedObj!=null)
+                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()+actionName, Arrays.toString(actionRequiresUserConfirmationRuleValue));        
+        }
+
+        //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
+        if (LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, "ALL")){
             return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
         }
-        if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
-        }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
+        if ( (actionRequiresUserConfirmationRuleValue.length==1 && "".equals(actionRequiresUserConfirmationRuleValue[0])) ){
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
+        }else if(!LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, actionName)){    
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
         }else{
             return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});
         }    
@@ -270,9 +289,14 @@ public enum LpPlatformErrorTrapping{
      * @param actionName
      * @return
      */
-    public static Object[] procActionRequiresEsignConfirmation(String procInstanceName, String actionName){
+    public static Object[] procActionRequiresEsignConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules){
         actionName = actionName.toUpperCase();
-        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
+        String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).split("\\|"); // Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
+        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
+            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
+            if (testingBusinessRulesVisitedObj!=null)
+                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()+actionName, Arrays.toString(procedureActions));        
+        }
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL"))
