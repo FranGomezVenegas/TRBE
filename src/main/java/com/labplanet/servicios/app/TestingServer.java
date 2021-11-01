@@ -102,7 +102,18 @@ public class TestingServer extends HttpServlet {
 
                 
     LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
-String procInstanceName2="proc-deploy";
+String procInstanceName2="em-demo-a";
+Rdbms.stablishDBConection("labplanet");
+TestingCoverage tstCov=null;
+tstCov=new TestingCoverage(procInstanceName2, 1);    
+tstCov=null;
+/*tstCov=new TestingCoverage(procInstanceName2, 2);    
+tstCov=null;
+tstCov=new TestingCoverage(procInstanceName2, 3);    
+tstCov=null;
+tstCov=new TestingCoverage(procInstanceName2, 4);    
+tstCov=null;
+*/
 Object[] isSampleTestingGroupGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName2, DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getTagName());
 out.println(Arrays.toString(isSampleTestingGroupGenericAutoApproveEnabled));
 
@@ -198,8 +209,6 @@ if (1==1) return;
         Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 
-        TestingCoverage tstCov=new TestingCoverage(procInstanceName, 1);    
-        tstCov.calculateCoverage();
 //            String tblCreateScript = TblsTesting.ScriptsCoverage.createTableScript(procInstanceName, new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         //jsonObj.put("TblsTesting.ScriptsCoverage", tblCreateScript);
