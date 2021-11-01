@@ -225,6 +225,13 @@ if (1==1) return fieldValue;
         return fieldValue;        
     }    
     
+    public static Object[] convertStringedPipedNumbersInArray(String values){
+        Integer[] intArr=new Integer[]{};
+        values=values.replace("\\|", "*INTEGER\\|");
+        values=values.concat("*INTEGER");
+        return convertStringWithDataTypeToObjectArray(values.split("\\|"));        
+    }
+    
 /**
  * Sometimes values from different nature/type are concatenated in same string, in this case concatenating the type by using *<br>
  * Example: 1*String will be treat as text but 1*Integer as numeric.<br>
