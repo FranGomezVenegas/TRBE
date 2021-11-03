@@ -11,6 +11,7 @@ import databases.TblsAppAudit;
 import databases.Token;
 import functionaljavaa.audit.AppIncidentAudit;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
+import functionaljavaa.responsemessages.ResponseMessages;
 import javax.json.JsonObject;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -35,8 +36,8 @@ public class AppIncident {
     
     enum IncidentAPIErrorMessages{
         AAA_FILE_NAME("errorTrapping"),
-        INCIDENT_CURRENTLY_NOT_ACTIVE("incidentCurrentlyNotActive"),
-        INCIDENT_ALREADY_ACTIVE("incidentAlreadyActive"),
+        INCIDENT_CURRENTLY_NOT_ACTIVE("AppIncident_incidentCurrentlyNotActive"),
+        INCIDENT_ALREADY_ACTIVE("AppIncident_incidentAlreadyActive"),
         ;
         private IncidentAPIErrorMessages(String sname){
             name=sname;
@@ -117,10 +118,13 @@ public class AppIncident {
     }    
 
     public Object[] reopenIncident(Integer incidentId, String note){  
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Token token=instanceForActions.getToken();
         Object[] isActive=isIncidentActive(incidentId);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isActive[0].toString())){
             isActive[0]=LPPlatform.LAB_FALSE;
+            ResponseMessages messages = instanceForActions.getMessages();
+            messages.addMainForError((String) isActive[isActive.length-2], new Object[]{incidentId});
             return isActive;
         }
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
@@ -135,6 +139,7 @@ public class AppIncident {
         Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
+            updFieldValue[updFieldValue.length-2]="null";updFieldValue[updFieldValue.length-1]="null";
             AppIncidentAudit.incidentAuditAdd(IncidentAuditEvents.REOPENED_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, 
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }
