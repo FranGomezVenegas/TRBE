@@ -57,6 +57,7 @@ public class ProcedureRequestSession {
         if (request==null) return;
         this.language = LPFrontEnd.setLanguage(request); 
         this.isForTesting=isForTesting;
+        
         String finalToken = "";
         Token tokn = null;
         String dbName = "";
@@ -105,7 +106,9 @@ public class ProcedureRequestSession {
             this.errorMessage="db connection not stablished";
             return;
         }           
-        this.busRulesProcInstance= new BusinessRules(procInstanceName, null);        
+        if (!isPlatform)
+            this.busRulesProcInstance= new BusinessRules(procInstanceName, null);        
+        
         if (!isForUAT && !isForDocumentation){
             finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);   
             if (finalToken!=null){
@@ -122,7 +125,7 @@ public class ProcedureRequestSession {
             this.procedureInstance=procInstanceName;
         }
         if (!isForTesting && !isForUAT && !isQuery && !isPlatform && !isForDocumentation){ 
-            Object[] theProcActionEnabled = isTheProcActionEnabled(tokn, procInstanceName, actionName);
+            Object[] theProcActionEnabled = isTheProcActionEnabled(tokn, procInstanceName, actionName, this.busRulesProcInstance);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())){
                 this.hasErrors=true;
                 this.errorMessage=theProcActionEnabled[theProcActionEnabled.length-1].toString();
@@ -131,13 +134,13 @@ public class ProcedureRequestSession {
             
         }
         if (!isForTesting && !isForUAT && !isQuery && !isPlatform && !isForDocumentation){  
-            Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName);
+            Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName, this.busRulesProcInstance);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
                 this.hasErrors=true;
                 this.errorMessage=actionEnabled[actionEnabled.length-1].toString();
                 return ;                           
             }            
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName);
+            actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, this.busRulesProcInstance);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
                 this.hasErrors=true;
                 this.errorMessage=actionEnabled[actionEnabled.length-1].toString();
@@ -165,6 +168,8 @@ public class ProcedureRequestSession {
         }
         this.isForQuery=isForQuery;
         this.hasErrors=false;
+        if (this.tokenStr==null)
+            this.tokenStr=finalToken;
         rspMessages=ResponseMessages.getInstance();
         markAsExpiredTheExpiredObjects(this.procedureInstance);
         }catch(Exception e){
@@ -174,6 +179,7 @@ public class ProcedureRequestSession {
     }
     
     public void killIt(){
+       // if (1==1) return;
 //        if (!this.isForQuery) 
             this.theSession=null;
         if (this.isForQuery!=null && !this.isForQuery){
@@ -184,14 +190,13 @@ public class ProcedureRequestSession {
         this.dbName=null;
         this.isForTesting=null;
         this.procedureInstance=null;
-        if (tstAuditObj!=null)
-            tstAuditObj.killIt();
-        if (busRuleVisited!=null)
-            busRuleVisited.killIt();
-        if (msgCodeVisited!=null)
-            msgCodeVisited.killIt();
+        if (tstAuditObj!=null) tstAuditObj.killIt();
+        if (busRuleVisited!=null) busRuleVisited.killIt();
+        if (msgCodeVisited!=null) msgCodeVisited.killIt();
         if (rspMessages!=null) rspMessages.killInstance();
         if (this.auditAndUsrValid!=null) this.auditAndUsrValid.killInstance();
+        if (this.busRulesProcInstance!=null) this.busRulesProcInstance=null;
+        if (this.busRulesTesting!=null) this.busRulesTesting=null;
         Rdbms.closeRdbms(); 
     }
     
@@ -270,7 +275,6 @@ public class ProcedureRequestSession {
         return getInstanceForActions(req, resp, isTesting, false);
     }
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform){
-
         if (theSession==null || theSession.getTokenString()==null){
             theSession=new ProcedureRequestSession(req, resp, isTesting, false, false, null, isPlatform, false);
         }
@@ -284,7 +288,7 @@ public class ProcedureRequestSession {
         }
         return theSession;
     }
-    public static Object[]  isTheProcActionEnabled(Token tokn, String procInstanceName, String actionNm){
+    public static Object[]  isTheProcActionEnabled(Token tokn, String procInstanceName, String actionNm, BusinessRules procBusinessRules){
         Boolean passCheckers=true;
 //        String actionNm = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
 //        String procInstanceName = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);            
@@ -301,13 +305,13 @@ public class ProcedureRequestSession {
             }*/
 //        }
 
-        Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, tokn, actionNm);
+        Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, tokn, actionNm, procBusinessRules);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) return actionEnabled;
 /*        {
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(req, resp, actionEnabled);
             return null;                             
         }            */
-        actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, tokn.getUserRole(), actionNm);
+        actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, tokn.getUserRole(), actionNm, procBusinessRules);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) return actionEnabled;
 /*        {            
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(req, null, actionEnabled);
