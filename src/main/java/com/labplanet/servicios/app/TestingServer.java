@@ -102,7 +102,7 @@ public class TestingServer extends HttpServlet {
 
                 
     LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
-String procInstanceName2="em-demo-a";
+String procInstanceName2="proc-deploy";//"em-demo-a";
 Rdbms.stablishDBConection("labplanet");
 TestingCoverage tstCov=null;
 tstCov=new TestingCoverage(procInstanceName2, 1);    

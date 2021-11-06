@@ -321,12 +321,15 @@ public class TblsTesting {
         FLD_PURPOSE("purpose", LPDatabase.string()),
         FLD_SCRIPT_IDS_LIST("script_ids_list", LPDatabase.string()),
         FLD_ENDPOINTS_COVERAGE("endpoints_coverage", LPDatabase.real()),
-        FLD_ENDPOINTS_MISSING("endpoints_missing", LPDatabase.integer()),
+        FLD_ENDPOINTS_EXCLUDE_LIST("endpoints_exclude_list", LPDatabase.string()),
         FLD_ENDPOINTS_COVERAGE_DETAIL("endpoints_coverage_detail", LPDatabase.string()),
         FLD_BUS_RULES_COVERAGE("bus_rule_coverage", LPDatabase.real()),
-        FLD_BUS_RULES_COVERAGE_DETAIL("bus_rule_coverage_detail", LPDatabase.string()),
+        FLD_BUS_RULES_EXCLUDE_LIST("bus_rule_exclude_list", LPDatabase.string()),        
+        FLD_BUS_RULES_COVERAGE_DETAIL("bus_rule_coverage_detail", LPDatabase.string()),        
         FLD_MSG_COVERAGE("msg_coverage", LPDatabase.real()),
         FLD_MSG_COVERAGE_DETAIL("msg_coverage_detail", LPDatabase.string()),
+        
+        
         ;
         private ScriptsCoverage(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

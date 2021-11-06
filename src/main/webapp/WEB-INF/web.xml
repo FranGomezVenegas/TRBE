@@ -298,6 +298,10 @@
         <servlet-name>EndpointsDocAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.doc.functionality.EndpointsDocAPIqueries</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>TestingCoverageRun</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.TestingCoverageRun</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DownloadFileServlet</servlet-name>
         <url-pattern>/DownloadFileServlet</url-pattern>
@@ -416,7 +420,7 @@
     <servlet-mapping>
         <servlet-name>AnalysisMethodCertifUserAPIfrontend</servlet-name>
         <url-pattern>/frontend/AnalysisMethodCertifUserAPIfrontend</url-pattern>
-    </servlet-mapping>       
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TstDataBatchArr</servlet-name>
         <url-pattern>/testing/db/TstDataBatchArr</url-pattern>
@@ -600,6 +604,10 @@
     <servlet-mapping>
         <servlet-name>EndpointsDocAPIqueries</servlet-name>
         <url-pattern>/Doc/EndpointsDocAPIqueries</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingCoverageRun</servlet-name>
+        <url-pattern>/testing/platform/TestingCoverageRun</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
