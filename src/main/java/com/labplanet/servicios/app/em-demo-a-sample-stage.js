@@ -3,7 +3,13 @@ var sampleStageSamplingNextChecker = function(sampleId, sampleData) {
     var samplingDate = sampleStructure.sampling_date;
 //	var testId=sampleStructure.sample_analysis[0].analysis	
     if (samplingDate==null){
-        return "stagesCheckerSamplingDataIsMandatory"+"@"+sampleId;} //" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+        return "stagesCheckerSamplingDataIsMandatory"+"@"+sampleId;} //" Fecha de muestreo es obligatoria para la muestra "+sampleId;}    
+    var reqsTrackingSamplingEnd = sampleStructure.requires_tracking_sampling_end;
+    if (reqsTrackingSamplingEnd==null || reqsTrackingSamplingEnd==false)
+        return "LABPLANET_TRUE";
+    var samplingDateEnd = sampleStructure.sampling_date_end;
+    if (samplingDateEnd==null){
+        return "stagesCheckerSamplingDateEndIsMandatory"+"@"+sampleId;} //" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
     return "LABPLANET_TRUE";
 };
 

@@ -8,6 +8,7 @@ package functionaljavaa.moduleenvironmentalmonitoring;
 import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
+import static databases.Rdbms.dbTableExists;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
@@ -87,22 +88,24 @@ public class DataProgramSample{
             }else
                 fieldValue[programLocationPosic] = programLocation;
             String[] specFldNames=new String[]{TblsEnvMonitData.ProgramLocation.FLD_SPEC_CODE.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_ANALYSIS_VARIATION.getName(), TblsEnvMonitData.ProgramLocation.FLD_AREA.getName(), TblsEnvMonitData.ProgramLocation.FLD_SPEC_VARIATION_NAME.getName()};
+            Object[] dbTableExists = dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(),TblsEnvMonitData.ProgramLocation.FLD_REQ_SAMPLING_END.getName());
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString()))
+                specFldNames=LPArray.addValueToArray1D(specFldNames, TblsEnvMonitData.ProgramLocation.FLD_REQ_SAMPLING_END.getName());
             Object[][] diagnosis = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(),
                 new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
                 new Object[]{programName, programLocation}, 
                 specFldNames, true);            
-//            Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
-//                    new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
-//                    new Object[]{programName, programLocation});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0][0].toString()))
                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Program <*1*> or location <*2*> not found for procedure <*3*>", new Object[]{programName, programLocation, procInstanceName});    
             for (int i=0;i<specFldNames.length;i++){
-                Integer fieldPosic=LPArray.valuePosicInArray(fieldName, specFldNames[i]);
-                if (fieldPosic==-1){
-                    fieldName = LPArray.addValueToArray1D(fieldName, specFldNames[i]);
-                    fieldValue = LPArray.addValueToArray1D(fieldValue, diagnosis[0][i]);                
-                }else
-                    fieldValue[fieldPosic] = diagnosis[0][i];
+                if (diagnosis[0][i]!=null && diagnosis[0][i].toString().length()>0){
+                    Integer fieldPosic=LPArray.valuePosicInArray(fieldName, specFldNames[i]);
+                    if (fieldPosic==-1){
+                        fieldName = LPArray.addValueToArray1D(fieldName, specFldNames[i]);
+                        fieldValue = LPArray.addValueToArray1D(fieldValue, diagnosis[0][i]);                
+                    }else
+                        fieldValue[fieldPosic] = diagnosis[0][i];
+                }
             }
             if (numSamplesToLog!=null)
                 newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue, numSamplesToLog); 

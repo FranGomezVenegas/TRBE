@@ -166,6 +166,22 @@ public class ClassSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                     this.messageDynamicData=new Object[]{LPNulls.replaceNull(newDate), sampleId};
                     break;
+                case SETSAMPLINGDATEEND:
+                    sampleId = (Integer) argValues[0];
+                    diagn = smp.setSamplingDateEnd(sampleId);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                    this.messageDynamicData=new Object[]{LPDate.getCurrentTimeStamp(), sampleId};
+                    break;
+                case CHANGESAMPLINGDATEEND:
+                    sampleId = (Integer) argValues[0];
+                    newDate=(LocalDateTime) argValues[1];
+                    if (newDate==null)
+                        diagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "newDateTimeNullOrWrongFormat", new Object[]{LPNulls.replaceNull(newDate)});
+                    else
+                        diagn = smp.changeSamplingDateEnd(sampleId, newDate);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                    this.messageDynamicData=new Object[]{LPNulls.replaceNull(newDate), sampleId};
+                    break;
                 case SAMPLINGCOMMENTADD:
                     sampleId = (Integer) argValues[0];
                     String comment=null;

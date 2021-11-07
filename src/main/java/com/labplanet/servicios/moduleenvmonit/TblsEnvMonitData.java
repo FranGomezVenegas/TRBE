@@ -212,6 +212,8 @@ public class TblsEnvMonitData {
         FLD_MAP_ICON_W("map_icon_w",  LPDatabase.string()),
         FLD_MAP_ICON_TOP("map_icon_top",  LPDatabase.string()),
         FLD_MAP_ICON_LEFT("map_icon_left",  LPDatabase.string()),
+        FLD_REQ_SAMPLING_END("requires_tracking_sampling_end",  LPDatabase.booleanFld()),
+        
         
 //        , FLD_PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.String())
         // ...
@@ -798,6 +800,8 @@ public class TblsEnvMonitData {
         FLD_PROG_DAY_ID("program_day_id",LPDatabase.integer()),
         FLD_PROG_DAY_DATE("program_day_date", dateTime()),
         FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),        
+        FLD_REQS_TRACKING_SAMPLING_END("requires_tracking_sampling_end", LPDatabase.booleanFld()),        
+        FLD_SAMPLING_DATE_END("sampling_date_end", dateTime()),
         
         
         

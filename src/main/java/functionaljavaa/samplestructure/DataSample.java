@@ -370,6 +370,42 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         return diagnoses;
     }
 
+    public Object[] setSamplingDateEnd(Integer sampleId){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Token token=procReqSession.getToken();        
+        String procInstanceName=procReqSession.getProcedureInstance();
+
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());         
+
+        String[] sampleFieldName = new String[]{TblsData.Sample.FLD_SAMPLING_DATE.getName(),TblsData.Sample.FLD_SAMPLING_DATE_END.getName(),TblsData.Sample.FLD_REQS_TRACKING_SAMPLING_END.getName()};
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(),  
+                new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))return LPArray.array2dTo1d(sampleInfo);
+        if (!Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][2]).toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLINGDATEEND_NOTREQUIRED_ASTOPERFORMTHEACTION.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
+        if (LPNulls.replaceNull(sampleInfo[0][0]).toString().length()==0)
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLINGDATE_REQUIRED_FOR_SAMPLINGDATEEND.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
+        if (LPNulls.replaceNull(sampleInfo[0][1]).toString().length()>0){
+            procReqSession.getMessages().addMainForError(DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
+        }
+        sampleFieldName = new String[]{TblsData.Sample.FLD_SAMPLING_DATE_END.getName(), TblsData.Sample.FLD_SAMPLER.getName()};
+        Object[] sampleFieldValue = new Object[]{LPDate.getCurrentTimeStamp(), token.getUserName()};
+
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+            sampleFieldName, sampleFieldValue, new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.SAMPLING_DATE_END_CHANGED.getErrorCode(), new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
+
+            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
+
+            SampleAudit smpAudit = new SampleAudit();
+            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SET_SAMPLING_DATE_END.toString(), TblsData.Sample.TBL.getName(), 
+                    sampleId, sampleId, null, null, fieldsForAudit, null);
+            this.parentAuditId=Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString());
+        }    
+        return diagnoses;
+    }
     /**
      *
      * @param sampleId
@@ -411,6 +447,40 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         return diagnoses;
     }
 
+    public Object[] changeSamplingDateEnd(Integer sampleId, LocalDateTime newDate){
+        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
+
+        String[] sampleFieldName = new String[]{TblsData.Sample.FLD_SAMPLING_DATE_END.getName()};
+        Object[] sampleFieldValue = new Object[]{newDate};
+
+        Object[][] sampleCurrentInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+                new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString())) return sampleCurrentInfo;
+        String currentDateStr=LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString();
+        if (currentDateStr==null || currentDateStr.length()==0)
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDateEnd_cannotBeAppliedForNullValue", new Object[]{sampleId, newDate});
+        if (currentDateStr!=null && currentDateStr.length()>0){
+            if (newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T"))))
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDateEnd_sameSamplingDate", new Object[]{sampleId, newDate});
+        }
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, 
+            new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){            
+            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.SAMPLING_DATE_END_CHANGED.getErrorCode(), 
+                    new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
+
+            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
+
+            SampleAudit smpAudit = new SampleAudit();
+            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_CHANGE_SAMPLING_DATE_END.toString(), TblsData.Sample.TBL.getName(), 
+                    sampleId, sampleId, null, null, fieldsForAudit, null);
+            this.parentAuditId=Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString());            
+        }    
+        return diagnoses;
+    }
     /**
      *
      * @param sampleId
@@ -877,7 +947,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     }
     private static String sampleEntireStructureDataPostgres(String procInstanceName, Integer sampleId, String sampleFieldToRetrieve, String sampleAnalysisFieldToRetrieve, String sampleAnalysisFieldToSort,
         String sarFieldToRetrieve, String sarFieldToSort, String sampleAuditFieldToRetrieve, String sampleAuditResultFieldToSort){
-        
+        String schemaData = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+        schemaData = Rdbms.addSuffixIfItIsForTesting(schemaData, TblsData.Sample.TBL.getName());
+        String schemaDataAudit = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName());
+        schemaDataAudit = Rdbms.addSuffixIfItIsForTesting(schemaDataAudit, TblsDataAudit.Sample.TBL.getName());
         String [] sampleFieldToRetrieveArr = new String[0];  
             if (SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sampleFieldToRetrieve)){                
                 sampleFieldToRetrieve = "*";
@@ -937,8 +1010,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             }
             if (sampleAuditResultFieldToSort==null){sampleAuditResultFieldToSort=TblsDataAudit.Sample.FLD_AUDIT_ID.getName();}                                    
         try {
-            String schemaData = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-            String schemaDataAudit = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName());
             String sqlSelect=" select ";
             String sqlFrom=" from ";
             String sqlOrderBy=" order by ";

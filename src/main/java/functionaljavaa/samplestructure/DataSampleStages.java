@@ -211,8 +211,7 @@ public enum SampleStageErrorTrapping{
             }
         }
         return moveDiagn;
-    }
-        
+    }        
     private Object[] moveStagetChecker(Integer sampleId, String currStage, String moveDirection){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String sampleStagesType = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_TYPE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_TYPE.getTagName());

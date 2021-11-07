@@ -26,6 +26,12 @@ public class ProcedureSampleStage {
         String samplingDate=sampleStructure.get("sampling_date").toString();
         if (samplingDate==null || "null".equalsIgnoreCase(samplingDate)) {
             return LPPlatform.LAB_FALSE+"stagesCheckerSamplingDateIsMandatory"+"@"+sampleId;} // Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+        String reqsTrackingSamplingEnd=sampleStructure.get("requires_tracking_sampling_end").toString();        
+        if (reqsTrackingSamplingEnd==null || !Boolean.valueOf(reqsTrackingSamplingEnd))
+            return "LABPLANET_TRUE";
+        String samplingDateEnd=sampleStructure.get("sampling_date_end").toString();        
+        if (samplingDateEnd==null || "null".equalsIgnoreCase(samplingDateEnd)) {
+            return LPPlatform.LAB_FALSE+"stagesCheckerSamplingDateEndIsMandatory"+"@"+sampleId;} // Fecha de muestreo es obligatoria para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
 

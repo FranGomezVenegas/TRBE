@@ -157,8 +157,9 @@ public class TblsData {
         /**
          *
          */
-        FLD_SAMPLING_DATE("sampling_date", LPDatabase.dateTime())
-        ,
+        FLD_SAMPLING_DATE("sampling_date", LPDatabase.dateTime()),
+        FLD_REQS_TRACKING_SAMPLING_END("requires_tracking_sampling_end", LPDatabase.booleanFld()),        
+        FLD_SAMPLING_DATE_END("sampling_date_end", LPDatabase.dateTime()),
         FLD_SAMPLER("sampler",LPDatabase.string()),
         FLD_SAMPLE_ID_RELATED("sample_id_related",LPDatabase.integer()),        
 
