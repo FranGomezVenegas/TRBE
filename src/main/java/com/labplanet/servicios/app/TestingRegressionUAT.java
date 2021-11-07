@@ -179,7 +179,8 @@ public class TestingRegressionUAT extends HttpServlet {
                 return;
             }        
             BusinessRules bi=new BusinessRules(procInstanceName, null);
-            procReqInstance.setBusinessRulesTesting(bi);
+            BusinessRules biTesting=new BusinessRules(procInstanceName, scriptId);
+            procReqInstance.setBusinessRulesTesting(biTesting);
             LPTestingOutFormat.cleanLastRun(procInstanceName, scriptId);
             LPTestingOutFormat.getIdsBefore(procInstanceName, scriptId, scriptTblInfo[0]);
             
