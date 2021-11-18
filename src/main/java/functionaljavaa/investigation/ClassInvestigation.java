@@ -13,7 +13,7 @@ import com.labplanet.servicios.app.InvestigationAPI;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIEndpoints;
 import databases.TblsProcedure;
 import databases.Token;
-import functionaljavaa.responsemessages.ResponseMessages;
+import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
@@ -74,11 +74,12 @@ public class ClassInvestigation {
             case NEW_INVESTIGATION:
                 actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|"))), argValues[2].toString());
                 String investigationIdStr="";
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                     investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
-                if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
-                messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId, argValues[2].toString()});
-                dynamicDataObjects=new Object[]{investigationId, argValues[2].toString()};
+                    if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+                    messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId, argValues[2].toString()});
+                    dynamicDataObjects=new Object[]{investigationId, argValues[2].toString()};
+                }                
                 break;
             case ADD_INVEST_OBJECTS:
                 actionDiagnoses = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), argValues[1].toString(), null);
@@ -106,8 +107,10 @@ public class ClassInvestigation {
                 }else{
                     if (argValues[2]!=null && argValues[2].toString().length()>0) capaFldName=argValues[2].toString().split("\\|");
                     if (argValues[3]!=null && argValues[3].toString().length()>0) capaFldValue=argValues[3].toString().split("\\|");
+                    Boolean closeInvestigation=false;
+                    if (argValues.length>3 && argValues[4]!=null && argValues[4].toString().length()>0) closeInvestigation=Boolean.valueOf(argValues[4].toString());
                     actionDiagnoses = Investigation.capaDecision(Integer.valueOf(argValues[0].toString()),
-                            Boolean.valueOf(argValues[1].toString()), capaFldName, capaFldValue);
+                            Boolean.valueOf(argValues[1].toString()), capaFldName, capaFldValue, closeInvestigation);
                     investigationIdStr=argValues[0].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
