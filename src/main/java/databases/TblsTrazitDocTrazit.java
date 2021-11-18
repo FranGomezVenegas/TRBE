@@ -21,9 +21,7 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsTrazitDocTrazit {
     public static final String FIELDS_NAMES_SCHEMA_PREFIX="schema_prefix";
     public static final String FIELDS_NAMES_DESCRIPTION="description";
-    /**
-     *
-     */
+
     public enum EndpointsDeclaration{
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
         ,        TBL("endpoints_declaration", LPDatabase.createSequence(FLD_ID.getName())
@@ -49,6 +47,7 @@ public class TblsTrazitDocTrazit {
         FLD_DOC_CHAPTER_NAME_ES("doc_chapter_name_es", LPDatabase.string()),
         FLD_DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string()),
         FLD_NUM_ENDPOINTS_IN_API("num_endpoints_in_api", LPDatabase.integer()),        
+        FLD_SUCCESS_MESSAGE_CODE("success_message_code", LPDatabase.string()),
         ;
         private EndpointsDeclaration(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
