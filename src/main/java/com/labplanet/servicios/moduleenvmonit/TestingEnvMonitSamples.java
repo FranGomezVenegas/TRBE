@@ -180,9 +180,18 @@ if (iLines==7){
                                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                             fileContentTable1Builder.append(clssInvestigationController.getRowArgsRows());                
                                         }else{
-                                            functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
-                                            testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                            fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                            ClassEnvMonProdLotController clsEnvMonProdLot=new ClassEnvMonProdLotController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
+                                            if (clsEnvMonProdLot.getFunctionFound()){
+                                                functionRelatedObjects=clsEnvMonProdLot.getFunctionRelatedObjects();
+                                                functionEvaluation=(Object[]) clsEnvMonProdLot.getFunctionDiagn();
+                                                testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                                fileContentTable1Builder.append(clsEnvMonProdLot.getRowArgsRows());                
+                                            }else{
+                                                functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
+                                                testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                                fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                            }
+                                            clsEnvMonProdLot=null;                                            
                                         }
                                         clssInvestigationController=null;
                                     }
