@@ -13,7 +13,7 @@ import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.responsemessages.ResponseMessages;
+import trazit.session.ResponseMessages;
 import lbplanet.utilities.LPArray;
 import functionaljavaa.samplestructure.DataSample;
 import java.time.LocalDateTime;

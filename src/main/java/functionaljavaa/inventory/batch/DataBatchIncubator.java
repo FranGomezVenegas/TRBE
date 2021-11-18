@@ -14,7 +14,7 @@ import functionaljavaa.audit.IncubBatchAudit;
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorBusinessRules;
 import functionaljavaa.moduleenvironmentalmonitoring.ProcedureDeviationIncubator;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.responsemessages.ResponseMessages;
+import trazit.session.ResponseMessages;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
