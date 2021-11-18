@@ -11,7 +11,7 @@ import databases.TblsAppAudit;
 import databases.Token;
 import functionaljavaa.audit.AppIncidentAudit;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
-import functionaljavaa.responsemessages.ResponseMessages;
+import trazit.session.ResponseMessages;
 import javax.json.JsonObject;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
