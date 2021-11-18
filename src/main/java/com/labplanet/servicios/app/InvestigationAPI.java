@@ -151,7 +151,7 @@ public class InvestigationAPI extends HttpServlet {
         response=LPHttp.responsePreparation(response);        
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
         
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
         if (procReqInstance.getHasErrors()){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   

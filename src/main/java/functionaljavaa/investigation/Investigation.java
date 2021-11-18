@@ -12,11 +12,11 @@ import databases.Token;
 import functionaljavaa.audit.ProcedureInvestigationAudit;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
-import functionaljavaa.responsemessages.ResponseMessages;
+import trazit.session.ResponseMessages;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
-import lbplanet.utilities.LPMath;
+import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -37,7 +37,7 @@ public final class Investigation {
         OBJECT_NOT_RECOGNIZED("objectNotRecognized", "ObjectNotRecognized <*1*>, should be two pieces of data separated by *", ""),
         OBJECT_ALREADY_ADDED("Investigation_objectAlreadyAdded", "<*1*> <*2*> already added in the investigation <*3*>", ""),
         NOT_FOUND("InvestigationNotFound","InvestigationNotFound <*1*>", ""),
-        IS_CLOSED("InvestigationIsClosed", "InvestigationIsClosed  <*1*>", ""),
+        IS_CLOSED("InvestigationAlreadyClosed", "InvestigationAlreadyClosed  <*1*>", ""),
         IS_OPEN("investigationIsOpen", "investigation Is Open  <*1*>","")
         ;
         private InvestigationErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
@@ -87,6 +87,7 @@ public final class Investigation {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] investigationClosed = isInvestigationClosed(investId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
+
         String[] updFieldName=new String[]{TblsProcedure.Investigation.FLD_CLOSED.getName(), TblsProcedure.Investigation.FLD_CLOSED_ON.getName(), TblsProcedure.Investigation.FLD_CLOSED_BY.getName()};
         Object[] updFieldValue=new Object[]{true, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         
@@ -101,7 +102,7 @@ public final class Investigation {
         Object[][] investObjects = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.InvestObjects.TBL.getName(), 
                 new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, new Object[]{investId}, 
                 new String[]{TblsProcedure.InvestObjects.FLD_OBJECT_TYPE.getName(), TblsProcedure.InvestObjects.FLD_OBJECT_ID.getName(), TblsProcedure.InvestObjects.FLD_OBJECT_NAME.getName() });
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investObjects[0][0].toString())) return LPArray.array2dTo1d(investObjects,7); 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investObjects[0][0].toString())) return diagnostic;
         for (Object[] curInvObj: investObjects){
             String curObj=curInvObj[0].toString()+"*";
             if (curInvObj[1]!=null && curInvObj[1].toString().length()>0) curObj=curObj+curInvObj[1].toString();
@@ -132,7 +133,8 @@ public final class Investigation {
             String[] curObjDetail=curObj.split("\\*");
             String[] updFieldName=new String[]{TblsProcedure.InvestObjects.FLD_OBJECT_TYPE.getName()};
             Object[] updFieldValue=new Object[]{curObjDetail[0]};
-            if (LPMath.isNumeric(curObjDetail[1])){
+            Object[] isNumeric = isNumeric(curObjDetail[1]);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric[0].toString())){
                 updFieldName=LPArray.addValueToArray1D(updFieldName, TblsProcedure.InvestObjects.FLD_OBJECT_ID.getName());
                 updFieldValue=LPArray.addValueToArray1D(updFieldValue, Integer.valueOf(curObjDetail[1]));
             }else{
@@ -205,7 +207,8 @@ public final class Investigation {
         checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_OBJECT_TYPE.getName());
         checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[0]);
 
-        if (LPMath.isNumeric(curObjDetail[1])){
+        Object[] isNumeric = isNumeric(curObjDetail[1]);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric[0].toString())){
             checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.FLD_OBJECT_ID.getName());
             checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, Integer.valueOf(curObjDetail[1]));
         }else{
@@ -214,7 +217,7 @@ public final class Investigation {
         }  
         return new Object[]{checkFieldName, checkFieldValue};
     }
-    public static Object[] capaDecision(Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue){
+    public static Object[] capaDecision(Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue, Boolean closeInvestigation){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] areCapaFields = isCapaField(capaFieldName);
@@ -229,10 +232,11 @@ public final class Investigation {
             updFieldName, updFieldValue,
             new String[]{TblsProcedure.Investigation.FLD_ID.getName()}, new Object[]{investId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
-        ProcedureInvestigationAudit.investigationAuditAdd(
-                InvestigationAuditEvents.CAPA_DECISION.toString(), TblsProcedure.Investigation.TBL.getName(), 
+        Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(
+                InvestigationAuditEvents.CAPA_DECISION.toString(), TblsProcedure.Investigation.TBL.getName(),
                 investId, investId.toString(),  
                 LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
+        if (closeInvestigation) closeInvestigation(investId);
         return diagnostic;               
     }
     

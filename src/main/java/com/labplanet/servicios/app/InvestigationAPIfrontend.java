@@ -52,7 +52,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
         response=LPHttp.responsePreparation(response);
 
         String language = LPFrontEnd.setLanguage(request); 
-        ProcedureRequestSession.getInstanceForActions(request, response, Boolean.FALSE);
+        ProcedureRequestSession instanceForQueries = ProcedureRequestSession.getInstanceForQueries(request, response, Boolean.FALSE);
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
@@ -111,7 +111,8 @@ public class InvestigationAPIfrontend extends HttpServlet {
                         investigationJArr.add(investigationJObj);
                     }
                 }
-                Rdbms.closeRdbms();  
+                //Rdbms.closeRdbms();  
+                instanceForQueries.killIt();                
                 LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
                 return;                  
             case INVESTIGATION_RESULTS_PENDING_DECISION:
@@ -134,7 +135,8 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     jArray.add(jObj);
                   }
                 }
-                // Rdbms.closeRdbms();                    
+                // Rdbms.closeRdbms();       
+                instanceForQueries.killIt();                
                 LPFrontEnd.servletReturnSuccess(request, response, jArray);
                 break;                
             case INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION:
@@ -175,6 +177,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     }
                 }
                 Rdbms.closeRdbms();  
+                instanceForQueries.killIt();
                 LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
                 return;
         default: 
