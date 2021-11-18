@@ -11,7 +11,7 @@ import functionaljavaa.certification.CertifGlobalVariables.CertifLight;
 import static functionaljavaa.intervals.IntervalsUtilities.applyExpiryInterval;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.PropertiesToRequirements.valuesListForEnableDisable;
-import functionaljavaa.responsemessages.ResponseMessages;
+import trazit.session.ResponseMessages;
 import static functionaljavaa.user.UserAndRolesViews.getPersonByUser;
 import java.util.Date;
 import java.util.Calendar;
