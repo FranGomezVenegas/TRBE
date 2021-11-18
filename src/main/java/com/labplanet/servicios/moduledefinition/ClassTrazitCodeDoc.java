@@ -30,8 +30,10 @@ public class ClassTrazitCodeDoc {
         Object[] actionDiagnoses = null;
         this.functionFound=true;
             switch (endPoint){
-                case DOC_API_ENDPOINTS_IN_DB:                    
-                    actionDiagnoses = EndPointsToRequirements.endpointDefinition();
+                case DOC_API_ENDPOINTS_IN_DB:         
+                    EndPointsToRequirements eToReq=new EndPointsToRequirements();
+                    actionDiagnoses = eToReq.endpointDefinition();
+                    eToReq=null;
                     this.messageDynamicData=new Object[]{Arrays.toString(actionDiagnoses)};                    
                     break;
                 case DOC_API_MESSAGE_CODES_IN_DB:

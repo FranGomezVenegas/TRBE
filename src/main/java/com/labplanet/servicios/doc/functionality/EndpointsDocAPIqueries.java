@@ -118,7 +118,8 @@ public class EndpointsDocAPIqueries extends HttpServlet {
             String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
             Rdbms.getRdbms().startRdbms(dbTrazitModules);
             Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.EndpointsDeclaration.TBL.getName(), 
-                whereFldName, whereFldValue, TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames());
+                whereFldName, whereFldValue, TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames(),
+                new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.FLD_API_NAME.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
                 out.println(Arrays.toString(reqEndpointInfo[0]));
                 return;
@@ -162,7 +163,10 @@ public class EndpointsDocAPIqueries extends HttpServlet {
             
         }catch(Exception e){
             String eMsg=e.getMessage();
-        }        
+        }  
+        finally{
+            procReqInstance.killIt();
+        }
     }    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
