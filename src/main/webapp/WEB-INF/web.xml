@@ -221,6 +221,14 @@
         <servlet-class>com.labplanet.servicios.app.IncidentAPIfrontend</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>InstrumentsAPIactions</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.procs.InstrumentsAPIactions</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InstrumentsAPIqueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.procs.InstrumentsAPIqueries</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>TestingInspLotRM</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.TestingInspLotRM</servlet-class>
     </servlet>
@@ -524,6 +532,14 @@
     <servlet-mapping>
         <servlet-name>IncidentAPIfrontend</servlet-name>
         <url-pattern>/frontend/IncidentAPIfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InstrumentsAPIactions</servlet-name>
+        <url-pattern>/app/procs/InstrumentsAPIactions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InstrumentsAPIqueries</servlet-name>
+        <url-pattern>/app/procs/InstrumentsAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestingInspLotRM</servlet-name>
