@@ -306,6 +306,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_QUANTITY = "quantity";  
     public static final String REQUEST_PARAM_QUANTITY_UOM = "quantityUom";  
     public static final String REQUEST_PARAM_NUM_CONTAINERS = "numContainers";  
+    public static final String REQUEST_PARAM_NUM_DAYS = "numDays";  
 
     public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
     public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";    
