@@ -8,6 +8,7 @@ package com.labplanet.servicios.app;
 import com.labplanet.servicios.app.IncidentAPI.IncidentAPIfrontendEndpoints;
 import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
+import databases.SqlStatement;
 import databases.TblsApp;
 import databases.TblsAppAudit;
 import databases.Token;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
@@ -80,13 +82,13 @@ public class IncidentAPIfrontend extends HttpServlet {
         switch (endPoint){
             case USER_OPEN_INCIDENTS:              
                 String[] fieldsToRetrieve=TblsApp.Incident.getAllFieldNames();
-                Object[][] incidentsNotClosed=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.Incident.TBL.getName(), 
+                Object[][] incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.Incident.TBL.getName(), 
                         new String[]{TblsApp.Incident.FLD_STATUS.getName()+"<>", TblsApp.Incident.FLD_PERSON_CREATION.getName()}, 
                         new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), token.getPersonName()}, 
                         fieldsToRetrieve, new String[]{TblsApp.Incident.FLD_ID.getName()+" desc"});
                 JSONArray jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
-                    for (Object[] currIncident: incidentsNotClosed){
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
+                    for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                         jArr.add(jObj);
                     }
@@ -100,20 +102,36 @@ public class IncidentAPIfrontend extends HttpServlet {
                 if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
 
                 fieldsToRetrieve=TblsAppAudit.Incident.getAllFieldNames();
-                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(),TblsAppAudit.Incident.TBL.getName(), 
+                incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(),TblsAppAudit.Incident.TBL.getName(), 
                         new String[]{TblsAppAudit.Incident.FLD_INCIDENT_ID.getName()}, 
                         new Object[]{incId}, 
                         fieldsToRetrieve, new String[]{TblsAppAudit.Incident.FLD_DATE.getName()+" desc"});
                 jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
-                    for (Object[] currIncident: incidentsNotClosed){
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
+                    for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                         jArr.add(jObj);
                     }
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
-        default: 
+            case CLOSED_INCIDENTS_LAST_N_DAYS:
+                //String numDays=argValues[0].toString();
+                fieldsToRetrieve=TblsApp.Incident.getAllFieldNames();
+                incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.Incident.TBL.getName(), 
+                        new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_DATE_RESOLUTION.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
+                        new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), LPDate.addDays(LPDate.getCurrentDateWithNoTime(), -7)}, 
+                        fieldsToRetrieve, new String[]{TblsApp.Incident.FLD_DATE_RESOLUTION.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
+                    for (Object[] currIncident: incidentsClosedLastDays){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);              
+            default: 
         }
     }
 

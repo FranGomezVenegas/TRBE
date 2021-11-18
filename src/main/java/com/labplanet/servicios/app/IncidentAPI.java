@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import databases.TblsApp;
 import functionaljavaa.incident.AppIncident;
@@ -56,6 +57,7 @@ public class IncidentAPI extends HttpServlet {
          */
         USER_OPEN_INCIDENTS("USER_OPEN_INCIDENTS", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INCIDENT_DETAIL_FOR_GIVEN_INCIDENT("INCIDENT_DETAIL_FOR_GIVEN_INCIDENT", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        CLOSED_INCIDENTS_LAST_N_DAYS("CLOSED_INCIDENTS_LAST_N_DAYS","",new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
         private IncidentAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
