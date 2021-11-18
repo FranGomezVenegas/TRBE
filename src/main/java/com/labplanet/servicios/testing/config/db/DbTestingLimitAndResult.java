@@ -123,7 +123,7 @@ Integer currentLine=0;
                 LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 currentLine=iLines;  
 //out.println(iLines);
-//if (currentLine==34) 
+//if (currentLine==23) 
 //    out.println("parate aqui");
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
@@ -216,8 +216,9 @@ Integer currentLine=0;
                                       specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
                             } 
                             if (specRule.getRuleIsQuantitative()){
-                                if (!isNumeric(resultValue))
-                                        resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", new Object[]{resultValue});                  
+                                Object[] isNumeric = isNumeric(resultValue);
+                                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString()))
+                                        resSpecEvaluation=isNumeric;
                                 else{
                                     Boolean requiresUnitsConversion=true;
                                     BigDecimal resultConverted =  null;

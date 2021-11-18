@@ -12,7 +12,7 @@ import functionaljavaa.modulegenoma.GenomaDataAudit;
 import static functionaljavaa.modulegenoma.GenomaDataStudy.isStudyOpenToChanges;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPMath;
+import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
@@ -104,8 +104,9 @@ public class DataStudyObjectsVariableValues {
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>", 
                     new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, procInstanceName});
         }else if (VariableTypes.INTEGER.toString().equalsIgnoreCase(fieldType)){
-            if (!LPMath.isNumeric(newValue))return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not numeric for variable <*2*> in procedure <*3*>", 
-                    new Object[]{newValue, variableName, procInstanceName});
+            Object[] isNumeric = isNumeric(newValue);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) 
+                return isNumeric;
         }else 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null);
         String[] updFieldsName=new String[]{TblsGenomaData.StudyVariableValues.FLD_VALUE.getName()};
