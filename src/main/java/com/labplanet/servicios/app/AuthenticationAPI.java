@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
+import static com.labplanet.servicios.app.AppBusinessRules.AllAppBusinessRules;
 import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPI;
 import static com.labplanet.servicios.app.AppProcedureListAPI.procedureListInfo;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
@@ -194,6 +195,7 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put("sop_tree_list_element", SopUserAPIfrontend.SopTreeListElements(request, response));                    
                     jsonObj.put("all_my_analysis_methods", AnalysisMethodCertifUserAPIfrontend.AllMyAnalysisMethodCertif(request, response));
 //                    jsonObj.put("my_pending_analysis_methods", AnalysisMethodCertifUserAPIfrontend.MyPendingAnalysisMethodCertif(request, response));
+                    jsonObj.put("platform_business_rules", AllAppBusinessRules(request, response));
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;                                   
                 case TOKEN_VALIDATE_ESIGN_PHRASE:     
