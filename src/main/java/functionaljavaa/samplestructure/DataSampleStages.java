@@ -16,7 +16,7 @@ import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.PropertiesToRequirements;
-import functionaljavaa.responsemessages.ResponseMessages;
+import trazit.session.ResponseMessages;
 import static functionaljavaa.samplestructure.ProcedureSampleStages.procedureSampleStagesTimingEvaluateDeviation;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
