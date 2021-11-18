@@ -93,18 +93,23 @@ public class LPMath {
        }
         return new Object[]{LPPlatform.LAB_TRUE, conclusionMsg, portion};
     }
-    public static boolean isNumeric(String strNum){
-        if (strNum==null) return false;
+    public static Object[] isNumeric(String strNum){
+        if (strNum==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "valueEmpty", null);
+        String curDigit="";
         try  {            
             for (int i=0;i<strNum.length();i++){
-                if (!"-".equalsIgnoreCase(strNum.substring(i, i+1))){
+                curDigit=strNum.substring(i, i+1);
+                if (!"-".equalsIgnoreCase(curDigit) && !".".equalsIgnoreCase(curDigit)){
                     Double valueParsed=Double.parseDouble(strNum.substring(i, i+1));}
             }
             //Float f = Float.valueOf(strNum);
             //System.out.print(valueParsed);
             
         }catch (Exception nfe){
-            return false;}
-        return true;
+            if (",".equalsIgnoreCase(curDigit))
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "commaIsTheDecimalsSeparator", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", null);
+        }
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "isNumeric", null);
     }
 } // end class
