@@ -12,6 +12,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.ProcedureDefinitionToInstance;
+import trazit.session.ResponseMessages;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.sql.Array;
 import java.sql.Connection;
@@ -37,6 +38,8 @@ import java.util.HashMap;
 import java.util.Properties;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+
+
 /**
  *
  * @author Administrator
@@ -1056,7 +1059,9 @@ if (1==1){Rdbms.transactionId=1; return;}
                 return crs;
             }
         }catch(Exception ex){
-            
+            ProcedureRequestSession instanceForDocumentation = ProcedureRequestSession.getInstanceForDocumentation(null, null);
+            ResponseMessages messages = instanceForDocumentation.getMessages();
+            messages.addMainForError("db error", new Object[]{ex.getMessage()});
 //        }catch(SQLException ex){
             //if (ex.getCause().)
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
