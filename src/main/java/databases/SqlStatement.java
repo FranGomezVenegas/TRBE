@@ -290,6 +290,19 @@ public class SqlStatement {
         StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
         if (fieldsToRetrieve != null) {
             for (String fn : fieldsToRetrieve) {
+                if (fn.contains("|")){
+                    String[] fnArr=fn.split("\\|");
+                    fn=fnArr[0];
+                    if (fnArr.length>1){
+                        switch(fnArr[1].toUpperCase()){
+                        case "DATETIME":
+                            fn="to_char("+fnArr[0]+",'DD.MM/YY HH:MI')";
+                        case "DATE":
+                        default:
+                        }
+                    }
+                        
+                }
                 if (fn.toUpperCase().contains(" IN")) {
                     Integer posicINClause = fn.toUpperCase().indexOf("IN");
                     fn = fn.substring(0, posicINClause - 1);
