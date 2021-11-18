@@ -196,6 +196,8 @@ public class AppProcedureListAPI extends HttpServlet {
                  
                 procedure.put("actions_with_esign", procActionsWithESign(curProc.toString()));
                 procedure.put("actions_with_confirm_user", procActionsWithConfirmUser(curProc.toString()));
+                procedure.put("actions_with_justification_phrase", procActionsWithJustifReason(curProc.toString()));
+                procedure.put("audit_sign_mode", auditSignMode(curProc.toString()));
                 procedures.add(procedure);
             }
             procFldNameArray = LPArray.addValueToArray1D(procFldNameArray, LABEL_PROC_SCHEMA);
@@ -210,9 +212,14 @@ public class AppProcedureListAPI extends HttpServlet {
     } 
     public static JSONArray procActionsWithESign(String procInstanceName){
         JSONArray jArr = new JSONArray();   
-        String[] eSignRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName()},
+                new Object[]{LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()}, 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;
+        String[] eSignRequired = LPNulls.replaceNull(ruleValue[0][0]).toString().split("\\|");
         for (String curAction: eSignRequired){
-            JSONObject jActionObj = new JSONObject();  
+            JSONObject jActionObj = new JSONObject();              
             jActionObj.put(curAction, actionDetail(procInstanceName, curAction));
             jArr.add(jActionObj);
             jArr.add(curAction);
@@ -221,19 +228,62 @@ public class AppProcedureListAPI extends HttpServlet {
     }
     public static JSONArray procActionsWithConfirmUser(String procInstanceName){
         JSONArray jArr = new JSONArray();   
-        String[] verifyUserRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).toString().split("\\|");
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName()},
+                new Object[]{LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()}, 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;
+        String[] verifyUserRequired = LPNulls.replaceNull(ruleValue[0][0]).toString().split("\\|");
         for (String curAction: verifyUserRequired){
-            JSONObject jActionObj = new JSONObject();  
+            JSONObject jActionObj = new JSONObject();             
             jActionObj.put(curAction, actionDetail(procInstanceName, curAction));
             jArr.add(jActionObj);
             jArr.add(curAction);
         }
         return jArr;
     }
+    public static JSONArray procActionsWithJustifReason(String procInstanceName){
+        JSONArray jArr = new JSONArray();   
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName()},
+                new Object[]{LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName()}, 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;
+        String[] justifReasonRequired = LPNulls.replaceNull(ruleValue[0][0]).toString().split("\\|");
+        for (String curAction: justifReasonRequired){
+            JSONObject jActionObj = new JSONObject();              
+            jActionObj.put(curAction, actionDetail(procInstanceName, curAction));
+            jArr.add(jActionObj);
+            jArr.add(curAction);
+        }
+        return jArr;
+    }
+    public static JSONObject auditSignMode(String procInstanceName){
+        JSONObject jObj = new JSONObject();   
+        Object[][] rulesValues = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()},
+                new Object[]{"sampleAuditChildRevisionRequired|sampleAuditRevisionMode"}, 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesValues[0][0].toString()))return jObj;
+        for (Object[] curRule: rulesValues){
+            JSONObject jActionObj = new JSONObject();              
+            jObj.put(curRule[0], curRule[1]);
+        }
+        return jObj;
+    }
+    
+    
     
     private static JSONObject actionDetail(String procInstanceName, String actionName){
         JSONObject jObj = new JSONObject();
-        String[] actionDetail = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), actionName+"AuditReasonPhrase").toString().split("\\|");
+        actionName=actionName+"AuditReasonPhrase";
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName()},
+                new Object[]{actionName}, 
+                new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()});
+//        String[] actionDetail = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), actionName+"AuditReasonPhrase").toString().split("\\|");
+        
+        String[] actionDetail=LPNulls.replaceNull(ruleValue[0][0]).toString().split("\\|");
         jObj.put("name", actionName);
         jObj.put("type", actionDetail[0]);
         if (actionDetail[0].toUpperCase().contains("LIST")){
