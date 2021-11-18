@@ -11,6 +11,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
+import databases.TblsAppProcDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsProcedure;
@@ -80,7 +81,15 @@ public class TestingServer extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
             try{
-/*             javax.json.JsonObject empObject = Json.createObjectBuilder().add("empName", "Jai")
+lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba desde Trazit", new String[]{"info.fran.gomez@gmail.com", "joel.sada.nillni@gmail.com"}, 
+        null, null, new String[]{});
+lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+        null, null, new String[]{}); //"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
+//lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+//        null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
+//lbplanet.utilities.LPMailing.otroMailViaSSL();
+
+                /*             javax.json.JsonObject empObject = Json.createObjectBuilder().add("empName", "Jai")
                                  .add("empAge", "25")
                                  .add("empSalary", "40000")
                                  .add("empAddress",
@@ -102,6 +111,10 @@ public class TestingServer extends HttpServlet {
 
                 
     LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
+String tblCreateScript2=TblsAppProcDataAudit.Instruments.createTableScript(new String[]{""});
+Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+
+if (1==1) return;
 String procInstanceName2="proc-deploy";//"em-demo-a";
 Rdbms.stablishDBConection("labplanet");
 TestingCoverage tstCov=null;
@@ -145,7 +158,7 @@ for (int curPlusDays: plusDays){
     }
 }
 Rdbms.stablishDBConection("labplanet");
-String tblCreateScript2=TblsProcedure.SampleStageTimingIntervalDeviation.createTableScript("em-demo-a", new String[]{""});
+tblCreateScript2=TblsProcedure.SampleStageTimingIntervalDeviation.createTableScript("em-demo-a", new String[]{""});
 Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 
