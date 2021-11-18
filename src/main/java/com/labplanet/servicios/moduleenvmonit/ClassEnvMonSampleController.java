@@ -5,15 +5,12 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 
 /**
