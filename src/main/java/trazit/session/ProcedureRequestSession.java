@@ -13,7 +13,6 @@ import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.businessrules.BusinessRules;
-import functionaljavaa.responsemessages.ResponseMessages;
 import functionaljavaa.testingscripts.TestingAuditIds;
 import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
 import functionaljavaa.testingscripts.TestingMessageCodeVisited;
@@ -51,13 +50,14 @@ public class ProcedureRequestSession {
     private ResponseMessages rspMessages;
     private BusinessRules busRulesProcInstance;
     private BusinessRules busRulesTesting;
+    private SessionAuditActions sessionAuditActions;
     
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
         try{
         if (request==null) return;
         this.language = LPFrontEnd.setLanguage(request); 
         this.isForTesting=isForTesting;
-        
+        this.sessionAuditActions=new SessionAuditActions();
         String finalToken = "";
         Token tokn = null;
         String dbName = "";
@@ -174,7 +174,14 @@ public class ProcedureRequestSession {
         markAsExpiredTheExpiredObjects(this.procedureInstance);
         }catch(Exception e){
             this.hasErrors=true;
-            this.errorMessage=e.getMessage();
+            if (this.rspMessages==null)
+                this.errorMessage=e.getMessage();
+            else{
+                Object[][] mainMessage = this.rspMessages.getMainMessage();
+                this.errorMessage=mainMessage[0][0].toString();
+                //messages.addMainForError("db error", new Object[]{ex.getMessage()});
+            }
+            
         }
     }
     
@@ -197,6 +204,7 @@ public class ProcedureRequestSession {
         if (this.auditAndUsrValid!=null) this.auditAndUsrValid.killInstance();
         if (this.busRulesProcInstance!=null) this.busRulesProcInstance=null;
         if (this.busRulesTesting!=null) this.busRulesTesting=null;
+        if (this.sessionAuditActions!=null) this.sessionAuditActions=null;
         Rdbms.closeRdbms(); 
     }
     
@@ -240,6 +248,12 @@ public class ProcedureRequestSession {
     public AuditAndUserValidation getAuditAndUsrValid(){
         return this.auditAndUsrValid;
     }
+    public SessionAuditActions getAuditActions(){
+        return this.sessionAuditActions;
+    }
+    public void addAuditAction(Integer audId, String auditAction){        
+        this.sessionAuditActions.addAuditAction(audId, auditAction);        
+    }    
     public TestingAuditIds getTestingAuditObj(){
         return this.tstAuditObj;
     }
