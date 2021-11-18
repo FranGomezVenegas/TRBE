@@ -10,7 +10,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.responsemessages.ResponseMessages;
+import trazit.session.ResponseMessages;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
