@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
@@ -174,7 +175,22 @@ public class ClassMasterData {
                                 separator = jO.getAsJsonObject().get(curFldName).getAsString();
                             resSpecEvaluation = mSpec.specLimitIsCorrectQualitative(rule,value, separator);
                             fieldValue=LPArray.addValueToArray1D(fieldValue, mSpec.getQualitativeRuleValues());
-
+                        }
+                        if (!LPArray.valueInArray(fieldName, TblsCnfg.SpecLimits.FLD_UOM.getName())){
+                            Object[][] paramUOM = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.AnalysisMethodParams.TBL.getName(), 
+                                    new String[]{TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName(), TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName(),
+                                        TblsCnfg.AnalysisMethodParams.FLD_PARAM_NAME.getName()},
+                                    new Object[]{jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName()).getAsString(),
+                                        jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_PARAMETER.getName()).getAsString()},
+                                    new String[]{TblsCnfg.AnalysisMethodParams.FLD_UOM.getName(), TblsCnfg.AnalysisMethodParams.FLD_UOM_CONVERSION_MODE.getName()});
+                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(paramUOM[0][0].toString()))){
+                                if (paramUOM[0][0]!=null){
+                                    fieldName=LPArray.addValueToArray1D(fieldName, TblsCnfg.SpecLimits.FLD_UOM.getName());
+                                    fieldValue=LPArray.addValueToArray1D(fieldValue, LPNulls.replaceNull(paramUOM[0][0].toString()));
+                                    fieldName=LPArray.addValueToArray1D(fieldName, TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName());
+                                    fieldValue=LPArray.addValueToArray1D(fieldValue, LPNulls.replaceNull(paramUOM[0][1].toString()));
+                                }
+                            }                            
                         }
                         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){
                            curFldName=TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(); 
