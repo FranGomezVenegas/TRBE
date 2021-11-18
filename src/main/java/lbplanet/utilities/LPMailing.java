@@ -173,7 +173,7 @@ public static void main(String[] args) {
             Transport.send(message);
             Logger.getLogger("Done");
         } catch (IOException|MessagingException ex) {
-            Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex.getMessage());
         }
     }    
 }      
