@@ -42,7 +42,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.user.UserAndRolesViews.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author Administrator
