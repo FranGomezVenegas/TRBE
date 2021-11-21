@@ -170,9 +170,9 @@ public class UserMethod {
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 updFields = LPArray.addValueToArray1D(updFields, whereFields);
                 updFieldsValue = LPArray.addValueToArray1D(updFieldsValue, whereFieldsValue);
-                String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(updFields, updFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.UPDATE_LAST_ANALYSIS_USER_METHOD.toString(), UserMethod.TABLENAME_DATA_USER_METHOD, testId, sampleId, testId, null, fieldsForAudit, preAuditId);
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.UPDATE_LAST_ANALYSIS_USER_METHOD.toString(), UserMethod.TABLENAME_DATA_USER_METHOD, 
+                    testId, sampleId, testId, null, updFields, updFieldsValue);
             }
         }
         return diagnoses;        

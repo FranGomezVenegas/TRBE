@@ -180,13 +180,12 @@ public class DataSampleRevisionTestingGroup{
         String[] updFldNames=new String[]{TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_BY.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_ON.getName()};
         Object[] updFldValues=new Object[]{false, true, reviewer, LPDate.getCurrentTimeStamp()};
         Object[] updateReviewSampleTestingGroup = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(),
-            updFldNames,updFldValues,
-            new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()},
+            updFldNames,updFldValues, new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()},
             new Object[]{sampleId, testingGroup});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateReviewSampleTestingGroup[0].toString())){
-            Object[] fieldsForAudit=LPArray.joinTwo1DArraysInOneOf1DString(updFldNames, updFldValues, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             SampleAudit smpAudit = new SampleAudit();
-            Object[] sampleAudit = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+            Object[] sampleAudit = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), TblsData.Sample.TBL.getName(), 
+                sampleId, sampleId, null, null, updFldNames, updFldValues);
             markSampleAsReadyForRevision(sampleId, SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), Integer.valueOf(LPNulls.replaceNull(sampleAudit[sampleAudit.length-1]).toString()));
         }
         return updateReviewSampleTestingGroup;        
@@ -227,13 +226,13 @@ public class DataSampleRevisionTestingGroup{
                 sampleFieldName, sampleFieldValue, 
                 new String[] {TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(),TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()}, new Object[]{sampleId, testingGroup});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             SampleAudit smpAudit = new SampleAudit(); 
             Object[] isSampleTestingGroupGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getTagName());
 //            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isSampleTestingGroupGenericAutoApproveEnabled[0].toString()))
 //                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_SET_AUTOAPPROVE.toString(), TblsData.SampleRevisionTestingGroup.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
 //            else
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_SET_READY_REVISION.toString(), TblsData.SampleRevisionTestingGroup.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_SET_READY_REVISION.toString(), TblsData.SampleRevisionTestingGroup.TBL.getName(), 
+                    sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isSampleTestingGroupGenericAutoApproveEnabled[0].toString())){
                 return reviewSampleTestingGroup(sampleId, testingGroup, DataSample.AUTO_APPROVE_USER);
             }                

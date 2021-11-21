@@ -180,7 +180,8 @@ public class DataProgramSample{
       if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
         SampleAudit smpAudit = new SampleAudit();
         String[] fieldsForAudit=new String[]{"Added microorganism "+microorganismName};
-        smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.MICROORGANISM_ADDED.toString() , TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+        smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.MICROORGANISM_ADDED.toString() , TblsData.Sample.TBL.getName(), 
+            sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
       }
       return diagnostic;
     }
@@ -210,7 +211,7 @@ public class DataProgramSample{
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
         SampleAudit smpAudit = new SampleAudit();
         String[] fieldsForAudit=new String[]{"Removed microorganism "+microorganismName};
-        smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.MICROORGANISM_REMOVED.toString() , TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+        smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.MICROORGANISM_REMOVED.toString() , TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
       }
       return diagnostic;
     }

@@ -74,7 +74,8 @@ public class TestingEnvMonitSamples extends HttpServlet {
         String stopPhrase=null;
         
         try (PrintWriter out = response.getWriter()) {
-            String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+            ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+            String procInstanceName=instanceForActions.getProcedureInstance();
 /*            String brName="sampleReviewer_canBeAnyTestingGroupReviewer";
             String ruleValue=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", brName);
             out.println("ruleValue using Parameter.getBusinessRuleProcedureFile = "+ruleValue);
@@ -245,7 +246,8 @@ if (iLines==7){
 //                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                     break;
                 }
-                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
+                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());   
+                instanceForActions.auditActionsKill();
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
             fileContentTable1Builder.append(LPTestingOutFormat.businessRulesTable());

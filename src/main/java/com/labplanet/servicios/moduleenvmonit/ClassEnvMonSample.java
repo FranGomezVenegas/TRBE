@@ -290,7 +290,7 @@ public class ClassEnvMonSample {
             }             
             if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                 DataSampleStages smpStage = new DataSampleStages();
-                smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId, smp.getParentAuditId(),null);
+                smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
             }           
             this.diagnostic=actionDiagnoses;
             this.relatedObj=rObj;

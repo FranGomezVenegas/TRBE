@@ -177,7 +177,7 @@ public enum SampleStageErrorTrapping{
         return new Object[]{LPPlatform.LAB_TRUE, previousStageFromPull};
     }
 
-    public Object[] dataSampleActionAutoMoveToNext(String actionName, Integer sampleId, Integer parentAuditId, String actionAuditName) {
+    public Object[] dataSampleActionAutoMoveToNext(String actionName, Integer sampleId) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
@@ -196,13 +196,11 @@ public enum SampleStageErrorTrapping{
             Object[] sampleFieldValue=new Object[]{moveDiagn[moveDiagn.length-1], sampleCurrStage};
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
                 Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
-                    sampleFieldName, sampleFieldValue,
-                    new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
-                    String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);               
+                    sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
                 dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());
                 SampleAudit smpAudit = new SampleAudit();
-                if (actionAuditName==null)actionAuditName=actionName;
-                smpAudit.sampleAuditAdd(actionAuditName+":"+SampleAudit.SampleAuditEvents.SAMPLESTAGE_MOVETONEXT.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, parentAuditId);        
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLESTAGE_MOVETONEXT.toString(), TblsData.Sample.TBL.getName(), 
+                    sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);        
             }
             if ("END".equalsIgnoreCase(sampleCurrStage)){
                 DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();

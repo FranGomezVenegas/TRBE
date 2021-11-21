@@ -167,9 +167,9 @@ public final class DataBatchIncubatorStructured {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString())) {
             SampleAudit smpAudit = new SampleAudit();       
             if (byMovement!=null && !byMovement) 
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, updFieldName, updFieldValue);
             else
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_MOVED_TO.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_MOVED_TO.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, updFieldName, updFieldValue);
         }
         return updateSampleInfo;
     }
@@ -271,13 +271,15 @@ public final class DataBatchIncubatorStructured {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString())) {
             SampleAudit smpAudit = new SampleAudit();       
             if (byMovement!=null && !byMovement) 
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsData.Sample.TBL.getName(), 
+                        sampleId, sampleId, null, null, updFieldName, updFieldValue);
             else{
                 updFieldName=LPArray.addValueToArray1D(updFieldName, "row");
                 updFieldName=LPArray.addValueToArray1D(updFieldName, "col");                
                 updFieldValue=LPArray.addValueToArray1D(updFieldValue, (valuePosition/batchNumCols)+1);
                 updFieldValue=LPArray.addValueToArray1D(updFieldValue, (valuePosition%batchNumCols)+1);                
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_MOVED_FROM.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_MOVED_FROM.toString(), TblsData.Sample.TBL.getName(), 
+                        sampleId, sampleId, null, null, updFieldName, updFieldValue);
             }
         }
         return updateSampleInfo;

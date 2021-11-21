@@ -499,9 +499,8 @@ public class ClassSample {
                                 sampleFieldName, 
                                 sampleFieldValue,
                                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
-                        String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
                         SampleAudit smpAudit = new SampleAudit();
-                        smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+                        smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
                             diagn=LPPlatform.trapMessage(diagn[0].toString(), endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         if ("END".equalsIgnoreCase(newSampleStage))
@@ -533,7 +532,7 @@ public class ClassSample {
             if (diagn!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
                 DataSampleStages smpStage = new DataSampleStages();
                 if (sampleId!=null)
-                    smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId, smp.getParentAuditId(), null);
+                    smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
             }
             this.diagnostic=diagn;
             this.relatedObj=rObj;

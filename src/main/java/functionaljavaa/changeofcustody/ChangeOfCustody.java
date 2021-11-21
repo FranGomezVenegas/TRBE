@@ -116,10 +116,9 @@ public enum ChangeOfCustodyErrorTrapping{
 
         switch (objectTable.toLowerCase()){
             case "sample":
-                Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.CHAIN_OF_CUSTODY_STARTED.toString(), objectTable, Integer.valueOf(objectId.toString()),
-                        Integer.valueOf(objectId.toString()), null, null, fieldsOnLogSample, null);
+                        Integer.valueOf(objectId.toString()), null, null, sampleFieldName, sampleFieldValue);
                 break;
             default:
                 break;
@@ -203,10 +202,9 @@ public enum ChangeOfCustodyErrorTrapping{
 
         switch (objectTable.toLowerCase()){
             case "sample":
-                Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.CHAIN_OF_CUSTODY_COMPLETED.toString(), objectTable, Integer.valueOf(objectId.toString()),
-                        Integer.valueOf(objectId.toString()), null, null, fieldsOnLogSample, null);
+                        Integer.valueOf(objectId.toString()), null, null, sampleFieldName, sampleFieldValue);
                 break;
             default:
                 break;

@@ -9,7 +9,6 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonAPI;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import functionaljavaa.audit.IncubBatchAudit;
-import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.inventory.batch.DataBatchIncubator.IncubatorBatchErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleIncubation;
 import functionaljavaa.samplestructure.DataSampleStages;
@@ -142,11 +141,10 @@ public final class DataBatchIncubatorUnstructured {
                 return setSampleIncubStarted;
             }else{
                 Object[] auditInfo=(Object[]) setSampleIncubStarted[1];
-                String parentSampleAudit=(String) auditInfo[auditInfo.length-1];
                 setSampleIncubStarted=(Object[]) setSampleIncubStarted[0];
                 DataSampleStages smpStage=new DataSampleStages();
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIEndpoints.EM_BATCH_INCUB_START.getName(), sampleId, Integer.valueOf(parentSampleAudit), SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_STARTED.toString());
+                    smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIEndpoints.EM_BATCH_INCUB_START.getName(), sampleId);
             }
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataBatchIncubator.IncubatorBatchErrorTrapping.SAMPLES_IN_BATCH_SET_AS_BATCHSTARTED.getErrorCode(), new Object[]{batchName});
@@ -172,14 +170,13 @@ public final class DataBatchIncubatorUnstructured {
             BigDecimal tempReading = null;
             Object[] setSampleIncubEnded = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, incubStage, incubName, tempReading, batchName);
             Object[] auditInfo=(Object[]) setSampleIncubEnded[1];
-            String parentSampleAudit=(String) auditInfo[auditInfo.length-1];
             setSampleIncubEnded=(Object[])setSampleIncubEnded[0];
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(setSampleIncubEnded[0].toString())) {
                 return setSampleIncubEnded;
             }else{
                 DataSampleStages smpStage=new DataSampleStages();
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIEndpoints.EM_BATCH_INCUB_END.getName(), sampleId, Integer.valueOf(parentSampleAudit), SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_ENDED.toString());
+                    smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);
             }
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchErrorTrapping.SAMPLES_IN_BATCH_SET_AS_BATCHENDED.getErrorCode(), new Object[]{batchName});
