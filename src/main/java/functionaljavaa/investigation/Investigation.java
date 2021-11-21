@@ -270,7 +270,7 @@ public final class Investigation {
             case "SAMPLE":
                 sampleId=(Integer)((Object[])decodeObjectDetail[1])[1];
                 smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), sampleId, 
-                    sampleId, null, null, new Object[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+investId.toString()}, null);
+                    sampleId, null, null, new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, new Object[]{investId.toString()});
                 return;
             case "SAMPLE_ANALYSIS":
                 testId=(Integer)((Object[])decodeObjectDetail[1])[1];
@@ -279,7 +279,7 @@ public final class Investigation {
                     new Object[]{testId}, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
                 sampleId=Integer.valueOf(objInfo[0][0].toString());
                 smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), testId, 
-                    sampleId, testId, null, new Object[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+investId.toString()}, null);
+                    sampleId, testId, null, new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, new Object[]{investId.toString()});
                 return;
             case "SAMPLE_ANALYSIS_RESULT":
                 resultId=(Integer)((Object[])decodeObjectDetail[1])[1];
@@ -288,7 +288,7 @@ public final class Investigation {
                     new Object[]{resultId}, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
                 sampleId=Integer.valueOf(objInfo[0][0].toString());
                 smpAudit.sampleAuditAdd(auditActionName, TblsData.Sample.TBL.getName(), resultId, 
-                    sampleId, null, resultId, new Object[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+investId.toString()}, null);
+                    sampleId, null, resultId, new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, new Object[]{investId.toString()});
                 return;
             default:
         }
