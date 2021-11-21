@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 
@@ -22,7 +21,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class AppBusinessRules {
-    public static JSONArray AllAppBusinessRules(HttpServletRequest request, HttpServletResponse response){
+    public static JSONObject AllAppBusinessRules(HttpServletRequest request, HttpServletResponse response){
     try{
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String language = LPFrontEnd.setLanguage(request); 
@@ -36,18 +35,16 @@ public class AppBusinessRules {
             new String[]{"rule_name", "rule_value"}, new String[]{"area", "order_number"});
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(appBusRulesInfo[0][0]).toString())){
-            return new JSONArray();
+            return new JSONObject();
         }
-        JSONArray appBusinessRulesJArr = new JSONArray(); 
+        JSONObject appBusinessRulesJArr = new JSONObject(); 
         for (Object[] curBusRule: appBusRulesInfo){
-            JSONObject brJObj = new JSONObject();
-            brJObj.put(curBusRule[0].toString(), curBusRule[1].toString());
-            appBusinessRulesJArr.add(brJObj);
+            appBusinessRulesJArr.put(curBusRule[0].toString(), curBusRule[1].toString());
         }    
         return appBusinessRulesJArr;
     }catch(Exception e){
-        JSONArray proceduresList = new JSONArray();
-        proceduresList.add("Error:"+e.getMessage());
+        JSONObject proceduresList = new JSONObject();
+        proceduresList.put("Error",e.getMessage());
         return proceduresList;            
     }
     }
