@@ -44,23 +44,26 @@ public class LPTestingParams {
         return;
     }
     public enum TestingServletsConfig{
-        NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT("/testing/config/testingConfigSpecQualitativeRuleFormat", "noDBSchema_config_SpecQualitativeRuleGeneratorChecker.txt", 1, "Rule;Text Spec;Separator"),
-        NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK("/testing/config/ResultCheckSpecQualitative", "noDBSchema_config_specQualitative_resultCheck.txt", 1, "Result; rule; rule value(s); separator; list name"),
-        NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT("/testing/config/testingConfigSpecQuantitativeRuleFormat", "noDBSchema_config_SpecQuantitativeRuleGeneratorChecker.txt", 2, " Min Acción ; Max Acción ;|Min Acción;Min Alerta;Max Alerta;Max Acción"),
-        NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK("/testing/config/ResultCheckSpecQuantitative", "noDBSchema_config_specQuantitative_resultCheck.txt", 2, "Result;Min;Max Acción;|Min Acción;Min Alerta;Result;Max Alerta;Max Acción"),
-        NODB_DBACTIONS("/testing/platform/DBActions", "noDBSchema_dbActions.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"),        
+        NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT("/testing/config/testingConfigSpecQualitativeRuleFormat", "noDBSchema_config_SpecQualitativeRuleGeneratorChecker.txt", 1, "Rule;Text Spec;Separator", false),
+        NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK("/testing/config/ResultCheckSpecQualitative", "noDBSchema_config_specQualitative_resultCheck.txt", 1, "Result; rule; rule value(s); separator; list name", false),
+        NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT("/testing/config/testingConfigSpecQuantitativeRuleFormat", "noDBSchema_config_SpecQuantitativeRuleGeneratorChecker.txt", 2, " Min Acción ; Max Acción ;|Min Acción;Min Alerta;Max Alerta;Max Acción", false),
+        NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK("/testing/config/ResultCheckSpecQuantitative", "noDBSchema_config_specQuantitative_resultCheck.txt", 2, "Result;Min;Max Acción;|Min Acción;Min Alerta;Result;Max Alerta;Max Acción", false),
+        NODB_DBACTIONS("/testing/platform/DBActions", "noDBSchema_dbActions.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", false),
         
-        DB_SCHEMACONFIG_SPEC_RESULTCHECK("/testing/config/db/DbTestingLimitAndResult", "dbSchema_config_spec_resultCheck.txt", 2, "procInstance; specCode; specCodeVersion; variation; analysis; methodName; methodVersion; Parameter; Value; UOM"),
+        DB_SCHEMACONFIG_SPEC_RESULTCHECK("/testing/config/db/DbTestingLimitAndResult", "dbSchema_config_spec_resultCheck.txt", 2, "procInstance; specCode; specCodeVersion; variation; analysis; methodName; methodVersion; Parameter; Value; UOM", true),
         
-        DB_SCHEMADATA_ENVMONIT_SAMPLES("/testing/moduleEnvMonit/TestingEnvMonitSamples", "DBSchema_data_envMonitSamples.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"),
-        DB_SCHEMADATA_SAMPLES("/testing/moduleSamples/TestingSamples", "DBSchema_data_Samples.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"),
-        DB_SCHEMADATA_INSPECTION_LOT_RM("/testing/moduleInspLotRM/TestingInspLotRM", "DBSchema_data_inspLotRM.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"),        
+        DB_SCHEMADATA_ENVMONIT_SAMPLES("/testing/moduleEnvMonit/TestingEnvMonitSamples", "DBSchema_data_envMonitSamples.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),
+        DB_SCHEMADATA_SAMPLES("/testing/moduleSamples/TestingSamples", "DBSchema_data_Samples.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),
+        DB_SCHEMADATA_INSPECTION_LOT_RM("/testing/moduleInspLotRM/TestingInspLotRM", "DBSchema_data_inspLotRM.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),        
+        
+        DB_PLATFORM_INSTRUMENTS("/testing/app/TestingPlatformInstruments", "DBSchema_platform_instruments.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", false),
         ;
-        private TestingServletsConfig(String url, String fileName, Integer numTables, String tablesHeaders){
+        private TestingServletsConfig(String url, String fileName, Integer numTables, String tablesHeaders, Boolean forProcedure){
             this.servletUrl=url;
             this.testerFileName=fileName;
             this.numTables=numTables;
             this.tablesHeaders=tablesHeaders;
+            this.isForProcedure=forProcedure;
         }
         public String getServletUrl(){
             return this.servletUrl;
@@ -80,5 +83,6 @@ public class LPTestingParams {
         private final String testerFileName;
         private final Integer numTables;
         private final String tablesHeaders;
+        private final Boolean isForProcedure;
     }
 }
