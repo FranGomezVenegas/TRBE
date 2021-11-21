@@ -229,6 +229,10 @@
         <servlet-class>com.labplanet.servicios.app.procs.InstrumentsAPIqueries</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>TestingPlatformInstruments</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.procs.TestingPlatformInstruments</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>TestingInspLotRM</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.TestingInspLotRM</servlet-class>
     </servlet>
@@ -540,6 +544,10 @@
     <servlet-mapping>
         <servlet-name>InstrumentsAPIqueries</servlet-name>
         <url-pattern>/app/procs/InstrumentsAPIqueries</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingPlatformInstruments</servlet-name>
+        <url-pattern>/testing/app/TestingPlatformInstruments</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestingInspLotRM</servlet-name>

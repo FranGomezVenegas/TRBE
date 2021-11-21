@@ -19,11 +19,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class TblsAppProcConfig {
-   
-    /**
-     *
-     */
-    public enum Instruments{
+    public enum InstrumentsFamily{
 
         /**
          *
@@ -32,12 +28,17 @@ public class TblsAppProcConfig {
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;"),        
         FLD_NAME("name", LPDatabase.stringNotNull()),
         FLD_DESCRIPTION("description", LPDatabase.string()),
-        FLD_FAMILY("family", LPDatabase.string()),
-        FLD_ON_LINE("on_line", LPDatabase.booleanFld()),
-        FLD_IS_LOCKED("is_locked", LPDatabase.booleanFld()),
-        FLD_LOCKED_REASON("locked_reason", LPDatabase.string())
+        FLD_CALIB_REQUIRED("calibration_required", LPDatabase.booleanFld()),
+        FLD_CALIB_INTERVAL("calibration_interval", LPDatabase.string()),
+        FLD_CALIB_TURN_OFF_WHEN_STARTED("calibration_turn_off_when_started", LPDatabase.booleanFld()),
+        FLD_CALIB_TURN_ON_WHEN_COMPLETED("calibration_turn_on_when_completed", LPDatabase.booleanFld()),
+        FLD_PM_REQUIRED("pm_required", LPDatabase.booleanFld()),
+        FLD_PM_INTERVAL("pm_interval", LPDatabase.string()),
+        FLD_PM_TURN_OFF_WHEN_STARTED("pm_turn_off_when_started", LPDatabase.booleanFld()),
+        FLD_PM_TURN_ON_WHEN_COMPLETED("pm_turn_on_when_completed", LPDatabase.booleanFld()),
+        FLD_VERIF_SAME_DAY_REQUIRED("verif_same_day_required", LPDatabase.booleanFld()),
         ;
-        private Instruments(String dbObjName, String dbObjType){
+        private InstrumentsFamily(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
@@ -63,14 +64,14 @@ public class TblsAppProcConfig {
         }
         private static String createTableScriptPostgres(String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Instruments.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = InstrumentsFamily.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(GlobalVariables.Schemas.APP_PROC_CONFIG.getName(), ""));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (Instruments obj: Instruments.values()){
+            for (InstrumentsFamily obj: InstrumentsFamily.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
@@ -89,7 +90,7 @@ public class TblsAppProcConfig {
         private final String dbObjTypePostgres;                     
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
-            for (Instruments obj: Instruments.values()){
+            for (InstrumentsFamily obj: InstrumentsFamily.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());

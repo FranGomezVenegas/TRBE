@@ -6,8 +6,8 @@
 package com.labplanet.servicios.app.procs;
 
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
-import databases.TblsAppProcConfig;
-import functionaljavaa.instruments.ConfigInstruments;
+import databases.TblsAppProcData;
+import functionaljavaa.instruments.DataInstruments;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
@@ -37,7 +37,6 @@ public class InstrumentsAPIactions extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);     
-
         
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
         if (procReqInstance.getHasErrors()){
@@ -65,76 +64,16 @@ public class InstrumentsAPIactions extends HttpServlet {
         argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
         String instrName=argValues[0].toString();
-        ConfigInstruments instr=new ConfigInstruments(instrName);
+        DataInstruments instr=new DataInstruments(instrName);
         try (PrintWriter out = response.getWriter()) {
-            switch (endPoint){
-                case NEW_INSTRUMENT:
-                    String fieldName=argValues[1].toString();
-                    String fieldValue=argValues[2].toString();
-                    String[] fieldNames=null;
-                    Object[] fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=ConfigInstruments.createNewInstrument(instrName, fieldNames, fieldValues);
-                    break;
-                case TURN_ON_LINE:
-                    fieldName=argValues[1].toString();
-                    fieldValue=argValues[2].toString();
-                    fieldNames=null;
-                    fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=instr.turnOnLine(fieldNames, fieldValues);
-                    break;
-                case TURN_OFF_LINE:
-                    fieldName=argValues[1].toString();
-                    fieldValue=argValues[2].toString();
-                    fieldNames=null;
-                    fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    instr=new ConfigInstruments(instrName);
-                    actionDiagnoses=instr.turnOffLine(fieldNames, fieldValues);
-                    break;
-                case START_CALIBRATION:
-                    instr=new ConfigInstruments(instrName);
-                    actionDiagnoses=instr.startCalibration();
-                    break;
-                case COMPLETE_CALIBRATION:
-                    instr=new ConfigInstruments(instrName);
-                    actionDiagnoses=instr.completeCalibration();
-                    break;
-/*                case CONFIRM_INCIDENT:
-                    incId=(Integer) argValues[0];
-                    AppIncident inc=new AppIncident(incId);
-                    actionDiagnoses = inc.confirmIncident(incId, argValues[1].toString());
-                    break;
-                case ADD_NOTE_INCIDENT:
-                    incId=(Integer) argValues[0];
-                    inc=new AppIncident(incId);
-                    String newNote=argValues[2].toString();
-                    actionDiagnoses = inc.addNoteIncident(incId, argValues[1].toString(), newNote);
-                    break;                    
-                case CLOSE_INCIDENT:
-                    incId=(Integer) argValues[0];
-                    inc=new AppIncident(incId);
-                    actionDiagnoses = inc.closeIncident(incId, argValues[1].toString());
-                    break;                    
-                case REOPEN_INCIDENT:
-                    incId=(Integer) argValues[0];
-                    inc=new AppIncident(incId);
-                    actionDiagnoses = inc.reopenIncident(incId, argValues[1].toString());
-                    break;    */      
-                default:
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, "endpointNotFound", null);   
-                    return;
-            }    
-            
+
+            ClassInstruments clss = new ClassInstruments(request, endPoint);
+            Object[] diagnostic=clss.getDiagnostic();
             if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, null, null);   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcConfig.Instruments.TBL.getName(), "instruments", instrName);                
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.Instruments.TBL.getName(), "instruments", instrName);                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{instrName}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
