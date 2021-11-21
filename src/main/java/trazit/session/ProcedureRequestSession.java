@@ -57,6 +57,9 @@ public class ProcedureRequestSession {
         if (request==null) return;
         this.language = LPFrontEnd.setLanguage(request); 
         this.isForTesting=isForTesting;
+        String paramIsTesting= request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING);            
+        if (paramIsTesting!=null && Boolean.valueOf(paramIsTesting))
+            this.isForTesting=true;
         this.sessionAuditActions=new SessionAuditActions();
         String finalToken = "";
         Token tokn = null;
@@ -207,7 +210,9 @@ public class ProcedureRequestSession {
         if (this.sessionAuditActions!=null) this.sessionAuditActions=null;
         Rdbms.closeRdbms(); 
     }
-    
+    public void auditActionsKill(){
+        if (this.sessionAuditActions!=null) this.sessionAuditActions=new SessionAuditActions();
+    }
     public String getActionName(){
         return this.actionName;
     }
