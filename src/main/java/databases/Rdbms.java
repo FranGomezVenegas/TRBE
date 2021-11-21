@@ -1219,6 +1219,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                             clase = "class java.time.LocalDateTime";
                             prepsta.setNull(indexval, Types.TIME_WITH_TIMEZONE);
                             break;
+                        case "LOCALDATETIME":
                         case "TIME":
                             clase = "class java.sql.Timestamp";
                             prepsta.setNull(indexval, Types.TIMESTAMP_WITH_TIMEZONE);
