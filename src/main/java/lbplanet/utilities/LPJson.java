@@ -36,17 +36,28 @@ public class LPJson {
             value.substring(value.toUpperCase().indexOf(" AS")+4);
     }
     public static JSONObject convertArrayRowToJSONObject(String[] header, Object[] row){
+        return convertArrayRowToJSONObject(header, row, null);
+    }
+
+    public static JSONObject convertArrayRowToJSONObject(String[] header, Object[] row, String[] fieldsToExclude){
         JSONObject jObj = new JSONObject();    
         if (header.length==0){return jObj;}
-        for (int iField=0; iField<header.length; iField++){     
+        for (int iField=0; iField<header.length; iField++){ 
             if (row[iField]==null){
                 jObj.put(header[iField], "");
             }else{
-                String clase = row[iField].getClass().toString();
-                if ( (clase.toUpperCase().equalsIgnoreCase("class java.sql.Date")) || (clase.toUpperCase().equalsIgnoreCase("class java.sql.Timestamp")) ){
-                    jObj.put(setAlias(header[iField]), row[iField].toString());
-                }else{
-                    jObj.put(setAlias(header[iField]), row[iField]);
+                if (fieldsToExclude==null || !LPArray.valueInArray(fieldsToExclude, header[iField])){
+                    String clase = row[iField].getClass().toString();
+                    if ( (clase.toUpperCase().equalsIgnoreCase("class java.sql.Date")) 
+                        || (clase.toUpperCase().equalsIgnoreCase("class java.time.LocalDateTime"))
+                        || (clase.toUpperCase().equalsIgnoreCase("class java.time.LocalDate"))
+                        || (clase.toUpperCase().equalsIgnoreCase("class java.sql.Timestamp")) ){
+                        jObj.put(setAlias(header[iField]), row[iField].toString());
+                    }else{
+                        if (row[iField].toString().toUpperCase().contains("NULL"))
+                            row[iField]="null";
+                        jObj.put(setAlias(header[iField]), row[iField]);
+                    }
                 }
             }
         }                    
