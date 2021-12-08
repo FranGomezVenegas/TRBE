@@ -157,12 +157,16 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 Object[] specFieldValueArr=new Object[]{};
                 if (specFieldName!=null && specFieldName.length()>0) specFieldNameArr=specFieldName.split("\\|");
                 if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
-                diagnostic = spcStr.specNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr, null, null);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                    messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
-                }else{
-                    messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                if (specFieldValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString()))
+                    diagnostic=specFieldValueArr;
+                else{
+                    diagnostic = spcStr.specNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr, null, null);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+                        messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
+                    }else{
+                        messageDynamicData=new Object[]{specFieldName};                
+                        rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    }
                 }
                 break;
             case SPEC_UPDATE:
@@ -171,7 +175,12 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 specCodeVersion = (Integer) argValues[1];
                 specFieldName = argValues[2].toString();
                 specFieldValue = argValues[3].toString();
-                diagnostic = spcStr.specUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|")));
+                if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
+                specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
+                if (specFieldValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString()))
+                    diagnostic=specFieldValueArr;
+                else
+                    diagnostic = spcStr.specUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
@@ -189,7 +198,10 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 specFieldValueArr=new Object[]{};
                 if (specFieldName!=null && specFieldName.length()>0) specFieldNameArr=specFieldName.split("\\|");
                 if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
-                diagnostic = anaStr.analysisNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
+                if (specFieldValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString()))
+                    diagnostic=specFieldValueArr;
+                else
+                    diagnostic = anaStr.analysisNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
@@ -203,7 +215,11 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 specCodeVersion = (Integer) argValues[1];
                 specFieldName = argValues[2].toString();
                 specFieldValue = argValues[3].toString();
-                diagnostic = anaStr.analysisUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|")));
+                specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
+                if (specFieldValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString()))
+                    diagnostic=specFieldValueArr;
+                else
+                    diagnostic = anaStr.analysisUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
@@ -257,7 +273,10 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     specFieldNameArr=LPArray.addValueToArray1D(specFieldNameArr, "rule_variables");
                     specFieldValueArr=LPArray.addValueToArray1D(specFieldValueArr, ruleVariables);
                 }
-                diagnostic = spcStr.specLimitNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
+                if (specFieldValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString()))
+                    diagnostic=specFieldValueArr;
+                else
+                    diagnostic = spcStr.specLimitNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
