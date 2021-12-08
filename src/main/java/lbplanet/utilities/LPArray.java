@@ -41,6 +41,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static lbplanet.utilities.LPDate.stringFormatToLocalDateTime;
 import static lbplanet.utilities.LPPlatform.trapMessage;
+import trazit.session.InternalMessage;
 
 /**
  * LPArray is a library for methods for building and modeling 1D and 2D arrays.
@@ -247,6 +248,57 @@ if (1==1) return fieldValue;
             String[] rowParse = myStringsArray[i].split("\\*");
             if (rowParse.length!=2){
                 myObjectsArray[i]=myStringsArray[i];
+                //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "objectOfArray_wrongFormat", new Object[]{i, myStringsArray[i].toString()});
+            }else{
+                switch (rowParse[1].toUpperCase()){                                    
+                    case "STRING":
+                        myObjectsArray[i]=rowParse[0];
+                        break;
+                    case "INTEGER":
+                        myObjectsArray[i]=Integer.parseInt((String) rowParse[0]);
+                        break;
+                    case "FLOAT":               
+                        myObjectsArray[i]=Float.parseFloat((String) rowParse[0]);
+                        break;
+                    case "BOOLEAN":               
+                        myObjectsArray[i]=Boolean.valueOf((String) rowParse[0]);
+                        break;               
+                    case "DATETIME":       
+                        myObjectsArray[i]= stringFormatToLocalDateTime((String) rowParse[0]);
+/*                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-ddT00:00:00");
+                            try {
+                                myObjectsArray[i]= format.parse((String) rowParse[0]);
+                            } catch (ParseException ex) {
+                                Logger.getLogger(LPArray.class.getName()).log(Level.SEVERE, null, ex);
+                            }*/
+                        break;                                                            
+                    case "DATE":        
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                            try {
+                                myObjectsArray[i]= format.parse((String) rowParse[0]);
+                            } catch (ParseException ex) {
+                                Logger.getLogger(LPArray.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        break;                                                            
+                    default:
+                        myObjectsArray[i]=rowParse[0];
+                        break;
+                }        
+            }                
+        }        
+        return myObjectsArray;
+        
+    }
+    public static Object[] convertStringWithDataTypeToObjectArrayInternalMessage(String[] myStringsArray){
+        
+        Object[] myObjectsArray = new Object[myStringsArray.length];
+        
+        for (Integer i=0;i<myStringsArray.length;i++){
+            String[] rowParse = myStringsArray[i].split("\\*");
+            if (rowParse.length!=2){
+                //myObjectsArray[i]=myStringsArray[i];
+                return new Object[]{LPPlatform.LAB_FALSE,
+                    new InternalMessage(LPPlatform.LAB_FALSE, "objectOfArray_wrongFormat", new Object[]{i, myStringsArray[i].toString()})};
             }else{
                 switch (rowParse[1].toUpperCase()){                                    
                     case "STRING":
