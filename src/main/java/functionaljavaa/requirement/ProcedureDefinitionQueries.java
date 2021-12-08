@@ -12,6 +12,7 @@ import databases.TblsProcedure;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleProcedureFile;
 import functionaljavaa.samplestructure.DataSampleStages.SampleStageBusinessRules;
+import functionaljavaa.sop.UserSop;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import lbplanet.utilities.LPArray;
@@ -34,7 +35,7 @@ public class ProcedureDefinitionQueries {
         PROCEDURE_MAIN_INFO(true, "PROCEDURE_MAIN_INFO", new String[]{"procedureName", "procedureVersion", "procedureRevision", "fileDeployment", "app"}, new String[]{CONFIG_PROC_FILE_NAME}, "", new Class[]{}, ""),
         PROCEDURE_ACTIONS_AND_ROLES(false, "PROCEDURE_ACTIONS_AND_ROLES", new String[]{}, new String[]{}, "procedureActionsAndRoles", new Class[]{String.class, ProcBusinessRulesQueries.class, JSONObject.class}, "procedure_events"),
         PROCEDURE_SAMPLE_AUDIT_LEVEL(true, "PROCEDURE_SAMPLE_AUDIT_LEVEL", new String[]{"sampleAuditRevisionMode", "sampleAuditChildRevisionRequired", "sampleAuditAuthorCanBeReviewerToo"}, new String[]{CONFIG_PROC_FILE_NAME}, "", new Class[]{}, ""),
-        PROCEDURE_USER_SOP_CERTIFICATION_LEVEL(true, "PROCEDURE_USER_SOP_CERTIFICATION_LEVEL", new String[]{"actionEnabledUserSopCertification", "windowOpenableUserSopCertification"}, new String[]{CONFIG_PROC_FILE_NAME}, "allProcSops", new Class[]{String.class, ProcBusinessRulesQueries.class, JSONObject.class}, "procedure_all_sops"),
+        PROCEDURE_USER_SOP_CERTIFICATION_LEVEL(true, "PROCEDURE_USER_SOP_CERTIFICATION_LEVEL", new String[]{UserSop.UserSopBusinessRules.ACTIONENABLED_USERSOP_CERTIFICATION.getTagName(), "windowOpenableUserSopCertification"}, new String[]{CONFIG_PROC_FILE_NAME}, "allProcSops", new Class[]{String.class, ProcBusinessRulesQueries.class, JSONObject.class}, "procedure_all_sops"),
         PROGRAM_CORRECTIVE_ACTION(true, "PROGRAM_CORRECTIVE_ACTION", new String[]{"programCorrectiveActionMode", "sampleActionWhenUponControlMode", "sampleActionWhenOOSMode"}, new String[]{CONFIG_PROC_FILE_NAME}, "", new Class[]{}, ""),
         CHANGE_OF_CUSTODY(true, "CHANGE_OF_CUSTODY", new String[]{"changeOfCustodyObjects"}, new String[]{CONFIG_PROC_FILE_NAME}, "", new Class[]{}, ""),
         SAMPLE_STAGES_TIMING_CAPTURE(true, "SAMPLE_STAGES_TIMING_CAPTURE", new String[]{"sampleStagesTimingCaptureMode", "sampleStagesTimingCaptureStages"}, new String[]{CONFIG_PROC_FILE_NAME}, "", new Class[]{}, ""),
@@ -231,7 +232,6 @@ public class ProcedureDefinitionQueries {
             JSONObject curSchemaMainObj = new JSONObject();
             JSONObject curSchemaObj=new JSONObject();
             String[] encryptedTables = getBusinessRuleProcedureFile(procInstanceName, curSchema, "encrypted_tables").split("\\|");
-            //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+curSchema, "encrypted_tables").split("\\|");
             if (encryptedTables[0].length()==0)
                 curSchemaMainObj.put(totalTables, 0);
             else
@@ -242,8 +242,7 @@ public class ProcedureDefinitionQueries {
                     encrypTableFldsObjArr.add("Nothing");
                 }else{
                     encrypTableFldsObjArr=new JSONArray();
-                    String[] encryptedTableFlds = getBusinessRuleProcedureFile(procInstanceName, curSchema, "encrypted_"+currEncrypTable).split("\\|");
-                    //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+curSchema, "encrypted_"+currEncrypTable).split("\\|");
+                    String[] encryptedTableFlds = getBusinessRuleProcedureFile(procInstanceName, curSchema, "encrypted_"+currEncrypTable, false).split("\\|");
                     JSONObject encrypTableFldsObj = new JSONObject();
                     if (encryptedTables[0].length()==0)
                         encrypTableFldsObj.put(totalFields, 0);
