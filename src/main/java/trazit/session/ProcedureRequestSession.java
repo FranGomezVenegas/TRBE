@@ -55,6 +55,7 @@ public class ProcedureRequestSession {
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
         try{
         if (request==null) return;
+        busRuleVisited=new TestingBusinessRulesVisited();
         this.language = LPFrontEnd.setLanguage(request); 
         this.isForTesting=isForTesting;
         String paramIsTesting= request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING);            
@@ -151,7 +152,7 @@ public class ProcedureRequestSession {
             }                        
         }
         if (!isForTesting && !isForUAT && !isQuery && !isForDocumentation){            
-            this.auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, language);
+            this.auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, language, this.busRulesProcInstance);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
                 this.hasErrors=true;
                 this.errorMessage=this.auditAndUsrValid.getCheckUserValidationPassesDiag()[this.auditAndUsrValid.getCheckUserValidationPassesDiag().length-1].toString();
@@ -336,7 +337,8 @@ public class ProcedureRequestSession {
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(req, null, actionEnabled);
             return null;                             
         }                        */
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allFine", null);
+
+return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allFine", null, true);
     }
     public void setBusinessRulesTesting(BusinessRules br){
         this.busRulesTesting=br;
