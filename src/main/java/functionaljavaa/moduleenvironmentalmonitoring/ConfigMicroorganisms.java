@@ -23,11 +23,17 @@ public class ConfigMicroorganisms {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken(); 
         Object[] existsMicroorg = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
                 new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()}, new Object[]{orgName});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsMicroorg[0].toString()))
-            return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsMicroorg[0].toString())){
+            Object[] existsMicroorgAhdoc = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.MicroOrganismAdhoc.TBL.getName(), 
+                    new String[]{TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_NAME.getName()}, new Object[]{orgName});            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsMicroorgAhdoc[0].toString()))
+                return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), 
                     TblsEnvMonitConfig.MicroOrganismAdhoc.TBL.getName(),                 
                     new String[]{TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_NAME.getName(), TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_ADDED_BY.getName(), TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_ADDED_ON.getName()}, 
-                    new Object[]{orgName, token.getPersonName(), LPDate.getCurrentTimeStamp()});    
+                    new Object[]{orgName, token.getPersonName(), LPDate.getCurrentTimeStamp()}); 
+            else
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "MicroorganismExistsInMicroorganism", new Object[]{orgName});
+        }
         else
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "MicroorganismExistsInMicroorganism", new Object[]{orgName});
     }
