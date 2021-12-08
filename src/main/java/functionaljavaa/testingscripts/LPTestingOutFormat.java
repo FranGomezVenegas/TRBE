@@ -343,7 +343,7 @@ public class LPTestingOutFormat {
     /**
      *
      */
-    public static final String BUNDLE_FILE_NAME="parameter.config.labtimus";
+    public static final String BUNDLE_FILE_NAME="parameter.config.testing-html-settings";
 
     /**
      *
@@ -984,7 +984,7 @@ public class LPTestingOutFormat {
             }
         }
         if (missingValues.length()==0)
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allFine", null);
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allFine", null, true);
         else
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{missingValues});
     }
