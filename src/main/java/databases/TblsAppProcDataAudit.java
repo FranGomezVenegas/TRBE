@@ -90,6 +90,17 @@ public class TblsAppProcDataAudit {
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
         }  
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (Instruments obj: Instruments.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }            
+        
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
