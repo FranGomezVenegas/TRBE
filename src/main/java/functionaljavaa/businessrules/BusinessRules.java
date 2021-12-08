@@ -6,7 +6,6 @@
 package functionaljavaa.businessrules;
 
 import databases.Rdbms;
-import databases.SqlStatement;
 import databases.TblsProcedure;
 import databases.TblsTesting;
 import java.util.ArrayList;
@@ -55,7 +54,7 @@ public class BusinessRules {
         else
             if (procedureInstanceName!=null && procedureInstanceName.length()>0)
                 testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
-                    new String[]{TblsProcedure.ProcedureBusinessRules.FLD_AREA.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{"ZZZ"}, 
+                    new String[]{TblsProcedure.ProcedureBusinessRules.FLD_DISABLED.getName()}, new Object[]{false}, 
                     new String[]{TblsProcedure.ProcedureBusinessRules.FLD_AREA.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()});
             else
                 testingBusRulsInfo=new Object[][]{LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "BusinessRulesNotCompatibleYetForPlatformRules", null)};
@@ -79,28 +78,34 @@ public class BusinessRules {
         return this.totalBusinessRules;}
     public ArrayList<RuleInfo> getProcedureBusinessRules(){return this.procedure;}    
     public String getProcedureBusinessRule(String ruleName){
-        for (RuleInfo curElement : this.procedure) {
-            if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
-//                LPPlatform.saveParameterPropertyInDbErrorLog("", this.procedureInstanceName+"-"+"procedure", new Object[]{}, ruleName);                
-                return curElement.getRuleValue();
+        if (this.procedure!=null){
+            for (RuleInfo curElement : this.procedure) {
+                if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
+    //                LPPlatform.saveParameterPropertyInDbErrorLog("", this.procedureInstanceName+"-"+"procedure", new Object[]{}, ruleName);                
+                    return curElement.getRuleValue();
+            }
         }
         return "";
     }
     public ArrayList<RuleInfo> getConfigBusinessRules(){return this.config;}
     public String getConfigBusinessRule(String ruleName){
-        for (RuleInfo curElement : this.config) {
-            if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
-//                LPPlatform.saveParameterPropertyInDbErrorLog("", this.procedureInstanceName+"-"+"config", new Object[]{}, ruleName);                
-                return curElement.getRuleValue();
+        if (this.config!=null){        
+            for (RuleInfo curElement : this.config) {
+                if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
+    //                LPPlatform.saveParameterPropertyInDbErrorLog("", this.procedureInstanceName+"-"+"config", new Object[]{}, ruleName);                
+                    return curElement.getRuleValue();
+            }
         }
         return "";
     }
     public ArrayList<RuleInfo> getDataBusinessRules(){return this.data;}    
     public String getDataBusinessRule(String ruleName){
-        for (RuleInfo curElement : this.data) {
-            if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
-//                LPPlatform.saveParameterPropertyInDbErrorLog("", this.procedureInstanceName+"-"+"data", new Object[]{}, ruleName);                
-                return curElement.getRuleValue();
+        if (this.data!=null){
+            for (RuleInfo curElement : this.data) {
+                if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
+    //                LPPlatform.saveParameterPropertyInDbErrorLog("", this.procedureInstanceName+"-"+"data", new Object[]{}, ruleName);                
+                    return curElement.getRuleValue();
+            }
         }
         return "";
     }
