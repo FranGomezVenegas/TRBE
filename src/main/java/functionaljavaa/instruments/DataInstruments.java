@@ -178,8 +178,10 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.UNDECOMMISSION_INSTRUMENT.getSuccessMessageCode(), new Object[]{name}, name);
     }
 
-    
     public InternalMessage turnOnLine(String[] fldNames, Object[] fldValues){
+        return turnOnLine(fldNames, fldValues, null);
+    }
+    public InternalMessage turnOnLine(String[] fldNames, Object[] fldValues, String actionName){
         if (this.isDecommissioned)
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -193,7 +195,7 @@ public class DataInstruments {
             messages.addMainForError(InstrumentsErrorTrapping.ALREADY_ONLINE.getErrorCode(), new Object[]{name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_ONLINE.getErrorCode(), new Object[]{name}, null);
         }
-        if (this.isLocked){
+        if (actionName==null && this.isLocked){
             messages.addMainForError(InstrumentsErrorTrapping.IS_LOCKED.getErrorCode(), new Object[]{name, this.lockedReason});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.IS_LOCKED.getErrorCode(), new Object[]{name, this.lockedReason}, null);
         }
@@ -293,8 +295,9 @@ public class DataInstruments {
                         fldNames, fldValues);        
         fldNames=new String[]{TblsAppProcData.Instruments.FLD_LAST_CALIBRATION.getName(), TblsAppProcData.Instruments.FLD_IS_LOCKED.getName(), TblsAppProcData.Instruments.FLD_LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
+        
         if (!this.onLine){
-            turnOnLine(fldNames, fldValues);
+            turnOnLine(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_CALIBRATION.toString());
         }else{
             updateInstrument(fldNames, fldValues);            
         }
@@ -366,7 +369,7 @@ public class DataInstruments {
         fldNames=new String[]{TblsAppProcData.Instruments.FLD_LAST_PM.getName(), TblsAppProcData.Instruments.FLD_IS_LOCKED.getName(), TblsAppProcData.Instruments.FLD_LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
         if (!this.onLine){
-            turnOnLine(fldNames, fldValues);
+            turnOnLine(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());
         }else{
             updateInstrument(fldNames, fldValues);            
         }
