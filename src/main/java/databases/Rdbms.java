@@ -1521,7 +1521,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         try{
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return new Object[]{LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}), 7), fieldsToRetrieve};
+                return new Object[]{LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}, true), 7), fieldsToRetrieve};
             }            
             res.last();
             Integer numRows=res.getRow();
@@ -1540,7 +1540,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                     }         
                     return new Object[]{diagnoses2, fieldsToRetrieve};
             }else{
-                return new Object[]{LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}), 7), fieldsToRetrieve};
+                return new Object[]{LPArray.array1dTo2d(LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}, true), 7), fieldsToRetrieve};
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
@@ -1703,7 +1703,9 @@ if (1==1){Rdbms.transactionId=1; return;}
         if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())){
              if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
              else schemaName=schemaName+"_testing";
-         }     
+        }     
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_CONFIG.getName()))
+            return schemaName;
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())){
             if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) 
                 schemaName=schemaName+"_testing";
