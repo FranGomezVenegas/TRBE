@@ -24,7 +24,7 @@ public class ProcReqSessionAutomatisms {
     public static void markAsExpiredTheExpiredObjects(String procInstanceName){
 //if (1==1)return;        
         //String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        String procedureActionsUserRoles = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.MARK_EXPIRED_OBJECTS.getAreaName(), LPPlatform.LpPlatformBusinessRules.MARK_EXPIRED_OBJECTS.getTagName());        
+        String procedureActionsUserRoles = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.MARK_EXPIRED_OBJECTS.getAreaName(), LPPlatform.LpPlatformBusinessRules.MARK_EXPIRED_OBJECTS.getTagName(), LPPlatform.LpPlatformBusinessRules.MARK_EXPIRED_OBJECTS.getIsOptional());        
         if (procedureActionsUserRoles==null || procedureActionsUserRoles.length()==0) return;
         for (String curEntity:procedureActionsUserRoles.split("\\*")){
             String[] curEntityInfo=curEntity.split("\\|");
