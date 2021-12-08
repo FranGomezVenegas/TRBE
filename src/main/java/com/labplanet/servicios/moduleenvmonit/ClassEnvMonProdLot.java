@@ -55,7 +55,10 @@ public class ClassEnvMonProdLot {
                     if (fieldName!=null && fieldName.length()>0) fieldNameArr=fieldName.split("\\|");
                     Object[] fieldValueArr=new Object[0];
                     if (fieldValue!=null && fieldValue.length()>0) fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=DataProgramProductionLot.newProgramProductionLot(lotName, fieldNameArr, fieldValueArr, Rdbms.getTransactionId());
+                    if (fieldValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString()))
+                        actionDiagnoses=fieldValueArr;
+                    else
+                        actionDiagnoses=DataProgramProductionLot.newProgramProductionLot(lotName, fieldNameArr, fieldValueArr, Rdbms.getTransactionId());
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
 //                        diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, procInstanceName});
                         messageDynamicData=new Object[]{lotName};
