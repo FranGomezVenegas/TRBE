@@ -54,6 +54,7 @@ import functionaljavaa.samplestructure.DataSampleStructureRevisionRules.DataSamp
 import functionaljavaa.sop.UserSop.UserSopBusinessRules;
 import functionaljavaa.sop.UserSop.UserSopErrorTrapping;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomErrorTrapping;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -74,18 +75,41 @@ public class PropertiesToRequirements {
         JSONArray vList=new JSONArray();
         String rulesNames="businessRulesEnableValues|businessRulesDisableValues";
         for (String curRule:rulesNames.split("\\|")){
-            String enableValuesStr=getBusinessRuleAppFile(curRule); 
+            String enableValuesStr=getBusinessRuleAppFile(curRule, true); 
             for (String curVal: enableValuesStr.split("\\|")){
                 vList.add(curVal);
             }
         }
         return vList;
     }
+    /*public static void whoImplementsEnumBusinessRules(){
+        ClassPathLoader cpl = new ClassPathLoader(".");
+        try {
+    Hashtable ht = cpl.getClasses();
+    Set s = ht.keySet();
+    Iterator iter = s.iterator();
+    String fullName = null;
+        while(iter.hasNext()) {
+            try {
+            fullName = (String) iter.next();
+            Class cls = Class.forName(fullName);
+            Class[] interfaces = cls.getInterfaces();
+            for(int i = 0; i < interfaces.length; i++) {
+            if(interfaces[i].getName().equals("IMyObserver.IFeature")) {
+
+            Object o = cls.newInstance();
+            }
+        }        
+    }*/
     public static void businessRulesDefinition(){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
 //        String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
 
 //        Rdbms.stablishDBConection(dbTrazitModules);   
+
+        
+
+
 
         LpPlatformBusinessRules[] lpPlatformBusinessRules=LpPlatformBusinessRules.values();
         for (LpPlatformBusinessRules curBusRul: lpPlatformBusinessRules){
@@ -116,7 +140,7 @@ public class PropertiesToRequirements {
         for (SampleStageBusinessRules curBusRul: sampleStageBusinessRules){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
-            declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
+            declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator(), curBusRul.getPreReqs());
         }        
         DataSampleBusinessRules[] dataSampleBusinessRules=DataSampleBusinessRules.values();
         for (DataSampleBusinessRules curBusRul: dataSampleBusinessRules){
@@ -194,7 +218,7 @@ public class PropertiesToRequirements {
         for (UserSopBusinessRules curBusRul: userSopBusinessRules){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
-            declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
+            declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator(), curBusRul.getPreReqs());
         }
         GenomaBusnessRules[] genomaBusnessRules=GenomaBusnessRules.values();
         for (GenomaBusnessRules curBusRul: genomaBusnessRules){
@@ -425,8 +449,10 @@ private static void declareBusinessRuleInDatabaseOld(String apiName, String area
         Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(), fieldNames, fieldValues);    
     }
 }
-
 private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, String areaName, String tagName, String[] fieldNames, Object[] fieldValues, JSONArray valuesLst, Boolean allowMultilist, char separatr){
+    declareBusinessRuleInDatabaseWithValuesList(apiName, areaName, tagName, fieldNames, fieldValues, valuesLst, allowMultilist, separatr, null);
+}
+private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, String areaName, String tagName, String[] fieldNames, Object[] fieldValues, JSONArray valuesLst, Boolean allowMultilist, char separatr, ArrayList<String[]> rulePreReqs){
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
     
     ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
@@ -479,6 +505,7 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
         fieldValues=LPArray.addValueToArray1D(fieldValues, updFldValue);
         fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_FILE_AREA.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, areaName);
+        
         Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(), fieldNames, fieldValues);    
     }
 }
