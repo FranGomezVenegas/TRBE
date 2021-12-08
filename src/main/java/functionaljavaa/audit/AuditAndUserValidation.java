@@ -8,7 +8,6 @@ package functionaljavaa.audit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Token;
 import functionaljavaa.businessrules.BusinessRules;
-import functionaljavaa.parameter.Parameter;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,10 +70,10 @@ public class AuditAndUserValidation {
 
     private static AuditAndUserValidation auditUserVal;
 
-     public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, HttpServletResponse response, String language) { 
+     public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, HttpServletResponse response, String language, BusinessRules busRulesProcInstance) { 
         if (auditUserVal == null) {
             if (request==null) return null;
-            auditUserVal = new AuditAndUserValidation(request, response, language);
+            auditUserVal = new AuditAndUserValidation(request, response, language, busRulesProcInstance);
             return auditUserVal;
         } else {
          return auditUserVal;
@@ -100,8 +99,8 @@ public class AuditAndUserValidation {
     private String auditReasonPhrase="";
     private Object[] checkUserValidationPassesDiag;
     
-    private AuditAndUserValidation(HttpServletRequest request, HttpServletResponse response, String language){
-                
+    private AuditAndUserValidation(HttpServletRequest request, HttpServletResponse response, String language, BusinessRules busRulesProcInstance){
+        
         String[] mandatoryParams = new String[]{};
         
         LPAPIArguments[] argsDef=new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -132,12 +131,21 @@ public class AuditAndUserValidation {
                 mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);                
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);    
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
+            isValidAuditPhrase(procInstanceName, actionName, auditReasonPhrase, busRulesProcInstance);
         }
         Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(procInstanceName, actionName, bi);
         if (procActionRequiresEsignConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)){      
             if (!procActionRequiresEsignConfirmation[0].toString().equalsIgnoreCase(LPPlatform.LAB_TRUE))
                 mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);                
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
+            isValidAuditPhrase(procInstanceName, actionName, auditReasonPhrase, busRulesProcInstance);
+        }        
+        Object[] procActionRequiresJustificationPhrase = LPPlatform.procActionRequiresJustificationPhrase(procInstanceName, actionName, bi);
+        if (procActionRequiresJustificationPhrase[0].toString().contains(LPPlatform.LAB_TRUE)){      
+            if (!procActionRequiresJustificationPhrase[0].toString().equalsIgnoreCase(LPPlatform.LAB_TRUE))
+                mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);
+            String auditReasonPhrase = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);      
+            isValidAuditPhrase(procInstanceName, actionName, auditReasonPhrase, busRulesProcInstance);
         }        
         
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);                       
@@ -148,7 +156,7 @@ public class AuditAndUserValidation {
 
         if (LPArray.valueInArray(mandatoryParams , GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE)){
             this.auditReasonPhrase=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE); 
-            if (!isValidAuditPhrase(procInstanceName, actionName, this.auditReasonPhrase)) return;                
+            if (!isValidAuditPhrase(procInstanceName, actionName, this.auditReasonPhrase, busRulesProcInstance)) return;                
         }
 
         if ( (procActionRequiresUserConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)) &&     
@@ -165,13 +173,14 @@ public class AuditAndUserValidation {
         this.auditReasonPhrase=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE); 
         this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_TRUE, AuditAndUserValidationErrorTrapping.CHECK_SUCCESS.getErrorCode(), null);
     }
-    private Boolean isValidAuditPhrase(String procInstanceName, String actionName, String auditReasonPhrase){
+    private Boolean isValidAuditPhrase(String procInstanceName, String actionName, String auditReasonPhrase, BusinessRules busRulesProcInstance){
 //        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
         if (procInstanceName==null){
             this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.PROC_INSTANCE_NAME_NULL.getErrorCode(), null);
             return false;
         }
-        String[] actionAuditReasonInfo = Parameter.getBusinessRuleProcedureFile(procInstanceName.replace("\"", ""), AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getAreaName(), actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
+        String[] actionAuditReasonInfo = busRulesProcInstance.getProcedureBusinessRule(actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
+        //String[] actionAuditReasonInfo = Parameter.getBusinessRuleProcedureFile(procInstanceName.replace("\"", ""), AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getAreaName(), actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
         if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (!LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase)) ){
             this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.WRONG_PHRASE.getErrorCode(), new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
             return false;
