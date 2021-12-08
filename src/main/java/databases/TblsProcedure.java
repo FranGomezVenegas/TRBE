@@ -204,6 +204,9 @@ public class TblsProcedure {
          */
         FLD_LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string()),
         FLD_ICON_NAME("icon_name", LPDatabase.string()),
+        FLD_LP_NEW_FRONTEND_PAGE_NAME("lp_new_frontend_page_name", LPDatabase.string()),
+        FLD_NEW_ICON_NAME("new_icon_name", LPDatabase.string()),
+        FLD_NEW_NAME("new_name", LPDatabase.stringNotNull()),
         FLD_POSITION("position", LPDatabase.string()),
         FLD_PARENT_NAME("parent_name", LPDatabase.string())
         ;
@@ -370,6 +373,7 @@ public class TblsProcedure {
         FLD_AREA("area", LPDatabase.stringNotNull())        ,
         FLD_RULE_NAME("rule_name", LPDatabase.stringNotNull())        ,
         FLD_RULE_VALUE("rule_value", LPDatabase.string())        ,
+        FLD_DISABLED("disabled", LPDatabase.booleanFld(false))        ,
         ;
         private ProcedureBusinessRules(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
