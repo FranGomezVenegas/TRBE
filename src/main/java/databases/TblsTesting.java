@@ -328,7 +328,7 @@ public class TblsTesting {
         FLD_BUS_RULES_COVERAGE_DETAIL("bus_rule_coverage_detail", LPDatabase.string()),        
         FLD_MSG_COVERAGE("msg_coverage", LPDatabase.real()),
         FLD_MSG_COVERAGE_DETAIL("msg_coverage_detail", LPDatabase.string()),
-        
+        FLD_MSG_CODE_EXCLUDE_LIST("msg_code_exclude_list", LPDatabase.string()),
         
         ;
         private ScriptsCoverage(String dbObjName, String dbObjType){
