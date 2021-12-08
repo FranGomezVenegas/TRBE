@@ -26,7 +26,9 @@ import databases.Token;
 import functionaljavaa.businessrules.BusinessRules;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
 import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
+import java.util.ArrayList;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -82,41 +84,50 @@ public class LPPlatform {
         }
         private final String name;           
     }
-   public enum LpPlatformBusinessRules{
-        PROCEDURE_ACTIONS("procedureActions", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        ACTION_ENABLED_ROLES("actionEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        ESIGN_REQUIRED("eSignRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        VERIFYUSER_REQUIRED("verifyUserRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        AUDIT_JUSTIF_REASON_REQUIRED("auditJustifReasonRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        AUDITREASON_PHRASE("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        TABLE_MANDATORYFIELDS_ACTIONNAME("_mandatoryFields", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        SUFFIX_CONFIGTABLENAME("_configTableName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
-        SUFFIX_CONFIGTABLEKEYFIELDS("_configTableKeyFields", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
-        SUFFIX_SPECIALFIELDNAME("_specialFieldsCheck", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
-        SUFFIX_SPECIALFIELDMETHODNAME("_specialFieldsCheck_methodName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
-        PREFIX_ENCRYPTED_TABLENAME("encrypted_", "", null, null, '|'),
-        MIDDLEOF_FIELDSADDINGMANDATORY("_fieldsAddingMandatory", "", null, null, '|'),
-        MARK_EXPIRED_OBJECTS("markExpiredObjects", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        MARK_EXPIRED_OBJECTS_LAST_RUN("markExpiredObjectsLastRun", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),        
+   public enum LpPlatformBusinessRules implements EnumIntBusinessRules {
+        PROCEDURE_ACTIONS("procedureActions", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
+        ACTION_ENABLED_ROLES("actionEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
+        ESIGN_REQUIRED("eSignRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
+        VERIFYUSER_REQUIRED("verifyUserRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
+        ACTIONCONFIRM_REQUIRED("actionConfirmRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
+        AUDIT_JUSTIF_REASON_REQUIRED("auditJustifReasonRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
+        AUDITREASON_PHRASE("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true),
+        TABLE_MANDATORYFIELDS_ACTIONNAME("_mandatoryFields", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
+        SUFFIX_CONFIGTABLENAME("_configTableName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true),
+        SUFFIX_CONFIGTABLEKEYFIELDS("_configTableKeyFields", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true),
+        SUFFIX_SPECIALFIELDNAME("_specialFieldsCheck", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true),
+        SUFFIX_SPECIALFIELDMETHODNAME("_specialFieldsCheck_methodName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true),
+        PREFIX_ENCRYPTED_TABLENAME("encrypted_", "", null, null, '|', true),
+        MIDDLEOF_FIELDSADDINGMANDATORY("_fieldsAddingMandatory", "", null, null, '|', true),
+        MARK_EXPIRED_OBJECTS("markExpiredObjects", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true),
+        MARK_EXPIRED_OBJECTS_LAST_RUN("markExpiredObjectsLastRun", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true),        
         ;
-        private LpPlatformBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private LpPlatformBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean opt){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=opt;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
         public JSONArray getValuesList(){return this.valuesList;}
         public Boolean getAllowMultiValue(){return this.allowMultiValue;}
         public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        public Boolean getIsOptional(){return this.isOptional;}
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
-        private final char multiValueSeparator;        
+        private final char multiValueSeparator;  
+        private final Boolean isOptional;
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 
 public enum LpPlatformErrorTrapping{ 
@@ -139,6 +150,10 @@ public enum LpPlatformErrorTrapping{
         ESIGNREQUIRED_DENIED_RULENOTFOUND("verifyUserRequired_denied_ruleNotFound", "", ""),
         ESIGNREQUIRED_DENIED("verifyUserRequired_denied", "", ""),
         ESIGNREQUIRED_ENABLED("verifyUserRequired_enabled", "", ""),
+        JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL("JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL", "", ""),
+        JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND("justificationPhraseRequired_denied_ruleNotFound", "", ""),
+        JUSTIFPHRASEREQUIRED_DENIED("justificationPhraseRequired_denied", "", ""),
+        JUSTIFPHRASEREQUIRED_ENABLED("justificationPhraseRequired_enabled", "", ""),
         MISSINGTABLECONFIGCODE("LabPLANETPlatform_MissingTableConfigCode", "", ""),
         SPECIALFUNCTION_RETURNEDERROR("LabPLANETPlatform_SpecialFunctionReturnedERROR", "", ""),
         SPECIALFUNCTION_CAUSEDEXCEPTION("LabPLANETPlatform_SpecialFunctionCausedException", "", ""),
@@ -217,7 +232,7 @@ public enum LpPlatformErrorTrapping{
         }
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
-            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new String[]{procInstanceName, actionName});
+            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new String[]{procInstanceName, actionName}, true);
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
             return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED_RULESNOTFOUND.getErrorCode(), new String[]{procInstanceName, Arrays.toString(procedureActions)});
@@ -245,7 +260,7 @@ public enum LpPlatformErrorTrapping{
         //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
         
         if (LPArray.valueInArray(procedureActionsUserRoles, "ALL")){
-            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new Object[]{procInstanceName});                    
+            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new Object[]{procInstanceName}, true);
         }
         if ( (procedureActionsUserRoles.length==1 && "".equals(procedureActionsUserRoles[0])) ){
             return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER.getErrorCode(), new Object[]{procInstanceName, actionName});        
@@ -310,6 +325,27 @@ public enum LpPlatformErrorTrapping{
             return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});               
         }    
     }    
+    public static Object[] procActionRequiresJustificationPhrase(String procInstanceName, String actionName, BusinessRules procBusinessRules){
+        actionName = actionName.toUpperCase();
+        String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName()).split("\\|"); // Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
+        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
+            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
+            if (testingBusinessRulesVisitedObj!=null)
+                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()+actionName, Arrays.toString(procedureActions));        
+        }
+                //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
+        
+        if (LPArray.valueInArray(procedureActions, "ALL"))
+            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
+        if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
+        }else if(!LPArray.valueInArray(procedureActions, actionName)){    
+            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
+        }else{
+            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});               
+        }    
+    }    
+    
     private static String auditReasonType(String procInstanceName, String actionName){
         String auditReasonType = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(), actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName()+actionName).toString();
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
@@ -331,7 +367,7 @@ public enum LpPlatformErrorTrapping{
         String parameterName = LpPlatformBusinessRules.PREFIX_ENCRYPTED_TABLENAME.getTagName()+tableName;
         schemaName = schemaName.replace("\"", "");
         if ( fieldName.contains(" ")){fieldName=fieldName.substring(0, fieldName.indexOf(' '));}
-        String tableEncrytedFields = Parameter.getBusinessRuleProcedureFile(schemaName, areaName, parameterName);
+        String tableEncrytedFields = Parameter.getBusinessRuleProcedureFile(schemaName, areaName, parameterName, true);
         if ( (tableEncrytedFields==null) ){return diagnoses;}
         if ( ("".equals(tableEncrytedFields)) ){return diagnoses;}        
         return LPArray.valueInArray(tableEncrytedFields.split("\\|"), fieldName);        
@@ -472,7 +508,7 @@ public enum LpPlatformErrorTrapping{
  * addJavaClassDoc is the method that should reduce the lines of code for justifying lines of code against its requirement
  * to keep the track about which is the requirement covered by each section in each method.
  * When running the code in Dev-Mode then it should mark as 'covered' the existing requirement or create one record for this given requirement
- * The parameter.config.labtimus mandatoryFields_requerimentsJavaDoc defines which are the mandatory fields that should be added
+ * The parameter.config.testing-html-settings mandatoryFields_requerimentsJavaDoc defines which are the mandatory fields that should be added
  * to the peer fields/values to let this call be consider fill enough to proceed.
  * 
  * @param fields String[] - which are the properties being passed.
@@ -809,7 +845,7 @@ public enum LpPlatformErrorTrapping{
  * trapMessage is the method that should reduce the lines of code for justifying lines of code against its requirement
  to keep the track about which is the requirement covered by each section in each method.
  * When running the code in Dev-Mode then it should mark as 'covered' the existing requirement or create one record for this given requirement
- * The parameter.config.labtimus mandatoryFields_requerimentsJavaDoc defines which are the mandatory fields that should be added
+ * The parameter.config.testing-html-settings mandatoryFields_requerimentsJavaDoc defines which are the mandatory fields that should be added
  * to the peer fields/values to let this call be consider fill enough to proceed.
  * 
  */
@@ -824,7 +860,16 @@ public enum LpPlatformErrorTrapping{
         Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
         className = className.replace(".java", "");
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo);
+        return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo, false);
+    }
+    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, Boolean isOptional) {
+        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
+        className = className.replace(".java", "");
+        Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
+        return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo, isOptional);
     }
     public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language) {
         return trapMessage(null, evaluation, msgCode, msgVariables, language);
@@ -837,9 +882,9 @@ public enum LpPlatformErrorTrapping{
         Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
         className = className.replace(".java", "");
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        return trapMessage(evaluation, msgCode, msgVariables, language, callerInfo);
+        return trapMessage(evaluation, msgCode, msgVariables, language, callerInfo, false);
     }
-    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language, Object[] callerInfo) {
+    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language, Object[] callerInfo,  Boolean isOptional) {
         if (LPArray.valueInArray(breakPointArray, msgCode))
             System.out.println("I'm "+msgCode);
         if (callerInfo==null){
@@ -864,11 +909,11 @@ public enum LpPlatformErrorTrapping{
         else
             propertiesFilePrefix=CONFIG_FILES_ERRORTRAPING;
         if (language==null)language=GlobalVariables.DEFAULTLANGUAGE;
-        errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, className+"_"+msgCode, language, callerInfo, false);
-        if (errorCodeText.length()==0){errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, msgCode, language, callerInfo, true);}
+        errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, className+"_"+msgCode, language, callerInfo, isOptional);
+        if (errorCodeText.length()==0){errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, msgCode, language, callerInfo, isOptional);}
         if (errorCodeText.length()==0){errorCodeText = msgCode; errorCodeFromBundle=false;}
         if (!errorCodeFromBundle){
-            errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file) ";
+            errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file, class="+className+" msgCode="+msgCode+") ";
             if (msgVariables!=null)errorDetail=errorDetail+Arrays.toString(msgVariables);
             if ( (msgVariables!=null) &&  msgVariables.length>0){
                 for (int iVarValue=1; iVarValue<=msgVariables.length; iVarValue++){
@@ -968,7 +1013,8 @@ public enum LpPlatformErrorTrapping{
      * @param callerInfo
      * @param paramName
      */
-    public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, Object[] callerInfo, String paramName) {          
+    public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, Object[] callerInfo, String paramName, Boolean isOptional) {          
+        if (Boolean.valueOf(isOptional)) return;
         if (!Rdbms.getRdbms().getIsStarted()){
             //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, paramName);
             return;
@@ -993,7 +1039,7 @@ public enum LpPlatformErrorTrapping{
                 fldNames, fldValues);
     }      
     public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){
-        String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues"); 
+        String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues", true); 
         String[] enableRuleValues=enableValuesStr.split("\\|");
         String ruleValue=Parameter.getBusinessRuleProcedureFile(procName, fileSchemaRepository, ruleName);
         if (ruleValue.length()==0) 

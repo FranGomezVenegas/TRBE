@@ -242,6 +242,15 @@
     <artifactId>opencsv</artifactId>
     <version>5.2</version>
 </dependency>
+
+<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
+<dependency>
+    <groupId>io.github.classgraph</groupId>
+    <artifactId>classgraph</artifactId>
+    <version>4.8.137</version>
+    <type>jar</type>
+</dependency>
+
 <!-- https://mvnrepository.com/artifact/org.molgenis/molgenis-data-excel
 <dependency>
     <groupId>org.molgenis</groupId>
@@ -259,8 +268,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>9</source>
+                    <target>9</target>
                     <compilerArguments>
                         <endorseddirs>${endorsed.dir}</endorseddirs>
                     </compilerArguments>
