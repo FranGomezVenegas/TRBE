@@ -98,10 +98,13 @@ public class ClassStudy {
                     fieldValues=new Object[0];
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
-                    
-                    actionDiagnoses =prjStudyIndividual.createStudyIndividual(studyName, indvidualName, fieldNames, fieldValues, false);
-                    this.messageDynamicData=new Object[]{indvidualName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=fieldValues;
+                    else{
+                        actionDiagnoses =prjStudyIndividual.createStudyIndividual(studyName, indvidualName, fieldNames, fieldValues, false);
+                        this.messageDynamicData=new Object[]{indvidualName, studyName, procInstanceName};
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
+                    }
                     break;
                 case STUDY_INDIVIDUAL_ACTIVATE:
                     studyName = argValues[0].toString();
@@ -158,6 +161,10 @@ public class ClassStudy {
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                                    
                     if (individualsListStr!=null && individualsListStr.length()>0) individualsList = individualsListStr.split("\\|");                    
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                        actionDiagnoses=fieldValues;
+                        break;
+                    }
                     actionDiagnoses =prjStudyFamily.createStudyFamily(studyName, familyName, individualsList, fieldNames, fieldValues, false);
                     this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
@@ -209,6 +216,10 @@ public class ClassStudy {
                     if (samplesStr!=null && samplesStr.length()>0) samples = samplesStr.split("\\|");
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                                    
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                        actionDiagnoses=fieldValues;
+                        break;
+                    }
                     actionDiagnoses =prjStudySampleSet.createStudySamplesSet(studyName, samplesSetName, samples, fieldNames, fieldValues, false);
                     this.messageDynamicData=new Object[]{samplesSetName, studyName, procInstanceName};
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
