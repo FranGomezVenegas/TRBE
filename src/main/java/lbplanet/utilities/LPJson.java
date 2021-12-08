@@ -116,8 +116,21 @@ public class LPJson {
     }
     
     public static JsonArray convertToJsonArrayStringedObject(String value){
-        JsonParser parser = new JsonParser();
-        return parser.parse(value).getAsJsonArray();
+        try{
+            if ("TBD".equalsIgnoreCase(value)){
+               JsonArray jArr = new JsonArray();
+               jArr.add(value);
+               return jArr;
+            }
+            JsonParser parser = new JsonParser();
+            return parser.parse(value).getAsJsonArray();
+        }catch(Exception e){
+           
+           JsonArray jArr = new JsonArray();
+           jArr.add(e.getMessage());
+           jArr.add(value);
+           return jArr; 
+        }
     }
 
    
