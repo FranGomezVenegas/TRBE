@@ -350,7 +350,7 @@ private Object[] existsEndPointInDatabase(String apiName, String endpointName){
     if (valuePosicInArray==-1)return new Object[]{LPPlatform.LAB_FALSE};
     return this.endpointsFromDatabase[valuePosicInArray];    
 }
-private void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi){
+public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi){
 //if (1==1)return;
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
     try{
