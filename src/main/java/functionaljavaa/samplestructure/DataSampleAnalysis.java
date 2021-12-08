@@ -43,19 +43,6 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         DataSampleAnalyisAutoAddLevel(String name) {this.name = name;}
         public String getName() {return name;}
     }
-    
-    /**
-     *
-     */
-    //public static final String CONFIG_SAMPLEANALYSIS_STATUSCANCELED = "sampleAnalysis_statusCanceled";
-
-    /**
-     *
-     */
-    //public static final String CONFIG_SAMPLEANALYSIS_STATUSREVIEWED = "sampleAnalysis_statusReviewed";
-
-    //private static final String ERROR_TRAPPING_DATA_SAMPLE_ANALYSIS_ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS= "DataSample_sampleAnalaysisAddToSample_MissingMandatoryFields";
-
     /**
      *
      * @param sampleId
