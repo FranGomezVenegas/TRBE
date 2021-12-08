@@ -69,7 +69,11 @@ public class ClassEnvMon {
                     Object[] fieldValues=new Object[0];
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
-                    actionDiagnoses= DataBatchIncubator.createBatch(batchName, batchTemplateId, batchTemplateVersion, fieldNames, fieldValues);
+                    if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                        actionDiagnoses=fieldValues;
+                        break;
+                    }
+                        actionDiagnoses= DataBatchIncubator.createBatch(batchName, batchTemplateId, batchTemplateVersion, fieldNames, fieldValues);
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, procInstanceName});                    
@@ -100,10 +104,13 @@ public class ClassEnvMon {
                     fieldName = argValues[1].toString();
                     String[] fieldsName = fieldName.split("\\|");
                     fieldValue = argValues[2].toString();
-                    Object[] fieldsValue= LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=DataBatchIncubator.batchUpdateInfo(batchName, fieldsName, fieldsValue);
+                    fieldValues= LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                    if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=fieldValues;
+                    else
+                        actionDiagnoses=DataBatchIncubator.batchUpdateInfo(batchName, fieldsName, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, Arrays.toString(fieldsName), Arrays.toString(fieldsValue), procInstanceName});
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, Arrays.toString(fieldsName), Arrays.toString(fieldValues), procInstanceName});
                     this.messageDynamicData=new Object[]{incubationName, batchName};
                     break;
                 case EM_BATCH_INCUB_START:
