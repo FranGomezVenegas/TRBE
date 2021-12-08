@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.app;
 
-
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -15,28 +14,43 @@ import databases.TblsAppProcDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsProcedure;
+import databases.TblsTrazitDocTrazit;
 import databases.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.intervals.IntervalsUtilities;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
 import functionaljavaa.materialspec.ConfigSpecRule;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 //import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
+import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
 //import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.csvExtractFieldValueBigDecimal;
 import functionaljavaa.testingscripts.TestingCoverage;
 import functionaljavaa.user.UserAndRolesViews;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ClassInfoList;
+import io.github.classgraph.FieldInfo;
+import io.github.classgraph.FieldInfoList;
+import io.github.classgraph.FieldInfoList.FieldInfoFilter;
+import io.github.classgraph.ScanResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
+import java.util.ServiceLoader;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -46,9 +60,11 @@ import static lbplanet.utilities.LPDate.SecondsInDateRange;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
-import functionaljavaa.businessrules.BusinessRules;
-import functionaljavaa.parameter.Parameter;
-import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
+import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPJson;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import trazit.enums.EnumIntBusinessRules;
 
 
 
@@ -69,7 +85,7 @@ public class TestingServer extends HttpServlet {
             throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
-        
+                
         try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
@@ -80,7 +96,93 @@ public class TestingServer extends HttpServlet {
             out.println("<h1>Servlet testingServer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
+            
+try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
+            .scan()) {    
+                ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntBusinessRules");
+                ClassInfoList allEnums = scanResult.getAllEnums();
+                out.println(classesImplementing.size());
+                for (int i=0;i<classesImplementing.size();i++){
+                    ClassInfo getMine = classesImplementing.get(i);      
+                    getMine.getFieldInfo().getNames();
+                    for (FieldInfo fi : getMine.getFieldInfo()) {
+                        //fi.getClass().getTagName();
+                        FieldInfoList filter = getMine.getFieldInfo().filter(new FieldInfoFilter() {
+                            @Override
+                            public boolean accept(FieldInfo fi) {
+                                 return fi.isEnum();
+                            }
+                        });
+                        out.println(fi);
+                    }                    
+/*                    out.println(classesImplementing.get(i).getName());
+                    String methName="values";
+                    out.println("has method "+methName+"? "+getMine.hasMethod(methName));
+                    Class [] carr = new Class[]{};
+                    Method method = (Method) getMine.getClass().getMethod("values").invoke(null);*/
+                    LPPlatform.LpPlatformBusinessRules[] lpPlatformBusinessRules=LPPlatform.LpPlatformBusinessRules.values();
+//                    Field f = getMine.getClass().getDeclaredField("$VALUES");
+//                    out.println(f);
+//                    out.println(Modifier.toString(f.getModifiers()));
+//                    f.setAccessible(true);
+//                    Object o = f.get(null);
+                    //return (E[]) o;                    
+//                    Method method = null;
+//                        Class<?>[] paramTypes = {String.class};
+                        //method = this.getClass().getDeclaredMethod(aMethod, paramTypes);
+//                        method=getMine.getClass().getMethod(methName, paramTypes);
+//                    String[] parameters = new String[]{"hhhh"};
+//                    method.invoke(this, paramTypes);
+                    
+                    //MethodInfoList methodInfo = getMine.getMethodInfo("values");
+                    //out.println(methodInfo.
+                    //getMine.getClass().getMethod(name, parameterTypes)
+
+                    for (LPPlatform.LpPlatformBusinessRules curBusRul: lpPlatformBusinessRules){
+                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
+                        Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
+//                        declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
+                    }                      
+                }
+    ClassInfoList widgetClasses = scanResult.getClassesImplementing("com.xyz.Widget");
+    List<String> widgetClassNames = widgetClasses.getNames();
+    // ...
+}catch(Exception e){
+    out.println(e.getMessage());
+    ScanResult.closeAll();
+    return;
+}
+ScanResult.closeAll();
+if (1==1){
+    out.println("ended line 105");
+    return;
+}
+ServiceLoader<EnumIntBusinessRules> loader = ServiceLoader.load(EnumIntBusinessRules.class);
+for (EnumIntBusinessRules implClass : loader) {
+    out.println(implClass.getClass().getSimpleName()); // prints Dog, Cat
+}            
             try{
+                
+                        AuthenticationAPIParams.AuthenticationAPIEndpoints[] valuesAuth = AuthenticationAPIParams.AuthenticationAPIEndpoints.values();
+        for (AuthenticationAPIParams.AuthenticationAPIEndpoints curApi: valuesAuth){
+
+            String[] argHeader=new String[]{"name", "type", "is_mandatory?","testing arg posic"};
+            JSONArray argsJsonArr = new JSONArray();
+            for (LPAPIArguments curArg: curApi.getArguments()){
+                JSONObject argsJson = LPJson.convertArrayRowToJSONObject(argHeader, new Object[]{curArg.getName(), curArg.getType(), curArg.getMandatory(), curArg.getTestingArgPosic()});
+                argsJsonArr.add(argsJson);
+            }
+
+            //getEndPointArguments(curApi.getArguments());
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ENDPOINT_NAME.getName(),  TblsTrazitDocTrazit.EndpointsDeclaration.FLD_SUCCESS_MESSAGE_CODE.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName(), curApi.getSuccessMessageCode()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+//            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            EndPointsToRequirements end=new EndPointsToRequirements();
+            end.declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), AuthenticationAPIParams.AuthenticationAPIEndpoints.values().length);
+        }
+
+if (1==1)return;      
 lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba desde Trazit", new String[]{"info.fran.gomez@gmail.com", "joel.sada.nillni@gmail.com"}, 
         null, null, new String[]{});
 lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 

@@ -15,6 +15,7 @@ import static functionaljavaa.testingscripts.LPTestingOutFormat.TESTING_FILES_FI
 import static functionaljavaa.testingscripts.LPTestingOutFormat.rowAddFields;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
+import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -208,8 +209,12 @@ public class TestingRegressionUAT extends HttpServlet {
                     BusinessRules bi=new BusinessRules(procInstanceName, null);
                     BusinessRules biTesting=new BusinessRules(procInstanceName, scriptId);
                     procReqInstance.setBusinessRulesTesting(biTesting);
-                    LPTestingOutFormat.cleanLastRun(procInstanceName, scriptId);
-                    LPTestingOutFormat.getIdsBefore(procInstanceName, scriptId, scriptTblInfo[0]);
+                    try{
+                        LPTestingOutFormat.cleanLastRun(procInstanceName, scriptId);
+                        LPTestingOutFormat.getIdsBefore(procInstanceName, scriptId, scriptTblInfo[0]);
+                    }catch(Exception err){
+                        String errMessage=err.getMessage();
+                    }
                     
                     String userProceduresList=token.getUserProcedures();
                     userProceduresList=userProceduresList.replace("[", "");
@@ -228,6 +233,10 @@ public class TestingRegressionUAT extends HttpServlet {
                             Logger.getLogger("In the script "+scriptId+" and step "+LPNulls.replaceNull(curStep[0]).toString()+"the action"+LPNulls.replaceNull(curStep[0]).toString()+" is not enabled"); 
     //                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getName(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language);              
     //                        return;
+                        }else{
+                            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
+                            if (testingBusinessRulesVisitedObj!=null)
+                            testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "ND", (String) LPNulls.replaceNull(curStep[1]), "ND");                                    
                         }                            
                     }
                     if (actionsList!=null){
@@ -252,6 +261,9 @@ public class TestingRegressionUAT extends HttpServlet {
                 Logger.getLogger(msgStr); 
                 out.println(msgStr);
             }
+        }
+        catch(Exception e){
+            String errMessage=e.getMessage();
         }
         finally{
             String scriptIdStr=request.getParameter("scriptId");

@@ -13,9 +13,11 @@ import functionaljavaa.user.UserProfile;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
+import static functionaljavaa.parameter.Parameter.isTagValueOneOfDisableOnes;
 import functionaljavaa.user.UserAndRolesViews;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import org.json.simple.JSONArray;
@@ -71,34 +73,50 @@ public class UserSop {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     public enum UserSopBusinessRules{
-        ACTIONENABLED_USERSOP_CERTIFICATION("actionEnabledUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),        
-        WINDOWOPENABLE_WHENNOTSOPCERTIFIED("windowOpenableWhenNotSopCertifiedUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        CERTIF_LEVEL_IMAGE_ERROR("userSopCertificationLevelImage_ERROR", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        CERTIF_LEVEL_IMAGE_NOTASSIGNED("userSopCertificationLevelImage_NotAssigned", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        CERTIF_LEVEL_IMAGE_CERTIFIED("userSopCertificationLevelImage_Certified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        CERTIF_LEVEL_IMAGE_NOTCERTIFIED("userSopCertificationLevelImage_NotCertified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        USERSOP_MODE("userSopMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, false, ' ', null),
+        ACTIONENABLED_USERSOP_CERTIFICATION("actionEnabledUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
+        WINDOWOPENABLE_WHENNOTSOPCERTIFIED("windowOpenableWhenNotSopCertifiedUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
+        CERTIF_LEVEL_IMAGE_ERROR("userSopCertificationLevelImage_ERROR", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
+        CERTIF_LEVEL_IMAGE_NOTASSIGNED("userSopCertificationLevelImage_NotAssigned", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
+        CERTIF_LEVEL_IMAGE_CERTIFIED("userSopCertificationLevelImage_Certified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
+        CERTIF_LEVEL_IMAGE_NOTCERTIFIED("userSopCertificationLevelImage_NotCertified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
 
-        USERSOP_INITIAL_STATUS("userSopInitialStatus", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
-        USERSOP_INITIAL_LIGHT("userSopInitialLight", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|'),
+        USERSOP_INITIAL_STATUS("userSopInitialStatus", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', "procedure*userSopMode"),
+        USERSOP_INITIAL_LIGHT("userSopInitialLight", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', "procedure*userSopMode")
         ;
-        private UserSopBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private UserSopBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, String preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.preReqsBusRules=preReqs;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
         public JSONArray getValuesList(){return this.valuesList;}
         public Boolean getAllowMultiValue(){return this.allowMultiValue;}
         public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        public ArrayList<String[]> getPreReqs(){
+            ArrayList<String[]> d = new ArrayList<String[]>();
+            if (preReqsBusRules!=null && preReqsBusRules.length()>0){
+                String[] rulesArr=preReqsBusRules.split("\\|");
+                for (String curRule: rulesArr){
+                    String[] curRuleArr = curRule.split("\\*");
+                    if (curRuleArr.length==2)
+                    d.add(curRuleArr);
+                }
+            }
+            return d;
+        }
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
-        private final char multiValueSeparator;        
+        private final char multiValueSeparator;    
+        private final String preReqsBusRules;        
+        
     }
     /**
      *
@@ -108,6 +126,9 @@ public class UserSop {
      * @return
      */
     public static final Object[][] getUserSop(String procInstanceName, String userName, String sopName ){
+        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return LPArray.array1dTo2d(procedureSopEnable, 1);        
+        
         UserProfile usProf = new UserProfile();
         Object[] userSchemas = usProf.getAllUserProcedurePrefix(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSchemas[0].toString())){
@@ -147,7 +168,8 @@ public class UserSop {
     }        
     
     private Object[] userSopCertifiedBySopInternalLogic( String procInstanceName, String userInfoId, String sopIdFieldName, String sopIdFieldValue ) {
-                        
+        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return LPArray.array1dTo2d(procedureSopEnable, 1);                        
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         
         UserProfile usProf = new UserProfile();
@@ -210,19 +232,21 @@ public class UserSop {
     /**
      *
      * @param userInfoId
-     * @param procInstanceNameName
+     * @param procInstanceName
      * @param fieldsToRetrieve
      * @return
      */
-    public Object[][] getNotCompletedUserSOP( String userInfoId, String procInstanceNameName, String[] fieldsToRetrieve) {
+    public Object[][] getNotCompletedUserSOP( String userInfoId, String procInstanceName, String[] fieldsToRetrieve) {
+        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return LPArray.array1dTo2d(procedureSopEnable, 1);        
         Object[] userSchemas = null;
-        if (procInstanceNameName.contains("ALL")){
+        if (procInstanceName.contains("ALL")){
             UserProfile usProf = new UserProfile();
             userSchemas = usProf.getAllUserProcedurePrefix(userInfoId);
         }
         else{
             userSchemas = new String[1];
-            userSchemas[0]=procInstanceNameName;
+            userSchemas[0]=procInstanceName;
         }
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSchemas[0].toString())){
@@ -381,6 +405,8 @@ public class UserSop {
      * @return
      */
     private Object[] addSopToUserInternalLogic( String procInstanceName, String personName, String sopIdFieldName, Object sopIdFieldValue){
+        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         Object[] exists = Rdbms.existsRecord(schemaName, TblsData.UserSop.TBL.getName(), new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
                 
@@ -418,12 +444,11 @@ public class UserSop {
      * @param procedureName
      * @return
      */
-    public boolean isProcedureSopEnable(String procedureName){
-        String sopCertificationLevel = Parameter.getBusinessRuleProcedureFile(procedureName, UserSopBusinessRules.ACTIONENABLED_USERSOP_CERTIFICATION.getAreaName(), UserSopBusinessRules.ACTIONENABLED_USERSOP_CERTIFICATION.getTagName());
-        if ("DISABLE".equalsIgnoreCase(sopCertificationLevel)) return false;
-        if ("DISABLED".equalsIgnoreCase(sopCertificationLevel)) return false;
-        if ("OFF".equalsIgnoreCase(sopCertificationLevel)) return false;
-        return !"".equalsIgnoreCase(sopCertificationLevel);
+    public static Object[] isProcedureSopEnable(String procedureName){
+        String sopCertificationLevel = Parameter.getBusinessRuleProcedureFile(procedureName, UserSopBusinessRules.USERSOP_MODE.getAreaName(), UserSopBusinessRules.USERSOP_MODE.getTagName());
+        if (isTagValueOneOfDisableOnes(sopCertificationLevel)) 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "disabled", null);
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "disabled", null);
     }
 
     /**
@@ -434,6 +459,9 @@ public class UserSop {
      * @return
      */
     public static final Object[] userSopMarkedAsCompletedByUser( String procInstanceName, String userName, String sopName ) {
+        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
+            
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName);
         if(LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())){return LPArray.array2dTo1d(sopInfo);}

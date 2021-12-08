@@ -14,7 +14,7 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class TestingBusinessRulesVisited {
-    private TestingBusinessRulesVisited() { jsonContent=new JSONArray();}  
+    public TestingBusinessRulesVisited() { jsonContent=new JSONArray();}  
     
 
     private static TestingBusinessRulesVisited busRuleInfo;
@@ -39,7 +39,8 @@ public class TestingBusinessRulesVisited {
         jObj.put("className", className);
         jObj.put("ruleName", ruleName);
         jObj.put("ruleValue", ruleValue);
-        this.jsonContent.add(jObj);
+        if (!this.jsonContent.contains(jObj))
+            this.jsonContent.add(jObj);
     }
     
 }
