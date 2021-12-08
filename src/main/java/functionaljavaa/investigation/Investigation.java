@@ -220,14 +220,18 @@ public final class Investigation {
     public static Object[] capaDecision(Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue, Boolean closeInvestigation){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+
+        Object[] capaFieldValues=LPArray.convertStringWithDataTypeToObjectArray(capaFieldValue);
+        if (capaFieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(capaFieldValues[0].toString()))
+            return capaFieldValues;
         Object[] areCapaFields = isCapaField(capaFieldName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areCapaFields[0].toString())) return areCapaFields;
         Object[] investigationClosed = isInvestigationClosed(investId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
         String[] updFieldName=new String[]{TblsProcedure.Investigation.FLD_CAPA_REQUIRED.getName(), TblsProcedure.Investigation.FLD_CAPA_DECISION_ON.getName(), TblsProcedure.Investigation.FLD_CAPA_DECISION_BY.getName()};
         Object[] updFieldValue=new Object[]{capaRequired, LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        if (capaFieldName!=null) updFieldName=LPArray.addValueToArray1D(updFieldName, capaFieldName);
-        if (capaFieldValue!=null) updFieldValue=LPArray.addValueToArray1D(updFieldValue, LPArray.convertStringWithDataTypeToObjectArray(capaFieldValue));
+        if (capaFieldName!=null) updFieldName=LPArray.addValueToArray1D(updFieldName, capaFieldName);        
+        if (capaFieldValue!=null) updFieldValue=LPArray.addValueToArray1D(updFieldValue, capaFieldValues);
         Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
             updFieldName, updFieldValue,
             new String[]{TblsProcedure.Investigation.FLD_ID.getName()}, new Object[]{investId});
