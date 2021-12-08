@@ -151,7 +151,7 @@ public class AppIncident {
         Object[] isActive=isIncidentActive(incidentId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isActive[0].toString())) return isActive;
         
-        String addNoteAvailableStatuses=getBusinessRuleAppFile("incidentsAddNoteAvailableStatuses"); 
+        String addNoteAvailableStatuses=getBusinessRuleAppFile("incidentsAddNoteAvailableStatuses", true); 
         if ( (newStatus!=null) && (newStatus.length()>0) && (!addNoteAvailableStatuses.contains("ALL") || (!addNoteAvailableStatuses.contains(newStatus))) )
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "status <*1*> not allowed as new status through Add Note Incident", new Object[]{newStatus});
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
