@@ -211,6 +211,8 @@ Integer currentLine=0;
                             String specUomName=(String) specLimits[0][4];
                             ConfigSpecRule specRule = new ConfigSpecRule();
                             specRule.specLimitsRule(limitId, null);
+                            if (!specRule.getRuleIsQualitative() && !specRule.getRuleIsQuantitative())
+                                resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "spec limit "+limitId+" not recognized as quantitative neither qualitative", null);                    
                             if (specRule.getRuleIsQualitative()){        
                               resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
                                       specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
