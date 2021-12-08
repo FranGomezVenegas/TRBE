@@ -86,6 +86,7 @@ public class TstDataBatchArr extends HttpServlet {
                 if (configSpecTestingArray[i][10]!=null){groupBy = configSpecTestingArray[i][10].split("\\|");}else{groupBy = new String[0];}
                 
                 Object[] fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue);
+                
                 if ( (fieldName!=null) && (fieldValue!=null) ){
                     //whereFieldsNameArr=labArr.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
                     //whereFieldsValueArr = labArr.addValueToArray1D(whereFieldsValueArr, labArr.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                                              
