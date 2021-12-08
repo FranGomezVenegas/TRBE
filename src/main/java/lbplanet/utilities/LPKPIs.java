@@ -168,6 +168,9 @@ public final class LPKPIs {
             return new Object[]{};
         String[] curWhereFieldsNameArr=giveMeStringArr(names);
         Object[] curWhereFieldsValueArr=LPArray.convertStringWithDataTypeToObjectArray(values.split("\\|"));
+        if (curWhereFieldsValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(curWhereFieldsValueArr[0].toString()))
+            return curWhereFieldsValueArr;
+
         for (int j=0;j<curWhereFieldsNameArr.length;j++){
             String curFldName=curWhereFieldsNameArr[j];
             if (curFldName.contains("*START")){
