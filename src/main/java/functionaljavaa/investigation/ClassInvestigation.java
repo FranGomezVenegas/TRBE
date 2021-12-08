@@ -72,7 +72,12 @@ public class ClassInvestigation {
         Integer investigationId=null;
         switch (endPoint){
             case NEW_INVESTIGATION:
-                actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|"))), argValues[2].toString());
+                Object[] fieldValues=LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|")));
+                if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    actionDiagnoses=fieldValues;
+                    break;
+                }                
+                actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), fieldValues, argValues[2].toString());
                 String investigationIdStr="";
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                     investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();

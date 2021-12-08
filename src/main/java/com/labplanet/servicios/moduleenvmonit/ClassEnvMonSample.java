@@ -78,7 +78,7 @@ public class ClassEnvMonSample {
         Token token=procReqSession.getToken();
 
         Object[] dynamicDataObjects=new Object[]{};        
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         try {
             DataProgramSampleAnalysis prgSmpAna = new DataProgramSampleAnalysis();
@@ -101,14 +101,17 @@ public class ClassEnvMonSample {
                         fieldNames=argValues[2].toString().split("\\|");
                         fieldValues=LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|"));
                     }                   
-                    if (argValues[6]==null){
-                        actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV, 
-                            fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
-                    }else{
-                        actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV,  
-                            fieldNames, fieldValues, (String) argValues[4], (String) argValues[5], (Integer) argValues[6]);
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=fieldValues;
+                    else{
+                        if (argValues[6]==null){
+                            actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV, 
+                                fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
+                        }else{
+                            actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV,  
+                                fieldNames, fieldValues, (String) argValues[4], (String) argValues[5], (Integer) argValues[6]);
+                        }
                     }
-
                     //actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", argValues);
                     dynamicDataObjects=new Object[]{actionDiagnoses[actionDiagnoses.length-1]};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), actionDiagnoses[actionDiagnoses.length-1]);                                                
@@ -161,7 +164,7 @@ public class ClassEnvMonSample {
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), resultInfo[0][0]);
                     }
                     break;
-                case PLATE_READING_NUMBER:
+/*                case PLATE_READING_NUMBER:
                     sampleId = (Integer) argValues[0];
                     rawValueResult = argValues[1].toString();
                     Object[][] sampleAnaResultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(),
@@ -194,6 +197,7 @@ public class ClassEnvMonSample {
                         }
                     }
                     break;
+*/
                 case ADD_SAMPLE_MICROORGANISM: 
                 case ADD_ADHOC_SAMPLE_MICROORGANISM:
                     sampleId=(Integer) argValues[0];
@@ -290,7 +294,9 @@ public class ClassEnvMonSample {
             }             
             if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                 DataSampleStages smpStage = new DataSampleStages();
-                smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
+                if (smpStage.isSampleStagesEnable())
+                    smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
+                
             }           
             this.diagnostic=actionDiagnoses;
             this.relatedObj=rObj;

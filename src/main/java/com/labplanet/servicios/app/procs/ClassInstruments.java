@@ -45,8 +45,11 @@ public class ClassInstruments {
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
                     if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=DataInstruments.createNewInstrument(instrName, fieldNames, fieldValues);
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    else
+                        actionDiagnoses=DataInstruments.createNewInstrument(instrName, fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                
@@ -57,8 +60,11 @@ public class ClassInstruments {
                     fieldNames=null;
                     fieldValues=null;
                     if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=instr.updateInstrument(fieldNames, fieldValues);
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    else
+                        actionDiagnoses=instr.updateInstrument(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                
@@ -69,8 +75,11 @@ public class ClassInstruments {
                     fieldNames=null;
                     fieldValues=null;
                     if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=instr.decommissionInstrument(fieldNames, fieldValues);
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    else
+                        actionDiagnoses=instr.decommissionInstrument(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                
@@ -81,8 +90,11 @@ public class ClassInstruments {
                     fieldNames=null;
                     fieldValues=null;
                     if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=instr.unDecommissionInstrument(fieldNames, fieldValues);
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    else
+                        actionDiagnoses=instr.unDecommissionInstrument(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                
@@ -93,8 +105,11 @@ public class ClassInstruments {
                     fieldNames=null;
                     fieldValues=null;
                     if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=instr.turnOnLine(fieldNames, fieldValues);
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    else
+                        actionDiagnoses=instr.turnOnLine(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                
@@ -105,8 +120,11 @@ public class ClassInstruments {
                     fieldNames=null;
                     fieldValues=null;
                     if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    instr=new DataInstruments(instrName);
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    else
+                        instr=new DataInstruments(instrName);
                     actionDiagnoses=instr.turnOffLine(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
