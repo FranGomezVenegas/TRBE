@@ -11,6 +11,7 @@ import functionaljavaa.testingscripts.TestingMessageCodeVisited;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -84,7 +85,7 @@ public class Parameter {
                 LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
                         //new Object[]{className, classFullName, methodName, lineNumber}, 
                         callerInfo,
-                        parameterName);
+                        parameterName, reportMissingProp);
                 TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
                 if (testingMessageCodeVisitedObj!=null)
                     testingMessageCodeVisitedObj.AddObject(procName, schemaSuffix, parameterName, "Not found!");
@@ -104,7 +105,7 @@ public class Parameter {
             LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
                     //new Object[]{className, classFullName, methodName, lineNumber}, 
                     callerInfo,
-                    parameterName);
+                    parameterName, reportMissingProp);
             TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
             if (testingMessageCodeVisitedObj!=null)
                 testingMessageCodeVisitedObj.AddObject(procName, schemaSuffix, parameterName, "ERROR: Not Found!");            
@@ -116,7 +117,7 @@ public class Parameter {
         return !"".equals(getMessageCodeValue(parameterFolder, schemaName, areaName, parameterName, language));
     }
 
-    public static String getBusinessRuleAppFile(String parameterName) {
+    public static String getBusinessRuleAppFile(String parameterName, Boolean reportMissingProp) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
         String methodName = "NO TRACE"; 
@@ -129,10 +130,10 @@ public class Parameter {
         }
         className = className.replace(".java", "");
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        return getBusinessRuleInAppFile("parameter.config.app", parameterName, callerInfo);
+        return getBusinessRuleInAppFile("parameter.config.app", parameterName, callerInfo, reportMissingProp);
     }
 
-    private static String getBusinessRuleInConfigFile(String configFile, String parameterName, String language) {
+    private static String getBusinessRuleInConfigFile(String configFile, String parameterName, String language, Boolean reportMissingProp) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
         String methodName = "NO TRACE"; 
@@ -145,22 +146,34 @@ public class Parameter {
         }
         className = className.replace(".java", "");
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        return getBusinessRuleInAppFile("parameter.config." + configFile + "_" + language, parameterName, callerInfo);
+        return getBusinessRuleInAppFile("parameter.config." + configFile + "_" + language, parameterName, callerInfo, reportMissingProp);
     }
-
-    private static String returnBusinessRuleValue(String valueToReturn, String procInstanceName, String area, String parameterName, Object[] callerInfo){        
-        if (valueToReturn==null || valueToReturn.length()==0)
+    private static String returnBusinessRuleValue(String valueToReturn, String procInstanceName, String area, String parameterName, Object[] callerInfo, Boolean isOptional){        
+        return returnBusinessRuleValue(valueToReturn, procInstanceName, area, parameterName, callerInfo, isOptional, false);
+    }
+    private static String returnBusinessRuleValue(String valueToReturn, String procInstanceName, String area, String parameterName, Object[] callerInfo, Boolean isOptional, Boolean disabledByPreReq){        
+        if ((valueToReturn==null || valueToReturn.length()==0) && (!Boolean.valueOf(isOptional)))
             LPPlatform.saveParameterPropertyInDbErrorLog("", procInstanceName+"-"+area, 
-                callerInfo, parameterName);
-        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
+                callerInfo, parameterName, isOptional);
+        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting() && (!disabledByPreReq) ){
+            if (parameterName.toUpperCase().contains("STATUS"))
+                parameterName=parameterName;
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
                 testingBusinessRulesVisitedObj.AddObject(procInstanceName, area, callerInfo[0].toString(), parameterName, valueToReturn);        
         }
         return valueToReturn;
     }
-    
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName) {
+        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, false, null);
+    }
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, Boolean isOptional) {
+        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, isOptional, null);
+    }    
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, ArrayList<String[]> rulePreReqs) {
+        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, false, rulePreReqs);
+    }    
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, Boolean isOptional, ArrayList<String[]> rulePreReqs) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
         String methodName = "NO TRACE"; 
@@ -170,29 +183,56 @@ public class Parameter {
             classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
             methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
             lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
-        className = className.replace(".java", "");
+            className = className.replace(".java", "");
         }
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-
         BusinessRules brTesting=ProcedureRequestSession.getInstanceForActions(null, null, null).getBusinessRulesTesting();
         BusinessRules brProcInstance=ProcedureRequestSession.getInstanceForActions(null, null, null).getBusinessRulesProcInstance();
+        if (rulePreReqs!=null){
+            for (String[] curPreReqRule: rulePreReqs){
+                String ruleRepo=curPreReqRule[0];
+                String ruleName=curPreReqRule[1];
+                String ruleValue="";
+                if (brTesting!=null)
+                    ruleValue=brTesting.getProcedureBusinessRule(ruleName);
+                if (ruleValue.length()==0){ 
+                    switch (ruleRepo.toUpperCase()){
+                        case "PROCEDURE":
+                            ruleValue=brProcInstance.getProcedureBusinessRule(ruleName);
+                            break;
+                        case "DATA":
+                            ruleValue=brProcInstance.getDataBusinessRule(ruleName);
+                            break;
+                        case "CONFIG":
+                            ruleValue=brProcInstance.getConfigBusinessRule(ruleName);
+                            break;
+                        default:
+                            ruleValue="DISABLED";
+                            break;
+                    }
+                }
+                if (isTagValueOneOfDisableOnes(ruleValue))
+                    return returnBusinessRuleValue(ruleValue, procInstanceName, ruleRepo, ruleName, callerInfo, false, true);
+            }
+        }
+
         //BusinessRules br=new BusinessRules(procInstanceName);
         if (brTesting!=null){
             String brValue=brTesting.getProcedureBusinessRule(parameterName);
-            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo);
+            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo, isOptional);
         }
         if (brProcInstance!=null){
             String brValue=brProcInstance.getConfigBusinessRule(parameterName);
-            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo);
+            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo, isOptional);
             brValue=brProcInstance.getDataBusinessRule(parameterName);
-            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo);
+            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo, isOptional);
             brValue=brProcInstance.getProcedureBusinessRule(parameterName);
-            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo);
+            if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo, isOptional);
         }
-        return returnBusinessRuleValue("", procInstanceName, suffixFile, parameterName, callerInfo);
+        return returnBusinessRuleValue("", procInstanceName, suffixFile, parameterName, callerInfo, isOptional);
     }
     
-    private static String getBusinessRuleInAppFile(String fileUrl, String parameterName, Object[] callerInfo) {
+    private static String getBusinessRuleInAppFile(String fileUrl, String parameterName, Object[] callerInfo, Boolean reportMissingProp) {
         /*String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
         String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
         String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
@@ -203,7 +243,7 @@ public class Parameter {
             if (!prop.containsKey(parameterName)) {
                 if (parameterName.toLowerCase().contains("encrypted_")) return ""; 
                 LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, 
-                        new Object[]{}, parameterName);
+                        new Object[]{}, parameterName, reportMissingProp);
                 return "";
             } else {
                 return prop.getString(parameterName);
@@ -211,12 +251,12 @@ public class Parameter {
         } catch (Exception e) {
             if (parameterName.toLowerCase().contains("encrypted_")) return "";
             LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, 
-                    callerInfo, parameterName);
+                    callerInfo, parameterName, reportMissingProp);
             return e.getMessage();
         }
     }
     
-    private static String getMessageCodeValue(String configFile, String parameterName) {
+    private static String getMessageCodeValue(String configFile, String parameterName, Boolean reportMissingProp) {
         /*StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         String className = Thread.currentThread().toString();
                 Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
@@ -231,7 +271,7 @@ public class Parameter {
                 LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, 
                         //new Object[]{className, classFullName, methodName, lineNumber}, 
                         new Object[]{}, 
-                        parameterName);
+                        parameterName, reportMissingProp);
                 return "";
             } else {
                 return prop.getString(parameterName);
@@ -239,7 +279,7 @@ public class Parameter {
         } catch (Exception e) {
             if (parameterName.toLowerCase().contains("encrypted_")) return "";
             LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, 
-                    new Object[]{}, parameterName);
+                    new Object[]{}, parameterName, reportMissingProp);
             return "";
         }
     }
@@ -254,7 +294,7 @@ public class Parameter {
         {
             String fileidt = fileDir + "\\" + f.getName();
             try{    
-                String paramExists=getMessageCodeValue(fileName, entryName);
+                String paramExists=getMessageCodeValue(fileName, entryName, false);
                 if (paramExists.length()>0 && paramExists.equalsIgnoreCase(entryValue) )
                     return "the parameter "+entryName+" already exists in properties file "+fileName+" . (Path:"+fileDir+")";
                 String newLogEntry = " created tag in " + f.getName() + " for the entry " + entryName + " and value " + entryValue;
@@ -382,9 +422,15 @@ public class Parameter {
     }  
     
     public static Boolean isTagValueOneOfEnableOnes(String tagValue){
-        String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues"); 
+        String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues", false); 
         String[] enableValues=enableValuesStr.split("\\|");
         return LPArray.valueInArray(enableValues, tagValue);
     }
-     
+
+    public static Boolean isTagValueOneOfDisableOnes(String tagValue){
+        String enableValuesStr=getBusinessRuleAppFile("businessRulesDisableValues", false); 
+        String[] enableValues=enableValuesStr.split("\\|");
+        return LPArray.valueInArray(enableValues, tagValue);
+    }
+    
 }
