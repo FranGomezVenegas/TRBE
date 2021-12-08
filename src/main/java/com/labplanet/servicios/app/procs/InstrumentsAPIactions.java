@@ -69,7 +69,7 @@ public class InstrumentsAPIactions extends HttpServlet {
 
             ClassInstruments clss = new ClassInstruments(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
-            if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){  
+            if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, null, null);   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();

@@ -6,13 +6,12 @@
 package com.labplanet.servicios.app.procs;
 
 import com.labplanet.servicios.app.*;
-import com.labplanet.servicios.app.IncidentAPI.IncidentAPIfrontendEndpoints;
 import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
-import databases.TblsApp;
-import databases.TblsAppAudit;
+import databases.TblsAppProcData;
+import databases.TblsAppProcDataAudit;
 import databases.Token;
-import functionaljavaa.incident.AppIncident;
+import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIqueriesEndpoints;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -67,9 +66,9 @@ public class InstrumentsAPIqueries extends HttpServlet {
                         LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, language);              
                 return;                             
         }
-        IncidentAPIfrontendEndpoints endPoint = null;
+        InstrumentsAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = IncidentAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = InstrumentsAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
             return;                   
@@ -79,41 +78,55 @@ public class InstrumentsAPIqueries extends HttpServlet {
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
         switch (endPoint){
-            case USER_OPEN_INCIDENTS:              
-                String[] fieldsToRetrieve=TblsApp.Incident.getAllFieldNames();
-                Object[][] incidentsNotClosed=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.Incident.TBL.getName(), 
-                        new String[]{TblsApp.Incident.FLD_STATUS.getName()+"<>", TblsApp.Incident.FLD_PERSON_CREATION.getName()}, 
-                        new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), token.getPersonName()}, 
-                        fieldsToRetrieve, new String[]{TblsApp.Incident.FLD_ID.getName()+" desc"});
+            case ACTIVE_INSTRUMENTS_LIST:              
+                String[] fieldsToRetrieve=TblsAppProcData.Instruments.getAllFieldNames();
+                Object[][] instrumentAudit=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TblsAppProcData.Instruments.TBL.getName(), 
+                        new String[]{TblsAppProcData.Instruments.FLD_DECOMMISSIONED.getName()+"<>"}, 
+                        new Object[]{true}, 
+                        fieldsToRetrieve, new String[]{TblsAppProcData.Instruments.FLD_NAME.getName()+" desc"});
                 JSONArray jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
-                    for (Object[] currIncident: incidentsNotClosed){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentAudit[0][0].toString())){
+                    for (Object[] currInstr: instrumentAudit){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
                         jArr.add(jObj);
                     }
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;  
-            case INCIDENT_DETAIL_FOR_GIVEN_INCIDENT:
-                Integer incId=null;
-                String incIdStr=LPNulls.replaceNull(argValues[0]).toString();
-                if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
-
-                fieldsToRetrieve=TblsAppAudit.Incident.getAllFieldNames();
-                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(),TblsAppAudit.Incident.TBL.getName(), 
-                        new String[]{TblsAppAudit.Incident.FLD_INCIDENT_ID.getName()}, 
-                        new Object[]{incId}, 
-                        fieldsToRetrieve, new String[]{TblsAppAudit.Incident.FLD_DATE.getName()+" desc"});
+            case INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT:
+                String instrName=LPNulls.replaceNull(argValues[0]).toString();
+                fieldsToRetrieve=TblsAppProcDataAudit.Instruments.getAllFieldNames();
+                instrumentAudit=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName(),TblsAppProcDataAudit.Instruments.TBL.getName(), 
+                        new String[]{TblsAppProcDataAudit.Instruments.FLD_INSTRUMENT_NAME.getName()}, 
+                        new Object[]{instrName}, 
+                        fieldsToRetrieve, new String[]{TblsAppProcDataAudit.Instruments.FLD_INSTRUMENT_NAME.getName(), TblsAppProcDataAudit.Instruments.FLD_DATE.getName()+" desc"});
                 jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
-                    for (Object[] currIncident: incidentsNotClosed){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentAudit[0][0].toString())){
+                    for (Object[] currInstrAudit: instrumentAudit){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrAudit);
                         jArr.add(jObj);
                     }
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
+            case INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT:
+                instrName=LPNulls.replaceNull(argValues[0]).toString();
+                fieldsToRetrieve=TblsAppProcData.InstrumentEvent.getAllFieldNames();
+                Object[][] instrumentEvents = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TblsAppProcData.InstrumentEvent.TBL.getName(), 
+                    new String[]{TblsAppProcData.InstrumentEvent.FLD_INSTRUMENT.getName()},
+                    new Object[]{instrName},
+                    fieldsToRetrieve, new String[]{TblsAppProcData.InstrumentEvent.FLD_INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.FLD_CREATED_ON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentEvents[0][0].toString())){
+                    for (Object[] currInstrEv: instrumentEvents){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+
         default: 
         }
     }
