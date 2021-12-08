@@ -44,7 +44,7 @@ public class QualityAssuranceRequirementsDoc extends HttpServlet {
             fileContent = fileContent + "<html>" + "";
             fileContent = fileContent + "<head>" + "";
             fileContent = fileContent + "<style>";
-                ResourceBundle prop = ResourceBundle.getBundle("parameter.config.labtimus");        
+                ResourceBundle prop = ResourceBundle.getBundle("parameter.config.testing-html-settings");        
                 fileContent = fileContent+prop.getString("testingTableStyle1");                
                 fileContent = fileContent+prop.getString("testingTableStyle2");                
                 fileContent = fileContent+prop.getString("testingTableStyle3");                
