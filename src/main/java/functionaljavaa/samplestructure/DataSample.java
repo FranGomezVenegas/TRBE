@@ -224,7 +224,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){return diagnoses;}
             
             Integer sampleId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
-            smpStages.dataSampleStagesTimingCapture(sampleId, firstStage[firstStage.length-1][1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
+            if (smpStages.isSampleStagesEnable)
+                smpStages.dataSampleStagesTimingCapture(sampleId, firstStage[firstStage.length-1][1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
             
             SampleAudit smpAudit = new SampleAudit();            
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_LOGGED.toString(), TblsData.Sample.TBL.getName(), sampleId, 
