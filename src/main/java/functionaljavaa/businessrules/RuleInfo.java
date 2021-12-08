@@ -12,7 +12,7 @@ package functionaljavaa.businessrules;
 public class RuleInfo {
     public RuleInfo(String ruleName, String ruleValue){
         this.ruleName=ruleName;
-        this.ruleValue=ruleValue;
+        this.ruleValue=ruleValue;        
     }
     public String getRuleValue(){return this.ruleValue;}
     public String getRuleName(){return this.ruleName;}
