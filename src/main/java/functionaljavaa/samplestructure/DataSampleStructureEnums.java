@@ -5,7 +5,9 @@
  */
 package functionaljavaa.samplestructure;
 
+import java.util.ArrayList;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -49,30 +51,32 @@ public class DataSampleStructureEnums {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
 
-    public enum DataSampleBusinessRules{ 
-        STATUSES ("sample_statuses", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUSES_LABEL_EN ("sample_statuses_label_en", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUSES_LABEL_ES ("sample_statuses_label_es", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SUFFIX_STATUS_FIRST ("_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUS_REVIEWED ("sample_statusReviewed", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUS_CANCELED ("sample_statusCanceled", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),        
-        SUFFIX_SAMPLESTRUCTURE ("_sampleStructure", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLE_STATUS_FIRST ("sample_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLE_STATUS_RECEIVED ("sample_statusReceived", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLE_STATUS_INCOMPLETE ("sample_statusIncomplete", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLE_STATUS_COMPLETE ("sample_statusComplete", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLE_STATUS_REVIEWED ("sample_statusReviewed", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLE_STATUS_CANCELED ("sample_statusCanceled", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLEALIQUOTING_VOLUME_REQUIRED ("sampleAliquot_volumeRequired", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLEASUBLIQUOTING_VOLUME_REQUIRED ("sampleSubAliquot_volumeRequired", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLE_GENERICAUTOAPPROVEENABLED("sampleGenericAutoApproveEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+    public enum DataSampleBusinessRules implements EnumIntBusinessRules{ 
+        STATUSES ("sample_statuses", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        STATUSES_LABEL_EN ("sample_statuses_label_en", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        STATUSES_LABEL_ES ("sample_statuses_label_es", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        SUFFIX_STATUS_FIRST ("_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        STATUS_REVIEWED ("sample_statusReviewed", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        STATUS_CANCELED ("sample_statusCanceled", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        SUFFIX_SAMPLESTRUCTURE ("_sampleStructure", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        SAMPLE_STATUS_FIRST ("sample_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|',true, "data*sampleStatusesByBusinessRules"),
+        SAMPLE_STATUS_RECEIVED ("sample_statusReceived", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        SAMPLE_STATUS_INCOMPLETE ("sample_statusIncomplete", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        SAMPLE_STATUS_COMPLETE ("sample_statusComplete", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        SAMPLE_STATUS_REVIEWED ("sample_statusReviewed", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        SAMPLE_STATUS_CANCELED ("sample_statusCanceled", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleStatusesByBusinessRules"),
+        SAMPLEALIQUOTING_VOLUME_REQUIRED ("sampleAliquot_volumeRequired", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, null),
+        SAMPLEASUBLIQUOTING_VOLUME_REQUIRED ("sampleSubAliquot_volumeRequired", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, null),
+        SAMPLE_GENERICAUTOAPPROVEENABLED("sampleGenericAutoApproveEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true, null),
         ;
-        private DataSampleBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private DataSampleBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean isOptional, String preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOptional;
+            this.preReqsBusRules=preReqs;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
@@ -85,40 +89,72 @@ public class DataSampleStructureEnums {
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
+        private final Boolean isOptional;
+        private final String preReqsBusRules;
+
+        public Boolean getIsOptional(){return this.isOptional;}
+        public ArrayList<String[]> getPreReqs(){
+            ArrayList<String[]> d = new ArrayList<String[]>();
+            if (preReqsBusRules!=null && preReqsBusRules.length()>0){
+                String[] rulesArr=preReqsBusRules.split("\\|");
+                for (String curRule: rulesArr){
+                    String[] curRuleArr = curRule.split("\\*");
+                    if (curRuleArr.length==2)
+                    d.add(curRuleArr);
+                }
+            }
+            return d;
+        }
     }
 
-    public enum DataSampleAnalysisBusinessRules{
-        MARK_READYFORREVISION_WHENALLRESULTSENTERED("revisionSampleAnalysis_markAsReadyForRevisionWhenAllResultsEntered", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        SAMPLEANALYSIS_STATUSFIRST("sampleAnalysis_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLEANALYSIS_STATUSINCOMPLETE("sampleAnalysis_statusIncomplete", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLEANALYSIS_STATUSCOMPLETE("sampleAnalysis_statusComplete", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
+    public enum DataSampleAnalysisBusinessRules implements EnumIntBusinessRules{
+        SAMPLEANALYSIS_STATUSFIRST("sampleAnalysis_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisStatusesByBusinessRules"),
+        SAMPLEANALYSIS_STATUSINCOMPLETE("sampleAnalysis_statusIncomplete", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisStatusesByBusinessRules"),
+        SAMPLEANALYSIS_STATUSCOMPLETE("sampleAnalysis_statusComplete", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisStatusesByBusinessRules"),
+        SAMPLEANALYSIS_STATUSCANCELED("sampleAnalysis_statusCanceled", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisStatusesByBusinessRules"),
+        SAMPLEANALYSIS_STATUSREVIEWED("sampleAnalysis_statusReviewed", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisStatusesByBusinessRules"),
+        MARK_READYFORREVISION_WHENALLRESULTSENTERED("revisionSampleAnalysis_markAsReadyForRevisionWhenAllResultsEntered", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
+        SAMPLEANALYSIS_ANALYSTASSIGNMENTMODE("sampleAnalysis_analystAssigmentMode", GlobalVariables.Schemas.DATA.getName(), null, null, '|', false, null),
+        SAMPLEANALYSIS_ANALYSTASSIGNMENTMODES("sampleAnalysis_analystAssigmentModes", GlobalVariables.Schemas.DATA.getName(), null, null, '|', false, null),
+        REVISION_TESTINGGROUP_REQUIRED("revisionTestinGroupRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
 
-        SAMPLEANALYSIS_STATUSCANCELED("sampleAnalysis_statusCanceled", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLEANALYSIS_STATUSREVIEWED("sampleAnalysis_statusReviewed", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLEANALYSIS_ANALYSTASSIGNMENTMODE("sampleAnalysis_analystAssigmentMode", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SAMPLEANALYSIS_ANALYSTASSIGNMENTMODES("sampleAnalysis_analystAssigmentModes", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        REVISION_TESTINGGROUP_REQUIRED("revisionTestinGroupRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-
-        SAMPLEANALYSIS_GENERICAUTOAPPROVEENABLED("sampleAnalysisGenericAutoApproveEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SAMPLEANALYSIS_GENERICAUTOAPPROVEENABLED("sampleAnalysisGenericAutoApproveEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
         ;
-        private DataSampleAnalysisBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private DataSampleAnalysisBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean isOptional, String preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOptional;
+            this.preReqsBusRules=preReqs;
         }             
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
         public JSONArray getValuesList(){return this.valuesList;}
         public Boolean getAllowMultiValue(){return this.allowMultiValue;}
         public char getMultiValueSeparator(){return this.multiValueSeparator;}
-        
+        public Boolean getIsOptional(){return this.isOptional;}
+        public ArrayList<String[]> getPreReqs(){
+            ArrayList<String[]> d = new ArrayList<String[]>();
+            if (preReqsBusRules!=null && preReqsBusRules.length()>0){
+                String[] rulesArr=preReqsBusRules.split("\\|");
+                for (String curRule: rulesArr){
+                    String[] curRuleArr = curRule.split("\\*");
+                    if (curRuleArr.length==2)
+                    d.add(curRuleArr);
+                }
+            }
+            return d;
+        }            
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;       
+        private final Boolean isOptional;
+        private final String preReqsBusRules;
+        
     }
     public enum DataSampleAnalysisErrorTrapping{ 
         MARK_READYFORREVISION_WHENALLRESULTSENTERED_NOTACTIVE_SUCCESS("markAsReadyForRevisionWhenAllResultsEnteredNotActive", "", ""),
@@ -160,34 +196,52 @@ public class DataSampleStructureEnums {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
 
-    public enum DataSampleAnalysisResultBusinessRules{        
-        STATUS_FIRST("sampleAnalysisResult_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUS_ENTERED("sampleAnalysisResult_statusEntered", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUS_REENTERED("sampleAnalysisResult_statusReEntered", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUS_REVIEWED("sampleAnalysisResult_statusReviewed", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUS_CANCELED("sampleAnalysisResult_statusCanceled", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUS_SPEC_EVAL_NOSPEC("sampleAnalysisResult_statusSpecEvalNoSpec", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUS_EVAL_NOSPECPARAMLIMIT("sampleAnalysisResult_statusSpecEvalNoSpecParamLimit", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
+    public enum DataSampleAnalysisResultBusinessRules implements EnumIntBusinessRules{        
+        STATUS_FIRST("sampleAnalysisResult_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisResultStatusesByBusinessRules"),
+        STATUS_ENTERED("sampleAnalysisResult_statusEntered", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisResultStatusesByBusinessRules"),
+        STATUS_REENTERED("sampleAnalysisResult_statusReEntered", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisResultStatusesByBusinessRules"),
+        STATUS_REVIEWED("sampleAnalysisResult_statusReviewed", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisResultStatusesByBusinessRules"),
+        STATUS_CANCELED("sampleAnalysisResult_statusCanceled", GlobalVariables.Schemas.DATA.getName(), null, null, '|', true, "data*sampleAnalysisResultStatusesByBusinessRules"),
+        STATUS_SPEC_EVAL_NOSPEC("sampleAnalysisResult_statusSpecEvalNoSpec", GlobalVariables.Schemas.DATA.getName(), null, null, '|', false, null),
+        STATUS_EVAL_NOSPECPARAMLIMIT("sampleAnalysisResult_statusSpecEvalNoSpecParamLimit", GlobalVariables.Schemas.DATA.getName(), null, null, '|', false, null),
          
         ;
-        private DataSampleAnalysisResultBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private DataSampleAnalysisResultBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean isOptional, String preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOptional;
+            this.preReqsBusRules=preReqs;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
         public JSONArray getValuesList(){return this.valuesList;}
         public Boolean getAllowMultiValue(){return this.allowMultiValue;}
         public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        public Boolean getIsOptional(){return this.isOptional;}
+        public ArrayList<String[]> getPreReqs(){
+            ArrayList<String[]> d = new ArrayList<String[]>();
+            if (preReqsBusRules!=null && preReqsBusRules.length()>0){
+                String[] rulesArr=preReqsBusRules.split("\\|");
+                for (String curRule: rulesArr){
+                    String[] curRuleArr = curRule.split("\\*");
+                    if (curRuleArr.length==2)
+                    d.add(curRuleArr);
+                }
+            }
+            return d;
+        }
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
-        private final char multiValueSeparator;       
+        private final char multiValueSeparator;   
+        private final Boolean isOptional;
+        private final String preReqsBusRules;
+        
     }
     public enum DataSampleAnalysisResultErrorTrapping{ 
         NOT_FOUND("DataSampleAnalysisResult_SampleAnalysisResultNotFound", "", ""),
