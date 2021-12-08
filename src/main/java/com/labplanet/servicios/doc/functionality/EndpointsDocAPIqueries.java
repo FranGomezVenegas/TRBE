@@ -141,7 +141,14 @@ public class EndpointsDocAPIqueries extends HttpServlet {
                         jApiObj.put("apiName", curApiName);
                     }
                             
-                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames(), currEndpoint);
+                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames(), 
+                        currEndpoint, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName(), TblsTrazitDocTrazit.EndpointsDeclaration.FLD_OUTPUT_OBJECT_TYPES.getName()});
+                    com.google.gson.JsonArray argArrayToJson = LPJson.convertToJsonArrayStringedObject(
+                            currEndpoint[LPArray.valuePosicInArray(TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames(), TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName())].toString());
+                    jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName(), argArrayToJson);
+                    com.google.gson.JsonArray argOutputToJson = LPJson.convertToJsonArrayStringedObject(
+                            currEndpoint[LPArray.valuePosicInArray(TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames(), TblsTrazitDocTrazit.EndpointsDeclaration.FLD_OUTPUT_OBJECT_TYPES.getName())].toString());
+                    jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.FLD_OUTPUT_OBJECT_TYPES.getName(), argOutputToJson);
                     jApiArr.add(jObj);                        
                 }
                 if (jApiArr.size()>0){
@@ -151,7 +158,14 @@ public class EndpointsDocAPIqueries extends HttpServlet {
                 
             }else{
                 for (Object[] currEndpoint: reqEndpointInfo){
-                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames(), currEndpoint);
+                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames(),
+                        currEndpoint, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName(), TblsTrazitDocTrazit.EndpointsDeclaration.FLD_OUTPUT_OBJECT_TYPES.getName()});
+                    com.google.gson.JsonArray argArrayToJson = LPJson.convertToJsonArrayStringedObject(
+                            currEndpoint[LPArray.valuePosicInArray(TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames(), TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName())].toString());
+                    jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName(), argArrayToJson);
+                    com.google.gson.JsonArray argOutputToJson = LPJson.convertToJsonArrayStringedObject(
+                            currEndpoint[LPArray.valuePosicInArray(TblsTrazitDocTrazit.EndpointsDeclaration.getAllFieldNames(), TblsTrazitDocTrazit.EndpointsDeclaration.FLD_OUTPUT_OBJECT_TYPES.getName())].toString());
+                    jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.FLD_OUTPUT_OBJECT_TYPES.getName(), argOutputToJson);
                     jMainArr.add(jObj);
                 }
             }
