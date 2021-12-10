@@ -15,7 +15,6 @@ import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsProcedure;
 import databases.Token;
-import functionaljavaa.parameter.Parameter;
 import functionaljavaa.user.UserProfile;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -185,7 +184,15 @@ public class AppProcedureListAPI extends HttpServlet {
                         new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_FLD_NAME.split("\\|"));
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){
                     procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
-                    String propValue = Parameter.getBusinessRuleProcedureFile(curProc.toString(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getAreaName(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName());
+                    
+                    String propValue = "false";
+                    
+                    Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
+                        new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_AREA.getName()},
+                        new Object[]{UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getAreaName()}, 
+                        new String[]{TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()});
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))
+                        propValue=ruleValue[0][0].toString();
                     procedure.put(UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName(), propValue);
                     procedure.put(LABEL_PROC_SCHEMA, curProc);
 
