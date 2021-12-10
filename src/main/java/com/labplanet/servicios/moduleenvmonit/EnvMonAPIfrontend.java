@@ -529,7 +529,7 @@ GlobalAPIsParams.
                     String programName = argValues[0].toString();
                     String[] progCorrFldNameList = getFieldsListToRetrieve(argValues[1].toString(), TblsProcedure.ProgramCorrectiveAction.TBL.getAllFieldNames());
                     String[] progCorrFldSortArray=argValues[2].toString().split("\\|");
-                    Object[][] progCorrInfo=getTableData(procReqInstance, GlobalVariables.Schemas.DATA.getName(),TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                    Object[][] progCorrInfo=getTableData(procReqInstance, GlobalVariables.Schemas.PROCEDURE.getName(),TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                         argValues[1].toString(), TblsProcedure.ProgramCorrectiveAction.getAllFieldNames(), 
                         new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                         new String[]{programName, statusClosed}, progCorrFldSortArray);        

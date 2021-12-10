@@ -110,7 +110,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                   jArray.add(jObj.put(TblsProcedure.ProgramCorrectiveAction.TBL.getName(), "program corrective action not active!"));
                 }
                 else{
-                  Object[][] investigationResultsPendingDecision = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                  Object[][] investigationResultsPendingDecision = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
                           new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                           new String[]{statusClosed}, 
                           TblsProcedure.ProgramCorrectiveAction.getAllFieldNames(), new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()});
