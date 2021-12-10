@@ -41,7 +41,7 @@ public class DataSampleStructureStatuses {
             preReqs.add(0, new String[]{"data","sampleStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
             String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs);     
-            if (statusPropertyValue==null || statusPropertyValue.length()==0 || (isTagValueOneOfDisableOnes(statusPropertyValue)) )this.toString();
+            if (statusPropertyValue==null || statusPropertyValue.length()==0 || (isTagValueOneOfDisableOnes(statusPropertyValue)) )return this.toString();
             return statusPropertyValue;
         }
         private final DataSampleBusinessRules busRulName;
@@ -70,7 +70,7 @@ public class DataSampleStructureStatuses {
             preReqs.add(0, new String[]{"data","sampleAnalysisStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
             String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs);     
-            if (statusPropertyValue==null || statusPropertyValue.length()==0 || (isTagValueOneOfDisableOnes(statusPropertyValue)) )this.toString();
+            if ((statusPropertyValue==null) || statusPropertyValue.length()==0 || isTagValueOneOfDisableOnes(statusPropertyValue) ) return this.toString();
             return statusPropertyValue;
         }
         private final DataSampleAnalysisBusinessRules busRulName;
@@ -99,7 +99,7 @@ public class DataSampleStructureStatuses {
             preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
             String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs);     
-            if (statusPropertyValue==null || statusPropertyValue.length()==0 || (isTagValueOneOfDisableOnes(statusPropertyValue)) )this.toString();
+            if (statusPropertyValue==null || statusPropertyValue.length()==0 || (isTagValueOneOfDisableOnes(statusPropertyValue)) ) return this.toString();
             return statusPropertyValue;
         }
         private final DataSampleAnalysisResultBusinessRules busRulName;
