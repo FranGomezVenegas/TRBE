@@ -71,9 +71,9 @@ public final class AppInstrumentsAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());      
         
         
-        if (auditActions.getLastAuditAction()!=null){
+        if (auditActions.getMainParentAuditAction()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.FLD_PARENT_AUDIT_ID.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getLastAuditAction().getAuditId());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getMainParentAuditAction().getAuditId());
         }    
         AuditAndUserValidation auditAndUsrValid=ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
         if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){

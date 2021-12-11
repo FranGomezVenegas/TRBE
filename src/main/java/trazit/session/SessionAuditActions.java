@@ -22,6 +22,10 @@ public class SessionAuditActions {
     public void addAuditAction(Integer auditId, String actionName){
         this.allActions.add(new SessionAuditEntry(auditId, actionName));
     }
+    public SessionAuditEntry getMainParentAuditAction(){
+        if (this.allActions.isEmpty())return null;
+        else return this.allActions.get(0);
+    }
     public SessionAuditEntry getLastAuditAction(){
         if (this.allActions.isEmpty())return null;
         else return this.allActions.get(this.allActions.size()-1);

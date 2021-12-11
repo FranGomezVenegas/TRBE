@@ -151,9 +151,9 @@ public class SampleAudit {
                 fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(token.getAppSessionId()));            
             }
         }
-        if (auditActions!=null && auditActions.getLastAuditAction()!=null){
+        if (auditActions!=null && auditActions.getMainParentAuditAction()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getLastAuditAction().getAuditId());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getMainParentAuditAction().getAuditId());
         }    
         for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
             Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
