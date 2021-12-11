@@ -622,7 +622,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String sampleStatusCanceled = SampleStatuses.CANCELED.getStatusCode("");
         String sampleStatusReviewed = SampleStatuses.REVIEWED.getStatusCode("");
-        
+                
         Object[] rulesDiagn=sampleReviewRulesAllowed(sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesDiagn[0].toString())) return rulesDiagn;
         

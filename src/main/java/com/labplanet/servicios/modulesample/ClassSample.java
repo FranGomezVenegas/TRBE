@@ -106,7 +106,7 @@ public class ClassSample {
                         sampleId = Integer.valueOf(sampleIdStr);
                 }
             }
-            if (sampleId!=null || LPArray.valueInArray(exceptionsToSampleReviewArr, endPoint.getName())){
+            if (sampleId!=null && !LPArray.valueInArray(exceptionsToSampleReviewArr, endPoint.getName())){
                 Object[][] sampleStatus=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, new String[]{TblsData.Sample.FLD_STATUS.getName()});
                 diagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_REVIEWED.getErrorCode(), null);
@@ -364,12 +364,13 @@ public class ClassSample {
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
                         messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.CANCELRESULT.getSuccessMessageCode(), this.messageDynamicData);
                     break;
-                case UNREVIEWRESULT:   // No break then will take the same logic than the next one
                 case UNCANCELSAMPLE:
                     sampleId = (Integer) argValues[0];
                     diagn = smpAnaRes.sampleAnalysisResultUnCancel(sampleId, null, null);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
+                        messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.UNCANCELSAMPLE.getSuccessMessageCode(), this.messageDynamicData);
                     break;
                 case UNREVIEWTEST:
                     testId = (Integer) argValues[0];
@@ -564,6 +565,9 @@ public class ClassSample {
                 if (smpStage.isSampleStagesEnable() && sampleId!=null)
                     smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
             }
+            if (diagn!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
+                diagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{argValues[0], procInstanceName});                    
+            
             this.diagnostic=diagn;
             this.relatedObj=rObj;
             rObj.killInstance();
