@@ -116,11 +116,13 @@ public class IncidentAPIfrontend extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
             case CLOSED_INCIDENTS_LAST_N_DAYS:
-                //String numDays=argValues[0].toString();
+                String numDays = LPNulls.replaceNull(argValues[0]).toString();
+                if (numDays.length()==0) numDays=String.valueOf(7);
+                int numDaysInt=0-Integer.valueOf(numDays);               
                 fieldsToRetrieve=TblsApp.Incident.getAllFieldNames();
                 incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.Incident.TBL.getName(), 
                         new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_DATE_RESOLUTION.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
-                        new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), LPDate.addDays(LPDate.getCurrentDateWithNoTime(), -7)}, 
+                        new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
                         fieldsToRetrieve, new String[]{TblsApp.Incident.FLD_DATE_RESOLUTION.getName()+" desc"});
                 jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){

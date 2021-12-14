@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -25,8 +26,10 @@ import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
+import databases.TblsApp;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
+import functionaljavaa.incident.AppIncident;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import functionaljavaa.parameter.Parameter;
@@ -37,6 +40,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -245,6 +249,7 @@ GlobalAPIsParams.
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_SORT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)
             }, EndPointsToRequirements.endpointWithNoOutputObjects),            
+        DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS("DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS","",new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
         private EnvMonAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -562,7 +567,25 @@ GlobalAPIsParams.
                         jArr.add(jObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                    return;                    
+                    return;  
+                case DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS:
+                    String numDays = LPNulls.replaceNull(argValues[0]).toString();
+                    if (numDays.length()==0) numDays=String.valueOf(7);
+                    int numDaysInt=0-Integer.valueOf(numDays);
+                    String[] fieldsToRetrieve = TblsEnvMonitData.ProductionLot.getAllFieldNames();
+                    Object[][] prodLotsDeactivatedLastDays=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsEnvMonitData.ProductionLot.TBL.getName(), 
+                            new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName(), TblsEnvMonitData.ProductionLot.FLD_CLOSED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
+                            new Object[]{false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                            fieldsToRetrieve, new String[]{TblsEnvMonitData.ProductionLot.FLD_CLOSED_ON.getName()+" desc"});
+                    jArr = new JSONArray();
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString())){
+                        for (Object[] currIncident: prodLotsDeactivatedLastDays){
+                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                            jArr.add(jObj);
+                        }
+                    }
+                    Rdbms.closeRdbms();  
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);                                                                    
                 default:      
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     rd.forward(request,response);   
