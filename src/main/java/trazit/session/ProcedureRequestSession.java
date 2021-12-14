@@ -257,8 +257,8 @@ public class ProcedureRequestSession {
     public SessionAuditActions getAuditActions(){
         return this.sessionAuditActions;
     }
-    public void addAuditAction(Integer audId, String auditAction){        
-        this.sessionAuditActions.addAuditAction(audId, auditAction);        
+    public void addAuditAction(Integer audId, String auditAction, String auditPrettyEn, String auditPrettyEs){
+        this.sessionAuditActions.addAuditAction(audId, auditAction, auditPrettyEn, auditPrettyEs);        
     }    
     public TestingAuditIds getTestingAuditObj(){
         return this.tstAuditObj;
