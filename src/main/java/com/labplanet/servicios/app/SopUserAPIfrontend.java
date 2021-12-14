@@ -331,7 +331,6 @@ public class SopUserAPIfrontend extends HttpServlet {
         return mySopsListArr;
     }catch(Exception e){
         JSONArray proceduresList = new JSONArray();
-        proceduresList.add("Error:"+e.getMessage());
         return proceduresList;            
     }
     }
@@ -410,7 +409,6 @@ public class SopUserAPIfrontend extends HttpServlet {
         return myPendingSopsByProc;
     }catch(Exception e){
         JSONArray proceduresList = new JSONArray();
-        proceduresList.add("Error:"+e.getMessage());
         return proceduresList;            
     }
     }
@@ -473,7 +471,6 @@ public class SopUserAPIfrontend extends HttpServlet {
         return myPendingSopsByProc;                   
     }catch(Exception e){
         JSONArray proceduresList = new JSONArray();
-        proceduresList.add("Error:"+e.getMessage());
         return proceduresList;            
     }
     }
@@ -556,7 +553,6 @@ public class SopUserAPIfrontend extends HttpServlet {
             return arrFinal;
     }catch(Exception e){
         JSONArray proceduresList = new JSONArray();
-        proceduresList.add("Error:"+e.getMessage());
         return proceduresList;            
     }
     }
