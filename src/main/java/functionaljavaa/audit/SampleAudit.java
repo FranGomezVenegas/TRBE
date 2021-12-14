@@ -19,9 +19,12 @@ import lbplanet.utilities.LPSession;
 import java.util.Arrays;
 import functionaljavaa.requirement.Requirement;
 import functionaljavaa.samplestructure.DataSampleStages;
+import java.util.ArrayList;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
 import trazit.session.ProcedureRequestSession;
 import static trazit.session.ProcedureRequestSession.getInstanceForActions;
 import trazit.globalvariables.GlobalVariables;
@@ -73,7 +76,7 @@ public class SampleAudit {
     public enum SampleAnalysisResultAuditEvents{BACK_FROM_CANCEL, SAMPLE_ANALYSIS_RESULT_ENTERED, UOM_CHANGED, 
         SAMPLE_ANALYSIS_RESULT_ADDED, SAMPLE_ANALYSIS_RESULT_CANCELED, SAMPLE_ANALYSIS_RESULT_UNCANCELED, SAMPLE_ANALYSIS_RESULT_REVIEWED}
       
-    public enum SampleAuditBusinessRules{
+    public enum SampleAuditBusinessRules implements EnumIntBusinessRules{
         REVISION_MODE("sampleAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         AUTHOR_CAN_REVIEW_AUDIT_TOO("sampleAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         CHILD_REVISION_REQUIRED("sampleAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
@@ -96,6 +99,16 @@ public class SampleAudit {
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 /**
  * Add one record in the audit table when altering any of the levels belonging to the sample structure when not linked to any other statement.
@@ -109,22 +122,53 @@ public class SampleAudit {
  */    
     public Object[] sampleAuditAdd(String action, String tableName, Integer tableId, 
                         Integer sampleId, Integer testId, Integer resultId, String[] fldNames, Object[] fldValues) {
+        String fileName="dataSampleAuditEvents";
+        if (testId!=null)
+            fileName="dataSampleAnalysisAuditEvents";
+        if (resultId!=null)
+            fileName="dataSampleAnalysisResultAuditEvents";
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
-        if (auditActions!=null && auditActions.getLastAuditAction()!=null){
-            action=auditActions.getLastAuditAction().getActionName()+">"+action;
-        }
-        
-        String[] fieldNames = new String[]{TblsDataAudit.Sample.FLD_DATE.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), 
+
+        String[] fieldNames = new String[]{TblsDataAudit.Sample.FLD_DATE.getName(), 
             TblsDataAudit.Sample.FLD_TABLE_NAME.getName(), TblsDataAudit.Sample.FLD_TABLE_ID.getName(),
             TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName(), TblsDataAudit.Sample.FLD_USER_ROLE.getName(),
             TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_TRANSACTION_ID.getName()};
-        Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp(), action, tableName, tableId,
+        Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp(), tableName, tableId,
             LPJson.convertArrayRowToJSONObject(fldNames, fldValues).toJSONString(), token.getUserRole(), token.getPersonName(), Rdbms.getTransactionId()};
 
+        for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
+            Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
+                    TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
+                String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
+                    fileName, null, action, curLang.getName(), false);
+                if (propValue==null || propValue.length()==0)propValue=action;
+                fieldNames = LPArray.addValueToArray1D(fieldNames, 
+                        TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+                fieldValues = LPArray.addValueToArray1D(fieldValues, propValue);            
+            }
+        }
+        String actionPrettyEn=action;
+        Integer actionPrettyEnPosic = LPArray.valuePosicInArray(fieldNames, TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName());
+        if (actionPrettyEnPosic>-1)
+            actionPrettyEn=LPNulls.replaceNull(fieldValues[actionPrettyEnPosic]).toString();
+        String actionPrettyEs=action;
+        Integer actionPrettyEsPosic = LPArray.valuePosicInArray(fieldNames, TblsDataAudit.Sample.FLD_ACTION_PRETTY_ES.getName());
+        if (actionPrettyEsPosic>-1)
+            actionPrettyEs=LPNulls.replaceNull(fieldValues[actionPrettyEsPosic]).toString();
+        if (auditActions!=null && auditActions.getLastAuditAction()!=null){
+            action=auditActions.getLastAuditAction().getActionName()+" > "+action;
+            actionPrettyEn=auditActions.getLastAuditAction().getActionPrettyEn()+" > "+actionPrettyEn;
+            actionPrettyEs=auditActions.getLastAuditAction().getActionPrettyEs()+" > "+actionPrettyEs;
+        }
+        fieldValues[actionPrettyEnPosic]=actionPrettyEn;
+        fieldValues[actionPrettyEsPosic]=actionPrettyEs;
+
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_ACTION_NAME.getName());
+        fieldValues = LPArray.addValueToArray1D(fieldValues, action);
         Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, new String[]{TblsDataAudit.Sample.FLD_PROCEDURE.getName(), TblsDataAudit.Sample.FLD_PROCEDURE_VERSION.getName()});
@@ -155,18 +199,6 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getMainParentAuditAction().getAuditId());
         }    
-        for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
-            Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
-                    TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
-                String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-                    "dataSampleAuditEvents", null, action, curLang.getName(), false);
-                if (propValue==null || propValue.length()==0)propValue=action;
-                fieldNames = LPArray.addValueToArray1D(fieldNames, 
-                        TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
-                fieldValues = LPArray.addValueToArray1D(fieldValues, propValue);            
-            }
-        }
         AuditAndUserValidation auditAndUsrValid=getInstanceForActions(null, null, null).getAuditAndUsrValid();
         if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_REASON.getName());
@@ -174,7 +206,7 @@ public class SampleAudit {
         }    
         Object[] insertRecordInfo = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.Sample.TBL.getName(), 
                 fieldNames, fieldValues);
-        auditActions.addAuditAction(Integer.valueOf(insertRecordInfo[insertRecordInfo.length-1].toString()), action);
+        auditActions.addAuditAction(Integer.valueOf(insertRecordInfo[insertRecordInfo.length-1].toString()), action, actionPrettyEn, actionPrettyEs);
         return insertRecordInfo;
     }
     /**

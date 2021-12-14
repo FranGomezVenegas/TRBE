@@ -82,7 +82,7 @@ public final class AppInstrumentsAudit {
         }    
         Object[] insertRecordInfo = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName(), TblsAppProcDataAudit.Instruments.TBL.getName(), 
                 fieldNames, fieldValues);
-        auditActions.addAuditAction(Integer.valueOf(insertRecordInfo[insertRecordInfo.length-1].toString()), action);
+        auditActions.addAuditAction(Integer.valueOf(insertRecordInfo[insertRecordInfo.length-1].toString()), action, action, action);
 /*        parentAuditId=ProcedureRequestSession.getInstanceForActions(null, null, null).getParentAuditId();       
         if (parentAuditId==null)
             ProcedureRequestSession.getInstanceForActions(null, null, null).setParentAuditId();

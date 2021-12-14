@@ -19,8 +19,8 @@ public class SessionAuditActions {
         this.allActions = new ArrayList<SessionAuditEntry>();
     }
     
-    public void addAuditAction(Integer auditId, String actionName){
-        this.allActions.add(new SessionAuditEntry(auditId, actionName));
+    public void addAuditAction(Integer auditId, String actionName, String actionPrettyEn, String actionPrettyEs){
+        this.allActions.add(new SessionAuditEntry(auditId, actionName, actionPrettyEn, actionPrettyEs));
     }
     public SessionAuditEntry getMainParentAuditAction(){
         if (this.allActions.isEmpty())return null;

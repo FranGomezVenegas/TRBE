@@ -8,6 +8,7 @@ package functionaljavaa.audit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Token;
 import functionaljavaa.businessrules.BusinessRules;
+import java.util.ArrayList;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
 import trazit.globalvariables.GlobalVariables;
 
     
@@ -45,7 +47,7 @@ public class AuditAndUserValidation {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
-    public enum AuditAndUserValidationBusinessRules{     
+    public enum AuditAndUserValidationBusinessRules implements EnumIntBusinessRules{     
         PREFIX_AUDITREASONPHRASE ("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         ;
         private AuditAndUserValidationBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
@@ -66,6 +68,16 @@ public class AuditAndUserValidation {
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 
     private static AuditAndUserValidation auditUserVal;
