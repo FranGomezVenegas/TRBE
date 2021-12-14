@@ -574,7 +574,7 @@ public class SampleAPIfrontend extends HttpServlet {
                    sampleId=Integer.valueOf(sampleIdStr);
                    sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_RETRIEVE);
                    sampleFieldToRetrieveArr=new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName(), TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName()
-                    , TblsDataAudit.Sample.FLD_REVIEWED.getName(), TblsDataAudit.Sample.FLD_REVIEWED_ON.getName(), TblsDataAudit.Sample.FLD_DATE.getName(), TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_REASON.getName()};
+                    , TblsDataAudit.Sample.FLD_REVIEWED.getName(), TblsDataAudit.Sample.FLD_REVIEWED_ON.getName(), TblsDataAudit.Sample.FLD_DATE.getName(), TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_REASON.getName(), TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName(), TblsDataAudit.Sample.FLD_ACTION_PRETTY_ES.getName()};
                    Object[][] sampleAuditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.Sample.TBL.getName(), 
                            new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName(), TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{sampleId}, 
                            sampleFieldToRetrieveArr, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
