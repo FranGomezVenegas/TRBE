@@ -253,7 +253,7 @@ public class ClassSample {
                         diagn=fieldValueArr;
                         break;
                     }
-                    diagn = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldNameArr, fieldValueArr, null);
+                    diagn = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldNameArr, fieldValueArr);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
