@@ -16,6 +16,7 @@ import lbplanet.utilities.LPSession;
 import java.util.Arrays;
 import functionaljavaa.requirement.Requirement;
 import lbplanet.utilities.LPDate;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -29,7 +30,7 @@ public class LotAudit {
      *
      */
  
-    public enum LotAuditErrorTrapping{ 
+    public enum LotAuditErrorTrapping implements EnumIntMessages{ 
         AUDIT_RECORDS_PENDING_REVISION("auditRecordsPendingRevision", "The sample <*1*> has pending sign audit records.", "La muestra <*1*> tiene registros de auditoría sin firmar"),
         AUDIT_RECORD_NOT_FOUND("AuditRecordNotFound", "The audit record <*1*> for sample does not exist", "No encontrado un registro de audit para muestra con id <*1*>"),
         AUDIT_RECORD_ALREADY_REVIEWED("AuditRecordAlreadyReviewed", "The audit record <*1*> was reviewed therefore cannot be reviewed twice.", "El registro de audit para muestra con id <*1*> ya fue revisado, no se puede volver a revisar."),
@@ -42,8 +43,11 @@ public class LotAudit {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
+        @Override
         public String getErrorCode(){return this.errorCode;}
+        @Override
         public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override
         public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
