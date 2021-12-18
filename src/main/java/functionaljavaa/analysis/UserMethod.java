@@ -27,7 +27,7 @@ import trazit.globalvariables.GlobalVariables;
 public class UserMethod {
    String classVersion = "0.1";
 
-    public enum UserMethodBusinessRules{     
+    public enum UserMethodBusinessRules  {     
         CERTIFICATE_NOTASSIGNED ("userMethodCertificate_notAssigned", GlobalVariables.Schemas.CONFIG.getName()),
         CERTIFICATE_INACTIVE("userMethodCertificate_inactive", GlobalVariables.Schemas.CONFIG.getName()),
         CERTIFICATE_CERTIFIED("userMethodCertificate_certified", GlobalVariables.Schemas.CONFIG.getName()),
@@ -41,6 +41,7 @@ public class UserMethod {
         
         private final String tagName;
         private final String areaName;
+
     }
    
     /**
