@@ -10,10 +10,13 @@ import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisErrorTrapping;
+import java.util.ArrayList;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -23,7 +26,7 @@ import trazit.session.ProcedureRequestSession;
  */
 public class DataSampleStructureRevisionRules {
 
-    public enum DataSampleStructureRevisionRls{
+    public enum DataSampleStructureRevisionRls  implements EnumIntBusinessRules{
         //SAMPLE_REVIEW_REVIEWER_MODE("sampleReviewReviewerMode",GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleEnums.sampleReviewReviewerModeValues.getValuesInOne(), null, '|'),
         SAMPLE_REVIEW_CAN_BE_ANY_AUTHOR("sampleReviewer_canBeAnyResultAuthor", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         SAMPLE_REVIEW_CAN_BE_ANY_TEST_REVIEWER("sampleReviewer_canBeAnyTestReviewer", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
@@ -52,9 +55,19 @@ public class DataSampleStructureRevisionRules {
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;       
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     
-    public enum DataSampleStructureRevisionErrorTrapping{ 
+    public enum DataSampleStructureRevisionErrorTrapping implements EnumIntMessages{ 
         SAMPLEANALYSIS_AUTHOR_CANNOTBE_ITSREVIEWER("SampleAnalysisAuthorCannotBeReviewer", "", ""),
         SAMPLEANALYSIS_AUTHOR_CANNOTBE_SAMPLEREVIEWER("SampleAnalysisAuthorCannotBeSampleReviewer", "", ""),
         SAMPLEANALYSIS_REVIEWER_CANNOTBE_SAMPLEREVIEWER("SampleAnalysisReviewerCannotBeSampleReviewer", "", ""),
