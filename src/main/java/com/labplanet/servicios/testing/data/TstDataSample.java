@@ -271,7 +271,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, userName, fieldNames, fieldValues", 
                                             LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueObjArr)}));                              
-                                    dataSample = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldName, fieldValueObjArr, null);
+                                    dataSample = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldName, fieldValueObjArr);
                                     break;              
                                 case ENTERRESULT:
                                     Integer resultId = 0;
