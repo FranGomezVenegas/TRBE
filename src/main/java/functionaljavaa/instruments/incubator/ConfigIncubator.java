@@ -8,9 +8,12 @@ package functionaljavaa.instruments.incubator;
 import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
+import java.util.ArrayList;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -19,7 +22,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class ConfigIncubator {
     
-public enum ConfigIncubatorErrorTrapping{ 
+public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{ 
         NOT_EXISTS("incubatorDoesnotExist", "", ""),
         ALREADY_ACTIVE("incubatorAlreadyActive", "", ""),
         CURRENTLY_DEACTIVE("incubatorCurrentlyDeactive", "", ""),
@@ -81,7 +84,7 @@ public enum ConfigIncubatorErrorTrapping{
         private final String descriptionEs;
     }
     
-    public enum ConfigIncubatorBusinessRules{ 
+    public enum ConfigIncubatorBusinessRules implements EnumIntBusinessRules{ 
         LOCK_WHEN_TEMP_OUT_OF_RANGE ("incubator_LockWhenTempOutOfRange", GlobalVariables.Schemas.PROCEDURE.getName(), ConfigIncubatorLockingModeValues.BY_PASS.getValuesInOne(), null, '|'),
         ;
         private ConfigIncubatorBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
@@ -102,6 +105,16 @@ public enum ConfigIncubatorErrorTrapping{
         private final JSONArray valuesList;        
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
         
     }
 
