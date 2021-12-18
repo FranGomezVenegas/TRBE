@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -24,6 +25,8 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -32,7 +35,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class DataSampleIncubation {
 
-    public enum DataSampleIncubationBusinessRules{
+    public enum DataSampleIncubationBusinessRules  implements EnumIntBusinessRules{
         SAMPLE_INCUBATION_MODE("sampleIncubationMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         SAMPLE_INCUB_TEMP_READING_BUSRULE("sampleIncubationTempReadingBusinessRule", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
         
@@ -55,6 +58,16 @@ public class DataSampleIncubation {
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     
     /**
@@ -356,7 +369,7 @@ public class DataSampleIncubation {
         return new Object[]{LPPlatform.LAB_FALSE}; 
     }    
     
-    public enum DataSampleIncubationErrorTrapping{ 
+    public enum DataSampleIncubationErrorTrapping implements EnumIntMessages{ 
         INCUBATORBATCH_NOT_STARTED("IncubatorBatchNotStartedYet", "The batch <*1*> was not started yet for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
         SAMPLEINCUBATION_STARTED_SUCCESS("SampleIncubationStartedSuccessfully", "", ""),
         SAMPLEINCUBATION_ENDED_SUCCESS("SampleIncubationEndedSuccessfully", "", ""),
