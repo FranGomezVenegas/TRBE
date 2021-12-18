@@ -13,12 +13,15 @@ import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.PropertiesToRequirements.valuesListForEnableDisable;
 import trazit.session.ResponseMessages;
 import static functionaljavaa.user.UserAndRolesViews.getPersonByUser;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Calendar;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -27,7 +30,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class AnalysisMethodCertif {
-    public enum CertificationAnalysisMethodErrorTrapping{ 
+    public enum CertificationAnalysisMethodErrorTrapping implements EnumIntMessages{ 
         USER_CERTIFICATION_ENABLED ("isUserCertificationEnabled", "", ""),
         USER_CERTIFICATION_NOT_ENABLED ("isUserCertificationEnabledNotEnabled", "", ""),
         USER_IS_CERTIFIED ("userIsCertifiedForAnalysisMethod", "", ""),
@@ -49,7 +52,7 @@ public class AnalysisMethodCertif {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     
-    public enum CertificationAnalysisMethodBusinessRules{
+    public enum CertificationAnalysisMethodBusinessRules implements EnumIntBusinessRules{
         CERTIFICATION_ANALYSIS_METHOD_MODE("certificationAnalysisMethodMode", GlobalVariables.Schemas.PROCEDURE.getName(), valuesListForEnableDisable(), false, '|'),
         USER_SOP("certificationUserSOPMode", GlobalVariables.Schemas.PROCEDURE.getName(), valuesListForEnableDisable(), false, '|')
         ;
@@ -71,6 +74,16 @@ public class AnalysisMethodCertif {
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     public static Object[] isUserCertified(String methodName, String userName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
