@@ -7,6 +7,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 /**
@@ -73,7 +74,7 @@ public class UnitsOfMeasurement {
     /**
      *
      */
-    public enum UomErrorTrapping{ 
+    public enum UomErrorTrapping implements EnumIntMessages{ 
         CURRENT_UNITS_NOT_DEFINED("UnitsOfMeasurement_currentUnitsNotDefined", "unit <*1*> not defined in procedure <*2*>", "Unidad de medida <*1*> no definida en proceso <*2*>"),
         NEW_UNITS_NOT_DEFINED("UnitsOfMeasurement_newUnitsNotDefined","",""),
         SAME_VALUE_NOT_CONVERTED("UnitsOfMeasurement_sameValueNotConverted","",""),
