@@ -24,7 +24,7 @@ public class TblsAppProcConfig {
         /**
          *
          */
-        TBL("instruments",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_NAME) ) " +
+        TBL("instruments_family",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_NAME) ) " +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;"),        
         FLD_NAME("name", LPDatabase.stringNotNull()),
         FLD_DESCRIPTION("description", LPDatabase.string()),
