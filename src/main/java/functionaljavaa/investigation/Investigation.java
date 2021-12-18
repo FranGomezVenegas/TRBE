@@ -18,6 +18,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 
@@ -32,7 +33,7 @@ public final class Investigation {
     public enum InvestigationAuditEvents{NEW_INVESTIGATION_CREATED, OBJECT_ADDED_TO_INVESTIGATION, CLOSED_INVESTIGATION, CAPA_DECISION
     //CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT
     }
-    public enum InvestigationErrorTrapping{ 
+    public enum InvestigationErrorTrapping implements EnumIntMessages{ 
         AAA_FILE_NAME("errorTrapping", "", ""),
         OBJECT_NOT_RECOGNIZED("objectNotRecognized", "ObjectNotRecognized <*1*>, should be two pieces of data separated by *", ""),
         OBJECT_ALREADY_ADDED("Investigation_objectAlreadyAdded", "<*1*> <*2*> already added in the investigation <*3*>", ""),
