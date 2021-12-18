@@ -29,11 +29,10 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
      * @param sampleFieldName
      * @param sampleFieldValue
      * @param eventName
-     * @param preAuditId
      * @return
      */
     @Override
-  public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId) {
+  public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] anaName =new Object[2][3];
                 anaName[0][0] = "pH";
@@ -46,7 +45,7 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
         for (Object[] anaName1 : anaName) {
             String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName()};
             Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2]};
-            functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue, preAuditId);
+            functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{analysisAdded.toString(), sampleId.toString(), procInstanceName});        
@@ -61,7 +60,7 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
      * @return
      */
   @Override
-    public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample, Integer preAuditId) {
+    public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
