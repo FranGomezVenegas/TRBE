@@ -14,6 +14,9 @@ import static databases.TblsCnfg.TABLETAG;
 import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
+import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -859,6 +862,10 @@ public class TblsData {
         FLD_REVIEWED("reviewed", LPDatabase.booleanFld()),
         FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime()),
         FLD_REVIEWED_BY("reviewed_by", LPDatabase.string()),
+        FLD_MAX_DP("max_dp", LPDatabase.integer()),
+        FLD_MIN_ALLOWED("min_allowed", LPDatabase.real()),
+        FLD_MAX_ALLOWED("max_allowed", LPDatabase.real()),
+        FLD_LIST_ENTRY("list_entry", LPDatabase.string()),
         
         /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
         , FLD_REVIEWER("reviewer", LPDatabase.String())
@@ -2363,6 +2370,10 @@ public class TblsData {
          */
         FLD_SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, "sar.subaliquot_id")
         ,        
+        FLD_MAX_DP("max_dp", "sar.max_dp")        ,        
+        FLD_MIN_ALLOWED("min_allowed", "sar.min_allowed")        ,        
+        FLD_MAX_ALLOWED("max_allowed", "sar.max_allowed")        ,        
+        FLD_LIST_ENTRY("list_entry", "sar.list_entry")        ,        
 
         /**
          *
@@ -2443,12 +2454,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_UOM_SPEC_LIMITS("uom_spec_limits", "spcLim.uom")
-        ,        
-
-        /**
-         *
-         */
+        FLD_UOM_SPEC_LIMITS("uom_spec_limits", "spcLim.uom")        ,        
         FLD_UOM_CONVERSION_MODE_SPEC_LIMITS("uom_conversion_mode_spec_limits", "spcLim.uom_conversion_mode") ,
         FLD_MIN_VAL_ALLOWED("min_val_allowed", "spcLim.min_val_allowed"),
         FLD_MAX_VAL_ALLOWED("max_val_allowed", "spcLim.max_val_allowed"),
@@ -2529,55 +2535,18 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }        
-    
-
     public enum SavedQueries{
-
-        /**
-         *
-         */
-        FLD_ID("id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
-        ,        
+        FLD_ID("id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")        ,        
         TBL("saved_queries", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_NAME("name", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_OWNER("owner", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_PRIVATE("private", LPDatabase.booleanFld())
-        ,
-
-        /**
-         *
-         */
-        FLD_READABLE_BY("readable_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_DEFINITION("definition", LPDatabase.string())
-        ;
+        FLD_NAME("name", LPDatabase.string())        ,
+        FLD_OWNER("owner", LPDatabase.string())        ,
+        FLD_PRIVATE("private", LPDatabase.booleanFld())        ,
+        FLD_READABLE_BY("readable_by", LPDatabase.string())        ,
+        FLD_DEFINITION("definition", LPDatabase.string())        ;
         private SavedQueries(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
@@ -2734,5 +2703,148 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }        
+    public enum TablesData implements EnumIntTables{
+        SAMPLE("sample", "data", new EnumIntTableFields[]{})
+        ;
+        private TablesData(String dbObjName, String repositoryName, EnumIntTableFields[] dbObjType){
+            this.tableName=dbObjName;
+            this.tableFields=dbObjType;
+            this.repositoryName=repositoryName;
+        }
+        public String getTableName() {return this.tableName;}
+        public String getRepositoryName() {return this.repositoryName;}
+        private final String tableName;             
+        private final String repositoryName;             
+        private final EnumIntTableFields[] tableFields;             
+        
+    }
+    public enum SampleFldsNew implements EnumIntTableFields{
+        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)", null, null)
+        ,        
+        TBL("sample", LPDatabase.createSequence(FLD_SAMPLE_ID.getFieldName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SAMPLE_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";", null, null)       ,
+        FLD_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull(),null, null)        ,
+        FLD_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer(),null, null),
+        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(),null, null)        ,
+        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.stringNotNull(),null, null)        ,
+        FLD_LOGGED_ON("logged_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'DD/MM/YY')", null)        ,
+        FLD_LOGGED_BY("logged_by", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"))        ,
+        FLD_RECEIVED_ON("received_on", LPDatabase.dateTime(),null, null)        ,
+        FLD_RECEIVED_BY("received_by", LPDatabase.string(),null, null)        ,
+        FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(),null, null)        ,
+        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.stringNotNull(),null, null)        ,
+        FLD_ALIQUOTED("aliquoted", LPDatabase.booleanFld(false),null, null)        ,
+        FLD_ALIQUOT_STATUS("aliq_status", LPDatabase.stringNotNull(),null, null)        ,
+        FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real(),null, null)        ,
+        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.stringNotNull(),null, null)        ,
+        FLD_SAMPLING_DATE("sampling_date", LPDatabase.dateTime(),null, null),
+        FLD_REQS_TRACKING_SAMPLING_END("requires_tracking_sampling_end", LPDatabase.booleanFld(),null, null),
+        FLD_SAMPLING_DATE_END("sampling_date_end", LPDatabase.dateTime(),null, null),
+        FLD_SAMPLER("sampler",LPDatabase.string(),null, null),
+        FLD_SAMPLE_ID_RELATED("sample_id_related",LPDatabase.integer(),null, null),
+        FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.string(),null, null)        ,
+        FLD_INCUBATION_BATCH("incubation_batch", LPDatabase.string(),null, null),
+        FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string(),null, null)        ,
+        FLD_INCUBATION_START("incubation_start", LPDatabase.dateTime(),null, null)        ,
+        FLD_INCUBATION_START_TEMPERATURE("incubation_start_temperature", LPDatabase.real(),null, null)        ,
+        FLD_INCUBATION_START_TEMP_EVENT_ID("incubation_start_temp_event_id", LPDatabase.integer(),null, null)        ,
+        FLD_INCUBATION_END("incubation_end", LPDatabase.dateTime(),null, null)        ,        
+        FLD_INCUBATION_END_TEMPERATURE("incubation_end_temperature", LPDatabase.real(),null, null)                ,
+        FLD_INCUBATION_END_TEMP_EVENT_ID("incubation_end_temp_event_id", LPDatabase.integer(),null, null)        ,        
+        FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.booleanFld(false),null, null)                ,
+        FLD_INCUBATION2_BATCH("incubation2_batch", LPDatabase.string(),null, null),
+        FLD_INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.string(),null, null)        ,
+        FLD_INCUBATION2_START("incubation2_start", LPDatabase.dateTime(),null, null)        ,
+        FLD_INCUBATION2_START_TEMPERATURE("incubation2_start_temperature", LPDatabase.real(),null, null)        ,
+        FLD_INCUBATION2_START_TEMP_EVENT_ID("incubation2_start_temp_event_id", LPDatabase.integer(),null, null)        ,
+        FLD_INCUBATION2_END("incubation2_end", LPDatabase.dateTime(),null, null)        ,        
+        FLD_INCUBATION2_END_TEMPERATURE("incubation2_end_temperature", LPDatabase.real(),null, null)                ,
+        FLD_INCUBATION2_END_TEMP_EVENT_ID("incubation2_end_temp_event_id", LPDatabase.integer(),null, null)        ,
+        FLD_INCUBATION2_PASSED("incubation2_passed", LPDatabase.booleanFld(),null, null)        ,
+        FLD_SPEC_CODE("spec_code", LPDatabase.stringNotNull(),null, null)        ,
+        FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer(),null, null)        ,
+        FLD_SPEC_VARIATION_NAME("spec_variation_name", LPDatabase.stringNotNull(),null, null)        ,
+        FLD_SPEC_ANALYSIS_VARIATION("spec_analysis_variation", LPDatabase.stringNotNull(),null, null)        ,
+        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL,  LPDatabase.stringNotNull(2),null, null)        ,
+        FLD_CUSTODIAN(FIELDS_NAMES_CUSTODIAN,  LPDatabase.stringNotNull(2), null, null),
+        FLD_CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE,  LPDatabase.stringNotNull(2), null, null),
+        FLD_COC_REQUESTED_ON("coc_requested_on", LPDatabase.dateTime(), null, null),
+        FLD_COC_CONFIRMED_ON(FIELDS_NAMES_COC_CONFIRMED_ON, LPDatabase.dateTime(), null, null),
+        FLD_CURRENT_STAGE("current_stage", LPDatabase.stringNotNull(), null, null),
+        FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.string(), null, null),
+        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null),
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(), null, null), 
+        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null), 
+        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null)
+        ;
+        /**
+         *
+         * @return
+         */
+        
+        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.fieldName, this.fieldType};}
+
+        /**
+         *
+         * @param schemaNamePrefix - Procedure Instance where it applies
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = Sample.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (Sample obj: Sample.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        } 
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (Sample obj: Sample.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                    
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+
+        public String getFieldName(){return this.fieldName;}
+        public String getFieldType() {return this.fieldType;}
+        public String getFieldMask() {return this.fieldMask;}
+        public ReferenceFld getReferenceTable() {return this.reference;}
+
+        private SampleFldsNew(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+        }
+    }            
     
 }
