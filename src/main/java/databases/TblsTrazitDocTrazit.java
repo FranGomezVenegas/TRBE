@@ -249,14 +249,14 @@ public class TblsTrazitDocTrazit {
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = BusinessRulesDeclaration.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = MessageCodeDeclaration.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.REQUIREMENTS.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (BusinessRulesDeclaration obj: BusinessRulesDeclaration.values()){
+            for (MessageCodeDeclaration obj: MessageCodeDeclaration.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
@@ -275,7 +275,7 @@ public class TblsTrazitDocTrazit {
         private final String dbObjTypePostgres;  
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
-            for (BusinessRulesDeclaration obj: BusinessRulesDeclaration.values()){
+            for (MessageCodeDeclaration obj: MessageCodeDeclaration.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
