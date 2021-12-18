@@ -12,6 +12,7 @@ import lbplanet.utilities.LPArray;
 import java.util.Arrays;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -20,7 +21,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class DataProgramProductionLot{
     
-    public enum ProductionLotErrorTrapping{ 
+    public enum ProductionLotErrorTrapping implements EnumIntMessages{ 
         PRODUCTIONLOT_ALREADY_EXIST("productionLotAlreadyExist", "One production lot called <*1*> already exist in procedure <*2*>", "Un lote de producción con el nombre <*1*> ya existe en el proceso <*2*>"),
         PRODUCTIONLOT_FIELD_NOT_FOUND("productionLot_fieldNotFound", "", ""),
         ;
