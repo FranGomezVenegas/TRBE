@@ -11,6 +11,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import trazit.enums.EnumIntMessages;
 
 /**
  *
@@ -19,7 +20,7 @@ import java.util.Arrays;
 public class DataSpec {
     String classVersion = "0.1";
     
-    public enum ResultCheckErrorsErrorTrapping{ 
+    public enum ResultCheckErrorsErrorTrapping implements EnumIntMessages{ 
         STRICT_DOES_NOT_ALLOW_EQUALS("resultCheck_StrictDoesNotAllowPairOfSameValue", "", ""), 
         NULL_MANDATORY_FIELD("resultCheck_mandatoryFieldIsNull", "", ""),
         MANDATORY_FIELD_ARGUMENT_RESULT("Result", "", ""), 
@@ -44,7 +45,7 @@ public class DataSpec {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
-    public enum ResultCheckSuccessErrorTrapping{ 
+    public enum ResultCheckSuccessErrorTrapping implements EnumIntMessages{ 
         QUANTITATIVE_IN("IN", "", ""),
         QUANTITATIVE_IN_ALERT_MAX("inAlertMax", "", ""), QUANTITATIVE_IN_ALERT_MAX_STRICT("inAlertMaxStrict", "", ""),
         QUANTITATIVE_IN_ALERT_MIN("inAlertMin", "", ""), QUANTITATIVE_IN_ALERT_MIN_STRICT("inAlertMinStrict", "", ""),
