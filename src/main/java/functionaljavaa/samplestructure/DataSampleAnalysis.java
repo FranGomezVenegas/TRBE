@@ -405,7 +405,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
      * @param parentAuditId
      * @return
      */
-    public static Object[] sampleAnalysisAddtoSample(Integer sampleId, String[] fieldName, Object[] fieldValue, Integer parentAuditId) {
+    public static Object[] sampleAnalysisAddtoSample(Integer sampleId, String[] fieldName, Object[] fieldValue) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String[] mandatoryFields = null;

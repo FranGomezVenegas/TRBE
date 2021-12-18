@@ -5,7 +5,9 @@
  */
 package functionaljavaa.samplestructure;
 
+import java.util.ArrayList;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -14,7 +16,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public interface DataSampleAnalysisResultStrategy {
 
-    public enum DataSampleAnalysisResultStrategyBusinessRules{
+    public enum DataSampleAnalysisResultStrategyBusinessRules  implements EnumIntBusinessRules{
         SAMPLE_ACTION_WHENUPONCONTROL_MODE("sampleActionWhenUponControlMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
         SAMPLE_ACTION_WHENOOS_MODE("sampleActionWhenOOSMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
         
@@ -37,6 +39,16 @@ public interface DataSampleAnalysisResultStrategy {
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     /**
      *
