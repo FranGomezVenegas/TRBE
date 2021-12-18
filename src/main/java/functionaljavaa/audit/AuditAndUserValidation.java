@@ -20,6 +20,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 
     
@@ -29,7 +30,8 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class AuditAndUserValidation {
-    public enum AuditAndUserValidationErrorTrapping{ 
+
+    public enum AuditAndUserValidationErrorTrapping implements EnumIntMessages{ 
         CHECK_SUCCESS ("checkUserValidationPassesSuccess", "", ""),
         WRONG_PHRASE ("wrongAuditReasonPhrase", "", ""),
         PROC_INSTANCE_NAME_NULL ("procInstanceNameNull", "", ""),
