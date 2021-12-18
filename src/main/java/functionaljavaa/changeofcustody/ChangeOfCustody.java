@@ -13,7 +13,10 @@ import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
+import java.util.ArrayList;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -29,7 +32,7 @@ public class ChangeOfCustody {
     /**
      *
      */
-    public enum ChangeOfCustodyBusinessRules{
+    public enum ChangeOfCustodyBusinessRules implements EnumIntBusinessRules{
         CUSTODIAN_FUNCTIONALITY_MODE("custodianFunctionalityMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
         ;
         private ChangeOfCustodyBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
@@ -50,8 +53,18 @@ public class ChangeOfCustody {
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
-public enum ChangeOfCustodyErrorTrapping{ 
+public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{ 
         REQUEST_COMPLETED("ChainOfCustody_requestCompleted", "", ""),
         NO_CUSTODIAN_CANDIDATE("ChainOfCustody_noCustodianCandidate", "", ""),
         SAME_CUSTODIAN("ChainOfCustody_sameCustodian","", ""),
