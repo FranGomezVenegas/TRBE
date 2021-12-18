@@ -20,6 +20,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
 import static lbplanet.utilities.LPPlatform.trapMessage;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -35,7 +36,7 @@ public class ConfigSpecStructure {
     
     private static final String ERROR_TRAPING_ARG_VALUE_LBL_ERROR="ERROR: ";
     
-    public enum ConfigSpecErrorTrapping{ 
+    public enum ConfigSpecErrorTrapping implements EnumIntMessages{ 
         SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "MissingMandatoryFields <*1*>", ""),
