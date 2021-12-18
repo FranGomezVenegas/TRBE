@@ -47,7 +47,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         private final String name;
     }
     
-    public enum ModuleDefinitionAPIEndpoints{
+    public enum ModuleDefinitionAPIEndpoints {
         DOC_API_ENDPOINTS_IN_DB("DOC_API_ENDPOINTS_IN_DB", "documentedApiEndpointsInDb_success: <*1*>", new LPAPIArguments[]{}),
         DOC_API_BUSINESS_RULES_IN_DB("DOC_API_BUSINESS_RULES_IN_DB", "documentedApiBusinessRulesInDb_success", new LPAPIArguments[]{}),
         DOC_API_MESSAGE_CODES_IN_DB("DOC_API_MESSAGE_CODES_IN_DB", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{}),
