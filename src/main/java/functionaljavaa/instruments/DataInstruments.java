@@ -14,6 +14,8 @@ import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentEvents;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsErrorTrapping;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import java.util.Arrays;
+import java.util.Date;
 import trazit.session.ResponseMessages;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -40,7 +42,32 @@ public class DataInstruments {
     private String[] familyFieldNames;
     private Object[] familyFieldValues;
     
+    public enum Decisions{ACCEPTED, ACCEPTED_WITH_RESTRICTIONS, REJECTED}
     
+    private InternalMessage decisionValueIsCorrect(String decision){
+        try{
+            Decisions.valueOf(decision);
+            return new InternalMessage(LPPlatform.LAB_TRUE, "", null, null);
+        }catch(Exception e){
+            return new InternalMessage(LPPlatform.LAB_FALSE, "wrongDecisions <*1*> is not one of the accepted values(<*2*>)", new Object[]{decision, Arrays.toString(Decisions.values())}, null);
+        }
+    }
+    private Boolean decisionAndFamilyRuleToTurnOn(String decision, String fieldName){
+        if (!decision.toUpperCase().contains("ACCEPT")) return false;
+        Integer fldPosic=LPArray.valuePosicInArray(this.familyFieldNames, fieldName);
+        if (fldPosic==-1) return false;
+        return Boolean.valueOf(LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString());
+    }
+    
+    private Date nextEventDate(String fieldName){
+        Integer fldPosic=LPArray.valuePosicInArray(this.familyFieldNames, fieldName);
+        if (fldPosic==-1) return null;
+        String intervalInfo = LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString();
+        if (intervalInfo==null || intervalInfo.length()==0) return null;
+        String[] intvlInfoArr=intervalInfo.split("\\*");
+        if (intvlInfoArr.length!=2) return null;
+        return LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), intvlInfoArr[0], Integer.valueOf(intvlInfoArr[1]));
+    }
     
     public DataInstruments(String instrName){
         Object[][] instrInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
@@ -90,10 +117,14 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT.getSuccessMessageCode(), new Object[]{name}, name);
     }
     public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues){
+        return updateInstrument(fldNames, fldValues, null);
+    }
+    public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues, String actionName){
         if (this.isDecommissioned)
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
-        String[] reservedFldsNotUpdatable=new String[]{TblsAppProcData.Instruments.FLD_NAME.getName(), TblsAppProcData.Instruments.FLD_IS_LOCKED.getName(),
-            TblsAppProcData.Instruments.FLD_LOCKED_REASON.getName(), TblsAppProcData.Instruments.FLD_ON_LINE.getName()};
+        String[] reservedFldsNotUpdatable=new String[]{TblsAppProcData.Instruments.FLD_NAME.getName(), TblsAppProcData.Instruments.FLD_ON_LINE.getName()};
+        String[] reservedFldsNotUpdatableFromActions=new String[]{TblsAppProcData.Instruments.FLD_NAME.getName(), TblsAppProcData.Instruments.FLD_ON_LINE.getName()};
+        if (actionName!=null)reservedFldsNotUpdatable=reservedFldsNotUpdatableFromActions;
         for (String curFld: fldNames){
             if (LPArray.valueInArray(reservedFldsNotUpdatable, curFld))
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD.getErrorCode(), new Object[]{curFld}, null);                
@@ -265,7 +296,9 @@ public class DataInstruments {
         messages.addMainForSuccess(this.getClass().getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_CALIBRATION.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_CALIBRATION.getSuccessMessageCode(), new Object[]{name}, name);
     }
-    public InternalMessage completeCalibration(){
+    public InternalMessage completeCalibration(String decision){
+        InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
         if (this.isDecommissioned)
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -284,8 +317,8 @@ public class DataInstruments {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), eventId);                
         
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.FLD_COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()};
-        Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.FLD_COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()};
+        Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), 
                 fldNames, fldValues, 
                 new String[]{TblsAppProcData.InstrumentEvent.FLD_ID.getName()}, new Object[]{eventId});
@@ -296,10 +329,15 @@ public class DataInstruments {
         fldNames=new String[]{TblsAppProcData.Instruments.FLD_LAST_CALIBRATION.getName(), TblsAppProcData.Instruments.FLD_IS_LOCKED.getName(), TblsAppProcData.Instruments.FLD_LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
         
-        if (!this.onLine){
+        Date nextEventDate = nextEventDate(TblsAppProcConfig.InstrumentsFamily.FLD_CALIB_INTERVAL.getName());
+        if (nextEventDate!=null){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsAppProcData.Instruments.FLD_NEXT_CALIBRATION.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
+        }
+        if (!this.onLine && decisionAndFamilyRuleToTurnOn(decision, TblsAppProcConfig.InstrumentsFamily.FLD_CALIB_TURN_ON_WHEN_COMPLETED.getName())){
             turnOnLine(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_CALIBRATION.toString());
         }else{
-            updateInstrument(fldNames, fldValues);            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_CALIBRATION.toString());            
         }
         messages.addMainForSuccess(this.getClass().getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name}, name);
@@ -338,7 +376,10 @@ public class DataInstruments {
         messages.addMainForSuccess(this.getClass().getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_PREV_MAINT.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_PREV_MAINT.getSuccessMessageCode(), new Object[]{name}, name);
     }
-    public InternalMessage completePrevMaint(){
+    public InternalMessage completePrevMaint(String decision){
+        InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
+        
         if (this.isDecommissioned)
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -357,8 +398,8 @@ public class DataInstruments {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), eventId);                
         
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.FLD_COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()};
-        Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.FLD_COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()};
+        Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), 
                 fldNames, fldValues, 
                 new String[]{TblsAppProcData.InstrumentEvent.FLD_ID.getName()}, new Object[]{eventId});
@@ -368,10 +409,16 @@ public class DataInstruments {
                         fldNames, fldValues);        
         fldNames=new String[]{TblsAppProcData.Instruments.FLD_LAST_PM.getName(), TblsAppProcData.Instruments.FLD_IS_LOCKED.getName(), TblsAppProcData.Instruments.FLD_LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
-        if (!this.onLine){
+
+        Date nextEventDate = nextEventDate(TblsAppProcConfig.InstrumentsFamily.FLD_PM_INTERVAL.getName());
+        if (nextEventDate!=null){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsAppProcData.Instruments.FLD_NEXT_PM.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
+        }
+        if (!this.onLine  && decisionAndFamilyRuleToTurnOn(decision, TblsAppProcConfig.InstrumentsFamily.FLD_PM_TURN_ON_WHEN_COMPLETED.getName())){
             turnOnLine(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());
         }else{
-            updateInstrument(fldNames, fldValues);            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());            
         }
         messages.addMainForSuccess(this.getClass().getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREV_MAINT.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREV_MAINT.getSuccessMessageCode(), new Object[]{name}, name);
@@ -410,7 +457,10 @@ public class DataInstruments {
         messages.addMainForSuccess(this.getClass().getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_VERIFICATION.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_VERIFICATION.getSuccessMessageCode(), new Object[]{name}, name);
     }
-    public InternalMessage completeVerification(){
+    public InternalMessage completeVerification(String decision){
+        InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
+        
         if (this.isDecommissioned)
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -429,8 +479,8 @@ public class DataInstruments {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), eventId);                
         
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.FLD_COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()};
-        Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.FLD_COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()};
+        Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), 
                 fldNames, fldValues, 
                 new String[]{TblsAppProcData.InstrumentEvent.FLD_ID.getName()}, new Object[]{eventId});
@@ -443,7 +493,7 @@ public class DataInstruments {
         if (!this.onLine){
             turnOnLine(fldNames, fldValues);
         }else{
-            updateInstrument(fldNames, fldValues);            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_VERIFICATION.toString());            
         }
         messages.addMainForSuccess(this.getClass().getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name}, name);
