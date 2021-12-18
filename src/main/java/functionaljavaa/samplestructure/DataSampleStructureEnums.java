@@ -8,6 +8,7 @@ package functionaljavaa.samplestructure;
 import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -15,7 +16,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class DataSampleStructureEnums {
-    public enum DataSampleErrorTrapping{         
+    public enum DataSampleErrorTrapping implements EnumIntMessages{  
         SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE ("SetSamplingDate_notAllowChangePreviousValue", "", ""),
         SAMPLINGDATE_REQUIRED_FOR_SAMPLINGDATEEND("SamplingDateRequiredForSampleDateEnd", "", ""),
         SAMPLINGDATEEND_NOTREQUIRED_ASTOPERFORMTHEACTION("SamplingDateEndNotRequiredAsToPerformTheAction", "", ""),
@@ -156,7 +157,7 @@ public class DataSampleStructureEnums {
         private final String preReqsBusRules;
         
     }
-    public enum DataSampleAnalysisErrorTrapping{ 
+    public enum DataSampleAnalysisErrorTrapping implements EnumIntMessages{ 
         MARK_READYFORREVISION_WHENALLRESULTSENTERED_NOTACTIVE_SUCCESS("markAsReadyForRevisionWhenAllResultsEnteredNotActive", "", ""),
         SAMPLE_ANALYSIS_ADDED_SUCCESS("SampleAnalysisAddedSuccessfully", "", ""),
         ALREADY_READYFORREVISION("alreadyReadyForRevision", "", ""),
@@ -243,7 +244,7 @@ public class DataSampleStructureEnums {
         private final String preReqsBusRules;
         
     }
-    public enum DataSampleAnalysisResultErrorTrapping{ 
+    public enum DataSampleAnalysisResultErrorTrapping implements EnumIntMessages{ 
         NOT_FOUND("DataSampleAnalysisResult_SampleAnalysisResultNotFound", "", ""),
         RESULT_CANNOT_BE_CANCELLED("DataSampleAnalysisResult_resultCannotBeCanceled", "", ""),
         ANALYSIS_HAS_SOME_PARAMETERS("DataSampleAnalysisResult_analysisWithManyParameters", "", ""),
