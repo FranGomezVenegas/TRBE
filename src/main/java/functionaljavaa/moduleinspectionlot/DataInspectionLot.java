@@ -24,6 +24,7 @@ import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSample;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
@@ -36,6 +37,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import static lbplanet.utilities.LPPlatform.trapMessage;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -44,7 +46,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class DataInspectionLot {
 
-    public enum DataInspectionLotBusinessRules{     
+    public enum DataInspectionLotBusinessRules  implements EnumIntBusinessRules{     
         SUFFIX_STATUS_FIRST ("_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
         ;
         private DataInspectionLotBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
@@ -65,6 +67,16 @@ public class DataInspectionLot {
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public ArrayList<String[]> getPreReqs() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
     public Object[] createLot(String lotName, String materialName, String template, Integer templateVersion, String[] fieldName, Object[] fieldValue, Integer numLotsToCreate) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
