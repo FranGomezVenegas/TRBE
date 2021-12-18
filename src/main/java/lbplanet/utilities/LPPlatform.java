@@ -29,6 +29,7 @@ import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
 import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -130,7 +131,7 @@ public class LPPlatform {
         }
     }
 
-public enum LpPlatformErrorTrapping{ 
+public enum LpPlatformErrorTrapping implements EnumIntMessages{  
         RULE_NAME_VALUE("LpPlatform_ruleNameValue", "Rule name = <*1*>", "Nombre de la regla = <*1*>"),
         BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND("LpPlatform_BusinessRulesampleTestingByGroup_ReviewByTestingGroupNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
         ACTION_ENABLED_BY_ALL("ACTION_ENABLED_BY_ALL", "", ""),
