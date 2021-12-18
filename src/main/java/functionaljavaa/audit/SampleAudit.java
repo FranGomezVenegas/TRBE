@@ -25,6 +25,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import static trazit.session.ProcedureRequestSession.getInstanceForActions;
 import trazit.globalvariables.GlobalVariables;
@@ -36,7 +37,7 @@ import trazit.session.SessionAuditActions;
  */
 public class SampleAudit {       
     
-    public enum SampleAuditErrorTrapping{ 
+    public enum SampleAuditErrorTrapping implements EnumIntMessages{ 
         AUDIT_RECORDS_PENDING_REVISION("auditRecordsPendingRevision", "The sample <*1*> has pending sign audit records.", "La muestra <*1*> tiene registros de auditoría sin firmar"),
         AUDIT_RECORD_NOT_FOUND("AuditRecordNotFound", "The audit record <*1*> for sample does not exist", "No encontrado un registro de audit para muestra con id <*1*>"),
         AUDIT_RECORD_ALREADY_REVIEWED("AuditRecordAlreadyReviewed", "The audit record <*1*> was reviewed therefore cannot be reviewed twice.", "El registro de audit para muestra con id <*1*> ya fue revisado, no se puede volver a revisar."),
@@ -54,8 +55,11 @@ public class SampleAudit {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
+        @Override
         public String getErrorCode(){return this.errorCode;}
+        @Override
         public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override
         public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
@@ -148,7 +152,7 @@ public class SampleAudit {
                 if (propValue==null || propValue.length()==0)propValue=action;
                 fieldNames = LPArray.addValueToArray1D(fieldNames, 
                         TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
-                fieldValues = LPArray.addValueToArray1D(fieldValues, propValue);            
+                fieldValues = LPArray.addValueToArray1D(fieldValues, propValue);
             }
         }
         String actionPrettyEn=action;
@@ -164,8 +168,17 @@ public class SampleAudit {
             actionPrettyEn=auditActions.getLastAuditAction().getActionPrettyEn()+" > "+actionPrettyEn;
             actionPrettyEs=auditActions.getLastAuditAction().getActionPrettyEs()+" > "+actionPrettyEs;
         }
-        fieldValues[actionPrettyEnPosic]=actionPrettyEn;
-        fieldValues[actionPrettyEsPosic]=actionPrettyEs;
+        if (actionPrettyEnPosic==-1){
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, actionPrettyEn);
+        }else
+            fieldValues[actionPrettyEnPosic]=actionPrettyEn;
+        
+        if (actionPrettyEsPosic==-1){
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_ACTION_PRETTY_ES.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, actionPrettyEs);
+        }else
+            fieldValues[actionPrettyEsPosic]=actionPrettyEs;
 
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.FLD_ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
