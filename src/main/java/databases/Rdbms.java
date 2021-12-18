@@ -36,6 +36,8 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Properties;
+import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 
@@ -67,15 +69,26 @@ public class Rdbms {
      */
     public static final String TBL_KEY_NOT_FIRST_TABLEFLD="PRIMARY KEY NOT FIRST FIELD IN TABLE";
     
-    public enum RdbmsErrorTrapping{RDBMS_DT_SQL_EXCEPTION("Rdbms_dtSQLException"), RDBMS_NOT_FILTER_SPECIFIED("Rdbms_NotFilterSpecified"),
-        RDBMS_RECORD_NOT_FOUND("existsRecord_RecordNotFound"), RDBMS_RECORD_FOUND("existsRecord_RecordFound"),
-        ARG_VALUE_RES_NULL("res is set to null"), ARG_VALUE_LBL_VALUES(" Values: "),
-        RDBMS_RECORD_CREATED("RecordCreated"), RDBMS_RECORD_NOT_CREATED("RecordNotCreated"),
-        RDBMS_RECORD_UPDATED("RecordUpdated"), 
+    public enum RdbmsErrorTrapping  implements EnumIntMessages{
+        RDBMS_DT_SQL_EXCEPTION("Rdbms_dtSQLException", "", ""), RDBMS_NOT_FILTER_SPECIFIED("Rdbms_NotFilterSpecified", "", ""),
+        RDBMS_RECORD_NOT_FOUND("existsRecord_RecordNotFound", "", ""), RDBMS_RECORD_FOUND("existsRecord_RecordFound", "", ""),
+        ARG_VALUE_RES_NULL("res is set to null", "", ""), ARG_VALUE_LBL_VALUES(" Values: ", "", ""),
+        RDBMS_RECORD_CREATED("RecordCreated", "", ""), RDBMS_RECORD_NOT_CREATED("RecordNotCreated", "", ""),
+        RDBMS_RECORD_UPDATED("RecordUpdated", "", ""),
         ;
+        RdbmsErrorTrapping(String cl, String msgEn, String msgEs){
+            this.errorCode=cl;
+            this.defaultTextWhenNotInPropertiesFileEn=msgEn;
+            this.defaultTextWhenNotInPropertiesFileEs=msgEs;
+        }
+
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
         private final String errorCode;
-        RdbmsErrorTrapping(String cl){this.errorCode=cl;}
-        public String getErrorCode(){            return errorCode;        }        
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
     }
     public enum DbConnectionParams{FILE_NAME_CONFIG("parameter.config.app-config"), 
         DBURL("dburl"), DBNAME("dbname"), DBMODULES("dbmodules"),
@@ -1754,6 +1767,53 @@ if (1==1){Rdbms.transactionId=1; return;}
         }
         Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(fieldsToGroupAltered)});
         return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                        
+    }
+    public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, EnumIntTableFields[] whereFields, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct){
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
+        if (whereFields.length==0){
+           Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED.getErrorCode(), new Object[]{tableName, schemaName});                         
+           return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
+        }
+        SqlStatement sql = new SqlStatement(); 
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
+                whereFields, whereFieldValues,
+                fieldsToRetrieve,  null, null, orderBy, null, inforceDistinct);            
+        String query= hmQuery.keySet().iterator().next();   
+        Object[] keyFieldValueNew = hmQuery.get(query);
+   
+        try{            
+            ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
+            if (res==null){
+                Object[] errorLog=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL.getErrorCode(), query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode()+ Arrays.toString(whereFieldValues)});
+                return LPArray.array1dTo2d(errorLog, errorLog.length);
+            }               
+            res.last();
+
+            if (res.getRow()>0){
+             Integer totalLines = res.getRow();
+             res.first();
+             Integer icurrLine = 0;   
+             
+             Object[][] diagnoses2 = new Object[totalLines][fieldsToRetrieve.length];
+             while(icurrLine<=totalLines-1) {
+                for (Integer icurrCol=0;icurrCol<fieldsToRetrieve.length;icurrCol++){
+                    Object currValue = res.getObject(icurrCol+1);
+                    diagnoses2[icurrLine][icurrCol] =  LPNulls.replaceNull(currValue);
+                }        
+                res.next();
+                icurrLine++;
+             }
+                //diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+                return diagnoses2;
+            }else{
+                Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
+                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION.getErrorCode(), new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);             
+        }                    
     }
     
 /*
