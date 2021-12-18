@@ -31,10 +31,6 @@ public class TblsAppProcData {
      *
      */
     public enum Instruments{
-
-        /**
-         *
-         */
         TBL("instruments",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_NAME) ) " +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;"),        
         FLD_NAME("name", LPDatabase.stringNotNull()),
@@ -115,28 +111,22 @@ public class TblsAppProcData {
                 }
             }           
             return tableFields;
-        }            
-        
+        }                   
     }        
     
     public enum InstrumentEvent{
-
-        /**
-         *
-         */
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
-        ,        
+        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")        ,        
         TBL("instrument_event", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SAMPLE_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
         FLD_INSTRUMENT("instrument", LPDatabase.string()),
         FLD_EVENT_TYPE("event_type", LPDatabase.string()), 
         FLD_CREATED_ON("created_on", LPDatabase.dateTime()),
         FLD_CREATED_BY("created_by", LPDatabase.string()), 
         FLD_COMPLETED_ON("completed_on", LPDatabase.dateTime()),
         FLD_COMPLETED_BY("completed_by", LPDatabase.string()), 
+        FLD_COMPLETED_DECISION("completed_decision", LPDatabase.string()), 
         FLD_DECISION("decision", LPDatabase.string()), 
         FLD_ATTACHMENT("attachment", LPDatabase.string()),         
         ;
@@ -144,11 +134,6 @@ public class TblsAppProcData {
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
-
-        /**
-         *
-         * @return
-         */
         public String getName(){return this.dbObjName;}
         private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
 
