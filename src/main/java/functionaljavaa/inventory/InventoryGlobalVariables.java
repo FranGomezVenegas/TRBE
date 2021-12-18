@@ -5,12 +5,14 @@
  */
 package functionaljavaa.inventory;
 
+import trazit.enums.EnumIntMessages;
+
 /**
  *
  * @author User
  */
 public class InventoryGlobalVariables {
-        public enum DataInvRetErrorTrapping{ 
+        public enum DataInvRetErrorTrapping implements EnumIntMessages{ 
         RECEPTION_FIELD_NOT_RETRIEVED("errorInCode, receptionFieldNotRetrieved", "", ""),
         ITEM_ALREADY_RECEIVED("retainRowAlreadyReceived", "", ""),
         NOT_ENOUGH_QUANTITY("NotEnoughQuantity", "", ""),
