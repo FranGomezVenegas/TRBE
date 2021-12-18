@@ -13,6 +13,8 @@ import java.util.ResourceBundle;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -155,7 +157,8 @@ public class SqlStatement {
         return hm;
     }
 
-    public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToGroup, String[] fieldsToOrder) {        
+    
+    public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, String[] whereFields, Object[] whereFieldValues, String[] fieldsToGroup, String[] fieldsToOrder) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
         String queryWhere = "";
@@ -163,8 +166,8 @@ public class SqlStatement {
         tableName = setSchemaName(tableName);
         
         Object[] whereFieldValuesNew = new Object[0];
-        if (whereFieldNames != null) {
-            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues);            
+        if (whereFields != null) {
+            Object[] whereClauseContent = buildWhereClause(whereFields, whereFieldValues);            
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
@@ -238,6 +241,7 @@ public class SqlStatement {
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
     }
+
     static Object whereFldValuesGetCurrArrValue(String textSpecs, String f){
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*")) return Float.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*", ""));
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*")) return Integer.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*", ""));
@@ -372,5 +376,146 @@ public class SqlStatement {
         }        
         return separator;
     }
+    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, EnumIntTableFields[] whereFields, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
+        HashMap<String, Object[]> hm = new HashMap();        
+        
+        String queryWhere = "";
+        schemaName = setSchemaName(schemaName);
+        tableName = setSchemaName(tableName);
+        
+        Object[] whereFieldValuesNew = new Object[0];
+        if (whereFields != null) {
+            Object[] whereClauseContent = buildWhereClause(whereFields, whereFieldValues);            
+            queryWhere=(String) whereClauseContent[0];
+            whereFieldValuesNew=(Object[]) whereClauseContent[1];
+        }
+        String fieldsToRetrieveStr = buildFieldsToRetrieve(fieldsToRetrieve);
+        String fieldsToOrderStr = buildOrderBy(fieldsToOrder);
+        String fieldsToGroupStr = buildGroupBy(fieldsToGroup);
+        
+        String insertFieldNamesStr = buildInsertFieldNames(setFieldNames);
+        String insertFieldValuesStr = buildInsertFieldNamesValues(setFieldNames);
+        
+        String query = "";
+        switch (operation.toUpperCase()) {
+            case "SELECT":
+                query = "select ";
+                if (forceDistinct){query=query+ " distinct ";}
+                query=query+ " " + fieldsToRetrieveStr + " from " + schemaName + "." + tableName + "   where " + queryWhere + " " + fieldsToGroupStr + " " + fieldsToOrderStr;
+                break;
+            case "INSERT":
+                query = "insert into " + schemaName + "." + tableName + " (" + insertFieldNamesStr + ") values ( " + insertFieldValuesStr + ") ";
+                break;
+            case "UPDATE":
+                String updateSetSectionStr=buildUpdateSetFields(setFieldNames);
+                query = "update " + schemaName + "." + tableName + " set " + updateSetSectionStr + " where " + queryWhere;
+                whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
+                break;
+            case "DELETE":                
+                query = "delete from " + schemaName + "." + tableName + " where " + queryWhere;
+                whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
+                break;
+            default:
+                break;
+        }
+        hm.put(query, whereFieldValuesNew);
+        return hm;
+    }
+
+    public static Object[] buildWhereClause(EnumIntTableFields[] whereFields, Object[] whereFieldValues){
+        StringBuilder queryWhere = new StringBuilder(0);
+        Object[] whereFieldValuesNew = new Object[0];
+        for (int iwhereFieldNames=0; iwhereFieldNames<whereFields.length; iwhereFieldNames++){
+            String fn = whereFields[iwhereFieldNames].getFieldName();
+            if (fn==null || fn.length()==0) break;
+            if (iwhereFieldNames > 0) {
+                if (!fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))
+//                    queryWhere.append(" or ");
+//                else
+                    queryWhere.append(" and ");
+            }
+            if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
+                queryWhere.append(fn);
+            } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.LIKE.getSqlClause())) {
+                queryWhere.append(fn).append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
+            } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
+                String separator = inNotInSeparator(fn);
+                String textSpecs = (String) whereFieldValues[iwhereFieldNames];
+                String[] textSpecArray = textSpecs.split("\\" + separator);
+                Integer posicINClause = fn.toUpperCase().indexOf(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
+                queryWhere.append(fn.substring(0, posicINClause + WHERECLAUSE_TYPES.NOT_IN.getSqlClause().length()+1)).append(" (");                
+                for (String f : textSpecArray) {
+                    queryWhere.append("?,");
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
+                }
+                queryWhere.deleteCharAt(queryWhere.length() - 1);
+                queryWhere.append(")");                
+            } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.IN.getSqlClause())) {
+                String separator = inNotInSeparator(fn);
+                String textSpecs = (String) whereFieldValues[iwhereFieldNames];
+                String[] textSpecArray = textSpecs.split("\\" + separator);
+                Integer posicINClause = fn.toUpperCase().indexOf(" "+WHERECLAUSE_TYPES.IN.getSqlClause());
+                queryWhere.append(fn.substring(0, posicINClause+ (" "+WHERECLAUSE_TYPES.IN.getSqlClause()).length())).append(" (");
+                for (String f : textSpecArray) {
+                    queryWhere.append("?,");
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
+                }
+                queryWhere.deleteCharAt(queryWhere.length() - 1);
+                queryWhere.append(")");
+            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause())) {
+                queryWhere.append(fn).append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
+            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
+                queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames+1]);
+            } else if ( (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN.getSqlClause())) ||
+                (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN_STRICT.getSqlClause())) ||
+                (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause())) || 
+                (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN_STRICT.getSqlClause()))) {
+                queryWhere.append(fn).append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
+            } else {
+                queryWhere.append(fn).append("=? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
+            }
+        }
+        return new Object[]{queryWhere.toString(), whereFieldValuesNew};
+    }
     
+    private String buildFieldsToRetrieve(EnumIntTableFields[] fieldsToRetrieve) {
+        StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
+        if (fieldsToRetrieve != null) {
+            String fn="";
+            for (EnumIntTableFields curFld : fieldsToRetrieve) {
+                fn=curFld.getFieldName();
+                if (curFld.getFieldMask()!=null)
+                    fn=curFld.getFieldMask();
+                if (curFld.getReferenceTable()!=null){ 
+                    if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
+                       && "person".equalsIgnoreCase(curFld.getReferenceTable().getTableName())
+                       && "person_id".equalsIgnoreCase(curFld.getReferenceTable().getFieldName()))
+                    fn="(select first_name||' '||last_name||' '||birth_date from config.person where person_id="+curFld.getFieldName()+")";
+                }
+            else{
+                    if ("DATE".equalsIgnoreCase(curFld.getFieldType()))
+                        fn="to_char("+fn+",'DD/MM/YY')";                
+                    if ("DATETIME".equalsIgnoreCase(curFld.getFieldType()))
+                        fn="to_char("+fn+",'DD.MM.YY HH:MI')";                
+                    if (curFld.getFieldType().toString().toLowerCase().contains("timestamp"))
+                        fn="to_char("+fn+",'DD.MM.YY HH:MI')";                
+                    if (fn.toUpperCase().contains(" IN")) {
+                        Integer posicINClause = fn.toUpperCase().indexOf("IN");
+                        fn = fn.substring(0, posicINClause - 1);
+                        fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+                    }
+                }
+                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+            }
+            fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
+            fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
+        }
+        return fieldsToRetrieveStr.toString();
+    }
 }
