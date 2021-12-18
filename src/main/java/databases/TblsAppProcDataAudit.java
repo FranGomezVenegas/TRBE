@@ -42,6 +42,8 @@ public class TblsAppProcDataAudit {
         FLD_PICTURE_AFTER("picture_after", "json")        ,
         FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer()),
         FLD_REASON("reason", LPDatabase.string()),
+        FLD_ACTION_PRETTY_EN("action_pretty_en", LPDatabase.string()),
+        FLD_ACTION_PRETTY_ES("action_pretty_es", LPDatabase.string()),        
         ;
         private Instruments(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
