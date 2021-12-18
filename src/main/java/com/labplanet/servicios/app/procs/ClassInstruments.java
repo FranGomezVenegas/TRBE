@@ -139,7 +139,8 @@ public class ClassInstruments {
                     break;
                 case COMPLETE_CALIBRATION:
                     instr=new DataInstruments(instrName);
-                    actionDiagnoses=instr.completeCalibration();
+                    String decision=argValues[3].toString();
+                    actionDiagnoses=instr.completeCalibration(decision);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                
@@ -153,7 +154,8 @@ public class ClassInstruments {
                     break;
                 case COMPLETE_PREV_MAINT:
                     instr=new DataInstruments(instrName);
-                    actionDiagnoses=instr.completePrevMaint();
+                    decision=argValues[3].toString();
+                    actionDiagnoses=instr.completePrevMaint(decision);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                
@@ -167,7 +169,8 @@ public class ClassInstruments {
                     break;
                 case COMPLETE_VERIFICATION:
                     instr=new DataInstruments(instrName);
-                    actionDiagnoses=instr.completeVerification();
+                    decision=argValues[3].toString();
+                    actionDiagnoses=instr.completeVerification(decision);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                
