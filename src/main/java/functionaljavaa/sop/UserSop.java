@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -48,7 +50,7 @@ public class UserSop {
         private final String lightCode;
     }
     
-    public enum UserSopErrorTrapping{ 
+    public enum UserSopErrorTrapping implements EnumIntMessages{ 
         MARKEDASCOMPLETED_NOT_PENDING("sopMarkedAsCompletedNotPending", "", ""),
         NOT_ASSIGNED_TO_THIS_USER("UserSop_SopNotAssignedToThisUser", "", ""),
         USER_WITHNOROLE_FORGIVENSCHEMA("UserSop_UserWithNoRolesForThisGivenSchema", "", ""),
@@ -72,7 +74,7 @@ public class UserSop {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
-    public enum UserSopBusinessRules{
+    public enum UserSopBusinessRules  implements EnumIntBusinessRules{
         USERSOP_MODE("userSopMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, false, ' ', null),
         ACTIONENABLED_USERSOP_CERTIFICATION("actionEnabledUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
         WINDOWOPENABLE_WHENNOTSOPCERTIFIED("windowOpenableWhenNotSopCertifiedUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
@@ -116,6 +118,11 @@ public class UserSop {
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;    
         private final String preReqsBusRules;        
+
+        @Override
+        public Boolean getIsOptional() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
         
     }
     /**
