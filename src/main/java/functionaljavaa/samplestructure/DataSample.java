@@ -235,10 +235,9 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 return sampleAuditAdd;
             
             Integer transactionId = null;
-            Integer preAuditId=Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString());
-            this.smpAna.autoSampleAnalysisAdd(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.getStatusCode(sampleLevel), preAuditId);
+            this.smpAna.autoSampleAnalysisAdd(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.getStatusCode(sampleLevel));
             
-            autoSampleAliquoting(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.getStatusCode(sampleLevel), transactionId, preAuditId);            
+            autoSampleAliquoting(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.getStatusCode(sampleLevel), transactionId);
         }
         return diagnoses;  
     }
@@ -740,7 +739,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @param preAuditId
      * @param transactionId
      */
-    public void autoSampleAliquoting(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer transactionId, Integer preAuditId){
+    public void autoSampleAliquoting(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer transactionId){
         LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
 // This code is commented because the method, at least by now, return void instead of anything else        
     }
