@@ -20,6 +20,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -28,7 +29,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class DataIncubatorNoteBook {
 
-    public enum DataIncubatorNoteBookErrorTrapping{ 
+    public enum DataIncubatorNoteBookErrorTrapping implements EnumIntMessages{ 
 //        INCUBATOR_NOT_EXIST("IncubatorNotExists", "The incubator <*1*> does not exist for procedure <*2*>", "La incubadora <*1*> no existe para el proceso <*2*>"),
         NO_READINGS_SINCE_LATEST_ACTIVATION("IncubatorNotebookNoReadingSinceLatestActivation", "", ""),
         NO_READINGS_LOGGED_YET("IncubatorNotebookNoReadingLoggedYet", "", "")
