@@ -39,7 +39,7 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
      * @return
      */
     @Override
-    public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer preAuditId) {
+    public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())) return fieldNameValueArrayChecker;
@@ -100,7 +100,7 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
                 fieldsValue= LPArray.addValueToArray1D(fieldsValue, (String) anaName1[3]);
             }
             
-            DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue, preAuditId);
+            DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded.toString()+" to the sample "+sampleId.toString()+" for schema "+procInstanceName});        
@@ -114,7 +114,7 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
      * @return
      */
   @Override
-    public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample, Integer preAuditId) {
+    public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
