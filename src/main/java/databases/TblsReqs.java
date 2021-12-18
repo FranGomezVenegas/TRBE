@@ -878,7 +878,7 @@ public class TblsReqs {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
-    public enum ProcedureBusinessRules{ // 'the sequence is session_id integer NOT NULL DEFAULT nextval('app.app_session_session_id_seq1'::regclass)'
+    public enum ProcedureBusinessRules { // 'the sequence is session_id integer NOT NULL DEFAULT nextval('app.app_session_session_id_seq1'::regclass)'
 
         /**
          *
