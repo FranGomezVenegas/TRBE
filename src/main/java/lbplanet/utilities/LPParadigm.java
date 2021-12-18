@@ -6,6 +6,7 @@
 package lbplanet.utilities;
 
 import java.util.Arrays;
+import trazit.enums.EnumIntMessages;
 
 /**
  *
@@ -14,7 +15,7 @@ import java.util.Arrays;
 public class LPParadigm {
     private LPParadigm(){    throw new IllegalStateException("Utility class");}    
     
-    public enum ParadigmErrorTrapping{ 
+    public enum ParadigmErrorTrapping implements EnumIntMessages{  
         SPECIAL_FUNCTION_RETURNED_EXCEPTION("SpecialFunctionReturnedException", "", ""),
         SPECIAL_FUNCTION_RETURNED_ERROR("SpecialFunctionReturnedERROR", "", ""),
         UNHANDLED_EXCEPTION_IN_CODE("UnhandledExceptionInCode", "", ""),
