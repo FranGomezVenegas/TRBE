@@ -5,6 +5,8 @@
  */
 package functionaljavaa.moduleinspectionlot;
 
+import trazit.enums.EnumIntMessages;
+
 /**
  *
  * @author User
@@ -33,7 +35,7 @@ public class ModuleInspLotRMenum {
         private final String description;
         private final String possibleValues;
     }
-    public enum DataInspLotErrorTrapping{ 
+    public enum DataInspLotErrorTrapping implements EnumIntMessages{ 
         SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         ERROR_INSERTING_INSPLOT_RECORD("errorInsertingInspLotRecord", "", ""),
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "", ""),
