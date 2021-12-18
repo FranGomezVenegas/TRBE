@@ -15,6 +15,7 @@ import databases.Token;
 import functionaljavaa.modulegenoma.GenomaDataAudit.ProjectAuditEvents;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -23,7 +24,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class GenomaDataProject {
     
-    public enum GenomaDataProjectErrorTrapping{ 
+    public enum GenomaDataProjectErrorTrapping implements EnumIntMessages{ 
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "", ""),
         NEW_PROJECT_MISSING_MANDATORY_FIELDS("NewProjectMissingMandatoryFields", "", ""),
         ;
