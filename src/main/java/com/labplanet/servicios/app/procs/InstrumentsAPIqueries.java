@@ -8,6 +8,7 @@ package com.labplanet.servicios.app.procs;
 import com.labplanet.servicios.app.*;
 import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
+import databases.SqlStatement;
 import databases.TblsAppProcData;
 import databases.TblsAppProcDataAudit;
 import databases.Token;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
@@ -78,7 +80,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
         switch (endPoint){
-            case ACTIVE_INSTRUMENTS_LIST:              
+            case ACTIVE_INSTRUMENTS_LIST:
                 String[] fieldsToRetrieve=TblsAppProcData.Instruments.getAllFieldNames();
                 Object[][] instrumentAudit=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TblsAppProcData.Instruments.TBL.getName(), 
                         new String[]{TblsAppProcData.Instruments.FLD_DECOMMISSIONED.getName()+"<>"}, 
@@ -110,6 +112,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                return;
             case INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT:
                 instrName=LPNulls.replaceNull(argValues[0]).toString();
                 fieldsToRetrieve=TblsAppProcData.InstrumentEvent.getAllFieldNames();
@@ -126,7 +129,45 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
-
+                return;
+        case INSTRUMENT_EVENTS_INPROGRESS:
+                String[] whereFldName=new String[]{TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
+                Object[] whereFldValue=new Object[]{};
+                String fieldName=LPNulls.replaceNull(argValues[0]).toString();
+                String fieldValue=LPNulls.replaceNull(argValues[1]).toString();
+                if (fieldValue.length()>0){                    
+                    Object[] convertStringWithDataTypeToObjectArray = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                }
+                fieldsToRetrieve=TblsAppProcData.InstrumentEvent.getAllFieldNames();
+                instrumentEvents = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TblsAppProcData.InstrumentEvent.TBL.getName(), 
+                    whereFldName, whereFldValue,
+                    fieldsToRetrieve, new String[]{TblsAppProcData.InstrumentEvent.FLD_INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.FLD_CREATED_ON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentEvents[0][0].toString())){
+                    for (Object[] currInstrEv: instrumentEvents){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+        case INSTRUMENT_EVENT_VARIABLES:
+                Integer instrEventId=(Integer)argValues[0];
+                fieldsToRetrieve=TblsAppProcData.InstrEventVariableValues.getAllFieldNames();
+                instrumentEvents = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TblsAppProcData.InstrEventVariableValues.TBL.getName(), 
+                    new String[]{TblsAppProcData.InstrEventVariableValues.FLD_EVENT_ID.getName()},
+                    new Object[]{instrEventId},
+                    fieldsToRetrieve, new String[]{TblsAppProcData.InstrEventVariableValues.FLD_ID.getName(), TblsAppProcData.InstrEventVariableValues.FLD_CREATED_ON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentEvents[0][0].toString())){
+                    for (Object[] currInstrEv: instrumentEvents){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+            
         default: 
         }
     }

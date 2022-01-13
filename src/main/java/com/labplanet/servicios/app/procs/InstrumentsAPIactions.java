@@ -79,6 +79,7 @@ public class InstrumentsAPIactions extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){   
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, e.getMessage(), null);   
             // Rdbms.closeRdbms();                   
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
