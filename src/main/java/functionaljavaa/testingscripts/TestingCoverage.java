@@ -220,7 +220,7 @@ public class TestingCoverage {
         if (accMissing==null)
             accMissing=missingRulesJArr;
         else
-            accMissing.addAll(visitedRulesJArr);
+            accMissing.addAll(missingRulesJArr);
         this.busRuleCoverageDetail.put("visited", accVisited);
         this.busRuleCoverageDetail.put("missing", accMissing);
     }            
