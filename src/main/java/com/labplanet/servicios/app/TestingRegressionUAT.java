@@ -235,8 +235,8 @@ public class TestingRegressionUAT extends HttpServlet {
     //                        return;
                         }else{
                             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
-                            if (testingBusinessRulesVisitedObj!=null)
-                            testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "ND", (String) LPNulls.replaceNull(curStep[1]), "ND");                                    
+                            //if (testingBusinessRulesVisitedObj!=null)
+                            //testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "ND", (String) LPNulls.replaceNull(curStep[1]), "ND");                                    
                         }                            
                     }
                     if (actionsList!=null){
@@ -285,12 +285,20 @@ public class TestingRegressionUAT extends HttpServlet {
     }
 
     private StringBuilder procedureRepositoryMirrors(String procInstanceName, Integer scriptId){
-        StringBuilder fileContentBuilder = new StringBuilder(0);        
+        StringBuilder fileContentBuilder = new StringBuilder(0); 
+        
+        Object[][] procInRequirements=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureModuleTablesAndFields.TBL.getName(), 
+            new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_ACTIVE.getName()},
+            new Object[]{procInstanceName, true}, 
+            new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_TABLE_NAME.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInRequirements[0][0].toString()))
+            return fileContentBuilder.append("noTablesDefinedInRequirementsForThisProcedure "+procInstanceName);
+        
         String[][] schemasToCheck=new String[][]{{GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName()}, 
             {GlobalVariables.Schemas.DATA_AUDIT.getName(), GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()}, 
             {GlobalVariables.Schemas.PROCEDURE.getName(), GlobalVariables.Schemas.PROCEDURE_TESTING.getName()},
             {GlobalVariables.Schemas.PROCEDURE_AUDIT.getName(), GlobalVariables.Schemas.PROCEDURE_AUDIT_TESTING.getName()}};
-
+        
         Object[][] allMismatches=null;
         Object[] mirrorCheckDiagn =null;
         for (String[] curSchToCheck:schemasToCheck){
