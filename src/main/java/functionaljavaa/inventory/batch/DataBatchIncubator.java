@@ -85,6 +85,7 @@ public class DataBatchIncubator {
         SAMPLES_IN_BATCH_SET_AS_BATCHENDED("allSamplesInBatchSetAsBatchEnded", "", ""),
         CREATEBATCH_TYPECHECKER_SUCCESS("createBatchTypeCheckerSuccess", "", ""),
         INCUBATORBATCH_NOTEMPTY_TOBEREMOVED("IncubatorBatchNotEmptyToRemove", "", ""),
+        INCUBATORBATCH_NOTEMPTY_TOCHANGEINCUBATOR("IncubatorBatchNotEmptyToChangeIncubator", "", ""),
         BATCHTYPE_NOT_RECOGNIZED("incubatorBatchType_notRecognized", "batchType <*1*> Not recognized", "batchType <*1*> Not recognized"),
         SAMPLE_HAS_NOPENDING_INCUBATION("sampleWithNoPendingIncubation", "There is no pending incubation for sample <*1*> in procedure <*2*>", "There is no pending incubation for sample <*1*> in procedure <*2*>"), 
         MOMENT_NOTDECLARED_IN_BATCHMOMENTSLIST("incubBatch_momentNotInBatchMomentsList","The moment <*1*> is not declared in BatchIncubatorMoments", "The moment <*1*> is not declared in BatchIncubatorMoments"),
@@ -511,6 +512,17 @@ public class DataBatchIncubator {
             return LPArray.array2dTo1d(batchInfo);
         if (!Boolean.valueOf(batchInfo[0][0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUBATORBATCH_NOT_ACTIVE.getErrorCode(), new Object[]{batchName});
+        Boolean isBatchEmpty=false;
+        String batchType=batchInfo[0][1].toString();        
+        if (batchType.equalsIgnoreCase(BatchIncubatorType.UNSTRUCTURED.toString())){ 
+            isBatchEmpty=DataBatchIncubatorUnstructured.batchIsEmptyUnstructured(batchName);
+        }else if (batchType.equalsIgnoreCase(BatchIncubatorType.STRUCTURED.toString())) 
+            isBatchEmpty=DataBatchIncubatorStructured.batchIsEmptyStructured(batchName);
+        else
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.BATCHTYPE_NOT_RECOGNIZED.getErrorCode(), new Object[]{batchType});   
+        if (!isBatchEmpty)
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUBATORBATCH_NOTEMPTY_TOCHANGEINCUBATOR.getErrorCode(), new Object[]{batchName, procInstanceName});        
+        
         String[] updFieldName=new String[]{TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUB_STAGE.getName()};
         Object[] updFieldValue=new Object[]{incubName, incubStage};
         Object[] updateDiagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.IncubBatch.TBL.getName(), 
