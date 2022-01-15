@@ -132,6 +132,7 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_FINAL_TOKEN = "finalToken";    
+    public static final String REQUEST_PARAM_INCLUDE_PROC_MODEL_INFO = "includeProcModelInfo";    
 
     /**
      *
