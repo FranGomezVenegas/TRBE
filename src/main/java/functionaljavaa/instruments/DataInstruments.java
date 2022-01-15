@@ -51,6 +51,8 @@ public class DataInstruments {
             Decisions.valueOf(decision);
             return new InternalMessage(LPPlatform.LAB_TRUE, "", null, null);
         }catch(Exception e){
+            ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
+            messages.addMainForError("wrongDecisions <*1*> is not one of the accepted values(<*2*>)", new Object[]{decision, Arrays.toString(Decisions.values())});
             return new InternalMessage(LPPlatform.LAB_FALSE, "wrongDecisions <*1*> is not one of the accepted values(<*2*>)", new Object[]{decision, Arrays.toString(Decisions.values())}, null);
         }
     }
@@ -81,8 +83,11 @@ public class DataInstruments {
             this.fieldValues=instrInfo[0];
             this.name=instrName;
             this.onLine=Boolean.valueOf(LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsAppProcData.Instruments.FLD_ON_LINE.getName())]).toString());
+            if (this.onLine==null) this.onLine=false;
             this.isLocked= Boolean.valueOf(LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsAppProcData.Instruments.FLD_IS_LOCKED.getName())]).toString());
+            if (this.isLocked==null) this.isLocked=false;
             this.isDecommissioned= Boolean.valueOf(LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsAppProcData.Instruments.FLD_DECOMMISSIONED.getName())]).toString());
+            if (this.isDecommissioned==null) this.isDecommissioned=false;
             this.lockedReason=LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsAppProcData.Instruments.FLD_LOCKED_REASON.getName())]).toString();
             this.family=LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsAppProcData.Instruments.FLD_FAMILY.getName())]).toString();
             if (this.family!=null && this.family.length()>0){
@@ -341,7 +346,9 @@ public class DataInstruments {
         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), eventId);                
         
         InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) return eventHasNotEnteredVariables;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())){
+            return eventHasNotEnteredVariables;
+        }
 
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.FLD_DECISION.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()};
         Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
