@@ -11,8 +11,10 @@ import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsApp;
 import databases.TblsAppAudit;
+import databases.TblsDataAudit;
 import databases.Token;
 import functionaljavaa.incident.AppIncident;
+import functionaljavaa.parameter.Parameter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +23,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -110,6 +113,18 @@ public class IncidentAPIfrontend extends HttpServlet {
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
                     for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.FLD_ACTION_NAME.getName());
+                        if (actionPosic>-1){
+                            String action=LPNulls.replaceNull(currIncident[actionPosic]).toString();
+                            String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
+                                "dataIncidentAuditEvents", null, action, "en", false);
+                            if (propValue.length()==0) propValue=action;
+                            jObj.put(TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName(), propValue);
+                            propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
+                                "dataIncidentAuditEvents", null, action, "es", false);
+                            if (propValue.length()==0) propValue=action;
+                            jObj.put(TblsDataAudit.Sample.FLD_ACTION_PRETTY_ES.getName(), propValue);
+                        }
                         jArr.add(jObj);
                     }
                 }
