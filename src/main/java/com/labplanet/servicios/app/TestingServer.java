@@ -10,9 +10,12 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
+import static databases.Rdbms.getRecordFieldsByFilter;
 import databases.TblsAppProcDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
+import databases.TblsData.SampleFldsNew;
+import databases.TblsData.TablesData;
 import databases.TblsProcedure;
 import databases.TblsTrazitDocTrazit;
 import databases.Token;
@@ -32,17 +35,11 @@ import functionaljavaa.user.UserAndRolesViews;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.FieldInfo;
-import io.github.classgraph.FieldInfoList;
-import io.github.classgraph.FieldInfoList.FieldInfoFilter;
 import io.github.classgraph.ScanResult;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
@@ -65,6 +62,7 @@ import lbplanet.utilities.LPJson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntTableFields;
 
 
 
@@ -96,31 +94,41 @@ public class TestingServer extends HttpServlet {
             out.println("<h1>Servlet testingServer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
-            
-try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
+        try{
+            Rdbms.stablishDBConection("labplanet"); 
+            String schemaName="proc-deploy";
+            Object[][] recordFieldsByFilter = getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaName, TablesData.SAMPLE.getRepositoryName()), TablesData.SAMPLE.getTableName(), 
+                new EnumIntTableFields[]{SampleFldsNew.FLD_STATUS}, new Object[]{"REVIEWED"},
+                new EnumIntTableFields[]{SampleFldsNew.FLD_LOGGED_ON, SampleFldsNew.FLD_LOGGED_BY, SampleFldsNew.FLD_SAMPLER, SampleFldsNew.FLD_SAMPLE_ID, SampleFldsNew.FLD_STATUS},
+                null, true);
+            out.println(recordFieldsByFilter.length);
+            out.println(recordFieldsByFilter[0][0].toString());
+            out.println(recordFieldsByFilter[0][1].toString());
+            out.println(recordFieldsByFilter[0][2].toString());
+        }catch(Exception e){
+            String errMsg=e.getMessage();
+            out.println(errMsg);
+        }
+            try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
             .scan()) {    
                 ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntBusinessRules");
                 ClassInfoList allEnums = scanResult.getAllEnums();
-                out.println(classesImplementing.size());
+                out.println("business rules counter: "+classesImplementing.size());
                 for (int i=0;i<classesImplementing.size();i++){
-                    ClassInfo getMine = classesImplementing.get(i);      
-                    getMine.getFieldInfo().getNames();
-                    for (FieldInfo fi : getMine.getFieldInfo()) {
-                        //fi.getClass().getTagName();
-                        FieldInfoList filter = getMine.getFieldInfo().filter(new FieldInfoFilter() {
-                            @Override
-                            public boolean accept(FieldInfo fi) {
-                                 return fi.isEnum();
-                            }
-                        });
-                        out.println(fi);
-                    }                    
-/*                    out.println(classesImplementing.get(i).getName());
+                    out.println("enum name:"+classesImplementing.get(i).getName());
+                    ClassInfo getMine = classesImplementing.get(i);  
+                    List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
+                    //getMine.getFieldInfo().getNames();
+                    for (i=0;i<enumConstantObjects.size();i++) {
+                        out.println(((EnumIntBusinessRules)enumConstantObjects.get(i)).getTagName());
+                        out.println(((EnumIntBusinessRules)enumConstantObjects.get(i)).getAreaName());
+                        out.println(enumConstantObjects.get(i).getClass().getName());
+                    }
+/*                    
                     String methName="values";
                     out.println("has method "+methName+"? "+getMine.hasMethod(methName));
                     Class [] carr = new Class[]{};
                     Method method = (Method) getMine.getClass().getMethod("values").invoke(null);*/
-                    LPPlatform.LpPlatformBusinessRules[] lpPlatformBusinessRules=LPPlatform.LpPlatformBusinessRules.values();
 //                    Field f = getMine.getClass().getDeclaredField("$VALUES");
 //                    out.println(f);
 //                    out.println(Modifier.toString(f.getModifiers()));
@@ -138,11 +146,6 @@ try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enable
                     //out.println(methodInfo.
                     //getMine.getClass().getMethod(name, parameterTypes)
 
-                    for (LPPlatform.LpPlatformBusinessRules curBusRul: lpPlatformBusinessRules){
-                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
-                        Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
-//                        declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), curBusRul.getAreaName(), curBusRul.getTagName(), fieldNames, fieldValues, curBusRul.getValuesList(), curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
-                    }                      
                 }
     ClassInfoList widgetClasses = scanResult.getClassesImplementing("com.xyz.Widget");
     List<String> widgetClassNames = widgetClasses.getNames();
@@ -154,7 +157,7 @@ try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enable
 }
 ScanResult.closeAll();
 if (1==1){
-    out.println("ended line 105");
+    out.println("ended line 159");
     return;
 }
 ServiceLoader<EnumIntBusinessRules> loader = ServiceLoader.load(EnumIntBusinessRules.class);
