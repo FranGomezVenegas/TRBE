@@ -83,8 +83,7 @@ public class LPMath {
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portion.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                          
-        }        
-       
+        }               
        String conclusionMsg = "It is possible to extract ";
        if (volumeUOM.equalsIgnoreCase(portionUOM)){
            conclusionMsg=conclusionMsg+portion.toString()+" from "+volume.toString()+" expressed in "+volumeUOM;
