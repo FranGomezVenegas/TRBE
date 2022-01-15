@@ -18,6 +18,8 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
+import trazit.session.ProcedureRequestSession;
+import trazit.session.ResponseMessages;
 
 /**
  *
@@ -151,8 +153,11 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
     public static InternalMessage eventHasNotEnteredVariables(String instrName, Integer instrEventId){
         String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();        
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())){ 
+            ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
+            messages.addMainForError("eventNotOpenedForChanges", null);
             return new InternalMessage(LPPlatform.LAB_FALSE, "eventNotOpenedForChanges", null,null);
+        }
         
         Object[][] diagn = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsAppProcData.InstrEventVariableValues.TBL.getName(), 
             new String[]{TblsAppProcData.InstrEventVariableValues.FLD_INSTRUMENT.getName(), 
@@ -160,8 +165,11 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             new Object[]{instrName, instrEventId, "Y"}, new String[]{TblsAppProcData.InstrEventVariableValues.FLD_ID.getName()});            
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0][0].toString())) 
             return new InternalMessage(LPPlatform.LAB_TRUE, "eventNothingPending", null,null);
-        else
+        else{
+            ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
+            messages.addMainForError("eventHasPendingResults", new Object[]{diagn.length});
             return new InternalMessage(LPPlatform.LAB_FALSE, "eventHasPendingResults", new Object[]{diagn.length},null);
+        }        
     }
     
 }
