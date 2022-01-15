@@ -213,6 +213,14 @@
         <servlet-class>com.labplanet.servicios.app.TestingRegressionUAT</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>HolidayCalendarAPIactions</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.HolidayCalendarAPIactions</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HolidayCalendarAPIqueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.HolidayCalendarAPIqueries</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>IncidentAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.app.IncidentAPI</servlet-class>
     </servlet>
@@ -528,6 +536,14 @@
     <servlet-mapping>
         <servlet-name>TestingRegressionUAT</servlet-name>
         <url-pattern>/testing/platform/TestingRegressionUAT</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HolidayCalendarAPIactions</servlet-name>
+        <url-pattern>/app/HolidayCalendarAPIactions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HolidayCalendarAPIqueries</servlet-name>
+        <url-pattern>/app/HolidayCalendarAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>IncidentAPI</servlet-name>

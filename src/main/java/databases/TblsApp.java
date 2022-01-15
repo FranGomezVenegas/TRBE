@@ -307,34 +307,13 @@ public class TblsApp {
      *
      */
     public enum HolidaysCalendar{
-
-        /**
-         *
-         */
         TBL("holidays_calendar",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE) ) "
-                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
-        ,
-
-        /**
-         *
-         */
-        FLD_CODE("code", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ACTIVE("active", LPDatabase.booleanFld())
-        ,
-
-        /**
-         *
-         */
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")            ,
+        FLD_CODE("code", LPDatabase.string())        ,
+        FLD_ACTIVE("active", LPDatabase.booleanFld())        ,
+        FLD_CREATED_ON("created_on", LPDatabase.dateTime())        ,
+        FLD_CREATED_BY("created_by", LPDatabase.string())        ,        
         FLD_DESCRIPTION("description", LPDatabase.string())
-        //, FLD_ESIGN("e_sign", LPDatabase.String())
-        //, FLD_PASSWORD("password", LPDatabase.String())
-        //, FLD_PERSON_NAME("person_name", LPDatabase.String())
-        
         ;
         private HolidaysCalendar(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -392,39 +371,16 @@ public class TblsApp {
      *
      */
     public enum HolidaysCalendarDate{
-
-        /**
-         *
-         */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)"),
         TBL("holidays_calendar_date", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) ) "
-                + LPDatabase.POSTGRESQL_OIDS+ LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
-        ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_CALENDAR_CODE("calendar_code", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_DATE("date", LPDatabase.date())
-        ,
-
-        /**
-         *
-         */
-        FLD_DAY_NAME("day_name", LPDatabase.string())
-        
+                + LPDatabase.POSTGRESQL_OIDS+ LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")            ,
+        FLD_CALENDAR_CODE("calendar_code", LPDatabase.string())        ,
+        FLD_DATE("date", LPDatabase.date())        ,
+        FLD_DAY_NAME("day_name", LPDatabase.string())        ,
+        FLD_CREATED_ON("created_on", LPDatabase.dateTime())        ,
+        FLD_CREATED_BY("created_by", LPDatabase.string())        ,        
         ;
         private HolidaysCalendarDate(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
