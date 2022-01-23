@@ -28,11 +28,10 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
      * @param sampleId
      * @param sampleFieldName
      * @param sampleFieldValue
-     * @param eventName
      * @return
      */
     @Override
-  public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName) {
+  public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] anaName =new Object[2][3];
                 anaName[0][0] = "pH";
