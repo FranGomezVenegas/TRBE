@@ -903,7 +903,9 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         String className=callerInfo[0].toString();
         String classFullName=callerInfo[1].toString(); 
         String methodName=callerInfo[2].toString();
-        Integer lineNumber = Integer.valueOf(callerInfo[3].toString());
+        Integer lineNumber=-999;
+        if (callerInfo.length>3)
+            lineNumber = Integer.valueOf(callerInfo[3].toString());
         String propertiesFilePrefix="";
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))
             propertiesFilePrefix=LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+className;
