@@ -19,7 +19,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import databases.Rdbms;
 import functionaljavaa.user.UserProfile;
 import java.io.File;
 import java.io.FileWriter;
