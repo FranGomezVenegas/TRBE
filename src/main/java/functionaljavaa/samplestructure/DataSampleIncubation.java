@@ -149,7 +149,12 @@ public class DataSampleIncubation {
             diagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_ENDED_SUCCESS.getErrorCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             SampleAudit smpAudit = new SampleAudit();
-            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_ENDED.toString(), TblsData.Sample.TBL.getName(), 
+            String sampleAuditEvName="";
+            if (incubationStage==1)
+                sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_1_ENDED.toString();
+            else
+                sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_2_ENDED.toString();            
+            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(sampleAuditEvName, TblsData.Sample.TBL.getName(), 
                     sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
             return new Object[]{diagnoses, sampleAuditAdd};
         }
@@ -182,7 +187,12 @@ public class DataSampleIncubation {
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_STARTED_SUCCESS.getErrorCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});           
             SampleAudit smpAudit = new SampleAudit();
-            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_STARTED.toString(), TblsData.Sample.TBL.getName(), 
+            String sampleAuditEvName="";
+            if (incubationStage==1)
+                sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_1_STARTED.toString();
+            else
+                sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_2_STARTED.toString();            
+            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(sampleAuditEvName, TblsData.Sample.TBL.getName(), 
                 sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
             return new Object[]{diagnoses, sampleAuditAdd};            
         }
