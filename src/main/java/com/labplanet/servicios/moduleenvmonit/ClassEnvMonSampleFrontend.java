@@ -12,6 +12,7 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewSampleMicroor
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import static com.labplanet.servicios.modulesample.SampleAPIfrontend.samplesByStageData;
 import databases.Rdbms;
+import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsData;
@@ -127,38 +128,54 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),
                 }, EndPointsToRequirements.endpointWithNoOutputObjects),        
         GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES("GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES", new LPAPIArguments[]{
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8),
-new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 9),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 15),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 20),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 21),
-                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 22),            
-new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 23),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 24),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 25),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 26),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 27),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 28),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 29),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 30),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 31),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 32),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 33),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 34),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 35),
-                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 36)}, EndPointsToRequirements.endpointWithNoOutputObjects)
-            
+                new LPAPIArguments("includeSplittedByIncubNumber", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 6),
+                new LPAPIArguments("includeAllWithAnyPendingIncubation", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 10),
+new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 11),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 15),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 20),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 21),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 22),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 23),
+                new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 24), 
+new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 25),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 26),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 27),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 28),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 29),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 30),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 31),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 32),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 33),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 34),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 35),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 36),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 37),
+                new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 38),
+new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 39),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 40),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 41),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 42),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 43),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 44),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 45),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 46),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 47),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 48),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 49),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 50),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 51),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 52), 
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 53),}, EndPointsToRequirements.endpointWithNoOutputObjects)
         
         ;
         private EnvMonSampleAPIFrontendEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes){
@@ -228,6 +245,7 @@ new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, L
                         resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
                         posicLimitIdFld=resultFieldToRetrieveArr.length;
                     }
+                    resultFieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
                     Object[][] analysisResultList=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                         argValues[1].toString(), resultFieldToRetrieveArr, 
                         sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
@@ -902,16 +920,16 @@ new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, L
                     return; 
                 case GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES:                    
                     fieldsToRetrieve=new String[]{};
-                    String fieldsRetrieveStr = argValues[0].toString(); 
+                    String fieldsRetrieveStr = argValues[2].toString(); 
                     if (fieldsRetrieveStr.length()==0 || "ALL".equalsIgnoreCase(fieldsRetrieveStr))
                         fieldsToRetrieve=TblsEnvMonitData.IncubBatch.getAllFieldNames();
                     else
                         fieldsToRetrieve=fieldsRetrieveStr.split("\\|");
                     whereFieldsNameArr = null;
                     whereFieldsValueArr = null;
-                    whereFieldsName = argValues[1].toString(); 
+                    whereFieldsName = argValues[3].toString(); 
                     if (whereFieldsName==null){whereFieldsName="";}
-                    whereFieldsValue = argValues[2].toString();
+                    whereFieldsValue = argValues[4].toString();
                     if (whereFieldsValue==null){whereFieldsValue="";}
 
                     if (whereFieldsName.length()>0)
@@ -945,11 +963,13 @@ new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, L
                     jObj.put("active_batches", jArr);
                     
                     
-                    sampleFieldToRetrieve=argValues[6].toString();
+                    sampleFieldToRetrieve=argValues[5].toString();
                     if (sampleFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve))
                         sampleFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
                     else 
                         sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
+                    if (!LPArray.valueInArray(sampleFieldToRetrieveArr, TblsData.Sample.FLD_SAMPLE_ID.getName()))
+                        sampleFieldToRetrieveArr=LPArray.addValueToArray1D(sampleFieldToRetrieveArr, TblsData.Sample.FLD_SAMPLE_ID.getName());
                     jArr=new JSONArray();
                     Object[][] smpArr=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
                             new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_INCUBATION_PASSED.getName(), TblsData.Sample.FLD_INCUBATION2_PASSED.getName()}, 
@@ -959,9 +979,48 @@ new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, L
                     }
                     jObj.put("samples_stillIncubationStageAndBothIncubCompleted", jArr);
                     
-                    
-                    int j=3;
-                    for (int i=1;i<3;i++){
+                    String includSplittedByIncubNumber=LPNulls.replaceNull(argValues[0]).toString();
+                    if (Boolean.valueOf(includSplittedByIncubNumber)){
+                        int j=5;
+                        for (int i=1;i<3;i++){
+                            whereFieldsName=argValues[j].toString();j++;
+                            whereFieldsValue=argValues[j].toString();j++;
+                            sampleFieldToRetrieve=argValues[j].toString();j++;
+                            if (sampleFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve))
+                                sampleFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                            else 
+                                sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
+                            String sampleAnalysisFieldToRetrieve=argValues[j].toString();j++;
+                            String sampleLastLevel=argValues[j].toString();j++;
+                            String addSampleAnalysis=argValues[j].toString();j++;
+                            sampleAnalysisFieldToRetrieve=argValues[j].toString();j++;
+                            String[] sampleAnalysisFieldToRetrieveArr=null;
+                            if (sampleAnalysisFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleAnalysisFieldToRetrieve))
+                                sampleAnalysisFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                            else 
+                                sampleAnalysisFieldToRetrieveArr=sampleAnalysisFieldToRetrieve.split("\\|");
+                            sampleAnalysisWhereFieldsName=argValues[j].toString();j++;
+                            sampleAnalysisWhereFieldsValue=argValues[j].toString();j++;
+                            String addSampleAnalysisResult=argValues[j].toString();j++;
+                            String sampleAnalysisResultFieldToRetrieve=argValues[j].toString();j++;
+                            String[] sampleAnalysisResultFieldToRetrieveArr=null;
+                            if (sampleAnalysisResultFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleAnalysisResultFieldToRetrieve))
+                                sampleAnalysisResultFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                            else 
+                                sampleAnalysisResultFieldToRetrieveArr=sampleAnalysisResultFieldToRetrieve.split("\\|");
+                            String sampleAnalysisResultWhereFieldsName=argValues[j].toString();j++;
+                            String sampleAnalysisResultWhereFieldsValue=argValues[j].toString();j++;
+                            sortFieldsName=argValues[j].toString();j++;
+                            JSONArray samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName, 
+                                    whereFieldsValue, sortFieldsName,
+                                    addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
+                                    addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue);
+                            jObj.put("incub_"+String.valueOf(i), samplesArray);                    
+                        } 
+                    }
+                    String includeAllWithAnyPendingIncubation=LPNulls.replaceNull(argValues[1]).toString();
+                    if (Boolean.valueOf(includeAllWithAnyPendingIncubation)){
+                        int j=33;
                         whereFieldsName=argValues[j].toString();j++;
                         whereFieldsValue=argValues[j].toString();j++;
                         sampleFieldToRetrieve=argValues[j].toString();j++;
@@ -990,12 +1049,33 @@ new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, L
                         String sampleAnalysisResultWhereFieldsName=argValues[j].toString();j++;
                         String sampleAnalysisResultWhereFieldsValue=argValues[j].toString();j++;
                         sortFieldsName=argValues[j].toString();j++;
+                        jArr=new JSONArray();
+                        smpArr=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+                                new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_INCUBATION2_PASSED.getName(), 
+                                    SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsData.Sample.FLD_INCUBATION2_PASSED.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
+                                new Object[]{"Incubation", false, }, sampleFieldToRetrieveArr);
+                        for (Object[] curSmp: smpArr){
+                            JSONObject incubRow = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp);
+                            Integer incub1Passed=LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.FLD_INCUBATION_PASSED.getName());
+                            if (incub1Passed>-1){
+                                String incub1PassedStr=LPNulls.replaceNull(curSmp[incub1Passed]).toString();
+                                if (Boolean.valueOf(incub1PassedStr))
+                                    incubRow.put("pending_incub", 2);
+                                else
+                                    incubRow.put("pending_incub", 1);
+                            }
+                            jArr.add(incubRow);
+                        }
+                        jObj.put("samplesWithAnyPendingIncubation", jArr);
+                        
+/*                        
                         JSONArray samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName, 
                                 whereFieldsValue, sortFieldsName,
                                 addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
                                 addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue);
-                        jObj.put("incub_"+String.valueOf(i), samplesArray);                    
-                    } 
+                        jObj.put("samplesWithAnyPendingIncubation", samplesArray);                    */
+                    }
+                    
                     this.isSuccess=true;
                     this.responseSuccessJObj=jObj;
                     return; 
