@@ -3,6 +3,7 @@ package com.labplanet.servicios.moduledefinition;
 import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIEndpoints;
 import functionaljavaa.platform.doc.AuditEventsDoc;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
+import functionaljavaa.platform.doc.MessageCodesToRequirements;
 import functionaljavaa.platform.doc.PropertiesToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.util.Arrays;
@@ -37,10 +38,10 @@ public class ClassTrazitCodeDoc {
                     this.messageDynamicData=new Object[]{Arrays.toString(actionDiagnoses)};                    
                     break;
                 case DOC_API_MESSAGE_CODES_IN_DB:
-                    PropertiesToRequirements.messageDefinition();
+                    MessageCodesToRequirements msgToReq=new MessageCodesToRequirements(request, response);
                     break;
                 case DOC_API_BUSINESS_RULES_IN_DB:
-                    PropertiesToRequirements.businessRulesDefinition();
+                    PropertiesToRequirements.businessRulesDefinition(request, response);
                     break;
                 case DOC_API_AUDIT_EVENTS_IN_DB:
                     AuditEventsDoc.AuditEventsDefinition();
