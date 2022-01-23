@@ -196,6 +196,8 @@ public class SampleAPIfrontend extends HttpServlet {
                 Object[][] smplsAnaData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
                     whereFieldsNameArr, whereFieldsValueArr, sampleAnalysisFieldToRetrieveArr, sampleAnalysisSortFieldArr);
                 JSONArray smplAnaJsArr= new JSONArray();
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(smplsAnaData[0][0].toString()))
+                    LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr); 
                 for (Object[] curSmpAna: smplsAnaData){
                     smplAnaJsArr.add(LPJson.convertArrayRowToJSONObject(sampleAnalysisFieldToRetrieveArr, curSmpAna));
                 }
@@ -246,12 +248,12 @@ public class SampleAPIfrontend extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response);       
                     return;
                 }
+                JSONArray myJSArr = new JSONArray();
                 Rdbms.closeRdbms();
                 if ( LPPlatform.LAB_FALSE.equalsIgnoreCase(mySamples[0][0].toString())) {  
-                    LPFrontEnd.servletReturnSuccess(request, response);       
+                    LPFrontEnd.servletReturnSuccess(request, response, myJSArr);       
                     return;
                 }else{                        
-                    JSONArray myJSArr = new JSONArray();
                     for (Object[] mySample : mySamples) {
                         JSONObject myJSObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, mySample); 
                         myJSArr.add(myJSObj);
@@ -412,8 +414,9 @@ public class SampleAPIfrontend extends HttpServlet {
                             sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr, resultFieldToRetrieveArr, sortFieldsNameArr);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
                         Rdbms.closeRdbms();                                          
-                        Object[] errMsg = LPFrontEnd.responseError(new String[] {Arrays.toString(LPArray.array2dTo1d(analysisResultList))}, language, null);
-                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+//                        Object[] errMsg = LPFrontEnd.responseError(new String[] {Arrays.toString(LPArray.array2dTo1d(analysisResultList))}, language, null);
+//                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{                
                       JSONArray jArr=new JSONArray();
                       for (Object[] curRow: analysisResultList){
@@ -445,8 +448,10 @@ public class SampleAPIfrontend extends HttpServlet {
                         new String[]{TblsData.ViewSampleTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.FLD_TESTING_GROUP.getName()});
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
-                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
-                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                        return;
+//                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
+//                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -467,8 +472,10 @@ public class SampleAPIfrontend extends HttpServlet {
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()});
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
-                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
-                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                        return;
+//                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
+//                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -503,8 +510,10 @@ public class SampleAPIfrontend extends HttpServlet {
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()},new Object[]{sampleId}, fieldToRetrieveArr, sortFieldsNameArr);
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
-                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
-                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                        return;
+//                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
+//                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -531,8 +540,10 @@ public class SampleAPIfrontend extends HttpServlet {
                             new String[]{TblsApp.Users.FLD_USER_NAME.getName()+" NOT IN|"},new Object[]{"0"}, fieldToRetrieveArr, sortFieldsNameArr);
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
-                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
-                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                        return;
+//                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
+//                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -541,9 +552,11 @@ public class SampleAPIfrontend extends HttpServlet {
                 case GET_SAMPLE_ANALYSIS_RESULT_SPEC:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_RESULT_SPEC.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                        return;
+/*                        LPFrontEnd.servletReturnResponseError(request, response, 
                                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
+                        return;                  */
                     }                      
                     // No implementado aun, seguramente no tiene sentido porque al final la spec está evaluada y guardada en la tabla sample_analysis_result
                     // Rdbms.closeRdbms();
@@ -591,7 +604,10 @@ public class SampleAPIfrontend extends HttpServlet {
                                 sampleFieldToRetrieveArr, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
                         JSONArray jArrLvl2 = new JSONArray();
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfoLvl2[0][0].toString())){
-                            JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, new Object[]{null, null, "No child", "", "", "", null, "", ""}); 
+                            Object[] childJObj=new Object[]{null, null, "No child", "", "", "", null, "", "", null, null};
+                            for (int iChild=childJObj.length;iChild<sampleFieldToRetrieveArr.length;iChild++)
+                                childJObj=LPArray.addValueToArray1D(childJObj, null);                            
+                            JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, childJObj); 
                             jArrLvl2.add(jObjLvl2);
                         }else{
                             for (Object[] curRowLvl2: sampleAuditInfoLvl2){
