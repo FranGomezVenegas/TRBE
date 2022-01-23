@@ -235,7 +235,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 return sampleAuditAdd;
             
             Integer transactionId = null;
-            this.smpAna.autoSampleAnalysisAdd(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.getStatusCode(sampleLevel));
+            this.smpAna.autoSampleAnalysisAdd(sampleId, sampleFieldName, sampleFieldValue);
             
             autoSampleAliquoting(sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.getStatusCode(sampleLevel), transactionId);
         }
