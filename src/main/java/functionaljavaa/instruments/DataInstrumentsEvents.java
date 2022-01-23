@@ -124,7 +124,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         if (objectVariablePropInfo.length!=1) return new InternalMessage(LPPlatform.LAB_FALSE, "Found more than one record, <*1*> for the query <*2*> on <*3*>", 
             new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
         
-        String fieldType = objectVariablePropInfo[0][2].toString();
+        String fieldType = objectVariablePropInfo[0][2].toString();        
         if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
             if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
@@ -138,6 +138,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             Object[] isNumeric = isNumeric(newValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) 
                 return new InternalMessage(LPPlatform.LAB_FALSE, "isNotNumeric",null, null);
+        }else if (DataStudyObjectsVariableValues.VariableTypes.TEXT.toString().equalsIgnoreCase(fieldType)){
         }else 
             return new InternalMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null, null);
         String[] updFieldsName=new String[]{TblsAppProcData.InstrEventVariableValues.FLD_VALUE.getName()};

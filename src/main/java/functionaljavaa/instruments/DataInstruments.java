@@ -401,6 +401,16 @@ public class DataInstruments {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
         instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.START_PREVENTIVE_MAINTENANCE.toString(), name, TblsAppProcData.Instruments.TBL.getName(), name,
                         fldNames, fldValues);
+
+        String variableSetName=null;
+        Integer fldPosic=LPArray.valuePosicInArray(this.familyFieldNames, TblsAppProcConfig.InstrumentsFamily.FLD_PM_VARIABLES_SET.getName());
+        if (fldPosic>-1) 
+            variableSetName=LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString();
+        if (variableSetName!=null){
+            String ownerId= token.getPersonName();
+            Integer instrEventId=Integer.valueOf(instCreationDiagn[instCreationDiagn.length-1].toString());        
+            addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
+        }
         
         if (this.onLine){
             fldNames=new String[]{TblsAppProcData.Instruments.FLD_IS_LOCKED.getName(), TblsAppProcData.Instruments.FLD_LOCKED_REASON.getName()};
@@ -488,6 +498,15 @@ public class DataInstruments {
         String insEventIdCreated=instCreationDiagn[instCreationDiagn.length-1].toString();
         instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.START_VERIFICATION.toString(), name, TblsAppProcData.Instruments.TBL.getName(), name,
                         fldNames, fldValues);
+        String variableSetName=null;
+        Integer fldPosic=LPArray.valuePosicInArray(this.familyFieldNames, TblsAppProcConfig.InstrumentsFamily.FLD_VERIF_SAME_DAY_VARIABLES_SET.getName());
+        if (fldPosic>-1) 
+            variableSetName=LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString();
+        if (variableSetName!=null){
+            String ownerId= token.getPersonName();
+            Integer instrEventId=Integer.valueOf(instCreationDiagn[instCreationDiagn.length-1].toString());        
+            addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
+        }
         
         if (this.onLine){
             fldNames=new String[]{TblsAppProcData.Instruments.FLD_IS_LOCKED.getName(), TblsAppProcData.Instruments.FLD_LOCKED_REASON.getName()};
