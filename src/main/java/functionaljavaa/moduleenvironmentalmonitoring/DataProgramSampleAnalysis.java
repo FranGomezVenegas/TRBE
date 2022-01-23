@@ -34,12 +34,10 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
      * @param sampleId
      * @param sampleFieldName
      * @param sampleFieldValue
-     * @param eventName
-     * @param preAuditId
      * @return
      */
     @Override
-    public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName) {
+    public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())) return fieldNameValueArrayChecker;
