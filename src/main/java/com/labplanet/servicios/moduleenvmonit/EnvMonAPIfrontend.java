@@ -26,10 +26,8 @@ import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
-import databases.TblsApp;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
-import functionaljavaa.incident.AppIncident;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import functionaljavaa.parameter.Parameter;
@@ -221,7 +219,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
 GlobalAPIsParams. GlobalAPIsParams. GlobalAPIsParams.  
 GlobalAPIsParams.
 */    
-    public enum EnvMonAPIfrontendEndpoints{
+    public enum EnvMonAPIfrontendEndpoints {
         PROGRAMS_LIST("PROGRAMS_LIST", "", 
             new LPAPIArguments[]{new LPAPIArguments("programFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
                 new LPAPIArguments("programFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),                    
