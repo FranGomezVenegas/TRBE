@@ -101,9 +101,12 @@ public class DataProgramProductionLot{
      * @return
      */
     public static Object[] deactivateProgramProductionLot(String lotName, Integer appSessionId) {
-      String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()};
-      Object[] fieldValue=new Object[]{false};
-      return updateProgramProductionLot(lotName, fieldName, fieldValue, appSessionId);
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        String personName = instanceForActions.getToken().getPersonName();
+        String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName(), TblsEnvMonitData.ProductionLot.FLD_CLOSED_ON.getName(),
+        TblsEnvMonitData.ProductionLot.FLD_CLOSED_BY.getName()};
+        Object[] fieldValue=new Object[]{false, LPDate.getCurrentTimeStamp(), personName};
+        return updateProgramProductionLot(lotName, fieldName, fieldValue, appSessionId);
     }        
     private static Object[] updateProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, Integer appSessionId) {       
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
