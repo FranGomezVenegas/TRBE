@@ -16,6 +16,7 @@ import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIfrontendEndp
 import com.labplanet.servicios.app.ModulesConfigMasterDataAPI.ConfigMasterDataAPIEndpoints;
 import com.labplanet.servicios.app.SopUserAPI.SopUserAPIEndpoints;
 import com.labplanet.servicios.app.SopUserAPIfrontend.SopUserAPIfrontendEndpoints;
+import com.labplanet.servicios.app.UserSessionAPIfrontend.UserSessionAPIfrontendEndpoints;
 import com.labplanet.servicios.doc.functionality.EndpointsDocAPIqueries.EndpointsDocAPIqueriesEndpoints;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonQueriesAPIEndpoints;
@@ -37,6 +38,8 @@ import com.labplanet.servicios.testing.config.db.DbTestingLimitAndResult.Testing
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsTrazitDocTrazit.EndpointsDeclaration;
+import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;
+import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIqueriesEndpoints;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.parameter.Parameter.PropertyFilesType;
 import java.util.ResourceBundle;
@@ -308,6 +311,30 @@ public final class EndPointsToRequirements {
         }
         SampleAPIEndpoints[] valuesSample = SampleAPIEndpoints.values();
         for (SampleAPIEndpoints curApi: valuesSample){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName(),  EndpointsDeclaration.FLD_SUCCESS_MESSAGE_CODE.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName(), curApi.getSuccessMessageCode()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), SampleAPIEndpoints.values().length);
+        }
+        UserSessionAPIfrontendEndpoints[] userSessionAPIfrontendEndpoints = UserSessionAPIfrontendEndpoints.values();
+        for (UserSessionAPIfrontendEndpoints curApi: userSessionAPIfrontendEndpoints){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName(),  EndpointsDeclaration.FLD_SUCCESS_MESSAGE_CODE.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName(), curApi.getSuccessMessageCode()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), SampleAPIEndpoints.values().length);
+        }        
+        CalendarAPIactionsEndpoints[] calendarAPIactionsEndpoints = CalendarAPIactionsEndpoints.values();
+        for (CalendarAPIactionsEndpoints curApi: calendarAPIactionsEndpoints){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName(),  EndpointsDeclaration.FLD_SUCCESS_MESSAGE_CODE.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName(), curApi.getSuccessMessageCode()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), SampleAPIEndpoints.values().length);
+        }
+        CalendarAPIqueriesEndpoints[] calendarAPIqueriesEndpoints = CalendarAPIqueriesEndpoints.values();
+        for (CalendarAPIqueriesEndpoints curApi: calendarAPIqueriesEndpoints){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName(),  EndpointsDeclaration.FLD_SUCCESS_MESSAGE_CODE.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName(), curApi.getSuccessMessageCode()});
             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
