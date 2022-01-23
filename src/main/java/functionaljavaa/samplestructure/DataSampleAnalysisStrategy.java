@@ -16,17 +16,15 @@ public interface DataSampleAnalysisStrategy {
      * @param sampleId
      * @param sampleFieldName
      * @param sampleFieldValue
-     * @param eventName
      * @return
      */
-    public abstract Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName);
+    public abstract Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue);
 
     /**
      *
      * @param template
      * @param templateVersion
      * @param dataSample
-     * @param preAuditId
      * @return
      */
     public abstract String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample);
