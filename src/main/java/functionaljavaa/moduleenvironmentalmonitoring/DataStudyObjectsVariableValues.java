@@ -23,7 +23,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class DataStudyObjectsVariableValues {
     
-    public enum VariableTypes{CATEGORICAL, INTEGER}
+    public enum VariableTypes{LIST, INTEGER, REAL, TEXT}
     
     private static Object[][] objectFieldExtraFields(String studyName, String variableSetName, String ownerTable, String ownerId){
         Object[] fields=new Object[0];        
@@ -98,7 +98,7 @@ public class DataStudyObjectsVariableValues {
             new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), procInstanceName});
         
         String fieldType = objectVariablePropInfo[0][2].toString();
-        if (VariableTypes.CATEGORICAL.toString().equalsIgnoreCase(fieldType)){
+        if (VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
             if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>", 
