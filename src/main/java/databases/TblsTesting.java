@@ -121,7 +121,7 @@ public class TblsTesting {
         private final String dbObjTypePostgres;  
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
-            for (ScriptSteps obj: ScriptSteps.values()){
+            for (Script obj: Script.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
@@ -383,6 +383,91 @@ public class TblsTesting {
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
             for (ScriptsCoverage obj: ScriptsCoverage.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }              
+    }
+    
+    public enum ScriptSavePoint{
+
+        /**
+         *
+         */
+        FLD_ID("script_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)"),
+        TBL("script_save_point", LPDatabase.createSequence(FLD_ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SCRIPT_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #FLD_SCRIPT_ID_pkey PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
+        ,
+        FLD_SCRIPT_ID("script_id", LPDatabase.integerNotNull()),
+        FLD_SAVED_DATE("saved_date", LPDatabase.dateTimeWithDefaultNow()),
+        FLD_COMMENT("comment", LPDatabase.string()),
+        FLD_CONTENT("content", LPDatabase.json()),
+        FLD_DATE_CREATION("date_creation", LPDatabase.dateTimeWithDefaultNow()),
+        FLD_DATE_EXECUTION("date_execution", LPDatabase.dateTime()),
+        FLD_TIME_STARTED("time_started", LPDatabase.dateTime()),           
+        FLD_TIME_COMPLETED("time_completed", LPDatabase.dateTime()),           
+        FLD_TIME_CONSUME("time_consume", LPDatabase.real()),                   
+        FLD_PURPOSE("purpose", LPDatabase.string()),
+        FLD_TESTER_NAME("tester_name", LPDatabase.string()),
+        FLD_RUN_SUMMARY("run_summary", LPDatabase.string()),
+        ;
+        private ScriptSavePoint(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return entry name
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
+
+        /**
+         *
+         * @param schemaNamePrefix procedure prefix
+         * @param fields fields , ALL when this is null
+         * @return One Create-Table ScriptSteps for this given table, for this given procedure and for ALL or the given fields.
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = ScriptSavePoint.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.TESTING.getName()));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ScriptSavePoint obj: ScriptSavePoint.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.TESTING.getName()));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }  
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;  
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ScriptSavePoint obj: ScriptSavePoint.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
