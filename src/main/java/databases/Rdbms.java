@@ -36,6 +36,7 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Properties;
+import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
@@ -1308,11 +1309,15 @@ if (1==1){Rdbms.transactionId=1; return;}
                         break;
                     case "class com.google.gson.JsonObject":    
                         prepsta.setString(indexval, (String) obj.toString()); 
-                        break;
+                        break;                          
                     case "class org.json.simple.JSONArray":
-                    case "class org.json.simple.JSONObject":
                         prepsta.setString(indexval, (String) obj.toString()); 
+                    case "class org.json.simple.JSONObject":
+                        JSONObject jObj = (JSONObject)obj;
+                        
+                        prepsta.setString(indexval, jObj.toString()); 
                         break;
+
                     default:
                         prepsta.setString(indexval, (String) obj);
                         break; 
