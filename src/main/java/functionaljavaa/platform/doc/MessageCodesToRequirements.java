@@ -37,7 +37,7 @@ public class MessageCodesToRequirements {
     Object[] apiName1d;
     Object[] endpointName1d;
     
-    public MessageCodesToRequirements(HttpServletRequest request, HttpServletResponse response){
+public MessageCodesToRequirements(HttpServletRequest request, HttpServletResponse response){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
         Rdbms.getRdbms().startRdbms(dbTrazitModules);
