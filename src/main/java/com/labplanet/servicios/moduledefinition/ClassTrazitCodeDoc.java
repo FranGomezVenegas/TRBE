@@ -6,7 +6,6 @@ import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.platform.doc.MessageCodesToRequirements;
 import functionaljavaa.platform.doc.PropertiesToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
-import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPPlatform;
@@ -24,18 +23,12 @@ public class ClassTrazitCodeDoc {
 
     public ClassTrazitCodeDoc(HttpServletRequest request, HttpServletResponse response, ModuleDefinitionAPIEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-//        String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
-
-//        Rdbms.stablishDBConection(dbTrazitModules);    
 
         Object[] actionDiagnoses = null;
         this.functionFound=true;
             switch (endPoint){
                 case DOC_API_ENDPOINTS_IN_DB:         
-                    EndPointsToRequirements eToReq=new EndPointsToRequirements();
-                    actionDiagnoses = eToReq.endpointDefinition();
-                    eToReq=null;
-                    this.messageDynamicData=new Object[]{Arrays.toString(actionDiagnoses)};                    
+                    EndPointsToRequirements eToReq=new EndPointsToRequirements(request, response);
                     break;
                 case DOC_API_MESSAGE_CODES_IN_DB:
                     MessageCodesToRequirements msgToReq=new MessageCodesToRequirements(request, response);
