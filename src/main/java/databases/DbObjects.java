@@ -202,9 +202,17 @@ public class DbObjects {
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTesting.ScriptSteps", tblCreateScript);
 
+        tblCreateScript=TblsTesting.ScriptBusinessRules.createTableScript(procInstanceName, new String[]{""});
+        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
+        jsonObj.put("TblsTesting.ScriptBusinessRules", tblCreateScript);
+
         tblCreateScript=TblsTesting.ScriptsCoverage.createTableScript(procInstanceName, new String[]{""});
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTesting.ScriptsCoverage", tblCreateScript);
+
+        tblCreateScript=TblsTesting.ScriptSavePoint.createTableScript(procInstanceName, new String[]{""});
+        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
+        jsonObj.put("TblsTesting.ScriptSavePoint", tblCreateScript);
 
         return jsonObj;
     }    
