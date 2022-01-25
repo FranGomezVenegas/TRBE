@@ -33,7 +33,7 @@ import trazit.session.ProcedureRequestSession;
  */
 
 public class DataInstruments {
-    private String name;
+    private final String name;
     private Boolean onLine;
     private Boolean isLocked;
     private Boolean isDecommissioned;
@@ -46,14 +46,16 @@ public class DataInstruments {
     
     public enum Decisions{ACCEPTED, ACCEPTED_WITH_RESTRICTIONS, REJECTED}
     
+    
+    
     private InternalMessage decisionValueIsCorrect(String decision){
         try{
             Decisions.valueOf(decision);
             return new InternalMessage(LPPlatform.LAB_TRUE, "", null, null);
         }catch(Exception e){
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-            messages.addMainForError("wrongDecisions <*1*> is not one of the accepted values(<*2*>)", new Object[]{decision, Arrays.toString(Decisions.values())});
-            return new InternalMessage(LPPlatform.LAB_FALSE, "wrongDecisions <*1*> is not one of the accepted values(<*2*>)", new Object[]{decision, Arrays.toString(Decisions.values())}, null);
+            messages.addMainForError(InstrumentsErrorTrapping.WRONG_DECISION.getErrorCode(), new Object[]{decision, Arrays.toString(Decisions.values())});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.WRONG_DECISION.getErrorCode(), new Object[]{decision, Arrays.toString(Decisions.values())}, null);
         }
     }
     private Boolean decisionAndFamilyRuleToTurnOn(String decision, String fieldName){
@@ -129,7 +131,7 @@ public class DataInstruments {
         instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.CREATION.toString(), name, TblsAppProcData.Instruments.TBL.getName(), name,
                         fldNames, fldValues);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        messages.addMainForSuccess("configInstruments", InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
+        messages.addMainForSuccess("DataInstruments", InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT.getSuccessMessageCode(), new Object[]{name}, name);
     }
     public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues){

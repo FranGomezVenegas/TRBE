@@ -20,6 +20,8 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -35,7 +37,7 @@ public class InstrumentsEnums {
         NON_ROUTINE_EVENT, DECOMMISSION, UNDECOMMISSION, UPDATE_INSTRUMENT,
         VALUE_ENTERED, VALUE_REENTERED
     }    
-    public enum InstrumentsAPIactionsEndpoints{
+    public enum InstrumentsAPIactionsEndpoints implements EnumIntEndpoints{
         NEW_INSTRUMENT("NEW_INSTRUMENT", "instrumentName", "", "instrumentNewInstrumentCreated_success",  
             new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments("familyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7 ),
@@ -175,7 +177,7 @@ public class InstrumentsEnums {
     static final String COMMON_PARAMS="incidentId|note";
 
     
-    public enum InstrumentsAPIqueriesEndpoints{
+    public enum InstrumentsAPIqueriesEndpoints implements EnumIntEndpoints{
         ACTIVE_INSTRUMENTS_LIST("ACTIVE_INSTRUMENTS_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT("INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT("INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
@@ -254,8 +256,9 @@ public class InstrumentsEnums {
         public ArrayList<String[]> getPreReqs() {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
-    }  
-    public enum InstrumentsErrorTrapping{ 
+    }                           
+    public enum InstrumentsErrorTrapping implements EnumIntMessages{ 
+        NOT_FOUND("instrumentNotFound","The instrument <*1*> is not found in procedure <*2*>","El instrumento <*1*> no se ha encontrado para el proceso <*2*>"),
         NOT_ONLINE("instrumentNotOnline","The instrument <*1*> is not currently on line","El instrumento <*1*> no está actualmente en línea"),
         NOT_DECOMMISSIONED("instrumentNotDecommissioned","The instrument <*1*> is not currently decommissioned","El instrumento <*1*> no está actualmente retirado"),
         ALREADY_ONLINE("instrumentAlreadyOnline", "The instrument <*1*> is currently on line","El instrumento <*1*> está actualmente en línea"),
@@ -268,6 +271,7 @@ public class InstrumentsEnums {
         IS_LOCKED("instrumentIsLocked", "The instrument <*1*> is locked, the reason is <*2*>","El instrumento <*1*> está actualmente bloqueado, la razón es <*2*>"),
         TRYINGUPDATE_RESERVED_FIELD("instrumentTryingToUpdateReservedField", "Not allowed to update the reserved field <*1*>","No permitido modificar el campo reservado <*1*>"),
         ALREADY_DECOMMISSIONED("instrumentAlreadyDecommissioned", "Instrument <*1*> already decommissioned","Instrumento <*1*> ya fue retirado"),
+        WRONG_DECISION("instrumentWrongDecision", "wrongDecision <*1*> is not one of the accepted values(<*2*>)", "wrongDecision <*1*> is not one of the accepted values(<*2*>)")
         ;
         private InstrumentsErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -283,4 +287,28 @@ public class InstrumentsEnums {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     
+    public enum InstrEventsErrorTrapping implements EnumIntMessages{ 
+        EVENT_NOT_FOUND("instrEvent_EventNotFound","The instrument event <*1*> is already complete in procedure <*2*>","The instrument event <*1*> is already complete in procedure <*2*>"),
+        EVENT_NOT_OPEN_FOR_CHANGES("instrEvent_NotOpenedForChanges","The event is not open for changes","Evento no abierto a cambios"),        
+        VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES("instEvent_variableNotExists_eventWithNoVariables","This event has no this variable and the event has no variables","Este evento no contiene esta variable y el evento no tiene variables"),
+        VARIABLE_NOT_EXISTS("instEvent_variableNotExists", "The parameter <*1*> is not one of the event parameters <*2*>","El parámetro <*1*> no es uno de los que tiene el evento, <*2*>"),
+        MORE_THAN_ONE_VARIABLE("instEvent_moreThanOneVariable", "Found more than one record, <*1*> for the query <*2*> on <*3*>","Found more than one record, <*1*> for the query <*2*> on <*3*>"),
+        EVENT_HAS_PENDING_RESULTS("instEvent_eventWithPendingResults", "The event has <*1*> pending results", "El evento tiene <*1*> resultado(s) pendiente(s)"),
+        EVENT_NOTHING_PENDING("instEvent_eventHasMothingPending", "The event has nothing pending", "El evento no tiene nada pendiente"),
+        VARIABLE_VALUE_NOTONEOFTHEEXPECTED("instEvent_valueNotOneOfExpected", "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>","The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>"),
+        NOT_NUMERIC_VALUE("DataSampleAnalysisResult_ValueNotNumericForQuantitativeParam", "", ""),
+        ;
+        private InstrEventsErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
 }

@@ -10,6 +10,8 @@ import databases.SqlStatement;
 import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
 import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
+import functionaljavaa.instruments.InstrumentsEnums.InstrEventsErrorTrapping;
+import functionaljavaa.instruments.InstrumentsEnums.InstrumentsErrorTrapping;
 import functionaljavaa.moduleenvironmentalmonitoring.DataStudyObjectsVariableValues;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
@@ -57,9 +59,9 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             new Object[]{insEventId}, 
             new String[]{TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()});
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventInfo[0][0].toString()))
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The instrument event <*1*> does not exist in procedure <*2*>", new Object[]{insEventId, appProcInstance});
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{insEventId, appProcInstance});
     if (LPNulls.replaceNull(eventInfo[0][0]).toString().length()>0)
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The instrument event <*1*> is already complete in procedure <*2*>", new Object[]{insEventId, appProcInstance});
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES.getErrorCode(), new Object[]{insEventId, appProcInstance});
     return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{insEventId, appProcInstance});
 }
     
@@ -108,7 +110,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) 
-            return new InternalMessage(LPPlatform.LAB_FALSE, "eventNotOpenedForChanges", null,null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES.getErrorCode(), null,null);
         
         String[] fieldsToRetrieve=new String[]{TblsAppProcData.InstrEventVariableValues.FLD_ID.getName(), TblsAppProcData.InstrEventVariableValues.FLD_PARAM_NAME.getName(), TblsAppProcData.InstrEventVariableValues.FLD_PARAM_TYPE.getName(), TblsAppProcData.InstrEventVariableValues.FLD_REQUIRED.getName(), 
             TblsAppProcData.InstrEventVariableValues.FLD_ALLOWED_VALUES.getName()};
@@ -118,26 +120,33 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         Object[] fieldsValue=new Object[]{instrEventId, variableName};
         Object[][] objectVariablePropInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsAppProcData.InstrEventVariableValues.TBL.getName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(objectVariablePropInfo[0]))) 
-            return new InternalMessage(LPPlatform.LAB_FALSE, "variableNotExists", null);
-        
-        if (objectVariablePropInfo.length!=1) return new InternalMessage(LPPlatform.LAB_FALSE, "Found more than one record, <*1*> for the query <*2*> on <*3*>", 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())){
+            Object[][] instEvVariables=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsAppProcData.InstrEventVariableValues.TBL.getName(),
+                    new String[]{TblsAppProcData.InstrEventVariableValues.FLD_EVENT_ID.getName()}, new Object[]{instrEventId}, fieldsToRetrieve);            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString()))
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES.getErrorCode(), null);
+            else{
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS.getErrorCode(), 
+                new Object[]{Arrays.toString(LPArray.getColumnFromArray2D(instEvVariables, 1))});
+            }
+        }
+        if (objectVariablePropInfo.length!=1) return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE.getErrorCode(), 
             new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
         
         String fieldType = objectVariablePropInfo[0][2].toString();        
         if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
             if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
-                return new InternalMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>", 
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE.getErrorCode(), 
                     new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
         }else if (DataStudyObjectsVariableValues.VariableTypes.REAL.toString().equalsIgnoreCase(fieldType)){
             Object[] isNumeric = isNumeric(newValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) 
-                return new InternalMessage(LPPlatform.LAB_FALSE, "isNotNumeric",null, null);
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.NOT_NUMERIC_VALUE.getErrorCode(),null, null);
         }else if (DataStudyObjectsVariableValues.VariableTypes.INTEGER.toString().equalsIgnoreCase(fieldType)){
             Object[] isNumeric = isNumeric(newValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) 
-                return new InternalMessage(LPPlatform.LAB_FALSE, "isNotNumeric",null, null);
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.NOT_NUMERIC_VALUE.getErrorCode(),null, null);
         }else if (DataStudyObjectsVariableValues.VariableTypes.TEXT.toString().equalsIgnoreCase(fieldType)){
         }else 
             return new InternalMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null, null);
@@ -156,8 +165,8 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())){ 
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-            messages.addMainForError("eventNotOpenedForChanges", null);
-            return new InternalMessage(LPPlatform.LAB_FALSE, "eventNotOpenedForChanges", null,null);
+            messages.addMainForError(InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES.getErrorCode(), new Object[]{instrEventId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES.getErrorCode(), new Object[]{instrEventId},null);
         }
         
         Object[][] diagn = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsAppProcData.InstrEventVariableValues.TBL.getName(), 
@@ -165,11 +174,11 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 TblsAppProcData.InstrEventVariableValues.FLD_EVENT_ID.getName(), TblsAppProcData.InstrEventVariableValues.FLD_REQUIRED.getName(), TblsAppProcData.InstrEventVariableValues.FLD_VALUE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
             new Object[]{instrName, instrEventId, "Y"}, new String[]{TblsAppProcData.InstrEventVariableValues.FLD_ID.getName()});            
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0][0].toString())) 
-            return new InternalMessage(LPPlatform.LAB_TRUE, "eventNothingPending", null,null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, InstrEventsErrorTrapping.EVENT_NOTHING_PENDING.getErrorCode(), null,null);
         else{
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-            messages.addMainForError("eventHasPendingResults", new Object[]{diagn.length});
-            return new InternalMessage(LPPlatform.LAB_FALSE, "eventHasPendingResults", new Object[]{diagn.length},null);
+            messages.addMainForError(InstrEventsErrorTrapping.EVENT_HAS_PENDING_RESULTS.getErrorCode(), new Object[]{diagn.length});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_HAS_PENDING_RESULTS.getErrorCode(), new Object[]{diagn.length},null);
         }        
     }
     
