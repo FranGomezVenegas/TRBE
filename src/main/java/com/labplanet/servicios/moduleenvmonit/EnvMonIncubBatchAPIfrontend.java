@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -42,7 +43,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
     
-    public enum EnvMonIncubBatchAPIfrontendEndpoints{
+    public enum EnvMonIncubBatchAPIfrontendEndpoints implements EnumIntEndpoints{
         ACTIVE_BATCH_LIST("ACTIVE_BATCH_LIST", "", 
             new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),

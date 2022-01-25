@@ -13,6 +13,7 @@ import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.batch.BatchArray;
 import functionaljavaa.businessrules.BusinessRules;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,12 +22,15 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import org.json.simple.JSONArray;
+import trazit.enums.EnumIntEndpoints;
 
 /**
  *
@@ -35,7 +39,7 @@ import lbplanet.utilities.LPArray;
 public class BatchAPI extends HttpServlet {
     static final String COMMON_PARAMS="incidentId|note";
 
-    public enum BatchAPIEndpoints{
+    public enum BatchAPIEndpoints implements EnumIntEndpoints{
         CREATE_BATCH_ARRAY("CREATE_BATCH_ARRAY", "incidentNewIncident_success",
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
         LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", "incidentConfirmIncident_success",
@@ -72,6 +76,11 @@ public class BatchAPI extends HttpServlet {
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+
+        
+        public JsonArray getOutputObjectTypes() {
+            return EndPointsToRequirements.endpointWithNoOutputObjects;
+        }
     }
     
     

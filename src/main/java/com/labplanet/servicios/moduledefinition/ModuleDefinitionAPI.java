@@ -7,12 +7,14 @@ package com.labplanet.servicios.moduledefinition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Token;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +25,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -45,9 +48,18 @@ public class ModuleDefinitionAPI extends HttpServlet {
             return this.name;
         }
         private final String name;
+
+        public String getSuccessMessageCode() {
+            return "Not supported yet."; //To change body of generated methods, choose Tools | Templates.
+        }
+
+
+        public LPAPIArguments[] getArguments() {
+            return new LPAPIArguments[]{}; //To change body of generated methods, choose Tools | Templates.
+        }
     }
     
-    public enum ModuleDefinitionAPIEndpoints {
+    public enum ModuleDefinitionAPIEndpoints implements EnumIntEndpoints{
         DOC_API_ENDPOINTS_IN_DB("DOC_API_ENDPOINTS_IN_DB", "documentedApiEndpointsInDb_success: <*1*>", new LPAPIArguments[]{}),
         DOC_API_BUSINESS_RULES_IN_DB("DOC_API_BUSINESS_RULES_IN_DB", "documentedApiBusinessRulesInDb_success", new LPAPIArguments[]{}),
         DOC_API_MESSAGE_CODES_IN_DB("DOC_API_MESSAGE_CODES_IN_DB", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{}),
@@ -84,6 +96,11 @@ public class ModuleDefinitionAPI extends HttpServlet {
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+
+        @Override
+        public JsonArray getOutputObjectTypes() {
+            return EndPointsToRequirements.endpointWithNoOutputObjects;
+        }
     }
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     

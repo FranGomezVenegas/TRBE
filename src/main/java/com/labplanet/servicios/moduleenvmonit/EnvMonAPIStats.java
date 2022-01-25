@@ -33,6 +33,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -46,7 +47,7 @@ public class EnvMonAPIStats extends HttpServlet {
      * methods.
      *
      */
-    public enum EnvMonAPIstatsEndpoints{
+    public enum EnvMonAPIstatsEndpoints implements EnumIntEndpoints{
         /**
          *
          */        
@@ -195,6 +196,11 @@ public class EnvMonAPIStats extends HttpServlet {
         private final String name;
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;        
+
+        @Override
+        public String getSuccessMessageCode() {
+            return "Not supported yet."; //To change body of generated methods, choose Tools | Templates.
+        }
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response){

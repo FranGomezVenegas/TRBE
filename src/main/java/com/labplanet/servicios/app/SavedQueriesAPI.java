@@ -11,6 +11,7 @@ import lbplanet.utilities.LPHttp;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.businessrules.BusinessRules;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.savedqueries.SaveQueries;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -22,9 +23,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -34,7 +37,7 @@ import trazit.globalvariables.GlobalVariables;
 public class SavedQueriesAPI extends HttpServlet {  
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
-    public enum SavedQueriesAPIEndpoints{
+    public enum SavedQueriesAPIEndpoints implements EnumIntEndpoints{
         CREATE_SAVED_QUERY("CREATE_SAVED_QUERY", "savedQueriesCreated_success", 
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments("definition", LPAPIArguments.ArgumentType.STRING.toString(), false, 7 ),
@@ -82,9 +85,13 @@ public class SavedQueriesAPI extends HttpServlet {
         private final String successMessageCode;  
         private final  LPAPIArguments[] arguments;
 
+        public JsonArray getOutputObjectTypes() {
+            return EndPointsToRequirements.endpointWithNoOutputObjects;
+        }
+
     }
 
-    public enum SavedQueriesAPIfrontendEndpoints{
+    public enum SavedQueriesAPIfrontendEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -123,6 +130,10 @@ public class SavedQueriesAPI extends HttpServlet {
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+
+        public JsonArray getOutputObjectTypes() {
+            return EndPointsToRequirements.endpointWithNoOutputObjects;
+        }
     }
 
     public enum ParamsList{INVESTIGATION_ID("investigationId"), OBJECTS_TO_ADD("objectsToAdd"),    

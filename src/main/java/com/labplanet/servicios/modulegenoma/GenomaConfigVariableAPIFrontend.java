@@ -6,18 +6,22 @@
 package com.labplanet.servicios.modulegenoma;
 
 import functionaljavaa.modulegenoma.GenomaConfigVariablesQueries;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -27,19 +31,21 @@ import trazit.session.ProcedureRequestSession;
 public class GenomaConfigVariableAPIFrontend extends HttpServlet {
     
             
-    public enum  GenomaVariableAPIFrontEndEndPoints{
-            GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName"),
-            GET_ACTIVE_CONFIG_VARIABLE_SET("GET_ACTIVE_CONFIG_VARIABLE_SET", ""),
+    public enum  GenomaVariableAPIFrontEndEndPoints implements EnumIntEndpoints{
+            GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName", new LPAPIArguments[]{}),
+            GET_ACTIVE_CONFIG_VARIABLE_SET("GET_ACTIVE_CONFIG_VARIABLE_SET", "", new LPAPIArguments[]{}),
 //          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
 //          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
 //          VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName"), VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName"),
 //          PROJECT_CHANGE_USER_ROLE("PROJECT_CHANGE_USER_ROLE", "projectName|userName|userRole"), PROJECT_USER_ACTIVATE("PROJECT_USER_ACTIVATE", "projectName|userName|userRole"),
 //          PROJECT_USER_DEACTIVATE("PROJECT_USER_DEACTIVATE", "projectName|userName|userRole"),
           ;
-        private GenomaVariableAPIFrontEndEndPoints(String name, String mandatoryFields){
+        private GenomaVariableAPIFrontEndEndPoints(String name, String mandatoryFields, LPAPIArguments[] argums){
             this.endPointName=name;
             this.endPointMandatoryFields=mandatoryFields;
+            this.arguments=argums;
         }
+            @Override
         public String getName(){
             return this.endPointName;
         }
@@ -48,6 +54,23 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         }
       String endPointName="";
       String endPointMandatoryFields="";
+      private final LPAPIArguments[] arguments;
+
+
+        @Override
+        public String getSuccessMessageCode() {
+            return "Not supported yet."; //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public JsonArray getOutputObjectTypes() {
+            return EndPointsToRequirements.endpointWithNoOutputObjects;
+        }
+
+        @Override
+        public LPAPIArguments[] getArguments() {
+            return this.arguments; //To change body of generated methods, choose Tools | Templates.
+        }
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {

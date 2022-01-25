@@ -23,6 +23,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -34,7 +35,7 @@ public class HolidaysCalendarEnums {
     public enum CalendarEvents{ 
         NEW_CALENDAR, CLONE_CALENDAR, REMOVE_CALENDAR, UPDATE_CALENDAR_PROPERTIES, ADD_DATE_TO_CALENDAR, ADD_DATE_FROM_CALENDAR
     }    
-    public enum CalendarAPIactionsEndpoints {
+    public enum CalendarAPIactionsEndpoints implements EnumIntEndpoints{
         NEW_CALENDAR("NEW_CALENDAR", "name", "", "instrumentNewInstrumentCreated_success",  
             new LPAPIArguments[]{ new LPAPIArguments("name", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7 ),
@@ -175,7 +176,7 @@ public class HolidaysCalendarEnums {
     static final String COMMON_PARAMS="incidentId|note";
 
     
-    public enum CalendarAPIqueriesEndpoints {
+    public enum CalendarAPIqueriesEndpoints implements EnumIntEndpoints{
         ACTIVE_INSTRUMENTS_LIST("ACTIVE_INSTRUMENTS_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT("INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT("INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),

@@ -40,6 +40,7 @@ import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
@@ -219,7 +220,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
 GlobalAPIsParams. GlobalAPIsParams. GlobalAPIsParams.  
 GlobalAPIsParams.
 */    
-    public enum EnvMonAPIfrontendEndpoints {
+    public enum EnvMonAPIfrontendEndpoints implements EnumIntEndpoints{
         PROGRAMS_LIST("PROGRAMS_LIST", "", 
             new LPAPIArguments[]{new LPAPIArguments("programFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
                 new LPAPIArguments("programFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),                    

@@ -35,6 +35,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 
 
@@ -43,7 +44,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class UserSessionAPIfrontend extends HttpServlet {
-    public enum UserSessionAPIfrontendEndpoints{
+    public enum UserSessionAPIfrontendEndpoints implements EnumIntEndpoints{
         /**
          *
          */

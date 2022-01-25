@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -28,7 +29,7 @@ import trazit.session.ProcedureRequestSession;
  * @author Administrator
  */
 public class CertifyAnalysisMethodAPI extends HttpServlet {
-    public enum CertifyAnalysisMethodAPIEndpoints{
+    public enum CertifyAnalysisMethodAPIEndpoints implements EnumIntEndpoints{
         CERTIFY_ASSIGN_METHOD_TO_USER("CERTIFY_ASSIGN_METHOD_TO_USER", "certificationAnalysisMethodAssigned_success", "CERTIF_ADDED_TO_USER", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),

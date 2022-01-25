@@ -35,6 +35,7 @@ import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author Administrator
@@ -136,7 +137,7 @@ public class SopUserAPIfrontend extends HttpServlet {
      */
     public static final String JSON_TAG_VALUE_WINDOWS_URL_HOME="Modulo1/home.js";
      
-    public enum SopUserAPIfrontendEndpoints{
+    public enum SopUserAPIfrontendEndpoints implements EnumIntEndpoints{
         ALL_MY_SOPS("ALL_MY_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
             EndPointsToRequirements.endpointWithNoOutputObjects),
         MY_PENDING_SOPS("MY_PENDING_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},

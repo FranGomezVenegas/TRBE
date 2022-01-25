@@ -23,6 +23,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -32,7 +33,7 @@ import trazit.session.ProcedureRequestSession;
  */
 public class EnvMonIncubationAPI extends HttpServlet {
 
-    public enum EnvMonIncubationAPIEndpoints{
+    public enum EnvMonIncubationAPIEndpoints implements EnumIntEndpoints{
         /**
          *
          */

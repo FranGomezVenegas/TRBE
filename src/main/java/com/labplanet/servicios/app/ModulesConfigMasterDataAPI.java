@@ -33,6 +33,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -42,7 +43,7 @@ import trazit.session.ProcedureRequestSession;
  */
 public class ModulesConfigMasterDataAPI extends HttpServlet {
     
-    public enum ConfigMasterDataAPIEndpoints{
+    public enum ConfigMasterDataAPIEndpoints implements EnumIntEndpoints{
         ANALYSIS_NEW("ANALYSIS_NEW", "analysisNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),

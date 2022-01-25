@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import trazit.enums.EnumIntEndpoints;
 
 /**
  *
@@ -23,7 +24,7 @@ import lbplanet.utilities.LPArray;
  */
 public class AuthenticationAPIParams extends HttpServlet {
 
-    public enum AuthenticationAPIEndpoints{
+    public enum AuthenticationAPIEndpoints implements EnumIntEndpoints{
         USER_CHANGE_PSWD("USER_CHANGE_PASSWORD", "userChangePswd_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),

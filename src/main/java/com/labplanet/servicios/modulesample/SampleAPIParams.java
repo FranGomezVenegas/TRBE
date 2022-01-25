@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -39,7 +40,7 @@ public class SampleAPIParams extends HttpServlet {
      */
     public static final String SERVLET_FRONTEND_URL="/frontend/SampleAPIfrontEnd";
     
-    public enum SampleAPIEndpoints{
+    public enum SampleAPIEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -248,7 +249,7 @@ public class SampleAPIParams extends HttpServlet {
         private final JsonArray outputObjectTypes;        
     }
     
-    public enum SampleAPIfrontendEndpoints{
+    public enum SampleAPIfrontendEndpoints implements EnumIntEndpoints{
         /**
          *
          */

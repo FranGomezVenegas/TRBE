@@ -35,6 +35,7 @@ import trazit.session.ProcedureRequestSession;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
@@ -51,7 +52,7 @@ public class IncidentAPI extends HttpServlet {
     static final String COMMON_PARAMS="incidentId|note";
 
     
-    public enum IncidentAPIfrontendEndpoints{
+    public enum IncidentAPIfrontendEndpoints implements EnumIntEndpoints{
         /**
          *
          */

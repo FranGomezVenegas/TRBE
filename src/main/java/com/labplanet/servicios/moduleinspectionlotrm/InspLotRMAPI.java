@@ -29,6 +29,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -37,7 +38,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */ 
 public class InspLotRMAPI extends HttpServlet {
-    public enum InspLotRMAPIEndpoints{
+    public enum InspLotRMAPIEndpoints implements EnumIntEndpoints{
         NEW_LOT("NEW_LOT", "createNewLot", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MATERIAL_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -115,7 +116,7 @@ public class InspLotRMAPI extends HttpServlet {
         private final JsonArray outputObjectTypes;
     }
     
-    public enum InspLotRMQueriesAPIEndpoints{
+    public enum InspLotRMQueriesAPIEndpoints implements EnumIntEndpoints{
         /**
          *
          */

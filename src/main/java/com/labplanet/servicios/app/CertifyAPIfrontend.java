@@ -30,6 +30,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -37,7 +38,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class CertifyAPIfrontend extends HttpServlet {
-    public enum CertifyAPIfrontendEndpoints{
+    public enum CertifyAPIfrontendEndpoints implements EnumIntEndpoints{
         CERTIFICATIONS_IN_PROGRESS("CERTIFICATIONS_IN_PROGRESS", "",new LPAPIArguments[]{
             new LPAPIArguments("areasToInclude", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
             new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7)},

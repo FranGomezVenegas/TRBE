@@ -25,6 +25,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -42,7 +43,7 @@ public class InvestigationAPI extends HttpServlet {
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
     static final String COMMON_PARAMS="investigationId|note";
-    public enum InvestigationAPIEndpoints{
+    public enum InvestigationAPIEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -101,7 +102,7 @@ public class InvestigationAPI extends HttpServlet {
     }
 
     
-    public enum InvestigationAPIfrontendEndpoints{
+    public enum InvestigationAPIfrontendEndpoints implements EnumIntEndpoints{
         /**
          *
          */

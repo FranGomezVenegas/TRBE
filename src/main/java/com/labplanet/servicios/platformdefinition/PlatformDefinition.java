@@ -6,18 +6,21 @@
 package com.labplanet.servicios.platformdefinition;
 
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
+import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import trazit.enums.EnumIntEndpoints;
 
 /**
  *
  * @author User
  */
 public class PlatformDefinition {
-    public enum PlatformDefinitionAPIEndpoints{
+    public enum PlatformDefinitionAPIEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -60,6 +63,11 @@ public class PlatformDefinition {
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+
+        @Override
+        public JsonArray getOutputObjectTypes() {
+            return EndPointsToRequirements.endpointWithNoOutputObjects;
+        }
     }
     
 }

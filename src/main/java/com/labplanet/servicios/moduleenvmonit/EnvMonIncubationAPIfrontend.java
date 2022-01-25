@@ -27,6 +27,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -35,7 +36,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class EnvMonIncubationAPIfrontend extends HttpServlet {
 
-    public enum EnvMonIncubationAPIfrontendEndpoints{
+    public enum EnvMonIncubationAPIfrontendEndpoints implements EnumIntEndpoints{
         INCUBATOR_TEMP_READINGS("INCUBATOR_TEMP_READINGS", "", 
                 new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),}, null),

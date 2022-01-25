@@ -38,12 +38,13 @@ import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 
 public class DbTestingLimitAndResult extends HttpServlet {
 
-    public enum TestingLimitAndResult{
+    public enum TestingLimitAndResult implements EnumIntEndpoints{
         DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT("DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT", "productionLot_newLotCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments("schemaName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments("specCode", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),

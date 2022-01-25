@@ -10,6 +10,7 @@ import databases.TblsApp;
 import javax.json.Json;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -18,7 +19,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class AppIncidentEnums {
     static final String COMMON_PARAMS="incidentId|note";
-    public enum IncidentAPIEndpoints{
+    public enum IncidentAPIEndpoints implements EnumIntEndpoints{
         /**
          *
          */

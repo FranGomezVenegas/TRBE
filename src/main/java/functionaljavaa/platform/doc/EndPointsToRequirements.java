@@ -4,8 +4,7 @@
  * and open the template in the editor.
  */
 package functionaljavaa.platform.doc;
-
-import com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPIfrontendEndpoints;
+/*import com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPIfrontendEndpoints;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
 import com.labplanet.servicios.app.CertifyAPIfrontend.CertifyAPIfrontendEndpoints;
 import com.labplanet.servicios.app.CertifyAnalysisMethodAPI.CertifyAnalysisMethodAPIEndpoints;
@@ -34,17 +33,23 @@ import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIfrontendEndpoints;
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints;
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionfrontend.ProcedureDefinitionAPIfrontendEndpoints;
-import com.labplanet.servicios.testing.config.db.DbTestingLimitAndResult.TestingLimitAndResult;
+import com.labplanet.servicios.testing.config.db.DbTestingLimitAndResult.TestingLimitAndResult;*/
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsTrazitDocTrazit.EndpointsDeclaration;
-import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;
-import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIqueriesEndpoints;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.parameter.Parameter.PropertyFilesType;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ClassInfoList;
+import io.github.classgraph.ScanResult;
+import lbplanet.utilities.LPFrontEnd;
+import java.util.List;
 import java.util.ResourceBundle;
 import javax.json.Json;
 import javax.json.JsonArray;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -52,6 +57,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.Languages;
 /**
@@ -62,13 +68,99 @@ public final class EndPointsToRequirements {
     String[] fldNames;
     Object[][] endpointsFromDatabase;
     String[] endpointsApiAndEndpointNamesKey;
+    Object[] apiName1d;
+    Object[] endpointName1d;
+    
+    
+public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse response){
+        ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
+        String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
+        Rdbms.getRdbms().startRdbms(dbTrazitModules);
+        getEndPointsFromDatabase();
+        if (this.fldNames==null) return;
+        JSONArray enumsCompleteSuccess = new JSONArray();
+        Integer classesImplementingInt=-999;
+        Integer totalEndpointsVisitedInt=0;
+            try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
+            .scan()) {    
+                ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntEndpoints");
+                ClassInfoList allEnums = scanResult.getAllEnums();
+                classesImplementingInt=classesImplementing.size();
+                for (int i=0;i<classesImplementing.size();i++){
+                    ClassInfo getMine = classesImplementing.get(i); 
+
+                    String st="";
+                    if ("SampleAuditErrorTrapping".equalsIgnoreCase(getMine.getName().toString())){
+                        st="e";
+                    }
+                    List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
+                    JSONArray enumsIncomplete = new JSONArray();
+                    totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
+                    for (int j=0;j<enumConstantObjects.size();j++) {
+                        EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
+                        
+                        
+                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName(),  EndpointsDeclaration.FLD_SUCCESS_MESSAGE_CODE.getName()});
+                        Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName(), curEndpoint.getSuccessMessageCode()});
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curEndpoint.getArguments())});                
+                        
+                        
+                        //String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+                        //Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getErrorCode()});
+                        try{
+                            declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName().toString(), 
+                                    fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size());
+                        //declareMessageInDatabase(curBusRul.getClass().getSimpleName(), 
+                          //  curBusRul.getErrorCode(), fieldNames, fieldValues);
+
+                        }catch(Exception e){
+                            JSONObject jObj=new JSONObject();
+                            jObj.put("enum",getMine.getName().toString());
+                            jObj.put("endpoint_code",curEndpoint.toString());
+                            jObj.put("error",e.getMessage());
+                            enumsIncomplete.add(jObj);
+                        }
+                    }
+                    if (enumsIncomplete.size()>0){
+                        LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
+                        return;
+                    }else{
+                        JSONObject jObj=new JSONObject();
+                        jObj.put("enum",getMine.getName().toString());
+                        jObj.put("messages",enumConstantObjects.size());
+                        enumsCompleteSuccess.add(jObj);
+                    }
+                }
+            }catch(Exception e){
+                ScanResult.closeAll();
+                JSONArray errorJArr = new JSONArray();
+                errorJArr.add(e.getMessage());
+                LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
+                return;
+            }
+        // Rdbms.closeRdbms();
+        ScanResult.closeAll();        
+        JSONObject jMainObj=new JSONObject();
+        jMainObj.put("00_total_in_db_before_running", this.endpointsFromDatabase.length);
+        jMainObj.put("01_total_apis_in_db_before_running", this.apiName1d.length);
+        jMainObj.put("02_total_enums",classesImplementingInt.toString());
+        jMainObj.put("03_total_visited_enums",enumsCompleteSuccess.size());
+        jMainObj.put("04_enums_visited_list", enumsCompleteSuccess);
+        jMainObj.put("05_total_number_of_messages_visited", totalEndpointsVisitedInt);
+        
+        
+        LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
+        return;
+    }    
+    
     public EndPointsToRequirements() {
         }
     
     public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", "no output for testing")
                     .add("table", "no output for testing").build()).build();
     // Endpoints 'antiguos': AppHeaderAPIEndpoints, IncidentAPIfrontendEndpoints, BatchAPIEndpoints, GenomaVariableAPIEndPoints y todos los de Genoma!
-
+/*
     public Object[] endpointDefinition(){
         getEndPointsFromDatabase();
         Object[] logMsg=new Object[]{};
@@ -345,7 +437,7 @@ public final class EndPointsToRequirements {
         Rdbms.closeRdbms();
         return logMsg;
 }
-    
+  */  
 private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
     String[] argHeader=new String[]{"name", "type", "is_mandatory?","testing arg posic"};
     JSONArray argsJsonArr = new JSONArray();

@@ -30,6 +30,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.InternalMessage;
 /**
  *
@@ -47,7 +48,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
     static final String COMMON_PARAMS="incidentId|note";
 
     
-    public enum IncidentAPIfrontendEndpoints{
+    public enum IncidentAPIfrontendEndpoints implements EnumIntEndpoints{
         /**
          *
          */

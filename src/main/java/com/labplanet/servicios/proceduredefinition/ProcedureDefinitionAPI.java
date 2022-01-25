@@ -24,6 +24,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -57,7 +58,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
         private final String name;
     }
     
-    public enum ProcedureDefinitionAPIEndpoints{
+    public enum ProcedureDefinitionAPIEndpoints implements EnumIntEndpoints{
         /**
          *
          */

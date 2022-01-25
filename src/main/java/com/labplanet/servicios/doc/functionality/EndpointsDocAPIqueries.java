@@ -28,6 +28,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -36,7 +37,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class EndpointsDocAPIqueries extends HttpServlet {
-    public enum EndpointsDocAPIqueriesEndpoints{
+    public enum EndpointsDocAPIqueriesEndpoints implements EnumIntEndpoints{
         GET_DOC_ENDPOINTS("GET_DOC_ENDPOINTS", "",new LPAPIArguments[]{
             new LPAPIArguments("apiName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments("endpointName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),

@@ -26,13 +26,14 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 
 /**
  *
  * @author User
  */
 public class ProcedureDefinitionfrontend extends HttpServlet {
-    public enum ProcedureDefinitionAPIfrontendEndpoints{
+    public enum ProcedureDefinitionAPIfrontendEndpoints implements EnumIntEndpoints{
         /**
          *
          */

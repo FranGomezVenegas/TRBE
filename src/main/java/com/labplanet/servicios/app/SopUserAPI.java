@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -36,7 +37,7 @@ import trazit.session.ProcedureRequestSession;
  */
 public class SopUserAPI extends HttpServlet {
 
-    public enum SopUserAPIEndpoints{
+    public enum SopUserAPIEndpoints implements EnumIntEndpoints{
         SOP_MARK_AS_COMPLETED("SOP_MARK_AS_COMPLETED", "appSop_markAsCompleted_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
         private SopUserAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){

@@ -9,18 +9,22 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIParamsList;
 import databases.Rdbms;
 import functionaljavaa.modulegenoma.GenomaConfigVariables;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -31,16 +35,18 @@ public class GenomaConfigVariableAPI extends HttpServlet {
 
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
             
-    public enum  GenomaVariableAPIEndPoints{
+    public enum  GenomaVariableAPIEndPoints implements EnumIntEndpoints{
 //          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
 //          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
-          VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName"), VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName"),
+          VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}), 
+          VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}),
 //          PROJECT_CHANGE_USER_ROLE("PROJECT_CHANGE_USER_ROLE", "projectName|userName|userRole"), PROJECT_USER_ACTIVATE("PROJECT_USER_ACTIVATE", "projectName|userName|userRole"),
 //          PROJECT_USER_DEACTIVATE("PROJECT_USER_DEACTIVATE", "projectName|userName|userRole"),
           ;
-        private GenomaVariableAPIEndPoints(String name, String mandatoryFields){
+        private GenomaVariableAPIEndPoints(String name, String mandatoryFields, LPAPIArguments[] argums){
             this.endPointName=name;
             this.endPointMandatoryFields=mandatoryFields;
+            this.arguments=argums;
         }
         public String getName(){
             return this.endPointName;
@@ -50,6 +56,22 @@ public class GenomaConfigVariableAPI extends HttpServlet {
         }
       String endPointName="";
       String endPointMandatoryFields="";
+      private final LPAPIArguments[] arguments;
+
+        @Override
+        public String getSuccessMessageCode() {
+            return "Not supported yet."; //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public JsonArray getOutputObjectTypes() {
+            return EndPointsToRequirements.endpointWithNoOutputObjects;
+        }
+
+        @Override
+        public LPAPIArguments[] getArguments() {
+            return this.arguments; //To change body of generated methods, choose Tools | Templates.
+        }
     }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

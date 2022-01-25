@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -33,7 +34,7 @@ import trazit.session.ProcedureRequestSession;
  * @author Administrator
  */
 public class EnvMonAPI extends HttpServlet {  
-    public enum EnvMonAPIEndpoints{
+    public enum EnvMonAPIEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -100,7 +101,7 @@ public class EnvMonAPI extends HttpServlet {
         private final JsonArray outputObjectTypes;
     }
     
-    public enum EnvMonQueriesAPIEndpoints{
+    public enum EnvMonQueriesAPIEndpoints implements EnumIntEndpoints{
         /**
          *
          */
