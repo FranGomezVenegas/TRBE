@@ -6,10 +6,8 @@
 package functionaljavaa.platform.doc;
 
 import databases.Rdbms;
-import databases.SqlStatement;
 import lbplanet.utilities.LPFrontEnd;
 import databases.TblsTrazitDocTrazit;
-import databases.TblsTrazitDocTrazit.MessageCodeDeclaration;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
 import io.github.classgraph.ClassGraph;
