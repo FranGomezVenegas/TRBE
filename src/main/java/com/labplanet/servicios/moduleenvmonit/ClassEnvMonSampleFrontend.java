@@ -354,7 +354,6 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     jArr=new JSONArray();
                     for (Object[] curRec: list){
                       JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
-                      jArr.add(jObj);
                       Integer fldSampleIdPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewSampleMicroorganismList.FLD_SAMPLE_ID.getName());                      
                       if (fldSampleIdPosic>-1){
                           JSONArray jMicArr=new JSONArray();
