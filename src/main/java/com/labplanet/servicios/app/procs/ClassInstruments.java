@@ -7,6 +7,7 @@ package com.labplanet.servicios.app.procs;
 
 import databases.TblsAppProcData;
 import functionaljavaa.instruments.DataInstruments;
+import static functionaljavaa.instruments.DataInstrumentsEvents.objectVariableChangeValue;
 import static functionaljavaa.instruments.DataInstrumentsEvents.objectVariableSetValue;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -196,13 +197,32 @@ public class ClassInstruments {
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                
                     break;
-                case ENTER_EVENT_RESULT:
+                case REOPEN_EVENT:
+                    instr=new DataInstruments(instrName);
                     Integer instrEventId=(Integer)argValues[1];
+                    actionDiagnoses=instr.reopenEvent(instrEventId);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
+                            TblsAppProcData.Instruments.TBL.getName(), instrName);                
+                    break;                    
+                case ENTER_EVENT_RESULT:
+                    instrEventId=(Integer)argValues[1];
                     String variableName=argValues[2].toString();
                     String newValue=argValues[3].toString();
                     //instr=new DataInstruments(instrName);
                     //actionDiagnoses=instr.startCalibration();
                     actionDiagnoses=objectVariableSetValue(instrName, instrEventId, variableName, newValue);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
+                            TblsAppProcData.Instruments.TBL.getName(), instrName);                
+                    break;
+                case REENTER_EVENT_RESULT:
+                    instrEventId=(Integer)argValues[1];
+                    variableName=argValues[2].toString();
+                    newValue=argValues[3].toString();
+                    //instr=new DataInstruments(instrName);
+                    //actionDiagnoses=instr.startCalibration();
+                    actionDiagnoses=objectVariableChangeValue(instrName, instrEventId, variableName, newValue);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.Instruments.TBL.getName(), 
                             TblsAppProcData.Instruments.TBL.getName(), instrName);                

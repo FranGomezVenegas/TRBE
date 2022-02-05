@@ -565,4 +565,48 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name}, name);
     }
     
+    public InternalMessage reopenEvent(Integer instrEventId){
+        if (this.isDecommissioned)
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
+        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
+        
+        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), 
+                new String[]{TblsAppProcData.InstrumentEvent.FLD_INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.FLD_ID.getName()}, 
+                new Object[]{this.name, instrEventId}, 
+                new String[]{TblsAppProcData.InstrumentEvent.FLD_COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.FLD_DECISION.getName()});        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{name}, name);
+        }
+        String eventCompletedOn=LPNulls.replaceNull(instrEventInfo[0][0]).toString();
+        String eventDecision=LPNulls.replaceNull(instrEventInfo[0][1]).toString();
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
+        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), instrEventId);                
+        
+        if (eventCompletedOn.length()==0 || eventDecision.length()==0){
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS.getErrorCode(), new Object[]{instrEventId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS.getErrorCode(), new Object[]{instrEventId}, name);
+        }
+
+        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.FLD_DECISION.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.FLD_COMPLETED_BY.getName()};
+        Object[] fldValues=new Object[]{"NULL>>>STRING", "NULL>>>LOCALDATETIME", "NULL>>>STRING"};
+        Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.InstrumentEvent.TBL.getName(), 
+                fldNames, fldValues, 
+                new String[]{TblsAppProcData.InstrumentEvent.FLD_ID.getName()}, new Object[]{instrEventId});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
+            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
+        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.REOPEN_EVENT.toString(), name, TblsAppProcData.Instruments.TBL.getName(), name,
+                        fldNames, fldValues);        
+        fldNames=new String[]{TblsAppProcData.Instruments.FLD_LAST_VERIF.getName(), TblsAppProcData.Instruments.FLD_IS_LOCKED.getName(), TblsAppProcData.Instruments.FLD_LOCKED_REASON.getName()};
+        fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
+        if (this.onLine){
+            turnOffLine(fldNames, fldValues);
+        }else{
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.REOPEN_EVENT.toString());            
+        }
+        messages.addMainForSuccess(this.getClass().getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT.getSuccessMessageCode(), new Object[]{name});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT.getSuccessMessageCode(), new Object[]{name}, name);
+    }
+
 }

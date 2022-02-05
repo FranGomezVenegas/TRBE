@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
@@ -200,6 +201,25 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     }
                     Rdbms.closeRdbms();  
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
+            case DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS:
+                String numDays = LPNulls.replaceNull(argValues[0]).toString();
+                if (numDays.length()==0) numDays=String.valueOf(7);
+                int numDaysInt=0-Integer.valueOf(numDays);               
+                fieldsToRetrieve=TblsAppProcData.Instruments.getAllFieldNames();
+                Object[][] instrDecommissionedClosedLastDays = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TblsAppProcData.Instruments.TBL.getName(), 
+                        new String[]{TblsAppProcData.Instruments.FLD_DECOMMISSIONED.getName(), TblsAppProcData.Instruments.FLD_DECOMMISSIONED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+                        new Object[]{true, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                        fieldsToRetrieve, new String[]{TblsAppProcData.Instruments.FLD_DECOMMISSIONED_ON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrDecommissionedClosedLastDays[0][0].toString())){
+                    for (Object[] currIncident: instrDecommissionedClosedLastDays){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);              
+                break;
 
             default: 
             }

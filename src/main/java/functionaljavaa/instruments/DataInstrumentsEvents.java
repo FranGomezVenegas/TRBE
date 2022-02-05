@@ -112,8 +112,10 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) 
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES.getErrorCode(), null,null);
         
-        String[] fieldsToRetrieve=new String[]{TblsAppProcData.InstrEventVariableValues.FLD_ID.getName(), TblsAppProcData.InstrEventVariableValues.FLD_PARAM_NAME.getName(), TblsAppProcData.InstrEventVariableValues.FLD_PARAM_TYPE.getName(), TblsAppProcData.InstrEventVariableValues.FLD_REQUIRED.getName(), 
-            TblsAppProcData.InstrEventVariableValues.FLD_ALLOWED_VALUES.getName()};
+        String[] fieldsToRetrieve=new String[]{TblsAppProcData.InstrEventVariableValues.FLD_ID.getName(), 
+            TblsAppProcData.InstrEventVariableValues.FLD_PARAM_NAME.getName(), TblsAppProcData.InstrEventVariableValues.FLD_PARAM_TYPE.getName(), 
+            TblsAppProcData.InstrEventVariableValues.FLD_REQUIRED.getName(), 
+            TblsAppProcData.InstrEventVariableValues.FLD_ALLOWED_VALUES.getName(), TblsAppProcData.InstrEventVariableValues.FLD_VALUE.getName()};
         
         String[] fieldsName=new String[]{TblsAppProcData.InstrEventVariableValues.FLD_EVENT_ID.getName(),
             TblsAppProcData.InstrEventVariableValues.FLD_PARAM_NAME.getName()};
@@ -132,7 +134,11 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         }
         if (objectVariablePropInfo.length!=1) return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE.getErrorCode(), 
             new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
-        
+        String currentValue = LPNulls.replaceNull(objectVariablePropInfo[0][5]).toString();
+        if (currentValue.length()>0){
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.USE_REENTER_WHEN_PARAM_ALREADY_HAS_VALUE.getErrorCode(), 
+            new Object[]{});            
+        }
         String fieldType = objectVariablePropInfo[0][2].toString();        
         if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
@@ -160,6 +166,68 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT.getSuccessMessageCode(), new Object[]{instrName, instrEventId, variableName, newValue}, null);        
     }
 
+    public static InternalMessage objectVariableChangeValue(String instrName, Integer instrEventId, String variableName, String newValue){
+        String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();
+        Object[] diagn=new Object[0];
+        Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) 
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES.getErrorCode(), null,null);
+        
+        String[] fieldsToRetrieve=new String[]{TblsAppProcData.InstrEventVariableValues.FLD_ID.getName(), TblsAppProcData.InstrEventVariableValues.FLD_PARAM_NAME.getName(), TblsAppProcData.InstrEventVariableValues.FLD_PARAM_TYPE.getName(), TblsAppProcData.InstrEventVariableValues.FLD_REQUIRED.getName(), 
+            TblsAppProcData.InstrEventVariableValues.FLD_ALLOWED_VALUES.getName(), TblsAppProcData.InstrEventVariableValues.FLD_VALUE.getName()};
+        
+        String[] fieldsName=new String[]{TblsAppProcData.InstrEventVariableValues.FLD_EVENT_ID.getName(),
+            TblsAppProcData.InstrEventVariableValues.FLD_PARAM_NAME.getName()};
+        Object[] fieldsValue=new Object[]{instrEventId, variableName};
+        Object[][] objectVariablePropInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsAppProcData.InstrEventVariableValues.TBL.getName(),
+                fieldsName, fieldsValue, fieldsToRetrieve);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())){
+            Object[][] instEvVariables=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsAppProcData.InstrEventVariableValues.TBL.getName(),
+                    new String[]{TblsAppProcData.InstrEventVariableValues.FLD_EVENT_ID.getName()}, new Object[]{instrEventId}, fieldsToRetrieve);            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString()))
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES.getErrorCode(), null);
+            else{
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS.getErrorCode(), 
+                new Object[]{Arrays.toString(LPArray.getColumnFromArray2D(instEvVariables, 1))});
+            }
+        }
+        if (objectVariablePropInfo.length!=1) return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE.getErrorCode(), 
+            new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
+        String currentValue = LPNulls.replaceNull(objectVariablePropInfo[0][5]).toString();
+        if (currentValue.length()==0){
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.USE_ENTER_WHEN_PARAM_HAS_NO_VALUE.getErrorCode(), 
+            new Object[]{});            
+        }
+        if (currentValue.toString().equalsIgnoreCase(newValue.toString())){
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.SAME_RESULT_VALUE.getErrorCode(), 
+            new Object[]{variableName, appProcInstance, newValue});                        
+        }
+        String fieldType = objectVariablePropInfo[0][2].toString();        
+        if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
+            String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
+            if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE.getErrorCode(), 
+                    new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
+        }else if (DataStudyObjectsVariableValues.VariableTypes.REAL.toString().equalsIgnoreCase(fieldType)){
+            Object[] isNumeric = isNumeric(newValue);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) 
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.NOT_NUMERIC_VALUE.getErrorCode(),null, null);
+        }else if (DataStudyObjectsVariableValues.VariableTypes.INTEGER.toString().equalsIgnoreCase(fieldType)){
+            Object[] isNumeric = isNumeric(newValue);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) 
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.NOT_NUMERIC_VALUE.getErrorCode(),null, null);
+        }else if (DataStudyObjectsVariableValues.VariableTypes.TEXT.toString().equalsIgnoreCase(fieldType)){
+        }else 
+            return new InternalMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null, null);
+        String[] updFieldsName=new String[]{TblsAppProcData.InstrEventVariableValues.FLD_VALUE.getName()};
+        Object[] updFieldsValue=new Object[]{newValue};
+        diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsAppProcData.InstrEventVariableValues.TBL.getName(), 
+            updFieldsName, updFieldsValue, new String[]{TblsAppProcData.InstrEventVariableValues.FLD_ID.getName()}, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())});            
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
+            instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.VALUE_REENTERED.toString(), instrName, TblsAppProcData.Instruments.TBL.getName(), instrEventId.toString(),
+                updFieldsName, updFieldsValue);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT.getSuccessMessageCode(), new Object[]{instrName, instrEventId, variableName, newValue}, null);        
+    }
     public static InternalMessage eventHasNotEnteredVariables(String instrName, Integer instrEventId){
         String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();        
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
