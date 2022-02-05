@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
@@ -35,7 +36,19 @@ public class ClassProcedureDefinition {
 
     public ClassProcedureDefinition(HttpServletRequest request, HttpServletResponse response, ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        
+        String[] mandatArgs=new String[]{};
+        for (LPAPIArguments curArg:endPoint.getArguments()){
+            if (curArg.getMandatory())
+                mandatArgs=LPArray.addValueToArray1D(mandatArgs, curArg.getName());
+        }
+        if (mandatArgs.length>0){
+            Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatArgs);                       
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response, 
+                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "en");              
+                return;          
+            }             
+        }
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;

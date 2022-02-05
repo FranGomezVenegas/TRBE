@@ -202,7 +202,7 @@ public class ProcedureDefinitionToInstance {
                 }
 /*                Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(),
                         new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName()}, new Object[]{procRoles[0][0].toString()},
-                        new String[]{TblsProcedure.ProcedureEvents.FLD_NAME.getName()}, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.FLD_NAME.getName())]});
+                        new String[]{TblsProcedure.ProcedureEvents.FLD_PROCEDURE_NAME.getName()}, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.FLD_PROCEDURE_NAME.getName())]});
                 updateRecordFieldsByFilter=new Object[]{};
 */                
             }
@@ -667,7 +667,7 @@ public class ProcedureDefinitionToInstance {
                     curprocBusRules);
             curprocBusRules=LPArray.addValueToArray1D(curprocBusRules, diagn);
             JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curprocBusRules);
-            //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_NAME.getName())];
+            //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_PROCEDURE_NAME.getName())];
             jsonArr.add(convertArrayRowToJSONObject);
         }
         //Build procedureActions and actionEnabled properties
@@ -707,7 +707,7 @@ public class ProcedureDefinitionToInstance {
     //                curProcEventSops[LPArray.valuePosicInArray(fildsToGet, diagnObjName)]=diagn;
                 curProcActionEnabled=LPArray.addValueToArray1D(curProcActionEnabled, diagn);
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curProcActionEnabled);
-                //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_NAME.getName())];
+                //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_PROCEDURE_NAME.getName())];
                 jsonArr.add(convertArrayRowToJSONObject);
                 if (allEnabledActions.length()>0)allEnabledActions=allEnabledActions+"|";
                 allEnabledActions=allEnabledActions+LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.FLD_WIDGET_ACTION.getName())]).toString();
@@ -762,7 +762,7 @@ public class ProcedureDefinitionToInstance {
 //                curProcEventSops[LPArray.valuePosicInArray(fildsToGet, diagnObjName)]=diagn;
             curProcEventSops=LPArray.addValueToArray1D(curProcEventSops, diagn);
             JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curProcEventSops);
-            //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_NAME.getName())];
+            //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_PROCEDURE_NAME.getName())];
             jsonArr.add(convertArrayRowToJSONObject);
         }
 
@@ -798,7 +798,7 @@ public class ProcedureDefinitionToInstance {
     //                curProcEventSops[LPArray.valuePosicInArray(fildsToGet, diagnObjName)]=diagn;
                 curProcActionEnabled=LPArray.addValueToArray1D(curProcActionEnabled, diagn);
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curProcActionEnabled);
-                //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_NAME.getName())];
+                //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_PROCEDURE_NAME.getName())];
                 jsonArr.add(convertArrayRowToJSONObject);
                 if (allEnabledActions.length()>0)allEnabledActions=allEnabledActions+"|";
                 allEnabledActions=allEnabledActions+LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.FLD_WIDGET_ACTION.getName())]).toString();

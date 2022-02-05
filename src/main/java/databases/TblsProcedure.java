@@ -5,13 +5,11 @@
  */
 package databases;
 
-import java.util.ArrayList;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
 import static lbplanet.utilities.LPDatabase.dateTimeWithDefaultNow;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -277,60 +275,22 @@ public class TblsProcedure {
      *
      */
     public enum ProcedureInfo{
-
-        /**
-         *
-         */
         TBL("procedure_info",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-        FLD_NAME("name", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_VERSION("version", LPDatabase.integerNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_SCHEMA_PREFIX("schema_prefix", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_LABEL_EN("label_en", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_LABEL_ES("label_es", LPDatabase.string())
+                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
+        FLD_NAME("name", LPDatabase.stringNotNull()),
+        FLD_VERSION("version", LPDatabase.integerNotNull())        ,
+        FLD_SCHEMA_PREFIX("schema_prefix", LPDatabase.stringNotNull())        ,
+        FLD_LABEL_EN("label_en", LPDatabase.string())        ,
+        FLD_LABEL_ES("label_es", LPDatabase.string()),
+        FLD_DESCRIPTION("description", LPDatabase.string())        
         ;
         private ProcedureInfo(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
-
-        /**
-         *
-         * @return
-         */
         public String getName(){
             return this.dbObjName;
         }
-
-        /**
-         *
-         * @return
-         */
         public String[] getDbFieldDefinitionPostgres(){
             return new String[]{this.dbObjName, this.dbObjTypePostgres};
         }
@@ -365,6 +325,16 @@ public class TblsProcedure {
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
         }
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ProcedureInfo obj: ProcedureInfo.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                        
         private final String dbObjName;             
         private final String dbObjTypePostgres;           
     } 
@@ -435,7 +405,7 @@ public class TblsProcedure {
     public enum ProcedureBusinessRules {
 
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_#FLD_ID_seq'::regclass)"),        
-        TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+        TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
         FLD_PROCEDURE_NAME("procedure_name", LPDatabase.stringNotNull()),

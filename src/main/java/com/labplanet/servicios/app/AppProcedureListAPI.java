@@ -7,6 +7,7 @@ package com.labplanet.servicios.app;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
@@ -16,6 +17,7 @@ import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsProcedure;
+import databases.TblsReqs;
 import databases.Token;
 import functionaljavaa.user.UserProfile;
 import java.io.IOException;
@@ -228,20 +230,14 @@ public class AppProcedureListAPI extends HttpServlet {
     public static JsonObject procModel(String procInstanceName){
         try{
             JsonObject jArr = new JsonObject();   
-            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), "fe_proc_model", 
-                    new String[]{"procedure"},
-                    new Object[]{procInstanceName}, 
-                    new String[]{"model_json"});
+            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureFrontEndProcModel.TBL.getName(), 
+                new String[]{TblsReqs.ProcedureFrontEndProcModel.FLD_PROCEDURE_NAME.getName()},
+                new Object[]{procInstanceName}, 
+                new String[]{TblsReqs.ProcedureFrontEndProcModel.FLD_MODEL_JSON.getName()});            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;
             JsonParser parser = new JsonParser();
             return parser.parse(ruleValue[0][0].toString()).getAsJsonObject();
-//            Object[] objToJsonObj = LPJson.convertToJsonObjectStringedObject(ruleValue[0][0].toString()); 
-//            return (JsonObject) objToJsonObj[1];
-/*            String jsonInString=new Gson().toJson(ruleValue[0][0]);
-            final Gson gson = new Gson();
-            return gson.fromJson((JsonObject)ruleValue[0][0], JsonObject.class);
-  */          
-        }catch(Exception e){
+        }catch(JsonSyntaxException e){
             JsonObject jArr = new JsonObject();   
             return jArr;            
         }
