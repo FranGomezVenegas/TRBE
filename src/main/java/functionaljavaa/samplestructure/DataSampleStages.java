@@ -248,7 +248,7 @@ public enum SampleStageErrorTrapping{
         String procInstanceName=instanceForActions.getProcedureInstance();
         String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
-                                DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
+                                null, null);
 //        String sampleStageClassName=procInstanceName+"SampleStage"; 
         String functionName="sampleStage"+currStage+moveDirection+"Checker";        
         ProcedureSampleStage procSampleStage=new ProcedureSampleStage();        
