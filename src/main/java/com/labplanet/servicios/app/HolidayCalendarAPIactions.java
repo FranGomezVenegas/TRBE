@@ -5,20 +5,16 @@
  */
 package com.labplanet.servicios.app;
 
-import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import databases.TblsApp;
 import functionaljavaa.holidayscalendar.HolidaysCalendar;
 import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;
-import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
-import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,7 +26,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import org.json.simple.JSONObject;
-import trazit.enums.EnumIntEndpoints;
+import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 /**
  *
@@ -45,42 +41,6 @@ public class HolidayCalendarAPIactions extends HttpServlet {
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
-    static final String COMMON_PARAMS="incidentId|note";
-
-    
-    public enum IncidentAPIfrontendEndpoints implements EnumIntEndpoints{
-        /**
-         *
-         */
-        USER_OPEN_INCIDENTS("USER_OPEN_INCIDENTS", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        INCIDENT_DETAIL_FOR_GIVEN_INCIDENT("INCIDENT_DETAIL_FOR_GIVEN_INCIDENT", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        CLOSED_INCIDENTS_LAST_N_DAYS("CLOSED_INCIDENTS_LAST_N_DAYS","",new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        ;
-        private IncidentAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
-            this.name=name;
-            this.successMessageCode=successMessageCode;
-            this.arguments=argums;  
-            this.outputObjectTypes=outputObjectTypes;            
-        } 
-        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
-            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
-            Object[] argValues=new Object[0];
-            for (LPAPIArguments curArg: this.arguments){                
-                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
-                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
-            }  
-            hm.put(request, argValues);            
-            return hm;
-        }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
-        private final String name;
-        private final String successMessageCode;  
-        private final LPAPIArguments[] arguments;
-        private final JsonArray outputObjectTypes;
-    }
 
     public enum ParamsList{INCIDENT_ID("incidentId"),INCIDENT_TITLE("incidentTitle"),INCIDENT_DETAIL("incidentDetail"),
         NOTE("note"),NEW_STATUS("newStatus"),
@@ -138,34 +98,30 @@ public class HolidayCalendarAPIactions extends HttpServlet {
                 case ADD_DATE_TO_CALENDAR:
                     actionDiagnoses = HolidaysCalendar.addDateToCalendar(argValues[0].toString(), (Date) argValues[1], (String) argValues[2], null, null);
                     break;
-/*                case ADD_NOTE_INCIDENT:
-                    incId=(Integer) argValues[0];
-                    inc=new AppIncident(incId);
-                    String newNote=argValues[2].toString();
-                    actionDiagnoses = inc.addNoteIncident(incId, argValues[1].toString(), newNote);
-                    break;                    
-                case CLOSE_INCIDENT:
-                    incId=(Integer) argValues[0];
-                    inc=new AppIncident(incId);
-                    actionDiagnoses = inc.closeIncident(incId, argValues[1].toString());
-                    break;                    
-                case REOPEN_INCIDENT:
-                    incId=(Integer) argValues[0];
-                    inc=new AppIncident(incId);
-                    actionDiagnoses = inc.reopenIncident(incId, argValues[1].toString());
-                    break;     */               
+                case DELETE_DATE_FROM_GIVEN_CALENDAR:    
+                    actionDiagnoses = HolidaysCalendar.deleteCalendarDate(argValues[0].toString(), (Integer) argValues[1]);
+                    break;
             }    
             String diagnostic=actionDiagnoses.getDiagnostic();
 
             if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic)){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, null, null);   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, actionDiagnoses.getMessageCode(), actionDiagnoses.getMessageCodeVariables());   
             }else{
+
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), "incident", incId);                
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
+                rObj.killInstance();
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                
+/*
+                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
+                
                 //rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.Instruments.TBL.getName(), "instruments", instrName);                
                 //JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{instrName}, rObj.getRelatedObject());
                 JSONObject dataSampleJSONMsg = new JSONObject();
                 rObj.killInstance();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                LPFrontEnd.responseJSONDiagnosticLPTrue(request, response, dataSampleJSONMsg);*/
             }           
 /*            
             if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
