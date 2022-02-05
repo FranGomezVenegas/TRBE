@@ -964,7 +964,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             }
             if (sarFieldToSort==null){sarFieldToSort=TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName();}                                        
         String[] sampleAuditFieldToRetrieveArr = new String[0];
-            if (SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sampleAuditFieldToRetrieve))
+            if (sampleAuditFieldToRetrieve!=null && SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sampleAuditFieldToRetrieve))
                 sampleAuditFieldToRetrieve="*";
             /*{                
                 for (TblsDataAudit.Sample obj: TblsDataAudit.Sample.values()){
@@ -973,12 +973,13 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 }                
             }*/
             else{
-                if (sampleAuditFieldToRetrieve!=null) sampleAuditFieldToRetrieveArr=sampleAuditFieldToRetrieve.split("\\|");                   
-
-                sampleAuditFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAuditFieldToRetrieveArr, 
+                if (sampleAuditFieldToRetrieve!=null){
+                    sampleAuditFieldToRetrieveArr=sampleAuditFieldToRetrieve.split("\\|");
+                    sampleAuditFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAuditFieldToRetrieveArr, 
                         new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_TRANSACTION_ID.getName(), 
-                             TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_USER_ROLE.getName()});
-                sampleAuditFieldToRetrieve = LPArray.convertArrayToString(sampleAuditFieldToRetrieveArr, ", ", "");
+                            TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_USER_ROLE.getName()});
+                    sampleAuditFieldToRetrieve = LPArray.convertArrayToString(sampleAuditFieldToRetrieveArr, ", ", "");
+                }
             }
             if (sampleAuditResultFieldToSort==null){sampleAuditResultFieldToSort=TblsDataAudit.Sample.FLD_AUDIT_ID.getName();}                                    
         try {
@@ -994,12 +995,17 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                     +"( "+sqlSelect+" "+sarFieldToRetrieve+" from "+schemaData+".sample_analysis_result sar where sar.test_id=sa.test_id "
                     +sqlOrderBy+sarFieldToSort+"     ) sarQry    ) as sample_analysis_result "
                     +sqlFrom+schemaData+".sample_analysis sa where sa.sample_id=s.sample_id "
-                    +sqlOrderBy+sampleAnalysisFieldToSort+"      ) saQry    ) as sample_analysis,"
-                    + "( "+sqlSelect+" COALESCE(array_to_json(array_agg(row_to_json(sauditQry))),'[]') from  "
+                    +sqlOrderBy+sampleAnalysisFieldToSort+"      ) saQry    ) as sample_analysis "
+                    + "<audit>"
+                    +sqlFrom+schemaData+".sample s where s.sample_id in ("+ "?"+" ) ) sQry   ";
+            if (sampleAuditFieldToRetrieve==null)
+                qry=qry.replace("<audit>", "");
+            else
+                qry=qry.replace("<audit>", 
+                    ", ( "+sqlSelect+" COALESCE(array_to_json(array_agg(row_to_json(sauditQry))),'[]') from  "
                     +"( "+sqlSelect+" "+sampleAuditFieldToRetrieve
                     +sqlFrom+schemaDataAudit+".sample saudit where saudit.sample_id=s.sample_id "
-                    +sqlOrderBy+sampleAuditResultFieldToSort+"      ) sauditQry    ) as sample_audit "
-                    +sqlFrom+schemaData+".sample s where s.sample_id in ("+ "?"+" ) ) sQry   ";
+                    +sqlOrderBy+sampleAuditResultFieldToSort+"      ) sauditQry    ) as sample_audit ");
             
             CachedRowSet prepRdQuery = Rdbms.prepRdQuery(qry, new Object[]{sampleId});
             prepRdQuery.last();
