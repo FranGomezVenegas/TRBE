@@ -559,8 +559,11 @@ GlobalAPIsParams.
                     programInfo=getTableData(procReqInstance, GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.ProductionLot.TBL.getName(), 
                         argValues[0].toString(), TblsEnvMonitData.ProductionLot.getAllFieldNames(), 
                         whereFldName, whereFldValue, prodLotFldToSort);        
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())) return;
                     jArr=new JSONArray();   
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())){
+                        LPFrontEnd.servletReturnSuccess(request, response, jArr);                    
+                        return;
+                    }
                     for (Object[] curProgram: programInfo){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(prodLotFldToRetrieve, curProgram);
                         jArr.add(jObj);
