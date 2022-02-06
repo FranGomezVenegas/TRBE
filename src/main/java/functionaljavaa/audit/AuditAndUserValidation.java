@@ -22,6 +22,8 @@ import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
+import trazit.session.ResponseMessages;
 
     
 
@@ -164,6 +166,8 @@ public class AuditAndUserValidation {
         
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+            ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+            messages.addMainForError(LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()});
             this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()});                             
             return;
         }
