@@ -666,7 +666,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             diagnoses[0][2]= "Code Line " + elements[1].getLineNumber();
             diagnoses[0][3]="FALSE";
             diagnoses[0][4]="ERROR:Missing Mandatory Fields";
-            diagnoses[0][5]="Mandatory fields not found: "+mandatoryFieldsMissing;
+            diagnoses[0][5]="MissingMandatoryFields"; //"Mandatory fields not found: "+mandatoryFieldsMissing;
             return diagnoses;
         }        
         for (Integer i=0;i<fieldNames.length;i++){
