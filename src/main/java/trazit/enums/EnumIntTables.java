@@ -11,5 +11,12 @@ package trazit.enums;
  */
 public interface EnumIntTables {
     String getRepositoryName(); 
+    Boolean getIsProcedureInstance();
     String getTableName();   
+    EnumIntTableFields[] getTableFields();
+    String getSeqName();   
+    String[] getPrimaryKey();  
+    ForeignkeyFld getForeignKey();
+    String getTableComment();
+    FldBusinessRules[] getTblBusinessRules();
 }
