@@ -127,11 +127,20 @@ public class SampleAudit {
  */    
     public Object[] sampleAuditAdd(String action, String tableName, Integer tableId, 
                         Integer sampleId, Integer testId, Integer resultId, String[] fldNames, Object[] fldValues) {
+        return sampleAuditAdd(action, tableName, tableId, 
+            sampleId, testId, resultId, fldNames, fldValues, null, null);
+    }
+    public Object[] sampleAuditAdd(String action, String tableName, Integer tableId, 
+                        Integer sampleId, Integer testId, Integer resultId, String[] fldNames, Object[] fldValues, String alternativeAuditEntry, String alternativeAuditClass) {
         String fileName="dataSampleAuditEvents";
         if (testId!=null)
             fileName="dataSampleAnalysisAuditEvents";
         if (resultId!=null)
             fileName="dataSampleAnalysisResultAuditEvents";
+        if (alternativeAuditClass!=null){
+            fileName=alternativeAuditClass;
+            action=alternativeAuditEntry;
+        }
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
@@ -333,7 +342,7 @@ public class SampleAudit {
             DataSampleStages smpStages = new DataSampleStages();
             if (!smpStages.isSampleStagesEnable())return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.STAGESDETECTED_BUT_SAMPLESTAGES_NOT_ENABLED.getErrorCode(), 
                 new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
-            Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+            Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
             String sampleCurrentStage=sampleInfo[0][0].toString();

@@ -42,7 +42,7 @@ public class ProcedureSampleStages {
             return sampleStageTimingCaptureInfo;
         String stageStartDateStr=sampleStageTimingCaptureInfo[sampleStageTimingCaptureInfo.length-1][0].toString();        
         LocalDateTime stageStartDate=LPDate.stringFormatToLocalDateTime(stageStartDateStr);
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()},    
             new Object[]{sampleId},
             new String[]{TblsData.Sample.FLD_CONFIG_CODE.getName(), TblsData.Sample.FLD_CONFIG_CODE_VERSION.getName()});

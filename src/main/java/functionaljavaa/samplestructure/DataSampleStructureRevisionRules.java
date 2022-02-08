@@ -123,7 +123,7 @@ public class DataSampleStructureRevisionRules {
         }
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyTestingGroupReviewerIsEnable[0].toString())){
             String[] fieldsToRetrieve=new String[]{TblsData.SampleRevisionTestingGroup.FLD_REVISION_BY.getName()};
-            Object[][] testingGroupInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleRevisionTestingGroup.TBL.getName(),
+            Object[][] testingGroupInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(),
                 new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToRetrieve);
             Object[] testingGroupInfo1D=LPArray.getColumnFromArray2D(testingGroupInfo, 0);
             if (LPArray.valueInArray(testingGroupInfo1D, token.getPersonName()))
@@ -154,7 +154,7 @@ public class DataSampleStructureRevisionRules {
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureRevisionRls.TESTING_GROUP_REVIEWER_CANBE_TEST_REVIEWER.getTagName()+"NotEnabled", null);
         String[] whereFieldName= new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()};
         Object[] whereFieldValue=new Object[]{sampleId, testingGroup};
-        Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysis.TBL.getName(), 
+        Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                 new String[]{TblsData.SampleAnalysis.FLD_REVIEWER.getName()}, whereFieldName, whereFieldValue, null);
         if ( (LPArray.valueInArray(LPArray.getColumnFromArray2D(grouper, 0), tokenUserName)) ||
              (LPArray.valueInArray(LPArray.getColumnFromArray2D(grouper, 0), tokenPersonName)) )   

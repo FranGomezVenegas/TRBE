@@ -143,7 +143,7 @@ public class DataSampleIncubation {
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
         
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                 sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
             diagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_ENDED_SUCCESS.getErrorCode(), 
@@ -154,7 +154,7 @@ public class DataSampleIncubation {
                 sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_1_ENDED.toString();
             else
                 sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_2_ENDED.toString();            
-            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(sampleAuditEvName, TblsData.Sample.TBL.getName(), 
+            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(sampleAuditEvName, TblsData.TablesData.SAMPLE.getTableName(), 
                     sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
             return new Object[]{diagnoses, sampleAuditAdd};
         }
@@ -182,7 +182,7 @@ public class DataSampleIncubation {
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_STARTED_SUCCESS.getErrorCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});           
@@ -192,7 +192,7 @@ public class DataSampleIncubation {
                 sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_1_STARTED.toString();
             else
                 sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_2_STARTED.toString();            
-            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(sampleAuditEvName, TblsData.Sample.TBL.getName(), 
+            Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(sampleAuditEvName, TblsData.TablesData.SAMPLE.getTableName(), 
                 sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
             return new Object[]{diagnoses, sampleAuditAdd};            
         }

@@ -81,6 +81,7 @@ public class ClassSampleQueries {
                     Integer posicRawValueFld=resultFieldToRetrieveArr.length;
                     resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
                     Integer posicLimitIdFld=resultFieldToRetrieveArr.length;
+                    
                     Object[][] analysisResultList = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
                             sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
                             //new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()},new Object[]{sampleId}, 
@@ -96,9 +97,9 @@ public class ClassSampleQueries {
                         for (Object curObj: objectsIds){
                             String[] curObjDet=curObj.toString().split("-");
                             if (TblsData.SampleAnalysisResult.FLD_TEST_ID.getName().equalsIgnoreCase(curObjDet[0]))
-                                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.SampleAnalysis.TBL.getName(), TblsData.SampleAnalysis.TBL.getName(), curObjDet[1]);
+                                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), curObjDet[1]);
                             if (TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName().equalsIgnoreCase(curObjDet[0]))
-                                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), curObjDet[1]);
+                                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), curObjDet[1]);
                         }
                       JSONArray jArr=new JSONArray();
                       for (Object[] curRow: analysisResultList){

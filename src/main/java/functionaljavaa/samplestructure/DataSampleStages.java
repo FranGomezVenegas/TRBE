@@ -207,7 +207,7 @@ public enum SampleStageErrorTrapping{
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
-        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) return sampleInfo;
@@ -221,11 +221,11 @@ public enum SampleStageErrorTrapping{
             String[] sampleFieldName=new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_PREVIOUS_STAGE.getName()};
             Object[] sampleFieldValue=new Object[]{moveDiagn[moveDiagn.length-1], sampleCurrStage};
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
-                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                     sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
                 dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLESTAGE_MOVETONEXT.toString(), TblsData.Sample.TBL.getName(), 
+                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLESTAGE_MOVETONEXT.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
                     sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);        
             }
             if ("END".equalsIgnoreCase(sampleCurrStage)){

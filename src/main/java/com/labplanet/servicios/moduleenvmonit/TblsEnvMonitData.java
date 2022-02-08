@@ -17,6 +17,8 @@ import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
 import databases.TblsData;
+import databases.TblsData.TablesData;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -33,13 +35,13 @@ public class TblsEnvMonitData {
             //case "PROGRAM_CALENDAR_DATE": return ProgramCalendarDate.createTableScript(schemaNamePrefix, fields);
             //case "PROGRAM_DAY": return ProgramDay.createTableScript(schemaNamePrefix, fields);
             //case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_ANALYSIS": return TblsData.SampleAnalysis.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE": return createTableScript(TablesData.SAMPLE, schemaNamePrefix);
+            case "SAMPLE_ANALYSIS": return createTableScript(TablesData.SAMPLE_ANALYSIS, schemaNamePrefix);
             case "SAVED_QUERIES": return TblsData.SavedQueries.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_MICROORGANISM": return SampleMicroorganism.createTableScript(schemaNamePrefix, fields);
             case "PR_SCHEDULED_LOCATIONS_VIEW": return ViewProgramScheduledLocations.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_MICROORGANISM_LIST_VW": return ViewSampleMicroorganismList.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_REVISION_TESTING_GROUP": return TblsData.SampleRevisionTestingGroup.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_REVISION_TESTING_GROUP": return createTableScript(TablesData.SAMPLE_REVISION_TESTING_GROUP, schemaNamePrefix);
             case "USER_ANALYSIS_METHOD_CERTIF": return TblsData.CertifUserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_TESTING_GROUP_VIEW": return TblsData.ViewSampleTestingGroup.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW": return TblsData.ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, fields);
@@ -514,7 +516,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)")
+        FLD_SAMPLE_ID(TblsData.Sample.FLD_SAMPLE_ID.getName(), "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)")
         ,        
         TBL("sample", LPDatabase.createSequence(FLD_SAMPLE_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"
@@ -893,7 +895,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.integer())
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), LPDatabase.integer())
         //, FLD_TEST_ID("test_id", LPDatabase.Integer())
         //, FLD_RESULT_ID("result_id", LPDatabase.Integer())    
         ,
@@ -1110,7 +1112,7 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
                    "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
                    "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;")
        ,
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, ""),
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), ""),
         FLD_SAMPLE_TEMPLATE("sample_config_code", ""),
         FLD_STATUS("status", ""),
         FLD_CURRENT_STAGE("current_stage", ""),

@@ -52,40 +52,40 @@ public class SampleAPIParams extends HttpServlet {
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build() ),
         UNREVIEWRESULT("UNREVIEWRESULT", "unreviewResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build() ),
         CANCELSAMPLE("CANCELSAMPLE", "cancelSample_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         UNCANCELSAMPLE("UNCANCELSAMPLE", "uncancelSample_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         CANCELTEST("CANCELTEST", "cancelTest_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysis.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS.getTableName()).build()).build() ),
         UNREVIEWTEST("UNREVIEWTEST", "unreviewTest_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysis.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS.getTableName()).build()).build() ),
         UNCANCELTEST("UNCANCELTEST", "uncancelTest_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysis.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS.getTableName()).build()).build() ),
         CANCELRESULT("CANCELRESULT", "cancelResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build() ),
         UNCANCELRESULT("UNCANCELRESULT", "uncancelResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build() ),
         COC_ABORTCHANGE("COC_ABORTCHANGE", "cocAbortChange_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CANCEL_CHANGE_COMMENT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, null),
@@ -120,108 +120,108 @@ public class SampleAPIParams extends HttpServlet {
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 12)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         RECEIVESAMPLE("RECEIVESAMPLE", "sampleReceived_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),                
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),                
         SETSAMPLINGDATE("SETSAMPLINGDATE", "setSamplingDate_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),                
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),                
         CHANGESAMPLINGDATE("CHANGESAMPLINGDATE", "changedSamplingDate_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_DATETIME, LPAPIArguments.ArgumentType.DATETIME.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         SETSAMPLINGDATEEND("SETSAMPLINGDATEEND", "setSamplingDateEnd_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),                
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),                
         CHANGESAMPLINGDATEEND("CHANGESAMPLINGDATEEND", "changeSamplingDate_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_DATETIME, LPAPIArguments.ArgumentType.DATETIME.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         SAMPLINGCOMMENTADD("SAMPLINGCOMMENTADD", "samplingCommentAdd_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_COMMENT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         SAMPLINGCOMMENTREMOVE("SAMPLINGCOMMENTREMOVE", "samplingCommentRemove_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         INCUBATIONSTART("INCUBATIONSTART", "incubationStart_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),                
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),                
         INCUBATIONEND("INCUBATIONEND", "incubationEnd_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         INCUBATION2START("INCUBATION2START", "incubation2Start_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         INCUBATION2END("INCUBATION2END", "incubation2End_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         SAMPLEANALYSISADD("SAMPLEANALYSISADD", "sampleAnalysisAdd_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         TESTASSIGNMENT("TESTASSIGNMENT", "testAssignment_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_ANALYST, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         ENTERRESULT("ENTERRESULT", "enterResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()),
         REENTERRESULT("REENTERRESULT", "reEnterResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()),
         ENTERRESULT_BY_ANALYSIS_NAME("ENTERRESULT_BY_ANALYSIS_NAME", "enterResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ANALYSIS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         ENTERRESULT_LOD("ENTERRESULT_LOD", "enterResultLOD_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build() ),
         RESULT_CHANGE_UOM("RESULT_CHANGE_UOM", "resultChangeUOM_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_NEW_UOM, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         REVIEWSAMPLE("REVIEWSAMPLE", "reviewSample_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build() ),
         REVIEWTEST("REVIEWTEST", "reviewTest_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysis.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS.getTableName()).build()).build() ),
         REVIEWTEST_BY_SAMPLE_ID_AND_ANALYSIS_NAME("REVIEWTEST_BY_SAMPLE_ID_AND_ANALYSIS_NAME", "reviewTestBySampleIdAndAnalysisName_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ANALYSIS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysis.TBL.getName()).build()).build() ),
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS.getTableName()).build()).build() ),
         ;      
         private SampleAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;

@@ -58,50 +58,66 @@ public class EnvMonSampleAPI extends HttpServlet {
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 12)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build()
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
         ),
         ENTERRESULT("ENTERRESULT", "enterResult_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
         ),
         REENTERRESULT("REENTERRESULT", "reEnterResult_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
+        ),        
+        PLATE_READING_ENTERED("PLATE_READING_ENTERED", "enterResult_success",   
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
+                .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
         ),
-/*        PLATE_READING_NUMBER("PLATE_READING_NUMBER", "plateReadingNumber_success",   
+        PLATE_READING_REENTERED("PLATE_READING_REENTERED", "reEnterResult_success",   
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
+                .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
+        ),
+        /*        PLATE_READING_NUMBER("PLATE_READING_NUMBER", "plateReadingNumber_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.SampleAnalysisResult.TBL.getName()).build()).build()
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
         ),
 */        
         ADD_SAMPLE_MICROORGANISM("ADD_SAMPLE_MICROORGANISM", "MigroorganismAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build()
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
         ),
         ADD_ADHOC_SAMPLE_MICROORGANISM("ADD_ADHOC_SAMPLE_MICROORGANISM", "MigroorganismAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build()
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
         ),
         REMOVE_SAMPLE_MICROORGANISM("REMOVE_SAMPLE_MICROORGANISM", "MigroorganismRemoved_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build()).build()
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
         ),
         EM_BATCH_INCUB_ADD_SMP("EM_BATCH_INCUB_ADD_SMP", "batchIncubator_sampleAdded_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -112,7 +128,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_COL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_OVERRIDE, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsEnvMonitData.IncubBatch.TBL.getName()).build()).build()
         ),
@@ -125,7 +141,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_COL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_OVERRIDE, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsEnvMonitData.IncubBatch.TBL.getName()).build()).build()
         ),
@@ -135,7 +151,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.Sample.TBL.getName()).build())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsEnvMonitData.IncubBatch.TBL.getName()).build()).build()
         )

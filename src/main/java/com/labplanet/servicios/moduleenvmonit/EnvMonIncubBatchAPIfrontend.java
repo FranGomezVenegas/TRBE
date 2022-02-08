@@ -137,7 +137,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 else
                     whereFieldsValueArr=new Object[]{true};
                 for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
-                    if (LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.Sample.TBL.getName(), whereFieldsNameArr[iFields])){                
+                    if (LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields])){                
                         HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
                         whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                         if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){

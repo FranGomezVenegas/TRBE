@@ -127,7 +127,7 @@ public class DataProgramCorrectiveAction {
           posicInArray=LPArray.valuePosicInArray(sampleFieldNames, TblsProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName());
           if (posicInArray==-1) return new Object[]{LPPlatform.LAB_FALSE};
           sampleId=Integer.valueOf(LPNulls.replaceNull(sampleFieldValues[posicInArray].toString()));
-          Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+          Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                   new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                   new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()});
           if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){return LPArray.array2dTo1d(sampleInfo);}
@@ -140,7 +140,7 @@ public class DataProgramCorrectiveAction {
           myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName());
           myFldValue=LPArray.addValueToArray1D(myFldValue, resultId);
         }
-        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFldsToGet);
         for (int iFld=0;iFld<sampleFldsToGet.length;iFld++){
           String currFld=sampleFldsToGet[iFld];
@@ -150,7 +150,7 @@ public class DataProgramCorrectiveAction {
             myFldValue=LPArray.addValueToArray1D(myFldValue, sampleInfo[0][iFld]);      
           }else{myFldValue[posicInArray]=sampleInfo[0][iFld];}      
         }
-        Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), 
+        Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                 new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, sampleAnalysisResultToGet);
         for (int iFld=0;iFld<sampleAnalysisResultToGet.length;iFld++){
           String currFld=sampleAnalysisResultToGet[iFld];
@@ -228,9 +228,9 @@ public class DataProgramCorrectiveAction {
         String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
         String objectIdClass=null;
         String fieldToFindRecord=null;
-        if (TblsData.Sample.TBL.getName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName();
-        if (TblsData.SampleAnalysis.TBL.getName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.FLD_TEST_ID.getName();
-        if (TblsData.SampleAnalysisResult.TBL.getName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName();
+        if (TblsData.TablesData.SAMPLE.getTableName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName();
+        if (TblsData.TablesData.SAMPLE_ANALYSIS.getTableName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.FLD_TEST_ID.getName();
+        if (TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName();
         if (fieldToFindRecord==null)
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Object Type <*1*> not recognized", new Object[]{objectType});
         else

@@ -73,13 +73,13 @@ public class ClassEnvMonQueries {
                             whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
                             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, resultId);
                         }
-                        Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.SampleAnalysisResult.TBL.getName(), 
+                        Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                                 whereFieldNames, whereFieldValues, 
                                 new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) actionDiagnoses=resultInfo[0];
                         else{
                             for (Object[] curResult: resultInfo){
-                                rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsData.SampleAnalysisResult.TBL.getName(), TblsData.SampleAnalysisResult.TBL.getName(), curResult[0]); 
+                                rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), curResult[0]); 
                             }
                             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         }

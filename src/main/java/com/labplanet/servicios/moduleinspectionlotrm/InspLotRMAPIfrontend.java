@@ -142,7 +142,7 @@ public class InspLotRMAPIfrontend extends HttpServlet {
                 if (LPArray.valueInArray(fieldsToRetrieve, TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName())){
                     String currMaterial=currLot[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName())].toString();
                     if (includesSamplesInfo && currMaterial!=null && currMaterial.length()>0)
-                        jObj.put(TblsData.Sample.TBL.getName(), dataSampleStructure(lotName, null, null, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()}, true, true));
+                        jObj.put(TblsData.TablesData.SAMPLE.getTableName(), dataSampleStructure(lotName, null, null, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()}, true, true));
                     if (includesMaterialInfo && currMaterial!=null && currMaterial.length()>0)
                         jObj.put(TblsInspLotRMConfig.Material.TBL.getName(), configMaterialStructure(currMaterial, null, new String[]{TblsInspLotRMConfig.Material.FLD_NAME.getName()}, true, true, true));
                 }

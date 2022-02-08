@@ -11,6 +11,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
 import static trazit.queries.QueryUtilities.getTableData;
@@ -109,7 +110,7 @@ public final class InspLotQueries {
         for (Object[] currRec: materialInfo){
             sampleId=Integer.valueOf(currRec[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName())].toString());
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
-            if (includeAnalysis==null || includeAnalysis) jObj.put(TblsData.SampleAnalysis.TBL.getName(), dataSampleAnalysisStructure(sampleId, null, new String[]{}, includeAnalysisResults));
+            if (includeAnalysis==null || includeAnalysis) jObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), dataSampleAnalysisStructure(sampleId, null, new String[]{}, includeAnalysisResults));
             jArr.add(jObj);
         }
         return jArr;
@@ -118,15 +119,15 @@ public final class InspLotQueries {
             Boolean includeAnalysisResults){
         String[] whereFldName=new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()};
         Object[] whereFldValue=new Object[]{sampleId};
-        Object[][] materialInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.SampleAnalysis.TBL.getName(), 
-                    filterFieldsToRetrieve, TblsData.SampleAnalysis.getAllFieldNames(), whereFldName, whereFldValue, orderBy);        
+        Object[][] materialInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
+                    filterFieldsToRetrieve, getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS.getTableFields()), whereFldName, whereFldValue, orderBy);        
         JSONArray jArr = new JSONArray();
-        String[] fieldsToRetrieve=getFieldsListToRetrieve(filterFieldsToRetrieve, TblsData.SampleAnalysis.getAllFieldNames());
+        String[] fieldsToRetrieve=getFieldsListToRetrieve(filterFieldsToRetrieve, getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return jArr;
         for (Object[] currRec: materialInfo){
             Integer testId=Integer.valueOf(currRec[LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.SampleAnalysis.FLD_TEST_ID.getName())].toString());
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
-            if (includeAnalysisResults==null || includeAnalysisResults) jObj.put(TblsData.SampleAnalysisResult.TBL.getName(), dataSampAnaResStructure(testId, null, new String[]{}, null));            
+            if (includeAnalysisResults==null || includeAnalysisResults) jObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), dataSampAnaResStructure(testId, null, new String[]{}, null));            
             jArr.add(jObj);
         }
         return jArr;
@@ -135,10 +136,10 @@ public final class InspLotQueries {
             Boolean includeAnalysisResults){
         String[] whereFldName=new String[]{TblsData.SampleAnalysisResult.FLD_TEST_ID.getName()};
         Object[] whereFldValue=new Object[]{testId};
-        Object[][] materialInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.SampleAnalysisResult.TBL.getName(), 
-                    filterFieldsToRetrieve, TblsData.SampleAnalysisResult.getAllFieldNames(), whereFldName, whereFldValue, orderBy);        
+        Object[][] materialInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                    filterFieldsToRetrieve, getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableFields()), whereFldName, whereFldValue, orderBy);        
         JSONArray jArr = new JSONArray();
-        String[] fieldsToRetrieve=getFieldsListToRetrieve(filterFieldsToRetrieve, TblsData.SampleAnalysisResult.getAllFieldNames());
+        String[] fieldsToRetrieve=getFieldsListToRetrieve(filterFieldsToRetrieve, getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return jArr;
         for (Object[] currRec: materialInfo){
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
