@@ -376,7 +376,10 @@ public class SqlStatement {
         }        
         return separator;
     }
-    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, EnumIntTableFields[] whereFields, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
+    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, 
+            
+            EnumIntTableFields[] whereFields, Object[] whereFieldValues, 
+            EnumIntTableFields[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
         String queryWhere = "";
@@ -426,7 +429,7 @@ public class SqlStatement {
         StringBuilder queryWhere = new StringBuilder(0);
         Object[] whereFieldValuesNew = new Object[0];
         for (int iwhereFieldNames=0; iwhereFieldNames<whereFields.length; iwhereFieldNames++){
-            String fn = whereFields[iwhereFieldNames].getFieldName();
+            String fn = whereFields[iwhereFieldNames].getName();
             if (fn==null || fn.length()==0) break;
             if (iwhereFieldNames > 0) {
                 if (!fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))
@@ -489,23 +492,24 @@ public class SqlStatement {
         if (fieldsToRetrieve != null) {
             String fn="";
             for (EnumIntTableFields curFld : fieldsToRetrieve) {
-                fn=curFld.getFieldName();
-                if (curFld.getFieldMask()!=null)
-                    fn=curFld.getFieldMask();
+                fn=curFld.getName();
                 if (curFld.getReferenceTable()!=null){ 
                     if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
                        && "person".equalsIgnoreCase(curFld.getReferenceTable().getTableName())
                        && "person_id".equalsIgnoreCase(curFld.getReferenceTable().getFieldName()))
-                    fn="(select first_name||' '||last_name||' '||birth_date from config.person where person_id="+curFld.getFieldName()+")";
+                    fn="(select first_name||' '||last_name||' '||birth_date from config.person where person_id="+curFld.getName()+")";
                 }
-            else{
+                if (curFld.getFieldMask()!=null)
+                    fn=curFld.getFieldMask(); 
+                else{
+                    
                     if ("DATE".equalsIgnoreCase(curFld.getFieldType()))
                         fn="to_char("+fn+",'DD/MM/YY')";                
-                    if ("DATETIME".equalsIgnoreCase(curFld.getFieldType()))
+                    else if ("DATETIME".equalsIgnoreCase(curFld.getFieldType()))
                         fn="to_char("+fn+",'DD.MM.YY HH:MI')";                
-                    if (curFld.getFieldType().toString().toLowerCase().contains("timestamp"))
+                    else if (curFld.getFieldType().toString().toLowerCase().contains("timestamp"))
                         fn="to_char("+fn+",'DD.MM.YY HH:MI')";                
-                    if (fn.toUpperCase().contains(" IN")) {
+                    else if (fn.toUpperCase().contains(" IN")) {
                         Integer posicINClause = fn.toUpperCase().indexOf("IN");
                         fn = fn.substring(0, posicINClause - 1);
                         fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
