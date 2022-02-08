@@ -16,7 +16,10 @@ import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.FldBusinessRules;
+import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -24,17 +27,14 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class TblsData {
-    private static final java.lang.String FIELDS_NAMES_LIGHT = "light";
-    public static final String FIELDS_NAMES_USER_ID="user_id";
-    public static final String FIELDS_NAMES_USER_NAME="user_name";
 
     public static final String getTableCreationScriptFromDataTable(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
-            case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_ALIQ": return SampleAliq.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_ALIQ_SUB": return SampleAliqSub.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_ANALYSIS": return SampleAnalysis.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_ANALYSIS_RESULT": return SampleAnalysisResult.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE": return createTableScript(TablesData.SAMPLE, schemaNamePrefix);
+            case "SAMPLE_ALIQ": return createTableScript(TablesData.SAMPLE_ALIQ, schemaNamePrefix);
+            case "SAMPLE_ALIQ_SUB": return createTableScript(TablesData.SAMPLE_ALIQ_SUB, schemaNamePrefix);
+            case "SAMPLE_ANALYSIS": return createTableScript(TablesData.SAMPLE_ANALYSIS, schemaNamePrefix);
+            case "SAMPLE_ANALYSIS_RESULT": return createTableScript(TablesData.SAMPLE_ANALYSIS_RESULT, schemaNamePrefix);
             case "SAMPLE_COC": return SampleCoc.createTableScript(schemaNamePrefix, fields);
             case "CERTIF_USER_ANALYSIS_METHOD": return CertifUserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
             case "USER_ANALYSIS_METHOD": return UserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
@@ -45,6 +45,9 @@ public class TblsData {
             default: return "TABLE "+tableName+" NOT IN TBLDATA "+LPPlatform.LAB_FALSE;
         }        
     }
+    private static final java.lang.String FIELDS_NAMES_LIGHT = "light";
+    public static final String FIELDS_NAMES_USER_ID="user_id";
+    public static final String FIELDS_NAMES_USER_NAME="user_name";
     public static final java.lang.String FIELDS_NAMES_STATUS_PREVIOUS = "status_previous";
     public static final java.lang.String FIELDS_NAMES_STATUS = "status";
     public static final java.lang.String FIELDS_NAMES_SPEC_EVAL = "spec_eval";
@@ -52,1145 +55,16 @@ public class TblsData {
     private static final java.lang.String FIELDS_NAMES_CUSTODIAN = "custodian";
     private static final java.lang.String FIELDS_NAMES_COC_CONFIRMED_ON = "coc_confirmed_on";
     
-    /**
-     *
-     */
-    public enum Sample{
-
-        /**
-         *
-         */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)")
-        ,        
-        TBL("sample", LPDatabase.createSequence(FLD_SAMPLE_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SAMPLE_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-        FLD_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_LOGGED_ON("logged_on", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_LOGGED_BY("logged_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_RECEIVED_ON("received_on", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_RECEIVED_BY("received_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_ALIQUOTED("aliquoted", LPDatabase.booleanFld(false))
-        ,
-
-        /**
-         *
-         */
-        FLD_ALIQUOT_STATUS("aliq_status", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_SAMPLING_DATE("sampling_date", LPDatabase.dateTime()),
-        FLD_REQS_TRACKING_SAMPLING_END("requires_tracking_sampling_end", LPDatabase.booleanFld()),        
-        FLD_SAMPLING_DATE_END("sampling_date_end", LPDatabase.dateTime()),
-        FLD_SAMPLER("sampler",LPDatabase.string()),
-        FLD_SAMPLE_ID_RELATED("sample_id_related",LPDatabase.integer()),        
-
-        /**
-         *
-         */
-        FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_BATCH("incubation_batch", LPDatabase.string()),
-        FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_START("incubation_start", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_START_TEMPERATURE("incubation_start_temperature", LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_START_TEMP_EVENT_ID("incubation_start_temp_event_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_END("incubation_end", LPDatabase.dateTime())
-        ,        
-
-        /**
-         *
-         */
-        FLD_INCUBATION_END_TEMPERATURE("incubation_end_temperature", LPDatabase.real())        
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION_END_TEMP_EVENT_ID("incubation_end_temp_event_id", LPDatabase.integer())
-        ,        
-
-        /**
-         *
-         */
-        FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.booleanFld(false))        
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_BATCH("incubation2_batch", LPDatabase.string()),
-        FLD_INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_START("incubation2_start", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_START_TEMPERATURE("incubation2_start_temperature", LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_START_TEMP_EVENT_ID("incubation2_start_temp_event_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_END("incubation2_end", LPDatabase.dateTime())
-        ,        
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_END_TEMPERATURE("incubation2_end_temperature", LPDatabase.real())        
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_END_TEMP_EVENT_ID("incubation2_end_temp_event_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_INCUBATION2_PASSED("incubation2_passed", LPDatabase.booleanFld())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_CODE("spec_code", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_VARIATION_NAME("spec_variation_name", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_ANALYSIS_VARIATION("spec_analysis_variation", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL,  LPDatabase.stringNotNull(2))
-        ,
-
-        /**
-         *
-         */
-        FLD_CUSTODIAN(FIELDS_NAMES_CUSTODIAN,  LPDatabase.stringNotNull(2))
-        ,
-
-        /**
-         *
-         */
-        FLD_CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE,  LPDatabase.stringNotNull(2))
-        ,
-
-        /**
-         *
-         */
-        FLD_COC_REQUESTED_ON("coc_requested_on", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_COC_CONFIRMED_ON(FIELDS_NAMES_COC_CONFIRMED_ON, LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_CURRENT_STAGE("current_stage", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.string()),
-        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),        
-        FLD_REVIEWED("reviewed", LPDatabase.booleanFld()), 
-        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string()), 
-        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime())        
-        ;
-        private Sample(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Sample.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (Sample obj: Sample.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        } 
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (Sample obj: Sample.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }            
-        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }            
-
-    public enum SampleRevisionTestingGroup{
-
-        /**
-         *
-         */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.integer()),
-        FLD_TESTING_GROUP("testing_group", LPDatabase.string()),                
-        TBL("sample_revision_testing_group",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_SAMPLE_ID, #FLD_TESTING_GROUP) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,        
-        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld())
-        ,
-        FLD_REVIEWED("reviewed", LPDatabase.booleanFld())
-        ,
-        FLD_REVISION_ON("revision_on", LPDatabase.dateTime())
-        ,
-        FLD_REVISION_BY("revision_by", LPDatabase.string())
-        ;
-        private SampleRevisionTestingGroup(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = SampleRevisionTestingGroup.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (SampleRevisionTestingGroup obj: SampleRevisionTestingGroup.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        } 
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (SampleRevisionTestingGroup obj: SampleRevisionTestingGroup.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }            
-        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }            
-
-
-    /**
-     *
-     */
-    public enum SampleAnalysis{
-
-        /**
-         *
-         */
-        FLD_TEST_ID(FIELDS_NAMES_TEST_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_test_id_seq'::regclass)")
-        ,        
-        TBL("sample_analysis", LPDatabase.createSequence(FLD_TEST_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_TEST_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_TEST_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ANALYSIS(FIELDS_NAMES_ANALYSIS, LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_REPLICA(FIELDS_NAMES_REPLICA, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_ADDED_ON("added_on", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_ADDED_BY("added_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL,  LPDatabase.string(2))
-        ,
-
-        /**
-         *
-         */
-        FLD_REVIEWER("reviewer", LPDatabase.string())
-        ,        
-
-        /**
-         *
-         */
-        FLD_REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime())        
-        ,        
-
-        /**
-         *
-         */
-        FLD_REVIEWER_ASSIGNED_BY("reviewer_assigned_by", LPDatabase.string())        
-        ,
-
-        /**
-         *
-         */
-        FLD_ANALYST("analyst", LPDatabase.string())
-        ,        
-
-        /**
-         *
-         */
-        FLD_ANALYST_ASSIGNED_ON("analyst_assigned_on", LPDatabase.dateTime())        
-        ,        
-
-        /**
-         *
-         */
-        FLD_ANALYST_ASSIGNED_BY("analyst_assigned_by", LPDatabase.string())        
-        ,
-
-        /**
-         *
-         */
-        FLD_ANALYST_CERTIFICATION_MODE("analyst_certification_mode", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer())
-        ,
-        FLD_TESTING_GROUP("testing_group",  LPDatabase.string()),
-        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),                
-        /**
-         *
-         */
-        FLD_SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer()),
-        FLD_REVIEWED("reviewed", LPDatabase.booleanFld()),
-        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime()),
-        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string()),
-
-        //, FLD_UNDER_DEVIATION("under_deviation", LPDatabase.Boolean()) Desviaciones aún no implementadas
-/*     Este bloque de campos está a nivel de Sample, es posible que pueda ser interesante tb en sample_analysis   
-        , FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.Real())
-        , FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.StringNotNull())
-        , FLD_ALIQUOTED("aliquoted", LPDatabase.Boolean(false))
-        , FLD_ALIQUOT_STATUS("aliq_status", LPDatabase.StringNotNull())
-        , FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.Real())
-        , FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.StringNotNull())
-        , FLD_SAMPLING_DATE("sampling_date", LPDatabase.dateTime())
-        , FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.String())
-        , FLD_INCUBATION_START("incubation_start", LPDatabase.dateTime())
-        , FLD_INCUBATION_END("incubation_end", LPDatabase.dateTime())
-        , FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.Boolean())*/ 
-        ;
-        private SampleAnalysis(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = SampleAnalysis.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (SampleAnalysis obj: SampleAnalysis.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }     
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (SampleAnalysis obj: SampleAnalysis.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }            
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }            
-    public static final java.lang.String FIELDS_NAMES_TEST_ID = "test_id";
     public static final java.lang.String FIELDS_NAMES_ANALYSIS = "analysis";
     public static final java.lang.String FIELDS_NAMES_REPLICA = "replica";
     public static final java.lang.String FIELDS_NAMES_SUBALIQUOT_ID = "subaliquot_id";
     public static final java.lang.String FIELDS_NAMES_ALIQUOT_ID = "aliquot_id";
+    private static final java.lang.String FIELDS_NAMES_ASSIGNED_ON = "assigned_on";
+    private static final java.lang.String FIELDS_NAMES_ASSIGNED_BY = "assigned_by";
+    private static final java.lang.String FIELDS_NAMES_MANDATORY_LEVEL = "mandatory_level";
+    private static final java.lang.String FIELDS_NAMES_EXPIRATION_DATE = "expiration_date";
+    private static final java.lang.String FIELDS_NAMES_SOP_NAME = "sop_name";
 
-    /**
-     *
-     */
-    public enum SampleAnalysisResult{
-
-        /**
-         *
-         */
-        FLD_RESULT_ID("result_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_result_id_seq'::regclass)")
-        ,        
-        TBL("sample_analysis_result", LPDatabase.createSequence(FLD_RESULT_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_RESULT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_RESULT_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_TEST_ID(FIELDS_NAMES_TEST_ID, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ANALYSIS(FIELDS_NAMES_ANALYSIS, LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_REPLICA(FIELDS_NAMES_REPLICA, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_PARAM_NAME("param_name", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_PARAM_TYPE("param_type", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_MANDATORY("mandatory", LPDatabase.booleanFld(false))
-        ,
-
-        /**
-         *
-         */
-        FLD_REQUIRES_LIMIT("requires_limit", LPDatabase.booleanFld(false))
-        ,
-
-        /**
-         *
-         */
-        FLD_RAW_VALUE("raw_value", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_PRETTY_VALUE("pretty_value", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ENTERED_ON("entered_on", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_ENTERED_BY("entered_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_REENTERED("reentered", LPDatabase.booleanFld())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, LPDatabase.string(200))
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_EVAL_DETAIL("spec_eval_detail",  LPDatabase.string(200))
-        ,        
-
-        /**
-         *
-         */
-        FLD_UOM("uom", LPDatabase.string())        
-        ,        
-
-        /**
-         *
-         */
-        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string())        
-        ,
-
-        /**
-         *
-         */
-        FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_LIMIT_ID("limit_id", LPDatabase.integer()),
-        FLD_REVIEWED("reviewed", LPDatabase.booleanFld()),
-        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime()),
-        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string()),
-        FLD_MAX_DP("max_dp", LPDatabase.integer()),
-        FLD_MIN_ALLOWED("min_allowed", LPDatabase.real()),
-        FLD_MAX_ALLOWED("max_allowed", LPDatabase.real()),
-        FLD_LIST_ENTRY("list_entry", LPDatabase.string()),
-        
-        /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
-        , FLD_REVIEWER("reviewer", LPDatabase.String())
-        , FLD_REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime())        
-        , FLD_REVIEWER_ASSIGNED_BY("reviewer_assigned_by", LPDatabase.String())        
-        , FLD_ANALYST("analyst", LPDatabase.String())
-        , FLD_ANALYST_ASSIGNED_ON("analyst_assigned_on", LPDatabase.dateTime())        
-        , FLD_ANALYST_ASSIGNED_BY("analyst_assigned_by", LPDatabase.String())        
-        , FLD_ANALYST_CERTIFICATION_MODE("analyst_certification_mode", LPDatabase.String()) */
-        //, FLD_UNDER_DEVIATION("under_deviation", LPDatabase.Boolean()) Desviaciones aún no implementadas
-/*     Este bloque de campos está a nivel de Sample, es posible que pueda ser interesante tb en sample_analysis   
-        , FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.Real())
-        , FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.StringNotNull())
-        , FLD_ALIQUOTED("aliquoted", LPDatabase.Boolean(false))
-        , FLD_ALIQUOT_STATUS("aliq_status", LPDatabase.StringNotNull())
-        , FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.Real())
-        , FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.StringNotNull())
-        , FLD_SAMPLING_DATE("sampling_date", LPDatabase.dateTime())
-        , FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.String())
-        , FLD_INCUBATION_START("incubation_start", LPDatabase.dateTime())
-        , FLD_INCUBATION_END("incubation_end", LPDatabase.dateTime())
-        , FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.Boolean())*/ 
-        ;
-        private SampleAnalysisResult(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = SampleAnalysisResult.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (SampleAnalysisResult obj: SampleAnalysisResult.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }  
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (SampleAnalysisResult obj: SampleAnalysisResult.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }                    
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }            
-
-    /**
-     *
-     */
-    public enum SampleAliq{
-
-        /**
-         *
-         */
-        FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_aliquot_id_seq'::regclass)")
-        ,        
-        TBL("sample_aliq", LPDatabase.createSequence(FLD_ALIQUOT_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ALIQUOT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ALIQUOT_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_CREATED_ON("created_on", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_CREATED_BY("created_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_SUBALIQ_STATUS("subaliq_status", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.string())
-        ;
-        private SampleAliq(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = SampleAliq.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (SampleAliq obj: SampleAliq.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }  
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }        
-
-    /**
-     *
-     */
-    public enum SampleAliqSub{
-
-        /**
-         *
-         */
-        FLD_SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_subaliquot_id_seq'::regclass)")
-        ,        
-        TBL("sample_aliq_sub", LPDatabase.createSequence(FLD_SUBALIQUOT_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SUBALIQUOT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SUBALIQUOT_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_CREATED_ON("created_on", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_CREATED_BY("created_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.string())
-        ;
-        private SampleAliqSub(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = SampleAliqSub.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (SampleAliqSub obj: SampleAliqSub.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }  
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }        
-
-    /**
-     *
-     */
     public enum SampleCoc{
 
         /**
@@ -1212,7 +86,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.integer())
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), LPDatabase.integer())
         ,
 
         /**
@@ -1372,7 +246,6 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }           
-
     public enum CertifUserAnalysisMethod{
         FLD_ID("id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
         ,        
@@ -1469,7 +342,6 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }           
-
     public enum UserAnalysisMethod{
 
         /**
@@ -1621,15 +493,6 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }           
-    private static final java.lang.String FIELDS_NAMES_ASSIGNED_ON = "assigned_on";
-    private static final java.lang.String FIELDS_NAMES_ASSIGNED_BY = "assigned_by";
-    private static final java.lang.String FIELDS_NAMES_MANDATORY_LEVEL = "mandatory_level";
-    private static final java.lang.String FIELDS_NAMES_EXPIRATION_DATE = "expiration_date";
-    private static final java.lang.String FIELDS_NAMES_SOP_NAME = "sop_name";
-
-    /**
-     *
-     */
     public enum UserSop{
 
         /**
@@ -1790,10 +653,6 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }        
-
-    /**
-     *
-     */
     public enum ViewSampleCocNames{
 
         /**
@@ -1814,7 +673,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, ""),
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), ""),
 
         /**
          *
@@ -1928,10 +787,6 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }        
-    
-    /**
-     *
-     */
     public enum ViewUserAndMetaDataSopView{
 
         /**
@@ -2100,7 +955,6 @@ public class TblsData {
         private final String dbObjTypePostgres;                     
         
     }        
-
     public enum ViewUserAndAnalysisMethodCertificationView{
 
         /**
@@ -2207,10 +1061,6 @@ public class TblsData {
         private final String dbObjTypePostgres;                     
         
     }        
-    
-    /**
-     *
-     */
     public enum ViewSampleAnalysisResultWithSpecLimits{
 
         /**
@@ -2236,13 +1086,13 @@ public class TblsData {
         /**
          *
          */
-        FLD_TEST_ID(FIELDS_NAMES_TEST_ID, "sar.test_id")
+        FLD_TEST_ID(SampleAnalysis.FLD_TEST_ID.getName(), "sar.test_id")
         ,
 
         /**
          *
          */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, "sar.sample_id")
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), "sar.sample_id")
         ,
 
         /**
@@ -2607,13 +1457,7 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }        
-
-    
     public enum ViewSampleTestingGroup{
-
-        /**
-         *
-         */
         TBL("sample_testing_group_view",  LPDatabase.createView() +
                 " SELECT #FLDS from #SCHEMA_CONFIG.sample s " +
                 "   INNER JOIN #SCHEMA_CONFIG.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
@@ -2622,7 +1466,7 @@ public class TblsData {
                 "ALTER VIEW  #SCHEMA_CONFIG.#TBL  OWNER TO #OWNER;")
         ,
 
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, "s.sample_id")        ,
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), "s.sample_id")        ,
         FLD_SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.FLD_CONFIG_CODE.getName()),
         FLD_SAMPLE_STATUS("sample_status", "s.status"),
         FLD_CURRENT_STAGE("current_stage", "s.current_stage"),
@@ -2702,149 +1546,424 @@ public class TblsData {
         }             
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
-    }        
+    } 
+    
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
+
     public enum TablesData implements EnumIntTables{
-        SAMPLE("sample", "data", new EnumIntTableFields[]{})
+        SAMPLE(null, "sample", SCHEMA_NAME, true, Sample.values(), Sample.FLD_SAMPLE_ID.getName(),
+            new String[]{Sample.FLD_SAMPLE_ID.getName()}, null, "sample table"),
+        SAMPLE_ANALYSIS(null, "sample_analysis", SCHEMA_NAME, true, SampleAnalysis.values(), Sample.FLD_SAMPLE_ID.getName(),
+            new String[]{SampleAnalysis.FLD_TEST_ID.getName()}, 
+            new ForeignkeyFld(SampleAnalysis.FLD_SAMPLE_ID.getName(), SCHEMA_NAME, SAMPLE.getTableName(), Sample.FLD_SAMPLE_ID.getName()), "sample analysis table"),
+        SAMPLE_ANALYSIS_RESULT(null, "sample_analysis_result", SCHEMA_NAME, true, SampleAnalysisResult.values(), Sample.FLD_SAMPLE_ID.getName(),
+            new String[]{SampleAnalysisResult.FLD_RESULT_ID.getName()}, 
+            new ForeignkeyFld(SampleAnalysisResult.FLD_TEST_ID.getName(), SCHEMA_NAME, SAMPLE_ANALYSIS.getTableName(), SampleAnalysis.FLD_TEST_ID.getName()), "sample analysis results table"),
+        SAMPLE_ALIQ(null, "sample_aliq", SCHEMA_NAME, true, SampleAliq.values(), SampleAliq.FLD_ALIQUOT_ID.getName(),
+            new String[]{SampleAliq.FLD_ALIQUOT_ID.getName()}, 
+            new ForeignkeyFld(SampleAliq.FLD_SAMPLE_ID.getName(), SCHEMA_NAME, SAMPLE.getTableName(), Sample.FLD_SAMPLE_ID.getName()), "sample aliquot table"),
+        SAMPLE_ALIQ_SUB(null, "sample_aliq_sub", SCHEMA_NAME, true, SampleAliqSub.values(), SampleAliqSub.FLD_SUBALIQUOT_ID.getName(),
+            new String[]{SampleAliqSub.FLD_SUBALIQUOT_ID.getName()}, 
+            new ForeignkeyFld(SampleAliqSub.FLD_ALIQUOT_ID.getName(), SCHEMA_NAME, SAMPLE_ALIQ.getTableName(), SampleAliq.FLD_ALIQUOT_ID.getName()), "sample sub aliquot table"),
+        PRODUCT(null, "product", "data", true, Sample.values(), null, 
+            new String[]{Sample.FLD_SAMPLE_ID.getName()}, 
+            new ForeignkeyFld(Sample.FLD_SAMPLE_ID_RELATED.getName(), SCHEMA_NAME, "sample", Sample.FLD_SAMPLE_ID.getName()), "product table comment"),
+        SAMPLE_COC(new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleChangeOfCustody", false, false, new String[]{"ENABLED"}, null)},
+            "sample_coc", SCHEMA_NAME, true, SampleCoCNew.values(), SampleCoCNew.FLD_ID.getName(),
+            new String[]{SampleCoCNew.FLD_ID.getName()}, null, ""),
+        SAMPLE_REVISION_TESTING_GROUP(new FldBusinessRules[]{new FldBusinessRules("procedure", "revisionTestinGroupRequired", false, false, new String[]{"ENABLED"}, null)},
+            "sample_revision_testing_group", SCHEMA_NAME, true, SampleRevisionTestingGroup.values(), null,
+            new String[]{SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()}, null, ""),
         ;
-        private TablesData(String dbObjName, String repositoryName, EnumIntTableFields[] dbObjType){
-            this.tableName=dbObjName;
-            this.tableFields=dbObjType;
+        private TablesData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+                String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.tableName=dbTblName;
+            this.tableFields=tblFlds;
             this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.sequence=seqName;
+            this.primarykey=primaryK;
+            this.foreignkey=foreignK;
+            this.tableComment=comment;
         }
-        public String getTableName() {return this.tableName;}
-        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public String getTableName() {return this.tableName;}
+        @Override        public String getTableComment() {return this.tableComment;}
+        @Override        public EnumIntTableFields[] getTableFields() {return this.tableFields;}
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public String getSeqName() {return this.sequence;}
+        @Override        public String[] getPrimaryKey() {return this.primarykey;}
+        @Override        public ForeignkeyFld getForeignKey() {return this.foreignkey;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        private final FldBusinessRules[] getTblBusinessRules;      
         private final String tableName;             
-        private final String repositoryName;             
-        private final EnumIntTableFields[] tableFields;             
-        
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final String sequence;
+        private final EnumIntTableFields[] tableFields;
+        private final String[] primarykey;
+        private final ForeignkeyFld foreignkey;
+        private final String tableComment;
     }
-    public enum SampleFldsNew implements EnumIntTableFields{
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)", null, null)
-        ,        
-        TBL("sample", LPDatabase.createSequence(FLD_SAMPLE_ID.getFieldName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SAMPLE_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";", null, null)       ,
-        FLD_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull(),null, null)        ,
-        FLD_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer(),null, null),
-        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(),null, null)        ,
-        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.stringNotNull(),null, null)        ,
-        FLD_LOGGED_ON("logged_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'DD/MM/YY')", null)        ,
-        FLD_LOGGED_BY("logged_by", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"))        ,
-        FLD_RECEIVED_ON("received_on", LPDatabase.dateTime(),null, null)        ,
-        FLD_RECEIVED_BY("received_by", LPDatabase.string(),null, null)        ,
-        FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(),null, null)        ,
-        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.stringNotNull(),null, null)        ,
-        FLD_ALIQUOTED("aliquoted", LPDatabase.booleanFld(false),null, null)        ,
-        FLD_ALIQUOT_STATUS("aliq_status", LPDatabase.stringNotNull(),null, null)        ,
-        FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real(),null, null)        ,
-        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.stringNotNull(),null, null)        ,
-        FLD_SAMPLING_DATE("sampling_date", LPDatabase.dateTime(),null, null),
-        FLD_REQS_TRACKING_SAMPLING_END("requires_tracking_sampling_end", LPDatabase.booleanFld(),null, null),
-        FLD_SAMPLING_DATE_END("sampling_date_end", LPDatabase.dateTime(),null, null),
-        FLD_SAMPLER("sampler",LPDatabase.string(),null, null),
-        FLD_SAMPLE_ID_RELATED("sample_id_related",LPDatabase.integer(),null, null),
-        FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.string(),null, null)        ,
-        FLD_INCUBATION_BATCH("incubation_batch", LPDatabase.string(),null, null),
-        FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string(),null, null)        ,
-        FLD_INCUBATION_START("incubation_start", LPDatabase.dateTime(),null, null)        ,
-        FLD_INCUBATION_START_TEMPERATURE("incubation_start_temperature", LPDatabase.real(),null, null)        ,
-        FLD_INCUBATION_START_TEMP_EVENT_ID("incubation_start_temp_event_id", LPDatabase.integer(),null, null)        ,
-        FLD_INCUBATION_END("incubation_end", LPDatabase.dateTime(),null, null)        ,        
-        FLD_INCUBATION_END_TEMPERATURE("incubation_end_temperature", LPDatabase.real(),null, null)                ,
-        FLD_INCUBATION_END_TEMP_EVENT_ID("incubation_end_temp_event_id", LPDatabase.integer(),null, null)        ,        
-        FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.booleanFld(false),null, null)                ,
-        FLD_INCUBATION2_BATCH("incubation2_batch", LPDatabase.string(),null, null),
-        FLD_INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.string(),null, null)        ,
-        FLD_INCUBATION2_START("incubation2_start", LPDatabase.dateTime(),null, null)        ,
-        FLD_INCUBATION2_START_TEMPERATURE("incubation2_start_temperature", LPDatabase.real(),null, null)        ,
-        FLD_INCUBATION2_START_TEMP_EVENT_ID("incubation2_start_temp_event_id", LPDatabase.integer(),null, null)        ,
-        FLD_INCUBATION2_END("incubation2_end", LPDatabase.dateTime(),null, null)        ,        
-        FLD_INCUBATION2_END_TEMPERATURE("incubation2_end_temperature", LPDatabase.real(),null, null)                ,
-        FLD_INCUBATION2_END_TEMP_EVENT_ID("incubation2_end_temp_event_id", LPDatabase.integer(),null, null)        ,
-        FLD_INCUBATION2_PASSED("incubation2_passed", LPDatabase.booleanFld(),null, null)        ,
-        FLD_SPEC_CODE("spec_code", LPDatabase.stringNotNull(),null, null)        ,
-        FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer(),null, null)        ,
-        FLD_SPEC_VARIATION_NAME("spec_variation_name", LPDatabase.stringNotNull(),null, null)        ,
-        FLD_SPEC_ANALYSIS_VARIATION("spec_analysis_variation", LPDatabase.stringNotNull(),null, null)        ,
-        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL,  LPDatabase.stringNotNull(2),null, null)        ,
-        FLD_CUSTODIAN(FIELDS_NAMES_CUSTODIAN,  LPDatabase.stringNotNull(2), null, null),
-        FLD_CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE,  LPDatabase.stringNotNull(2), null, null),
-        FLD_COC_REQUESTED_ON("coc_requested_on", LPDatabase.dateTime(), null, null),
-        FLD_COC_CONFIRMED_ON(FIELDS_NAMES_COC_CONFIRMED_ON, LPDatabase.dateTime(), null, null),
-        FLD_CURRENT_STAGE("current_stage", LPDatabase.stringNotNull(), null, null),
-        FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.string(), null, null),
-        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null),
-        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(), null, null), 
-        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null), 
-        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null)
+    public enum Sample implements EnumIntTableFields{
+        FLD_SAMPLE_ID("sample_id", LPDatabase.integerNotNull(), null, null, null, null),
+        FLD_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull(),null, null, "sample config code comment in field", null),
+        FLD_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer(),null, null, null, null),
+        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(),null, null, null, null),
+        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.stringNotNull(),null, null, null, null),
+        FLD_LOGGED_ON("logged_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_LOGGED_BY("logged_by", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), null, null),
+        FLD_RECEIVED_ON("received_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_RECEIVED_BY("received_by", LPDatabase.string(),null, null, null, null),
+        FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(),null, null, null, null),
+        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.stringNotNull(),null, null, null, null),
+        FLD_ALIQUOTED("aliquoted", LPDatabase.booleanFld(false),null, null, null, null),
+        FLD_ALIQUOT_STATUS("aliq_status", LPDatabase.stringNotNull(),null, null, null, null),
+        FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real(),null, null, null, null),
+        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.stringNotNull(),null, null, null, null),
+        FLD_SAMPLING_DATE("sampling_date", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_REQS_TRACKING_SAMPLING_END("requires_tracking_sampling_end", LPDatabase.booleanFld(),null, null, null, null),
+        FLD_SAMPLING_DATE_END("sampling_date_end", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_SAMPLER("sampler",LPDatabase.string(),null, null, null, null),
+        FLD_SAMPLE_ID_RELATED("sample_id_related",LPDatabase.integer(),null, null, null, null),
+        FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.string(),null, null, null, null),
+        FLD_INCUBATION_BATCH("incubation_batch", LPDatabase.string(),null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string(),null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION_START("incubation_start", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION_START_TEMPERATURE("incubation_start_temperature", LPDatabase.real(), null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION_START_TEMP_EVENT_ID("incubation_start_temp_event_id", LPDatabase.integer(), null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION_END("incubation_end", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION_END_TEMPERATURE("incubation_end_temperature", LPDatabase.real(), null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION_END_TEMP_EVENT_ID("incubation_end_temp_event_id", LPDatabase.integer(), null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.booleanFld(false), null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION2_BATCH("incubation2_batch", LPDatabase.string(), null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.string(),null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION2_START("incubation2_start", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION2_START_TEMPERATURE("incubation2_start_temperature", LPDatabase.real(),null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION2_START_TEMP_EVENT_ID("incubation2_start_temp_event_id", LPDatabase.integer(), null,null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION2_END("incubation2_end", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION2_END_TEMPERATURE("incubation2_end_temperature", LPDatabase.real(),null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION2_END_TEMP_EVENT_ID("incubation2_end_temp_event_id", LPDatabase.integer(), null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_INCUBATION2_PASSED("incubation2_passed", LPDatabase.booleanFld(),null, null, null, 
+            new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleIncubationMode", true, false, null, new String[]{"DISABLED"})}),
+        FLD_SPEC_CODE("spec_code", LPDatabase.stringNotNull(),null, null, null, null),
+        FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer(),null, null, null, null),
+        FLD_SPEC_VARIATION_NAME("spec_variation_name", LPDatabase.stringNotNull(),null, null, null, null),
+        FLD_SPEC_ANALYSIS_VARIATION("spec_analysis_variation", LPDatabase.stringNotNull(),null, null, null, null),
+        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL,  LPDatabase.stringNotNull(2),null, null, null, null),
+        FLD_CUSTODIAN(FIELDS_NAMES_CUSTODIAN,  LPDatabase.stringNotNull(2), null, null, null, null),
+        FLD_CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE,  LPDatabase.stringNotNull(2), null, null, null, null),
+        FLD_COC_REQUESTED_ON("coc_requested_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_CURRENT_STAGE("current_stage", LPDatabase.stringNotNull(), null, null, null, null),
+        FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.string(), null, null, null, null),
+        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null), 
+        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null), 
+        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null)
         ;
-        /**
-         *
-         * @return
-         */
-        
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.fieldName, this.fieldType};}
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Sample.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (Sample obj: Sample.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        } 
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (Sample obj: Sample.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }                    
-        private final String fieldName;
-        private final String fieldType;
-        private final String fieldMask;
-        private final ReferenceFld reference;
-
-        public String getFieldName(){return this.fieldName;}
-        public String getFieldType() {return this.fieldType;}
-        public String getFieldMask() {return this.fieldMask;}
-        public ReferenceFld getReferenceTable() {return this.reference;}
-
-        private SampleFldsNew(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer){
+        private Sample(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
             this.fieldMask=fieldMask;
             this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
     
+    public enum SampleCoCNew implements EnumIntTableFields{
+        FLD_ID("id", LPDatabase.integer(), null, null, null, null),
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        FLD_CUSTODIAN(FIELDS_NAMES_CUSTODIAN, LPDatabase.string(), null, null, null, null),
+        FLD_CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE, LPDatabase.string(), null, null, null, null),
+        FLD_STARTED_ON("coc_started_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_CONFIRMED_ON(FIELDS_NAMES_COC_CONFIRMED_ON, LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_CUSTODIAN_NOTES("coc_custodian_notes", LPDatabase.string(), null, null, null, null),
+        FLD_NEW_CUSTODIAN_NOTES("coc_new_custodian_notes", LPDatabase.string(), null, null, null, null),
+        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(), null, null, null, null),
+        FLD_SAMPLE_PICTURE("sample_picture", "json", null, null, null, null),;
+        private SampleCoCNew(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    public enum SampleRevisionTestingGroup implements EnumIntTableFields{    
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        FLD_TESTING_GROUP("testing_group", LPDatabase.string(), null, null, null, null),
+        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null),
+        FLD_REVISION_ON("revision_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_REVISION_BY("revision_by", LPDatabase.string(), null, null, null, null)
+        ;
+        private SampleRevisionTestingGroup(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    public enum SampleAnalysis  implements EnumIntTableFields{
+        FLD_TEST_ID("test_id", LPDatabase.integerNotNull(), null, null, null, null),
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(), null, null, null, null),
+        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.string(), null, null, null, null),
+        FLD_ANALYSIS(FIELDS_NAMES_ANALYSIS, LPDatabase.stringNotNull(), null, null, null, null),
+        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string(), null, null, null, null),
+        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
+        FLD_REPLICA(FIELDS_NAMES_REPLICA, LPDatabase.integer(), null, null, null, null),
+        FLD_ADDED_ON("added_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_ADDED_BY("added_by", LPDatabase.string(), null, null, null, null),
+        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL,  LPDatabase.string(2), null, null, null, null),
+        FLD_REVIEWER("reviewer", LPDatabase.string(), null, null, null, null),
+        FLD_REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_REVIEWER_ASSIGNED_BY("reviewer_assigned_by", LPDatabase.string(), null, null, null, null),
+        FLD_ANALYST("analyst", LPDatabase.string(), null, null, null, null),
+        FLD_ANALYST_ASSIGNED_ON("analyst_assigned_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_ANALYST_ASSIGNED_BY("analyst_assigned_by", LPDatabase.string(), null, null, null, null),
+        FLD_ANALYST_CERTIFICATION_MODE("analyst_certification_mode", LPDatabase.string(), null, null, null, null),
+        FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        FLD_TESTING_GROUP("testing_group",  LPDatabase.string(), null, null, null, null),
+        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),     
+        FLD_SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null),
+        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        ;
+        private SampleAnalysis(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }            
+    public enum SampleAnalysisResult implements EnumIntTableFields{
+        FLD_RESULT_ID("result_id", LPDatabase.integer(), null, null, null, null),
+        FLD_TEST_ID(SampleAnalysis.FLD_TEST_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(), null, null, null, null),
+        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.string(), null, null, null, null),
+        FLD_ANALYSIS(FIELDS_NAMES_ANALYSIS, LPDatabase.stringNotNull(), null, null, null, null),
+        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string(), null, null, null, null),
+        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
+        FLD_REPLICA(FIELDS_NAMES_REPLICA, LPDatabase.integer(), null, null, null, null),
+        FLD_PARAM_NAME("param_name", LPDatabase.string(), null, null, null, null),
+        FLD_PARAM_TYPE("param_type", LPDatabase.string(), null, null, null, null),
+        FLD_MANDATORY("mandatory", LPDatabase.booleanFld(false), null, null, null, null),
+        FLD_REQUIRES_LIMIT("requires_limit", LPDatabase.booleanFld(false), null, null, null, null),
+        FLD_RAW_VALUE("raw_value", LPDatabase.string(), null, null, null, null),
+        FLD_PRETTY_VALUE("pretty_value", LPDatabase.string(), null, null, null, null),
+        FLD_ENTERED_ON("entered_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_ENTERED_BY("entered_by", LPDatabase.string(), null, null, null, null),
+        FLD_REENTERED("reentered", LPDatabase.booleanFld(), null, null, null, null),
+        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, LPDatabase.string(200), null, null, null, null),
+        FLD_SPEC_EVAL_DETAIL("spec_eval_detail",  LPDatabase.string(200), null, null, null, null),
+        FLD_UOM("uom", LPDatabase.string(), null, null, null, null),
+        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string(), null, null, null, null),
+        FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        FLD_SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        FLD_LIMIT_ID("limit_id", LPDatabase.integer(), null, null, null, null),
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null),
+        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        FLD_MAX_DP("max_dp", LPDatabase.integer(), null, null, null, null),
+        FLD_MIN_ALLOWED("min_allowed", LPDatabase.real(), null, null, null, null),
+        FLD_MAX_ALLOWED("max_allowed", LPDatabase.real(), null, null, null, null),
+        FLD_LIST_ENTRY("list_entry", LPDatabase.string(), null, null, null, null),
+        
+        /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
+        , FLD_REVIEWER("reviewer", LPDatabase.String())
+        , FLD_REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime())        
+        , FLD_REVIEWER_ASSIGNED_BY("reviewer_assigned_by", LPDatabase.String())        
+        , FLD_ANALYST("analyst", LPDatabase.String())
+        , FLD_ANALYST_ASSIGNED_ON("analyst_assigned_on", LPDatabase.dateTime())        
+        , FLD_ANALYST_ASSIGNED_BY("analyst_assigned_by", LPDatabase.String())        
+        , FLD_ANALYST_CERTIFICATION_MODE("analyst_certification_mode", LPDatabase.String()) */
+        //, FLD_UNDER_DEVIATION("under_deviation", LPDatabase.Boolean()) Desviaciones aún no implementadas
+/*     Este bloque de campos está a nivel de Sample, es posible que pueda ser interesante tb en sample_analysis   
+        , FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.Real())
+        , FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.StringNotNull())
+        , FLD_ALIQUOTED("aliquoted", LPDatabase.Boolean(false))
+        , FLD_ALIQUOT_STATUS("aliq_status", LPDatabase.StringNotNull())
+        , FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.Real())
+        , FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.StringNotNull())
+        , FLD_SAMPLING_DATE("sampling_date", LPDatabase.dateTime())
+        , FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.String())
+        , FLD_INCUBATION_START("incubation_start", LPDatabase.dateTime())
+        , FLD_INCUBATION_END("incubation_end", LPDatabase.dateTime())
+        , FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.Boolean())*/ 
+        ;
+        private SampleAnalysisResult(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }            
+    
+    public enum SampleAliq implements EnumIntTableFields{
+        FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_aliquot_id_seq'::regclass)", null, null, null, null),
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(), null, null, null, null),
+        FLD_CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
+        FLD_CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        FLD_SUBALIQ_STATUS("subaliq_status", LPDatabase.string(), null, null, null, null),
+        FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(), null, null, null, null),
+        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.string(), null, null, null, null),
+        FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real(), null, null, null, null),
+        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.string(), null, null, null, null),
+        ;
+        private SampleAliq(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }        
+    public enum SampleAliqSub implements EnumIntTableFields{
+        FLD_SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_subaliquot_id_seq'::regclass)", null, null, null, null),
+        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        FLD_STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(), null, null, null, null),
+        FLD_CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
+        FLD_CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        FLD_VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(), null, null, null, null),
+        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.string(), null, null, null, null),
+        ;
+        private SampleAliqSub(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }        
 }
