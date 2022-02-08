@@ -223,13 +223,13 @@ public class LPFrontEnd {
         String errorTextEn = "";
         String errorTextEs = "";
         if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
-            errorMsgEn=LPPlatform.trapMessage(mainMessage[0][0].toString(), LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), (Object[]) mainMessage[0][2], "en");
-            errorMsgEs=LPPlatform.trapMessage(mainMessage[0][0].toString(), LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), (Object[]) mainMessage[0][2], "es");
+            errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), (Object[]) mainMessage[0][2], "en", mainMessage[0], true);
+            errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), (Object[]) mainMessage[0][2], "es", mainMessage[0], false);
             errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
             errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();                        
         }else{
-            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en");
-            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es");
+            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en", null, true);
+            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es", null, false);
             if (msgCode!=null){
                 if (msgDynamicValues!=null){
                     for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){
@@ -248,7 +248,7 @@ public class LPFrontEnd {
                         errorTextEs=errorTextEs+Arrays.toString(msgDynamicValues);
                 }
             }      
-        }
+        }        
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_TRUE);
         errJsObj.put(ResponseTags.CATEGORY.getLabelName(), apiName.toUpperCase().replace("API", ""));
@@ -269,9 +269,9 @@ public class LPFrontEnd {
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.MESSAGE.getLabelName(), errorPropertyName);
         //String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName+"_detail", null);
-        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, null);
+        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, null, true);
         if (errorTextEn==null || errorTextEn.length()==0)
-            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "en");
+            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "en", true);
         if (errorPropertyValue!=null){
             for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){                
                 errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(errorPropertyValue[iVarValue-1]).toString());
@@ -279,9 +279,9 @@ public class LPFrontEnd {
         }
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
 //        String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName+"_detail", "es");
-        String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, "es");
+        String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, "es", false);
         if (errorTextEs==null || errorTextEs.length()==0)
-            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "es");
+            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "es", false);
         if (errorPropertyValue!=null){
             for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){
                 errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(errorPropertyValue[iVarValue-1]).toString());
