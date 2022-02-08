@@ -37,31 +37,31 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TRAINING_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
+                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         CERTIFY_START_USER_METHOD("CERTIFY_START_USER_METHOD", "startCertification_success", "CERTIF_STARTED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
+                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         CERTIFY_COMPLETE_CERTIFIED_USER_METHOD("CERTIFY_COMPLETE_CERTIFIED_USER_METHOD", "completeCertifiedCertification_success", "CERTIF_COMPLETED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
+                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         CERTIFY_COMPLETE_NOT_CERTIFIED_USER_METHOD("CERTIFY_COMPLETE_NOT_CERTIFIED_USER_METHOD", "completeNotCertifiedCertification_success", "CERTIF_COMPLETED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
+                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         CERTIFY_REVOKE_USER_METHOD("CERTIFY_REVOKE_USER_METHOD", "revokeCertification_success", "CERTIF_REVOKED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.CertifUserAnalysisMethod.TBL.getName()).build()).build()),
+                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         ;
         private CertifyAnalysisMethodAPIEndpoints(String name, String successMessageCode, String audtEv, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -157,7 +157,7 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                     messageDynamicData=new Object[]{methodName, userName, procReqInstance.getProcedureInstance()};                
                 }
                 if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getName()))
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.CertifUserAnalysisMethod.TBL.getName(), TblsData.CertifUserAnalysisMethod.TBL.getName(), diagnostic[diagnostic.length-1]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), diagnostic[diagnostic.length-1]);
                     
                 break;
             default:                

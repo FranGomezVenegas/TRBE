@@ -18,6 +18,7 @@ import databases.TblsData;
 import databases.TblsData.CertifUserAnalysisMethod;
 import databases.TblsData.SampleAnalysis;
 import databases.TblsData.Training;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -26,8 +27,8 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsInspLotRMData {
     public static final String getTableCreationScriptFromDataTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
-            case "TRAINING": return Training.createTableScript(schemaNamePrefix, fields);
-            case "CERTIF_USER_ANALYSIS_METHOD": return CertifUserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
+            case "TRAINING": return createTableScript(TblsData.TablesData.TRAINING, schemaNamePrefix);
+            case "CERTIF_USER_ANALYSIS_METHOD": return createTableScript(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, schemaNamePrefix);
             case "INVENTORY_RETAIN": return InventoryRetain.createTableScript(schemaNamePrefix, fields);
             case "LOT": return Lot.createTableScript(schemaNamePrefix, fields);
             case "LOT_DECISION": return LotDecision.createTableScript(schemaNamePrefix, fields);
@@ -42,10 +43,6 @@ public class TblsInspLotRMData {
      *
      */
     public enum Lot{
-
-        /**
-         *
-         */
         TBL("lot",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,

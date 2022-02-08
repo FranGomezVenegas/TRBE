@@ -30,7 +30,7 @@ public class AnalysisMethodCertifQueries {
         }
         String[] whereFldName=new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName()};
         Object[] whereFldValue=new Object[]{methodName, "GREEN"};
-        return new Object[]{fieldsToRetrieve, Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.CertifUserAnalysisMethod.TBL.getName(), 
+        return new Object[]{fieldsToRetrieve, Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
                 whereFldName, whereFldValue, fieldsToRetrieve, fieldsToSort)};
         //return new Object[][]{{LPPlatform.LAB_FALSE.toString()}, {LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "notImplementedYet", null)}};
     }

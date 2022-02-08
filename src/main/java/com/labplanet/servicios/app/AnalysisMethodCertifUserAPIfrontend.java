@@ -35,6 +35,7 @@ import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 /**
  *
  * @author Administrator
@@ -227,7 +228,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
                 }                       
             }                    
             columnsCreated=true;
-            String[] userAnaMethCertifTblAllFields=TblsData.CertifUserAnalysisMethod.getAllFieldNames();
+            String[] userAnaMethCertifTblAllFields=getAllFieldNames(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableFields());
             JSONArray jArrPieceOfInfo=new JSONArray();
             for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
                 if (LPArray.valueInArray(userAnaMethCertifTblAllFields, fieldsToRetrieve[iFlds])){

@@ -27,7 +27,7 @@ public class CertifyQueries {
     
     public enum CertifObjects{
         ANALYSIS_METHOD(CertificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName(), 
-                TblsData.CertifUserAnalysisMethod.TBL.getName(),
+                TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(),
                 new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName(), TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), 
                     TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), 
                     TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()},

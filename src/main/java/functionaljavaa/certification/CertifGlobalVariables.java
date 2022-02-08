@@ -2,11 +2,13 @@ package functionaljavaa.certification;
 
 import static databases.Rdbms.dbTableGetFieldDefinition;
 import databases.TblsData;
+import databases.TblsData.CertifUserAnalysisMethod;
 import java.util.HashMap;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
 /**
  *
  * @author User
@@ -68,12 +70,11 @@ public class CertifGlobalVariables {
         //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tableFldsInfo[0][0].toString())) return "";
         Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name"));
         StringBuilder tblAlterScript=new StringBuilder();
-
-        for (String curFld: fields){
+        
+        for (EnumIntTableFields curFld: CertifUserAnalysisMethod.values()){
             if (!LPArray.valueInArray(tableFldsInfoColumns, curFld)){
-                String[] currField = TblsData.CertifUserAnalysisMethod.getFldDefBydbFieldName(curFld);
                 if (tblAlterScript.length()>0)tblAlterScript.append(", ");
-                tblAlterScript.append(LPDatabase.addColumn()).append(" ").append(currField[0]).append(" ").append(currField[1]);                            
+                tblAlterScript.append(LPDatabase.addColumn()).append(" ").append(curFld.getName()).append(" ").append(curFld.getFieldType());
             }
         }
         if (tblAlterScript.toString().length()>0) return LPDatabase.alterTable()+" "+LPPlatform.buildSchemaName(procInstanceName, schemaGroupName)+"."+tableName+" "
