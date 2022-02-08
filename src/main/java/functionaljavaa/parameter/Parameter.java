@@ -55,9 +55,9 @@ public class Parameter {
      * @param language - Language
      * @return
      **/
-    public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
+/*    public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
         return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, true);       
-    }
+    }*/
     public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Object[] callerInfo, Boolean reportMissingProp) {
         if (reportMissingProp==null) reportMissingProp=true;
         return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, null, callerInfo);       
@@ -114,7 +114,7 @@ public class Parameter {
     }
   
     private Boolean parameterInFile(String parameterFolder, String schemaName, String areaName, String parameterName, String language){
-        return !"".equals(getMessageCodeValue(parameterFolder, schemaName, areaName, parameterName, language));
+        return !"".equals(getMessageCodeValue(parameterFolder, schemaName, areaName, parameterName, language, null));
     }
 
     public static String getBusinessRuleAppFile(String parameterName, Boolean reportMissingProp) {
