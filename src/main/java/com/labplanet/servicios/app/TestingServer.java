@@ -10,11 +10,9 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
-import static databases.Rdbms.getRecordFieldsByFilter;
 import databases.TblsAppProcDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
-import databases.TblsData.SampleFldsNew;
 import databases.TblsData.TablesData;
 import databases.TblsProcedure;
 import databases.TblsTrazitDocTrazit;
@@ -62,7 +60,7 @@ import lbplanet.utilities.LPJson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
-import trazit.enums.EnumIntTableFields;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 
 
 
@@ -96,15 +94,28 @@ public class TestingServer extends HttpServlet {
             out.println("</html>");
         try{
             Rdbms.stablishDBConection("labplanet"); 
-            String schemaName="proc-deploy";
+
+String schemaName="em-demo-a";
+out.println(" "+TablesData.SAMPLE.getTableName()+" >> "+createTableScript(TablesData.SAMPLE, schemaName));
+out.println("");
+schemaName="proc-deploy";
+out.println(schemaName+" "+TablesData.SAMPLE.getTableName()+" >> "+createTableScript(TablesData.SAMPLE, schemaName));
+out.println("");
+out.println(schemaName+" "+TablesData.PRODUCT.getTableName()+" >> "+createTableScript(TablesData.PRODUCT, schemaName));
+out.println("");            
+/*            Rdbms.stablishDBConection("labplanet"); 
+            schemaName="proc-deploy";
             Object[][] recordFieldsByFilter = getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaName, TablesData.SAMPLE.getRepositoryName()), TablesData.SAMPLE.getTableName(), 
-                new EnumIntTableFields[]{SampleFldsNew.FLD_STATUS}, new Object[]{"REVIEWED"},
-                new EnumIntTableFields[]{SampleFldsNew.FLD_LOGGED_ON, SampleFldsNew.FLD_LOGGED_BY, SampleFldsNew.FLD_SAMPLER, SampleFldsNew.FLD_SAMPLE_ID, SampleFldsNew.FLD_STATUS},
+                new EnumIntTableFields[]{SampleFlds.FLD_STATUS}, new Object[]{"REVIEWED"},
+                new EnumIntTableFields[]{SampleFlds.FLD_LOGGED_ON, SampleFlds.FLD_LOGGED_BY, SampleFlds.FLD_SAMPLER, SampleFlds.FLD_SAMPLE_ID, SampleFlds.FLD_STATUS},
                 null, true);
             out.println(recordFieldsByFilter.length);
             out.println(recordFieldsByFilter[0][0].toString());
             out.println(recordFieldsByFilter[0][1].toString());
             out.println(recordFieldsByFilter[0][2].toString());
+            out.println(recordFieldsByFilter[0][3].toString());
+            out.println(recordFieldsByFilter[0][4].toString());*/
+if (1==1)return;            
         }catch(Exception e){
             String errMsg=e.getMessage();
             out.println(errMsg);
@@ -591,14 +602,14 @@ out.println("Bye");
             
             String procInstanceNameSampleInfo="oil-pl1";
             Integer selSample=134;
-            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceNameSampleInfo, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceNameSampleInfo, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{selSample}, 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName()});
             out.println("Info from "+procInstanceNameSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
 
             procInstanceNameSampleInfo="em-demo-a";
             selSample=160;
-            sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceNameSampleInfo, GlobalVariables.Schemas.DATA.getName()), TblsData.Sample.TBL.getName(), 
+            sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceNameSampleInfo, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{selSample}, 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName(), TblsData.Sample.FLD_STATUS_PREVIOUS.getName()});
             out.println("Info from "+procInstanceNameSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
