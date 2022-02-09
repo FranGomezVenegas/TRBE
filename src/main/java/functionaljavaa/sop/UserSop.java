@@ -416,7 +416,7 @@ public class UserSop {
         Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        Object[] exists = Rdbms.existsRecord(schemaName, TblsData.UserSop.TBL.getName(), new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
+        Object[] exists = Rdbms.existsRecord(schemaName, TblsData.TablesData.USER_SOP.getTableName(), new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
                 
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(exists[0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.SOP_ALREADY_ASSIGNED.getErrorCode(), new Object[]{sopIdFieldValue, personName, schemaName});
@@ -440,7 +440,7 @@ public class UserSop {
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsData.UserSop.FLD_USER_NAME.getName()); 
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, UserAndRolesViews.getUserByPerson(personName));}
         
-        Object[] diagnosis = Rdbms.insertRecordInTable(schemaName, TblsData.UserSop.TBL.getName(), insertFieldNames, insertFieldValues);
+        Object[] diagnosis = Rdbms.insertRecordInTable(schemaName, TblsData.TablesData.USER_SOP.getTableName(), insertFieldNames, insertFieldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
             return diagnosis;
         else
@@ -486,7 +486,7 @@ public class UserSop {
             updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
         }
         
-        Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.UserSop.TBL.getName(), 
+        Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.TablesData.USER_SOP.getTableName(), 
             updFldNames, updFldValues,     
             new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()}, new Object[]{sopName, userName} );
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userSopDiagnostic[0].toString())){

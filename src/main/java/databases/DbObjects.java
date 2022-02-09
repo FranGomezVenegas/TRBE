@@ -7,6 +7,7 @@ package databases;
 
 import static databases.DbObjects.SchemaActions.CREATE;
 import static databases.DbObjects.SchemaActions.DELETE;
+import databases.TblsData.TablesData;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.ProcedureDefinitionToInstance.JsonTags;
@@ -17,6 +18,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import java.util.ResourceBundle;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 
 
 /**
@@ -186,7 +188,7 @@ public class DbObjects {
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsCnfg.SopMetaData", tblCreateScript);
         
-        tblCreateScript=TblsData.UserSop.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TablesData.USER_SOP, procInstanceName);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsData.UserSop", tblCreateScript);
 

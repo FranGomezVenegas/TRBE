@@ -305,7 +305,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
                     anaMethCertifJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curAnaMethCertif);
                     myAnaMethCertifList.put("pending_analysis_method_certification", myAnaMethCertif);
                     myAnaMethCertifList.put("procedure_name", currProc);
-                    String[] userSopTblAllFields=TblsData.UserSop.getAllFieldNames();
+                    String[] userSopTblAllFields=getAllFieldNames(TblsData.TablesData.USER_SOP.getTableFields());
                     JSONArray jArrPieceOfInfo=new JSONArray();
                     for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
                         if (LPArray.valueInArray(userSopTblAllFields, fieldsToRetrieve[iFlds])){

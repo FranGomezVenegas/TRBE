@@ -7,6 +7,7 @@ package com.labplanet.servicios.modulegenoma;
 
 import databases.TblsCnfg;
 import databases.TblsData;
+import databases.TblsData.TablesData;
 import databases.TblsDataAudit;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 
 /**
  *
@@ -51,9 +53,9 @@ public class TablesDeployment extends HttpServlet {
             //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
             out.println("<p>Table "+TblsCnfg.SopMetaData.TBL.getName()+" created.</p>");
             
-            String tblCreateScript=TblsData.UserSop.createTableScript(schemaNamePrefix, new String[]{""});
+            String tblCreateScript=createTableScript(TablesData.USER_SOP, schemaNamePrefix);
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsData.UserSop.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsData.TablesData.USER_SOP.getTableName()+" created.</p>");
 
             tblCreateScript=TblsData.ViewUserAndMetaDataSopView.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});

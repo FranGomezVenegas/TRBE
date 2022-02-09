@@ -26,6 +26,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -76,8 +77,8 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
 
         switch (endPoint){
             case ALL_SAVED_QUERIES:              
-                String[] fieldsToRetrieve=TblsData.SavedQueries.getAllFieldNames();
-                Object[][] savedQueriesInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsData.SavedQueries.TBL.getName(), 
+                String[] fieldsToRetrieve=getAllFieldNames(TblsData.TablesData.SAVED_QUERIES.getTableFields());
+                Object[][] savedQueriesInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsData.TablesData.SAVED_QUERIES.getTableName(), 
                         new String[]{TblsData.SavedQueries.FLD_ID.getName()+">"}, 
                         new Object[]{0}, 
                         fieldsToRetrieve, new String[]{TblsData.SavedQueries.FLD_ID.getName()+" desc"});
@@ -131,7 +132,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                 if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
 
                 fieldsToRetrieve=TblsData.SavedQueries.getAllFieldNames();
-                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsData.SavedQueries.TBL.getName(), 
+                incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsData.TablesData.SAVED_QUERIES.getTableName(), 
                         new String[]{TblsData.SavedQueries.FLD_ID.getName()}, 
                         new Object[]{investigationId}, 
                         fieldsToRetrieve, new String[]{TblsData.SavedQueries.FLD_ID.getName()+" desc"});

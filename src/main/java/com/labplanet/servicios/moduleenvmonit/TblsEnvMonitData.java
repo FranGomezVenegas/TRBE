@@ -37,7 +37,7 @@ public class TblsEnvMonitData {
             //case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE": return createTableScript(TablesData.SAMPLE, schemaNamePrefix);
             case "SAMPLE_ANALYSIS": return createTableScript(TablesData.SAMPLE_ANALYSIS, schemaNamePrefix);
-            case "SAVED_QUERIES": return TblsData.SavedQueries.createTableScript(schemaNamePrefix, fields);
+            case "SAVED_QUERIES": return createTableScript(TablesData.SAVED_QUERIES, schemaNamePrefix);
             case "SAMPLE_MICROORGANISM": return SampleMicroorganism.createTableScript(schemaNamePrefix, fields);
             case "PR_SCHEDULED_LOCATIONS_VIEW": return ViewProgramScheduledLocations.createTableScript(schemaNamePrefix, fields);
             case "SAMPLE_MICROORGANISM_LIST_VW": return ViewSampleMicroorganismList.createTableScript(schemaNamePrefix, fields);

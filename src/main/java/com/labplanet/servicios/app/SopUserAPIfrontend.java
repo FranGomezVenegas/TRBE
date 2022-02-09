@@ -36,6 +36,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntEndpoints;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 /**
  *
  * @author Administrator
@@ -312,7 +313,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 }                       
             }                    
             columnsCreated=true;
-            String[] userSopTblAllFields=TblsData.UserSop.getAllFieldNames();
+            String[] userSopTblAllFields=getAllFieldNames(TblsData.TablesData.USER_SOP.getTableFields());
             JSONArray jArrPieceOfInfo=new JSONArray();
             for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
                 if (LPArray.valueInArray(userSopTblAllFields, fieldsToRetrieve[iFlds])){
@@ -391,7 +392,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                     }
                     mySopsList.put("pending_sops", mySops);
                     mySopsList.put("procedure_name", currProc);
-                    String[] userSopTblAllFields=TblsData.UserSop.getAllFieldNames();
+                    String[] userSopTblAllFields=getAllFieldNames(TblsData.TablesData.USER_SOP.getTableFields());
                     JSONArray jArrPieceOfInfo=new JSONArray();
                     for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
                         if (LPArray.valueInArray(userSopTblAllFields, fieldsToRetrieve[iFlds])){

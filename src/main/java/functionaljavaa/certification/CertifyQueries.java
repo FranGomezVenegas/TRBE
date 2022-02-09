@@ -33,7 +33,7 @@ public class CertifyQueries {
                     TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()},
                 TblsDataAudit.CertifUserAnalysisMethod.getAllFieldNames()),
         USER_SOP(ProcBusinessRulesQueries.PROCEDURE_USER_SOP_CERTIFICATION_LEVEL.getPropertiesSectionName(), 
-                TblsData.UserSop.TBL.getName(),
+                TblsData.TablesData.USER_SOP.getTableName(),
                 new String[]{TblsData.UserSop.FLD_SOP_ID.getName(), TblsData.UserSop.FLD_SOP_NAME.getName(), 
                     TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), 
                     TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()},

@@ -184,7 +184,7 @@ public class SopUserAPI extends HttpServlet {
                 }else{
                     messageDynamicData=new Object[]{sopName};                
                 }
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.UserSop.TBL.getName(), TblsData.UserSop.TBL.getName(), sopName);
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.USER_SOP.getTableName(), TblsData.TablesData.USER_SOP.getTableName(), sopName);
                 break;
             default:                
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
