@@ -227,18 +227,6 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
                     columns.put("column_"+yProc, fieldsToRetrieve[yProc]);
                 }                       
             }                    
-            columnsCreated=true;
-            String[] userAnaMethCertifTblAllFields=getAllFieldNames(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableFields());
-            JSONArray jArrPieceOfInfo=new JSONArray();
-            for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
-                if (LPArray.valueInArray(userAnaMethCertifTblAllFields, fieldsToRetrieve[iFlds])){
-                    JSONObject jObjPieceOfInfo = new JSONObject();
-                    jObjPieceOfInfo.put("field_name", fieldsToRetrieve[iFlds]);
-                    jObjPieceOfInfo.put("field_value", LPNulls.replaceNull(curCertif[iFlds]).toString());
-                    jArrPieceOfInfo.add(jObjPieceOfInfo);
-                }
-            }
-            anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELD_TO_DISPLAY, jArrPieceOfInfo);
             myAnaMethCertif.add(anaMethodJObj);
         }    
         columnNames.add(columns);

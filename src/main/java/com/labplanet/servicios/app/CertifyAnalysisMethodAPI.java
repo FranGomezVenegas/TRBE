@@ -5,6 +5,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import databases.TblsData;
 import functionaljavaa.certification.AnalysisMethodCertif;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -62,6 +63,10 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
+        USER_MARKIT_AS_COMPLETED("USER_MARKIT_AS_COMPLETED", "appAnaMethCertifUser_markAsCompleted_success","",
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+            //    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7)
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
         private CertifyAnalysisMethodAPIEndpoints(String name, String successMessageCode, String audtEv, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -159,6 +164,17 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                 if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getName()))
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), diagnostic[diagnostic.length-1]);
                     
+                break;
+            case USER_MARKIT_AS_COMPLETED:
+                methodName = argValues[0].toString();
+                userName=procReqInstance.getToken().getUserName();
+                diagnostic=AnalysisMethodCertif.userMarkItAsCompleted(methodName);
+                messageDynamicData=new Object[]{methodName, userName, procReqInstance.getProcedureInstance()};                
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+                    messageDynamicData=new Object[]{sopName, userName, procReqInstance.getProcedureInstance()};
+                }else{
+                    messageDynamicData=new Object[]{methodName, userName, procReqInstance.getProcedureInstance()};                
+                }
                 break;
             default:                
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
