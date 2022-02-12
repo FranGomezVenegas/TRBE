@@ -41,6 +41,7 @@ import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.user.UserAndRolesViews.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT;
+import static lbplanet.utilities.LPSession.frontEndIpChecker;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -89,7 +90,13 @@ public class AuthenticationAPI extends HttpServlet {
             }                            
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             switch (endPoint){
-                case AUTHENTICATE:                                             
+                case AUTHENTICATE:     
+                    Object[] ipCheck=frontEndIpChecker(request.getRemoteAddr());
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ipCheck[0].toString())){               
+                        LPFrontEnd.servletReturnResponseError(request, response, ipCheck[ipCheck.length-1].toString(), null, language);              
+                        return;                                                          
+                    }      
+
                     String dbUserName = argValues[0].toString();
                     String dbUserPassword = argValues[1].toString();                 
                     String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
