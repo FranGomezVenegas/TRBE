@@ -634,7 +634,7 @@ public class TblsCnfg {
          */
         FLD_AUTHOR("author", LPDatabase.string()),
         FLD_EXPIRY_INTERVAL_INFO(DBFIELDNAME_EXPIRY_INTERVAL_INFO, LPDatabase.string()),        
-        
+        FLD_CERTIFICATION_MODE("certification_mode", LPDatabase.string()),
 /*        , FLD_ACTIVE_DATE("active_date", "Date")
         , FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())
         , FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.Date())

@@ -910,11 +910,9 @@ public class TblsData {
          *
          */
         FLD_FILE_LINK("file_link", ""),
-
-        /**
-         *
-         */
-        FLD_AUTHOR("author", "")
+        FLD_AUTHOR("author", ""),
+        FLD_CERTIFICATION_MODE("certification_mode", "")
+        
         ;
         private ViewUserAndMetaDataSopView(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
