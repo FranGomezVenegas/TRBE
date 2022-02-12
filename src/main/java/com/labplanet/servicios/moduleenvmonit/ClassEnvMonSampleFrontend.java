@@ -212,7 +212,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
     public ClassEnvMonSampleFrontend(HttpServletRequest request, EnvMonSampleAPIFrontendEndpoints endPoint){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
+    try{
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         String batchName = "";
@@ -1100,8 +1100,11 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
         rObj.killInstance();
+    }catch(Exception e){
+        String errMsg=e.getMessage();
+        String s="";
     }
-
+    }
 private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
     if (sampleStageFldValue==null) return null;
     if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
@@ -1173,44 +1176,54 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
 }
     
     static Object[] sampleAnalysisResultLockData(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow){
-        String[] fldNameArr=null;
-        Object[] fldValueArr=null;
-        Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
-        Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
-        
-        Object[] lockedByCorrectiveAction = isLockedByCorrectiveAction(procInstanceName, resultFieldToRetrieveArr, curRow);
-        if (lockedByCorrectiveAction[0]!=null) return lockedByCorrectiveAction;
+        try{
+            String[] fldNameArr=null;
+            Object[] fldValueArr=null;
+            Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
+            Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
 
-        Object[] isLockedByUserCertification = isLockedByUserCertification(procInstanceName, resultFieldToRetrieveArr, curRow);
-        if (isLockedByUserCertification[0]!=null) return isLockedByUserCertification;
-        
-        return new Object[]{fldNameArr, fldValueArr};
+            Object[] lockedByCorrectiveAction = isLockedByCorrectiveAction(procInstanceName, resultFieldToRetrieveArr, curRow);
+            if (lockedByCorrectiveAction[0]!=null) return lockedByCorrectiveAction;
+
+            Object[] isLockedByUserCertification = isLockedByUserCertification(procInstanceName, resultFieldToRetrieveArr, curRow);
+            if (isLockedByUserCertification[0]!=null) return isLockedByUserCertification;
+
+            return new Object[]{fldNameArr, fldValueArr};
+        }catch(Exception e){
+            String erMsg=e.getMessage();
+            return new Object[]{"ERROR", e.getMessage()};            
+        }
     }
 
     static Object[] isLockedByCorrectiveAction(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow){
         String[] fldNameArr=null;
         Object[] fldValueArr=null;
-        Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
-        Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
-        if (!isProgramCorrectiveActionEnable(procInstanceName)) return new Object[]{null, null};
-        Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
-                new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
-                new Object[]{resultId,DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()}, 
-                SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString())){
-            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
-            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.ProgramCorrectiveAction.TBL.getName());
-            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
-            
-            JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPTrue(
-                    EnvMonSampleAPI.class.getSimpleName(),
-                    "resultLockedByProgramCorrectiveAction", notClosedProgramCorrreciveAction[0], null);                                
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
-            return new Object[]{fldNameArr, fldValueArr};
-        }
-        return new Object[]{null, null};
+        try{
+            Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
+            Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
+            if (!isProgramCorrectiveActionEnable(procInstanceName)) return new Object[]{null, null};
+            Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                    new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
+                    new Object[]{resultId,DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()}, 
+                    SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION);
+            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString())){
+                fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
+                fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.ProgramCorrectiveAction.TBL.getName());
+                fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
+
+                JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPTrue(
+                        EnvMonSampleAPI.class.getSimpleName(),
+                        "resultLockedByProgramCorrectiveAction", notClosedProgramCorrreciveAction[0], null);                                
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
+                return new Object[]{fldNameArr, fldValueArr};
+            }
+            return new Object[]{null, null};
+        }catch(Exception e){
+            String erMsg=e.getMessage();
+            return new Object[]{"ERROR", e.getMessage()};            
+        }            
     }
     
     static Object[] isLockedByUserCertification(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow){
