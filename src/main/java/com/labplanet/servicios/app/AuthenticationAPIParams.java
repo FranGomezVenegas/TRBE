@@ -89,6 +89,9 @@ public class AuthenticationAPIParams extends HttpServlet {
         private final JsonArray outputObjectTypes;
     }
 public enum AuthenticationErrorTrapping{ 
+        IP_IN_BLACK_LIST("IPinBlackList", "", ""),
+        IP_NOTIN_WHITE_LIST("IPnotInWhiteList", "", ""),
+        WRONG_IP("wrongIP", "", ""),
         INVALID_USER_PWD("authenticationAPI_invalidUserPsswd", "", ""),
         SESSION_ID_NULLNOTALLOWED("authenticationAPI_sessionIdNullNotAllowed", "", ""),
         SESSION_ID_NOTGENERATED("authenticationAPI_sessionIdNotGenerated", "", ""),

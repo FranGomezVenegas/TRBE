@@ -13,6 +13,11 @@ import static databases.TblsCnfg.TABLETAG;
 import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
+import trazit.enums.FldBusinessRules;
+import trazit.enums.ForeignkeyFld;
+import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -21,6 +26,123 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsApp {
 
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP.getName();
+    public enum TablesApp implements EnumIntTables{
+        
+        IP_WHITE_LIST(null, "ip_white_list", SCHEMA_NAME, true, IPWhiteList.values(), IPWhiteList.ID.getName(),
+            new String[]{IPWhiteList.ID.getName()}, null, "White List, when at least one IP added then the access will be limited to those IPs (except if added to blacklist)"),
+        IP_BLACK_LIST(null, "ip_black_list", SCHEMA_NAME, true, IPBlackList.values(), IPBlackList.ID.getName(),
+            new String[]{IPBlackList.ID.getName()}, null, "Black List, when one IP is added to this table then it is banned, independently of be in the white list too"),
+        ;
+        private TablesApp(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+                String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.tableName=dbTblName;
+            this.tableFields=tblFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.sequence=seqName;
+            this.primarykey=primaryK;
+            this.foreignkey=foreignK;
+            this.tableComment=comment;
+        }
+        @Override        public String getTableName() {return this.tableName;}
+        @Override        public String getTableComment() {return this.tableComment;}
+        @Override        public EnumIntTableFields[] getTableFields() {return this.tableFields;}
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public String getSeqName() {return this.sequence;}
+        @Override        public String[] getPrimaryKey() {return this.primarykey;}
+        @Override        public ForeignkeyFld getForeignKey() {return this.foreignkey;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String tableName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final String sequence;
+        private final EnumIntTableFields[] tableFields;
+        private final String[] primarykey;
+        private final ForeignkeyFld foreignkey;
+        private final String tableComment;
+    }
+    public enum IPWhiteList implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null), 
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null), 
+        ADDED_ON("added_on", LPDatabase.dateTime(), null, null, null, null),
+        ADDED_BY("added_by", LPDatabase.string(), null, null, null, null), 
+        IP_VALUE1("ip_value1", LPDatabase.stringNotNull(),null, null, "", null),
+        IP_VALUE2("ip_value2", LPDatabase.stringNotNull(),null, null, "", null),
+        IP_VALUE3("ip_value3", LPDatabase.stringNotNull(),null, null, "", null),
+        IP_VALUE4("ip_value4", LPDatabase.stringNotNull(),null, null, "", null),
+        IP_ENDRANGE_VALUE1("ip_endrange_value1", LPDatabase.string(),null, null, "", null),
+        IP_ENDRANGE_VALUE2("ip_endrange_value2", LPDatabase.string(),null, null, "", null),
+        IP_ENDRANGE_VALUE3("ip_endrange_value3", LPDatabase.string(),null, null, "", null),
+        IP_ENDRANGE_VALUE4("ip_endrange_value4", LPDatabase.string(),null, null, "", null),
+        ;
+        private IPWhiteList(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }            
+
+    public enum IPBlackList implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null), 
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null), 
+        ADDED_ON("added_on", LPDatabase.dateTime(), null, null, null, null),
+        ADDED_BY("added_by", LPDatabase.string(), null, null, null, null), 
+        IP_VALUE1("ip_value1", LPDatabase.stringNotNull(),null, null, "", null),
+        IP_VALUE2("ip_value2", LPDatabase.stringNotNull(),null, null, "", null),
+        IP_VALUE3("ip_value3", LPDatabase.stringNotNull(),null, null, "", null),
+        IP_VALUE4("ip_value4", LPDatabase.stringNotNull(),null, null, "", null),
+        IP_ENDRANGE_VALUE1("ip_endrange_value1", LPDatabase.string(),null, null, "", null),
+        IP_ENDRANGE_VALUE2("ip_endrange_value2", LPDatabase.string(),null, null, "", null),
+        IP_ENDRANGE_VALUE3("ip_endrange_value3", LPDatabase.string(),null, null, "", null),
+        IP_ENDRANGE_VALUE4("ip_endrange_value4", LPDatabase.string(),null, null, "", null),
+        ;
+        private IPBlackList(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }            
+    
     /**
      *
      */
