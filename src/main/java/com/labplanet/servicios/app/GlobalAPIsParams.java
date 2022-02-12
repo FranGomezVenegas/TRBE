@@ -255,7 +255,6 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
-    public static final String REQUEST_PARAM_SOP_FIELD_TO_DISPLAY = "sopFieldsToDisplay";
     public static final String REQUEST_PARAM_ANA_METH_CERTIF_FIELD_TO_DISPLAY = "analysisMethodCertifFieldsToDisplay";
     
     
