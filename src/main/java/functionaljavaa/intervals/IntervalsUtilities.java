@@ -30,9 +30,9 @@ public class IntervalsUtilities {
         Object[][] intervalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), objectWithIntervalTableName, 
                 whereFieldNames, whereFieldValues,
                 fieldsToRetrieve);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(intervalInfo[0][0].toString())) return intervalInfo;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(intervalInfo[0][0].toString())) return intervalInfo[0];
         Object[] intervalChecker = intervalChecker(intervalInfo[0][0].toString());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(intervalChecker[0].toString())) return intervalInfo;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(intervalChecker[0].toString())) return intervalInfo[0];
         String[] intervalInfoArr=intervalInfo[0][0].toString().split("\\|");
         Date addIntervalToGivenDate = LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), intervalInfoArr[0], Integer.parseInt(intervalInfoArr[1]));        
         if (addIntervalToGivenDate==null)
