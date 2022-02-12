@@ -206,6 +206,7 @@ public class TblsProcedure {
         FLD_ICON_NAME("icon_name", LPDatabase.string()),
         FLD_LP_NEW_FRONTEND_PAGE_NAME("lp_new_frontend_page_name", LPDatabase.string()),
         FLD_NEW_ICON_NAME("new_icon_name", LPDatabase.string()),
+        FLD_NEW_ICON_NAME_WHEN_NOT_CERTIFIED("new_icon_name_when_not_certified", LPDatabase.string()),
         FLD_NEW_NAME("new_name", LPDatabase.stringNotNull()),
         FLD_POSITION("position", LPDatabase.string()),
         FLD_PARENT_NAME("parent_name", LPDatabase.string())
