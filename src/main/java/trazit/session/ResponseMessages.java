@@ -55,13 +55,14 @@ public class ResponseMessages {
         Object[] array2dTo1d = LPArray.array2dTo1d(messages);
         LPArray.addValueToArray1D(array2dTo1d, messageCode);
         LPArray.addValueToArray1D(array2dTo1d, msgCodeVariables);
-        mainStructureObject.messages=LPArray.array1dTo2d(array2dTo1d, 2);
+        LPArray.addValueToArray1D(array2dTo1d, new Object[]{});
+        mainStructureObject.messages=LPArray.array1dTo2d(array2dTo1d, 3);
     }
     public void addMainForSuccess(String className, String messageCode, Object[] msgCodeVariables){
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{className, messageCode, msgCodeVariables}, 3);
     }
     public void addMainForError(String messageCode, Object[] msgCodeVariables){
-        mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables}, 2);
+        mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3);
     }
     
 }
