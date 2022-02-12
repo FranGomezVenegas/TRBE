@@ -557,7 +557,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         }
         SqlStatement sql = new SqlStatement(); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
-                keyFieldNames, keyFieldValues, keyFieldNames,  null, null,  null, null);          
+                keyFieldNames, keyFieldValues, new String[]{keyFieldNames[0]},  null, null,  null, null);          
         String query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);
         try{
