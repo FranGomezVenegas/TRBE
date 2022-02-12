@@ -122,8 +122,8 @@ public class ProcedureDefinitionToInstance {
     public static final JSONObject createDBProcedureInfo(String procedure,  Integer procVersion, String procInstanceName){
         JSONObject jsonObj = new JSONObject();
         String schemaNameDestinationProc=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
-         Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsProcedure.ProcedureInfo.TBL.getName(), 
-                new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName(), TblsProcedure.ProcedureInfo.FLD_VERSION.getName(),TblsProcedure.ProcedureInfo.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
+         Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureInfo.TBL.getName(), 
+                new String[]{TblsReqs.ProcedureInfo.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.FLD_PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.FLD_SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procInfoRecordsSource[0]));
