@@ -16,6 +16,7 @@ import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
 import databases.TblsProcedure;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -26,8 +27,8 @@ public class TblsEnvMonitProcedure {
         switch (tableName.toUpperCase()){
             case "INCUBATOR_TEMP_READING_VIOLATIONS": return IncubatorTempReadingViolations.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_CORRECTIVE_ACTION": return TblsProcedure.ProgramCorrectiveAction.createTableScript(schemaNamePrefix, fields);
-            case "INVESTIGATION": return TblsProcedure.Investigation.createTableScript(schemaNamePrefix, fields);
-            case "INVEST_OBJECTS": return TblsProcedure.InvestObjects.createTableScript(schemaNamePrefix, fields);
+            case "INVESTIGATION": return createTableScript(TblsProcedure.TablesProcedure.INVESTIGATION, schemaNamePrefix);
+            case "INVEST_OBJECTS": return createTableScript(TblsProcedure.TablesProcedure.INVEST_OBJECTS, schemaNamePrefix);
             case "SAMPLE_STAGE_TIMING_CAPTURE": return TblsProcedure.SampleStageTimingCapture.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
         }        

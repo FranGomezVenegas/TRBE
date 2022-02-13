@@ -106,17 +106,17 @@ public class LPSession {
      */
     public static Object[] addProcessSession( String processName, Integer appSessionId, String[] fieldsNamesToInsert){
         addProcessToAppSession(processName, appSessionId);
-        String tableName = TblsDataAudit.Session.TBL.getName();
+        String tableName = TblsDataAudit.TablesDataAudit.SESSION.getTableName();
         String schemaAuditName = LPPlatform.buildSchemaName(processName, GlobalVariables.Schemas.DATA_AUDIT.getName());       
         
         Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(schemaAuditName, tableName, 
-                new String[]{TblsDataAudit.Session.FLD_SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
+                new String[]{TblsDataAudit.Session.SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())){
             Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())) 
                 return appSession;
-            if (!LPArray.valueInArray(fieldsNamesToInsert, TblsDataAudit.Session.FLD_SESSION_ID.getName())){
-                fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsDataAudit.Session.FLD_SESSION_ID.getName());
+            if (!LPArray.valueInArray(fieldsNamesToInsert, TblsDataAudit.Session.SESSION_ID.getName())){
+                fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsDataAudit.Session.SESSION_ID.getName());
                 appSession = LPArray.addValueToArray1D(appSession, appSessionId);
             }
             return Rdbms.insertRecordInTable(schemaAuditName, tableName, fieldsNamesToInsert, appSession);

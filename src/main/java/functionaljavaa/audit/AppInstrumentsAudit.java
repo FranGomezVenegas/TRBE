@@ -38,7 +38,7 @@ public final class AppInstrumentsAudit {
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
             Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
-                    TblsDataAudit.Sample.TBL.getName(), TblsAppProcDataAudit.Instruments.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+                    TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), TblsAppProcDataAudit.Instruments.FLD_ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
                 String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
                     fileName, null, action, curLang.getName(), false);

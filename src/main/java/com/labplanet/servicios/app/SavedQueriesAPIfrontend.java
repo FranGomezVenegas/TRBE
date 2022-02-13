@@ -142,10 +142,10 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                         JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
                         
                         fieldsToRetrieve=TblsProcedure.InvestObjects.getAllFieldNames();
-                        incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsProcedure.InvestObjects.TBL.getName(), 
-                                new String[]{TblsProcedure.InvestObjects.FLD_INVEST_ID.getName()}, 
+                        incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), 
+                                new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, 
                                 new Object[]{investigationId}, 
-                                fieldsToRetrieve, new String[]{TblsProcedure.InvestObjects.FLD_ID.getName()});
+                                fieldsToRetrieve, new String[]{TblsProcedure.InvestObjects.ID.getName()});
                         JSONArray investObjectsJArr = new JSONArray();
                         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
                             for (Object[] currInvestObject: incidentsNotClosed){
@@ -153,7 +153,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                                 investObjectsJArr.add(investObjectsJObj);
                             }
                         }
-                        investigationJObj.put(TblsProcedure.InvestObjects.TBL.getName(), investObjectsJArr);
+                        investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
                         investigationJArr.add(investigationJObj);
                     }
                 }

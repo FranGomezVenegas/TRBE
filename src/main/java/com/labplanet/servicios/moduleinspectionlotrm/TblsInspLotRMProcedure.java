@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.moduleinspectionlotrm;
 
-import com.labplanet.servicios.moduleenvmonit.*;
 import databases.DbObjects;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
@@ -18,6 +17,7 @@ import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
 import databases.TblsProcedure;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -27,8 +27,8 @@ public class TblsInspLotRMProcedure {
     public static final String getTableCreationScriptFromDataProcedureTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "PROGRAM_CORRECTIVE_ACTIONS": return TblsProcedure.ProgramCorrectiveAction.createTableScript(schemaNamePrefix, fields);
-            case "INVESTIGATION": return TblsProcedure.Investigation.createTableScript(schemaNamePrefix, fields);
-            case "INVEST_OBJECTS": return TblsProcedure.InvestObjects.createTableScript(schemaNamePrefix, fields);
+            case "INVESTIGATION": return createTableScript(TblsProcedure.TablesProcedure.INVESTIGATION, schemaNamePrefix);
+            case "INVEST_OBJECTS": return createTableScript(TblsProcedure.TablesProcedure.INVEST_OBJECTS, schemaNamePrefix);
             case "SAMPLE_STAGE_TIMING_CAPTURE": return zSampleStageTimingCapture.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
         }        

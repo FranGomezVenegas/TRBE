@@ -70,7 +70,7 @@ public class LotAudit {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String[] fieldNames = new String[]{TblsDataAudit.Sample.FLD_DATE.getName()};
+        String[] fieldNames = new String[]{TblsDataAudit.Sample.DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         
         Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);

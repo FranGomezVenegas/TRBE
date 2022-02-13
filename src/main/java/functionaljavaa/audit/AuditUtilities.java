@@ -12,6 +12,7 @@ import databases.TblsDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -40,20 +41,20 @@ public final class AuditUtilities {
         if (GlobalVariables.Schemas.DATA.getName().equalsIgnoreCase(repository)){  
             switch (tableName.toLowerCase()){
                 case "sample":
-                    return TblsDataAudit.Sample.getAllFieldNames();
+                    return getAllFieldNames(TblsDataAudit.TablesDataAudit.SAMPLE.getTableFields());
                 default:
-                    return new String[]{TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_APP_SESSION_ID.getName(), TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName()};                    
+                    return new String[]{TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.APP_SESSION_ID.getName(), TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.ACTION_NAME.getName()};                    
             }
         }
-        return new String[]{TblsDataAudit.Sample.FLD_APP_SESSION_ID.getName(), TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName()};        
+        return new String[]{TblsDataAudit.Sample.APP_SESSION_ID.getName(), TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.ACTION_NAME.getName()};        
     }
     
     
     
     public static Boolean userSessionExistAtProcLevel(String procInstanceName, Integer sessionId){
         
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.Session.TBL.getName(),
-                new String[]{TblsDataAudit.Session.FLD_SESSION_ID.getName()}, new Object[]{sessionId});
+        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.TablesDataAudit.SESSION.getTableName(),
+                new String[]{TblsDataAudit.Session.SESSION_ID.getName()}, new Object[]{sessionId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) return true;
         return false;
     }

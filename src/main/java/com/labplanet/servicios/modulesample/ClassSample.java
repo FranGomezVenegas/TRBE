@@ -544,9 +544,9 @@ public class ClassSample {
                     break;
                 case SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED:
                     Integer auditId = (Integer) argValues[0];
-                    Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.Sample.TBL.getName(), 
-                        new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()}, new Object[]{auditId}, 
-                        new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName()}, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
+                    Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), 
+                        new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()}, new Object[]{auditId}, 
+                        new String[]{TblsDataAudit.Sample.SAMPLE_ID.getName()}, new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfo[0][0].toString())){
                         diagn=LPPlatform.trapMessage(auditInfo[0][0].toString(), SampleAudit.SampleAuditErrorTrapping.AUDIT_RECORD_NOT_FOUND.getErrorCode(), new Object[]{auditId});
                         sampleId=null;
@@ -554,7 +554,7 @@ public class ClassSample {
                         diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(procInstanceName, auditId, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getPersonName());
                         sampleId=Integer.valueOf(auditInfo[0][0].toString());
                     }
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditId);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), auditId);
                     this.messageDynamicData=new Object[]{auditId, sampleId};
                     break;
                 default:

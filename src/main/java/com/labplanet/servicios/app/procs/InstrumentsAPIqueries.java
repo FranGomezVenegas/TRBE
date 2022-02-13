@@ -113,13 +113,13 @@ public class InstrumentsAPIqueries extends HttpServlet {
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrAudit);
 
 
-                            Object[] convertToJsonObjectStringedObject = LPJson.convertToJsonObjectStringedObject(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName())].toString());
+                            Object[] convertToJsonObjectStringedObject = LPJson.convertToJsonObjectStringedObject(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
                             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObject[0].toString()))
-                                jObj.put(TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName(), convertToJsonObjectStringedObject[1]);            
+                                jObj.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObject[1]);            
                             String curAuditId=currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.FLD_AUDIT_ID.getName())].toString();
                                 Object[][] sampleAuditInfoLvl2=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName(), TblsAppProcDataAudit.Instruments.TBL.getName(), 
-                                        new String[]{TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()}, new Object[]{curAuditId}, 
-                                        fieldsToRetrieve, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
+                                        new String[]{TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()}, new Object[]{curAuditId}, 
+                                        fieldsToRetrieve, new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
                                 JSONArray jArrLvl2 = new JSONArray();
                                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfoLvl2[0][0].toString())){
                                     Object[] childJObj=new Object[]{null, null, "No child", "", "", "", null, "", "", null, null};
@@ -130,10 +130,10 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                 }else{
                                     for (Object[] curRowLvl2: sampleAuditInfoLvl2){
                                         JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRowLvl2,
-                                            new String[]{TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName()});  
-                                        Object[] convertToJsonObjectStringedObjectLvl2 = LPJson.convertToJsonObjectStringedObject(curRowLvl2[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName())].toString());
+                                            new String[]{TblsDataAudit.Sample.FIELDS_UPDATED.getName()});  
+                                        Object[] convertToJsonObjectStringedObjectLvl2 = LPJson.convertToJsonObjectStringedObject(curRowLvl2[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
                                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString()))
-                                            jObjLvl2.put(TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);            
+                                            jObjLvl2.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);            
                                         jArrLvl2.add(jObjLvl2);
                                     }
                                 }

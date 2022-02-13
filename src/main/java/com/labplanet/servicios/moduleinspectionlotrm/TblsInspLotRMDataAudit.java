@@ -14,7 +14,8 @@ import static databases.TblsCnfg.TABLETAG;
 import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
-import databases.TblsDataAudit.CertifUserAnalysisMethod;
+import databases.TblsDataAudit;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -23,7 +24,7 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsInspLotRMDataAudit {
     public static final String getTableCreationScriptFromDataAuditTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
-            case "CERTIF_USER_ANALYSIS_METHOD": return CertifUserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
+            case "CERTIF_USER_ANALYSIS_METHOD": return createTableScript(TblsDataAudit.TablesDataAudit.CERTIF_USER_ANALYSIS_METHOD, schemaNamePrefix);
             case "LOT": return Lot.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN INSPLOT_RM_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
         }        

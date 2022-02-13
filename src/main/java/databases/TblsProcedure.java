@@ -10,6 +10,11 @@ import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
 import static lbplanet.utilities.LPDatabase.dateTimeWithDefaultNow;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
+import trazit.enums.FldBusinessRules;
+import trazit.enums.ForeignkeyFld;
+import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -17,6 +22,45 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsProcedure {
 
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.PROCEDURE.getName();
+    public enum TablesProcedure implements EnumIntTables{
+        INVESTIGATION(null, "investigation", SCHEMA_NAME, true, TblsProcedure.Investigation.values(), TblsProcedure.Investigation.ID.getName(),
+            new String[]{TblsProcedure.Investigation.ID.getName()}, null, "Investigation objects"),
+        INVEST_OBJECTS(null, "invest_objects", SCHEMA_NAME, true, TblsProcedure.InvestObjects.values(), TblsProcedure.InvestObjects.ID.getName(),
+            new String[]{TblsProcedure.InvestObjects.ID.getName()}, null, "Objects added to one given investigation"),
+        ;
+        private TablesProcedure(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+                String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.tableName=dbTblName;
+            this.tableFields=tblFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.sequence=seqName;
+            this.primarykey=primaryK;
+            this.foreignkey=foreignK;
+            this.tableComment=comment;
+        }
+        @Override        public String getTableName() {return this.tableName;}
+        @Override        public String getTableComment() {return this.tableComment;}
+        @Override        public EnumIntTableFields[] getTableFields() {return this.tableFields;}
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public String getSeqName() {return this.sequence;}
+        @Override        public String[] getPrimaryKey() {return this.primarykey;}
+        @Override        public ForeignkeyFld getForeignKey() {return this.foreignkey;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String tableName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final String sequence;
+        private final EnumIntTableFields[] tableFields;
+        private final String[] primarykey;
+        private final ForeignkeyFld foreignkey;
+        private final String tableComment;
+    }
+    
     /**
      *
      */
@@ -570,182 +614,80 @@ public class TblsProcedure {
         private final String dbObjTypePostgres;                     
     }        
     
-    public enum Investigation{
-        /**
-         *
-         */
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)"),
-        TBL("investigation", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) ) "
-                + LPDatabase.POSTGRESQL_OIDS+" "+LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
-        ,
-        /**
-         *
-         */
-        FLD_DESCRIPTION("description", LPDatabase.string()),
-        FLD_CREATED_ON("created_on", LPDatabase.dateTime()),
-        FLD_CREATED_BY("created_by", LPDatabase.string()),
-        FLD_CLOSED("closed", LPDatabase.booleanFld()),
-        FLD_CLOSED_ON("closed_on", LPDatabase.dateTime()),
-        FLD_CLOSED_BY("closed_by", LPDatabase.string()),
-        FLD_EXTERNAL_SYSTEM_ID("external_system_id", LPDatabase.string()),
-        FLD_EXTERNAL_SYSTEM_NAME("external_system_name", LPDatabase.string()),
-        FLD_CAPA_REQUIRED("capa_required", LPDatabase.booleanFld()),
-        FLD_CAPA_DECISION_ON("capa_decision_on", LPDatabase.dateTime()),
-        FLD_CAPA_DECISION_BY("capa_decision_by", LPDatabase.string()),
-        FLD_CAPA_OBSERVATION("capa_observation", LPDatabase.string()),
-        FLD_CAPA_EXTERNAL_SYSTEM_ID("capa_external_system_id", LPDatabase.string()),
-        FLD_CAPA_EXTERNAL_SYSTEM_NAME("capa_external_system_name", LPDatabase.string()),
+    public enum Investigation implements EnumIntTableFields{
+        ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)", null, null, null, null),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CLOSED("closed", LPDatabase.booleanFld(), null, null, null, null),
+        CLOSED_ON("closed_on", LPDatabase.dateTime(), null, null, null, null),
+        CLOSED_BY("closed_by", LPDatabase.string(), null, null, null, null),
+        EXTERNAL_SYSTEM_ID("external_system_id", LPDatabase.string(), null, null, null, null),
+        EXTERNAL_SYSTEM_NAME("external_system_name", LPDatabase.string(), null, null, null, null),
+        CAPA_REQUIRED("capa_required", LPDatabase.booleanFld(), null, null, null, null),
+        CAPA_DECISION_ON("capa_decision_on", LPDatabase.dateTime(), null, null, null, null),
+        CAPA_DECISION_BY("capa_decision_by", LPDatabase.string(), null, null, null, null),
+        CAPA_OBSERVATION("capa_observation", LPDatabase.string(), null, null, null, null),
+        CAPA_EXTERNAL_SYSTEM_ID("capa_external_system_id", LPDatabase.string(), null, null, null, null),
+        CAPA_EXTERNAL_SYSTEM_NAME("capa_external_system_name", LPDatabase.string(), null, null, null, null),
         ;
-        private Investigation(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private Investigation(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
 
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String procInstanceName, String[] fields){
-            return createTableScriptPostgres(procInstanceName, fields);
-        }
-        private static String createTableScriptPostgres(String procInstanceName, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Investigation.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (Investigation obj: Investigation.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }             
-        
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (Investigation obj: Investigation.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }             
-        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }    
 
-    public enum InvestObjects{
-        /**
-         *
-         */
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)"),
-        TBL("invest_objects", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) ) "
-                + LPDatabase.POSTGRESQL_OIDS+" "+LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
-        ,
-        /**
-         *
-         */
-        FLD_INVEST_ID("invest_id", LPDatabase.integer()),
-        FLD_OBJECT_TYPE("object_type", LPDatabase.string()),
-        FLD_OBJECT_NAME("object_name", LPDatabase.string()),
-        FLD_OBJECT_ID("object_id", LPDatabase.integer()),
-        FLD_ADDED_ON("added_on", LPDatabase.dateTime()),
-        FLD_ADDED_BY("added_BY", LPDatabase.string()),
-        FLD_DESCRIPTION("description", LPDatabase.string()),
-        FLD_NOTES("notes", LPDatabase.string()),
+    public enum InvestObjects implements EnumIntTableFields{
+        ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)", null, null, null, null),
+        INVEST_ID("invest_id", LPDatabase.integer(), null, null, null, null),
+        OBJECT_TYPE("object_type", LPDatabase.string(), null, null, null, null),
+        OBJECT_NAME("object_name", LPDatabase.string(), null, null, null, null),
+        OBJECT_ID("object_id", LPDatabase.integer(), null, null, null, null),
+        ADDED_ON("added_on", LPDatabase.dateTime(), null, null, null, null),
+        ADDED_BY("added_BY", LPDatabase.string(), null, null, null, null),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
+        NOTES("notes", LPDatabase.string(), null, null, null, null),
         ;
-        private InvestObjects(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private InvestObjects(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
 
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String procInstanceName, String[] fields){
-            return createTableScriptPostgres(procInstanceName, fields);
-        }
-        private static String createTableScriptPostgres(String procInstanceName, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = InvestObjects.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (InvestObjects obj: InvestObjects.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }             
-        
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (InvestObjects obj: InvestObjects.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }             
-        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }    
     public enum ProgramCorrectiveAction{
 

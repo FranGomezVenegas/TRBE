@@ -922,7 +922,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String schemaData = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         schemaData = Rdbms.addSuffixIfItIsForTesting(schemaData, TblsData.TablesData.SAMPLE.getTableName());
         String schemaDataAudit = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName());
-        schemaDataAudit = Rdbms.addSuffixIfItIsForTesting(schemaDataAudit, TblsDataAudit.Sample.TBL.getName());
+        schemaDataAudit = Rdbms.addSuffixIfItIsForTesting(schemaDataAudit, TblsDataAudit.TablesDataAudit.SAMPLE.getTableName());
         String [] sampleFieldToRetrieveArr = new String[0];  
             if (SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sampleFieldToRetrieve)){                
                 sampleFieldToRetrieve = "*";
@@ -976,12 +976,12 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 if (sampleAuditFieldToRetrieve!=null){
                     sampleAuditFieldToRetrieveArr=sampleAuditFieldToRetrieve.split("\\|");
                     sampleAuditFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAuditFieldToRetrieveArr, 
-                        new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_TRANSACTION_ID.getName(), 
-                            TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_USER_ROLE.getName()});
+                        new String[]{TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.TRANSACTION_ID.getName(), 
+                            TblsDataAudit.Sample.ACTION_NAME.getName(), TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.USER_ROLE.getName()});
                     sampleAuditFieldToRetrieve = LPArray.convertArrayToString(sampleAuditFieldToRetrieveArr, ", ", "");
                 }
             }
-            if (sampleAuditResultFieldToSort==null){sampleAuditResultFieldToSort=TblsDataAudit.Sample.FLD_AUDIT_ID.getName();}                                    
+            if (sampleAuditResultFieldToSort==null){sampleAuditResultFieldToSort=TblsDataAudit.Sample.AUDIT_ID.getName();}                                    
         try {
             String sqlSelect=" select ";
             String sqlFrom=" from ";

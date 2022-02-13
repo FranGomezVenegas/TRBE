@@ -34,6 +34,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -350,7 +351,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     /*                    
                 String creationDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START);
                 String creationDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END);
-                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.FLD_CREATED_ON.getName(), creationDayStart, creationDayEnd);
+                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.CREATED_ON.getName(), creationDayStart, creationDayEnd);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
                 if (buildDateRangeFromStrings.length>=2){
@@ -520,12 +521,12 @@ public class EnvMonAPIStats extends HttpServlet {
             
             if (getInvestigationInfo){
                 Object[][] investigationInfo=new Object[0][0];
-                String[] investigationFieldToRetrieveArr = TblsProcedure.Investigation.getAllFieldNames();
+                String[] investigationFieldToRetrieveArr = getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
                 
                         
                 String creationDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START);
                 String creationDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END);
-                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.FLD_CREATED_ON.getName(), creationDayStart, creationDayEnd);
+                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.CREATED_ON.getName(), creationDayStart, creationDayEnd);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
                 if (buildDateRangeFromStrings.length>=2){
@@ -537,7 +538,7 @@ public class EnvMonAPIStats extends HttpServlet {
 
                 String closureDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CLOSURE_DAY_START);
                 String closureDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CLOSURE_DAY_END);
-                buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.FLD_CLOSED_ON.getName(), closureDayStart, closureDayEnd);
+                buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.CLOSED_ON.getName(), closureDayStart, closureDayEnd);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
                 if (buildDateRangeFromStrings.length>=2){
@@ -549,13 +550,13 @@ public class EnvMonAPIStats extends HttpServlet {
                 
                 String excludeNotClosedYet = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_NOT_CLOSED_YET);
                 if (excludeNotClosedYet!=null && excludeNotClosedYet.length()>0 && Boolean.valueOf(excludeNotClosedYet)){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsProcedure.Investigation.FLD_CLOSED_ON.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsProcedure.Investigation.CLOSED_ON.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
                 }            
                         
-                investigationInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
+                investigationInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), 
                          filterFieldName, filterFieldValue,
-                         investigationFieldToRetrieveArr , new String[]{TblsProcedure.Investigation.FLD_ID.getName()+" desc"} ); 
+                         investigationFieldToRetrieveArr , new String[]{TblsProcedure.Investigation.ID.getName()+" desc"} ); 
                 jObj=new JSONObject();
                 JSONArray investigationJsonArr = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString())){
@@ -598,7 +599,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     JSONArray investigationGrouperJsonArr = new JSONArray();
                     String[] groupInfo = currGroup.split("\\*");
                     String[] invGroupFldsArr=groupInfo[0].split(",");
-                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.Investigation.TBL.getName(), 
+                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), 
                             invGroupFldsArr, filterFieldName, filterFieldValue, 
                             null);
                     invGroupFldsArr=LPArray.addValueToArray1D(invGroupFldsArr, "count");

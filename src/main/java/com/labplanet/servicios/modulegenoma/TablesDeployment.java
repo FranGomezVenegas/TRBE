@@ -109,9 +109,9 @@ public class TablesDeployment extends HttpServlet {
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
             out.println("<p>Table config."+TblsGenomaConfig.VariablesSet.TBL.getName()+" created.</p>");
 
-            tblCreateScript=TblsDataAudit.Session.createTableScript(schemaNamePrefix, new String[]{""});
+            tblCreateScript=createTableScript(TblsDataAudit.TablesDataAudit.SESSION, schemaNamePrefix);
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table data-audit."+TblsDataAudit.Session.TBL.getName()+" created.</p>");
+            out.println("<p>Table data-audit."+TblsDataAudit.TablesDataAudit.SESSION.getTableName()+" created.</p>");
             
             tblCreateScript=TblsGenomaDataAudit.Project.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});

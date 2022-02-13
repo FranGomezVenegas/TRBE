@@ -120,11 +120,11 @@ public class IncidentAPIfrontend extends HttpServlet {
                             String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
                                 "dataIncidentAuditEvents", null, action, "en", false);
                             if (propValue.length()==0) propValue=action;
-                            jObj.put(TblsDataAudit.Sample.FLD_ACTION_PRETTY_EN.getName(), propValue);
+                            jObj.put(TblsDataAudit.Sample.ACTION_PRETTY_EN.getName(), propValue);
                             propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
                                 "dataIncidentAuditEvents", null, action, "es", false);
                             if (propValue.length()==0) propValue=action;
-                            jObj.put(TblsDataAudit.Sample.FLD_ACTION_PRETTY_ES.getName(), propValue);
+                            jObj.put(TblsDataAudit.Sample.ACTION_PRETTY_ES.getName(), propValue);
                         }
                         jArr.add(jObj);
                     }
