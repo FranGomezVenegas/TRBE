@@ -25,6 +25,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -77,8 +78,8 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
         try{
             switch (endPoint){
                 case GET_ALL_HOLIDAY_DATES_LIST_ALL_CALENDARS:              
-                    String[] fieldsToRetrieve=TblsApp.HolidaysCalendarDate.getAllFieldNames();
-                    Object[][] incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.HolidaysCalendarDate.TBL.getName(), 
+                    String[] fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableFields());
+                    Object[][] incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(), 
                             new String[]{TblsApp.HolidaysCalendarDate.FLD_CALENDAR_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, 
                             new Object[]{}, 
                             fieldsToRetrieve, new String[]{TblsApp.HolidaysCalendarDate.FLD_CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.FLD_ID.getName()});

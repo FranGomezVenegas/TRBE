@@ -225,7 +225,7 @@ public class InspLotRMAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), "incident", "incId");                
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), "incident", "incId");                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 

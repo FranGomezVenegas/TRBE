@@ -63,31 +63,31 @@ public class DbObjects {
         //jsonObj.put("TblsCnfg.zzzPropertiesMissing", tblCreateScript);
         
         jsonObj=createSchemas(schemaNames, platformName);
-        tblCreateScript=TblsApp.AppSession.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsApp.TablesApp.APP_SESSION);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsApp.AppSession", tblCreateScript);
 
-        tblCreateScript=TblsApp.HolidaysCalendar.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsApp.TablesApp.HOLIDAYS_CALENDAR);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsApp.HolidaysCalendar", tblCreateScript);
         
-        tblCreateScript=TblsApp.HolidaysCalendarDate.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsApp.HolidaysCalendarDate", tblCreateScript);
 
-        tblCreateScript=TblsApp.Incident.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsApp.TablesApp.INCIDENT);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsApp.Incident", tblCreateScript);
 
-        tblCreateScript=TblsApp.UserProcess.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsApp.TablesApp.USER_PROCESS);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsApp.UserProcess", tblCreateScript);
 
-        tblCreateScript=TblsApp.Users.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsApp.TablesApp.USERS);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsApp.Users", tblCreateScript);
 
-        tblCreateScript=TblsApp.VideoTutorial.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsApp.TablesApp.VIDEO_TUTORIAL);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsApp.VideoTutorial", tblCreateScript);
 

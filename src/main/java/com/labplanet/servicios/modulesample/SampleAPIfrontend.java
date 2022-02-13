@@ -537,7 +537,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         sortFieldsNameArr=SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_CHANGEOFCUSTODY_USERS_LIST.split("\\|"); 
                     }  
                     
-                    myData = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(),
+                    myData = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(),
                             new String[]{TblsApp.Users.FLD_USER_NAME.getName()+" NOT IN|"},new Object[]{"0"}, fieldToRetrieveArr, sortFieldsNameArr);
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  

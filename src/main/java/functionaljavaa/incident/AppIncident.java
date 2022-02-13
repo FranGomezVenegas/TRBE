@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -49,8 +50,8 @@ public class AppIncident {
     }
     
     public AppIncident(Integer incidentId){
-        this.fieldNames=TblsApp.Incident.getAllFieldNames();
-        Object[][] dbInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), 
+        this.fieldNames=getAllFieldNames(TblsApp.TablesApp.INCIDENT.getTableFields());
+        Object[][] dbInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
                 new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId}, 
                 this.fieldNames, new String[]{TblsApp.Incident.FLD_ID.getName()});
         this.fieldValues=dbInfo[0];
@@ -65,7 +66,7 @@ public class AppIncident {
         Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), incTitle, incDetail,
                 token.getUserName(), token.getUserRole(), token.getPersonName(), 
                 IncidentStatuses.LOGGED.toString(), sessionInfo};
-        Object[] diagnostic=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), 
+        Object[] diagnostic=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
             updFieldName, updFieldValue);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){
             String incIdStr=diagnostic[diagnostic.length-1].toString();
@@ -87,7 +88,7 @@ public class AppIncident {
         updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.FLD_DATE_LAST_UPDATE.getName(), TblsApp.Incident.FLD_PERSON_LAST_UPDATE.getName()});
         updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()});
         
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), 
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
             AppIncidentAudit.incidentAuditAdd(IncidentAuditEvents.CONFIRMED_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, 
@@ -108,7 +109,7 @@ public class AppIncident {
         updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.FLD_DATE_LAST_UPDATE.getName(), TblsApp.Incident.FLD_PERSON_LAST_UPDATE.getName()});
         updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()});
         
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), 
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
             AppIncidentAudit.incidentAuditAdd(IncidentAuditEvents.CLOSED_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, 
@@ -136,7 +137,7 @@ public class AppIncident {
         updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.FLD_DATE_LAST_UPDATE.getName(), TblsApp.Incident.FLD_PERSON_LAST_UPDATE.getName(), TblsApp.Incident.FLD_DATE_RESOLUTION.getName(), TblsApp.Incident.FLD_PERSON_RESOLUTION.getName()});
         updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), "null>>>DATETIME", "null>>>STRING"});
         
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), 
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
             updFieldValue[updFieldValue.length-2]="null";updFieldValue[updFieldValue.length-1]="null";
@@ -163,7 +164,7 @@ public class AppIncident {
             updFieldValue=LPArray.addValueToArray1D(updFieldValue, new String[]{newStatus, currentStatus});
         }
 
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), 
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){                  
             String auditStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
@@ -181,7 +182,7 @@ public class AppIncident {
     }
     
 /*    private static Object[] getValueByFldName(String fldName){
-        Object[][] dbInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), 
+        Object[][] dbInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
                 new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId}, 
                 TblsApp.Incident.getAllFieldNames(), new String[]{TblsApp.Incident.FLD_ID.getName()});
         return dbInfo[0];    

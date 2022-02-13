@@ -191,7 +191,7 @@ public class IncidentAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.Incident.TBL.getName(), "incident", incId);                
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), "incident", incId);                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);

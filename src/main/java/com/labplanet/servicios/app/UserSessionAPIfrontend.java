@@ -36,6 +36,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 
 
@@ -52,10 +53,10 @@ public class UserSessionAPIfrontend extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
             new LPAPIArguments(TblsApp.AppSession.FLD_DATE_STARTED.getName().toLowerCase(), LPAPIArguments.ArgumentType.DATE.toString(), true, 7)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsApp.AppSession.TBL.getName()).build()).build() ),
+                .add("table", TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build() ),
         USER_SESSION_INCLUDING_AUDIT_HISTORY("USER_SESSION_INCLUDING_AUDIT_HISTORY", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_SESSION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsApp.AppSession.TBL.getName()).build()).build() ),
+                .add("table", TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build() ),
         ;
         private UserSessionAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -124,8 +125,8 @@ public class UserSessionAPIfrontend extends HttpServlet {
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
         switch (endPoint){
-            case USER_SESSIONS:              
-                String[] fieldsToRetrieve=TblsApp.AppSession.getAllFieldNames();
+            case USER_SESSIONS:             
+                String[] fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.APP_SESSION.getTableFields());
                 String[] whereFldName = new String[]{};
                 Object[] whereFldValue = new Object[]{};
                 LPAPIArguments[] apiArgs=endPoint.getArguments();
@@ -149,7 +150,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 if (whereFldName.length==0){
                     return;
                 }
-                Object[][] userSessionInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.AppSession.TBL.getName(), 
+                Object[][] userSessionInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.TablesApp.APP_SESSION.getTableName(), 
                         whereFldName, whereFldValue, 
                         fieldsToRetrieve, new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()+" desc"});
                 JSONArray userSessionArr = new JSONArray();
@@ -166,8 +167,8 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, userSessionArr);
                 return; 
             case USER_SESSION_INCLUDING_AUDIT_HISTORY:
-                fieldsToRetrieve=TblsApp.AppSession.getAllFieldNames();
-                userSessionInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.AppSession.TBL.getName(), 
+                fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.APP_SESSION.getTableFields());
+                userSessionInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.TablesApp.APP_SESSION.getTableName(), 
                         new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, 
                         new Object[]{argValues[0]}, 
                         fieldsToRetrieve, new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()+" desc"});

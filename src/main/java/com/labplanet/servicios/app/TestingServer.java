@@ -222,7 +222,7 @@ lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new 
                                  .build();
              out.println(empObject); 
             JsonArray build = Json.createArrayBuilder().add(Json.createObjectBuilder()//.add("repository", GlobalVariables.Schemas.APP.getName())
-                    .add("table", TblsApp.Incident.TBL.getName()).build()).build();
+                    .add("table", TblsApp.TablesApp.INCIDENT.getTableName()).build()).build();
             out.println(build); 
 
                 
@@ -594,7 +594,7 @@ out.println("Bye");
             
             out.println("The name for the table Session in db is "+ TblsApp.AppSession.valueOf("TBL").getName());
             out.println("The name for the field Session_id in db is "+TblsApp.AppSession.valueOf("FLD_SESSION_ID").getName());
-            String myTableName=TblsApp.Users.TBL.getName();
+            String myTableName=TblsApp.TablesApp.USERS.getTableName();
             out.println("The table name with NO valueOf() is "+myTableName);
             myTableName=TblsApp.Users.valueOf("TBL").getName();
             out.println("The table name WITH valueOf() is "+myTableName);

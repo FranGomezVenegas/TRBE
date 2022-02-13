@@ -38,11 +38,11 @@ public class PlatformNewInstance {
                 TblsProcedure.PersonProfile.FLD_ACTIVE.getName(), TblsProcedure.PersonProfile.FLD_USER_TITLE.getName()}, 
             new Object[]{personId, "testing", true, "Testing user access / Testeo acceso usuario"});
         
-        insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
+        insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{TblsApp.Users.FLD_USER_NAME.getName(), TblsApp.Users.FLD_EMAIL.getName(), TblsApp.Users.FLD_ESIGN.getName(),
                     TblsApp.Users.FLD_PASSWORD.getName(), TblsApp.Users.FLD_PERSON_NAME.getName()},
                 new Object[]{fakeProcUserName, "trazit.info@gmail.com", "firmademo", fakeProcUserName+fakeProcUserName, personId});
-        insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.UserProcess.TBL.getName(), 
+        insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
             new String[]{TblsApp.UserProcess.FLD_USER_NAME.getName(), TblsApp.UserProcess.FLD_PROC_NAME.getName(), TblsApp.UserProcess.FLD_ACTIVE.getName()}, 
             new Object[]{fakeProcUserName, fakeProcName, true});
         insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
@@ -65,10 +65,10 @@ public class PlatformNewInstance {
         Object[] removeRecordInTable=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.PersonProfile.TBL.getName(), 
             new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName(), TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()}, 
             new Object[]{personId, "testing"});        
-        removeRecordInTable = Rdbms.removeRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.Users.TBL.getName(), 
+        removeRecordInTable = Rdbms.removeRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{TblsApp.Users.FLD_USER_NAME.getName()},
                 new Object[]{fakeProcUserName});
-        removeRecordInTable=Rdbms.removeRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.UserProcess.TBL.getName(), 
+        removeRecordInTable=Rdbms.removeRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
             new String[]{TblsApp.UserProcess.FLD_USER_NAME.getName(), TblsApp.UserProcess.FLD_PROC_NAME.getName()}, 
             new Object[]{fakeProcUserName, fakeProcName});
         removeRecordInTable=Rdbms.removeRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 

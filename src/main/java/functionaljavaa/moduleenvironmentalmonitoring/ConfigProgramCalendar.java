@@ -193,12 +193,12 @@ public class ConfigProgramCalendar {
     @SuppressWarnings("empty-statement")
     public static Object[] importHolidaysCalendarSchedule(String pName, Integer programCalendarId, String holidaysCalendarCode) {                
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.HolidaysCalendar.TBL.getName(),  
+        Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(),  
               new String[]{TblsApp.HolidaysCalendar.FLD_CODE.getName(),TblsApp.HolidaysCalendar.FLD_ACTIVE.getName()}, 
               new Object[]{holidaysCalendarCode, true});
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){ return existsRecord;}     
 
-      Object[][] holidaysCalendarDates = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.HolidaysCalendarDate.TBL.getName(), 
+      Object[][] holidaysCalendarDates = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(), 
               new String[]{TblsApp.HolidaysCalendarDate.FLD_CALENDAR_CODE.getName()}, 
               new Object[]{holidaysCalendarCode}, new String[]{TblsApp.HolidaysCalendarDate.FLD_ID.getName(), TblsApp.HolidaysCalendarDate.FLD_DATE.getName()});
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(holidaysCalendarDates[0][0].toString())){return LPArray.array2dTo1d(holidaysCalendarDates);}

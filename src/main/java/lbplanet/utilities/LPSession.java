@@ -63,7 +63,7 @@ public class LPSession {
     public static Object[] newAppSession( String[] fieldsName, Object[] fieldsValue, String remoteAddr){        
         LocalDateTime localDateTime=LPDate.getCurrentTimeStamp();
         
-        String tableName = TblsApp.AppSession.TBL.getName();
+        String tableName = TblsApp.TablesApp.APP_SESSION.getTableName();
         
         fieldsName = LPArray.addValueToArray1D(fieldsName, TblsApp.AppSession.FLD_DATE_STARTED.getName());
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, localDateTime);
@@ -82,7 +82,7 @@ public class LPSession {
      * @return
      */
     public static Object[] getAppSession( Integer appSessionId, String[] fieldsToRetrieve){
-        String tableName = TblsApp.AppSession.TBL.getName();
+        String tableName = TblsApp.TablesApp.APP_SESSION.getTableName();
         if (fieldsToRetrieve==null){
             fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, TblsApp.AppSession.FLD_SESSION_ID.getName());
             fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, TblsApp.AppSession.FLD_DATE_STARTED.getName());
@@ -133,7 +133,7 @@ public class LPSession {
      * @return
      */    
     public static Object[] addProcessToAppSession(String processName, Integer appSessionId){
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.AppSession.TBL.getName(), 
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(), 
                 new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, new Object[]{appSessionId}, 
                 new String[]{TblsApp.AppSession.FLD_PROCEDURES.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString()))        
@@ -143,7 +143,7 @@ public class LPSession {
         if (procListValue.length()>0) procListValue=procListValue+"|";
         procListValue=procListValue+processName.replace("-"+GlobalVariables.Schemas.DATA_AUDIT.getName(), "");
         if (!LPArray.valueInArray(sessionProcsArr, processName))
-            return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.AppSession.TBL.getName(), 
+            return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(), 
                     new String[]{TblsApp.AppSession.FLD_PROCEDURES.getName()}, new Object[]{procListValue}, 
                     new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, new Object[]{appSessionId});
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>",new Object[]{processName, appSessionId} );

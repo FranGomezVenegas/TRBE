@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import org.json.simple.parser.JSONParser;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 
 
@@ -216,11 +217,11 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
              
             switch (endPoint){
             case ALL_ACTIVE_VIDEO_TUTORIALS:
-                Object[][] videoTutorialItems=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.VideoTutorial.TBL.getName(), 
+                Object[][] videoTutorialItems=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL.getTableName(), 
                     new String[]{TblsApp.VideoTutorial.FLD_ACTIVE.getName()}, new Object[]{true},
-                    TblsApp.VideoTutorial.getAllFieldNames(), 
+                    getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), 
                     new String[]{TblsApp.VideoTutorial.FLD_PARENT_ID.getName(), TblsApp.VideoTutorial.FLD_ORDER_NUMBER.getName()});
-/*                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.VideoTutorial.TBL.getName(), 
+/*                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL.getTableName(), 
                     new String[]{TblsApp.VideoTutorial.FLD_ACTIVE.getName()}, new Object[]{true},
                     TblsApp.VideoTutorial.getAllFieldNames(), 
                     new String[]{TblsApp.VideoTutorial.FLD_PARENT_ID.getName(), TblsApp.VideoTutorial.FLD_ORDER_NUMBER.getName()});
@@ -230,17 +231,17 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                 JSONParser parser = new JSONParser();  
                 String[] itemPosic=new String[]{};
                 for (Object[] curItem: videoTutorialItems){
-                    Object curItemId=curItem[LPArray.valuePosicInArray(TblsApp.VideoTutorial.getAllFieldNames(), TblsApp.VideoTutorial.FLD_ID.getName())];
-                    Object curItemParentId=curItem[LPArray.valuePosicInArray(TblsApp.VideoTutorial.getAllFieldNames(), TblsApp.VideoTutorial.FLD_PARENT_ID.getName())];
+                    Object curItemId=curItem[LPArray.valuePosicInArray(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields(), TblsApp.VideoTutorial.FLD_ID.getName())];
+                    Object curItemParentId=curItem[LPArray.valuePosicInArray(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields(), TblsApp.VideoTutorial.FLD_PARENT_ID.getName())];
                     if ("0".equalsIgnoreCase(curItemParentId.toString())){
                         itemPosic=(String[]) LPArray.addValueToArray1D(itemPosic, curItemId.toString());
-                        jArr.add(LPJson.convertArrayRowToJSONObject(TblsApp.VideoTutorial.getAllFieldNames(), curItem));
+                        jArr.add(LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), curItem));
                     }else{
                         Integer parentValuePosicInArray = LPArray.valuePosicInArray(itemPosic, curItemParentId.toString());
 //                        itemPosic=(String[]) LPArray.addValueToArray1D(itemPosic, curItemId.toString());
                         if (parentValuePosicInArray!=-1){
                             JSONObject get = (JSONObject) jArr.get(parentValuePosicInArray);
-                            get.putIfAbsent("children", LPJson.convertArrayRowToJSONObject(TblsApp.VideoTutorial.getAllFieldNames(), curItem));
+                            get.putIfAbsent("children", LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), curItem));
                             jArr.add(parentValuePosicInArray, get);
                         }
                     }                   
@@ -249,7 +250,7 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
 /*            case ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY:
-                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.VideoTutorial.TBL.getName(), 
+                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL.getTableName(), 
                         new String[]{TblsApp.VideoTutorial.FLD_ACTIVE.getName()}, new Object[]{true},
                         TblsApp.VideoTutorial.getAllFieldNames(), new String[]{TblsApp.VideoTutorial.FLD_ID.getName(), TblsApp.VideoTutorial.FLD_PARENT_ID.getName(), TblsApp.VideoTutorial.FLD_ORDER_NUMBER.getName()});
 

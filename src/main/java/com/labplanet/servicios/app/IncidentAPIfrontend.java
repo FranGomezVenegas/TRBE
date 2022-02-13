@@ -32,6 +32,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -84,8 +85,8 @@ public class IncidentAPIfrontend extends HttpServlet {
 
         switch (endPoint){
             case USER_OPEN_INCIDENTS:              
-                String[] fieldsToRetrieve=TblsApp.Incident.getAllFieldNames();
-                Object[][] incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.Incident.TBL.getName(), 
+                String[] fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.INCIDENT.getTableFields());
+                Object[][] incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.TablesApp.INCIDENT.getTableName(), 
                         new String[]{TblsApp.Incident.FLD_STATUS.getName()+"<>", TblsApp.Incident.FLD_PERSON_CREATION.getName()}, 
                         new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), token.getPersonName()}, 
                         fieldsToRetrieve, new String[]{TblsApp.Incident.FLD_ID.getName()+" desc"});
@@ -134,8 +135,8 @@ public class IncidentAPIfrontend extends HttpServlet {
                 String numDays = LPNulls.replaceNull(argValues[0]).toString();
                 if (numDays.length()==0) numDays=String.valueOf(7);
                 int numDaysInt=0-Integer.valueOf(numDays);               
-                fieldsToRetrieve=TblsApp.Incident.getAllFieldNames();
-                incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.Incident.TBL.getName(), 
+                fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.INCIDENT.getTableFields());
+                incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.TablesApp.INCIDENT.getTableName(), 
                         new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_DATE_RESOLUTION.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
                         new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
                         fieldsToRetrieve, new String[]{TblsApp.Incident.FLD_DATE_RESOLUTION.getName()+" desc"});
