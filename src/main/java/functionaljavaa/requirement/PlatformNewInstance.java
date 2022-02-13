@@ -45,9 +45,9 @@ public class PlatformNewInstance {
         insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
             new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName(), TblsApp.UserProcess.ACTIVE.getName()}, 
             new Object[]{fakeProcUserName, fakeProcName, true});
-        insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
-            new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName(), TblsAppConfig.Person.FLD_FIRST_NAME.getName(), 
-                TblsAppConfig.Person.FLD_LAST_NAME.getName(), TblsAppConfig.Person.FLD_PHOTO.getName()}, 
+        insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), 
+            new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName(), 
+                TblsAppConfig.Person.LAST_NAME.getName(), TblsAppConfig.Person.PHOTO.getName()}, 
             new Object[]{personId, "I'm a user demo", "for demos "+platfName, "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"});
         
         return new JSONObject();
@@ -71,8 +71,8 @@ public class PlatformNewInstance {
         removeRecordInTable=Rdbms.removeRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
             new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName()}, 
             new Object[]{fakeProcUserName, fakeProcName});
-        removeRecordInTable=Rdbms.removeRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
-            new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName()}, 
+        removeRecordInTable=Rdbms.removeRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), 
+            new String[]{TblsAppConfig.Person.PERSON_ID.getName()}, 
             new Object[]{personId});
         return new JSONObject();
     }

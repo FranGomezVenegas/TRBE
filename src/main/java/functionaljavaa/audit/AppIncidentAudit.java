@@ -32,35 +32,35 @@ public final class AppIncidentAudit {
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};
 
-        String[] fieldNames = new String[]{TblsAppAudit.Incident.FLD_DATE.getName()};
+        String[] fieldNames = new String[]{TblsAppAudit.Incident.DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         if (procInstanceName!=null){
             Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
             if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
-                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_PROCEDURE.getName());
+                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PROCEDURE.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
-                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_PROCEDURE_VERSION.getName());
+                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PROCEDURE_VERSION.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][1]);        
             }        
         }
         if (note!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_NOTE.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.NOTE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, note);
         }
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_ACTION_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_INCIDENT_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.INCIDENT_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, incidentId);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_TABLE_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_TABLE_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, incidentId);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_FIELDS_UPDATED.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FIELDS_UPDATED.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_USER_ROLE.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.USER_ROLE.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getUserRole());
 
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_PERSON.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
             Object[] appSession = LPSession.addAppSession( Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
@@ -70,22 +70,22 @@ public final class AppIncidentAudit {
                 return appSession;
             }else{
 
-                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_APP_SESSION_ID.getName());
+                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.APP_SESSION_ID.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(token.getAppSessionId()));            
             }
         }
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_TRANSACTION_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.TRANSACTION_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());            
         if (parentAuditId!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_PARENT_AUDIT_ID.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
         AuditAndUserValidation auditAndUsrValid=ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
         if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_REASON.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_AUDIT.getName(), TblsAppAudit.Incident.TBL.getName(), 
+        Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_AUDIT.getName(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), 
                 fieldNames, fieldValues);
         return insertRecordInTable;
     }    

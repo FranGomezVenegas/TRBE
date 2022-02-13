@@ -91,11 +91,11 @@ public class DbObjects {
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsApp.VideoTutorial", tblCreateScript);
 
-        tblCreateScript=TblsAppAudit.Incident.createTableScript("", new String[]{""});
+        tblCreateScript=createTableScript(TblsAppAudit.TablesAppAudit.INCIDENT);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsAppAudit.Incident", tblCreateScript);
         
-        tblCreateScript=TblsAppAudit.Session.createTableScript("", new String[]{""});
+        tblCreateScript=createTableScript(TblsAppAudit.TablesAppAudit.SESSION);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsAppAudit.Session", tblCreateScript);
 
@@ -111,7 +111,7 @@ public class DbObjects {
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsCnfg.zzzPropertiesMissing", tblCreateScript);
 */
-        tblCreateScript=TblsAppConfig.Person.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsAppConfig.TablesAppConfig.PERSON);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsAppConfig.Person", tblCreateScript);
         

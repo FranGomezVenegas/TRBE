@@ -105,16 +105,16 @@ public class IncidentAPIfrontend extends HttpServlet {
                 String incIdStr=LPNulls.replaceNull(argValues[0]).toString();
                 if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
 
-                fieldsToRetrieve=TblsAppAudit.Incident.getAllFieldNames();
-                incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(),TblsAppAudit.Incident.TBL.getName(), 
-                        new String[]{TblsAppAudit.Incident.FLD_INCIDENT_ID.getName()}, 
+                fieldsToRetrieve=getAllFieldNames(TblsAppAudit.TablesAppAudit.INCIDENT.getTableFields());
+                incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(),TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), 
+                        new String[]{TblsAppAudit.Incident.INCIDENT_ID.getName()}, 
                         new Object[]{incId}, 
-                        fieldsToRetrieve, new String[]{TblsAppAudit.Incident.FLD_DATE.getName()+" desc"});
+                        fieldsToRetrieve, new String[]{TblsAppAudit.Incident.DATE.getName()+" desc"});
                 jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
                     for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                        Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.FLD_ACTION_NAME.getName());
+                        Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.ACTION_NAME.getName());
                         if (actionPosic>-1){
                             String action=LPNulls.replaceNull(currIncident[actionPosic]).toString();
                             String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 

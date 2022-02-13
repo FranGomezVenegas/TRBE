@@ -5,112 +5,78 @@
  */
 package databases;
 
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
-import lbplanet.utilities.LPPlatform;
-import static databases.TblsCnfg.SCHEMATAG;
-import static databases.TblsCnfg.TABLETAG;
-import static databases.TblsCnfg.OWNERTAG;
-import static databases.TblsCnfg.TABLESPACETAG;
-import static databases.TblsCnfg.FIELDSTAG;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
+import trazit.enums.FldBusinessRules;
+import trazit.enums.ForeignkeyFld;
+import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
  */
 public class TblsAppConfig {
-   
-    /**
-     *
-     */
-    public enum Person{
-
-        /**
-         *
-         */
-        TBL("person",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_PERSON_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
-        ,
-
-        /**
-         *
-         */
-        FLD_PERSON_ID("person_id", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_FIRST_NAME("first_name", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_LAST_NAME("last_name", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_BIRTH_DATE("birth_date", LPDatabase.date())
-        ,
-
-        /**
-         *
-         */
-        FLD_PHOTO("photo", LPDatabase.stringNotNull())
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_CONFIG.getName();
+    public enum TablesAppConfig implements EnumIntTables{
+        
+        PERSON(null, "person", SCHEMA_NAME, true, TblsAppConfig.Person.values(), TblsAppConfig.Person.PERSON_ID.getName(),
+            new String[]{TblsAppConfig.Person.PERSON_ID.getName()}, null, ""),
         ;
-        private Person(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private TablesAppConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+                String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.tableName=dbTblName;
+            this.tableFields=tblFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.sequence=seqName;
+            this.primarykey=primaryK;
+            this.foreignkey=foreignK;
+            this.tableComment=comment;
         }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
+        @Override        public String getTableName() {return this.tableName;}
+        @Override        public String getTableComment() {return this.tableComment;}
+        @Override        public EnumIntTableFields[] getTableFields() {return this.tableFields;}
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public String getSeqName() {return this.sequence;}
+        @Override        public String[] getPrimaryKey() {return this.primarykey;}
+        @Override        public ForeignkeyFld getForeignKey() {return this.foreignkey;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String tableName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final String sequence;
+        private final EnumIntTableFields[] tableFields;
+        private final String[] primarykey;
+        private final ForeignkeyFld foreignkey;
+        private final String tableComment;
+    }
+    
+    public enum Person implements EnumIntTableFields{
+        PERSON_ID("person_id", LPDatabase.stringNotNull(), null, null, null, null),
+        FIRST_NAME("first_name", LPDatabase.stringNotNull(), null, null, null, null),
+        LAST_NAME("last_name", LPDatabase.stringNotNull(), null, null, null, null),
+        BIRTH_DATE("birth_date", LPDatabase.date(), null, null, null, null),
+        PHOTO("photo", LPDatabase.stringNotNull(), null, null, null, null),
+        ;
+        private Person(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String[] fields){
-            return createTableScriptPostgres(fields);
-        }
-        private static String createTableScriptPostgres(String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Person.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, GlobalVariables.Schemas.CONFIG.getName());
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (Person obj: Person.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, GlobalVariables.Schemas.CONFIG.getName());
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
         
 }

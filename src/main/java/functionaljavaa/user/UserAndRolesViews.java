@@ -100,8 +100,8 @@ public class UserAndRolesViews {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personIdDiagn[0].toString())) return personIdDiagn;
         String personId=personIdDiagn[1].toString();
         Object[] personCreatedDiagn; 
-        personCreatedDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.Person.TBL.getName(), 
-                new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName(), TblsAppConfig.Person.FLD_FIRST_NAME.getName()}, new Object[]{personId, uName});
+        personCreatedDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), 
+                new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName()}, new Object[]{personId, uName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personCreatedDiagn[0].toString())) return personCreatedDiagn;
         Object[] userCreatedDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{Users.USER_NAME.getName(), Users.PASSWORD.getName(), Users.PERSON_NAME.getName()}, new Object[]{uName, "trazit123", personId});        
