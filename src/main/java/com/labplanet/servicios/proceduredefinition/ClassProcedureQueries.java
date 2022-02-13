@@ -23,9 +23,9 @@ import trazit.globalvariables.GlobalVariables;
 public class ClassProcedureQueries {    
     
     static JSONObject procAccessBlock(String procInstanceName){
-        String[] fldsArr=new String[]{TblsReqs.ProcedureUsers.FLD_USER_NAME.getName()};
-        Object[][] procUsers = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUsers.TBL.getName(), 
-            new String[]{TblsReqs.ProcedureUsers.FLD_PROCEDURE_NAME.getName()}, 
+        String[] fldsArr=new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()};
+        Object[][] procUsers = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
+            new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName()}, 
             new Object[]{procInstanceName}, fldsArr);
         JSONObject jBlockObj = new JSONObject();
         JSONArray jBlockArr = new JSONArray(); 
@@ -35,9 +35,9 @@ public class ClassProcedureQueries {
             }
             jBlockObj.put("users", jBlockArr);
         }
-        fldsArr=new String[]{TblsReqs.ProcedureUserRole.FLD_USER_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_ROLE_NAME.getName()};
-        Object[][] procUserRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUserRole.TBL.getName(), 
-            new String[]{TblsReqs.ProcedureUserRole.FLD_PROCEDURE_NAME.getName()}, 
+        fldsArr=new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()};
+        Object[][] procUserRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
+            new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName()}, 
             new Object[]{procInstanceName}, fldsArr);
         jBlockArr = new JSONArray(); 
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserRoles[0][0].toString())){
@@ -46,9 +46,9 @@ public class ClassProcedureQueries {
             }
             jBlockObj.put("user_role", jBlockArr);
         }
-        fldsArr=new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()};
-        Object[][] procRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureRoles.TBL.getName(), 
-            new String[]{TblsReqs.ProcedureRoles.FLD_PROCEDURE_NAME.getName()}, 
+        fldsArr=new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
+        Object[][] procRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(), 
+            new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName()}, 
             new Object[]{procInstanceName}, fldsArr);
         jBlockArr = new JSONArray(); 
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procRoles[0][0].toString())){
@@ -61,10 +61,10 @@ public class ClassProcedureQueries {
     }
     static JsonObject feProcModel(String procInstanceName){
         JsonObject jArr = new JsonObject();   
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureFrontEndProcModel.TBL.getName(), 
-                new String[]{TblsReqs.ProcedureFrontEndProcModel.FLD_PROCEDURE_NAME.getName()},
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(), 
+                new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName()},
                 new Object[]{procInstanceName}, 
-                new String[]{TblsReqs.ProcedureFrontEndProcModel.FLD_MODEL_JSON.getName()});
+                new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName()});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){
             JsonParser parser = new JsonParser();
             return parser.parse(ruleValue[0][0].toString()).getAsJsonObject();
@@ -95,7 +95,7 @@ public class ClassProcedureQueries {
                     jObj=(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow, jsonFlds));
                     JsonParser parser = new JsonParser();
                     for (String curJsonFld: jsonFlds)
-                        jObj.put(TblsReqs.ProcedureMasterData.FLD_JSON_OBJ.getName(), parser.parse(curRow[LPArray.valuePosicInArray(fldsToGet, curJsonFld)].toString()).getAsJsonObject());
+                        jObj.put(TblsReqs.ProcedureMasterData.JSON_OBJ.getName(), parser.parse(curRow[LPArray.valuePosicInArray(fldsToGet, curJsonFld)].toString()).getAsJsonObject());
                     jBlockArr.add(jObj);
                 }
             }

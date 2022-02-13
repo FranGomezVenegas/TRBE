@@ -48,9 +48,9 @@ public class BusinessRules {
 //        if(1==1) return;
         Object[][] testingBusRulsInfo = null;
         if (scriptId!=null && scriptId>0)
-            testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptBusinessRules.TBL.getName(), 
-                new String[]{TblsTesting.ScriptBusinessRules.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptBusinessRules.FLD_ACTIVE.getName()}, new Object[]{scriptId, true}, 
-                new String[]{TblsTesting.ScriptBusinessRules.FLD_REPOSITORY.getName(), TblsTesting.ScriptBusinessRules.FLD_RULE_NAME.getName(), TblsTesting.ScriptBusinessRules.FLD_RULE_VALUE.getName()});
+            testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableName(), 
+                new String[]{TblsTesting.ScriptBusinessRules.SCRIPT_ID.getName(), TblsTesting.ScriptBusinessRules.ACTIVE.getName()}, new Object[]{scriptId, true}, 
+                new String[]{TblsTesting.ScriptBusinessRules.REPOSITORY.getName(), TblsTesting.ScriptBusinessRules.RULE_NAME.getName(), TblsTesting.ScriptBusinessRules.RULE_VALUE.getName()});
         else
             if (procedureInstanceName!=null && procedureInstanceName.length()>0)
                 testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 

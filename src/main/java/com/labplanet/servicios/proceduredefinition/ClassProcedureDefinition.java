@@ -75,9 +75,9 @@ public class ClassProcedureDefinition {
                         actionDiagnoses=personByUserObj;
                         break;
                     }
-                    actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUsers.TBL.getName(), 
-                            new String[]{TblsReqs.ProcedureUsers.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.FLD_PROCEDURE_VERSION.getName(),
-                                TblsReqs.ProcedureUsers.FLD_SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUsers.FLD_USER_NAME.getName()}, 
+                    actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
+                            new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(),
+                                TblsReqs.ProcedureUsers.SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()}, 
                             new Object[]{procedureName, procedureVersion, procInstanceName, userName});
                     JSONObject createDBProcedureUsers = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;
@@ -97,9 +97,9 @@ public class ClassProcedureDefinition {
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The role <*1*> does not exist in procedure <*2*> and version <*3*>", new Object[]{roleName, procedureName, procedureVersion});
                         break;
                     }
-                    actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureUserRole.TBL.getName(), 
-                            new String[]{TblsReqs.ProcedureUserRole.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_PROCEDURE_VERSION.getName(),
-                                TblsReqs.ProcedureUserRole.FLD_SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUserRole.FLD_USER_NAME.getName(), TblsReqs.ProcedureUserRole.FLD_ROLE_NAME.getName()}, 
+                    actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
+                            new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
+                                TblsReqs.ProcedureUserRoles.SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()}, 
                             new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
                     JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;

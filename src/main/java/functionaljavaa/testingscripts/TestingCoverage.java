@@ -25,6 +25,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -73,30 +74,30 @@ public class TestingCoverage {
         this.msgCodeVisited=new JSONArray();
         this.procInstanceName=procInstanceName;
         this.coverageId=coverageId;
-        String[] covFldNameArr=TblsTesting.ScriptsCoverage.getAllFieldNames();
-        Object[][] coverageInfoArr=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptsCoverage.TBL.getName(),
-            new String[]{TblsTesting.ScriptsCoverage.FLD_COVERAGE_ID.getName()},
+        String[] covFldNameArr=getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields());
+        Object[][] coverageInfoArr=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(),
+            new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()},
             new Object[]{coverageId},covFldNameArr);        
         //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(coverageInfo[0][0].toString())){return;}
         
-        String scrId=LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(TblsTesting.ScriptsCoverage.getAllFieldNames(), TblsTesting.ScriptsCoverage.FLD_SCRIPT_IDS_LIST.getName())]).toString();
+        String scrId=LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), TblsTesting.ScriptsCoverage.SCRIPT_IDS_LIST.getName())]).toString();
         this.scriptIds = convertStringedPipedNumbersInArray(scrId);
         scrId=scrId.replace("\\|", "\\|INTEGER*");
         scrId="INTEGER*".concat(scrId);        
         BusinessRules bR=new BusinessRules(procInstanceName, 0);
-        this.coverageEndpointsExcludeList=LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(TblsTesting.ScriptsCoverage.getAllFieldNames(), TblsTesting.ScriptsCoverage.FLD_ENDPOINTS_EXCLUDE_LIST.getName())]).toString().split("\\|");
+        this.coverageEndpointsExcludeList=LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), TblsTesting.ScriptsCoverage.ENDPOINTS_EXCLUDE_LIST.getName())]).toString().split("\\|");
         if (this.coverageEndpointsExcludeList!=null && this.coverageEndpointsExcludeList[0].length()==0) this.coverageEndpointsExcludeList=new String[]{};
-        this.coverageBusRulesExcludeList=LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(TblsTesting.ScriptsCoverage.getAllFieldNames(), TblsTesting.ScriptsCoverage.FLD_BUS_RULES_EXCLUDE_LIST.getName())]).toString().split("\\|");
+        this.coverageBusRulesExcludeList=LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), TblsTesting.ScriptsCoverage.BUS_RULES_EXCLUDE_LIST.getName())]).toString().split("\\|");
         if (this.coverageBusRulesExcludeList!=null && this.coverageBusRulesExcludeList[0].length()==0) this.coverageBusRulesExcludeList=new String[]{};
         
-        this.coverageMsgCodeExcludeList=LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(TblsTesting.ScriptsCoverage.getAllFieldNames(), TblsTesting.ScriptsCoverage.FLD_MSG_CODE_EXCLUDE_LIST.getName())]).toString().split("\\|");
+        this.coverageMsgCodeExcludeList=LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), TblsTesting.ScriptsCoverage.MSG_CODE_EXCLUDE_LIST.getName())]).toString().split("\\|");
         
         this.procBusRules=bR;
         initializeCounters();
-        this.scriptsFldNameArr=new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName(), TblsTesting.Script.FLD_BUSINESS_RULES_VISITED.getName(), TblsTesting.Script.FLD_MESSAGES_VISITED.getName(),
-            TblsTesting.Script.FLD_DATE_EXECUTION.getName(), TblsTesting.Script.FLD_PURPOSE.getName(), TblsTesting.Script.FLD_RUN_SUMMARY.getName()};
-        this.scriptsInfoArr = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
-                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()+"|"}, new Object[]{scrId}, 
+        this.scriptsFldNameArr=new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.BUSINESS_RULES_VISITED.getName(), TblsTesting.Script.MESSAGES_VISITED.getName(),
+            TblsTesting.Script.DATE_EXECUTION.getName(), TblsTesting.Script.PURPOSE.getName(), TblsTesting.Script.RUN_SUMMARY.getName()};
+        this.scriptsInfoArr = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
+                new String[]{TblsTesting.Script.SCRIPT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()+"|"}, new Object[]{scrId}, 
                 this.scriptsFldNameArr);
         List<String> calcProcedureBusRules=  new ArrayList<String>();
         List<String> calcDataBusRules=  new ArrayList<String>();
@@ -121,9 +122,9 @@ public class TestingCoverage {
 
     public void calculateCoverageEndpoints(String scrId, List<String> calcProcedureActions){       
         Object[] whereFldValue=new Object[]{scrId, true};
-        Object[][] scriptsEndpoints = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptSteps.TBL.getName(), 
-                new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()+"|", TblsTesting.ScriptSteps.FLD_ACTIVE.getName()}, whereFldValue, 
-                new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_01.getName()});
+        Object[][] scriptsEndpoints = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
+                new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()+"|", TblsTesting.ScriptSteps.ACTIVE.getName()}, whereFldValue, 
+                new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.ARGUMENT_01.getName()});
         //this.endpointsCoverageDetail=new JsonArray();
         JSONArray visitedjObj=new JSONArray();
         JSONArray missingjObj=new JSONArray();
@@ -247,16 +248,16 @@ public class TestingCoverage {
         this.busRuleCoverageDetail.put("missing", accMissing);*/
     }            
     public void saveCoverage(){    
-        Object[] updateCoverageRow = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.ScriptsCoverage.TBL.getName(), 
-            new String[]{TblsTesting.ScriptsCoverage.FLD_DATE_EXECUTION.getName(), TblsTesting.ScriptsCoverage.FLD_ENDPOINTS_COVERAGE.getName(), 
-                TblsTesting.ScriptsCoverage.FLD_ENDPOINTS_COVERAGE_DETAIL.getName(), 
-                TblsTesting.ScriptsCoverage.FLD_BUS_RULES_COVERAGE.getName(), TblsTesting.ScriptsCoverage.FLD_BUS_RULES_COVERAGE_DETAIL.getName(), 
+        Object[] updateCoverageRow = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), 
+            new String[]{TblsTesting.ScriptsCoverage.DATE_EXECUTION.getName(), TblsTesting.ScriptsCoverage.ENDPOINTS_COVERAGE.getName(), 
+                TblsTesting.ScriptsCoverage.ENDPOINTS_COVERAGE_DETAIL.getName(), 
+                TblsTesting.ScriptsCoverage.BUS_RULES_COVERAGE.getName(), TblsTesting.ScriptsCoverage.BUS_RULES_COVERAGE_DETAIL.getName(), 
             }, 
             new Object[]{LPDate.getCurrentTimeStamp(), this.endpointsCovPerc, 
                 LPNulls.replaceNull(this.endpointsCoverageDetail).toString(), 
                 this.busRuleCovPerc, LPNulls.replaceNull(this.busRuleCoverageDetail).toString(), 
             }, 
-            new String[]{TblsTesting.ScriptsCoverage.FLD_COVERAGE_ID.getName()}, new Object[]{this.coverageId});        
+            new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()}, new Object[]{this.coverageId});        
     }
     
     void generateSummaryForBusinessRules(){
@@ -463,7 +464,7 @@ public class TestingCoverage {
         mainObj.put("Message_Codes_Info", msgCodeObj);
         
         JSONArray scriptsInfoArr=new JSONArray();
-        String[] fldsToGet=new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName(), TblsTesting.Script.FLD_DATE_EXECUTION.getName(), TblsTesting.Script.FLD_PURPOSE.getName(), TblsTesting.Script.FLD_RUN_SUMMARY.getName()};
+        String[] fldsToGet=new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.DATE_EXECUTION.getName(), TblsTesting.Script.PURPOSE.getName(), TblsTesting.Script.RUN_SUMMARY.getName()};
         for (Object[] curRec: this.scriptsInfoArr){
             JSONObject curRecObj=new JSONObject();
             for (String curFld: fldsToGet){

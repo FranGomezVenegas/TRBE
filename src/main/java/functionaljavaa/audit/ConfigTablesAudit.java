@@ -103,7 +103,7 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), TblsCnfgAudit.Analysis.TBL.getName(),
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), TblsCnfgAudit.TablesCfgAudit.ANALYSIS.getTableName(),
                 fieldNames, fieldValues);
     }
 
@@ -183,7 +183,7 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), TblsCnfgAudit.Spec.TBL.getName(),
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), TblsCnfgAudit.TablesCfgAudit.SPEC.getTableName(),
                 fieldNames, fieldValues);
     }
 

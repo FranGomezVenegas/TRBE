@@ -7,6 +7,7 @@ package com.labplanet.servicios.moduleenvmonit;
 
 import databases.TblsCnfgAudit;
 import lbplanet.utilities.LPPlatform;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 
 /**
  *
@@ -15,8 +16,8 @@ import lbplanet.utilities.LPPlatform;
 public class TblsEnvMonitConfigAudit {
     public static final String getTableCreationScriptFromConfigAuditTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
-            case "ANALYSIS": return TblsCnfgAudit.Analysis.createTableScript(schemaNamePrefix, fields);
-            case "SPEC": return TblsCnfgAudit.Spec.createTableScript(schemaNamePrefix, fields);
+            case "ANALYSIS": return createTableScript(TblsCnfgAudit.TablesCfgAudit.ANALYSIS, schemaNamePrefix);
+            case "SPEC": return createTableScript(TblsCnfgAudit.TablesCfgAudit.SPEC, schemaNamePrefix);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSCNFGAUDITENVMONIT"+LPPlatform.LAB_FALSE;            
         }        
     }

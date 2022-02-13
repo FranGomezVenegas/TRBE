@@ -35,15 +35,9 @@ public class TblsDataAudit {
     public static final String FIELDS_NAMES_USER_NAME="user_name";
 
     
-public enum MyEnum implements Indexed<MyEnum> {
-    ONE,
-    TWO,
-    THREE,
-    ;
-}
+public enum MyEnum implements Indexed<MyEnum> {ONE, TWO, THREE,;}
 
-public enum SomeEnumClass {
-    ONE(1), TWO(2), THREE(3);
+public enum SomeEnumClass {ONE(1), TWO(2), THREE(3);
     SomeEnumClass(int n){}
     // This variable hosts your static data, along with shared behavior
     private static  final CellHelper<SomeEnumClass> helper = new CellHelper(SomeEnumClass.values(), SomeEnumClass.class);
@@ -51,15 +45,11 @@ public enum SomeEnumClass {
     public static SomeEnumClass getCell(int i) {return helper.getCell(i);}
 }
 
-public enum OtherEnumClass {
-    MONDAY(1), TUESDAY(2), WEDNESDAY(3), THRUSDAY(4), FRIDAY(5), SATURDAY(6), SUNDAY(7);
+public enum OtherEnumClass {MONDAY(1), TUESDAY(2), WEDNESDAY(3), THRUSDAY(4), FRIDAY(5), SATURDAY(6), SUNDAY(7);
     OtherEnumClass(int n){}
     private static  final CellHelper<OtherEnumClass> helper = new CellHelper(OtherEnumClass.values(), OtherEnumClass.class);
     public static OtherEnumClass getCell(int i) {return helper.getCell(i);}
 }
-    /**
-     *
-     */
     public enum Session{
 
         /**
@@ -157,9 +147,6 @@ public enum OtherEnumClass {
         private final String dbObjTypePostgres;                     
     }
 
-    /**
-     *
-     */
     public enum Sample{
 
         /**

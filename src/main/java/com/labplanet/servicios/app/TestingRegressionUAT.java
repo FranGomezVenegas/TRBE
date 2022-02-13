@@ -128,11 +128,11 @@ public class TestingRegressionUAT extends HttpServlet {
                 }
             }
 
-            scriptTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.Script.TBL.getName(), 
-                    new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
-                    new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName(), TblsTesting.Script.FLD_AUDIT_IDS_TO_GET.getName(),
-                                    TblsTesting.Script.FLD_GET_DB_ERRORS.getName(), TblsTesting.Script.FLD_GET_MSG_ERRORS.getName()},
-                    new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()});
+            scriptTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(), 
+                    new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId}, 
+                    new String[]{TblsTesting.Script.TESTER_NAME.getName(), TblsTesting.Script.EVAL_NUM_ARGS.getName(), TblsTesting.Script.AUDIT_IDS_TO_GET.getName(),
+                                    TblsTesting.Script.GET_DB_ERRORS.getName(), TblsTesting.Script.GET_MSG_ERRORS.getName()},
+                    new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
                 String msgStr=" Script "+scriptId.toString()+" Not found in procedure "+procInstanceName;
                 Logger.getLogger(msgStr); 
@@ -164,10 +164,10 @@ public class TestingRegressionUAT extends HttpServlet {
             // The dispatcher for both is exactly the same, there is not one for regression and another for unit testing.
             switch (endPoints){
             case DB_PLATFORM_INSTRUMENTS:
-/*                Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.TESTING.getName(), TblsTesting.ScriptSteps.TBL.getName(), 
-                        new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName(), TblsTesting.Script.FLD_ACTIVE.getName()}, new Object[]{scriptId, true}, 
-                        new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_01.getName()},
-                        new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName()});
+/*                Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.TESTING.getName(), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
+                        new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.ACTIVE.getName()}, new Object[]{scriptId, true}, 
+                        new String[]{TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.ARGUMENT_01.getName()},
+                        new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())){
                     String msgStr=" Not found ANY active step for the script "+scriptId.toString();
                     Logger.getLogger(msgStr); 
@@ -195,10 +195,10 @@ public class TestingRegressionUAT extends HttpServlet {
                 return;                       */
             case DB_SCHEMADATA_ENVMONIT_SAMPLES:
             case DB_SCHEMADATA_INSPECTION_LOT_RM:
-                Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.ScriptSteps.TBL.getName(), 
-                        new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName(), TblsTesting.Script.FLD_ACTIVE.getName()}, new Object[]{scriptId, true}, 
-                        new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_01.getName()},
-                        new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName()});
+                Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
+                        new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.ACTIVE.getName()}, new Object[]{scriptId, true}, 
+                        new String[]{TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.ARGUMENT_01.getName()},
+                        new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())){
                     String msgStr=" Not found ANY active step for the script "+scriptId.toString();
                     Logger.getLogger(msgStr); 
@@ -287,10 +287,10 @@ public class TestingRegressionUAT extends HttpServlet {
     private StringBuilder procedureRepositoryMirrors(String procInstanceName, Integer scriptId){
         StringBuilder fileContentBuilder = new StringBuilder(0); 
         
-        Object[][] procInRequirements=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureModuleTablesAndFields.TBL.getName(), 
-            new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_ACTIVE.getName()},
+        Object[][] procInRequirements=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
+            new String[]{TblsReqs.ProcedureModuleTables.PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTables.ACTIVE.getName()},
             new Object[]{procInstanceName, true}, 
-            new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_TABLE_NAME.getName()});
+            new String[]{TblsReqs.ProcedureModuleTables.TABLE_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInRequirements[0][0].toString()))
             return fileContentBuilder.append("noTablesDefinedInRequirementsForThisProcedure "+procInstanceName);
         
@@ -302,10 +302,10 @@ public class TestingRegressionUAT extends HttpServlet {
         Object[][] allMismatches=null;
         Object[] mirrorCheckDiagn =null;
         for (String[] curSchToCheck:schemasToCheck){
-            Object[][] tablesToCheckQry=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureModuleTablesAndFields.TBL.getName(), 
-                    new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_ACTIVE.getName()},
+            Object[][] tablesToCheckQry=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
+                    new String[]{TblsReqs.ProcedureModuleTables.PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.ACTIVE.getName()},
                     new Object[]{procInstanceName, curSchToCheck[0], true}, 
-                    new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_TABLE_NAME.getName()});
+                    new String[]{TblsReqs.ProcedureModuleTables.TABLE_NAME.getName()});
             Object[] tablesToCheck=new String[]{"sample"};
             tablesToCheck=LPArray.getColumnFromArray2D(tablesToCheckQry, 0);
 

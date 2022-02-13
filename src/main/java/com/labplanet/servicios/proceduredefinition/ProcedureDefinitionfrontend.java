@@ -30,6 +30,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -128,39 +129,39 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
                     ProcBusinessRulesQueries.PROCEDURE_SAMPLE_STAGES.toString(),ProcBusinessRulesQueries.PROCEDURE_ENCRYPTION_TABLES_AND_FIELDS.toString()};
                 //for (String currSection: sectionsArr)
                 //    mainArr.add(getProcBusinessRulesQueriesInfo(procInstanceName, currSection));
-                jMainObj.put("procedure_info", ClassProcedureQueries.dbSingleRowToJsonObj(procInstanceName, TblsReqs.ProcedureInfo.TBL.getName(), 
-                    TblsReqs.ProcedureInfo.getAllFieldNames(), new String[]{TblsReqs.ProcedureInfo.FLD_PROCEDURE_NAME.getName()}, new Object[]{procInstanceName}));
+                jMainObj.put("procedure_info", ClassProcedureQueries.dbSingleRowToJsonObj(procInstanceName, TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
+                    getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields()), new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName()}, new Object[]{procInstanceName}));
 
-                jMainObj.put("business_rules", ClassProcedureQueries.dbRowsGroupedToJsonArr(procInstanceName, TblsReqs.ProcedureBusinessRules.TBL.getName(), 
-                    new String[]{TblsReqs.ProcedureBusinessRules.FLD_CATEGORY.getName(), 
-                        TblsReqs.ProcedureBusinessRules.FLD_RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.FLD_RULE_VALUE.getName(),
-                        TblsReqs.ProcedureBusinessRules.FLD_EXPLANATION.getName(), TblsReqs.ProcedureBusinessRules.FLD_VALUES_ALLOWED.getName()},
-                    new String[]{TblsReqs.ProcedureBusinessRules.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureBusinessRules.FLD_CATEGORY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsReqs.ProcedureBusinessRules.FLD_CATEGORY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
+                jMainObj.put("business_rules", ClassProcedureQueries.dbRowsGroupedToJsonArr(procInstanceName, TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), 
+                    new String[]{TblsReqs.ProcedureBusinessRules.CATEGORY.getName(), 
+                        TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName(),
+                        TblsReqs.ProcedureBusinessRules.EXPLANATION.getName(), TblsReqs.ProcedureBusinessRules.VALUES_ALLOWED.getName()},
+                    new String[]{TblsReqs.ProcedureBusinessRules.PROCEDURE_NAME.getName(), TblsReqs.ProcedureBusinessRules.CATEGORY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsReqs.ProcedureBusinessRules.CATEGORY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
                     new Object[]{procInstanceName, "ACCESS"},
-                    new String[]{TblsReqs.ProcedureBusinessRules.FLD_CATEGORY.getName(), TblsReqs.ProcedureBusinessRules.FLD_ORDER_NUMBER.getName(), TblsReqs.ProcedureBusinessRules.FLD_RULE_NAME.getName()}));
+                    new String[]{TblsReqs.ProcedureBusinessRules.CATEGORY.getName(), TblsReqs.ProcedureBusinessRules.ORDER_NUMBER.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName()}));
                 
                 jMainObj.put("process_accesses", ClassProcedureQueries.procAccessBlock(procInstanceName));
 
-                jMainObj.put("sops", ClassProcedureQueries.dbRowsToJsonArr(procInstanceName, TblsReqs.ProcedureSopMetaData.TBL.getName(), 
-                    TblsReqs.ProcedureSopMetaData.getAllFieldNames(), new String[]{TblsReqs.ProcedureSopMetaData.FLD_PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
-                    new String[]{TblsReqs.ProcedureSopMetaData.FLD_SOP_NAME.getName()}, null));
+                jMainObj.put("sops", ClassProcedureQueries.dbRowsToJsonArr(procInstanceName, TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
+                    getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableFields()), new String[]{TblsReqs.ProcedureSopMetaData.PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
+                    new String[]{TblsReqs.ProcedureSopMetaData.SOP_NAME.getName()}, null));
 
-                jMainObj.put("tables", ClassProcedureQueries.dbRowsGroupedToJsonArr(procInstanceName, TblsReqs.ProcedureModuleTablesAndFields.TBL.getName(), 
-                    new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTablesAndFields.FLD_TABLE_NAME.getName()}, 
-                    new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
-                    new String[]{TblsReqs.ProcedureModuleTablesAndFields.FLD_SCHEMA_NAME.getName()}));
+                jMainObj.put("tables", ClassProcedureQueries.dbRowsGroupedToJsonArr(procInstanceName, TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
+                    new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName()}, 
+                    new String[]{TblsReqs.ProcedureModuleTables.PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
+                    new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName()}));
 
-                jMainObj.put("user_requirements", ClassProcedureQueries.dbRowsToJsonArr(procInstanceName, TblsReqs.ProcedureUserRequirements.TBL.getName(), 
-                    TblsReqs.ProcedureUserRequirements.getAllFieldNames(), new String[]{TblsReqs.ProcedureUserRequirements.FLD_PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
-                    new String[]{TblsReqs.ProcedureUserRequirements.FLD_ORDER_NUMBER.getName()}, null));
+                jMainObj.put("user_requirements", ClassProcedureQueries.dbRowsToJsonArr(procInstanceName, TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
+                    getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableFields()), new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
+                    new String[]{TblsReqs.ProcedureUserRequirements.ORDER_NUMBER.getName()}, null));
                 
-                jMainObj.put("user_requirements_events", ClassProcedureQueries.dbRowsToJsonArr(procInstanceName, TblsReqs.ProcedureUserRequirementsEvents.TBL.getName(), 
-                    TblsReqs.ProcedureUserRequirementsEvents.getAllFieldNames(), new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
-                    new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_ORDER_NUMBER.getName()}, null));
+                jMainObj.put("user_requirements_events", ClassProcedureQueries.dbRowsToJsonArr(procInstanceName, TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), 
+                    getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableFields()), new String[]{TblsReqs.ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
+                    new String[]{TblsReqs.ProcedureUserRequirementsEvents.ORDER_NUMBER.getName()}, null));
 
-                jMainObj.put("master_data", ClassProcedureQueries.dbRowsToJsonArr(procInstanceName, TblsReqs.ProcedureMasterData.TBL.getName(), 
-                    TblsReqs.ProcedureMasterData.getAllFieldNames(), new String[]{TblsReqs.ProcedureMasterData.FLD_PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
-                    null, new String[]{TblsReqs.ProcedureMasterData.FLD_JSON_OBJ.getName()}));
+                jMainObj.put("master_data", ClassProcedureQueries.dbRowsToJsonArr(procInstanceName, TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName(), 
+                    getAllFieldNames(TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableFields()), new String[]{TblsReqs.ProcedureMasterData.PROCEDURE_NAME.getName()}, new Object[]{procInstanceName},
+                    null, new String[]{TblsReqs.ProcedureMasterData.JSON_OBJ.getName()}));
 
                 jMainObj.put("frontend_proc_model", ClassProcedureQueries.feProcModel(procInstanceName));
                 Rdbms.closeRdbms();  

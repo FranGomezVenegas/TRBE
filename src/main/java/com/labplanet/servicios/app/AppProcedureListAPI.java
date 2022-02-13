@@ -230,10 +230,10 @@ public class AppProcedureListAPI extends HttpServlet {
     public static JsonObject procModel(String procInstanceName){
         try{
             JsonObject jArr = new JsonObject();   
-            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureFrontEndProcModel.TBL.getName(), 
-                new String[]{TblsReqs.ProcedureFrontEndProcModel.FLD_PROCEDURE_NAME.getName()},
+            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(), 
+                new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName()},
                 new Object[]{procInstanceName}, 
-                new String[]{TblsReqs.ProcedureFrontEndProcModel.FLD_MODEL_JSON.getName()});            
+                new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName()});            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;
             JsonParser parser = new JsonParser();
             return parser.parse(ruleValue[0][0].toString()).getAsJsonObject();

@@ -231,9 +231,9 @@ if (iLines==7){
                             !TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic()) ){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length;
-//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
-//                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length}, 
-//                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
+//                                new String[]{TblsTesting.Script.RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length}, 
+//                                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                         break;      
                     }
                 }
@@ -241,9 +241,9 @@ if (iLines==7){
                     && LPPlatform.LAB_FALSE.equalsIgnoreCase(functionEvaluation[0].toString())){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
-//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.Script.TBL.getName(), 
-//                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation returning false "+(iLines+1)+" of "+testingContent.length}, 
-//                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
+//                                new String[]{TblsTesting.Script.RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation returning false "+(iLines+1)+" of "+testingContent.length}, 
+//                                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                     break;
                 }
                 fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());   

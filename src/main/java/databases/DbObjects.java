@@ -115,43 +115,43 @@ public class DbObjects {
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsAppConfig.Person", tblCreateScript);
         
-        tblCreateScript=TblsReqs.ProcedureInfo.createTableScript("", new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROCEDURE_INFO);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureInfo", tblCreateScript);
 
-        tblCreateScript=TblsReqs.ProcedureModuleTablesAndFields.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROC_MODULE_TABLES);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsReqs.ProcedureModuleTablesAndFields", tblCreateScript);
+        jsonObj.put("TblsReqs.ProcedureModuleTables.", tblCreateScript);
         
-        tblCreateScript=TblsReqs.ProcedureRoles.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROCEDURE_ROLES);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureRoles", tblCreateScript);
 
-        tblCreateScript=TblsReqs.ProcedureSopMetaData.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureSopMetaData", tblCreateScript);
 
-        tblCreateScript=TblsReqs.ProcedureUserRequirements.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROCEDURE_USER_REQS);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureUserRequirements", tblCreateScript);
 
-        tblCreateScript=TblsReqs.ProcedureUserRequirementsEvents.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureUserRequirementsEvents", tblCreateScript);
         
-        tblCreateScript=TblsReqs.ProcedureUserRole.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROC_USER_ROLES);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureUserRole", tblCreateScript);
         
-        tblCreateScript=TblsReqs.ProcedureUsers.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROC_USERS);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureUsers", tblCreateScript);
 
-        tblCreateScript=TblsReqs.ProcedureBusinessRules.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROC_BUS_RULES);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureBusinessRules", tblCreateScript);
 
-        tblCreateScript=TblsReqs.ProcedureMasterData.createTableScript(new String[]{""});
+        tblCreateScript=createTableScript(TblsReqs.TablesReqs.PROC_MASTER_DATA);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsReqs.ProcedureMasterData", tblCreateScript);
 
@@ -196,23 +196,23 @@ public class DbObjects {
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsData.ViewUserAndMetaDataSopView", tblCreateScript);
         
-        tblCreateScript=TblsTesting.Script.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPT);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTesting.Script", tblCreateScript);
         
-        tblCreateScript=TblsTesting.ScriptSteps.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPT_STEPS);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTesting.ScriptSteps", tblCreateScript);
 
-        tblCreateScript=TblsTesting.ScriptBusinessRules.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPT_BUS_RULES);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTesting.ScriptBusinessRules", tblCreateScript);
 
-        tblCreateScript=TblsTesting.ScriptsCoverage.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPTS_COVERAGE);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTesting.ScriptsCoverage", tblCreateScript);
 
-        tblCreateScript=TblsTesting.ScriptSavePoint.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPT_SAVE_POINT);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTesting.ScriptSavePoint", tblCreateScript);
 

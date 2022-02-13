@@ -25,9 +25,9 @@ public class ProcedureDefinitionToInstanceUtility {
 
     
     public static final Object[] procedureRolesList(String procInstanceName, Integer procVersion){
-        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ProcedureRoles.TBL.getName(), 
-                new String[]{TblsReqs.ProcedureRoles.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.FLD_PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
-                new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()}, new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()});
+        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(), 
+                new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
+                new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()}, new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0][0].toString()))
             return new Object[]{};
         return LPArray.getColumnFromArray2D(procedureRolesListArr, 0);
