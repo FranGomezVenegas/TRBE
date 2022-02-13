@@ -210,7 +210,7 @@ public class SampleAudit {
             fieldValues = LPArray.addValueToArray1D(fieldValues, resultId);
         }    
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
                 return appSession;
             }else{

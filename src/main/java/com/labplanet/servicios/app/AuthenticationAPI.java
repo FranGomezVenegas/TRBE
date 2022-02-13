@@ -150,7 +150,7 @@ public class AuthenticationAPI extends HttpServlet {
                     String userRole = argValues[1].toString();
 
                     token = new Token(firstToken);
-                    String[] fieldsName = new String[]{TblsApp.AppSession.FLD_PERSON.getName(), TblsApp.AppSession.FLD_ROLE_NAME.getName()};
+                    String[] fieldsName = new String[]{TblsApp.AppSession.PERSON.getName(), TblsApp.AppSession.ROLE_NAME.getName()};
                     Object[] fieldsValue = new Object[]{token.getPersonName(), userRole};
                     Object[] newAppSession = LPSession.newAppSession(fieldsName, fieldsValue, request.getRemoteAddr());                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newAppSession[0].toString())){   
@@ -162,8 +162,8 @@ public class AuthenticationAPI extends HttpServlet {
 
                     Date nowLocalDate =LPDate.getTimeStampLocalDate();
                     Object[][] userInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
-                            new String[]{Users.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()}, 
-                            new String[]{Users.FLD_ESIGN.getName(), TblsApp.Users.FLD_TABS_ON_LOGIN.getName()});
+                            new String[]{Users.USER_NAME.getName()}, new Object[]{token.getUserName()}, 
+                            new String[]{Users.ESIGN.getName(), TblsApp.Users.TABS_ON_LOGIN.getName()});
                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userInfo[0][0].toString())){  
                         LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.ESGININFO_NOTAVAILABLE.getErrorCode(), null, language);       

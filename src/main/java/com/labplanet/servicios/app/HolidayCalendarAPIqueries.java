@@ -80,9 +80,9 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
                 case GET_ALL_HOLIDAY_DATES_LIST_ALL_CALENDARS:              
                     String[] fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableFields());
                     Object[][] incidentsClosedLastDays=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(), 
-                            new String[]{TblsApp.HolidaysCalendarDate.FLD_CALENDAR_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, 
+                            new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, 
                             new Object[]{}, 
-                            fieldsToRetrieve, new String[]{TblsApp.HolidaysCalendarDate.FLD_CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.FLD_ID.getName()});
+                            fieldsToRetrieve, new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.ID.getName()});
                     JSONArray jArr = new JSONArray();
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
                         for (Object[] currIncident: incidentsClosedLastDays){

@@ -22,8 +22,8 @@ public final class AuditUtilities {
     
     public static String[] getUserSessionProceduresList(String[] tblFlds, Object[] fldVls){
         char procsSeparator = (char)34;
-        if (LPArray.valueInArray(tblFlds, TblsApp.AppSession.FLD_PROCEDURES.getName())){
-            String usSessProcs=LPNulls.replaceNull(fldVls[LPArray.valuePosicInArray(tblFlds, TblsApp.AppSession.FLD_PROCEDURES.getName())]).toString();
+        if (LPArray.valueInArray(tblFlds, TblsApp.AppSession.PROCEDURES.getName())){
+            String usSessProcs=LPNulls.replaceNull(fldVls[LPArray.valuePosicInArray(tblFlds, TblsApp.AppSession.PROCEDURES.getName())]).toString();
             if (usSessProcs.length()>0){
                 usSessProcs=usSessProcs.replace(String.valueOf(procsSeparator), "");
                 return LPArray.getUniquesArray(usSessProcs.split("\\|"));

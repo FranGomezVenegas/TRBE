@@ -85,7 +85,7 @@ public class ProcedureDefinitionToInstance {
     /**
      *
      */
-    public static final String FIELDS_TO_INSERT_APP_USER_PROCESS=TblsApp.UserProcess.FLD_USER_NAME.getName()+"|"+TblsApp.UserProcess.FLD_PROC_NAME.getName()+"|"+TblsApp.UserProcess.FLD_ACTIVE.getName();
+    public static final String FIELDS_TO_INSERT_APP_USER_PROCESS=TblsApp.UserProcess.USER_NAME.getName()+"|"+TblsApp.UserProcess.PROC_NAME.getName()+"|"+TblsApp.UserProcess.ACTIVE.getName();
 
     /**
      *
@@ -236,7 +236,7 @@ public class ProcedureDefinitionToInstance {
             jsUserRoleObj.put("User", curUserName); jsUserRoleObj.put("Role", curRoleName);
 
             Object[][] existsAppUser = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
-                    new String[]{TblsApp.Users.FLD_USER_NAME.getName()}, new Object[]{curUserName.toString()}, new String[]{TblsApp.Users.FLD_PERSON_NAME.getName()});
+                    new String[]{TblsApp.Users.USER_NAME.getName()}, new Object[]{curUserName.toString()}, new String[]{TblsApp.Users.PERSON_NAME.getName()});
             String diagnosesForLog = (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) ? JsonTags.NO.getTagValue() : JsonTags.YES.getTagValue();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())){
                 String personId=curUserName+"z";
@@ -246,13 +246,13 @@ public class ProcedureDefinitionToInstance {
                         TblsAppConfig.Person.FLD_LAST_NAME.getName(), TblsAppConfig.Person.FLD_PHOTO.getName()}, 
                     new Object[]{personId, "I'm a user demo", "for demos ", "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"});
                 insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
-                        new String[]{TblsApp.Users.FLD_USER_NAME.getName(), TblsApp.Users.FLD_EMAIL.getName(), TblsApp.Users.FLD_ESIGN.getName(),
-                            TblsApp.Users.FLD_PASSWORD.getName(), TblsApp.Users.FLD_PERSON_NAME.getName()},
+                        new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
+                            TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
                         new Object[]{curUserName, "trazit.info@gmail.com", "firmademo", "1234", personId});
                 existsAppUser=LPArray.array1dTo2d(insertRecordInTable,1);
                 diagnosesForLog=diagnosesForLog+" trying to create, log for creation="+insertRecordInTable[0].toString();
 //                insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
-//                    new String[]{TblsApp.UserProcess.FLD_USER_NAME.getName(), TblsApp.UserProcess.FLD_PROC_NAME.getName(), TblsApp.UserProcess.FLD_ACTIVE.getName()}, 
+//                    new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName(), TblsApp.UserProcess.ACTIVE.getName()}, 
 //                    new Object[]{curUserName, fakeProcName, true});
                 
                 // Place to create the user
@@ -260,7 +260,7 @@ public class ProcedureDefinitionToInstance {
             jsUserRoleObj.put("User exists in the app?", diagnosesForLog); 
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(existsAppUser[0]))){
                 Object[] existsAppUserProcess = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
-                        new String[]{TblsApp.UserProcess.FLD_USER_NAME.getName(), TblsApp.UserProcess.FLD_PROC_NAME.getName()}, new Object[]{curUserName.toString(), procInstanceName});
+                        new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName()}, new Object[]{curUserName.toString(), procInstanceName});
                 jsonObj.put("User was added to the Process at the App level?", existsAppUserProcess[0].toString());  
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUserProcess[0].toString())){
                     Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 

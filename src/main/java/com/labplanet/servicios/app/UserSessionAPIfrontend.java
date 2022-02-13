@@ -51,7 +51,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
          */
         USER_SESSIONS("USER_SESSIONS", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_SESSION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-            new LPAPIArguments(TblsApp.AppSession.FLD_DATE_STARTED.getName().toLowerCase(), LPAPIArguments.ArgumentType.DATE.toString(), true, 7)},
+            new LPAPIArguments(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase(), LPAPIArguments.ArgumentType.DATE.toString(), true, 7)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build() ),
         USER_SESSION_INCLUDING_AUDIT_HISTORY("USER_SESSION_INCLUDING_AUDIT_HISTORY", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_SESSION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),},
@@ -138,9 +138,9 @@ public class UserSessionAPIfrontend extends HttpServlet {
                     }
                     iVal++;
                 }
-                String samplingDayStart = request.getParameter(TblsApp.AppSession.FLD_DATE_STARTED.getName().toLowerCase()+"_start");
-                String samplingDayEnd = request.getParameter(TblsApp.AppSession.FLD_DATE_STARTED.getName().toLowerCase()+"_end");
-                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsApp.AppSession.FLD_DATE_STARTED.getName().toLowerCase(), samplingDayStart, samplingDayEnd);
+                String samplingDayStart = request.getParameter(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase()+"_start");
+                String samplingDayEnd = request.getParameter(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase()+"_end");
+                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase(), samplingDayStart, samplingDayEnd);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())){
                     whereFldName=LPArray.addValueToArray1D(whereFldName, buildDateRangeFromStrings[1].toString());
                     whereFldValue=LPArray.addValueToArray1D(whereFldValue, buildDateRangeFromStrings[2]);
@@ -152,13 +152,13 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 }
                 Object[][] userSessionInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.TablesApp.APP_SESSION.getTableName(), 
                         whereFldName, whereFldValue, 
-                        fieldsToRetrieve, new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()+" desc"});
+                        fieldsToRetrieve, new String[]{TblsApp.AppSession.SESSION_ID.getName()+" desc"});
                 JSONArray userSessionArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString())){
                     for (Object[] currUsrSession: userSessionInfo){
                         Integer sessionId=-1;
-                        if (LPArray.valueInArray(fieldsToRetrieve, TblsApp.AppSession.FLD_SESSION_ID.getName()))
-                            sessionId=(Integer) currUsrSession[LPArray.valuePosicInArray(fieldsToRetrieve, TblsApp.AppSession.FLD_SESSION_ID.getName())];
+                        if (LPArray.valueInArray(fieldsToRetrieve, TblsApp.AppSession.SESSION_ID.getName()))
+                            sessionId=(Integer) currUsrSession[LPArray.valuePosicInArray(fieldsToRetrieve, TblsApp.AppSession.SESSION_ID.getName())];
                         JSONObject userSessionObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currUsrSession);
                         userSessionArr.add(userSessionObj);
                     }
@@ -169,16 +169,16 @@ public class UserSessionAPIfrontend extends HttpServlet {
             case USER_SESSION_INCLUDING_AUDIT_HISTORY:
                 fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.APP_SESSION.getTableFields());
                 userSessionInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(),TblsApp.TablesApp.APP_SESSION.getTableName(), 
-                        new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, 
+                        new String[]{TblsApp.AppSession.SESSION_ID.getName()}, 
                         new Object[]{argValues[0]}, 
-                        fieldsToRetrieve, new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()+" desc"});
+                        fieldsToRetrieve, new String[]{TblsApp.AppSession.SESSION_ID.getName()+" desc"});
                 userSessionArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString())){
                     JSONArray procAuditArr = new JSONArray();
                     for (Object[] currUsrSession: userSessionInfo){
                         Integer sessionId=-1;
-                        if (LPArray.valueInArray(fieldsToRetrieve, TblsApp.AppSession.FLD_SESSION_ID.getName()))
-                            sessionId=(Integer) currUsrSession[LPArray.valuePosicInArray(fieldsToRetrieve, TblsApp.AppSession.FLD_SESSION_ID.getName())];
+                        if (LPArray.valueInArray(fieldsToRetrieve, TblsApp.AppSession.SESSION_ID.getName()))
+                            sessionId=(Integer) currUsrSession[LPArray.valuePosicInArray(fieldsToRetrieve, TblsApp.AppSession.SESSION_ID.getName())];
                         JSONObject userSessionObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currUsrSession);
                         String[] userSessionProceduresList = getUserSessionProceduresList(fieldsToRetrieve, currUsrSession);
                         for (String curProc: userSessionProceduresList){
@@ -217,7 +217,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
                         }
                         userSessionObj.put("audit_actions", procAuditArr);
 /*                        
-                        Integer investFldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsApp.AppSession.FLD_SESSION_ID.getName());
+                        Integer investFldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsApp.AppSession.SESSION_ID.getName());
                         if (investFldPosic>-1){
                             Integer investigationId=Integer.valueOf(currInvestigation[investFldPosic].toString());
                             fieldsToRetrieve=TblsProcedure.InvestObjects.getAllFieldNames();
@@ -270,9 +270,9 @@ public class UserSessionAPIfrontend extends HttpServlet {
 
                 fieldsToRetrieve=TblsApp.AppSession.getAllFieldNames();
                 incidentsNotClosed=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()),TblsApp.AppSession.TBL.getName(), 
-                        new String[]{TblsApp.AppSession.FLD_ID.getName()}, 
+                        new String[]{TblsApp.AppSession.ID.getName()}, 
                         new Object[]{investigationId}, 
-                        fieldsToRetrieve, new String[]{TblsApp.AppSession.FLD_ID.getName()+" desc"});
+                        fieldsToRetrieve, new String[]{TblsApp.AppSession.ID.getName()+" desc"});
                 investigationJArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
                     for (Object[] currInvestigation: incidentsNotClosed){

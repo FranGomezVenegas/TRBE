@@ -26,20 +26,20 @@ public class TblsApp {
             new String[]{IPWhiteList.ID.getName()}, null, "White List, when at least one IP added then the access will be limited to those IPs (except if added to blacklist)"),
         IP_BLACK_LIST(null, "ip_black_list", SCHEMA_NAME, true, IPBlackList.values(), IPBlackList.ID.getName(),
             new String[]{IPBlackList.ID.getName()}, null, "Black List, when one IP is added to this table then it is banned, independently of be in the white list too"),
-        APP_SESSION(null, "app_session", SCHEMA_NAME, true, AppSession.values(), AppSession.FLD_SESSION_ID.getName(),
-            new String[]{AppSession.FLD_SESSION_ID.getName()}, null, "Id for any user session"),
+        APP_SESSION(null, "app_session", SCHEMA_NAME, true, AppSession.values(), AppSession.SESSION_ID.getName(),
+            new String[]{AppSession.SESSION_ID.getName()}, null, "Id for any user session"),
         USER_PROCESS(null, "user_process", SCHEMA_NAME, true, UserProcess.values(), null,
-            new String[]{UserProcess.FLD_USER_NAME.getName(), UserProcess.FLD_USER_NAME.getName()}, null, "Processes assigned to the users"),
+            new String[]{UserProcess.USER_NAME.getName(), UserProcess.USER_NAME.getName()}, null, "Processes assigned to the users"),
         USERS(null, "users", SCHEMA_NAME, true, Users.values(), null,
-            new String[]{Users.FLD_USER_NAME.getName()}, null, "instance users declaration"),
+            new String[]{Users.USER_NAME.getName()}, null, "instance users declaration"),
         HOLIDAYS_CALENDAR(null, "holidays_calendar", SCHEMA_NAME, true, HolidaysCalendar.values(), null,
             new String[]{HolidaysCalendar.FLD_CODE.getName()}, null, "Holiday Calendars"),
-        HOLIDAYS_CALENDAR_DATE(null, "holidays_calendar_date", SCHEMA_NAME, true, HolidaysCalendarDate.values(), HolidaysCalendarDate.FLD_ID.getName(),
-            new String[]{HolidaysCalendarDate.FLD_ID.getName()}, null, "Holiday Calendars"),
-        INCIDENT(null, "incident", SCHEMA_NAME, true, Incident.values(), Incident.FLD_ID.getName(),
-            new String[]{Incident.FLD_ID.getName()}, null, "Holiday Calendars"),
-        VIDEO_TUTORIAL(null, "video_tutorial", SCHEMA_NAME, true, VideoTutorial.values(), VideoTutorial.FLD_ID.getName(),
-            new String[]{VideoTutorial.FLD_ID.getName()}, null, "Holiday Calendars"),
+        HOLIDAYS_CALENDAR_DATE(null, "holidays_calendar_date", SCHEMA_NAME, true, HolidaysCalendarDate.values(), HolidaysCalendarDate.ID.getName(),
+            new String[]{HolidaysCalendarDate.ID.getName()}, null, "Holiday Calendars dates added"),
+        INCIDENT(null, "incident", SCHEMA_NAME, true, Incident.values(), Incident.ID.getName(),
+            new String[]{Incident.ID.getName()}, null, "Incidents table"),
+        VIDEO_TUTORIAL(null, "video_tutorial", SCHEMA_NAME, true, VideoTutorial.values(), VideoTutorial.ID.getName(),
+            new String[]{VideoTutorial.ID.getName()}, null, "Video Tutorial entries table"),
         ;
         private TablesApp(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
@@ -143,12 +143,12 @@ public class TblsApp {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
     public enum AppSession implements EnumIntTableFields{
-        FLD_SESSION_ID("session_id", LPDatabase.integerNotNull(),null, null, "", null),
-        FLD_DATE_STARTED("date_started", LPDatabase.date(),null, null, "", null),
-        FLD_PERSON("person", LPDatabase.string(),null, null, "", null),
-        FLD_ROLE_NAME("role_name", LPDatabase.string(),null, null, "", null),
-        FLD_IP_ADDRESS("ip_address", LPDatabase.string(),null, null, "", null),
-        FLD_PROCEDURES("procedures", LPDatabase.string(),null, null, "", null);
+        SESSION_ID("session_id", LPDatabase.integerNotNull(),null, null, "", null),
+        DATE_STARTED("date_started", LPDatabase.date(),null, null, "", null),
+        PERSON("person", LPDatabase.string(),null, null, "", null),
+        ROLE_NAME("role_name", LPDatabase.string(),null, null, "", null),
+        IP_ADDRESS("ip_address", LPDatabase.string(),null, null, "", null),
+        PROCEDURES("procedures", LPDatabase.string(),null, null, "", null);
         private AppSession(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
@@ -166,9 +166,9 @@ public class TblsApp {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
     public enum UserProcess implements EnumIntTableFields{
-        FLD_USER_NAME("user_name", LPDatabase.stringNotNull(),null, null, "", null),
-        FLD_PROC_NAME("proc_name", LPDatabase.stringNotNull(),null, null, "", null),
-        FLD_ACTIVE("active", LPDatabase.booleanFld(),null, null, "", null)
+        USER_NAME("user_name", LPDatabase.stringNotNull(),null, null, "", null),
+        PROC_NAME("proc_name", LPDatabase.stringNotNull(),null, null, "", null),
+        ACTIVE("active", LPDatabase.booleanFld(),null, null, "", null)
         ;
         private UserProcess(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -187,12 +187,12 @@ public class TblsApp {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
     public enum Users implements EnumIntTableFields{
-        FLD_USER_NAME("user_name", LPDatabase.string(),null, null, "", null),
-        FLD_EMAIL("email", LPDatabase.string(),null, null, "", null),
-        FLD_ESIGN("e_sign", LPDatabase.string(),null, null, "", null),
-        FLD_PASSWORD("password", LPDatabase.string(),null, null, "", null),
-        FLD_PERSON_NAME("person_name", LPDatabase.string(),null, null, "", null),
-        FLD_TABS_ON_LOGIN("tabs_on_login", LPDatabase.string(),null, null, "", null)
+        USER_NAME("user_name", LPDatabase.string(),null, null, "", null),
+        EMAIL("email", LPDatabase.string(),null, null, "", null),
+        ESIGN("e_sign", LPDatabase.string(),null, null, "", null),
+        PASSWORD("password", LPDatabase.string(),null, null, "", null),
+        PERSON_NAME("person_name", LPDatabase.string(),null, null, "", null),
+        TABS_ON_LOGIN("tabs_on_login", LPDatabase.string(),null, null, "", null)
         //, FLD_PROCEDURES("procedures", "character varying[] COLLATE pg_catalog.\"default\"")
         ;
         private Users(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -236,12 +236,12 @@ public class TblsApp {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }    
     public enum HolidaysCalendarDate implements EnumIntTableFields{
-        FLD_ID("id", LPDatabase.integerNotNull(), null, null, "", null),
-        FLD_CALENDAR_CODE("calendar_code", LPDatabase.string(),null, null, "", null),
-        FLD_DATE("date", LPDatabase.date(),null, null, "", null),
-        FLD_DAY_NAME("day_name", LPDatabase.string(),null, null, "", null),
-        FLD_CREATED_ON("created_on", LPDatabase.dateTime(),null, null, "", null),
-        FLD_CREATED_BY("created_by", LPDatabase.string(),null, null, "", null)
+        ID("id", LPDatabase.integerNotNull(), null, null, "", null),
+        CALENDAR_CODE("calendar_code", LPDatabase.string(),null, null, "", null),
+        DATE("date", LPDatabase.date(),null, null, "", null),
+        DAY_NAME("day_name", LPDatabase.string(),null, null, "", null),
+        CREATED_ON("created_on", LPDatabase.dateTime(),null, null, "", null),
+        CREATED_BY("created_by", LPDatabase.string(),null, null, "", null)
         ;
         private HolidaysCalendarDate(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -261,23 +261,23 @@ public class TblsApp {
     }    
 
     public enum Incident implements EnumIntTableFields{
-        FLD_ID("id", LPDatabase.integerNotNull(), null, null, "", null),
-        FLD_DATE_CREATION("date_creation", LPDatabase.dateTime(), null, null, "", null),
-        FLD_PERSON_CREATION("person_creation", LPDatabase.string(), null, null, "", null),
-        FLD_DATE_CONFIRMED("date_confirmed", LPDatabase.dateTime(), null, null, "", null),
-        FLD_PERSON_CONFIRMED("person_confirmed", LPDatabase.string(), null, null, "", null),
-        FLD_DATE_RESOLUTION("date_resolution", LPDatabase.dateTime(), null, null, "", null),
-        FLD_PERSON_RESOLUTION("person_resolution", LPDatabase.string(), null, null, "", null),
-        FLD_DATE_LAST_UPDATE("date_last_update", LPDatabase.dateTime(), null, null, "", null),
-        FLD_PERSON_LAST_UPDATE("person_last_update", LPDatabase.string(), null, null, "", null),
-        FLD_STATUS("status", LPDatabase.string(), null, null, "", null),
-        FLD_STATUS_PREVIOUS("status_previous", LPDatabase.string(), null, null, "", null),    
-        FLD_USER_NAME("user_name", LPDatabase.string(), null, null, "", null),
-        FLD_PERSON_NAME("person_name", LPDatabase.string(), null, null, "", null),
-        FLD_USER_ROLE("user_role", LPDatabase.string(), null, null, "", null),
-        FLD_TITLE("item_title", LPDatabase.string(), null, null, "", null),
-        FLD_DETAIL("item_detail", LPDatabase.string(), null, null, "", null),
-        FLD_SESSION_INFO("session_info", LPDatabase.string(), null, null, "", null),
+        ID("id", LPDatabase.integerNotNull(), null, null, "", null),
+        DATE_CREATION("date_creation", LPDatabase.dateTime(), null, null, "", null),
+        PERSON_CREATION("person_creation", LPDatabase.string(), null, null, "", null),
+        DATE_CONFIRMED("date_confirmed", LPDatabase.dateTime(), null, null, "", null),
+        PERSON_CONFIRMED("person_confirmed", LPDatabase.string(), null, null, "", null),
+        DATE_RESOLUTION("date_resolution", LPDatabase.dateTime(), null, null, "", null),
+        PERSON_RESOLUTION("person_resolution", LPDatabase.string(), null, null, "", null),
+        DATE_LAST_UPDATE("date_last_update", LPDatabase.dateTime(), null, null, "", null),
+        PERSON_LAST_UPDATE("person_last_update", LPDatabase.string(), null, null, "", null),
+        STATUS("status", LPDatabase.string(), null, null, "", null),
+        STATUS_PREVIOUS("status_previous", LPDatabase.string(), null, null, "", null),    
+        USER_NAME("user_name", LPDatabase.string(), null, null, "", null),
+        PERSON_NAME("person_name", LPDatabase.string(), null, null, "", null),
+        USER_ROLE("user_role", LPDatabase.string(), null, null, "", null),
+        TITLE("item_title", LPDatabase.string(), null, null, "", null),
+        DETAIL("item_detail", LPDatabase.string(), null, null, "", null),
+        SESSION_INFO("session_info", LPDatabase.string(), null, null, "", null),
         ;
         private Incident(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -297,19 +297,19 @@ public class TblsApp {
     }    
     
     public enum VideoTutorial implements EnumIntTableFields{
-        FLD_ID("id", LPDatabase.integerNotNull(), null, null, "", null),
-        FLD_DATE_CREATION("date_creation", LPDatabase.dateTime(), null, null, "", null),
-        FLD_SOURCE("source", LPDatabase.string(), null, null, "", null),
-        FLD_ACTIVE("active", LPDatabase.booleanFld(), null, null, "", null),
-        FLD_INDEX_LEVEL("index_level", LPDatabase.string(), null, null, "", null),
-        FLD_ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, "", null),
-        FLD_PARENT_ID("parent_id", LPDatabase.integer(), null, null, "", null),
-        FLD_LABEL_EN("label_en", LPDatabase.string(), null, null, "", null),
-        FLD_LABEL_ES("label_es", LPDatabase.string(), null, null, "", null),
-        FLD_SUMMARY_EN("summary_en", LPDatabase.string(), null, null, "", null),
-        FLD_SUMMARY_ES("summary_es", LPDatabase.string(), null, null, "", null),
-        FLD_ENTITY_TYPE("entity_type", LPDatabase.string(), null, null, "", null),
-        FLD_ENTITY_NAME("entity_name", LPDatabase.string(), null, null, "", null),
+        ID("id", LPDatabase.integerNotNull(), null, null, "", null),
+        DATE_CREATION("date_creation", LPDatabase.dateTime(), null, null, "", null),
+        SOURCE("source", LPDatabase.string(), null, null, "", null),
+        ACTIVE("active", LPDatabase.booleanFld(), null, null, "", null),
+        INDEX_LEVEL("index_level", LPDatabase.string(), null, null, "", null),
+        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, "", null),
+        PARENT_ID("parent_id", LPDatabase.integer(), null, null, "", null),
+        LABEL_EN("label_en", LPDatabase.string(), null, null, "", null),
+        LABEL_ES("label_es", LPDatabase.string(), null, null, "", null),
+        SUMMARY_EN("summary_en", LPDatabase.string(), null, null, "", null),
+        SUMMARY_ES("summary_es", LPDatabase.string(), null, null, "", null),
+        ENTITY_TYPE("entity_type", LPDatabase.string(), null, null, "", null),
+        ENTITY_NAME("entity_name", LPDatabase.string(), null, null, "", null),
         ;
         private VideoTutorial(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

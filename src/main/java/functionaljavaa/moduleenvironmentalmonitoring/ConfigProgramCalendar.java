@@ -199,8 +199,8 @@ public class ConfigProgramCalendar {
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){ return existsRecord;}     
 
       Object[][] holidaysCalendarDates = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(), 
-              new String[]{TblsApp.HolidaysCalendarDate.FLD_CALENDAR_CODE.getName()}, 
-              new Object[]{holidaysCalendarCode}, new String[]{TblsApp.HolidaysCalendarDate.FLD_ID.getName(), TblsApp.HolidaysCalendarDate.FLD_DATE.getName()});
+              new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName()}, 
+              new Object[]{holidaysCalendarCode}, new String[]{TblsApp.HolidaysCalendarDate.ID.getName(), TblsApp.HolidaysCalendarDate.DATE.getName()});
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(holidaysCalendarDates[0][0].toString())){return LPArray.array2dTo1d(holidaysCalendarDates);}
       if (holidaysCalendarDates.length==0)
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_HOLIDAY_CALENDAR_EMPTY, new Object[]{holidaysCalendarCode});
