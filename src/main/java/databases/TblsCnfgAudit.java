@@ -15,7 +15,7 @@ import trazit.globalvariables.GlobalVariables;
 
 public class TblsCnfgAudit {
     
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_AUDIT.getName();
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG_AUDIT.getName();
     public enum TablesCfgAudit implements EnumIntTables{
         ANALYSIS(null, "analysis", SCHEMA_NAME, true, Analysis.values(), Analysis.AUDIT_ID.getName(),
             new String[]{Analysis.AUDIT_ID.getName()}, null, "Analysis Audit Trial"),
