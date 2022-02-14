@@ -227,7 +227,7 @@ lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new 
 
                 
     LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
-String tblCreateScript2=TblsAppProcDataAudit.Instruments.createTableScript(new String[]{""});
+String tblCreateScript2=createTableScript(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS);
 Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 if (1==1) return;
