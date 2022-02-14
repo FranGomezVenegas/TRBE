@@ -85,9 +85,9 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 case ACTIVE_INSTRUMENTS_LIST:
                     String[] fieldsToRetrieve=TblsAppProcData.Instruments.getAllFieldNames();
                     Object[][] instrumentAudit=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TblsAppProcData.Instruments.TBL.getName(), 
-                            new String[]{TblsAppProcData.Instruments.FLD_DECOMMISSIONED.getName()+"<>"}, 
+                            new String[]{TblsAppProcData.Instruments.DECOMMISSIONED.getName()+"<>"}, 
                             new Object[]{true}, 
-                            fieldsToRetrieve, new String[]{TblsAppProcData.Instruments.FLD_NAME.getName()+" desc"});
+                            fieldsToRetrieve, new String[]{TblsAppProcData.Instruments.NAME.getName()+" desc"});
                     JSONArray jArr = new JSONArray();
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentAudit[0][0].toString())){
                         for (Object[] currInstr: instrumentAudit){
@@ -207,9 +207,9 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 int numDaysInt=0-Integer.valueOf(numDays);               
                 fieldsToRetrieve=TblsAppProcData.Instruments.getAllFieldNames();
                 Object[][] instrDecommissionedClosedLastDays = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TblsAppProcData.Instruments.TBL.getName(), 
-                        new String[]{TblsAppProcData.Instruments.FLD_DECOMMISSIONED.getName(), TblsAppProcData.Instruments.FLD_DECOMMISSIONED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+                        new String[]{TblsAppProcData.Instruments.DECOMMISSIONED.getName(), TblsAppProcData.Instruments.DECOMMISSIONED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
                         new Object[]{true, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                        fieldsToRetrieve, new String[]{TblsAppProcData.Instruments.FLD_DECOMMISSIONED_ON.getName()+" desc"});
+                        fieldsToRetrieve, new String[]{TblsAppProcData.Instruments.DECOMMISSIONED_ON.getName()+" desc"});
                 jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrDecommissionedClosedLastDays[0][0].toString())){
                     for (Object[] currIncident: instrDecommissionedClosedLastDays){

@@ -18,6 +18,7 @@ import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
@@ -32,17 +33,17 @@ public class DataInstrumentsEvents {
 public static Object[][] getVariableSetVariablesProperties(String variableSetName){
     String appProcInstance=GlobalVariables.Schemas.APP_PROC_CONFIG.getName();
 
-    Object[][] variableSetInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), TblsAppProcConfig.VariablesSet.TBL.getName(), 
-        new String[]{TblsAppProcConfig.VariablesSet.FLD_NAME.getName()}, new Object[]{variableSetName}, 
-        new String[]{TblsAppProcConfig.VariablesSet.FLD_VARIABLES_LIST.getName()});
+    Object[][] variableSetInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET.getTableName(), 
+        new String[]{TblsAppProcConfig.VariablesSet.NAME.getName()}, new Object[]{variableSetName}, 
+        new String[]{TblsAppProcConfig.VariablesSet.VARIABLES_LIST.getName()});
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetInfo[0][0].toString())) {
         return variableSetInfo;
     }
     String variableSetContent = LPNulls.replaceNull(variableSetInfo[0][0]).toString();
-    String[] fieldsToRetrieve=new String[]{TblsAppProcConfig.Variables.FLD_PARAM_NAME.getName(), TblsAppProcConfig.Variables.FLD_PARAM_TYPE.getName(), TblsAppProcConfig.Variables.FLD_REQUIRED.getName(), 
-        TblsAppProcConfig.Variables.FLD_ALLOWED_VALUES.getName()};
-    Object[][] variablesProperties2D= Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), TblsAppProcConfig.Variables.TBL.getName(), 
-        new String[]{TblsAppProcConfig.Variables.FLD_PARAM_NAME.getName()+" IN"}, new Object[]{variableSetContent}, 
+    String[] fieldsToRetrieve=new String[]{TblsAppProcConfig.Variables.PARAM_NAME.getName(), TblsAppProcConfig.Variables.PARAM_TYPE.getName(), TblsAppProcConfig.Variables.REQUIRED.getName(), 
+        TblsAppProcConfig.Variables.ALLOWED_VALUES.getName()};
+    Object[][] variablesProperties2D= Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), getAllFieldNames(TblsAppProcConfig.TablesAppProcConfig.VARIABLES.getTableFields()), 
+        new String[]{TblsAppProcConfig.Variables.PARAM_NAME.getName()+" IN"}, new Object[]{variableSetContent}, 
          fieldsToRetrieve);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesProperties2D[0][0].toString())) {
         return variablesProperties2D;
