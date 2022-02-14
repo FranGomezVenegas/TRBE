@@ -135,8 +135,8 @@ public class AnalysisMethodCertif {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.CERTIF_RECORD_ALREADY_EXISTS.getErrorCode(), new Object[]{methodName, methodVersion, userName});
         Object[] userIdObj=getPersonByUser(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userIdObj[0].toString())) return userIdObj;
-        Object[] userInProcedure=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.PersonProfile.TBL.getName(), 
-                new String[]{ TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName()}, new Object[]{userIdObj[0].toString()});
+        Object[] userInProcedure=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
+                new String[]{ TblsProcedure.PersonProfile.PERSON_NAME.getName()}, new Object[]{userIdObj[0].toString()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userInProcedure[0].toString())) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.USER_NOT_INVOLVED_IN_THIS_CERTIFICATION.getErrorCode(), new Object[]{userName});
         String[] fldsName=CertifGlobalVariables.CertifEventUpdateFieldsAndValues.NEW_RECORD.getFieldsName();

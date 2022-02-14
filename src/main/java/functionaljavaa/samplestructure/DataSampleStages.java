@@ -331,14 +331,14 @@ public enum SampleStageErrorTrapping{
         if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, procInstanceName});
         if (SampleStageTimingCapturePhases.START.toString().equalsIgnoreCase(phase)){
-            return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.SampleStageTimingCapture.TBL.getName(), 
-                    new String[]{TblsProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()}, 
+            return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
+                    new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()}, 
                     new Object[]{sampleId, currStage, LPDate.getCurrentTimeStamp()});            
         }else if (SampleStageTimingCapturePhases.END.toString().equalsIgnoreCase(phase)){            
             procedureSampleStagesTimingEvaluateDeviation(sampleId, currStage);
-            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.SampleStageTimingCapture.TBL.getName(), 
-                    new String[]{TblsProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()}, new Object[]{LPDate.getCurrentTimeStamp()},
-                    new String[]{TblsProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
+                    new String[]{TblsProcedure.SampleStageTimingCapture.ENDED_ON.getName()}, new Object[]{LPDate.getCurrentTimeStamp()},
+                    new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.ENDED_ON.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                     new Object[]{sampleId, currStage });            
             return updateRecordFieldsByFilter;
         }else{

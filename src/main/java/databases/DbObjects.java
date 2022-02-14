@@ -172,15 +172,15 @@ public class DbObjects {
             LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_TESTING.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName())};        
         JSONObject jsonObj=createSchemas(schemaNames, dbName);
 
-        tblCreateScript=TblsProcedure.PersonProfile.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PERSON_PROFILE);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsProcedure.PersonProfile", tblCreateScript);
 
-        tblCreateScript=TblsProcedure.ProcedureInfo.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROCEDURE_INFO);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsTblsProcedureReqs.ProcedureInfo", tblCreateScript);
 
-        tblCreateScript=TblsProcedure.ProcedureEvents.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsProcedure.ProcedureEvents", tblCreateScript);
 

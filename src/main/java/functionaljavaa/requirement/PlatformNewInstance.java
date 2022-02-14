@@ -14,6 +14,7 @@ import databases.TblsProcedure;
 import javax.sql.rowset.CachedRowSet;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -30,12 +31,12 @@ public class PlatformNewInstance {
         JSONObject jsonObj=new JSONObject();
         jsonObj=createSchemas(schemaNames, LPPlatform.buildSchemaName(fakeProcName, platfName));  
         
-        tblCreateScript=TblsProcedure.PersonProfile.createTableScript(fakeProcName, new String[]{""});
+        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PERSON_PROFILE);
         CachedRowSet prepRdQuery = Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsProcedure.PersonProfile", tblCreateScript);
-        Object[] insertRecordInTable=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.PersonProfile.TBL.getName(), 
-            new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName(), TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName(), 
-                TblsProcedure.PersonProfile.FLD_ACTIVE.getName(), TblsProcedure.PersonProfile.FLD_USER_TITLE.getName()}, 
+        Object[] insertRecordInTable=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
+            new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName(), 
+                TblsProcedure.PersonProfile.ACTIVE.getName(), TblsProcedure.PersonProfile.USER_TITLE.getName()}, 
             new Object[]{personId, "testing", true, "Testing user access / Testeo acceso usuario"});
         
         insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
@@ -62,8 +63,8 @@ public class PlatformNewInstance {
         JSONObject jsonObj=new JSONObject();
         jsonObj=removeSchemas(schemaNames, LPPlatform.buildSchemaName(fakeProcName, platfName));  
         
-        Object[] removeRecordInTable=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.PersonProfile.TBL.getName(), 
-            new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName(), TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()}, 
+        Object[] removeRecordInTable=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
+            new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName()}, 
             new Object[]{personId, "testing"});        
         removeRecordInTable = Rdbms.removeRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{TblsApp.Users.USER_NAME.getName()},

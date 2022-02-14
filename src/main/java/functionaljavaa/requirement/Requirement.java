@@ -23,10 +23,10 @@ public class Requirement {
     public static final Object[][] getProcedureByProcInstanceName( String procInstanceName){
                 
         String schemaName = GlobalVariables.Schemas.REQUIREMENTS.getName();
-        String tableName = TblsProcedure.ProcedureInfo.TBL.getName();
-        String[] whereFldName = new String[]{TblsProcedure.ProcedureInfo.FLD_SCHEMA_PREFIX.getName()};
+        String tableName = TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName();
+        String[] whereFldName = new String[]{TblsProcedure.ProcedureInfo.SCHEMA_PREFIX.getName()};
         Object[] whereFldValue = new Object[]{procInstanceName};
-        String[] fieldsToRetrieve = new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName(), TblsProcedure.ProcedureInfo.FLD_VERSION.getName()};
+        String[] fieldsToRetrieve = new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()};
         
         return Rdbms.getRecordFieldsByFilter(schemaName, tableName, whereFldName, whereFldValue, fieldsToRetrieve);        
     }    

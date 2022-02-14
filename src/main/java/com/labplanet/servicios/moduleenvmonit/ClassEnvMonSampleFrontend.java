@@ -63,7 +63,7 @@ public class ClassEnvMonSampleFrontend {
     private JSONArray responseSuccessJArr=null;
     private Object[] responseError=null;
 
-    private static final String[] SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION=new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()};
+    private static final String[] SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION=new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName()};
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
     public enum EnvMonSampleAPIFrontendEndpoints implements EnumIntEndpoints{
@@ -425,13 +425,13 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     JSONArray jArrMainObj=new JSONArray();
                     jObjPieceOfInfo=new JSONObject();
                     DataSampleStages smpStage= new DataSampleStages();
-                    String[] sampleStageTimingCaptureAllFlds=TblsProcedure.SampleStageTimingCapture.getAllFieldNames();
+                    String[] sampleStageTimingCaptureAllFlds=getAllFieldNames(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableFields());
                     JSONObject jObjMainObject2=new JSONObject();                    
                     
                     if (smpStage.isSampleStagesEnable()){
-                        Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.SampleStageTimingCapture.TBL.getName(), 
-                                new String[]{TblsProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                                sampleStageTimingCaptureAllFlds, new String[]{TblsProcedure.SampleStageTimingCapture.FLD_ID.getName()});                    
+                        Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
+                                new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                                sampleStageTimingCaptureAllFlds, new String[]{TblsProcedure.SampleStageTimingCapture.ID.getName()});                    
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleStageInfo[0][0].toString())){
                             this.isSuccess=false;
                             this.responseError=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName});              
@@ -1107,8 +1107,8 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
     }
 private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
     if (sampleStageFldValue==null) return null;
-    if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
-    String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())].toString();
+    if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
+    String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())].toString();
     JSONObject jObj= new JSONObject();
     JSONArray jArrMainObj=new JSONArray();
     JSONArray jArrMainObj2=new JSONArray();
@@ -1202,15 +1202,15 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
             Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
             Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
             if (!isProgramCorrectiveActionEnable(procInstanceName)) return new Object[]{null, null};
-            Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
-                    new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
+            Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
+                    new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName()+"<>"}, 
                     new Object[]{resultId,DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()}, 
                     SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION);
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString())){
                 fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
                 fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
                 fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
-                fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.ProgramCorrectiveAction.TBL.getName());
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
                 fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
 
                 JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPTrue(

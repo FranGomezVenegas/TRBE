@@ -47,8 +47,8 @@ public class ProcedureDefinitionToInstanceUtility {
         String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.PROCEDURE.getName());
         UserSop usSop = new UserSop();
         Object[][] diagnoses = new Object[0][0];
-        Object[][] personPerRole = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProcedure, TblsProcedure.PersonProfile.TBL.getName(),
-        new String[]{TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()}, new Object[]{roleName}, new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName()});
+        Object[][] personPerRole = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProcedure, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
+        new String[]{TblsProcedure.PersonProfile.ROLE_NAME.getName()}, new Object[]{roleName}, new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personPerRole[0][0].toString())){
             for (Object[] curPersRole: personPerRole){
                 String curPersonName=curPersRole[0].toString();

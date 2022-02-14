@@ -70,11 +70,11 @@ public class UserProfile {
      * @return
      */
     public Object[] getProcedureUserProfileFieldValues ( String procInstanceName, String personName) {
-            String[] filterFieldName = new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName(), FIELDVALUE_ACTIVE, TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
+            String[] filterFieldName = new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), FIELDVALUE_ACTIVE, TblsProcedure.PersonProfile.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
             Object[] filterFieldValue = new Object[]{personName, true};            
             
-            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.PersonProfile.TBL.getName(), 
-                    filterFieldName, filterFieldValue, new String[] {TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()});
+            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
+                    filterFieldName, filterFieldValue, new String[] {TblsProcedure.PersonProfile.ROLE_NAME.getName()});
             return LPArray.array2dTo1d(userProc);                         
         }
 

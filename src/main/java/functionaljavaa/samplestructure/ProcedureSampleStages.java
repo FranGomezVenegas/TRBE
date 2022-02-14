@@ -33,11 +33,11 @@ public class ProcedureSampleStages {
         Boolean businessRuleIsEnable = Parameter.isTagValueOneOfEnableOnes(tagValue);
         if (!businessRuleIsEnable)
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ruleDisabled", null);
-        Object[][] sampleStageTimingCaptureInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.SampleStageTimingCapture.TBL.getName(), 
-            new String[]{TblsProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName()},    
+        Object[][] sampleStageTimingCaptureInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
+            new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName()},    
             new Object[]{sampleId, stage},
-            new String[]{TblsProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName(), TblsProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()},
-            new String[]{TblsProcedure.SampleStageTimingCapture.FLD_ID.getName()});
+            new String[]{TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName(), TblsProcedure.SampleStageTimingCapture.ENDED_ON.getName()},
+            new String[]{TblsProcedure.SampleStageTimingCapture.ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleStageTimingCaptureInfo[0][0].toString()))
             return sampleStageTimingCaptureInfo;
         String stageStartDateStr=sampleStageTimingCaptureInfo[sampleStageTimingCaptureInfo.length-1][0].toString();        
@@ -67,17 +67,17 @@ public class ProcedureSampleStages {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] isTheIntervalIntoTheDatesRange = IntervalsUtilities.isTheIntervalIntoTheDatesRange(interval, stageStartDate, stageEndDate);        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isTheIntervalIntoTheDatesRange[0].toString())){
-            String[] insFldNames=new String[]{TblsProcedure.SampleStageTimingIntervalDeviation.FLD_SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingIntervalDeviation.FLD_STAGE.getName(),
-                TblsProcedure.SampleStageTimingIntervalDeviation.FLD_STARTED_ON.getName(), TblsProcedure.SampleStageTimingIntervalDeviation.FLD_ENDED_ON.getName(),
-                TblsProcedure.SampleStageTimingIntervalDeviation.FLD_SAMPLE_CONFIG_CODE.getName(), TblsProcedure.SampleStageTimingIntervalDeviation.FLD_SAMPLE_CONFIG_VERSION.getName(),
-                TblsProcedure.SampleStageTimingIntervalDeviation.FLD_EXPECTED_INTERVAL_SECONDS.getName()};
+            String[] insFldNames=new String[]{TblsProcedure.SampleStageTimingIntervalDeviation.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingIntervalDeviation.STAGE.getName(),
+                TblsProcedure.SampleStageTimingIntervalDeviation.STARTED_ON.getName(), TblsProcedure.SampleStageTimingIntervalDeviation.ENDED_ON.getName(),
+                TblsProcedure.SampleStageTimingIntervalDeviation.SAMPLE_CONFIG_CODE.getName(), TblsProcedure.SampleStageTimingIntervalDeviation.SAMPLE_CONFIG_VERSION.getName(),
+                TblsProcedure.SampleStageTimingIntervalDeviation.EXPECTED_INTERVAL_SECONDS.getName()};
             Object[] insFldValues=new Object[]{sampleId, stage, stageStartDate, stageEndDate, configCode, configVersion, interval};
             Object datesDiffSeconds = isTheIntervalIntoTheDatesRange[isTheIntervalIntoTheDatesRange.length-1];
             if (datesDiffSeconds!=null){
-               insFldNames=LPArray.addValueToArray1D(insFldNames, TblsProcedure.SampleStageTimingIntervalDeviation.FLD_DATERANGE_INTERVAL_SECONDS.getName());
+               insFldNames=LPArray.addValueToArray1D(insFldNames, TblsProcedure.SampleStageTimingIntervalDeviation.DATERANGE_INTERVAL_SECONDS.getName());
                insFldValues=LPArray.addValueToArray1D(insFldValues, datesDiffSeconds);
             }
-            Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.SampleStageTimingIntervalDeviation.TBL.getName(), 
+            Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION.getTableName(), 
                     insFldNames, insFldValues);            
             return;            
         }

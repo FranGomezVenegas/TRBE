@@ -41,6 +41,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import trazit.enums.EnumIntEndpoints;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
@@ -531,11 +532,11 @@ GlobalAPIsParams.
                 case PROGRAMS_CORRECTIVE_ACTION_LIST:   
                     String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
                     String programName = argValues[0].toString();
-                    String[] progCorrFldNameList = getFieldsListToRetrieve(argValues[1].toString(), TblsProcedure.ProgramCorrectiveAction.TBL.getAllFieldNames());
+                    String[] progCorrFldNameList = getFieldsListToRetrieve(argValues[1].toString(), getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()));
                     String[] progCorrFldSortArray=argValues[2].toString().split("\\|");
-                    Object[][] progCorrInfo=getTableData(procReqInstance, GlobalVariables.Schemas.PROCEDURE.getName(),TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
-                        argValues[1].toString(), TblsProcedure.ProgramCorrectiveAction.getAllFieldNames(), 
-                        new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
+                    Object[][] progCorrInfo=getTableData(procReqInstance, GlobalVariables.Schemas.PROCEDURE.getName(),TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
+                        argValues[1].toString(), getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()), 
+                        new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName()+"<>"}, 
                         new String[]{programName, statusClosed}, progCorrFldSortArray);        
                     JSONArray jArr=new JSONArray();   
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(progCorrInfo[0][0].toString())) 

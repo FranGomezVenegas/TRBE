@@ -107,12 +107,12 @@ public class ProcedureDeployment extends HttpServlet {
             if (PROC_DISPLAY_PROC_DEF_REQUIREMENTS){
                 Requirement.getProcedureByProcInstanceName(procName);
             }
-            Object[][] procEvent = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.ProcedureEvents.TBL.getName(),
-                    new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_FLD_NAME.split("\\|"),
+            Object[][] procEvent = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
+                    new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_FLD_NAME.split("\\|"),
                     PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_SORT.split("\\|"), true );
-            Object[][] procEventSOPStemp = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.ProcedureEvents.TBL.getName(),
-                    new String[]{TblsProcedure.ProcedureEvents.FLD_SOP+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, new String[]{TblsProcedure.ProcedureEvents.FLD_SOP.getName()},
-                    new String[]{TblsProcedure.ProcedureEvents.FLD_SOP.getName()} );
+            Object[][] procEventSOPStemp = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
+                    new String[]{TblsProcedure.ProcedureEvents.SOP+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, new String[]{TblsProcedure.ProcedureEvents.SOP.getName()},
+                    new String[]{TblsProcedure.ProcedureEvents.SOP.getName()} );
             Object[] procEventSOPS = new Object[0];
             for (Object[] prSop: procEventSOPStemp){
                 if (prSop!=null){
@@ -130,16 +130,16 @@ public class ProcedureDeployment extends HttpServlet {
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procEvent);
             }
             if (PROC_DISPLAY_PROC_INSTANCE_ROLES){
-                Object[][] procRoles = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.PersonProfile.TBL.getName(),
-                        new String[]{TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""},
+                Object[][] procRoles = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
+                        new String[]{TblsProcedure.PersonProfile.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""},
                         PROC_DISPLAY_PROC_INSTANCE_ROLES_FLD_NAME.split("\\|"), PROC_DISPLAY_PROC_INSTANCE_ROLES_SORT.split("\\|"), true );
                 procRoles = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROC_DISPLAY_PROC_INSTANCE_ROLES_FLD_NAME.split("\\|"),
                         PROC_DISPLAY_PROC_INSTANCE_ROLES_FLD_NAME.split("\\|").length), procRoles);
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procRoles);
             }
             if (PROC_DISPLAY_PROC_INSTANCE_USERS){
-                Object[][] procUserPerson = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.PersonProfile.TBL.getName(),
-                        new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_FLD_NAME.split("\\|"),
+                Object[][] procUserPerson = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
+                        new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_FLD_NAME.split("\\|"),
                         PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_SORT.split("\\|"), true );
                 
                 Object[] procUsers = new Object[0];

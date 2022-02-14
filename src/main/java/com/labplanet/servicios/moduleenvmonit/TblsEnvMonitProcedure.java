@@ -26,10 +26,11 @@ public class TblsEnvMonitProcedure {
     public static final String getTableCreationScriptFromDataProcedureTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "INCUBATOR_TEMP_READING_VIOLATIONS": return IncubatorTempReadingViolations.createTableScript(schemaNamePrefix, fields);
-            case "PROGRAM_CORRECTIVE_ACTION": return TblsProcedure.ProgramCorrectiveAction.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_CORRECTIVE_ACTION": createTableScript(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, schemaNamePrefix);
             case "INVESTIGATION": return createTableScript(TblsProcedure.TablesProcedure.INVESTIGATION, schemaNamePrefix);
             case "INVEST_OBJECTS": return createTableScript(TblsProcedure.TablesProcedure.INVEST_OBJECTS, schemaNamePrefix);
-            case "SAMPLE_STAGE_TIMING_CAPTURE": return TblsProcedure.SampleStageTimingCapture.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_STAGE_TIMING_CAPTURE": return createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, schemaNamePrefix);
+            case "SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION": return createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, schemaNamePrefix);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }    

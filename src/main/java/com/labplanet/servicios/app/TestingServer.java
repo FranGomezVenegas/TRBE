@@ -274,7 +274,7 @@ for (int curPlusDays: plusDays){
     }
 }
 Rdbms.stablishDBConection("labplanet");
-tblCreateScript2=TblsProcedure.SampleStageTimingIntervalDeviation.createTableScript("em-demo-a", new String[]{""});
+tblCreateScript2=createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, "em-demo-a");
 Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 
@@ -378,7 +378,7 @@ if (1==1) return;
 //        GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), 
 //        new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_SCHEMA_PREFIX.getName()},
 //        new Object[]{"proc-deploy", 1, "proc-deploy"},
-//        LPPlatform.buildSchemaName("proc-deploy", GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureEvents.TBL.getName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
+//        LPPlatform.buildSchemaName("proc-deploy", GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
 //            if (1==1) return;            
 //            out.println(SomeEnumClass.getCell(1));
 //            out.println(OtherEnumClass.getCell(1));

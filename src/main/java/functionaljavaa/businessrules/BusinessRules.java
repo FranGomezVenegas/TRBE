@@ -53,9 +53,9 @@ public class BusinessRules {
                 new String[]{TblsTesting.ScriptBusinessRules.REPOSITORY.getName(), TblsTesting.ScriptBusinessRules.RULE_NAME.getName(), TblsTesting.ScriptBusinessRules.RULE_VALUE.getName()});
         else
             if (procedureInstanceName!=null && procedureInstanceName.length()>0)
-                testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.ProcedureBusinessRules.TBL.getName(), 
-                    new String[]{TblsProcedure.ProcedureBusinessRules.FLD_DISABLED.getName()}, new Object[]{false}, 
-                    new String[]{TblsProcedure.ProcedureBusinessRules.FLD_AREA.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.FLD_RULE_VALUE.getName()});
+                testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
+                    new String[]{TblsProcedure.ProcedureBusinessRules.DISABLED.getName()}, new Object[]{false}, 
+                    new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
             else
                 testingBusRulsInfo=new Object[][]{LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "BusinessRulesNotCompatibleYetForPlatformRules", null)};
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testingBusRulsInfo[0][0].toString())) return;

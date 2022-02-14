@@ -28,6 +28,20 @@ public class TblsProcedure {
             new String[]{TblsProcedure.Investigation.ID.getName()}, null, "Investigation objects"),
         INVEST_OBJECTS(null, "invest_objects", SCHEMA_NAME, true, TblsProcedure.InvestObjects.values(), TblsProcedure.InvestObjects.ID.getName(),
             new String[]{TblsProcedure.InvestObjects.ID.getName()}, null, "Objects added to one given investigation"),
+        PERSON_PROFILE(null, "person_profile", SCHEMA_NAME, true, TblsProcedure.PersonProfile.values(), null,
+            new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName()}, null, "Objects added to one given investigation"),
+        PROCEDURE_INFO(null, "procedure_info", SCHEMA_NAME, true, TblsProcedure.ProcedureInfo.values(), null,
+            new String[]{TblsProcedure.ProcedureInfo.NAME.getName()}, null, "Procedure Info"),
+        PROCEDURE_BUSINESS_RULE(null, "procedure_business_rules", SCHEMA_NAME, true, ProcedureBusinessRules.values(), null,
+            new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, null, "Procedure Business Rules Info"),
+        PROCEDURE_EVENTS(null, "procedure_events", SCHEMA_NAME, true, TblsProcedure.ProcedureEvents.values(), null,
+            new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName()}, null, "Procedure Events Info"),
+        PROGRAM_CORRECTIVE_ACTION(null, "program_corrective_action", SCHEMA_NAME, true, TblsProcedure.ProgramCorrectiveAction.values(), TblsProcedure.ProgramCorrectiveAction.ID.getName(),
+            new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, null, "Program Corrective Action for results OOS and/or OOC Info"),
+        SAMPLE_STAGE_TIMING_CAPTURE(null, "sample_stage_timing_capture", SCHEMA_NAME, true, TblsProcedure.SampleStageTimingCapture.values(), TblsProcedure.SampleStageTimingCapture.ID.getName(),
+            new String[]{TblsProcedure.SampleStageTimingCapture.ID.getName()}, null, "Sample Stage Timing Capture Info"),
+        SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION(null, "sample_stage_timing_interval_deviation", SCHEMA_NAME, true, TblsProcedure.SampleStageTimingIntervalDeviation.values(), TblsProcedure.SampleStageTimingIntervalDeviation.ID.getName(),
+            new String[]{TblsProcedure.SampleStageTimingIntervalDeviation.ID.getName()}, null, "SampleStageTimingIntervalDeviation Info"),
         ;
         private TablesProcedure(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
@@ -86,361 +100,119 @@ public class TblsProcedure {
      */
     public static final String FIELDSTAG = "#FLDS";
     
-    /**
-     *
-     */
-    public enum PersonProfile{
-
-        /**
-         *
-         */
-        TBL("person_profile",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_PERSON_NAME, #FLD_ROLE_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-        FLD_PERSON_NAME("person_name", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_ROLE_NAME("role_name", LPDatabase.stringNotNull()),        
-        FLD_ACTIVE("active", LPDatabase.booleanFld()),
-        FLD_USER_TITLE("user_title", LPDatabase.string()),
-        
-/*        , FLD_ANALYSIS("analysis", LPDatabase.StringNotNull())
-         , FLD_METHOD_VERSION("method_version", LPDatabase.IntegerNotNull())
-        , FLD_MANDATORY("mandatory", LPDatabase.Boolean())
-        , FLD_PARAM_TYPE("param_type", LPDatabase.String())
-        , FLD_NUM_REPLICAS("num_replicas", LPDatabase.Integer())
-        , FLD_UOM("uom", LPDatabase.String())
-        , FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.String())*/
+    public enum PersonProfile implements EnumIntTableFields{
+        PERSON_NAME("person_name", LPDatabase.stringNotNull(), null, null, null, null),
+        ROLE_NAME("role_name", LPDatabase.stringNotNull(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
+        USER_TITLE("user_title", LPDatabase.string(), null, null, null, null),
         ;
-        private PersonProfile(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private PersonProfile(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = PersonProfile.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (PersonProfile obj: PersonProfile.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        fieldsScript.append(currField[0]).append(" ").append(currField[1]);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }                                
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
 
     /**
      *
      */
-    public enum ProcedureEvents{
-
-        /**
-         *
-         */
-        TBL("procedure_events",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_NAME, #FLD_ROLE_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-        FLD_NAME("name", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_ROLE_NAME("role_name", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_MODE("mode", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_TYPE("type", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_BRANCH_LEVEL("branch_level", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_LABEL_EN("label_en", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_LABEL_ES("label_es", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ORDER_NUMBER("order_number", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_SOP("sop", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld())
-        ,
-        FLD_USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld())
-        ,
-
-        /**
-         *
-         */
-        FLD_LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string()),
-        FLD_ICON_NAME("icon_name", LPDatabase.string()),
-        FLD_LP_NEW_FRONTEND_PAGE_NAME("lp_new_frontend_page_name", LPDatabase.string()),
-        FLD_NEW_ICON_NAME("new_icon_name", LPDatabase.string()),
-        FLD_NEW_ICON_NAME_WHEN_NOT_CERTIFIED("new_icon_name_when_not_certified", LPDatabase.string()),
-        FLD_NEW_NAME("new_name", LPDatabase.stringNotNull()),
-        FLD_POSITION("position", LPDatabase.string()),
-        FLD_PARENT_NAME("parent_name", LPDatabase.string())
+    public enum ProcedureEvents implements EnumIntTableFields{
+        NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
+        ROLE_NAME("role_name", LPDatabase.stringNotNull(), null, null, null, null),
+        MODE("mode", LPDatabase.string(), null, null, null, null),
+        TYPE("type", LPDatabase.string(), null, null, null, null),
+        BRANCH_LEVEL("branch_level", LPDatabase.string(), null, null, null, null),
+        LABEL_EN("label_en", LPDatabase.string(), null, null, null, null),
+        LABEL_ES("label_es", LPDatabase.string(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        SOP("sop", LPDatabase.string(), null, null, null, null),
+        ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld(), null, null, null, null),
+        USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
+        LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
+        ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null),
+        LP_NEW_FRONTEND_PAGE_NAME("lp_new_frontend_page_name", LPDatabase.string(), null, null, null, null),
+        NEW_ICON_NAME("new_icon_name", LPDatabase.string(), null, null, null, null),
+        NEW_ICON_NAME_WHEN_NOT_CERTIFIED("new_icon_name_when_not_certified", LPDatabase.string(), null, null, null, null),
+        NEW_NAME("new_name", LPDatabase.stringNotNull(), null, null, null, null),
+        POSITION("position", LPDatabase.string(), null, null, null, null),
+        PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),
         ;
-        private ProcedureEvents(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private ProcedureEvents(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = ProcedureEvents.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (ProcedureEvents obj: ProcedureEvents.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        fieldsScript.append(currField[0]).append(" ").append(currField[1]);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }  
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (ProcedureEvents obj: ProcedureEvents.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }                     
-        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
 
     /**
      *
      */
-    public enum ProcedureInfo{
-        TBL("procedure_info",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
-        FLD_NAME("name", LPDatabase.stringNotNull()),
-        FLD_VERSION("version", LPDatabase.integerNotNull())        ,
-        FLD_SCHEMA_PREFIX("schema_prefix", LPDatabase.stringNotNull())        ,
-        FLD_LABEL_EN("label_en", LPDatabase.string())        ,
-        FLD_LABEL_ES("label_es", LPDatabase.string()),
-        FLD_DESCRIPTION("description", LPDatabase.string())        
+    public enum ProcedureInfo implements EnumIntTableFields{
+        NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
+        VERSION("version", LPDatabase.integerNotNull(), null, null, null, null),
+        SCHEMA_PREFIX("schema_prefix", LPDatabase.stringNotNull(), null, null, null, null),
+        LABEL_EN("label_en", LPDatabase.string(), null, null, null, null),
+        LABEL_ES("label_es", LPDatabase.string(), null, null, null, null),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
         ;
-        private ProcedureInfo(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private ProcedureInfo(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-        public String getName(){
-            return this.dbObjName;
-        }
-        public String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = ProcedureInfo.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (ProcedureInfo obj: ProcedureInfo.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        fieldsScript.append(currField[0]).append(" ").append(currField[1]);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (ProcedureInfo obj: ProcedureInfo.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }                        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;           
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     } 
 
-    public enum ProcedureBusinessRules{
-        TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_AREA, #FLD_RULE_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
-        FLD_AREA("area", LPDatabase.stringNotNull())        ,
-        FLD_RULE_NAME("rule_name", LPDatabase.stringNotNull())        ,
-        FLD_RULE_VALUE("rule_value", LPDatabase.string())        ,
-        FLD_DISABLED("disabled", LPDatabase.booleanFld(false))        ,
+    public enum ProcedureBusinessRules implements EnumIntTableFields{
+        AREA("area", LPDatabase.stringNotNull(), null, null, null, null),
+        RULE_NAME("rule_name", LPDatabase.stringNotNull(), null, null, null, null),
+        RULE_VALUE("rule_value", LPDatabase.string(), null, null, null, null),
+        DISABLED("disabled", LPDatabase.booleanFld(false), null, null, null, null),
         ;
-        private ProcedureBusinessRules(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private ProcedureBusinessRules(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-        public String getName(){
-            return this.dbObjName;
-        }
-
-        /**
-         *
-         * @return
-         */
-        public String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = ProcedureInfo.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (ProcedureInfo obj: ProcedureInfo.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        fieldsScript.append(currField[0]).append(" ").append(currField[1]);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;           
-
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     } 
 
     // Esta no tiene sentido a este nivel porque business rules a nivel de proceso son archivos, no tabla.
@@ -449,19 +221,19 @@ public class TblsProcedure {
 /*    
     public enum ProcedureBusinessRules {
 
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_#FLD_ID_seq'::regclass)"),        
-        TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME) )" +
+        ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_#ID_seq'::regclass)"),        
+        TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#PROCEDURE_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
-        FLD_PROCEDURE_NAME("procedure_name", LPDatabase.stringNotNull()),
-        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.integerNotNull()),
-        FLD_INSTANCE_NAME("instance_name", LPDatabase.stringNotNull()),
-        FLD_MODULE_NAME("module_name", LPDatabase.stringNotNull()),
-        FLD_MODULE_VERSION("module_version", LPDatabase.integerNotNull()),
-        FLD_FILE_SUFFIX("file_suffix", LPDatabase.string()),
-        FLD_RULE_NAME("rule_name", LPDatabase.string()),
-        FLD_RULE_VALUE("rule_value", LPDatabase.string()),
-        FLD_ACTIVE("active", LPDatabase.booleanFld())
+        PROCEDURE_NAME("procedure_name", LPDatabase.stringNotNull()),
+        PROCEDURE_VERSION("procedure_version", LPDatabase.integerNotNull()),
+        INSTANCE_NAME("instance_name", LPDatabase.stringNotNull()),
+        MODULE_NAME("module_name", LPDatabase.stringNotNull()),
+        MODULE_VERSION("module_version", LPDatabase.integerNotNull()),
+        FILE_SUFFIX("file_suffix", LPDatabase.string()),
+        RULE_NAME("rule_name", LPDatabase.string()),
+        RULE_VALUE("rule_value", LPDatabase.string()),
+        ACTIVE("active", LPDatabase.booleanFld())
         ;
         private ProcedureBusinessRules(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -528,30 +300,30 @@ public class TblsProcedure {
         /**
          *
          */
-        FLD_USER_NAME("user_name", "usr.user_name")
+        USER_NAME("user_name", "usr.user_name")
         ,
 
         /**
          *
          */
-        FLD_EMAIL("email", "usr.email")
+        EMAIL("email", "usr.email")
         ,
 
         /**
          *
          */
-        FLD_ROLE_NAME("role_name", "persprof.role_name")
+        ROLE_NAME("role_name", "persprof.role_name")
         ,
         /**
          *
          */
-        FLD_USER_TITLE("user_title", "persprof.user_title")
+        USER_TITLE("user_title", "persprof.user_title")
         ,
 
         /**
          *
          */
-        FLD_ACTIVE("active", "persprof.active")
+        ACTIVE("active", "persprof.active")
         ;
         private ViewProcUserAndRoles(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -689,388 +461,97 @@ public class TblsProcedure {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }    
-    public enum ProgramCorrectiveAction{
-
-        /**
-         *
-         */
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)"),
-
-        /**
-         *
-         */
-        TBL("program_corrective_action", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        
-        /**
-         *
-         */
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS("status", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS_PREVIOUS("status_previous", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_PROGRAM_NAME("program_name", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_LOCATION_NAME("location_name", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_AREA("area", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_SAMPLE_ID("sample_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_TEST_ID("test_id", LPDatabase.integer())
-        ,    
-
-        /**
-         *
-         */
-        FLD_RESULT_ID("result_id", LPDatabase.integer())    
-        ,    		
-
-        /**
-         *
-         */
-        FLD_LIMIT_ID("limit_id", LPDatabase.integer())    		
-        ,
-
-        /**
-         *
-         */
-        FLD_ANALYSIS("analysis", LPDatabase.stringNotNull(10))
-        ,
-
-        /**
-         *
-         */
-        FLD_METHOD_NAME("method_name", LPDatabase.stringNotNull(10))
-        ,    		
-
-        /**
-         *
-         */
-        FLD_METHOD_VERSION("method_version", LPDatabase.integer())    		
-        ,
-
-        /**
-         *
-         */
-        FLD_PARAM_NAME("param_name", LPDatabase.stringNotNull(10))
-        ,        
-
-        /**
-         *
-         */
-        FLD_SPEC_RULE_WITH_DETAIL("spec_rule_with_detail", LPDatabase.stringNotNull(10))        
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_EVAL("spec_eval", LPDatabase.stringNotNull(10))
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_EVAL_DETAIL("spec_eval_detail", LPDatabase.stringNotNull()),
-        FLD_INVEST_ID("invest_id", LPDatabase.integer())    		
-
+    public enum ProgramCorrectiveAction implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        STATUS("status", LPDatabase.stringNotNull(), null, null, null, null),
+        STATUS_PREVIOUS("status_previous", LPDatabase.stringNotNull(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        PROGRAM_NAME("program_name", LPDatabase.string(), null, null, null, null),
+        LOCATION_NAME("location_name", LPDatabase.string(), null, null, null, null),
+        AREA("area", LPDatabase.string(), null, null, null, null),
+        SAMPLE_ID("sample_id", LPDatabase.integer(), null, null, null, null),
+        TEST_ID("test_id", LPDatabase.integer(), null, null, null, null),
+        RESULT_ID("result_id", LPDatabase.integer(), null, null, null, null),
+        LIMIT_ID("limit_id", LPDatabase.integer(), null, null, null, null),
+        ANALYSIS("analysis", LPDatabase.stringNotNull(10), null, null, null, null),
+        METHOD_NAME("method_name", LPDatabase.stringNotNull(10), null, null, null, null),
+        METHOD_VERSION("method_version", LPDatabase.integer(), null, null, null, null),
+        PARAM_NAME("param_name", LPDatabase.stringNotNull(10), null, null, null, null),
+        SPEC_RULE_WITH_DETAIL("spec_rule_with_detail", LPDatabase.stringNotNull(10), null, null, null, null),
+        SPEC_EVAL("spec_eval", LPDatabase.stringNotNull(10), null, null, null, null),
+        SPEC_EVAL_DETAIL("spec_eval_detail", LPDatabase.stringNotNull(), null, null, null, null),
+        INVEST_ID("invest_id", LPDatabase.integer(), null, null, null, null),
         ;
-        private ProgramCorrectiveAction(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private ProgramCorrectiveAction(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix procedure prefix
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = ProgramCorrectiveAction.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (ProgramCorrectiveAction obj: ProgramCorrectiveAction.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }   
-
-        /**
-         *
-         * @return get all table fields
-         */
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (ProgramCorrectiveAction obj: ProgramCorrectiveAction.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
 
-    public enum SampleStageTimingCapture{
-
-        /**
-         *
-         */
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)"),
-
-        /**
-         *
-         */
-        TBL("sample_stage_timing_capture", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-
-        /**
-         *
-         */
-        FLD_SAMPLE_ID("sample_id", LPDatabase.integer()),
-
-        /**
-         *
-         */
-        FLD_STAGE_CURRENT("current_stage", LPDatabase.stringNotNull()),
-
-        /**
-         *
-         */
-        FLD_STAGE_PREVIOUS("stage_previous", LPDatabase.string()),
-
-        /**
-         *
-         */
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTimeWithDefaultNow()),
-
-        /**
-         *
-         */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
-
-        /**
-         *
-         */
-        FLD_STARTED_ON("started_on", dateTime()),
-
-        /**
-         *
-         */
-        FLD_ENDED_ON("ended_on", dateTime()),
+    public enum SampleStageTimingCapture implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        SAMPLE_ID("sample_id", LPDatabase.integer(), null, null, null, null),
+        STAGE_CURRENT("current_stage", LPDatabase.stringNotNull(), null, null, null, null),
+        STAGE_PREVIOUS("stage_previous", LPDatabase.string(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTimeWithDefaultNow(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        STARTED_ON("started_on", dateTime(), null, null, null, null),
+        ENDED_ON("ended_on", dateTime(), null, null, null, null),
         ;
-        private SampleStageTimingCapture(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private SampleStageTimingCapture(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix procedure prefix
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = SampleStageTimingCapture.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (SampleStageTimingCapture obj: SampleStageTimingCapture.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }    
-
-        /**
-         *
-         * @return get all Table Fields
-         */
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (SampleStageTimingCapture obj: SampleStageTimingCapture.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }                
-    public enum SampleStageTimingIntervalDeviation{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)"),
-        TBL("sample_stage_timing_interval_deviation",  LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                + LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) )" +
-                LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-        FLD_SAMPLE_ID("sample_id", LPDatabase.integerNotNull())        ,        
-        FLD_SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull()),
-        FLD_SAMPLE_CONFIG_VERSION("sample_config_version", LPDatabase.integerNotNull())        ,        
-        FLD_STAGE("stage", LPDatabase.stringNotNull()),
-        FLD_STARTED_ON("started_on", dateTime()),
-        FLD_ENDED_ON("ended_on", dateTime()),
-        FLD_DATERANGE_INTERVAL_SECONDS("daterange_interval_seconds", LPDatabase.integer()),
-        FLD_EXPECTED_INTERVAL_SECONDS("expected_interval_seconds", LPDatabase.integer())
+    public enum SampleStageTimingIntervalDeviation implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        SAMPLE_ID("sample_id", LPDatabase.integerNotNull(), null, null, null, null),
+        SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull(), null, null, null, null),
+        SAMPLE_CONFIG_VERSION("sample_config_version", LPDatabase.integerNotNull(), null, null, null, null),
+        STAGE("stage", LPDatabase.stringNotNull(), null, null, null, null),
+        STARTED_ON("started_on", dateTime(), null, null, null, null),
+        ENDED_ON("ended_on", dateTime(), null, null, null, null),
+        DATERANGE_INTERVAL_SECONDS("daterange_interval_seconds", LPDatabase.integer(), null, null, null, null),
+        EXPECTED_INTERVAL_SECONDS("expected_interval_seconds", LPDatabase.integer(), null, null, null, null),
         ;
-        private SampleStageTimingIntervalDeviation(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private SampleStageTimingIntervalDeviation(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = SampleStageTimingIntervalDeviation.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (SampleStageTimingIntervalDeviation obj: SampleStageTimingIntervalDeviation.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        } 
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (SampleStageTimingIntervalDeviation obj: SampleStageTimingIntervalDeviation.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }                
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
     
     

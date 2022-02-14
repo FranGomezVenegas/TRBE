@@ -12,6 +12,7 @@ import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_A
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 
@@ -62,7 +63,7 @@ public final class EnvMonitSchemaDefinition {
         JSONObject jsonObj = new JSONObject();        
         String tblCreateScript="";
         
-        tblCreateScript=TblsProcedure.ProgramCorrectiveAction.createTableScript(procInstanceName, new String[]{""});
+        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION);
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsProcedure.ProgramCorrectiveAction", tblCreateScript);
         

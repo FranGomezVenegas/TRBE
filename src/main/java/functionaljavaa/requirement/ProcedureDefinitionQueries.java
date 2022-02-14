@@ -167,9 +167,9 @@ public class ProcedureDefinitionQueries {
                 new String[]{"procedure_roles_by_user", "procedure_users_counter_by_role"}, 
                 new String[]{"procedure", "procedure"},
                 new String[]{TblsProcedure.ViewProcUserAndRoles.TBL.getName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName()},
-                new String[]{TblsProcedure.ViewProcUserAndRoles.FLD_ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause(), TblsProcedure.ViewProcUserAndRoles.FLD_ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new String[]{TblsProcedure.ViewProcUserAndRoles.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause(), TblsProcedure.ViewProcUserAndRoles.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new String[]{null, null},
-                new String[]{TblsProcedure.ViewProcUserAndRoles.FLD_USER_NAME.getName()+"|"+TblsProcedure.ViewProcUserAndRoles.FLD_ROLE_NAME.getName(), TblsProcedure.ViewProcUserAndRoles.FLD_ROLE_NAME.getName()},
+                new String[]{TblsProcedure.ViewProcUserAndRoles.USER_NAME.getName()+"|"+TblsProcedure.ViewProcUserAndRoles.ROLE_NAME.getName(), TblsProcedure.ViewProcUserAndRoles.ROLE_NAME.getName()},
                 new String[]{"false", "true"}
                 );
         mainObj.put(bsnRuleQry.getMethodSectionName().toLowerCase(), programkpIsObj);
