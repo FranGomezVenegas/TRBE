@@ -224,7 +224,7 @@ public class LPFrontEnd {
         String errorTextEs = "";
         if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){            
             Object[] msgArg3=new Object[]{};
-            if (mainMessage[0].length<=2)
+            if (mainMessage[0].length>2)
                 msgArg3=(Object[]) mainMessage[0][2];
             errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
             errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
