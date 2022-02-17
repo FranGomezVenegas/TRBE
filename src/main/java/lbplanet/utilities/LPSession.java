@@ -14,6 +14,7 @@ import databases.TblsAppAudit;
 import databases.TblsDataAudit;
 import java.time.LocalDateTime;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 /**
  * Create one new app.app_session
  * @author Administrator
@@ -104,9 +105,10 @@ public class LPSession {
      * @param fieldsNamesToInsert
      * @return
      */
-    public static Object[] addProcessSession( String processName, Integer appSessionId, String[] fieldsNamesToInsert){
-        addProcessToAppSession(processName, appSessionId);
+    public static Object[] addProcessSession(Integer appSessionId, String[] fieldsNamesToInsert){
+        addProcessToAppSession(appSessionId);
         String tableName = TblsDataAudit.TablesDataAudit.SESSION.getTableName();
+        String processName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
         String schemaAuditName = LPPlatform.buildSchemaName(processName, GlobalVariables.Schemas.DATA_AUDIT.getName());       
         
         Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(schemaAuditName, tableName, 
@@ -128,24 +130,35 @@ public class LPSession {
     /**
      * One user can be assigned to multiple processes, keep the track about which are the processes for which the user
      *  performed any action at the app_session level is useful to simplify the way to get data across the procedures and audits.
-     * @param processName
      * @param appSessionId
      * @return
      */    
-    public static Object[] addProcessToAppSession(String processName, Integer appSessionId){
+    public static Object[] addProcessToAppSession(Integer appSessionId){
+        String processName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        //String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(), 
                 new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId}, 
                 new String[]{TblsApp.AppSession.PROCEDURES.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString()))        
             return LPArray.array2dTo1d(recordFieldsBySessionId);
-        String[] sessionProcsArr=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString().split("\\|");
         String procListValue=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString();
-        if (procListValue.length()>0) procListValue=procListValue+"|";
-        procListValue=procListValue+processName.replace("-"+GlobalVariables.Schemas.DATA_AUDIT.getName(), "");
-        if (!LPArray.valueInArray(sessionProcsArr, processName))
+        Boolean addProcess=false;
+        if (procListValue==null || procListValue.length()==0){
+            procListValue=processName.replace("-"+GlobalVariables.Schemas.DATA_AUDIT.getName(), "").replace("\"", "");
+            addProcess=true;
+        }else{
+            String[] sessionProcsArr=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString().split("\\,");
+            processName=processName.replace("-"+GlobalVariables.Schemas.DATA_AUDIT.getName(), "").replace("\"", "");
+            if (!LPArray.valueInArray(sessionProcsArr, processName)){
+                if (procListValue.length()>0)
+                    procListValue=procListValue+","+processName;
+                addProcess=true;
+            }            
+        }
+        if (addProcess)
             return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(), 
-                    new String[]{TblsApp.AppSession.PROCEDURES.getName()}, new Object[]{procListValue}, 
-                    new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId});
+                      new String[]{TblsApp.AppSession.PROCEDURES.getName()}, new Object[]{procListValue}, 
+                      new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId});
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>",new Object[]{processName, appSessionId} );
     }
 

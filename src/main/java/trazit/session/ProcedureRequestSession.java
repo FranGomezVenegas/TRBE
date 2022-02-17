@@ -33,6 +33,7 @@ public class ProcedureRequestSession {
     
     private static ProcedureRequestSession theSession;
     private String procedureInstance;
+    private Integer procedureVersion;
     private String actionName;
     private String dbName;
     private Token token;
@@ -67,7 +68,9 @@ public class ProcedureRequestSession {
         String dbName = "";
         if (!isForDocumentation){
             dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);            
-            finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);         
+            finalToken = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN); 
+            if (finalToken==null || finalToken.length()==0)
+                finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);         
             if (finalToken==null || finalToken.length()==0){
                 this.hasErrors=true;
                 this.errorMessage="No token provided";
@@ -235,6 +238,9 @@ public class ProcedureRequestSession {
     public String getProcedureInstance(){
         return this.procedureInstance;
     }
+    public Integer getProcedureInstanceVersion(){
+        return this.procedureVersion;
+    }
     public Boolean getIsForTesting(){
         if (this.isForTesting==null)return false;
         return this.isForTesting;
@@ -342,6 +348,14 @@ return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allFine", null, true);
     }
     public void setBusinessRulesTesting(BusinessRules br){
         this.busRulesTesting=br;
+        return;
+    }
+    public void setBusinessProcInstance(BusinessRules br, String procInstanceName, String finalToken){
+        if (theSession!=null || theSession.getTokenString()!=null){
+            theSession.busRulesProcInstance=br;
+            theSession.procedureInstance=procInstanceName;
+            theSession.tokenStr=finalToken;
+        }
         return;
     }
     public void setAlternativeToken(Token newToken){
