@@ -217,22 +217,26 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
              
             switch (endPoint){
             case ALL_ACTIVE_VIDEO_TUTORIALS:
+                JSONArray jArr=new JSONArray();
                 Object[][] videoTutorialItems=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL.getTableName(), 
                     new String[]{TblsApp.VideoTutorial.ACTIVE.getName()}, new Object[]{true},
                     getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), 
                     new String[]{TblsApp.VideoTutorial.PARENT_ID.getName(), TblsApp.VideoTutorial.ORDER_NUMBER.getName()});
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(videoTutorialItems[0][0].toString())){
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    return;
+                }
 /*                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL.getTableName(), 
                     new String[]{TblsApp.VideoTutorial.ACTIVE.getName()}, new Object[]{true},
                     TblsApp.VideoTutorial.getAllFieldNames(), 
                     new String[]{TblsApp.VideoTutorial.PARENT_ID.getName(), TblsApp.VideoTutorial.ORDER_NUMBER.getName()});
 */
-                JSONArray jArr=new JSONArray();
                 JSONObject jObj=new JSONObject();
                 JSONParser parser = new JSONParser();  
                 String[] itemPosic=new String[]{};
                 for (Object[] curItem: videoTutorialItems){
-                    Object curItemId=curItem[LPArray.valuePosicInArray(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields(), TblsApp.VideoTutorial.ID.getName())];
-                    Object curItemParentId=curItem[LPArray.valuePosicInArray(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields(), TblsApp.VideoTutorial.PARENT_ID.getName())];
+                    Object curItemId=curItem[LPArray.valuePosicInArray(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), TblsApp.VideoTutorial.ID.getName())];
+                    Object curItemParentId=curItem[LPArray.valuePosicInArray(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), TblsApp.VideoTutorial.PARENT_ID.getName())];
                     if ("0".equalsIgnoreCase(curItemParentId.toString())){
                         itemPosic=(String[]) LPArray.addValueToArray1D(itemPosic, curItemId.toString());
                         jArr.add(LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), curItem));
