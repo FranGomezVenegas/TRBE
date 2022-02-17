@@ -33,14 +33,15 @@ public class DataSampleStructureStatuses {
             preReqs.add(0, new String[]{"data","sampleStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
             String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), sampleLevel+DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs);     
-            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst)) ) return LOGGED.toString();
+            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst)) ) 
+                return LOGGED.toString();
             return sampleStatusFirst;        
         }
         public String getStatusCode(String sampleLevel){
             ArrayList<String[]> preReqs = new ArrayList<String[]>();
             preReqs.add(0, new String[]{"data","sampleStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-            String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs);     
+            String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), sampleLevel+this.busRulName.getTagName(), preReqs);     
             if (statusPropertyValue==null || statusPropertyValue.length()==0 || (isTagValueOneOfDisableOnes(statusPropertyValue)) )return this.toString();
             return statusPropertyValue;
         }
@@ -61,8 +62,9 @@ public class DataSampleStructureStatuses {
             ArrayList<String[]> preReqs = new ArrayList<String[]>();
             preReqs.add(0, new String[]{"data","sampleAnalysisStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysis_"+DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs);     
-            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst))) return NOT_STARTED.toString();
+            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysis"+DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs);     
+            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst))) 
+                return NOT_STARTED.toString();
             return sampleStatusFirst;        
         }
         public String getStatusCode(String sampleLevel){
@@ -70,7 +72,8 @@ public class DataSampleStructureStatuses {
             preReqs.add(0, new String[]{"data","sampleAnalysisStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
             String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs);     
-            if ((statusPropertyValue==null) || statusPropertyValue.length()==0 || isTagValueOneOfDisableOnes(statusPropertyValue) ) return this.toString();
+            if ((statusPropertyValue==null) || statusPropertyValue.length()==0 || isTagValueOneOfDisableOnes(statusPropertyValue) ) 
+                return this.toString();
             return statusPropertyValue;
         }
         private final DataSampleAnalysisBusinessRules busRulName;
@@ -90,8 +93,9 @@ public class DataSampleStructureStatuses {
             ArrayList<String[]> preReqs = new ArrayList<String[]>();
             preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
-            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysisResult_"+DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs );     
-            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst)) ) return BLANK.toString();
+            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysisResult"+DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs );     
+            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst)) ) 
+                return BLANK.toString();
             return sampleStatusFirst;        
         }
         public String getStatusCode(String sampleLevel){
