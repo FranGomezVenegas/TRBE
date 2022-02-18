@@ -988,8 +988,10 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     Object[][] smpArr=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                             new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_INCUBATION_PASSED.getName(), TblsData.Sample.FLD_INCUBATION2_PASSED.getName()}, 
                             new Object[]{"Incubation", true, true}, sampleFieldToRetrieveArr);
-                    for (Object[] curSmp: smpArr){
-                        jArr.add(LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp));
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(smpArr[0][0].toString())){
+                        for (Object[] curSmp: smpArr){
+                            jArr.add(LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp));
+                        }
                     }
                     jObj.put("samples_stillIncubationStageAndBothIncubCompleted", jArr);
                     
