@@ -64,11 +64,11 @@ public class AuthenticationAPI extends HttpServlet {
 
         String language = LPFrontEnd.setLanguage(request); 
         String dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);                                    
-/*        if (dbName==null || dbName.length()==0)
+        if (dbName==null || dbName.length()==0)
             Rdbms.stablishDBConection();
         else
             Rdbms.stablishDBConection(dbName);
-*/        
+        
         try (PrintWriter out = response.getWriter()) {            
             
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
@@ -79,32 +79,34 @@ public class AuthenticationAPI extends HttpServlet {
             try{
                 endPoint = AuthenticationAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
+                Rdbms.closeRdbms(); 
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
             Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                Rdbms.closeRdbms(); 
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
             }                            
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             switch (endPoint){
-                case AUTHENTICATE:     
+                case AUTHENTICATE:
                     Object[] ipCheck=frontEndIpChecker(request.getRemoteAddr());
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ipCheck[0].toString())){               
-                        LPFrontEnd.servletReturnResponseError(request, response, ipCheck[ipCheck.length-1].toString(), null, language);              
-                        return;                                                          
-                    }      
-
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ipCheck[0].toString())){
+                        Rdbms.closeRdbms();
+                        LPFrontEnd.servletReturnResponseError(request, response, ipCheck[ipCheck.length-1].toString(), null, language);                        return;
+                    }
                     String dbUserName = argValues[0].toString();
-                    String dbUserPassword = argValues[1].toString();                 
+                    String dbUserPassword = argValues[1].toString();
                     String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
                     if (!Boolean.valueOf(userIsCaseSensitive)) dbUserName=dbUserName.toLowerCase();
                     
                     Object[] personNameObj = UserAndRolesViews.getPersonByUser(dbUserName);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personNameObj[0].toString())){               
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.PERSON_NOT_FOUND.getErrorCode(), null, language);              
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personNameObj[0].toString())){
+                        Rdbms.closeRdbms();
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.PERSON_NOT_FOUND.getErrorCode(), null, language);
                         return;                                                          
                     }      
                     String personName=personNameObj[0].toString();
@@ -112,6 +114,7 @@ public class AuthenticationAPI extends HttpServlet {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(validUserPassword[0].toString())){
                         validUserPassword = UserAndRolesViews.isValidUserPassword(dbUserName, dbUserPassword);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(validUserPassword[0].toString())){     
+                            Rdbms.closeRdbms(); 
                             LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.INVALID_USER_PWD.getErrorCode(), null, language);              
                             return;                               
                         }
@@ -122,6 +125,8 @@ public class AuthenticationAPI extends HttpServlet {
                     JSONObject jsonObj = new JSONObject();
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_USER_INFO_ID, personName);
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_MY_TOKEN, myToken);
+                    Rdbms.closeRdbms(); 
+
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;
                 case GETUSERROLE:                                                 
@@ -148,8 +153,9 @@ public class AuthenticationAPI extends HttpServlet {
                   if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
                     firstToken = argValues[0].toString();
                     String userRole = argValues[1].toString();
-
+                        
                     token = new Token(firstToken);
+                    
                     String[] fieldsName = new String[]{TblsApp.AppSession.PERSON.getName(), TblsApp.AppSession.ROLE_NAME.getName()};
                     Object[] fieldsValue = new Object[]{token.getPersonName(), userRole};
                     Object[] newAppSession = LPSession.newAppSession(fieldsName, fieldsValue, request.getRemoteAddr());                    
@@ -171,6 +177,7 @@ public class AuthenticationAPI extends HttpServlet {
                     }                               
                     String myFinalToken = token.createToken(token.getUserName(), token.getUsrPw(), token.getPersonName(), 
                             userRole, sessionIdStr, nowLocalDate.toString(), userInfo[0][0].toString(), token.getDbName());
+                    request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, myFinalToken);
                     // Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
@@ -196,11 +203,9 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put("header_info", AppHeaderAPI(request, response));
                     jsonObj.put("procedures_list", procedureListInfo(request, response));
                     jsonObj.put("all_my_sops", SopUserAPIfrontend.AllMySops(request, response));
-//                    jsonObj.put("my_pending_sops", SopUserAPIfrontend.MyPendingSops(request, response));
                     jsonObj.put("procedures_sops", SopUserAPIfrontend.ProceduresSops(request, response));
                     jsonObj.put("sop_tree_list_element", SopUserAPIfrontend.SopTreeListElements(request, response));                    
                     jsonObj.put("all_my_analysis_methods", AnalysisMethodCertifUserAPIfrontend.AllMyAnalysisMethodCertif(request, response));
-//                    jsonObj.put("my_pending_analysis_methods", AnalysisMethodCertifUserAPIfrontend.MyPendingAnalysisMethodCertif(request, response));
                     jsonObj.put("platform_business_rules", AllAppBusinessRules(request, response));
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;                                   
@@ -358,9 +363,10 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
             String exceptionMessage = e.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
         } finally {
+            Rdbms.closeRdbms();
             // release database resources
             try {
-                Rdbms.closeRdbms(); 
+                Rdbms.closeRdbms();
                 // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
