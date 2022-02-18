@@ -1288,51 +1288,19 @@ public class TblsCnfg {
                 +  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
         FLD_CREATION_DATE("creation_date", "timestamp NOT NULL DEFAULT NOW()")
         ,
-
-        /**
-         *
-         */
-        FLD_QUERY("query", LPDatabase.stringNotNull())
+        FLD_ACTION_NAME("action_name", LPDatabase.string())        ,
+        FLD_QUERY("query", LPDatabase.string())
         ,
-
-        /**
-         *
-         */
-        FLD_QUERY_PARAMETERS("query_parameters", LPDatabase.stringNotNull())
+        FLD_QUERY_PARAMETERS("query_parameters", LPDatabase.string())
         ,
-
-        /**
-         *
-         */
         FLD_ERROR_MESSAGE("error_message", LPDatabase.stringNotNull())
         ,
-
-        /**
-         *
-         */
         FLD_CLASS_CALLER("class_caller_info", LPDatabase.string())
         ,
-
-        /**
-         *
-         */
         FLD_RESOLVED("resolved", LPDatabase.booleanFld(false))
         ,
-
-        /**
-         *
-         */
         FLD_RESOLUTION_NOTES("resolution_notes", LPDatabase.real())
         ;
         private zzzDbErrorLog(String dbObjName, String dbObjType){
@@ -1403,47 +1371,19 @@ public class TblsCnfg {
                 +  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
         FLD_CREATION_DATE("creation_date", "date NOT NULL DEFAULT NOW()")
         ,
-
-        /**
-         *
-         */
-        FLD_FILE("query", LPDatabase.stringNotNull())
+        FLD_AREA("area", LPDatabase.string())
         ,
-
-        /**
-         *
-         */
-        FLD_PARAMETER_NAME("query_parameters", LPDatabase.stringNotNull())
+        FLD_RULE_NAME("rule_name", LPDatabase.string())
         ,
-        FLD_PROCEDURE("procedure", LPDatabase.stringNotNull())
+        FLD_PROCEDURE("procedure", LPDatabase.string())
         ,
-
-        /**
-         *
-         */
+        FLD_ACTION_NAME("action_name", LPDatabase.string())        ,
         FLD_CLASS_CALLER("class_caller_info", LPDatabase.string())
         ,
-
-        /**
-         *
-         */
         FLD_RESOLVED("resolved", LPDatabase.booleanFld(false))
         ,
-
-        /**
-         *
-         */
         FLD_RESOLUTION_NOTES("resolution_notes", LPDatabase.real())
         ;
         private zzzPropertiesMissing(String dbObjName, String dbObjType){
