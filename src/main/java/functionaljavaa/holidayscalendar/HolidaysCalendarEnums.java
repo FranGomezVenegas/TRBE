@@ -10,7 +10,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NEW_DATE;
-import databases.TblsAppProcData;
+import databases.TblsApp;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class HolidaysCalendarEnums {
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsAppProcData.Instruments.TBL.getName()).build()).build()
+                .add("table", TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName()).build()).build()
         ),        
         ADD_DATE_TO_CALENDAR("ADD_DATE_TO_CALENDAR", "name", "", "calendarDateAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments("name", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
@@ -49,13 +49,13 @@ public class HolidaysCalendarEnums {
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 9 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 10 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsAppProcData.Instruments.TBL.getName()).build()).build()
+                .add("table", TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName()).build()).build()
         ),
         DELETE_DATE_FROM_GIVEN_CALENDAR("DELETE_DATE_FROM_GIVEN_CALENDAR", "", "", "calendarDateDeleted_success",  
             new LPAPIArguments[]{ new LPAPIArguments("calendar", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments("date_id", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsAppProcData.Instruments.TBL.getName()).build()).build()
+                .add("table", TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName()).build()).build()
         )
         ;
         private CalendarAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){

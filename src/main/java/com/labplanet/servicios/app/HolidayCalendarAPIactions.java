@@ -117,7 +117,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
 /*
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 
-                //rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.Instruments.TBL.getName(), "instruments", instrName);                
+                //rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), "instruments", instrName);                
                 //JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{instrName}, rObj.getRelatedObject());
                 JSONObject dataSampleJSONMsg = new JSONObject();
                 rObj.killInstance();
