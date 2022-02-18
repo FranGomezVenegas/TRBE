@@ -183,10 +183,9 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), messageDynamicData);                
             }else{                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue("AnalysisMethodCertifUserAPI", endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);     
-                
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                     
             }                 
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED.getName(), new Object[]{e.getMessage(), this.getServletName()}, language);                   
