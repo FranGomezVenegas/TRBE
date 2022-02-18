@@ -17,6 +17,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -50,16 +51,16 @@ public class ProcedureSampleStages {
             return sampleInfo;
         String configCode=sampleInfo[0][0].toString();
         Integer configVersion=(Integer)sampleInfo[0][1];
-        Object[][] sampleStageProcInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_CONFIG.getName()), TblsProcedureConfig.StageTimingInterval.TBL.getName(), 
-                new String[]{TblsProcedureConfig.StageTimingInterval.FLD_SAMPLE_CONFIG_CODE.getName(), TblsProcedureConfig.StageTimingInterval.FLD_SAMPLE_CONFIG_VERSION.getName(), TblsProcedureConfig.StageTimingInterval.FLD_STAGE.getName()},
+        Object[][] sampleStageProcInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_CONFIG.getName()), TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableName(), 
+                new String[]{TblsProcedureConfig.StageTimingInterval.SAMPLE_CONFIG_CODE.getName(), TblsProcedureConfig.StageTimingInterval.SAMPLE_CONFIG_VERSION.getName(), TblsProcedureConfig.StageTimingInterval.STAGE.getName()},
                 new Object[]{configCode, configVersion, stage}, 
-                TblsProcedureConfig.StageTimingInterval.getAllFieldNames());
+                getAllFieldNames(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleStageProcInfo[0][0].toString()))
             return sampleStageProcInfo;
-        String isStageMarkedAsEnabled=LPNulls.replaceNull(sampleStageProcInfo[0][LPArray.valuePosicInArray(TblsProcedureConfig.StageTimingInterval.getAllFieldNames(), TblsProcedureConfig.StageTimingInterval.FLD_ENABLED.getName())]).toString();
+        String isStageMarkedAsEnabled=LPNulls.replaceNull(sampleStageProcInfo[0][LPArray.valuePosicInArray(getAllFieldNames(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableFields()), TblsProcedureConfig.StageTimingInterval.ENABLED.getName())]).toString();
         if (!Boolean.valueOf(isStageMarkedAsEnabled)) 
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "stageMarkedAsDisabled", null);
-        String intvValue=LPNulls.replaceNull(sampleStageProcInfo[0][LPArray.valuePosicInArray(TblsProcedureConfig.StageTimingInterval.getAllFieldNames(), TblsProcedureConfig.StageTimingInterval.FLD_INTERVAL_SECONDS.getName())]).toString();
+        String intvValue=LPNulls.replaceNull(sampleStageProcInfo[0][LPArray.valuePosicInArray(getAllFieldNames(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableFields()), TblsProcedureConfig.StageTimingInterval.INTERVAL_SECONDS.getName())]).toString();
         stageProcedureDeviationShouldBeCreated(sampleId, stageStartDate, LocalDateTime.now(), configCode, configVersion, stage, Integer.valueOf(intvValue));
         return new Object[]{LPPlatform.LAB_TRUE, Integer.valueOf(intvValue)};
     }
