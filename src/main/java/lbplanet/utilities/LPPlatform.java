@@ -348,7 +348,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
     }    
     
     private static String auditReasonType(String procInstanceName, String actionName){
-        String auditReasonType = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(), actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName()+actionName).toString();
+        String auditReasonType = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(), actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName()).toString();
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
         if (auditReasonType.length()==0)return "TEXT";
         if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("DISABLE"))return "";
@@ -1008,10 +1008,17 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
                 return;
         }
+
+        String[] fldNames=new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
+        TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()};
+        Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), query, Arrays.toString(queryParams), msgCode, Arrays.toString(callerInfo), false};
+        String actionName=ProcedureRequestSession.getInstanceForActions(null, null, null).getActionName();
+        if (actionName!=null){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_ACTION_NAME.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, actionName);
+        }        
         Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
-            new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
-            TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()}, 
-            new Object[]{LPDate.getCurrentTimeStamp(), query, Arrays.toString(queryParams), msgCode, Arrays.toString(callerInfo), false});
+            fldNames, fldValues);
   }    
   
     /**
@@ -1036,12 +1043,17 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
                 return;
         }        
-        String[] fldNames=new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(),
-            TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName(), TblsCnfg.zzzPropertiesMissing.FLD_CLASS_CALLER.getName()};
+        String[] fldNames=new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_AREA.getName(),
+            TblsCnfg.zzzPropertiesMissing.FLD_RULE_NAME.getName(), TblsCnfg.zzzPropertiesMissing.FLD_CLASS_CALLER.getName()};
         Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName, Arrays.toString(callerInfo)};
         if (procInstanceName!=null){
             fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_PROCEDURE.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, procInstanceName);
+        }
+        String actionName=ProcedureRequestSession.getInstanceForActions(null, null, null).getActionName();
+        if (actionName!=null){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_ACTION_NAME.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, actionName);
         }
         Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
                 fldNames, fldValues);
