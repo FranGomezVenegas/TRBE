@@ -8,6 +8,7 @@ package functionaljavaa.sop;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsData;
+import functionaljavaa.businessrules.BusinessRules;
 import static functionaljavaa.intervals.IntervalsUtilities.applyExpiryInterval;
 import functionaljavaa.user.UserProfile;
 import lbplanet.utilities.LPArray;
@@ -453,7 +454,8 @@ public class UserSop {
      * @return
      */
     public static Object[] isProcedureSopEnable(String procedureName){
-        String sopCertificationLevel = Parameter.getBusinessRuleProcedureFile(procedureName, UserSopBusinessRules.USERSOP_MODE.getAreaName(), UserSopBusinessRules.USERSOP_MODE.getTagName());
+        BusinessRules bi=new BusinessRules(procedureName, null);
+        String sopCertificationLevel = Parameter.getBusinessRuleProcedureFile(procedureName, UserSopBusinessRules.USERSOP_MODE.getAreaName(), UserSopBusinessRules.USERSOP_MODE.getTagName(), null, null, bi);
         if (isTagValueOneOfDisableOnes(sopCertificationLevel)) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "disabled", null);
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "disabled", null);

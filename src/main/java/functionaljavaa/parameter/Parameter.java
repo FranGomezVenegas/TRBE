@@ -165,15 +165,15 @@ public class Parameter {
         return valueToReturn;
     }
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName) {
-        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, false, null);
+        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, false, null, null);
     }
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, Boolean isOptional) {
-        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, isOptional, null);
+        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, isOptional, null, null);
     }    
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, ArrayList<String[]> rulePreReqs) {
-        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, false, rulePreReqs);
+        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, false, rulePreReqs, null);
     }    
-    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, Boolean isOptional, ArrayList<String[]> rulePreReqs) {
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, Boolean isOptional, ArrayList<String[]> rulePreReqs, BusinessRules biProcInst) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
         String methodName = "NO TRACE"; 
@@ -188,6 +188,7 @@ public class Parameter {
         Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
         BusinessRules brTesting=ProcedureRequestSession.getInstanceForActions(null, null, null).getBusinessRulesTesting();
         BusinessRules brProcInstance=ProcedureRequestSession.getInstanceForActions(null, null, null).getBusinessRulesProcInstance();
+        if (brProcInstance==null)brProcInstance=biProcInst;
         if (rulePreReqs!=null){
             for (String[] curPreReqRule: rulePreReqs){
                 String ruleRepo=curPreReqRule[0];
