@@ -245,11 +245,11 @@ public class SampleAPIfrontend extends HttpServlet {
                 }
                 Object[][] mySamples = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
                     whereFieldsNameArr, whereFieldsValueArr, fieldToRetrieveArr, sortFieldsNameArr);
+                JSONArray myJSArr = new JSONArray();
                 if (mySamples==null){ 
-                    LPFrontEnd.servletReturnSuccess(request, response);       
+                    LPFrontEnd.servletReturnSuccess(request, response, myJSArr);
                     return;
                 }
-                JSONArray myJSArr = new JSONArray();
                 Rdbms.closeRdbms();
                 if ( LPPlatform.LAB_FALSE.equalsIgnoreCase(mySamples[0][0].toString())) {  
                     LPFrontEnd.servletReturnSuccess(request, response, myJSArr);       

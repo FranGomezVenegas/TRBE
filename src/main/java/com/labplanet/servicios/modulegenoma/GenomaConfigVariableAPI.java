@@ -151,7 +151,7 @@ public class GenomaConfigVariableAPI extends HttpServlet {
                     con.rollback();
                     con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
-            }else{
+            }else{                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(dataSample);
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }            

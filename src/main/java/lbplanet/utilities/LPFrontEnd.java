@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package lbplanet.utilities;
 
 import com.github.opendevl.JFlat;
@@ -50,11 +45,6 @@ public class LPFrontEnd {
 
     private LPFrontEnd(){    throw new IllegalStateException("Utility class");}    
 
-    /**
-     *
-     * @param request
-     * @return
-     */
     public static String setLanguage(HttpServletRequest request){
         String language = request.getParameter(LPPlatform.REQUEST_PARAM_LANGUAGE);
         if (language == null)language = LANGUAGE_ALL_LANGUAGES;
@@ -148,7 +138,7 @@ public class LPFrontEnd {
      * @param lpFalseStructure
      * @return
      */
-    public static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
+    private static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
         JSONObject errJsObj = new JSONObject();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         Object[][] mainMessage = messages.getMainMessage();
@@ -195,8 +185,9 @@ public class LPFrontEnd {
     /**
      *
      * @param lpTrueStructure
-     * @return
+     * @return     
      */
+    //Esta debe ser privada pero toca convertir GenomaConfigVariableAPI en el formato de usar una Class como ClassStudy 
     public static JSONObject responseJSONDiagnosticLPTrue(Object[] lpTrueStructure){
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpTrueStructure[0]);
@@ -268,7 +259,7 @@ public class LPFrontEnd {
      * @param errorPropertyValue
      * @return
      */
-    public static JSONObject responseJSONError(String errorPropertyName, Object[] errorPropertyValue){
+    private static JSONObject responseJSONError(String errorPropertyName, Object[] errorPropertyValue){
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.MESSAGE.getLabelName(), errorPropertyName);
         //String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName+"_detail", null);
@@ -359,17 +350,6 @@ public class LPFrontEnd {
         servetInvokeResponseErrorServlet(request, response);
     }
 
-    /**
-     *
-     * @param request
-     * @param response
-     */
-    public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response){  
-        JSONObject errJSONMsg = LPFrontEnd.responseJSONError("successMsgCode",null);
-        request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());
-        request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(),"");
-        servetInvokeResponseSuccessServlet(request, response);
-    }    
 
     /**
      *

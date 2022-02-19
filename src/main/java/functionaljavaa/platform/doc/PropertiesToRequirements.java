@@ -88,7 +88,7 @@ public class PropertiesToRequirements {
                 }
             }catch(Exception e){
                 ScanResult.closeAll();
-                LPFrontEnd.servletReturnSuccess(request, response, e.getMessage());                
+                LPFrontEnd.responseJSONDiagnosticLPFalse(e.getMessage(), null);
                 return;
             }
         // Rdbms.closeRdbms();
