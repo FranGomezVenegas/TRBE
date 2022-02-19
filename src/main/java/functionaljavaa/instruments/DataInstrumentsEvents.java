@@ -19,7 +19,6 @@ import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
@@ -43,7 +42,7 @@ public static Object[][] getVariableSetVariablesProperties(String variableSetNam
     String variableSetContent = LPNulls.replaceNull(variableSetInfo[0][0]).toString();
     String[] fieldsToRetrieve=new String[]{TblsAppProcConfig.Variables.PARAM_NAME.getName(), TblsAppProcConfig.Variables.PARAM_TYPE.getName(), TblsAppProcConfig.Variables.REQUIRED.getName(), 
         TblsAppProcConfig.Variables.ALLOWED_VALUES.getName()};
-    Object[][] variablesProperties2D= Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), getAllFieldNames(TblsAppProcConfig.TablesAppProcConfig.VARIABLES.getTableFields()), 
+    Object[][] variablesProperties2D= Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), TblsAppProcConfig.TablesAppProcConfig.VARIABLES.getTableName(), 
         new String[]{TblsAppProcConfig.Variables.PARAM_NAME.getName()+" IN"}, new Object[]{variableSetContent}, 
          fieldsToRetrieve);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesProperties2D[0][0].toString())) {
