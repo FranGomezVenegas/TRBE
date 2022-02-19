@@ -29,6 +29,7 @@ import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import static trazit.session.ProcedureRequestSession.getInstanceForActions;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.SessionAuditActions;
 /**
  * 
@@ -306,10 +307,10 @@ public class SampleAudit {
             new String[]{TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.REVIEWED.getName()}, new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
         if (!isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode)){//(!"TRUE".equalsIgnoreCase(auditAuthorCanBeReviewerMode)){            
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(auditInfo[0][0].toString())) return LPArray.array2dTo1d(auditInfo);
-            if (personName.equalsIgnoreCase(auditInfo[0][0].toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER.getErrorCode(), new Object[]{});
+            if (personName.equalsIgnoreCase(auditInfo[0][0].toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER.getErrorCode(), new Object[]{});
         }
         if (Boolean.valueOf(auditInfo[0][1].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED.getErrorCode(), new Object[]{auditId});              
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED.getErrorCode(), new Object[]{auditId});              
         }
         return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), 
             new String[]{TblsDataAudit.Sample.REVIEWED.getName(), TblsDataAudit.Sample.REVIEWED_BY.getName(), TblsDataAudit.Sample.REVIEWED_ON.getName()}, 
@@ -327,27 +328,27 @@ public class SampleAudit {
         String[] auditRevisionModesRequired=new String[]{"ENABLE", "DISABLE"};
         String auditRevisionMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.REVISION_MODE.getAreaName(), SampleAuditBusinessRules.REVISION_MODE.getTagName());  
         String auditRevisionChildRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getAreaName(), SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getTagName());   
-        if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(), 
+        if (auditRevisionMode==null || auditRevisionMode.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(), 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
         Boolean auditRevisionModeRecognized=false;
         for (String curModeRequired: auditRevisionModesRequired){
           if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
         }
-        if (!auditRevisionModeRecognized)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(),
+        if (!auditRevisionModeRecognized)return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(),
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
-        if (LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLE")>-1)return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.DISABLED.getErrorCode(), 
+        if (LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLE")>-1)return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.DISABLED.getErrorCode(), 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "STAGES")>-1){
             DataSampleStages smpStages = new DataSampleStages();
-            if (!smpStages.isSampleStagesEnable())return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.STAGESDETECTED_BUT_SAMPLESTAGES_NOT_ENABLED.getErrorCode(), 
+            if (!smpStages.isSampleStagesEnable())return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.STAGESDETECTED_BUT_SAMPLESTAGES_NOT_ENABLED.getErrorCode(), 
                 new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
             Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
             String sampleCurrentStage=sampleInfo[0][0].toString();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleCurrentStage)) return LPArray.array2dTo1d(sampleInfo);
-            if (LPArray.valuePosicInArray(auditRevisionModeArr, sampleInfo[0][0].toString())==-1) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.CURRENTSAMPLESTAGE_NOTREQUIRES_SAMPLEAUDITREVISION.getErrorCode(), 
+            if (LPArray.valuePosicInArray(auditRevisionModeArr, sampleInfo[0][0].toString())==-1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.CURRENTSAMPLESTAGE_NOTREQUIRES_SAMPLEAUDITREVISION.getErrorCode(), 
                 new Object[]{sampleCurrentStage, sampleId, SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         }
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS")>-1){
@@ -363,7 +364,7 @@ public class SampleAudit {
                 new String[]{TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.REVIEWED.getName()});
         for (Object[] curSampleInfo: sampleInfo){
           if (!"true".equalsIgnoreCase(curSampleInfo[1].toString())) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
             new Object[]{sampleId, procInstanceName});
           }
         }      
@@ -383,26 +384,26 @@ public class SampleAudit {
      */
     public static Object[] sampleAuditRevisionPassByAction(String procInstanceName, String actionName, Integer sampleId, Integer testId, Integer resultId){
         if ( (sampleId==null || sampleId==0) && (testId==null || testId==0) && (resultId==null || resultId==0) )
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.ACTION_HAS_NO_SAMPLE_TEST_RESULT_LINKED.getErrorCode(), new Object[]{actionName});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.ACTION_HAS_NO_SAMPLE_TEST_RESULT_LINKED.getErrorCode(), new Object[]{actionName});
         String[] auditRevisionModesRequired=new String[]{"ENABLE", "DISABLE"};
         String auditRevisionMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.REVISION_MODE.getAreaName(), SampleAuditBusinessRules.REVISION_MODE.getTagName());  
         String auditChildRevisionMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getAreaName(), SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getTagName());  
-        if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(), 
+        if (auditRevisionMode==null || auditRevisionMode.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(), 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         if (auditRevisionMode.equalsIgnoreCase("DISABLE"))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "auditRevisionModeDisabled", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "auditRevisionModeDisabled", null);
         String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
         Boolean auditRevisionModeRecognized=false;
         for (String curModeRequired: auditRevisionModesRequired){
           if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
         }
-        if (!auditRevisionModeRecognized)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(), 
+        if (!auditRevisionModeRecognized)return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING.getErrorCode(), 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         Integer isActions=LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS");
         Integer actionIsThere=LPArray.valuePosicInArray(auditRevisionModeArr, actionName);
         if ((LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS")>-1) && (LPArray.valuePosicInArray(auditRevisionModeArr, actionName)==-1)) {
             
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
         }
         String[] whereFieldName=new String[]{TblsDataAudit.Sample.REVIEWED.getName()};
         Object[] whereFieldValue=new Object[]{false};
@@ -426,7 +427,7 @@ public class SampleAudit {
                 new String[]{TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.REVIEWED.getName()});
         for (Object[] curSampleInfo: sampleAuditInfo){
           if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(curSampleInfo[0].toString())) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
             new Object[]{sampleId, procInstanceName});
           }
         }      

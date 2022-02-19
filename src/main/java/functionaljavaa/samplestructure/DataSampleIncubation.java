@@ -29,6 +29,7 @@ import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
@@ -138,7 +139,7 @@ public class DataSampleIncubation {
         Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.END.toString(), incubName, tempReading, batchName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleIncubatorModeCheckerInfo[0].toString())) return sampleIncubatorModeCheckerInfo;
         if ((incubationStage < 1) || (incubationStage > 2)) {
-            return new Object[]{LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null)};
+            return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null)};
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
@@ -146,7 +147,7 @@ public class DataSampleIncubation {
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                 sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-            diagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_ENDED_SUCCESS.getErrorCode(), 
+            diagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_ENDED_SUCCESS.getErrorCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             SampleAudit smpAudit = new SampleAudit();
             String sampleAuditEvName="";
@@ -178,13 +179,13 @@ public class DataSampleIncubation {
         Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.START.toString(), incubName, tempReading, batchName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleIncubatorModeCheckerInfo[0].toString())) return sampleIncubatorModeCheckerInfo;
         if ((incubationStage < 1) || (incubationStage > 2)) {
-            return new Object[]{LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null)};
+            return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), null)};
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_STARTED_SUCCESS.getErrorCode(), 
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_STARTED_SUCCESS.getErrorCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});           
             SampleAudit smpAudit = new SampleAudit();
             String sampleAuditEvName="";
@@ -203,20 +204,20 @@ public class DataSampleIncubation {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String sampleIncubationMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleIncubationBusinessRules.SAMPLE_INCUBATION_MODE.getAreaName(), DataSampleIncubationBusinessRules.SAMPLE_INCUBATION_MODE.getTagName());
-        if (sampleIncubationMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeBusinessRuleNotDefined", new Object[]{procInstanceName});
-        if (!SampleIncubationModes.contains(sampleIncubationMode)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeValueNotRrecognized", new Object[]{sampleIncubationMode});        
+        if (sampleIncubationMode.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeBusinessRuleNotDefined", new Object[]{procInstanceName});
+        if (!SampleIncubationModes.contains(sampleIncubationMode)) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeValueNotRrecognized", new Object[]{sampleIncubationMode});        
         
         String[] requiredFields=new String[0];
         Object[] requiredFieldsValue=new Object[0];
         
         if (sampleIncubationMode.contains(SampleIncubationObjects.SAMPLE.toString())){}
         else if (sampleIncubationMode.contains(SampleIncubationObjects.BATCH.toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.NOT_IMPLEMENTED.getErrorCode(), null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.NOT_IMPLEMENTED.getErrorCode(), null);
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_OBJECT_NOTRECOGNIZED.getErrorCode(), new Object[]{sampleIncubationMode});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_OBJECT_NOTRECOGNIZED.getErrorCode(), new Object[]{sampleIncubationMode});
         
         if (!SampleIncubationMoment.contains(moment))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), new Object[]{moment});        
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED.getErrorCode(), new Object[]{moment});        
         if (sampleIncubationMode.contains(SampleIncubationLevel.DATE.toString())){
             if (incubationStage == 2) {
                 if (moment.contains(SampleIncubationMoment.START.toString())){
@@ -244,11 +245,11 @@ public class DataSampleIncubation {
                 }                
             }
         }else if (sampleIncubationMode.contains(SampleIncubationLevel.INCUBATOR.toString())){
-            if (incubName==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED.getErrorCode(), null);
+            if (incubName==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED.getErrorCode(), null);
             Object[] incubInfo=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
                     new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{incubName});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubInfo[0].toString()))
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED.getErrorCode(), new Object[]{incubName, procInstanceName});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED.getErrorCode(), new Object[]{incubName, procInstanceName});
             Integer tempReadingEvId=null;
             if (tempReading==null){
                 Object[][] incubLastTempReading=DataIncubatorNoteBook.getLastTemperatureReading(incubName, 1);
@@ -288,7 +289,7 @@ public class DataSampleIncubation {
                 }
             }
         }else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_OBJECT_NOTRECOGNIZED.getErrorCode(), new Object[]{sampleIncubationMode});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_OBJECT_NOTRECOGNIZED.getErrorCode(), new Object[]{sampleIncubationMode});
                 
         return new Object[]{LPPlatform.LAB_TRUE, requiredFields, requiredFieldsValue};
     }
@@ -301,7 +302,7 @@ public class DataSampleIncubation {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime tempReadingDateDateTime = LocalDateTime.parse(tempReadingDate.toString().substring(0, 19), formatter);
         if (sampleIncubationTempReadingBusinessRulevalue.length()==0)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubationTempReadingBusinessRule procedure property not found for procedure <*1*>.", new Object[]{procInstanceName} );
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubationTempReadingBusinessRule procedure property not found for procedure <*1*>.", new Object[]{procInstanceName} );
         if (TempReadingBusinessRules.DISABLE.toString().equalsIgnoreCase(sampleIncubationTempReadingBusinessRulevalue))
                 return new Object[]{LPPlatform.LAB_TRUE};
         String[] sampleIncubationTempReadingBusinessRulevalueArr=sampleIncubationTempReadingBusinessRulevalue.split("\\|");
@@ -318,17 +319,17 @@ public class DataSampleIncubation {
             String[] currSampleIncubationTempReadingBusinessRulevalueArr=currSampleIncubationTempReadingBusinessRulevalue.split("\\*");
             if (TempReadingBusinessRules.SAME_DAY.toString().equalsIgnoreCase(currSampleIncubationTempReadingBusinessRulevalueArr[0])){                
                 currDiagn = tempReadingDateDateTime.getDayOfYear()==LPDate.getCurrentTimeStamp().getDayOfYear();
-                    currDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.TEMPERATUREREADYDAY_ISNOTTODAY.getErrorCode(), new Object[]{tempReadingDate.toString(), procInstanceName} );                
+                    currDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.TEMPERATUREREADYDAY_ISNOTTODAY.getErrorCode(), new Object[]{tempReadingDate.toString(), procInstanceName} );                
             }else if (TempReadingBusinessRules.HOURS.toString().equalsIgnoreCase(currSampleIncubationTempReadingBusinessRulevalueArr[0])){
                 long hours = ChronoUnit.HOURS.between(tempReadingDateDateTime, LPDate.getCurrentTimeStamp());
                 if (hours>Long.valueOf(currSampleIncubationTempReadingBusinessRulevalueArr[1])){
                     currDiagn=false;
-                    currDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUB_TEMP_READING_INTVL_EXPIRED.getErrorCode(), new Object[]{tempReadingDate.toString(), hours, procInstanceName} );                                    
+                    currDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUB_TEMP_READING_INTVL_EXPIRED.getErrorCode(), new Object[]{tempReadingDate.toString(), hours, procInstanceName} );                                    
                 }else{
                     currDiagn=true;
                 }
             }else
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubationTempReadingBusinessRule procedure property value is <*1*> and is not a recognized value for procedure <*2*>", new Object[]{sampleIncubationTempReadingBusinessRulevalue, procInstanceName} );
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubationTempReadingBusinessRule procedure property value is <*1*> and is not a recognized value for procedure <*2*>", new Object[]{sampleIncubationTempReadingBusinessRulevalue, procInstanceName} );
             if (!currDiagn){
                 String curLevel=currSampleIncubationTempReadingBusinessRulevalueArr[currSampleIncubationTempReadingBusinessRulevalueArr.length-1];
                 Boolean currLevelExists=false;

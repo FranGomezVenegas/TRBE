@@ -15,6 +15,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -53,7 +54,7 @@ public class SqlStatement {
         else if (endStr.toString().length()>0)
             return LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.LESS_THAN.getSqlClause());
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DateRange filter NotRecognized for start <*1*> and end <*2*>", new Object[]{startStr, endStr});                
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "DateRange filter NotRecognized for start <*1*> and end <*2*>", new Object[]{startStr, endStr});                
     }
     
     public static Object[] buildDateRangeFromStrings(String fieldName, String startStr, String endStr){

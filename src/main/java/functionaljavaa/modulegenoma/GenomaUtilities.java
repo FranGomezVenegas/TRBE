@@ -10,6 +10,7 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -55,12 +56,12 @@ public final class GenomaUtilities {
         String familyIndividuals = LPNulls.replaceNull(sampleInfo[0][0]).toString();
         Integer samplePosic = familyIndividuals.indexOf(newObjectId);
         if (samplePosic == -1) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, objectTableName+" <*1*> not found in "+tableName+" <*2*> for procedure <*3*>.", new Object[]{newObjectId, Arrays.toString(tableKeyFieldValue), procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, objectTableName+" <*1*> not found in "+tableName+" <*2*> for procedure <*3*>.", new Object[]{newObjectId, Arrays.toString(tableKeyFieldValue), procInstanceName});
         }
         String samplePosicInfo = familyIndividuals.substring(samplePosic, samplePosic + newObjectInfoToStore.length());
         String[] samplePosicInfoArr = samplePosicInfo.split("\\*");
         if (samplePosicInfoArr.length != 1) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " removeObjectToUnstructuredField cannot parse the info for the "+tableName+" <*1*> when there are more than 1 pieces of info. Family individual info is <*2*> for procedure <*3*>.", new Object[]{samplePosicInfo, familyIndividuals, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, " removeObjectToUnstructuredField cannot parse the info for the "+tableName+" <*1*> when there are more than 1 pieces of info. Family individual info is <*2*> for procedure <*3*>.", new Object[]{samplePosicInfo, familyIndividuals, procInstanceName});
         }
 
         if (samplePosic == 0) {

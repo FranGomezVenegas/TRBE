@@ -20,6 +20,7 @@ import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.ResponseMessages;
@@ -60,10 +61,10 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             new Object[]{insEventId}, 
             new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()});
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventInfo[0][0].toString()))
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{insEventId, appProcInstance});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{insEventId, appProcInstance});
     if (LPNulls.replaceNull(eventInfo[0][0]).toString().length()>0)
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES.getErrorCode(), new Object[]{insEventId, appProcInstance});
-    return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{insEventId, appProcInstance});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES.getErrorCode(), new Object[]{insEventId, appProcInstance});
+    return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{insEventId, appProcInstance});
 }
     
     public static Object[] addVariableSetToObject(String instrName, Integer instrEventId, String variableSetName, String ownerId){

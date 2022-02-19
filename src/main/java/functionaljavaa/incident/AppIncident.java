@@ -18,6 +18,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -154,7 +155,7 @@ public class AppIncident {
         
         String addNoteAvailableStatuses=getBusinessRuleAppFile("incidentsAddNoteAvailableStatuses", true); 
         if ( (newStatus!=null) && (newStatus.length()>0) && (!addNoteAvailableStatuses.contains("ALL") || (!addNoteAvailableStatuses.contains(newStatus))) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "status <*1*> not allowed as new status through Add Note Incident", new Object[]{newStatus});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "status <*1*> not allowed as new status through Add Note Incident", new Object[]{newStatus});
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();
 
         String[] updFieldName=new String[]{TblsApp.Incident.DATE_LAST_UPDATE.getName(), TblsApp.Incident.PERSON_LAST_UPDATE.getName()};
@@ -177,8 +178,8 @@ public class AppIncident {
     
     private Object[] isIncidentActive(Integer incidentId){
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();
-        if (IncidentStatuses.CLOSED.toString().equalsIgnoreCase(currentStatus)) return  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_CURRENTLY_NOT_ACTIVE.getErrorCode(), new Object[]{incidentId});
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, IncidentAPIErrorMessages.INCIDENT_ALREADY_ACTIVE.getErrorCode(), new Object[]{incidentId});
+        if (IncidentStatuses.CLOSED.toString().equalsIgnoreCase(currentStatus)) return  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_CURRENTLY_NOT_ACTIVE.getErrorCode(), new Object[]{incidentId});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncidentAPIErrorMessages.INCIDENT_ALREADY_ACTIVE.getErrorCode(), new Object[]{incidentId});
     }
     
 /*    private static Object[] getValueByFldName(String fldName){

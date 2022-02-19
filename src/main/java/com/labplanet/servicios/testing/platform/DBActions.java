@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -180,7 +181,7 @@ public class DBActions extends HttpServlet {
                         errorDetail[0]="The function <*1*> is not one of the declared ones therefore nothing can be performed for it. Functions are: <*2*>";
                         errorDetail = LPArray.addValueToArray1D(errorDetail, actionName);
                         errorDetail = LPArray.addValueToArray1D(errorDetail, Arrays.toString(allFunctionsBeingTested));
-                        Object[] trapErrorMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetail);            
+                        Object[] trapErrorMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetail);            
                         dataSample2D = LPArray.array1dTo2d(trapErrorMessage, trapErrorMessage.length);
                         break;
                 }                    

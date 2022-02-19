@@ -6,13 +6,13 @@
 package functionaljavaa.requirement;
 
 import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import lbplanet.utilities.LPNulls;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -39,7 +39,7 @@ public class RequirementLogFile {
      * @param numTabs
      */
     public static final void requirementsLogEntry(String logFile, String functionName, String entryValue, Integer numTabs){ 
-        String methodName = LPPlatform.getClassMethodName();
+        String methodName = ApiMessageReturn.getClassMethodName();
         FileWriter fw = null;  
         try{
             fw = new FileWriter(logFile, true);                  

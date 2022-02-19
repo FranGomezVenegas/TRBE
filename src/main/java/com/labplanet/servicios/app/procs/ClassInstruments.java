@@ -17,6 +17,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
@@ -231,7 +232,7 @@ public class ClassInstruments {
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, "endpointNotFound", null);   
                     return;
             }     
-        this.diagnostic=LPPlatform.trapMessage(actionDiagnoses.getDiagnostic(),actionDiagnoses.getMessageCode(), actionDiagnoses.getMessageCodeVariables());
+        this.diagnostic=ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(),actionDiagnoses.getMessageCode(), actionDiagnoses.getMessageCodeVariables());
         this.relatedObj=rObj;
         rObj.killInstance();
     }

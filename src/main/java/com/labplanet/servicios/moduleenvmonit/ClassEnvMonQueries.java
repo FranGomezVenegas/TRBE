@@ -14,6 +14,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -48,12 +49,12 @@ public class ClassEnvMonQueries {
                                 new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                                 fieldsToRetrieve, new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) 
-                            actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, sampleInfo[sampleInfo.length-1][0].toString(), new Object[]{sampleId});
+                            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, sampleInfo[sampleInfo.length-1][0].toString(), new Object[]{sampleId});
                         else{
                             for (Object[] curSample: sampleInfo){
                                 rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), curSample[0], fieldsToRetrieve, curSample); 
                             }
-                            actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
+                            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         }
                         this.messageDynamicData=new Object[]{sampleId};    
                         break;
@@ -81,7 +82,7 @@ public class ClassEnvMonQueries {
                             for (Object[] curResult: resultInfo){
                                 rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), curResult[0]); 
                             }
-                            actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
+                            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         }
                         this.messageDynamicData=new Object[]{sampleId};
                         break;

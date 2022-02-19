@@ -13,6 +13,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
@@ -51,7 +52,7 @@ public class ClassInspLotRMQueries {
                             for (Object[] curLot: lotInfo){
                                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Lot.TBL.getName(), TblsInspLotRMData.Lot.TBL.getName(), curLot[0], fieldsToRetrieve, curLot); 
                             }
-                            actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName});
+                            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName});
                         }
                         this.messageDynamicData=new Object[]{lotName};    
                         break;
@@ -76,7 +77,7 @@ public class ClassInspLotRMQueries {
                             for (Object[] curSample: sampleInfo){
                                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Sample.TBL.getName(), TblsInspLotRMData.Sample.TBL.getName(), curSample[0], fieldsToRetrieve, curSample); 
                             }
-                            actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName});
+                            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName});
                         }
                         this.messageDynamicData=new Object[]{lotName};    
                         break;

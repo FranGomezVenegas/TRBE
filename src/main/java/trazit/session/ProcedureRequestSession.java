@@ -323,7 +323,7 @@ public class ProcedureRequestSession {
 //        if (finalToken!=null){
 //            tokn = new Token(finalToken);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null);
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null);
 /*            {
                     LPFrontEnd.servletReturnResponseError(req, resp, 
                             LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, LPFrontEnd.setLanguage(req));              
@@ -344,7 +344,7 @@ public class ProcedureRequestSession {
             return null;                             
         }                        */
 
-return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allFine", null, true);
+return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "allFine", null, true);
     }
     public void setBusinessRulesTesting(BusinessRules br){
         this.busRulesTesting=br;

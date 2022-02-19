@@ -24,6 +24,7 @@ import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -207,7 +208,7 @@ public class DataProgramCorrectiveAction {
             return correctiveActionInfo[0];
         }
         if (statusClosed.equalsIgnoreCase(correctiveActionInfo[0][0].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.ACTION_CLOSED.getErrorCode(), new Object[]{correctiveActionId});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.ACTION_CLOSED.getErrorCode(), new Object[]{correctiveActionId});
         }
         String[] updFldName=new String[]{TblsProcedure.ProgramCorrectiveAction.STATUS.getName()};
         Object[] updFldValue=new Object[]{statusClosed};
@@ -232,7 +233,7 @@ public class DataProgramCorrectiveAction {
         if (TblsData.TablesData.SAMPLE_ANALYSIS.getTableName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.TEST_ID.getName();
         if (TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName();
         if (fieldToFindRecord==null)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Object Type <*1*> not recognized", new Object[]{objectType});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Object Type <*1*> not recognized", new Object[]{objectType});
         else
             objectIdClass=LPDatabase.integer();
         Object[][] programCorrectiveActionsToMarkAsCompleted=null;
@@ -249,7 +250,7 @@ public class DataProgramCorrectiveAction {
         Object[] diagnostic=null;
         for (Object[] curObj: programCorrectiveActionsToMarkAsCompleted){
             if (statusClosed.equalsIgnoreCase(curObj[1].toString()))
-                diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> is closed, cannot be added to the investigation", new Object[]{investId});
+                diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "<*1*> is closed, cannot be added to the investigation", new Object[]{investId});
             Object[] diagn=markAsCompleted(Integer.valueOf(curObj[0].toString()), investId);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))diagnostic=diagn;
             diagn = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
@@ -258,7 +259,7 @@ public class DataProgramCorrectiveAction {
                     new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, new Object[]{Integer.valueOf(curObj[0].toString())});        
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))diagnostic=diagn;
         }
-        if (diagnostic==null) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allMarkedAsAdded <*1*>", new Object[]{Arrays.toString(programCorrectiveActionsToMarkAsCompleted)});
+        if (diagnostic==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "allMarkedAsAdded <*1*>", new Object[]{Arrays.toString(programCorrectiveActionsToMarkAsCompleted)});
         else return diagnostic;
         
     }

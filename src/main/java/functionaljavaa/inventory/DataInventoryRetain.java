@@ -17,6 +17,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -45,10 +46,10 @@ public final class DataInventoryRetain {
         Object[] isRetAvailable=isRetainAvailable(lotName, id, extraFldName, new Object[]{""}, new String[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRetAvailable[0].toString())) return isRetAvailable;
         Integer recepFieldPosic=LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName());
-        if (recepFieldPosic==-1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.RECEPTION_FIELD_NOT_RETRIEVED.getErrorCode(), null);
+        if (recepFieldPosic==-1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.RECEPTION_FIELD_NOT_RETRIEVED.getErrorCode(), null);
         recepFieldPosic=recepFieldPosic+(isRetAvailable.length/2);
         if (isRetAvailable[recepFieldPosic]!=null && isRetAvailable[recepFieldPosic].toString().length()>0)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.ITEM_ALREADY_RECEIVED.getErrorCode(), null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.ITEM_ALREADY_RECEIVED.getErrorCode(), null);
         String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName()};
         Object[] fldValue=new Object[]{"", lotName};
         if (id!=null){
@@ -136,17 +137,17 @@ public final class DataInventoryRetain {
         BigDecimal resultConverted = q;
         if ((newAmountUom.length()>0) && (!newAmountUom.equalsIgnoreCase(qUom)) ) {
             if ((!qUom.equalsIgnoreCase(newAmountUom)) && (conversionMode == null || conversionMode.equalsIgnoreCase("DISABLED") || ((!conversionMode.contains(qUom)) && !conversionMode.equalsIgnoreCase("ALL")))) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.CONVERSION_NOT_ALLOWED.getErrorCode(), new Object[]{conversionMode, newAmountUom, qUom,  id.toString(), procReqSession.getProcedureInstance()});            
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.CONVERSION_NOT_ALLOWED.getErrorCode(), new Object[]{conversionMode, newAmountUom, qUom,  id.toString(), procReqSession.getProcedureInstance()});            
             //Boolean requiresUnitsConversion = true;
             uom.convertValue(newAmountUom);
             if (!uom.getConvertedFine()) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.CONVERTER_FALSE.getErrorCode(), new Object[]{id.toString(), uom.getConversionErrorDetail()[3].toString(), procReqSession.getProcedureInstance()});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.CONVERTER_FALSE.getErrorCode(), new Object[]{id.toString(), uom.getConversionErrorDetail()[3].toString(), procReqSession.getProcedureInstance()});
             resultConverted = uom.getConvertedQuantity();
         }        
         newAmount=newAmount.subtract(resultConverted);
         Integer isNegative=newAmount.compareTo(BigDecimal.ZERO);
         if (newAmount.compareTo(BigDecimal.ZERO)==-1)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.NOT_ENOUGH_QUANTITY.getErrorCode(), new Object[]{newAmount, newAmountUom, resultConverted, procReqSession.getProcedureInstance()});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.NOT_ENOUGH_QUANTITY.getErrorCode(), new Object[]{newAmount, newAmountUom, resultConverted, procReqSession.getProcedureInstance()});
         String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.FLD_AMOUNT_UOM.getName()};
         Object[] updFldValue=new Object[]{newAmount, newAmountUom};
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIEndpoints.LOT_RETAIN_EXTRACT.getAuditActionName());
@@ -179,10 +180,10 @@ public final class DataInventoryRetain {
         Object[][] retainRowsInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.InventoryRetain.TBL.getName(), 
                 fldName, fldValue, fldNameToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(retainRowsInfo[0][0].toString())) return LPArray.array2dTo1d(retainRowsInfo);
-        if (retainRowsInfo.length>1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.MULTI_ITEMS_NOT_ALLOWED.getErrorCode(), null);
+        if (retainRowsInfo.length>1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.MULTI_ITEMS_NOT_ALLOWED.getErrorCode(), null);
         String retRowLocked=retainRowsInfo[0][LPArray.valuePosicInArray(fldNameToGet, TblsInspLotRMData.InventoryRetain.FLD_LOCKED.getName())].toString();
         if (retRowLocked==null || (retRowLocked.length()>0 && Boolean.valueOf(retRowLocked)))            
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.ITEM_IS_LOCKED.getErrorCode(), null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.ITEM_IS_LOCKED.getErrorCode(), null);
         else
             //return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "retainRowAvailable", null);
             return LPArray.addValueToArray1D(LPArray.addValueToArray1D(new Object[]{}, fldNameToGet), retainRowsInfo[0]);

@@ -34,6 +34,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -126,9 +127,9 @@ if (iLines==7){
                         procInstanceName+"-"+suffixName, propName, propValue);
                     functionRelatedObjects=new JSONArray();                      
                     if (diagn.toUpperCase().contains("CREATED"))
-                        functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "propertyCreated <*1*>", new Object[]{diagn});
+                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "propertyCreated <*1*>", new Object[]{diagn});
                     else
-                        functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "propertyNOTCreated <*1*>", new Object[]{diagn});
+                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "propertyNOTCreated <*1*>", new Object[]{diagn});
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     
                 }else{    
@@ -188,7 +189,7 @@ if (iLines==7){
                                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                                 fileContentTable1Builder.append(clsEnvMonProdLot.getRowArgsRows());                
                                             }else{
-                                                functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
+                                                functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
                                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                                 fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
                                             }

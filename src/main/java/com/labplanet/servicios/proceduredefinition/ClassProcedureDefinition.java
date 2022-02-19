@@ -22,6 +22,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
@@ -94,7 +95,7 @@ public class ClassProcedureDefinition {
                     }
                     Object[] procedureRolesList = procedureRolesList(procedureName, procedureVersion);    
                     if (!LPArray.valueInArray(procedureRolesList, roleName)){
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The role <*1*> does not exist in procedure <*2*> and version <*3*>", new Object[]{roleName, procedureName, procedureVersion});
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The role <*1*> does not exist in procedure <*2*> and version <*3*>", new Object[]{roleName, procedureName, procedureVersion});
                         break;
                     }
                     actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
@@ -113,7 +114,7 @@ public class ClassProcedureDefinition {
                     try{
                         impTypeEnum = UomImportType.valueOf(importType.toUpperCase());
                     }catch(Exception e){
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UOM Import Type "+importType+" not recognized", null);
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "UOM Import Type "+importType+" not recognized", null);
                         LPFrontEnd.servletReturnResponseError(request, response, "UOM Import Type "+importType+" not recognized", new Object[]{importType}, "");                                      
                         return;
                     }   
@@ -134,7 +135,7 @@ public class ClassProcedureDefinition {
                     } catch (ServletException | IOException ex) {
                         Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Completed", null);
+                    actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Completed", null);
                     break;                    
 
                     //String procName = request.getParameter("procedureName"); //"process-us"; 

@@ -24,6 +24,7 @@ import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 /**
  *
@@ -48,7 +49,7 @@ public class ClassMasterData {
         }        
         Object[] objToJsonObj = convertToJsonObjectStringedObject(jsonObj);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
-           this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, objToJsonObj[1].toString()+".Object: <*1*>", new Object[]{jsonObj});
+           this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, objToJsonObj[1].toString()+".Object: <*1*>", new Object[]{jsonObj});
            return;
         }
         
@@ -91,7 +92,7 @@ public class ClassMasterData {
                         if (jO.getAsJsonObject().has(currFld) && uom.length()>0)
                             actionDiagnoses=getUomFromConfig(uom, jO.getAsJsonObject().get(currFld).getAsString());
                     }   
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new analysis params", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new analysis params", null);
                     break;
                 case MD_SPECS:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -109,7 +110,7 @@ public class ClassMasterData {
                                 specFieldName, specFldValues, specRulesFieldName, specRulesFldValues);
                         
                     }                    
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new specs", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new specs", null);
                     break;
                 case MD_SPEC_LIMITS:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -199,7 +200,7 @@ public class ClassMasterData {
                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                         }
                     }                    
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new spec limits", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new spec limits", null);
                     break;
                 case MD_INCUBATORS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -210,7 +211,7 @@ public class ClassMasterData {
                             new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.FLD_DESCRIPTION.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()).getAsBoolean(), LPDate.getCurrentTimeStamp(), userCreator});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }                    
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incubators", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incubators", null);
                     break;   
                 case MD_INCUB_BATCHES:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -221,7 +222,7 @@ public class ClassMasterData {
                             new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName()).getAsInt(), 1, jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()).getAsString(), true, LPDate.getCurrentTimeStamp(), userCreator});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }    
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incub batch", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incub batch", null);
                     break;   
                 case MD_MICROORGANISMS: 
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -231,7 +232,7 @@ public class ClassMasterData {
                             new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()).getAsString()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }    
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new microorganisms", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new microorganisms", null);
                     break;
                 case MD_SAMPLES:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -242,7 +243,7 @@ public class ClassMasterData {
                             new Object[]{jO.getAsJsonObject().get(TblsCnfg.Sample.FLD_CODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.Sample.FLD_CODE_VERSION.getName()).getAsInt(), LPDate.getCurrentTimeStamp(), userCreator});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) break;
                     }    
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new samples", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new samples", null);
                     break;   
                 case MD_SAMPLE_RULES:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -255,7 +256,7 @@ public class ClassMasterData {
                                 jO.getAsJsonObject().get(TblsCnfg.SampleRules.FLD_ANALYST_ASSIGNMENT_MODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SampleRules.FLD_TEST_ANALYST_REQUIRED.getName()).getAsBoolean(),
                                 LPDate.getCurrentTimeStamp(), userCreator});
                     }                    
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new sample rules", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new sample rules", null);
                     break;   
                 case MD_PROGRAMS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -291,7 +292,7 @@ public class ClassMasterData {
                             fldName, fldValue);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program", null);
                     break;
                 case MD_PROGRAM_LOCATIONS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -320,7 +321,7 @@ public class ClassMasterData {
                             fldName, fldValue);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }
-                    this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program locations", null);
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program locations", null);
                     break;
                 case MD_STAGES: 
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -354,7 +355,7 @@ public class ClassMasterData {
                                     instanceName+"-"+GlobalVariables.Schemas.DATA.getName(),  
                                     "sampleStage"+curStage+"Next", jO.getAsJsonObject().get(curFldName).getAsString());
                         }
-                        this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new stages", null);
+                        this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new stages", null);
                     }
                     parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
                         instanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_en", allStages+"|END");

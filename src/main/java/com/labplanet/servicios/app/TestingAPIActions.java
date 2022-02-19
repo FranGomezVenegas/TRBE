@@ -35,6 +35,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -121,7 +122,7 @@ public class TestingAPIActions extends HttpServlet {
                         new Object[]{(Integer)argValues[0]},
                         scriptFldToRetrieve);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptInfo[0][0].toString())){
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "scriptNotFound", new Object[]{argValues[0]});
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "scriptNotFound", new Object[]{argValues[0]});
                         break;
                     }
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, scriptInfo[0]);

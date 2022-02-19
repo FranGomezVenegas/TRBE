@@ -9,6 +9,7 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPPlatform;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -41,9 +42,9 @@ public class ClassTrazitCodeDoc {
                     break;
             }    
         if (actionDiagnoses!=null)
-            this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "<*1*>", new Object[]{actionDiagnoses[0]});
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*>", new Object[]{actionDiagnoses[0]});
         else
-            this.diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "no return", null);
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "no return", null);
         this.relatedObj=rObj;
         rObj.killInstance();
     }

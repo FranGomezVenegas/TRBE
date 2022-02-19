@@ -11,6 +11,7 @@ import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsProcedure;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -87,7 +88,7 @@ public class UserProfile {
     public Object[] getProcedureUserProfileFieldValues ( Object[] procInstanceName, String personName) {
             Object[] totalProcUserProfiles  = new Object[0];          
         if ( (personName == null) || (personName.length()==0) ){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "personNameIsEmpty", new Object[]{});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "personNameIsEmpty", new Object[]{});
         }               
         for (Object procInstanceName1 : procInstanceName) {
             String currProcPrefix = procInstanceName1.toString();

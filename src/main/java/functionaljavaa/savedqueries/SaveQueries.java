@@ -15,6 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
@@ -42,7 +43,7 @@ public class SaveQueries {
             JSONParser parser = new JSONParser(); 
             JSONObject json = (JSONObject) parser.parse(definition);
         } catch (ParseException ex) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Definition field not recognized as Json object, error: <*1*>. Field value: <*2*>",new Object[]{ex.toString(), definition});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Definition field not recognized as Json object, error: <*1*>. Field value: <*2*>",new Object[]{ex.toString(), definition});
         }
         
         String[] updFieldName=new String[]{TblsData.SavedQueries.FLD_NAME.getName(), TblsData.SavedQueries.FLD_DEFINITION.getName(), TblsData.SavedQueries.FLD_OWNER.getName()};

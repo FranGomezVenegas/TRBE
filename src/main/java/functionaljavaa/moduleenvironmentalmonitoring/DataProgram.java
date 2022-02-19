@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -135,9 +136,9 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineNameProj = "BEGIN";
-        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, LPPlatform.JAVADOC_LINE_FLDNAME);
+        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, javaDocLineNameProj);
-        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, LPPlatform.JAVADOC_CLASS_FLDNAME);
+        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);
         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, classVersionProj);
         LPPlatform.addJavaClassDoc(javaDocFieldsProj, javaDocValuesProj, elementsDev);
     }    
@@ -156,9 +157,9 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineNameProj = "CHECK sampleFieldName and sampleFieldValue match in length";
-        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, LPPlatform.JAVADOC_LINE_FLDNAME);
+        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, javaDocLineNameProj);
-        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, LPPlatform.JAVADOC_CLASS_FLDNAME);
+        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);
         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, classVersionProj);
         LPPlatform.addJavaClassDoc(javaDocFieldsProj, javaDocValuesProj, elementsDev);
     }    
@@ -178,9 +179,9 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineNameProj = "CHECK sampleFieldName and sampleFieldValue match in length";
-        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, LPPlatform.JAVADOC_LINE_FLDNAME);
+        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, javaDocLineNameProj);
-        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, LPPlatform.JAVADOC_CLASS_FLDNAME);
+        javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);
         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, classVersionProj);
         LPPlatform.addJavaClassDoc(javaDocFieldsProj, javaDocValuesProj, elementsDev);
     }    
@@ -223,7 +224,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Mandatory fields not found: <*1*>", new Object[]{mandatoryFieldsMissingBuilder.toString()});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Mandatory fields not found: <*1*>", new Object[]{mandatoryFieldsMissingBuilder.toString()});
         }        
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString())) return diagnosis;
@@ -246,7 +247,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
                         String errorCode = "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION";
                         Object[] errorDetailVariables = new Object[0];
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, ex.getMessage());
-                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                        
+                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                        
                     }
                     Object specialFunctionReturn = method.invoke(this, null, procInstanceName, projectTemplate, projectTemplateVersion);      
                     if (specialFunctionReturn.toString().contains("ERROR")){
@@ -275,9 +276,9 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineNameProj = "END";
-        Integer specialFieldIndex = Arrays.asList(javaDocFieldsProj).indexOf(LPPlatform.JAVADOC_LINE_FLDNAME);
+        Integer specialFieldIndex = Arrays.asList(javaDocFieldsProj).indexOf(ApiMessageReturn.JAVADOC_LINE_FLDNAME);
         if (specialFieldIndex==-1){
-            javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, LPPlatform.JAVADOC_LINE_FLDNAME);         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, javaDocLineNameProj);         
+            javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, javaDocLineNameProj);         
         }else{    
             javaDocValuesProj[specialFieldIndex] = javaDocLineNameProj;             
         }

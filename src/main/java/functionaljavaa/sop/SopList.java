@@ -10,6 +10,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -149,7 +150,7 @@ public class SopList {
                                         new String[]{"sop_list_id"}, new Object[]{sopAssigned});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())) return diagnoses;
         String errorCode = "SopList_SopAssignedToSopList";
-        LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{sopAssigned, this.sopListId, schemaConfigName} );
+        ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{sopAssigned, this.sopListId, schemaConfigName} );
         return diagnoses;        
     }   
     
@@ -178,13 +179,13 @@ public class SopList {
         Integer arrayPosic = currSopAssignedValue.length;
         for (Integer i=0;i<arrayPosic;i++){
             if (currSopAssignedValue[i] == null ? sopId == null : currSopAssignedValue[i].equals(sopId)){ 
-                Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "SOP FOUND IN SOP LIST", 
+                Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "SOP FOUND IN SOP LIST", 
                         new Object[]{"SOP <*1*> found in SOP List <*2*> in position <*3>", sopId, currSopAssignedValue, i});
                 diagnoses = LPArray.addValueToArray1D(diagnoses, i);
                 return diagnoses;
             }
         }
-        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "SOP NOT FOUND IN SOP LIST", 
+        Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "SOP NOT FOUND IN SOP LIST", 
                 new Object[]{"SOP <*1*> NOT found in SOP List <*2*>", sopId, currSopAssignedValue});
         diagnoses = LPArray.addValueToArray1D(diagnoses, -1);
         return diagnoses;
@@ -206,7 +207,7 @@ public class SopList {
             }
             setSopListSopAssigned(newArray);
         }    
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "SopList_SopAssignedToSopList", 
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "SopList_SopAssignedToSopList", 
                 new Object[]{sopId, Arrays.toString(currSopAssignedValue),""});
     }
      

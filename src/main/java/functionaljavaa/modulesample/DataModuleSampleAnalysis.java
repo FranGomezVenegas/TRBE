@@ -15,6 +15,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -47,7 +48,7 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
             functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{analysisAdded.toString(), sampleId.toString(), procInstanceName});        
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{analysisAdded.toString(), sampleId.toString(), procInstanceName});        
   }
 
     /**

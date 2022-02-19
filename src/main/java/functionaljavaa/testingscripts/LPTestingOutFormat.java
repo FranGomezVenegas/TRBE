@@ -39,6 +39,7 @@ import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 /*
  *
@@ -984,9 +985,9 @@ public class LPTestingOutFormat {
             }
         }
         if (missingValues.length()==0)
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "allFine", null, true);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "allFine", null, true);
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{missingValues});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{missingValues});
     }
     public static void cleanLastRun(String procInstanceName, Integer scriptId){
         String[] scriptFieldName=new String[]{TblsTesting.Script.RUN_SUMMARY.getName(), TblsTesting.Script.EVAL_TOTAL_TESTS.getName(), 

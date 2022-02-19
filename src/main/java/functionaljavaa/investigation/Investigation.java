@@ -22,6 +22,7 @@ import trazit.enums.EnumIntMessages;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 
 
@@ -128,7 +129,7 @@ public final class Investigation {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decodeObjectDetail[0].toString())) return decodeObjectDetail;
             Object[] objectAlreadyInInvestigation = isObjectAlreadyInInvestigation(curObj, investId);            
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(objectAlreadyInInvestigation[0].toString())) {
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{curObj, investId});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{curObj, investId});                
             }
         }
         for (String curObj: objectsToAdd.split("\\|")){
@@ -169,7 +170,7 @@ public final class Investigation {
                 return objectAlreadyInInvestigation;
             }              
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllWell", null);
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllWell", null);
     }
 
     public static Object[] isObjectAlreadyInInvestigation(String objectToAdd){
@@ -191,12 +192,12 @@ public final class Investigation {
                 TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), 
                 checkFieldName, checkFieldValue, fldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invObjectInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "objectNotInInvestigationYet", checkFieldValue);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "objectNotInInvestigationYet", checkFieldValue);
         else{
             ResponseMessages messages = instanceForActions.getMessages();
             messages.addMainForError(InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{checkFieldValue[0], checkFieldValue[1], investId});
             investId=(Integer) invObjectInfo[0][LPArray.valuePosicInArray(fldsToRetrieve, TblsProcedure.InvestObjects.INVEST_ID.getName())];
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{checkFieldValue[0], checkFieldValue[1], investId});        
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED.getErrorCode(), new Object[]{checkFieldValue[0], checkFieldValue[1], investId});        
         }
     }    
     private static Object[] decodeObjectInfo(String objInfo){
@@ -205,7 +206,7 @@ public final class Investigation {
 
         String[] curObjDetail=objInfo.split("\\*");
         if (curObjDetail.length!=2)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED.getErrorCode(), new Object[]{objInfo});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED.getErrorCode(), new Object[]{objInfo});
         checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.OBJECT_TYPE.getName());
         checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[0]);
 
@@ -251,18 +252,18 @@ public final class Investigation {
         Object[][] investigationInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), 
             new String[]{TblsProcedure.Investigation.ID.getName()}, new Object[]{investId}, new String[]{TblsProcedure.Investigation.CLOSED.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{investId});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{investId});
         if ("FALSE".equalsIgnoreCase(investigationInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, InvestigationErrorTrapping.IS_OPEN.getErrorCode(), new Object[]{investId});
-        else return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.IS_CLOSED.getErrorCode(), new Object[]{investId});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, InvestigationErrorTrapping.IS_OPEN.getErrorCode(), new Object[]{investId});
+        else return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.IS_CLOSED.getErrorCode(), new Object[]{investId});
     }
     private static Object[] isCapaField(String[] fields){
         String[] allFieldNames = getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
         for (String curFld: fields){
-            if (!LPArray.valueInArray(allFieldNames, curFld)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
+            if (!LPArray.valueInArray(allFieldNames, curFld)) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
             //if (!curFld.toUpperCase().contains("CAPA")) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "AllCapaFields:  <*1*>", new Object[]{Arrays.toString(fields)});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllCapaFields:  <*1*>", new Object[]{Arrays.toString(fields)});
     }
     
     public static void addAuditRecordForObject(String curObj, Integer investId, String auditActionName){

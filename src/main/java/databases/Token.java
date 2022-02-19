@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -85,7 +86,7 @@ public final class Token {
     }  
     
     private Object[] isValidToken(String token){
-        if (token.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE , "tokenIsEmptyOrInvalid", new Object[]{});
+        if (token.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE , "tokenIsEmptyOrInvalid", new Object[]{});
         Object[] diagnoses = new Object[0];
         try {
             

@@ -14,6 +14,7 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -67,7 +68,7 @@ public class LPDate {
     } 
     public static Object[] getDaysInRangeByIntervals(Calendar startDate, Calendar endDate, String dayOfWeek, String inverval, Integer numIterations){
         Object[] dt = new Object[0];
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "notImplementedYet", null);
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "notImplementedYet", null);
     }
     
     /**

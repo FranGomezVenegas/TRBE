@@ -10,6 +10,7 @@ import databases.TblsCnfg;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -77,7 +78,7 @@ public class Sop {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbGetSopObjByName[0][0].toString())){        
             return Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), fieldNames, fieldValues);
         }else{
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Sop_SopAlreadyExists", new Object[]{this.sopName, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Sop_SopAlreadyExists", new Object[]{this.sopName, procInstanceName});
         }
     }
     
@@ -154,7 +155,7 @@ public class Sop {
             errorCode = "Sop_SopMetaData_recordNotCreated";
             String[] fieldForInserting = LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName(), TblsCnfg.SopMetaData.FLD_SOP_VERSION.getName(), TblsCnfg.SopMetaData.FLD_SOP_REVISION.getName()}, 
                     new Object[]{sopName, 1, 1}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
-            LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{fieldForInserting, schemaConfigName} );
+            ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{fieldForInserting, schemaConfigName} );
             return diagnoses;            
         }else{           
             return diagnoses;                        
@@ -174,7 +175,7 @@ public class Sop {
                                         new String[]{fieldName}, new Object[]{fieldValue}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){
             String errorCode = ERROR_TRAPING_SOP_META_DATA_NOT_FOUND;
-            LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{fieldName, fieldValue, sopName, schemaConfigName} );
+            ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{fieldName, fieldValue, sopName, schemaConfigName} );
             return diagnoses;            
         }else{
             return diagnoses;                        

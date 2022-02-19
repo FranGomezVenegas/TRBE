@@ -17,6 +17,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
@@ -94,21 +95,21 @@ public class DataStudyObjectsVariableValues {
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(objectVariablePropInfo[0]))) return objectVariablePropInfo;
         
-        if (objectVariablePropInfo.length!=1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Found more than one record, <*1*> for the query <*2*> on <*3*>", 
+        if (objectVariablePropInfo.length!=1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Found more than one record, <*1*> for the query <*2*> on <*3*>", 
             new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), procInstanceName});
         
         String fieldType = objectVariablePropInfo[0][2].toString();
         if (VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
             if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>", 
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>", 
                     new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, procInstanceName});
         }else if (VariableTypes.INTEGER.toString().equalsIgnoreCase(fieldType)){
             Object[] isNumeric = isNumeric(newValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) 
                 return isNumeric;
         }else 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null);
         String[] updFieldsName=new String[]{TblsGenomaData.StudyVariableValues.FLD_VALUE.getName()};
         Object[] updFieldsValue=new Object[]{newValue};
         diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyVariableValues.TBL.getName(), 

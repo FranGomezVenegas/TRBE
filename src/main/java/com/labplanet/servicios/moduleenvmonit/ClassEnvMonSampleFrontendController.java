@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -41,7 +42,7 @@ public class ClassEnvMonSampleFrontendController {
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
             ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, endPoint);
             if (clss.getIsSuccess())
-                this.functionDiagn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);
+                this.functionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);
             else
                 this.functionDiagn=clss.getDiagnostic(); //LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "queriesHaveNoMsgCode", null);
             //this.functionDiagn=clss.getDiagnostic();

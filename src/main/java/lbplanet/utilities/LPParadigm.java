@@ -7,6 +7,7 @@ package lbplanet.utilities;
 
 import java.util.Arrays;
 import trazit.enums.EnumIntMessages;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -49,13 +50,13 @@ public class LPParadigm {
            errorCode = "DataSample_FieldArraysDifferentSize";
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fName));
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fValue));
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
         }
         
         if (LPArray.duplicates(fName)){
            errorCode = "DataSample_FieldsDuplicated";
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fName));
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                      
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                      
         }        
         diagnoses = LPArray.addValueToArray1D(diagnoses, LPPlatform.LAB_TRUE);
         return diagnoses;                

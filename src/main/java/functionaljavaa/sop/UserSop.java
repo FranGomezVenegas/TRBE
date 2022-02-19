@@ -25,6 +25,7 @@ import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -148,7 +149,7 @@ public class UserSop {
         Object[] filterFieldValue =new Object[]{sopName, userName};        
         Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{procInstanceName});   
         if (getUserProfileFieldValues==null || getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopName, userName, procInstanceName});
+            Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopName, userName, procInstanceName});
             return LPArray.array1dTo2d(diagnoses, diagnoses.length);
         }        
         return getUserProfileFieldValues;
@@ -190,7 +191,7 @@ public class UserSop {
             if (us.equalsIgnoreCase(procInstanceName)){schemaIsCorrect=true;break;}            
         }
         if (!schemaIsCorrect){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA.getErrorCode(), new Object[]{userInfoId, procInstanceName});
+            Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA.getErrorCode(), new Object[]{userInfoId, procInstanceName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.CERTIF_LEVEL_IMAGE_ERROR.getAreaName(), UserSopBusinessRules.CERTIF_LEVEL_IMAGE_ERROR.getTagName()));
             return diagnoses;
@@ -217,20 +218,20 @@ public class UserSop {
             return diagnoses;
         }
         if (getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopIdFieldValue, userInfoId, procInstanceName});
+            Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopIdFieldValue, userInfoId, procInstanceName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.CERTIF_LEVEL_IMAGE_NOTASSIGNED.getAreaName(), UserSopBusinessRules.CERTIF_LEVEL_IMAGE_NOTASSIGNED.getTagName()));
             return diagnoses;
         }
         if (getUserProfileFieldValues[0][3].toString().contains(userSopStatuses.PASS.getLightCode())){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), 
+            Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), 
                     new Object[]{userInfoId, sopIdFieldValue, procInstanceName, "current status is "+getUserProfileFieldValues[0][2].toString()+" and the light is "+getUserProfileFieldValues[0][3].toString()});
             diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.PASS.getCode());
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.CERTIF_LEVEL_IMAGE_CERTIFIED.getAreaName(), UserSopBusinessRules.CERTIF_LEVEL_IMAGE_CERTIFIED.getTagName()));
             return diagnoses;
         }
         else{
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.USER_NOT_CERTIFIED_FOR_SOP.getErrorCode(), new Object[]{userInfoId, sopIdFieldValue, procInstanceName});
+            Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.USER_NOT_CERTIFIED_FOR_SOP.getErrorCode(), new Object[]{userInfoId, sopIdFieldValue, procInstanceName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.NOTPASS.getCode());
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.CERTIF_LEVEL_IMAGE_NOTCERTIFIED.getAreaName(), UserSopBusinessRules.CERTIF_LEVEL_IMAGE_NOTCERTIFIED.getTagName()));
             return diagnoses;
@@ -366,7 +367,7 @@ public class UserSop {
             }
             return getUserProfileNEW;                
         }catch(SQLException ex){
-            Object[] trpErr=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new String[]{ex.getMessage()});
+            Object[] trpErr=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new String[]{ex.getMessage()});
             return LPArray.array1dTo2d(trpErr, trpErr.length);            
         }
     }
@@ -420,7 +421,7 @@ public class UserSop {
         Object[] exists = Rdbms.existsRecord(schemaName, TblsData.TablesData.USER_SOP.getTableName(), new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
                 
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(exists[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.SOP_ALREADY_ASSIGNED.getErrorCode(), new Object[]{sopIdFieldValue, personName, schemaName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.SOP_ALREADY_ASSIGNED.getErrorCode(), new Object[]{sopIdFieldValue, personName, schemaName});
         String userSopInitialStatus = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.USERSOP_INITIAL_STATUS.getAreaName(), UserSopBusinessRules.USERSOP_INITIAL_STATUS.getTagName());
         String userSopInitialLight = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.USERSOP_INITIAL_LIGHT.getAreaName(), UserSopBusinessRules.USERSOP_INITIAL_LIGHT.getTagName());
         
@@ -445,7 +446,7 @@ public class UserSop {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
             return diagnosis;
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, UserSopErrorTrapping.SOP_ADDED_TO_USER.getErrorCode(), new Object[]{sopIdFieldValue, personName, schemaName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, UserSopErrorTrapping.SOP_ADDED_TO_USER.getErrorCode(), new Object[]{sopIdFieldValue, personName, schemaName});
     }    
     
     /**
@@ -457,8 +458,8 @@ public class UserSop {
         BusinessRules bi=new BusinessRules(procedureName, null);
         String sopCertificationLevel = Parameter.getBusinessRuleProcedureFile(procedureName, UserSopBusinessRules.USERSOP_MODE.getAreaName(), UserSopBusinessRules.USERSOP_MODE.getTagName(), null, null, bi);
         if (isTagValueOneOfDisableOnes(sopCertificationLevel)) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "disabled", null);
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "disabled", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "disabled", null);
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "disabled", null);
     }
 
     /**
@@ -476,7 +477,7 @@ public class UserSop {
         Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName);
         if(LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())){return LPArray.array2dTo1d(sopInfo);}
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING.getErrorCode(), new Object[]{sopName, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING.getErrorCode(), new Object[]{sopName, procInstanceName});
         }
         String[] updFldNames=new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}; 
         Object[] updFldValues=new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()};

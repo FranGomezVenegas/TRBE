@@ -11,6 +11,7 @@ import java.util.HashMap;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -42,7 +43,7 @@ public class FromInstanceToInstance {
         }
         String diagn=LPPlatform.LAB_FALSE;
         if (numRecsTransferred==recordsInSourceDB.length) diagn=LPPlatform.LAB_TRUE;
-        return LPPlatform.trapMessage(diagn, "Moved "+numRecsTransferred+" records of "+recordsInSourceDB.length, null, GlobalVariables.Languages.EN.getName());
+        return ApiMessageReturn.trapMessage(diagn, "Moved "+numRecsTransferred+" records of "+recordsInSourceDB.length, null, GlobalVariables.Languages.EN.getName());
     }
     
 }

@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -57,7 +58,7 @@ public class BusinessRules {
                     new String[]{TblsProcedure.ProcedureBusinessRules.DISABLED.getName()}, new Object[]{false}, 
                     new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
             else
-                testingBusRulsInfo=new Object[][]{LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "BusinessRulesNotCompatibleYetForPlatformRules", null)};
+                testingBusRulsInfo=new Object[][]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "BusinessRulesNotCompatibleYetForPlatformRules", null)};
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testingBusRulsInfo[0][0].toString())) return;
         for (Object[] curObj: testingBusRulsInfo){
             if ("PROCEDURE".equalsIgnoreCase(curObj[0].toString()))

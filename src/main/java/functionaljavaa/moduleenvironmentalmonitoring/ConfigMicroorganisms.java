@@ -11,6 +11,7 @@ import databases.Token;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -32,9 +33,9 @@ public class ConfigMicroorganisms {
                     new String[]{TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_NAME.getName(), TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_ADDED_BY.getName(), TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_ADDED_ON.getName()}, 
                     new Object[]{orgName, token.getPersonName(), LPDate.getCurrentTimeStamp()}); 
             else
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "MicroorganismExistsInMicroorganism", new Object[]{orgName});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "MicroorganismExistsInMicroorganism", new Object[]{orgName});
         }
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "MicroorganismExistsInMicroorganism", new Object[]{orgName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "MicroorganismExistsInMicroorganism", new Object[]{orgName});
     }
 }

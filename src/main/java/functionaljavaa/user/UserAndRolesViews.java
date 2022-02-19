@@ -15,6 +15,7 @@ import databases.Token;
 import functionaljavaa.parameter.Parameter;
 import java.util.ResourceBundle;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -53,7 +54,7 @@ public class UserAndRolesViews {
         Object[][] personByUser = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{TblsApp.Users.USER_NAME.getName()}, new String[]{userName}, new String[]{Users.PERSON_NAME.getName()}, new String[]{Users.PERSON_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0][0].toString()))
-            LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "userNotExists", new Object[]{userName});
+            ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "userNotExists", new Object[]{userName});
         return new Object[]{personByUser[0][0].toString()};
     }
     
@@ -96,7 +97,7 @@ public class UserAndRolesViews {
     
     public static final Object[] createAppUser(String uName, String[] fldNames, Object[] fldValues){
         Object[] personByUserObj = getPersonByUser(uName);        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserAlreadyExists", new Object[]{uName});        
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "UserAlreadyExists", new Object[]{uName});        
         Object[] personIdDiagn = getNextAppPersonId();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personIdDiagn[0].toString())) return personIdDiagn;
         String personId=personIdDiagn[1].toString();

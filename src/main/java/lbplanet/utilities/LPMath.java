@@ -7,6 +7,7 @@ package lbplanet.utilities;
 
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.math.BigDecimal;
+import trazit.session.ApiMessageReturn;
 
 /**
  * LPMath is a library for adding extra maths to the standard ones.
@@ -59,7 +60,7 @@ public class LPMath {
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                 
         }
         UnitsOfMeasurement uom = new UnitsOfMeasurement(portion, portionUOM);
         if (portionUOM == null ? volumeUOM != null : !portionUOM.equals(volumeUOM)){
@@ -72,7 +73,7 @@ public class LPMath {
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portion.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portionObjectId.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                 
         }        
        volume = volume.add(portion.negate());        
        if ( volume.compareTo(BigDecimal.ZERO)<0) {
@@ -82,7 +83,7 @@ public class LPMath {
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "subaliquoting");
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portion.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                          
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                          
         }               
        String conclusionMsg = "It is possible to extract ";
        if (volumeUOM.equalsIgnoreCase(portionUOM)){
@@ -93,7 +94,7 @@ public class LPMath {
         return new Object[]{LPPlatform.LAB_TRUE, conclusionMsg, portion};
     }
     public static Object[] isNumeric(String strNum){
-        if (strNum==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "valueEmpty", null);
+        if (strNum==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "valueEmpty", null);
         String curDigit="";
         try  {            
             for (int i=0;i<strNum.length();i++){
@@ -106,9 +107,9 @@ public class LPMath {
             
         }catch (Exception nfe){
             if (",".equalsIgnoreCase(curDigit))
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "commaIsTheDecimalsSeparator", null);
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", null);
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "commaIsTheDecimalsSeparator", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", null);
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "isNumeric", null);
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "isNumeric", null);
     }
 } // end class

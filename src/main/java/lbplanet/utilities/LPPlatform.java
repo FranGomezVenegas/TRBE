@@ -31,6 +31,7 @@ import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -60,7 +61,7 @@ public class LPPlatform {
      */
     public static final String CONFIG_FILES_FOLDER = "LabPLANET";
     
-    static final String CONFIG_FILES_ERRORTRAPING = "errorTraping";
+    public static final String CONFIG_FILES_ERRORTRAPING = "errorTraping";
 
     /**
      *
@@ -187,25 +188,6 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
     /**
      *
      */
-    public static final String JAVADOC_CLASS_FLDNAME = "class";
-    private static final String JAVADOC_METHOD_FLDNAME = "method";
-
-    /**
-     *
-     */
-    public static final String JAVADOC_LINE_FLDNAME = "line";
-    
-    private static final String JSON_TAG_ERR_MSG_EVALUATION = "evaluation";
-    private static final String JSON_TAG_ERR_MSG_CLSS = JAVADOC_CLASS_FLDNAME;
-    private static final String JSON_TAG_ERR_MSG_CLSS_VERSION = "classVersion";
-    private static final String JSON_TAG_ERR_MSG_CLSS_LINE = "line";
-    private static final String JSON_TAG_ERR_MSG_CLSS_ERR_CODE = "errorCode";
-    private static final String JSON_TAG_ERR_MSG_CLSS_ERR_CODE_TEXT = "errorCodeText";
-    private static final String JSON_TAG_ERR_MSG_CLSS_ERR_DETAIL = "errorDetail";
-    public static final String CONFIG_OTRONOMBRE_FILE_NAME = "-otronombre";
-    /**
-     *
-     */
     public static final String BUSINESS_RULES_VALUE_ENABLED="ENABLE";    
     public static final Object[] breakPointArray=new Object[]{"MissingMandatoryParametersInRequest"};
 
@@ -222,7 +204,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         userProceduresList=userProceduresList.replace("[", "");
         userProceduresList=userProceduresList.replace("]", "");        
         if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName))
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE.getErrorCode(), new String[]{token.getUserName(), procInstanceName, userProceduresList});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE.getErrorCode(), new String[]{token.getUserName(), procInstanceName, userProceduresList});
         
         actionName = actionName.toUpperCase();        
         String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).split("\\|");
@@ -233,14 +215,14 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         }
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
-            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new String[]{procInstanceName, actionName}, true);
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new String[]{procInstanceName, actionName}, true);
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED_RULESNOTFOUND.getErrorCode(), new String[]{procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED_RULESNOTFOUND.getErrorCode(), new String[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED.getErrorCode(), new String[]{actionName, procInstanceName, Arrays.toString(procedureActions)});            
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED.getErrorCode(), new String[]{actionName, procInstanceName, Arrays.toString(procedureActions)});            
         }else{
-            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED.getErrorCode(), new String[]{procInstanceName, actionName});               
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED.getErrorCode(), new String[]{procInstanceName, actionName});               
         }    
     }    
     /**
@@ -261,14 +243,14 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
         
         if (LPArray.valueInArray(procedureActionsUserRoles, "ALL")){
-            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new Object[]{procInstanceName}, true);
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new Object[]{procInstanceName}, true);
         }
         if ( (procedureActionsUserRoles.length==1 && "".equals(procedureActionsUserRoles[0])) ){
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER.getErrorCode(), new Object[]{procInstanceName, actionName});        
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER.getErrorCode(), new Object[]{procInstanceName, actionName});        
         }else if(!LPArray.valueInArray(procedureActionsUserRoles, userRole)){    
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ROLENOTINCLUDED.getErrorCode(), new Object[]{procInstanceName, actionName, userRole, Arrays.toString(procedureActionsUserRoles)});        
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ROLENOTINCLUDED.getErrorCode(), new Object[]{procInstanceName, actionName, userRole, Arrays.toString(procedureActionsUserRoles)});        
         }else{
-            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});        
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});        
         }            
     }
     
@@ -289,14 +271,14 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
 
         //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
         if (LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, "ALL")){
-            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
         }
         if ( (actionRequiresUserConfirmationRuleValue.length==1 && "".equals(actionRequiresUserConfirmationRuleValue[0])) ){
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
         }else if(!LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, actionName)){    
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
         }else{
-            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});
+            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});
         }    
     }    
 
@@ -317,13 +299,13 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL"))
-            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         }else{
-            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});               
+            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});               
         }    
     }    
     public static Object[] procActionRequiresJustificationPhrase(String procInstanceName, String actionName, BusinessRules procBusinessRules){
@@ -337,13 +319,13 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL"))
-            return trapMessage(LAB_TRUE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         }else{
-            return trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});               
+            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});               
         }    
     }    
     
@@ -524,9 +506,9 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         Object[] fldValue = new Object[0];
         String currField = "";        
 
-        fldName = LPArray.addValueToArray1D(fldName, JAVADOC_CLASS_FLDNAME);         fldValue = LPArray.addValueToArray1D(fldValue, elementsDev[1].getClassName()); 
-        fldName = LPArray.addValueToArray1D(fldName, JAVADOC_METHOD_FLDNAME);         fldValue = LPArray.addValueToArray1D(fldValue, elementsDev[1].getMethodName());     
-        fldName = LPArray.addValueToArray1D(fldName, JAVADOC_LINE_FLDNAME);         fldValue = LPArray.addValueToArray1D(fldValue, elementsDev[1].getLineNumber());
+        fldName = LPArray.addValueToArray1D(fldName, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);         fldValue = LPArray.addValueToArray1D(fldValue, elementsDev[1].getClassName()); 
+        fldName = LPArray.addValueToArray1D(fldName, ApiMessageReturn.JAVADOC_METHOD_FLDNAME);         fldValue = LPArray.addValueToArray1D(fldValue, elementsDev[1].getMethodName());     
+        fldName = LPArray.addValueToArray1D(fldName, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         fldValue = LPArray.addValueToArray1D(fldValue, elementsDev[1].getLineNumber());
         
         for (Integer iNumFields=0;iNumFields<fields.length;iNumFields++){
             if ( (fields[iNumFields]!=null) && (values[iNumFields]!=null) ){
@@ -536,8 +518,8 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         
         String[] getFilterFldName = new String[0];
         Object[] getFilterFldValue = new Object[0];    
-        getFilterFldName = LPArray.addValueToArray1D(getFilterFldName, JAVADOC_CLASS_FLDNAME);        getFilterFldValue = LPArray.addValueToArray1D(getFilterFldValue, elementsDev[1].getClassName()); 
-        getFilterFldName = LPArray.addValueToArray1D(getFilterFldName, JAVADOC_METHOD_FLDNAME);       getFilterFldValue = LPArray.addValueToArray1D(getFilterFldValue, elementsDev[1].getMethodName());     
+        getFilterFldName = LPArray.addValueToArray1D(getFilterFldName, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);        getFilterFldValue = LPArray.addValueToArray1D(getFilterFldValue, elementsDev[1].getClassName()); 
+        getFilterFldName = LPArray.addValueToArray1D(getFilterFldName, ApiMessageReturn.JAVADOC_METHOD_FLDNAME);       getFilterFldValue = LPArray.addValueToArray1D(getFilterFldValue, elementsDev[1].getMethodName());     
         currField = "class_version";
         Integer specialFieldIndex = Arrays.asList(fldName).indexOf(currField);
         if (specialFieldIndex==-1){return;}
@@ -547,14 +529,14 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         if (specialFieldIndex==-1){return;}
         getFilterFldName = LPArray.addValueToArray1D(getFilterFldName, currField);      getFilterFldValue = LPArray.addValueToArray1D(getFilterFldValue, fldValue[specialFieldIndex]);     
         
-        String[] getFields = new String[] {"id",JAVADOC_LINE_FLDNAME,"last_update_on","created_on"};        
+        String[] getFields = new String[] {"id",ApiMessageReturn.JAVADOC_LINE_FLDNAME,"last_update_on","created_on"};        
         Object[][] diagnoses = Rdbms.getRecordFieldsByFilter(schemaName, tableName, getFilterFldName, getFilterFldValue, getFields);
         if (LAB_FALSE.equalsIgnoreCase(diagnoses[0][0].toString())){        
             Rdbms.insertRecordInTable(schemaName, tableName, fldName, fldValue);
         }else{
             String[] fieldsUpdate = new String[0];
             Object[] fieldsUpdateValue = new Object[0];
-            currField = JAVADOC_LINE_FLDNAME;
+            currField = ApiMessageReturn.JAVADOC_LINE_FLDNAME;
             if (elementsDev[1].getLineNumber()!=(Integer) fldValue[Arrays.asList(fldName).indexOf(currField)]){
                 fieldsUpdate = LPArray.addValueToArray1D(fieldsUpdate, currField);        fieldsUpdateValue = LPArray.addValueToArray1D(fieldsUpdateValue, elementsDev[1].getLineNumber());                 
             }
@@ -768,7 +750,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         Object[] diagnosis = Rdbms.existsRecord(procInstanceName, configTableName, configTableKeyFieldName, configTableKeyFielValue);
         if (!LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){            
            String[] configTableFilter = LPArray.joinTwo1DArraysInOneOf1DString(configTableKeyFieldName, configTableKeyFielValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
-           return trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MISSINGTABLECONFIGCODE.getErrorCode(), new Object[]{tableName, Arrays.toString(configTableFilter), procInstanceName, diagnosis[5]});
+           return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MISSINGTABLECONFIGCODE.getErrorCode(), new Object[]{tableName, Arrays.toString(configTableFilter), procInstanceName, diagnosis[5]});
         }    
 
         
@@ -811,35 +793,15 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
                         
                         Object specialFunctionReturn = LPNulls.replaceNull(method.invoke(this, fieldNames, fieldValues, procInstanceName));
                         if (specialFunctionReturn.toString().contains("ERROR")) {
-                            return (String[]) trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_RETURNEDERROR.getErrorCode(), new Object[]{currField, aMethod, specialFunctionReturn.toString()});
+                            return (String[]) ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_RETURNEDERROR.getErrorCode(), new Object[]{currField, aMethod, specialFunctionReturn.toString()});
                         }
                     } catch (NoSuchMethodException | SecurityException|IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                        return (String[]) trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new Object[]{currField, ex.getCause(), ex.getMessage()});
+                        return (String[]) ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new Object[]{currField, ex.getCause(), ex.getMessage()});
                     }
             }
         }         
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFieldName.replace("\\|", ", "));
-        return (String[]) trapMessage(LAB_TRUE, LpPlatformErrorTrapping.SPECIALFUNCTION_ALLSUCCESS.getErrorCode(), errorDetailVariables);                      
-    }
-/**
- * Get Class Method Name dynamically for the method that call this method.
- * @return String - Class method name
- */
-    public static String getClassMethodName(){
-        return Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName();
-    }
-    
-    private static final int CLIENT_CODE_STACK_INDEX;
-    
-    static{
-        int i = 0;
-        for (StackTraceElement ste : Thread.currentThread().getStackTrace()){
-            i++;
-            if (ste.getClassName().equals(LPPlatform.class.getName())){
-                break;
-            }
-        }
-        CLIENT_CODE_STACK_INDEX = i;
+        return (String[]) ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.SPECIALFUNCTION_ALLSUCCESS.getErrorCode(), errorDetailVariables);                      
     }
     
 /**
@@ -854,115 +816,6 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
     public static final Integer TRAP_MESSAGE_CODE_POSIC=4;
     public static final Integer TRAP_MESSAGE_MESSAGE_POSIC=6;
     
-    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables) {
-        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
-        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
-        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
-        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
-        className = className.replace(".java", "");
-        Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo, false);
-    }
-    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, Boolean isOptional) {
-        String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
-        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
-        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
-        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
-        className = className.replace(".java", "");
-        Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo, isOptional);
-    }
-    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language) {
-        return trapMessage(null, evaluation, msgCode, msgVariables, language);
-    }
-    public static Object[] trapMessage(String className, String evaluation, String msgCode, Object[] msgVariables, String language) {
-        if (className==null)
-            className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
-        String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
-        String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
-        Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
-        className = className.replace(".java", "");
-        Object[] callerInfo=new Object[]{className, classFullName, methodName, lineNumber};
-        return trapMessage(evaluation, msgCode, msgVariables, language, callerInfo, false);
-    }
-    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language, Object[] callerInfo,  Boolean isOptional) {
-        if (LPArray.valueInArray(breakPointArray, msgCode))
-            System.out.println("I'm "+msgCode);
-        if (callerInfo==null){
-            String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
-            String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
-            String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
-            Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
-            className = className.replace(".java", "");
-            callerInfo=new Object[]{className, classFullName, methodName, lineNumber};            
-        }
-        String errorDetail = "";
-        Object[] fldValue = new Object[7];
-        Boolean errorCodeFromBundle = true;
-        String errorCodeText="";
-        String className=callerInfo[0].toString();
-        String classFullName=callerInfo[1].toString(); 
-        String methodName=callerInfo[2].toString();
-        Integer lineNumber=-999;
-        if (callerInfo.length>3)
-            lineNumber = Integer.valueOf(callerInfo[3].toString());
-        String propertiesFilePrefix="";
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))
-            propertiesFilePrefix=LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+className;
-        else
-            propertiesFilePrefix=CONFIG_FILES_ERRORTRAPING;
-        if (language==null)language=GlobalVariables.DEFAULTLANGUAGE;
-        errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, className+"_"+msgCode, language, callerInfo, isOptional);
-        if (errorCodeText.length()==0){errorCodeText = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, propertiesFilePrefix, null, msgCode, language, callerInfo, isOptional);}
-        if (errorCodeText.length()==0){errorCodeText = msgCode; errorCodeFromBundle=false;}
-        if (!errorCodeFromBundle){
-            errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file, class="+className+" msgCode="+msgCode+") ";
-            if (msgVariables!=null)errorDetail=errorDetail+Arrays.toString(msgVariables);
-            if ( (msgVariables!=null) &&  msgVariables.length>0){
-                for (int iVarValue=1; iVarValue<=msgVariables.length; iVarValue++){
-                    errorDetail = errorDetail.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgVariables[iVarValue-1]).toString());
-                }
-            }            
-        }else{
-            errorDetail=errorCodeText;
-            //errorDetail = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode, language, callerInfo, false);
-            if (errorDetail.length()==0){errorDetail = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode, language, callerInfo, true);}
-            if (errorDetail==null || errorDetail.length()==0 ){
-                if (msgVariables.length>0){errorDetail =msgVariables[0].toString();}else{errorDetail="";}
-            }else{
-                if (msgVariables!=null){
-                    for (int iVarValue=1; iVarValue<=msgVariables.length; iVarValue++){
-                        errorDetail = errorDetail.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgVariables[iVarValue-1]).toString());
-                    }
-                }
-            }
-        }
-        fldValue[TRAP_MESSAGE_EVALUATION_POSIC] = evaluation; 
-        fldValue[1] = classFullName + "." + methodName;
-        fldValue[2] = "-999";
-        fldValue[3] = "Code line " + lineNumber.toString();
-        fldValue[TRAP_MESSAGE_CODE_POSIC] = msgCode;
-        fldValue[5] = errorCodeText;
-        fldValue[TRAP_MESSAGE_MESSAGE_POSIC] = errorDetail;
-         return fldValue;
-  }
-    
-    /**
-     *
-     * @param errorArray
-     * @return
-     */
-    public static JSONObject trapErrorMessageJSON(Object[] errorArray) {               
-        JSONObject errorJson = new JSONObject();
-            errorJson.put(JSON_TAG_ERR_MSG_EVALUATION, errorArray[0]);
-            errorJson.put(JSON_TAG_ERR_MSG_CLSS, errorArray[1]);
-            errorJson.put(JSON_TAG_ERR_MSG_CLSS_VERSION, errorArray[2]);
-            errorJson.put(JSON_TAG_ERR_MSG_CLSS_LINE, errorArray[3]);
-            errorJson.put(JSON_TAG_ERR_MSG_CLSS_ERR_CODE, errorArray[4]);
-            errorJson.put(JSON_TAG_ERR_MSG_CLSS_ERR_CODE_TEXT, errorArray[5]);
-            errorJson.put(JSON_TAG_ERR_MSG_CLSS_ERR_DETAIL, errorArray[6]);
-        return errorJson;
-    }
     
     /**
      *
@@ -1063,11 +916,11 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         String[] enableRuleValues=enableValuesStr.split("\\|");
         String ruleValue=Parameter.getBusinessRuleProcedureFile(procName, fileSchemaRepository, ruleName);
         if (ruleValue.length()==0) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND.getErrorCode(), null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND.getErrorCode(), null);
         for (String curVal: enableRuleValues){
             if (curVal.equalsIgnoreCase(ruleValue))
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, LpPlatformErrorTrapping.RULE_NAME_VALUE.getErrorCode(), new Object[]{ruleName, ruleValue});        
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformErrorTrapping.RULE_NAME_VALUE.getErrorCode(), new Object[]{ruleName, ruleValue});        
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.RULE_NAME_VALUE.getErrorCode(), new Object[]{ruleName, ruleValue});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.RULE_NAME_VALUE.getErrorCode(), new Object[]{ruleName, ruleValue});
     }
 }

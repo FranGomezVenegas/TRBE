@@ -20,6 +20,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User 
@@ -57,11 +58,11 @@ public class DataInspectionLotDecision {
     
     public Object[] decisionTypePasses(String lotName, String decision, String[] dataLotFlds, Object[] lotInfo, String[] configLotDecFlds, Object[] configLotDecInfo){
         String decisionsList=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.FLD_DECISIONS_LIST.getName())].toString();
-        if (decisionsList==null || decisionsList.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "NoDecisionsListDefined", null);
+        if (decisionsList==null || decisionsList.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "NoDecisionsListDefined", null);
         if (LPArray.valueInArray(decisionsList.split("\\|"), decision)) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lotDecision_notAcceptedValue", new Object[]{decision, Arrays.toString(decisionsList.split("\\|")), lotName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lotDecision_notAcceptedValue", new Object[]{decision, Arrays.toString(decisionsList.split("\\|")), lotName});
     }
     
     public Object[] sampleAndTestCheck(String lotName, String templateName, Integer templateVersion, String decision, String[] dataLotFlds, Object[] lotInfo, String[] configLotDecFlds, Object[] configLotDecInfo){
@@ -70,7 +71,7 @@ public class DataInspectionLotDecision {
         String testRevisionRequired=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.FLD_SAMPLE_ANALYSIS_REVISION_REQUIRED.getName())].toString();
         String sampleRevisionRequired=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.FLD_SAMPLE_REVISION_REQUIRED.getName())].toString();
         if ((testRevisionRequired==null || !Boolean.valueOf(testRevisionRequired)) && (sampleRevisionRequired==null || !Boolean.valueOf(sampleRevisionRequired)) ) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "NoDecisionsListDefined", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "NoDecisionsListDefined", null);
         else{
             String[] sampleAndSampleAnalysisFlds=new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_STATUS.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_STATUS.getName()};
             String sampleStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
@@ -82,18 +83,18 @@ public class DataInspectionLotDecision {
             if (Boolean.valueOf(testRevisionRequired)){            
                 Object[] sampleAnalysisStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_STATUS.getName()));
                 for (Object curSmpAnaStatus: sampleAnalysisStatuses){
-                    if (curSmpAnaStatus==null || curSmpAnaStatus.toString().length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lotHasOneSampleAnalysisWithNoStatus", null);
-                    if (!sampleStatusReviewed.equalsIgnoreCase(curSmpAnaStatus.toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lotHasNotReviewedSampleAnalysis", new Object[]{lotName, procInstanceName});
+                    if (curSmpAnaStatus==null || curSmpAnaStatus.toString().length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lotHasOneSampleAnalysisWithNoStatus", null);
+                    if (!sampleStatusReviewed.equalsIgnoreCase(curSmpAnaStatus.toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lotHasNotReviewedSampleAnalysis", new Object[]{lotName, procInstanceName});
                 }
             }
             if (Boolean.valueOf(sampleRevisionRequired)){            
                 Object[] sampleStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_STATUS.getName()));
                 for (Object curSmpStatus: sampleStatuses){
-                    if (curSmpStatus==null || curSmpStatus.toString().length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lotHasOneSampleWithNoStatus", null);
-                    if (!sampleStatusReviewed.equalsIgnoreCase(curSmpStatus.toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "lotHasNotReviewedSamples", null);
+                    if (curSmpStatus==null || curSmpStatus.toString().length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lotHasOneSampleWithNoStatus", null);
+                    if (!sampleStatusReviewed.equalsIgnoreCase(curSmpStatus.toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lotHasNotReviewedSamples", null);
                 }
             }
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
         }
         //return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
     }
@@ -123,7 +124,7 @@ public class DataInspectionLotDecision {
                 lotFieldName, lotFieldValue);
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD.getErrorCode(), errorDetailVariables);
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD.getErrorCode(), errorDetailVariables);
             }                                
         }
         Object[] fieldsOnLogLot = LPArray.joinTwo1DArraysInOneOf1DString(lotFieldName, lotFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
@@ -134,8 +135,8 @@ public class DataInspectionLotDecision {
             LotAudit lotAudit = new LotAudit();            
             lotAudit.lotAuditAdd(InspLotRMAPIEndpoints.LOT_TAKE_DECISION.getAuditActionName(), 
                     TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, fieldsOnLogLot, null);
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "LotDecisionTaken", new Object[]{lotName, decision, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "LotDecisionTaken", new Object[]{lotName, decision, procInstanceName});
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
     }
 }

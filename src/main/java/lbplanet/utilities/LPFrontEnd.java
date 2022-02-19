@@ -23,6 +23,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.LANGUAGE_ALL_LANGUAGES;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -145,8 +146,8 @@ public class LPFrontEnd {
         Object [] errorMsgEn=null;
         Object [] errorMsgEs=null;
         if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
-            errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "en");
-            errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "es");
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "en");
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "es");
             String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
             String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
             errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
@@ -167,11 +168,11 @@ public class LPFrontEnd {
         Object [] errorMsgEn=null;
         Object [] errorMsgEs=null;
         if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
-            errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "en");
-            errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "es");
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "en");
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "es");
         }else{
-            errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
-            errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
         }
         String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
         String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
@@ -217,8 +218,8 @@ public class LPFrontEnd {
             Object[] msgArg3=new Object[]{};
             if (mainMessage[0].length>2)
                 msgArg3=(Object[]) mainMessage[0][2];
-            errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
-            errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
             errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
             errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();                        
         }else{

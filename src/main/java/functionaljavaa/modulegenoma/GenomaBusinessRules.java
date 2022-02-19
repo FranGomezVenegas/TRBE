@@ -12,6 +12,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -69,7 +70,7 @@ public final class GenomaBusinessRules {
         
         String propertyEntryValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, GenomaBusnessRules.SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT.getAreaName(), GenomaBusnessRules.SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT.getTagName());        
 
-        if (propertyEntryValue.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "", null);
+        if (propertyEntryValue.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "", null);
         String[] propertyEntryValueArr=propertyEntryValue.split("\\|");
         StringBuilder specialFieldsPresent=new StringBuilder();
         for (String curFldToCheck: fieldsToCheck){
@@ -78,8 +79,8 @@ public final class GenomaBusinessRules {
                 specialFieldsPresent.append(curFldToCheck);
             }                  
         }
-        if (specialFieldsPresent.length()>0) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Special fields (<*1*>) are present and they are not allowed by the generic update action.", new Object[]{specialFieldsPresent});
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "", null);
+        if (specialFieldsPresent.length()>0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Special fields (<*1*>) are present and they are not allowed by the generic update action.", new Object[]{specialFieldsPresent});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "", null);
     }
     
 }

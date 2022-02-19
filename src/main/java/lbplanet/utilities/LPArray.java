@@ -40,7 +40,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static lbplanet.utilities.LPDate.stringFormatToLocalDateTime;
-import static lbplanet.utilities.LPPlatform.trapMessage;
+import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 
 /**
@@ -139,7 +139,7 @@ if (1==1) return fieldValue;
                     String errorCode = ERRORTRAPPING_EXCEPTION;
                     Object[] errorDetailVariables = new Object[0];
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, e.getMessage());
-                    return trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
                 }
             }
         }
@@ -820,7 +820,7 @@ if (1==1) return fieldValue;
            errorCode = "DataSample_FieldArraysDifferentSize";
            errorDetailVariables = addValueToArray1D(errorDetailVariables, Arrays.toString(arrayA));
            errorDetailVariables = addValueToArray1D(errorDetailVariables, Arrays.toString(arrayB));
-           return (String[]) LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);           
+           return (String[]) ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);           
         }else{
             diagnoses[0]=LPPlatform.LAB_TRUE;
         }    
@@ -842,7 +842,7 @@ if (1==1) return fieldValue;
            errorCode = "LabPLANETArray_getColumnFromArray2D_ColNotFound";
            errorDetailVariables = (String[]) addValueToArray1D(errorDetailVariables, array[0].length);
            errorDetailVariables = addValueToArray1D(errorDetailVariables, colNum.toString());
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);           
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);           
         }       
         for (Integer i=0;i<array.length;i++){
             diagnoses=addValueToArray1D(diagnoses, array[i][colNum]);

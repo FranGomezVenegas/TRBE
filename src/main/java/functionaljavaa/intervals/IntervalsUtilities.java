@@ -14,6 +14,7 @@ import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPDate.SecondsInDateRange;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -36,31 +37,31 @@ public class IntervalsUtilities {
         String[] intervalInfoArr=intervalInfo[0][0].toString().split("\\|");
         Date addIntervalToGivenDate = LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), intervalInfoArr[0], Integer.parseInt(intervalInfoArr[1]));        
         if (addIntervalToGivenDate==null)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "IntervalNotPossible <*1*>", new Object[]{intervalInfo[0][0].toString()});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "IntervalNotPossible <*1*>", new Object[]{intervalInfo[0][0].toString()});
         return new Object[]{LPPlatform.LAB_TRUE, addIntervalToGivenDate};
     }
     
     private static Object[] intervalChecker(String val){
-        if (val==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "formatIsNull", null);
+        if (val==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "formatIsNull", null);
         String[] valArr=val.split("\\|");
-        if (valArr.length!=2) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "wrongFormat", null);
+        if (valArr.length!=2) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "wrongFormat", null);
         LPDate.IntervalTypes iTypes=null;
         try{
             iTypes = LPDate.IntervalTypes.valueOf(valArr[0].toUpperCase());
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
         }catch(Exception e){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "wrongIntervalType <*1*>, Accepted values: <*2*>", 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "wrongIntervalType <*1*>, Accepted values: <*2*>", 
                 new Object[]{LPPlatform.LAB_FALSE,valArr[0], Arrays.toString(LPDate.IntervalTypes.values())});
         }        
     }
     public static Object[] isTheIntervalIntoTheDatesRange(long interval, LocalDateTime startDate, LocalDateTime endDate){
-        if (interval<=0) return LPArray.addValueToArray1D(LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "intervalValueIsNegativeOrZero", null), -1);
+        if (interval<=0) return LPArray.addValueToArray1D(ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "intervalValueIsNegativeOrZero", null), -1);
         long seconds = SecondsInDateRange(startDate, endDate);               
         int compareTo = Integer.valueOf((int) seconds).compareTo((int) interval);
         //if (secondsInDateRange.interval);
         if (compareTo==1)
-            return LPArray.addValueToArray1D(LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not", null), seconds);
+            return LPArray.addValueToArray1D(ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "not", null), seconds);
         else
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "yes", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "yes", null);
     }
 }

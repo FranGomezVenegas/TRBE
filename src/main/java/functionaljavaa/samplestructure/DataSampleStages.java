@@ -34,11 +34,11 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import static lbplanet.utilities.LPPlatform.trapMessage;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -214,7 +214,7 @@ public enum SampleStageErrorTrapping{
         String sampleCurrStage=sampleInfo[0][0].toString();
         String sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName());
         if (LPArray.valuePosicInArray(sampleStagesActionAutoMoveToNext.split("\\|"), actionName)==-1)
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleStageErrorTrapping.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT.getErrorCode(), new Object[]{actionName, procInstanceName});        
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleStageErrorTrapping.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT.getErrorCode(), new Object[]{actionName, procInstanceName});        
         Object[] moveDiagn=moveToNextStage(sampleId, sampleCurrStage,null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
             dataSampleStagesTimingCapture(sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 
@@ -259,7 +259,7 @@ public enum SampleStageErrorTrapping{
         //    method = getClass().getDeclaredMethod(functionName, paramTypes);
             method = ProcedureSampleStage.class.getDeclaredMethod(functionName, paramTypes);
         } catch (NoSuchMethodException | SecurityException ex) {
-                return trapMessage(LPPlatform.LAB_FALSE, "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION", new Object[]{ex.getMessage()});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION", new Object[]{ex.getMessage()});
         }
         Object specialFunctionReturn=null;      
         try { 
@@ -268,7 +268,7 @@ public enum SampleStageErrorTrapping{
             Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
         }
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("ERROR")) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecialFunctionReturnedERROR", new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecialFunctionReturnedERROR", new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("FALSE")) ){
             String errorCode=specialFunctionReturn.toString();
             errorCode=LPNulls.replaceNull(specialFunctionReturn).toString().replace(LPPlatform.LAB_FALSE, "");
@@ -279,7 +279,7 @@ public enum SampleStageErrorTrapping{
             ResponseMessages messages = instanceForActions.getMessages();
             messages.addMainForError(errorCodeArr[0], msgVariables);
             
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{errorCode});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{errorCode});
         }
         return new Object[]{specialFunctionReturn};
         }
@@ -327,9 +327,9 @@ public enum SampleStageErrorTrapping{
     public Object[] dataSampleStagesTimingCapture(Integer sampleId, String currStage, String phase) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         if (!this.isSampleStagesTimingCaptureEnable)
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getTagName(), procInstanceName});
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getTagName(), procInstanceName});
         if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, procInstanceName});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, procInstanceName});
         if (SampleStageTimingCapturePhases.START.toString().equalsIgnoreCase(phase)){
             return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
                     new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()}, 
@@ -342,7 +342,7 @@ public enum SampleStageErrorTrapping{
                     new Object[]{sampleId, currStage });            
             return updateRecordFieldsByFilter;
         }else{
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The phase <*1*> is not one of the recognized by the system, <*2*>", 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The phase <*1*> is not one of the recognized by the system, <*2*>", 
                 new Object[]{phase, Arrays.toString(new String[]{SampleStageTimingCapturePhases.START.toString(), SampleStageTimingCapturePhases.END.toString()})});
         }
     }

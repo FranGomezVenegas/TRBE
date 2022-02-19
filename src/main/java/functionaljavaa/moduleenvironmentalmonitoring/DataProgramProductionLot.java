@@ -15,6 +15,7 @@ import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -55,7 +56,7 @@ public class DataProgramProductionLot{
         Object[] batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProductionLot.TBL.getName(), 
                 new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(batchExists[0].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode(), new Object[]{lotName, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode(), new Object[]{lotName, procInstanceName});
             //return LPArray.addValueToArray1D(trapMessage, new Object[]{lotName, procInstanceName});
         }
         
@@ -64,7 +65,7 @@ public class DataProgramProductionLot{
         }        
         if (fieldName==null)fieldName=new String[0];
         for (String curFld: fieldName){
-          if (curFld.length()>0 && LPArray.valuePosicInArray(tblFlds, curFld)==-1)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, 
+          if (curFld.length()>0 && LPArray.valuePosicInArray(tblFlds, curFld)==-1)return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
                   ProductionLotErrorTrapping.PRODUCTIONLOT_FIELD_NOT_FOUND.getErrorCode(), new Object[]{curFld, lotName, Arrays.toString(fieldName), Arrays.toString(fieldValue), procInstanceName});
         }
         fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName());

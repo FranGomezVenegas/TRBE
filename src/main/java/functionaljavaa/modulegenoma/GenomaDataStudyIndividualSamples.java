@@ -15,6 +15,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
@@ -41,9 +42,9 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
         if (devMode){
             StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
             javaDocLineName = "BEGIN";
-            javaDocFields = LPArray.addValueToArray1D(javaDocFields, LPPlatform.JAVADOC_LINE_FLDNAME);
+            javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
             javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);
-            javaDocFields = LPArray.addValueToArray1D(javaDocFields, LPPlatform.JAVADOC_CLASS_FLDNAME);
+            javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);
             javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersionProj);
             LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
         }    
@@ -59,9 +60,9 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
         if (devMode){
             StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
             javaDocLineName = "CHECK sampleFieldName and sampleFieldValue match in length";
-            javaDocFields = LPArray.addValueToArray1D(javaDocFields, LPPlatform.JAVADOC_LINE_FLDNAME);
+            javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
             javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);
-            javaDocFields = LPArray.addValueToArray1D(javaDocFields, LPPlatform.JAVADOC_CLASS_FLDNAME);
+            javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);
             javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersionProj);
             LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
         }    
@@ -81,16 +82,16 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
         if (devMode){
             StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
             javaDocLineName = "CHECK sampleFieldName and sampleFieldValue match in length";
-            javaDocFields = LPArray.addValueToArray1D(javaDocFields, LPPlatform.JAVADOC_LINE_FLDNAME);
+            javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
             javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);
-            javaDocFields = LPArray.addValueToArray1D(javaDocFields, LPPlatform.JAVADOC_CLASS_FLDNAME);
+            javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);
             javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersionProj);
             LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
         }    
         Object[] diagnosesProj = new Object[0];
         if (!devMode){        
             if (LPArray.duplicates(fieldsName)){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Detected any field duplicated in FieldName, the values are: <*1*>", new String[]{Arrays.toString(fieldsName)});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Detected any field duplicated in FieldName, the values are: <*1*>", new String[]{Arrays.toString(fieldsName)});
             }
 
             StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -108,7 +109,7 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
                 }        
             }            
             if (mandatoryFieldsMissingBuilder.length()>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, GenomaDataProject.GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS.getErrorCode(), new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, GenomaDataProject.GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS.getErrorCode(), new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
             }        
     /*        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){	
@@ -199,9 +200,9 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
         if (devMode){
             StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
             javaDocLineName = "END";
-            Integer specialFieldIndex = Arrays.asList(javaDocFields).indexOf(LPPlatform.JAVADOC_LINE_FLDNAME);
+            Integer specialFieldIndex = Arrays.asList(javaDocFields).indexOf(ApiMessageReturn.JAVADOC_LINE_FLDNAME);
             if (specialFieldIndex==-1){
-                javaDocFields = LPArray.addValueToArray1D(javaDocFields, LPPlatform.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         
+                javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         
             }else{    
                 javaDocValues[specialFieldIndex] = javaDocLineName;             
             }
@@ -251,7 +252,7 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
 
         Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName(), fieldsName);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyIndividualSample.TBL.getName(), 
                 fieldsName, fieldsValue, 
                 new String[]{TblsGenomaData.StudyIndividualSample.FLD_STUDY.getName(), TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName(), TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName()}, 

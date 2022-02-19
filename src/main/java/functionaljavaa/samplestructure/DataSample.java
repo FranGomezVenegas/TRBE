@@ -30,9 +30,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
 import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
-import static lbplanet.utilities.LPPlatform.trapMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -135,12 +135,12 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                     new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
                     new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion]});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
-               return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_SPEC_CONFIG_CODE.getErrorCode(), new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion], procInstanceName});    
+               return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_SPEC_CONFIG_CODE.getErrorCode(), new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion], procInstanceName});    
         }else{
             if (fieldIndexSpecCode==-1)
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_FIELDNOTFOUND.getErrorCode(), new Object[]{TblsData.Sample.FLD_SPEC_CODE.getName()});    
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_FIELDNOTFOUND.getErrorCode(), new Object[]{TblsData.Sample.FLD_SPEC_CODE.getName()});    
             else
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_FIELDNOTFOUND.getErrorCode(), new Object[]{TblsData.Sample.FLD_SPEC_CODE_VERSION.getName()});    
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_FIELDNOTFOUND.getErrorCode(), new Object[]{TblsData.Sample.FLD_SPEC_CODE_VERSION.getName()});    
         }
         mandatoryFieldsValue = new Object[mandatoryFields.length];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -157,12 +157,12 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), new Object[]{mandatoryFieldsMissingBuilder.toString()});    
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), new Object[]{mandatoryFieldsMissingBuilder.toString()});    
         }                       
         Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.Sample.TBL.getName(), 
                 new String[]{TblsCnfg.Sample.FLD_CODE.getName(), TblsCnfg.Sample.FLD_CODE_VERSION.getName()}, new Object[]{sampleTemplate, sampleTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_CONFIG_CODE.getErrorCode(), new Object[]{sampleTemplate, sampleTemplateVersion, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), diagnosis[5]});    
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_CONFIG_CODE.getErrorCode(), new Object[]{sampleTemplate, sampleTemplateVersion, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), diagnosis[5]});    
         String[] specialFields = labIntChecker.getStructureSpecialFields(sampleLevel+DataSampleBusinessRules.SUFFIX_SAMPLESTRUCTURE.getTagName());
         String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(sampleLevel+DataSampleBusinessRules.SUFFIX_SAMPLESTRUCTURE.getTagName());
         Integer specialFieldIndex = -1;
@@ -178,7 +178,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                     Class<?>[] paramTypes = {Rdbms.class, String[].class, String.class, String.class, Integer.class};
                     method = getClass().getDeclaredMethod(aMethod, paramTypes);
                 } catch (NoSuchMethodException | SecurityException ex) {
-                    return trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_EXCEPTION.getErrorCode(), new Object[]{ex.getMessage()});
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_EXCEPTION.getErrorCode(), new Object[]{ex.getMessage()});
                 }
                 Object specialFunctionReturn=null;      
                 try {
@@ -187,7 +187,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                     Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("ERROR")) )
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR.getErrorCode(), new Object[]{currField, aMethod, LPNulls.replaceNull(specialFunctionReturn)});                            
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR.getErrorCode(), new Object[]{currField, aMethod, LPNulls.replaceNull(specialFunctionReturn)});                            
             }
         }        
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.Sample.FLD_CONFIG_CODE.getName(), TblsData.Sample.FLD_CONFIG_CODE_VERSION.getName(),
@@ -216,7 +216,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         for (int iNumSamplesToLog=0; iNumSamplesToLog<numSamplesToLog; iNumSamplesToLog++ ){        
             diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue);
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD.getErrorCode(), new Object[]{diagnoses[diagnoses.length-2]});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD.getErrorCode(), new Object[]{diagnoses[diagnoses.length-2]});
             }                                
 
             diagnoses = LPArray.addValueToArray1D(diagnoses, diagnoses[diagnoses.length-1]);
@@ -258,10 +258,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                                                     new String[]{TblsData.Sample.FLD_STATUS.getName(), TblsData.Sample.FLD_RECEIVED_BY.getName(), TblsData.Sample.FLD_RECEIVED_ON.getName(), 
                                                         TblsData.Sample.FLD_STATUS.getName()});
         if (LPPlatform.LAB_FALSE==currSampleStatus[0][0]){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{sampleId, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{sampleId, procInstanceName});
         }
         if ( (currSampleStatus[0][1]!=null) && (currSampleStatus[0][1].toString().length()>0) ) { 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_RECEIVED.getErrorCode(), new Object[]{sampleId, currSampleStatus[0][2]});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_RECEIVED.getErrorCode(), new Object[]{sampleId, currSampleStatus[0][2]});
         }
         String currentStatus = (String) currSampleStatus[0][0];
 
@@ -291,9 +291,9 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),  
                     new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleAnalysisFieldName);
             if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.READY_FOR_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});            
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleErrorTrapping.READY_FOR_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});            
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.NOT_IMPLEMENTED.getErrorCode(), new Object[]{sampleId, procInstanceName});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.NOT_IMPLEMENTED.getErrorCode(), new Object[]{sampleId, procInstanceName});
         //return diagnoses;
     }    
     /**
@@ -312,7 +312,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),  
                     new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldName);
             if ("TRUE".equalsIgnoreCase(sampleInfo[0][0].toString()))
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_READY_FOR_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_READY_FOR_REVISION.getErrorCode(), new Object[]{sampleId, procInstanceName});
         
             diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, 
                     new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
@@ -348,14 +348,14 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))return LPArray.array2dTo1d(sampleInfo);
         if (LPNulls.replaceNull(sampleInfo[0][0]).toString().length()>0){
             procReqSession.getMessages().addMainForError(DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
         }
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.Sample.FLD_SAMPLER.getName()});
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, new Object[]{token.getUserName()});
 
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.SETSAMPLINGDATE.getSuccessMessageCode(), new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.SETSAMPLINGDATE.getSuccessMessageCode(), new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             SampleAudit smpAudit = new SampleAudit();
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SET_SAMPLING_DATE.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
                     sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
@@ -375,12 +375,12 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))return LPArray.array2dTo1d(sampleInfo);
         if (!Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][2]).toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLINGDATEEND_NOTREQUIRED_ASTOPERFORMTHEACTION.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLINGDATEEND_NOTREQUIRED_ASTOPERFORMTHEACTION.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
         if (LPNulls.replaceNull(sampleInfo[0][0]).toString().length()==0)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLINGDATE_REQUIRED_FOR_SAMPLINGDATEEND.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLINGDATE_REQUIRED_FOR_SAMPLINGDATEEND.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
         if (LPNulls.replaceNull(sampleInfo[0][1]).toString().length()>0){
             procReqSession.getMessages().addMainForError(DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE.getErrorCode(), new Object[]{sampleId, sampleInfo[0][0]});                             
         }
         sampleFieldName = new String[]{TblsData.Sample.FLD_SAMPLING_DATE_END.getName(), TblsData.Sample.FLD_SAMPLER.getName()};
         Object[] sampleFieldValue = new Object[]{LPDate.getCurrentTimeStamp(), token.getUserName()};
@@ -388,7 +388,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
             sampleFieldName, sampleFieldValue, new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.SETSAMPLINGDATEEND.getSuccessMessageCode(), new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.SETSAMPLINGDATEEND.getSuccessMessageCode(), new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
 
             SampleAudit smpAudit = new SampleAudit();
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SET_SAMPLING_DATE_END.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
@@ -417,15 +417,15 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString())) return sampleCurrentInfo;
         String currentDateStr=LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString();
         if (currentDateStr==null || currentDateStr.length()==0)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDate_cannotBeAppliedForNullValue", new Object[]{sampleId, newDate});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDate_cannotBeAppliedForNullValue", new Object[]{sampleId, newDate});
         if (currentDateStr!=null && currentDateStr.length()>0){
             if (newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T"))))
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDate_sameSamplingDate", new Object[]{sampleId, newDate});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDate_sameSamplingDate", new Object[]{sampleId, newDate});
         }
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, 
             new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){            
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.CHANGESAMPLINGDATE.getSuccessMessageCode(), 
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.CHANGESAMPLINGDATE.getSuccessMessageCode(), 
                     new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             SampleAudit smpAudit = new SampleAudit();
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_CHANGE_SAMPLING_DATE.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
@@ -449,15 +449,15 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString())) return sampleCurrentInfo;
         String currentDateStr=LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString();
         if (currentDateStr==null || currentDateStr.length()==0)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDateEnd_cannotBeAppliedForNullValue", new Object[]{sampleId, newDate});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDateEnd_cannotBeAppliedForNullValue", new Object[]{sampleId, newDate});
         if (currentDateStr!=null && currentDateStr.length()>0){
             if (newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T"))))
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDateEnd_sameSamplingDate", new Object[]{sampleId, newDate});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDateEnd_sameSamplingDate", new Object[]{sampleId, newDate});
         }
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, 
             new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){            
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.CHANGESAMPLINGDATEEND.getSuccessMessageCode(), 
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.CHANGESAMPLINGDATEEND.getSuccessMessageCode(), 
                     new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             SampleAudit smpAudit = new SampleAudit();
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_CHANGE_SAMPLING_DATE_END.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
@@ -483,7 +483,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, 
                 new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){        
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.SAMPLINGCOMMENTADD.getSuccessMessageCode(), 
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.SAMPLINGCOMMENTADD.getSuccessMessageCode(), 
                 new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});                
             SampleAudit smpAudit = new SampleAudit();
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_RECEPTION_COMMENT_ADD.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
@@ -509,7 +509,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, 
                 new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.SAMPLINGCOMMENTREMOVE.getSuccessMessageCode(), 
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAPIParams.SampleAPIEndpoints.SAMPLINGCOMMENTREMOVE.getSuccessMessageCode(), 
                 new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});                
             SampleAudit smpAudit = new SampleAudit();
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_RECEPTION_COMMENT_REMOVE.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
@@ -569,7 +569,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){smpNewStatus=sampleStatusIncomplete;}
         else{smpNewStatus=sampleStatusComplete;}
         if (sampleInfo[0][0].toString().equalsIgnoreCase(smpNewStatus))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "noChangeRequired", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "noChangeRequired", null);
             diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
                 new String[]{TblsData.Sample.FLD_STATUS.getName()}, new Object[]{smpNewStatus},
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
@@ -645,7 +645,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_REVIEWED.toString(), TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, updFldName, updFldValue);                            
             }                        
         }else{
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_REVIEWABLE.getErrorCode(), 
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_REVIEWABLE.getErrorCode(), 
                 new Object[]{LPNulls.replaceNull(sampleId), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), currStatus});                       
         }
         return diagnoses;        
@@ -770,7 +770,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             if ( (sampleInfo[0][0]!=null) && (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) ) return LPArray.array2dTo1d(sampleInfo);
 
             if (sampleInfo[0][1]==null) 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.VOLUME_SHOULD_BE_GREATER_THAN_ZERO.getErrorCode(), 
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.VOLUME_SHOULD_BE_GREATER_THAN_ZERO.getErrorCode(), 
                     new Object[]{"null", sampleId, procInstanceName});                 
                       
             BigDecimal smpVolume = new BigDecimal(sampleInfo[0][0].toString());           
@@ -803,10 +803,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             token.getPersonName(), LPDate.getCurrentTimeStamp()});
         Object[] diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ALIQ.getTableName(), smpAliqFieldName, smpAliqFieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){            
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD.getErrorCode(), new Object[]{diagnoses[diagnoses.length-2]});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD.getErrorCode(), new Object[]{diagnoses[diagnoses.length-2]});
         }
         if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){            
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ALIQUOT_CREATED_BUT_ID_NOT_GOT.getErrorCode(), new Object[]{});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ALIQUOT_CREATED_BUT_ID_NOT_GOT.getErrorCode(), new Object[]{});
         }
         Integer aliquotId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
         Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(smpAliqFieldName, smpAliqFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
@@ -846,10 +846,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 return LPArray.array2dTo1d(aliquotInfo);}    
             for (String fv: mandatorySampleSubAliqFields){
                 if (LPArray.valuePosicInArray(smpSubAliqFieldName, fv) == -1) 
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLEASUBLIQUOTING_VOLUME_AND_UOM_REQUIRED.getErrorCode(), 
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLEASUBLIQUOTING_VOLUME_AND_UOM_REQUIRED.getErrorCode(), 
                         new Object[]{DataSampleBusinessRules.SAMPLEALIQUOTING_VOLUME_REQUIRED.getTagName(), Arrays.toString(smpSubAliqFieldName), aliquotId, procInstanceName});                
             }
-            if (aliquotInfo[0][1]==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.VOLUME_SHOULD_BE_GREATER_THAN_ZERO.getErrorCode(), 
+            if (aliquotInfo[0][1]==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.VOLUME_SHOULD_BE_GREATER_THAN_ZERO.getErrorCode(), 
                                                     new Object[]{"null", sampleId, procInstanceName});                
             sampleId = (Integer) aliquotInfo[0][0];
             BigDecimal aliqVolume = new BigDecimal(aliquotInfo[0][1].toString());           
@@ -886,7 +886,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             token.getPersonName(), LPDate.getCurrentTimeStamp()});
         Object[] diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ALIQ_SUB.getTableName(), smpSubAliqFieldName, smpSubAliqFieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD.getErrorCode(), new Object[]{diagnoses[diagnoses.length-2]});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD.getErrorCode(), new Object[]{diagnoses[diagnoses.length-2]});
         }
         Integer subaliquotId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
         Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(smpSubAliqFieldName, smpSubAliqFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
@@ -1012,7 +1012,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             if (prepRdQuery.getRow()>0){
                 return prepRdQuery.getString(1);
             }else{                
-                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"sample", "", procInstanceName});                         
+                ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), new Object[]{"sample", "", procInstanceName});                         
                 return null;
             }            
         } catch (SQLException ex) {

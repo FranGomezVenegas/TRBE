@@ -32,11 +32,11 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.LAB_FALSE;
-import static lbplanet.utilities.LPPlatform.trapMessage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import static trazit.session.ProcedureRequestSession.isTheProcActionEnabled;
 /**
  *
@@ -220,7 +220,7 @@ public class TestingRegressionUAT extends HttpServlet {
                     userProceduresList=userProceduresList.replace("[", "");
                     userProceduresList=userProceduresList.replace("]", "");        
                     if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName)){
-                        out.println(Arrays.toString(trapMessage(LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE.getErrorCode(), 
+                        out.println(Arrays.toString(ApiMessageReturn.trapMessage(LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE.getErrorCode(), 
                             new String[]{token.getUserName(), procInstanceName, userProceduresList})));
                         return;                    
                     }                

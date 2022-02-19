@@ -41,6 +41,7 @@ import org.json.simple.JSONArray;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 public class DbTestingLimitAndResult extends HttpServlet {
 
@@ -193,9 +194,9 @@ Integer currentLine=0;
                         if (specCodeVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "specCodeVersion");
                         if (methodVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "methodVersion");
                         if ((specCodeVersion==null && specCodeVersionStr==null) || (methodVersion==null && methodVersionStr==null))
-                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), fldsNull);
+                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), fldsNull);
                         else
-                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", fldsNull);
+                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", fldsNull);
                         resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");                    
                     }else{
                         Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
@@ -213,7 +214,7 @@ Integer currentLine=0;
                             ConfigSpecRule specRule = new ConfigSpecRule();
                             specRule.specLimitsRule(limitId, null);
                             if (!specRule.getRuleIsQualitative() && !specRule.getRuleIsQuantitative())
-                                resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "spec limit "+limitId+" not recognized as quantitative neither qualitative", null);                    
+                                resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "spec limit "+limitId+" not recognized as quantitative neither qualitative", null);                    
                             if (specRule.getRuleIsQualitative()){        
                               resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
                                       specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
@@ -233,7 +234,7 @@ Integer currentLine=0;
                                     if (requiresUnitsConversion && specUomName!=null && specUomName.length()>0){
                                         uom.convertValue(specUomName);
                                         if (!uom.getConvertedFine()) 
-                                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), "", schemaDataName});                  
+                                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), "", schemaDataName});                  
                                         else
                                             resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        
                                     }

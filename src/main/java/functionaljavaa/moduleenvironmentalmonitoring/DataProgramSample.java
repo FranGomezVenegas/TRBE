@@ -27,6 +27,7 @@ import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -108,7 +109,7 @@ public class DataProgramSample{
                 new Object[]{programName, programLocation}, 
                 specFldNames, true);            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0][0].toString()))
-               return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Program <*1*> or location <*2*> not found for procedure <*3*>", new Object[]{programName, programLocation, procInstanceName});    
+               return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Program <*1*> or location <*2*> not found for procedure <*3*>", new Object[]{programName, programLocation, procInstanceName});    
             for (int i=0;i<specFldNames.length;i++){
                 if (diagnosis[0][i]!=null && diagnosis[0][i].toString().length()>0){
                     Integer fieldPosic=LPArray.valuePosicInArray(fieldName, specFldNames[i]);
@@ -150,7 +151,7 @@ public class DataProgramSample{
         
         String samplerArea = programLocationPersonalInfo[0][1].toString();
         if ((samplerArea==null) || (samplerArea!=null && samplerArea.length()==0) ) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Personal Analysis required but not defined", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Personal Analysis required but not defined", null);
         String[] samplerAreas = samplerArea.split("\\|");
         Object[] newProjSample= new Object[0];
         for (String curArea: samplerAreas){
@@ -211,7 +212,7 @@ public class DataProgramSample{
                 new Object[]{sampleId, microorganismName},
                 new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgRow[0][0].toString())) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "microorganismNotFound", new  Object[]{microorganismName, sampleId});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "microorganismNotFound", new  Object[]{microorganismName, sampleId});
         Object[] diagnostic=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.SampleMicroorganism.TBL.getName(),
                 new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName(), TblsEnvMonitData.SampleMicroorganism.FLD_ID.getName()},
                 new Object[]{sampleId, microorganismName, sampleMicroOrgRow[0][0]});
@@ -259,7 +260,7 @@ public class DataProgramSample{
                 whereFieldNames, whereFieldValues, 
                 fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
         StringBuilder newSamplesLogged=new StringBuilder();
         Integer newSamplesCounter=0;
         for (Object[] curRecord: programCalendarDatePending){
@@ -278,7 +279,7 @@ public class DataProgramSample{
                 newSamplesLogged.append(" ").append(diagn[diagn.length-1].toString());
             }            
         }
-        if (newSamplesCounter>0) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Logged "+newSamplesCounter.toString()+" new samples. Ids: "+newSamplesLogged, new Object[]{});
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getName()+" not implemented yet!", new Object[]{});
+        if (newSamplesCounter>0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Logged "+newSamplesCounter.toString()+" new samples. Ids: "+newSamplesLogged, new Object[]{});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getName()+" not implemented yet!", new Object[]{});
     }
 }

@@ -16,6 +16,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -203,7 +204,7 @@ public class ConfigProgramCalendar {
               new Object[]{holidaysCalendarCode}, new String[]{TblsApp.HolidaysCalendarDate.ID.getName(), TblsApp.HolidaysCalendarDate.DATE.getName()});
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(holidaysCalendarDates[0][0].toString())){return LPArray.array2dTo1d(holidaysCalendarDates);}
       if (holidaysCalendarDates.length==0)
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_HOLIDAY_CALENDAR_EMPTY, new Object[]{holidaysCalendarCode});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_HOLIDAY_CALENDAR_EMPTY, new Object[]{holidaysCalendarCode});
 
       existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.ProgramCalendar.TBL.getName(), 
               new String[]{TblsEnvMonitConfig.ProgramCalendar.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName()}, 
@@ -239,7 +240,7 @@ public class ConfigProgramCalendar {
               }
           }                        
       }
-      return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, HOLIDAY_CALENDAR_ADDED, new Object[]{datesStr});
+      return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, HOLIDAY_CALENDAR_ADDED, new Object[]{datesStr});
     }
  
     /**
@@ -278,7 +279,7 @@ public class ConfigProgramCalendar {
                   startDate = Calendar.getInstance();
                   startDate.setTime(currDate);
               }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_START_DATE_CANNOT_BE_NULL, new Object[]{});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_START_DATE_CANNOT_BE_NULL, new Object[]{});
               }
           }
           if (endDate==null){
@@ -287,7 +288,7 @@ public class ConfigProgramCalendar {
                   endDate = Calendar.getInstance();
                   endDate.setTime(currDate);                
               }else{
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_END_DATE_CANNOT_BE_NULL, new Object[]{});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_END_DATE_CANNOT_BE_NULL, new Object[]{});
               }                
           }            
       }
@@ -299,7 +300,7 @@ public class ConfigProgramCalendar {
       StringBuilder datesStr = new StringBuilder();
       Object[] daysInRange = LPDate.getDaysInRange(startDate, endDate, daysOfWeek);  
       if (daysInRange.length==0){
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_NO_DAYS_IN_RANGE, new Object[]{daysOfWeek, startDate, endDate});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_NO_DAYS_IN_RANGE, new Object[]{daysOfWeek, startDate, endDate});
       }
       Object[] newProjSchedRecursive = null;
       newProjSchedRecursive = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.TBL.getName(), 
@@ -329,7 +330,7 @@ public class ConfigProgramCalendar {
           Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
             fieldNames, fieldValues);            
       }
-      return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, HOLIDAY_CALENDAR_ADDED, new Object[]{datesStr});
+      return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, HOLIDAY_CALENDAR_ADDED, new Object[]{datesStr});
     }
            
 

@@ -19,6 +19,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -33,7 +34,7 @@ public class ProcedureSampleStages {
                 SampleStageBusinessRules.SAMPLE_STAGE_TIMING_PROCEDURE_CONFIG_ENABLED.getTagName());        
         Boolean businessRuleIsEnable = Parameter.isTagValueOneOfEnableOnes(tagValue);
         if (!businessRuleIsEnable)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ruleDisabled", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "ruleDisabled", null);
         Object[][] sampleStageTimingCaptureInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
             new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName()},    
             new Object[]{sampleId, stage},
@@ -59,7 +60,7 @@ public class ProcedureSampleStages {
             return sampleStageProcInfo;
         String isStageMarkedAsEnabled=LPNulls.replaceNull(sampleStageProcInfo[0][LPArray.valuePosicInArray(getAllFieldNames(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableFields()), TblsProcedureConfig.StageTimingInterval.ENABLED.getName())]).toString();
         if (!Boolean.valueOf(isStageMarkedAsEnabled)) 
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "stageMarkedAsDisabled", null);
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "stageMarkedAsDisabled", null);
         String intvValue=LPNulls.replaceNull(sampleStageProcInfo[0][LPArray.valuePosicInArray(getAllFieldNames(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableFields()), TblsProcedureConfig.StageTimingInterval.INTERVAL_SECONDS.getName())]).toString();
         stageProcedureDeviationShouldBeCreated(sampleId, stageStartDate, LocalDateTime.now(), configCode, configVersion, stage, Integer.valueOf(intvValue));
         return new Object[]{LPPlatform.LAB_TRUE, Integer.valueOf(intvValue)};

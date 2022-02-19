@@ -20,6 +20,7 @@ import java.util.Arrays;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  * Class for anything related to analysis user method
  * @author Fran Gomez
@@ -253,7 +254,7 @@ public class UserMethod {
             }
             return getUserProfileNEW;                
         }catch(SQLException ex){
-            Object[] trpErr=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new String[]{ex.getMessage()});
+            Object[] trpErr=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new String[]{ex.getMessage()});
             return LPArray.array1dTo2d(trpErr, trpErr.length);            
         }
     }

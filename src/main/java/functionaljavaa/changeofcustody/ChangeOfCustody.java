@@ -19,6 +19,7 @@ import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author Administrator
@@ -102,9 +103,9 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
         String cocTableName = objectTable.toLowerCase()+"_coc";
         String currCustodian=token.getPersonName();
         if ((custodianCandidate==null) || (custodianCandidate.length()==0) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CUSTODIAN_CANDIDATE.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CUSTODIAN_CANDIDATE.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
         if (currCustodian.equalsIgnoreCase(custodianCandidate))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.SAME_CUSTODIAN.getErrorCode(), new Object[]{currCustodian, objectId, objectTable, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.SAME_CUSTODIAN.getErrorCode(), new Object[]{currCustodian, objectId, objectTable, procInstanceName});
 
         Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())) return changeOfCustodyEnable;
@@ -113,7 +114,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
                 new String[]{objectFieldName, TblsData.SampleCoc.FLD_STATUS.getName()},
                 new Object[]{objectId, cocStartChangeStatus});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.REQUEST_ALREADY_INCOURSE.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.REQUEST_ALREADY_INCOURSE.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable.toLowerCase(),
                 new String[]{TblsData.SampleCoc.FLD_STARTED_ON.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()},
                 new Object[]{LPDate.getCurrentTimeStamp(), custodianCandidate},
@@ -136,7 +137,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
             default:
                 break;
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodyErrorTrapping.REQUEST_STARTED.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodyErrorTrapping.REQUEST_STARTED.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
     }
 
     /**
@@ -177,7 +178,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
                 new Object[]{objectId, cocStartChangeStatus},
                 new String[]{"id", TblsData.SampleCoc.FLD_STATUS.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(startedProcessData[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CHANGE_IN_PROGRESS.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CHANGE_IN_PROGRESS.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
 
         String custodianCandidate = "";
         Integer recordId=null;
@@ -186,7 +187,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
             custodianCandidate = startedProcessData[0][2].toString();}
 
         if ( (startedProcessData[0][2]==null) || (!token.getUserName().equalsIgnoreCase(custodianCandidate)) )
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CUSTODIAN_CANDIDATE.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CUSTODIAN_CANDIDATE.getErrorCode(), new Object[]{objectId, objectTable, procInstanceName});
 
 
         String[] sampleFieldName=new String[]{TblsData.SampleCoc.FLD_STATUS.getName(), TblsData.SampleCoc.FLD_CONFIRMED_ON.getName() };
@@ -222,7 +223,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
             default:
                 break;
         }
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodyErrorTrapping.REQUEST_COMPLETED.getErrorCode(), new Object[]{procInstanceName, objectTable, objectId, actionName.toLowerCase()});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodyErrorTrapping.REQUEST_COMPLETED.getErrorCode(), new Object[]{procInstanceName, objectTable, objectId, actionName.toLowerCase()});
     }
 
     /**

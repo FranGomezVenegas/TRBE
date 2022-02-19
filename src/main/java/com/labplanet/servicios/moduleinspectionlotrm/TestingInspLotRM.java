@@ -31,6 +31,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -122,7 +123,7 @@ public class TestingInspLotRM extends HttpServlet {
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                 fileContentTable1Builder.append(clssSampleQueriesController.getRowArgsRows());                
                             }else{
-                                functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
+                                functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                 fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
                             }

@@ -14,6 +14,7 @@ import databases.TblsAppAudit;
 import databases.TblsDataAudit;
 import java.time.LocalDateTime;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 /**
  * Create one new app.app_session
@@ -27,7 +28,7 @@ public class LPSession {
         if (remoteAddrParts.length==1)
         remoteAddrParts = remoteAddr.split("\\:");
         if (remoteAddrParts.length<4)
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.WRONG_IP.getErrorCode(), new Object[]{remoteAddr});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.WRONG_IP.getErrorCode(), new Object[]{remoteAddr});
         Object[] existRecordBlackList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_BLACK_LIST.getTableName(), 
                 new String[]{TblsApp.IPBlackList.ACTIVE.getName(), TblsApp.IPBlackList.IP_VALUE1.getName(), 
                     "("+TblsApp.IPBlackList.IP_VALUE2.getName(), "OR "+TblsApp.IPBlackList.IP_VALUE2.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )",
@@ -35,7 +36,7 @@ public class LPSession {
                     "("+TblsApp.IPBlackList.IP_VALUE4.getName(), "OR "+TblsApp.IPBlackList.IP_VALUE4.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )"}, 
                 new Object[]{true, remoteAddrParts[0], remoteAddrParts[1], null, remoteAddrParts[2], null, remoteAddrParts[3]});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordBlackList[0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_IN_BLACK_LIST.getErrorCode(), new Object[]{remoteAddr});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_IN_BLACK_LIST.getErrorCode(), new Object[]{remoteAddr});
         
         Object[] existRecordWhiteList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(), 
                 new String[]{TblsApp.IPWhiteList.ACTIVE.getName()}, 
@@ -48,11 +49,11 @@ public class LPSession {
                     "("+TblsApp.IPWhiteList.IP_VALUE4.getName(), "OR "+TblsApp.IPWhiteList.IP_VALUE4.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )"}, 
                 new Object[]{true, remoteAddrParts[0], remoteAddrParts[1], null, remoteAddrParts[2], null, remoteAddrParts[3]});
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordWhiteList[0].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_NOTIN_WHITE_LIST.getErrorCode(), new Object[]{remoteAddr});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_NOTIN_WHITE_LIST.getErrorCode(), new Object[]{remoteAddr});
             }
         }
             
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "OK", new Object[]{remoteAddr});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "OK", new Object[]{remoteAddr});
     }
     /**
      *
@@ -159,7 +160,7 @@ public class LPSession {
             return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(), 
                       new String[]{TblsApp.AppSession.PROCEDURES.getName()}, new Object[]{procListValue}, 
                       new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId});
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>",new Object[]{processName, appSessionId} );
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>",new Object[]{processName, appSessionId} );
     }
 
     public static Object[] addAppSession(Integer appSessionId, String[] fieldsNamesToInsert){
