@@ -329,7 +329,7 @@ public class DataInstruments {
     public InternalMessage completeCalibration(String decision){
         InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
-        if (this.isDecommissioned)
+        if (this.isDecommissioned!=null && this.isDecommissioned)
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
