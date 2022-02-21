@@ -81,7 +81,7 @@ public class LPFrontEnd {
             isConnected = Rdbms.getRdbms().startRdbms(dbName);      
         if (!isConnected){      
             LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.ApiErrorTraping.PROPERTY_DATABASE_NOT_CONNECTED.getName(), null, null);                                                                
+                    LPPlatform.ApiErrorTraping.PROPERTY_DATABASE_NOT_CONNECTED.getErrorCode(), null, null);                                                                
         }  
         return isConnected;
     }

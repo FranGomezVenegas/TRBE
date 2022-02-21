@@ -220,7 +220,7 @@ public class TestingRegressionUAT extends HttpServlet {
                     userProceduresList=userProceduresList.replace("[", "");
                     userProceduresList=userProceduresList.replace("]", "");        
                     if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName)){
-                        out.println(Arrays.toString(ApiMessageReturn.trapMessage(LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE.getErrorCode(), 
+                        out.println(Arrays.toString(ApiMessageReturn.trapMessage(LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE, 
                             new String[]{token.getUserName(), procInstanceName, userProceduresList})));
                         return;                    
                     }                
@@ -240,7 +240,7 @@ public class TestingRegressionUAT extends HttpServlet {
                         }                            
                     }
                     if (actionsList!=null){
-                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getName(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getErrorCode(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language);              
                         return;
                     }
                 }

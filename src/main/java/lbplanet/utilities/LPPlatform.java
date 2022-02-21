@@ -73,18 +73,28 @@ public class LPPlatform {
     /**
      *
      */
-    public enum ApiErrorTraping{EXCEPTION_RAISED("exceptionRaised"), PROPERTY_DATABASE_NOT_CONNECTED("databaseConnectivityError"),
-        MANDATORY_PARAMS_MISSING("MissingMandatoryParametersInRequest"), PROPERTY_ENDPOINT_NOT_FOUND("endPointNotFound"),
-        INVALID_TOKEN("invalidToken"), INVALID_USER_VERIFICATION("invalidUserVerification"), INVALID_ESIGN("invalidEsign"),
-        REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC("regressionTesting_actionsNotAllowedOrDeclaredAsPartOfThisProcedure")
+    public enum ApiErrorTraping  implements EnumIntMessages{
+        EXCEPTION_RAISED("exceptionRaised", "", ""),
+        PROPERTY_DATABASE_NOT_CONNECTED("databaseConnectivityError", "", ""),
+        MANDATORY_PARAMS_MISSING("MissingMandatoryParametersInRequest", "", ""),
+        PROPERTY_ENDPOINT_NOT_FOUND("endPointNotFound", "", ""),
+        INVALID_TOKEN("invalidToken", "", ""),
+        INVALID_USER_VERIFICATION("invalidUserVerification", "", ""),
+        INVALID_ESIGN("invalidEsign", "", ""),
+        REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC("regressionTesting_actionsNotAllowedOrDeclaredAsPartOfThisProcedure", "", ""),
         ;
-        ApiErrorTraping(String nm){
-            this.name=nm;
+        private ApiErrorTraping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getName() {
-            return name;
-        }
-        private final String name;           
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
     }
    public enum LpPlatformBusinessRules implements EnumIntBusinessRules {
         PROCEDURE_ACTIONS("procedureActions", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),

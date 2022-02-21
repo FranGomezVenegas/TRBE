@@ -40,6 +40,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static lbplanet.utilities.LPDate.stringFormatToLocalDateTime;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 
@@ -53,22 +54,6 @@ public class  LPArray {
     private LPArray(){    throw new IllegalStateException("Utility class");}    
     
     
-    public enum LpArrayErrorTrapping{ 
-        FIELDS_DUPLICATED("DataSample_FieldsDuplicated", "There are duplicated fields", "Hay campos por duplicado"),
-        ;
-        private LpArrayErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
-            this.errorCode=errCode;
-            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
-            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
-        }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
-    
-        private final String errorCode;
-        private final String defaultTextWhenNotInPropertiesFileEn;
-        private final String defaultTextWhenNotInPropertiesFileEs;
-    }
 
     public enum LpArrayBusinessRules{    
         ENCRYPTED_PREFIX("encrypted_", ""),
@@ -85,7 +70,6 @@ public class  LPArray {
     }
     
     private static final String ENCRYPTION_KEY = "Bar12345Bar12345";
-    private static final String ERRORTRAPPING_EXCEPTION= "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION";
     /**
      *
      * @param zipcodelist
@@ -136,10 +120,9 @@ if (1==1) return fieldValue;
                     fieldValue[iFields] = enc;
         }
                 catch(InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e){
-                    String errorCode = ERRORTRAPPING_EXCEPTION;
                     Object[] errorDetailVariables = new Object[0];
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, e.getMessage());
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, errorDetailVariables);
                 }
             }
         }
@@ -298,7 +281,7 @@ if (1==1) return fieldValue;
             if (rowParse.length!=2){
                 //myObjectsArray[i]=myStringsArray[i];
                 return new Object[]{LPPlatform.LAB_FALSE,
-                    new InternalMessage(LPPlatform.LAB_FALSE, "objectOfArray_wrongFormat", new Object[]{i, myStringsArray[i].toString()})};
+                    new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.OBJECTOFARRAY_WRONGFORMAT, new Object[]{i, myStringsArray[i].toString()})};
             }else{
                 switch (rowParse[1].toUpperCase()){                                    
                     case "STRING":
@@ -817,10 +800,9 @@ if (1==1) return fieldValue;
             StackTraceElement[] elements = Thread.currentThread().getStackTrace();
             diagnoses[0]= elements[1].getClassName() + "." + elements[1].getMethodName() + " called from " + elements[2].getMethodName();
         if (arrayA.length!=arrayB.length){
-           errorCode = "DataSample_FieldArraysDifferentSize";
            errorDetailVariables = addValueToArray1D(errorDetailVariables, Arrays.toString(arrayA));
            errorDetailVariables = addValueToArray1D(errorDetailVariables, Arrays.toString(arrayB));
-           return (String[]) ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);           
+           return (String[]) ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, errorDetailVariables);           
         }else{
             diagnoses[0]=LPPlatform.LAB_TRUE;
         }    
@@ -839,10 +821,9 @@ if (1==1) return fieldValue;
     String[] errorDetailVariables = new String[0];
         
         if (colNum>array[0].length){
-           errorCode = "LabPLANETArray_getColumnFromArray2D_ColNotFound";
            errorDetailVariables = (String[]) addValueToArray1D(errorDetailVariables, array[0].length);
            errorDetailVariables = addValueToArray1D(errorDetailVariables, colNum.toString());
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);           
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.GETCOLUMNFROM2D_COLNOTFOUND, errorDetailVariables);           
         }       
         for (Integer i=0;i<array.length;i++){
             diagnoses=addValueToArray1D(diagnoses, array[i][colNum]);

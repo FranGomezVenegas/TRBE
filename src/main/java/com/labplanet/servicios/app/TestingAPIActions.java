@@ -33,6 +33,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntMessages;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -82,6 +83,23 @@ public class TestingAPIActions extends HttpServlet {
         private final JsonArray outputObjectTypes;
     }
     
+    public enum TestingAPIErrorTrapping implements EnumIntMessages{ 
+        SCRIPT_NOT_FOUND("scriptNotFound","The instrument <*1*> is not found in procedure <*2*>","El instrumento <*1*> no se ha encontrado para el proceso <*2*>"),
+        ;
+        private TestingAPIErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);     
@@ -101,7 +119,7 @@ public class TestingAPIActions extends HttpServlet {
             try{
                 endPoint = TestingAPIActionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
             JsonObject jsonObject=null;
@@ -122,7 +140,7 @@ public class TestingAPIActions extends HttpServlet {
                         new Object[]{(Integer)argValues[0]},
                         scriptFldToRetrieve);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptInfo[0][0].toString())){
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "scriptNotFound", new Object[]{argValues[0]});
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TestingAPIErrorTrapping.SCRIPT_NOT_FOUND, new Object[]{argValues[0]});
                         break;
                     }
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, scriptInfo[0]);

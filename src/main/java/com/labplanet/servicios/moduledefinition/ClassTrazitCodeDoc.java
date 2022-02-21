@@ -42,9 +42,9 @@ public class ClassTrazitCodeDoc {
                     break;
             }    
         if (actionDiagnoses!=null)
-            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*>", new Object[]{actionDiagnoses[0]});
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{actionDiagnoses[0]});
         else
-            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "no return", null);
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, null);
         this.relatedObj=rObj;
         rObj.killInstance();
     }

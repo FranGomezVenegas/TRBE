@@ -93,6 +93,10 @@ public class TestingEnvMonitSamples extends HttpServlet {
             
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
+//out.println(iLines+" "+actionName);      
+if (iLines==35){
+    out.println("stop here");
+}
                 LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 LPTestingParams.handleAlternativeToken(tstOut, iLines);
                 
@@ -101,10 +105,6 @@ public class TestingEnvMonitSamples extends HttpServlet {
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
-/*out.println(iLines+" "+actionName);      
-if (iLines==7){
-    out.println("stop here");
-}*/
                 if (tstOut.getAuditReasonPosic()!=-1)
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
 

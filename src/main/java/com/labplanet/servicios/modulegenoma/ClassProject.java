@@ -58,7 +58,7 @@ public class ClassProject {
                         actionDiagnoses= prj.projectUpdate(projectName, fieldNames, fieldValues);
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                
                     if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{projectName, procInstanceName});                    
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{projectName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{projectName, procInstanceName};
                     break;
                 case PROJECT_ACTIVATE:
@@ -96,7 +96,7 @@ public class ClassProject {
                     actionDiagnoses= prjStudy.createStudy(studyName, projectName, fieldNames, fieldValues,  false);
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{studyName, procInstanceName});                    
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{studyName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{projectName, studyName, procInstanceName};
                     break;
                 default:

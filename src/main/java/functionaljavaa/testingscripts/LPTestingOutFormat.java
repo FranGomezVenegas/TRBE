@@ -987,7 +987,7 @@ public class LPTestingOutFormat {
         if (missingValues.length()==0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "allFine", null, true);
         else
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{missingValues});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{missingValues});
     }
     public static void cleanLastRun(String procInstanceName, Integer scriptId){
         String[] scriptFieldName=new String[]{TblsTesting.Script.RUN_SUMMARY.getName(), TblsTesting.Script.EVAL_TOTAL_TESTS.getName(), 

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntMessages;
 
 /**
  *
@@ -88,7 +89,7 @@ public class AuthenticationAPIParams extends HttpServlet {
         private final  LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
     }
-public enum AuthenticationErrorTrapping{ 
+public enum AuthenticationErrorTrapping  implements EnumIntMessages{ 
         IP_IN_BLACK_LIST("IPinBlackList", "", ""),
         IP_NOTIN_WHITE_LIST("IPnotInWhiteList", "", ""),
         WRONG_IP("wrongIP", "", ""),

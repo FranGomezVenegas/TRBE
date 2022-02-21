@@ -6,6 +6,7 @@
 package trazit.session;
 
 import lbplanet.utilities.LPArray;
+import trazit.enums.EnumIntMessages;
 
 /**
  *
@@ -63,6 +64,9 @@ public class ResponseMessages {
     }
     public void addMainForError(String messageCode, Object[] msgCodeVariables){
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3);
+    }
+    public void addMainForError(EnumIntMessages messageCode, Object[] msgCodeVariables){
+        mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode.getErrorCode(), msgCodeVariables, new Object[]{}}, 3);
     }
     
 }

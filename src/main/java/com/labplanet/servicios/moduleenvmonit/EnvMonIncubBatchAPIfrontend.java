@@ -109,7 +109,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
             try{
                 endPoint = EnvMonIncubBatchAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                                         
@@ -158,7 +158,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 procReqInstance.killIt();       
                 break;        
             default:      
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);                                                                  
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);                                                                  
         }
     }catch(Exception e){      
         procReqInstance.killIt();
@@ -188,7 +188,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
             Integer incubPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName());
             JSONArray instrLast10ReadingsjArr = new JSONArray();
-            if (incubPosic>-1){
+            if (incubPosic>-1 && currBatch[incubPosic].toString().length()>0){
                 String[] incubatorFldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED_REASON.getName()};
                 whereFieldsNameArr=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()};
                 whereFieldsValueArr=new Object[]{currBatch[incubPosic].toString()};

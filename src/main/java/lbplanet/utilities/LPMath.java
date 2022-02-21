@@ -7,6 +7,7 @@ package lbplanet.utilities;
 
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.math.BigDecimal;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.session.ApiMessageReturn;
 
 /**
@@ -56,11 +57,10 @@ public class LPMath {
         Object[] errorDetailVariables = new Object[0];
         
         if (volume==null){
-            errorCode = "DataSample_sampleAliquoting_volumeCannotBeNegativeorZero";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VOLUME_CANNOTBE_NULL, errorDetailVariables);                 
         }
         UnitsOfMeasurement uom = new UnitsOfMeasurement(portion, portionUOM);
         if (portionUOM == null ? volumeUOM != null : !portionUOM.equals(volumeUOM)){
@@ -69,21 +69,19 @@ public class LPMath {
         }
         
         if ( portion.compareTo(BigDecimal.ZERO)<1) {
-            errorCode = "DataSample_sampleAliquoting_volumeCannotBeNegativeorZero";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portion.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portionObjectId.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.PORTION_NOT_ZERO_OR_NEGATIVE, errorDetailVariables);                 
         }        
        volume = volume.add(portion.negate());        
        if ( volume.compareTo(BigDecimal.ZERO)<0) {
-            errorCode = "DataSample_sampleAliquoting_notEnoughVolumeToAliquoting";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "aliquot  "+volumeObjectId.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, volume.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "subaliquoting");
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portion.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                          
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VOLUME_NOT_ZERO_OR_NEGATIVE, errorDetailVariables);                          
         }               
        String conclusionMsg = "It is possible to extract ";
        if (volumeUOM.equalsIgnoreCase(portionUOM)){
@@ -94,7 +92,7 @@ public class LPMath {
         return new Object[]{LPPlatform.LAB_TRUE, conclusionMsg, portion};
     }
     public static Object[] isNumeric(String strNum){
-        if (strNum==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "valueEmpty", null);
+        if (strNum==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_EMPTY, null);
         String curDigit="";
         try  {            
             for (int i=0;i<strNum.length();i++){
@@ -107,8 +105,8 @@ public class LPMath {
             
         }catch (Exception nfe){
             if (",".equalsIgnoreCase(curDigit))
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "commaIsTheDecimalsSeparator", null);
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", null);
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.COMMA_IS_DECIMAL_SEPARATOR, null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, null);
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "isNumeric", null);
     }

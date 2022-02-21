@@ -94,7 +94,7 @@ public class ProcedureRequestSession {
                 areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 this.hasErrors=true;
-                this.errorMessage=LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName()+areMandatoryParamsInResponse[1].toString();                
+                this.errorMessage=LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode()+areMandatoryParamsInResponse[1].toString();                
                 return;          
             }                 
             String actionNm = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
@@ -122,7 +122,7 @@ public class ProcedureRequestSession {
                 tokn = new Token(finalToken);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())){
                         this.hasErrors=true;
-                        this.errorMessage=LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName();
+                        this.errorMessage=LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode();
                         return;                             
                 }
                 this.token=tokn;
@@ -323,10 +323,10 @@ public class ProcedureRequestSession {
 //        if (finalToken!=null){
 //            tokn = new Token(finalToken);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())) 
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null);
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN, null);
 /*            {
                     LPFrontEnd.servletReturnResponseError(req, resp, 
-                            LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, LPFrontEnd.setLanguage(req));              
+                            LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, LPFrontEnd.setLanguage(req));              
                     return null;                             
             }*/
 //        }

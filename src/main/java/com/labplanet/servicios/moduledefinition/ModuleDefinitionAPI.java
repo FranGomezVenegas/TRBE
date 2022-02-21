@@ -124,7 +124,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
+                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
             return;          
         }             
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
@@ -133,7 +133,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         Token token = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
                 LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, language);              
+                        LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language);              
                 return;                             
         }
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
@@ -143,13 +143,13 @@ public class ModuleDefinitionAPI extends HttpServlet {
         try{
             endPoint = ModuleDefinitionAPIEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }
         areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response,
-                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
             return;
         }                
         try (PrintWriter out = response.getWriter()) {

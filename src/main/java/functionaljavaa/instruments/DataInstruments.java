@@ -56,8 +56,8 @@ public class DataInstruments {
             return new InternalMessage(LPPlatform.LAB_TRUE, "", null, null);
         }catch(Exception e){
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-            messages.addMainForError(InstrumentsErrorTrapping.WRONG_DECISION.getErrorCode(), new Object[]{decision, Arrays.toString(Decisions.values())});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.WRONG_DECISION.getErrorCode(), new Object[]{decision, Arrays.toString(Decisions.values())}, null);
+            messages.addMainForError(InstrumentsErrorTrapping.WRONG_DECISION, new Object[]{decision, Arrays.toString(Decisions.values())});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.WRONG_DECISION, new Object[]{decision, Arrays.toString(Decisions.values())}, null);
         }
     }
     private Boolean decisionAndFamilyRuleToTurnOn(String decision, String fieldName){
@@ -141,13 +141,13 @@ public class DataInstruments {
     }
     public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues, String actionName){
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         String[] reservedFldsNotUpdatable=new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.ON_LINE.getName()};
         String[] reservedFldsNotUpdatableFromActions=new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.ON_LINE.getName()};
         if (actionName!=null)reservedFldsNotUpdatable=reservedFldsNotUpdatableFromActions;
         for (String curFld: fldNames){
             if (LPArray.valueInArray(reservedFldsNotUpdatable, curFld))
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD.getErrorCode(), new Object[]{curFld}, null);                
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD, new Object[]{curFld}, null);                
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (fldNames==null || fldNames[0].length()==0){
@@ -167,7 +167,7 @@ public class DataInstruments {
     }
     public InternalMessage decommissionInstrument(String[] fldNames, Object[] fldValues){
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getToken();
         String[] reservedFldsNotUpdatable=new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(),
             TblsAppProcData.Instruments.LOCKED_REASON.getName(), TblsAppProcData.Instruments.ON_LINE.getName()};
@@ -177,7 +177,7 @@ public class DataInstruments {
         }        
         for (String curFld: fldNames){
             if (LPArray.valueInArray(reservedFldsNotUpdatable, curFld))
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD.getErrorCode(), new Object[]{curFld}, null);                
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD, new Object[]{curFld}, null);                
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.ON_LINE.getName(),
@@ -197,7 +197,7 @@ public class DataInstruments {
     }
     public InternalMessage unDecommissionInstrument(String[] fldNames, Object[] fldValues){
         if (!this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_DECOMMISSIONED, new Object[]{this.name}, null);
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getToken();
         String[] reservedFldsNotUpdatable=new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(),
             TblsAppProcData.Instruments.LOCKED_REASON.getName(), TblsAppProcData.Instruments.ON_LINE.getName()};
@@ -207,7 +207,7 @@ public class DataInstruments {
         }        
         for (String curFld: fldNames){
             if (LPArray.valueInArray(reservedFldsNotUpdatable, curFld))
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD.getErrorCode(), new Object[]{curFld}, null);                
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD, new Object[]{curFld}, null);                
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.ON_LINE.getName(),
@@ -234,7 +234,7 @@ public class DataInstruments {
     }
     public InternalMessage turnOnLine(String[] fldNames, Object[] fldValues, String actionName){
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (fldNames==null || fldNames[0].length()==0){
             fldNames=new String[]{};
@@ -243,12 +243,12 @@ public class DataInstruments {
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.ON_LINE.getName()});
         fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{true});
         if (this.onLine){
-            messages.addMainForError(InstrumentsErrorTrapping.ALREADY_ONLINE.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_ONLINE.getErrorCode(), new Object[]{name}, null);
+            messages.addMainForError(InstrumentsErrorTrapping.ALREADY_ONLINE, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_ONLINE, new Object[]{name}, null);
         }
         if (actionName==null && this.isLocked){
-            messages.addMainForError(InstrumentsErrorTrapping.IS_LOCKED.getErrorCode(), new Object[]{name, this.lockedReason});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.IS_LOCKED.getErrorCode(), new Object[]{name, this.lockedReason}, null);
+            messages.addMainForError(InstrumentsErrorTrapping.IS_LOCKED, new Object[]{name, this.lockedReason});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.IS_LOCKED, new Object[]{name, this.lockedReason}, null);
         }
         Object[] instUpdateDiagn = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), 
                 fldNames, fldValues, new String[]{TblsAppProcData.Instruments.NAME.getName()},new Object[]{name});
@@ -261,15 +261,15 @@ public class DataInstruments {
     }
     public InternalMessage turnOffLine(String[] fldNames, Object[] fldValues){
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (fldNames==null || fldNames[0].length()==0){
             fldNames=new String[]{};
             fldValues=new Object[]{};
         }        
         if (!this.onLine){
-            messages.addMainForError(InstrumentsErrorTrapping.NOT_ONLINE.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_ONLINE.getErrorCode(), new Object[]{name}, null);
+            messages.addMainForError(InstrumentsErrorTrapping.NOT_ONLINE, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_ONLINE, new Object[]{name}, null);
         }
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.ON_LINE.getName()});
         fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{false});
@@ -285,7 +285,7 @@ public class DataInstruments {
 
     public InternalMessage startCalibration(){
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);        
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);        
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         
@@ -295,8 +295,8 @@ public class DataInstruments {
                 new Object[]{this.name, InstrumentEvents.CALIBRATION.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_CALIBRATION.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_CALIBRATION.getErrorCode(), new Object[]{name}, name);
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_CALIBRATION, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_CALIBRATION, new Object[]{name}, name);
         }        
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
@@ -330,7 +330,7 @@ public class DataInstruments {
         InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
         if (this.isDecommissioned!=null && this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         
@@ -341,8 +341,8 @@ public class DataInstruments {
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_CALIBRATION.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_CALIBRATION.getErrorCode(), new Object[]{name}, name);
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_CALIBRATION, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_CALIBRATION, new Object[]{name}, name);
         }
         String instrName=instrEventInfo[0][0].toString();
         Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
@@ -382,7 +382,7 @@ public class DataInstruments {
 
     public InternalMessage startPrevMaint(){
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);        
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);        
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         
@@ -392,8 +392,8 @@ public class DataInstruments {
                 new Object[]{this.name, InstrumentEvents.PREVENTIVE_MAINTENANCE.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_PREV_MAINT.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_PREV_MAINT.getErrorCode(), new Object[]{name}, name);
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_PREV_MAINT, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_PREV_MAINT, new Object[]{name}, name);
         }        
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
@@ -429,7 +429,7 @@ public class DataInstruments {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
         
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         
@@ -440,8 +440,8 @@ public class DataInstruments {
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_PREV_MAINT.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_PREV_MAINT.getErrorCode(), new Object[]{name}, name);
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_PREV_MAINT, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_PREV_MAINT, new Object[]{name}, name);
         }
         String instrName=instrEventInfo[0][0].toString();
         Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
@@ -479,7 +479,7 @@ public class DataInstruments {
     
     public InternalMessage startVerification(){
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);        
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);        
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         
@@ -489,8 +489,8 @@ public class DataInstruments {
                 new Object[]{this.name, InstrumentEvents.VERIFICATION.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_VERIFICATION.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_VERIFICATION.getErrorCode(), new Object[]{name}, name);
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_VERIFICATION, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_VERIFICATION, new Object[]{name}, name);
         }        
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
@@ -525,7 +525,7 @@ public class DataInstruments {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
         
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         
@@ -536,8 +536,8 @@ public class DataInstruments {
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_VERIFICATION.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_VERIFICATION.getErrorCode(), new Object[]{name}, name);
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_VERIFICATION, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NO_PENDING_VERIFICATION, new Object[]{name}, name);
         }
         String instrName=instrEventInfo[0][0].toString();
         Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
@@ -569,7 +569,7 @@ public class DataInstruments {
     
     public InternalMessage reopenEvent(Integer instrEventId){
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED.getErrorCode(), new Object[]{this.name}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         
@@ -578,8 +578,8 @@ public class DataInstruments {
                 new Object[]{this.name, instrEventId}, 
                 new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.DECISION.getName()});        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{name}, name);
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{name}, name);
         }
         String eventCompletedOn=LPNulls.replaceNull(instrEventInfo[0][0]).toString();
         String eventDecision=LPNulls.replaceNull(instrEventInfo[0][1]).toString();
@@ -587,8 +587,8 @@ public class DataInstruments {
         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), instrEventId);                
         
         if (eventCompletedOn.length()==0 || eventDecision.length()==0){
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS.getErrorCode(), new Object[]{instrEventId});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS.getErrorCode(), new Object[]{instrEventId}, name);
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId}, name);
         }
 
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};

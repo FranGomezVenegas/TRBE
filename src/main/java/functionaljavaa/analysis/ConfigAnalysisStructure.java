@@ -18,9 +18,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import lbplanet.utilities.LPArray.LpArrayErrorTrapping;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -299,7 +299,7 @@ if (1==1){return "ERROR";}
 
         if (LPArray.duplicates(fieldName)){
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fieldName));
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpArrayErrorTrapping.FIELDS_DUPLICATED.getErrorCode(), errorDetailVariables);                      
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.FIELDS_DUPLICATED, errorDetailVariables);                      
         }
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];

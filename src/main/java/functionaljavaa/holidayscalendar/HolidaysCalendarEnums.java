@@ -23,6 +23,7 @@ import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -171,7 +172,7 @@ public class HolidaysCalendarEnums {
             throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
     }  
-    public enum CalendarErrorTrapping{         
+    public enum CalendarErrorTrapping implements EnumIntMessages{         
         CALENDAR_NOT_EXISTS("calendar_calendarNotExists", "", ""),
         CALENDAR_ALREADY_EXISTS("calendar_calendarAlreadyExists", "", ""),
         CALENDAR_DATE_NOT_EXISTS("calendar_calendarDateNotExists", "", ""),

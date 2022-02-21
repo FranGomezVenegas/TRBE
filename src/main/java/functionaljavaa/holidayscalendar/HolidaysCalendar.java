@@ -31,8 +31,8 @@ public static InternalMessage createNewCalendar(String name, String[] fldNames, 
             new String[]{TblsApp.HolidaysCalendar.FLD_CODE.getName()},
             new Object[]{name});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
-            messages.addMainForError(CalendarErrorTrapping.CALENDAR_ALREADY_EXISTS.getErrorCode(), new Object[]{name});
-            return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_ALREADY_EXISTS.getErrorCode(), new Object[]{name}, name);    
+            messages.addMainForError(CalendarErrorTrapping.CALENDAR_ALREADY_EXISTS, new Object[]{name});
+            return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_ALREADY_EXISTS, new Object[]{name}, name);    
         }                
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsApp.HolidaysCalendar.FLD_CODE.getName(), TblsApp.HolidaysCalendar.FLD_ACTIVE.getName(),
             TblsApp.HolidaysCalendar.FLD_CREATED_ON.getName(), TblsApp.HolidaysCalendar.FLD_CREATED_BY.getName()});
@@ -58,8 +58,8 @@ public static InternalMessage addDateToCalendar(String code, Date newDate, Strin
             new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.DATE.getName()},
             new Object[]{code, newDate});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){
-            messages.addMainForError(CalendarErrorTrapping.CALENDAR_NOT_EXISTS.getErrorCode(), new Object[]{code});
-            return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_NOT_EXISTS.getErrorCode(), new Object[]{code}, code);    
+            messages.addMainForError(CalendarErrorTrapping.CALENDAR_NOT_EXISTS, new Object[]{code});
+            return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_NOT_EXISTS, new Object[]{code}, code);    
         }
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.DATE.getName(),
             TblsApp.HolidaysCalendarDate.DAY_NAME.getName(),
@@ -73,7 +73,7 @@ public static InternalMessage addDateToCalendar(String code, Date newDate, Strin
         //instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.CREATION.toString(), name, TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(), name,
         //                fldNames, fldValues);
         messages.addMainForSuccess("HolidaysCalendar", CalendarAPIactionsEndpoints.ADD_DATE_TO_CALENDAR.getSuccessMessageCode(), new Object[]{newDate, code});
-        return new InternalMessage(LPPlatform.LAB_TRUE, CalendarAPIactionsEndpoints.ADD_DATE_TO_CALENDAR.getSuccessMessageCode(), new Object[]{newDate, code}, newDate);
+        return new InternalMessage(LPPlatform.LAB_TRUE, CalendarAPIactionsEndpoints.ADD_DATE_TO_CALENDAR, new Object[]{newDate, code}, newDate);
     }
 
 public static InternalMessage deleteCalendarDate(String code, Integer dateId){   
@@ -83,8 +83,8 @@ public static InternalMessage deleteCalendarDate(String code, Integer dateId){
             new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.ID.getName()},
             new Object[]{code, dateId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){
-            messages.addMainForError(CalendarErrorTrapping.CALENDAR_DATE_NOT_EXISTS.getErrorCode(), new Object[]{code, dateId});
-            return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_DATE_NOT_EXISTS.getErrorCode(), new Object[]{code, dateId}, code);    
+            messages.addMainForError(CalendarErrorTrapping.CALENDAR_DATE_NOT_EXISTS, new Object[]{code, dateId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_DATE_NOT_EXISTS, new Object[]{code, dateId}, code);    
         }
         Object[] removeRecordInTable = Rdbms.removeRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(), 
             new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.ID.getName()},
@@ -94,7 +94,7 @@ public static InternalMessage deleteCalendarDate(String code, Integer dateId){
         //instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.CREATION.toString(), name, TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(), name,
         //                fldNames, fldValues);
         messages.addMainForSuccess("HolidaysCalendar", CalendarAPIactionsEndpoints.DELETE_DATE_FROM_GIVEN_CALENDAR.getSuccessMessageCode(), new Object[]{dateId, code});
-        return new InternalMessage(LPPlatform.LAB_TRUE, CalendarAPIactionsEndpoints.DELETE_DATE_FROM_GIVEN_CALENDAR.getSuccessMessageCode(), new Object[]{dateId, code}, dateId);
+        return new InternalMessage(LPPlatform.LAB_TRUE, CalendarAPIactionsEndpoints.DELETE_DATE_FROM_GIVEN_CALENDAR, new Object[]{dateId, code}, dateId);
     }
 
 }

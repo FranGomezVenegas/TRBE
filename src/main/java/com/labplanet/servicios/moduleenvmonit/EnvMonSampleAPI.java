@@ -261,7 +261,7 @@ public class EnvMonSampleAPI extends HttpServlet {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())){  
 //            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, sampleAuditRevision);
-            //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_TOKEN.getName(), null, language);              
+            //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language);              
             return;                             
         }  
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
@@ -294,7 +294,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 try{
                     endPointSmp = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
                 }catch(Exception er){
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
                     return;                   
                 }                
                 ClassSample clssSmp=new ClassSample(request, endPointSmp);
@@ -317,7 +317,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response,
-                        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
             }                            
             ClassEnvMonSample clss=new ClassEnvMonSample(request, endPoint);
@@ -344,7 +344,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 try{
                     endPointSmp = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
                 }catch(Exception e){
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
                     return;                   
                 }                
                 ClassSample clssSmp=new ClassSample(request, endPointSmp);

@@ -28,7 +28,7 @@ public class LPSession {
         if (remoteAddrParts.length==1)
         remoteAddrParts = remoteAddr.split("\\:");
         if (remoteAddrParts.length<4)
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.WRONG_IP.getErrorCode(), new Object[]{remoteAddr});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.WRONG_IP, new Object[]{remoteAddr});
         Object[] existRecordBlackList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_BLACK_LIST.getTableName(), 
                 new String[]{TblsApp.IPBlackList.ACTIVE.getName(), TblsApp.IPBlackList.IP_VALUE1.getName(), 
                     "("+TblsApp.IPBlackList.IP_VALUE2.getName(), "OR "+TblsApp.IPBlackList.IP_VALUE2.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )",
@@ -36,7 +36,7 @@ public class LPSession {
                     "("+TblsApp.IPBlackList.IP_VALUE4.getName(), "OR "+TblsApp.IPBlackList.IP_VALUE4.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )"}, 
                 new Object[]{true, remoteAddrParts[0], remoteAddrParts[1], null, remoteAddrParts[2], null, remoteAddrParts[3]});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordBlackList[0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_IN_BLACK_LIST.getErrorCode(), new Object[]{remoteAddr});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_IN_BLACK_LIST, new Object[]{remoteAddr});
         
         Object[] existRecordWhiteList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(), 
                 new String[]{TblsApp.IPWhiteList.ACTIVE.getName()}, 
@@ -49,7 +49,7 @@ public class LPSession {
                     "("+TblsApp.IPWhiteList.IP_VALUE4.getName(), "OR "+TblsApp.IPWhiteList.IP_VALUE4.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )"}, 
                 new Object[]{true, remoteAddrParts[0], remoteAddrParts[1], null, remoteAddrParts[2], null, remoteAddrParts[3]});
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordWhiteList[0].toString())){
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_NOTIN_WHITE_LIST.getErrorCode(), new Object[]{remoteAddr});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_NOTIN_WHITE_LIST, new Object[]{remoteAddr});
             }
         }
             

@@ -110,7 +110,7 @@ public class ClassSample {
             if (sampleId!=null && !LPArray.valueInArray(exceptionsToSampleReviewArr, endPoint.getName())){
                 Object[][] sampleStatus=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, new String[]{TblsData.Sample.FLD_STATUS.getName()});
-                diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_REVIEWED.getErrorCode(), null);
+                diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_REVIEWED, null);
                 if ( (sampleStatus[0][0].toString().equalsIgnoreCase(DataSampleStructureStatuses.SampleStatuses.CANCELED.getStatusCode(""))) ||
                      (sampleStatus[0][0].toString().equalsIgnoreCase(DataSampleStructureStatuses.SampleStatuses.REVIEWED.getStatusCode(""))) ){               
                     this.diagnostic=diagn;
@@ -269,7 +269,7 @@ public class ClassSample {
                                     TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName(), TblsData.SampleAnalysisResult.FLD_UOM.getName(), 
                                     TblsData.SampleAnalysisResult.FLD_UOM_CONVERSION_MODE.getName()});
                         if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString()))
-                            diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                            diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND, new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                         else{            
                             String currRawValue = (String) resultData[0][7];
                             if (currRawValue!=null && currRawValue.length()>0 && SampleAPIParams.SampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
@@ -534,7 +534,7 @@ public class ClassSample {
                         SampleAudit smpAudit = new SampleAudit();
                         smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
-                            diagn=ApiMessageReturn.trapMessage(diagn[0].toString(), endPoint.getSuccessMessageCode(), new Object[]{sampleId});
+                            diagn=ApiMessageReturn.trapMessage(diagn[0].toString(), endPoint, new Object[]{sampleId});
                         if ("END".equalsIgnoreCase(newSampleStage))
                             smp.sampleReview(sampleId);                                        
                         this.messageDynamicData=new Object[]{sampleId};                    
@@ -549,7 +549,7 @@ public class ClassSample {
                         new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()}, new Object[]{auditId}, 
                         new String[]{TblsDataAudit.Sample.SAMPLE_ID.getName()}, new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfo[0][0].toString())){
-                        diagn=ApiMessageReturn.trapMessage(auditInfo[0][0].toString(), SampleAudit.SampleAuditErrorTrapping.AUDIT_RECORD_NOT_FOUND.getErrorCode(), new Object[]{auditId});
+                        diagn=ApiMessageReturn.trapMessage(auditInfo[0][0].toString(), SampleAudit.SampleAuditErrorTrapping.AUDIT_RECORD_NOT_FOUND, new Object[]{auditId});
                         sampleId=null;
                     }else{
                         diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(procInstanceName, auditId, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getPersonName());
@@ -567,7 +567,7 @@ public class ClassSample {
                     smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
             }
             if (diagn!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
-                diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{argValues[0], procInstanceName});                    
+                diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{argValues[0], procInstanceName});                    
             
             this.diagnostic=diagn;
             this.relatedObj=rObj;

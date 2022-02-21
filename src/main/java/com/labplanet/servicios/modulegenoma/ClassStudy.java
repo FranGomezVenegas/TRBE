@@ -65,7 +65,7 @@ public class ClassStudy {
                         actionDiagnoses= prjStudy.studyUpdate(studyName, fieldNames, fieldValues);
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                
                     if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{studyName, procInstanceName});                    
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{studyName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{projectName, studyName, procInstanceName};
                     break;
                 case STUDY_ACTIVATE:

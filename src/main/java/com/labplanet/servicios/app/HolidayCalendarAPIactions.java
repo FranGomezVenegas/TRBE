@@ -74,7 +74,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
             try{
                 endPoint = CalendarAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getName(), new Object[]{actionName, this.getServletName()}, language);              
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
         JsonObject jsonObject=null;
@@ -105,7 +105,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
             String diagnostic=actionDiagnoses.getDiagnostic();
 
             if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic)){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, actionDiagnoses.getMessageCode(), actionDiagnoses.getMessageCodeVariables());   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, actionDiagnoses.getMessageCodeObj().getErrorCode(), actionDiagnoses.getMessageCodeVariables());   
             }else{
 
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();

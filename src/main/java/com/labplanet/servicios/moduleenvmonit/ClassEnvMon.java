@@ -54,7 +54,7 @@ public class ClassEnvMon {
                         Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
                             new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, new Object[]{correctiveActionId},
                             new String[]{TblsProcedure.ProgramCorrectiveAction.SAMPLE_ID.getName()});
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName}); 
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName}); 
                         this.messageDynamicData=new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName};   
                     }else{
                         this.messageDynamicData=new Object[]{correctiveActionId, procInstanceName};                           
@@ -77,7 +77,7 @@ public class ClassEnvMon {
                         actionDiagnoses= DataBatchIncubator.createBatch(batchName, batchTemplateId, batchTemplateVersion, fieldNames, fieldValues);
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, procInstanceName});                    
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{batchName, procInstanceName};
                     break;   
                 case EM_BATCH_INCUB_REMOVE:    
@@ -85,7 +85,7 @@ public class ClassEnvMon {
                     actionDiagnoses= DataBatchIncubator.removeBatch(batchName);
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, procInstanceName});                    
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{batchName, procInstanceName};
                     break;   
                 case EM_BATCH_ASSIGN_INCUB: 
@@ -97,7 +97,7 @@ public class ClassEnvMon {
                     this.messageDynamicData=new Object[]{batchName, incubationName};
                     actionDiagnoses=DataBatchIncubator.batchAssignIncubator(batchName, incubationName, incubStage);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{incubationName, batchName, procInstanceName});
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{incubationName, batchName, procInstanceName});
                     break;
                 case EM_BATCH_UPDATE_INFO: 
                     batchName = argValues[0].toString();
@@ -111,7 +111,7 @@ public class ClassEnvMon {
                     else
                         actionDiagnoses=DataBatchIncubator.batchUpdateInfo(batchName, fieldsName, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, Arrays.toString(fieldsName), Arrays.toString(fieldValues), procInstanceName});
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, Arrays.toString(fieldsName), Arrays.toString(fieldValues), procInstanceName});
                     this.messageDynamicData=new Object[]{incubationName, batchName};
                     break;
                 case EM_BATCH_INCUB_START:
@@ -121,7 +121,7 @@ public class ClassEnvMon {
                     batchTemplateVersion = (Integer) argValues[2];
                     actionDiagnoses=DataBatchIncubator.batchStarted(batchName, batchTemplateId, batchTemplateVersion);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, procInstanceName});
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, procInstanceName});
                         this.messageDynamicData=new Object[]{incubationName, batchName};                    
                     }else{
                         if (actionDiagnoses[4]==DataBatchIncubator.IncubatorBatchErrorTrapping.INCUBATORBATCH_ALREADY_IN_PROCESS.getErrorCode())
@@ -137,7 +137,7 @@ public class ClassEnvMon {
                     batchTemplateVersion = (Integer) argValues[2];
                     actionDiagnoses=DataBatchIncubator.batchEnded(batchName, batchTemplateId, batchTemplateVersion);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, procInstanceName});
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, procInstanceName});
                     this.messageDynamicData=new Object[]{batchName, incubationName};
                     break;
                 case EM_LOGSAMPLE_SCHEDULER:
@@ -146,7 +146,7 @@ public class ClassEnvMon {
                     programName = argValues[2].toString();
                     actionDiagnoses=prgSmp.logProgramSampleScheduled(programName, dateStart, dateEnd);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{dateStart, dateEnd, programName, procInstanceName});                                        
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{dateStart, dateEnd, programName, procInstanceName});                                        
                     this.messageDynamicData=new Object[]{};
                     break;
             }    

@@ -72,6 +72,7 @@ public class ProcedureDefinitionToInstance {
     /**
      *
      */
+    public static final String FIELDS_TO_RETRIEVE_REQS_PROCEDURE_INFO_SOURCE=TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName()+"|"+TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_EN.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_ES.getName();
     public static final String FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE=TblsProcedure.ProcedureInfo.NAME.getName()+"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_EN.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_ES.getName();
 
     /**
@@ -126,7 +127,7 @@ public class ProcedureDefinitionToInstance {
         String schemaNameDestinationProc=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
          Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.SCHEMA_PREFIX.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
-                FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"));
+                FIELDS_TO_RETRIEVE_REQS_PROCEDURE_INFO_SOURCE.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procInfoRecordsSource[0]));
         }else{

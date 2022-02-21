@@ -194,7 +194,7 @@ Integer currentLine=0;
                         if (specCodeVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "specCodeVersion");
                         if (methodVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "methodVersion");
                         if ((specCodeVersion==null && specCodeVersionStr==null) || (methodVersion==null && methodVersionStr==null))
-                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getName(), fldsNull);
+                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), fldsNull);
                         else
                             resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", fldsNull);
                         resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");                    

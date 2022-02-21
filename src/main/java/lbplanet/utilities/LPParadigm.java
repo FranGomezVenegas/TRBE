@@ -6,6 +6,7 @@
 package lbplanet.utilities;
 
 import java.util.Arrays;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ApiMessageReturn;
 
@@ -47,16 +48,14 @@ public class LPParadigm {
 
         diagnoses = LPArray.checkTwoArraysSameLength(fName, fValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-           errorCode = "DataSample_FieldArraysDifferentSize";
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fName));
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fValue));
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, errorDetailVariables);
         }
         
         if (LPArray.duplicates(fName)){
-           errorCode = "DataSample_FieldsDuplicated";
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fName));
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                      
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.FIELDS_DUPLICATED, errorDetailVariables);                      
         }        
         diagnoses = LPArray.addValueToArray1D(diagnoses, LPPlatform.LAB_TRUE);
         return diagnoses;                

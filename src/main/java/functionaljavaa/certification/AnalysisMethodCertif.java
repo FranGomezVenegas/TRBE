@@ -101,7 +101,7 @@ public class AnalysisMethodCertif {
             new Object[]{methodName, userName, CertifLight.GREEN.toString(), true, true}, fieldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())){
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
-            messages.addMainForError(CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode(), new Object[]{methodName});
+            messages.addMainForError(CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName});
             return new Object[]{false, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode(), new Object[]{methodName})};            
         }else
             return new Object[]{true, ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, CertificationAnalysisMethodErrorTrapping.USER_IS_CERTIFIED.getErrorCode(), new Object[]{methodName})};                
