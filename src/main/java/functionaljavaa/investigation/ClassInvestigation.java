@@ -109,7 +109,7 @@ public class ClassInvestigation {
                 String[] capaFldName=null;
                 String[] capaFldValue=null;
                 if (argValues[1]==null){
-                    actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{InvestigationAPI.ParamsList.CAPA_REQUIRED.getParamName()});
+                    actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING, new Object[]{InvestigationAPI.ParamsList.CAPA_REQUIRED.getParamName()});
                 }else{
                     if (argValues[2]!=null && argValues[2].toString().length()>0) capaFldName=argValues[2].toString().split("\\|");
                     if (argValues[3]!=null && argValues[3].toString().length()>0) capaFldValue=argValues[3].toString().split("\\|");
@@ -127,7 +127,7 @@ public class ClassInvestigation {
                 break;
         }
         if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), dynamicDataObjects);
+            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, dynamicDataObjects);
         
         if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
             

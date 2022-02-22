@@ -82,6 +82,8 @@ public class LPPlatform {
         INVALID_USER_VERIFICATION("invalidUserVerification", "", ""),
         INVALID_ESIGN("invalidEsign", "", ""),
         REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC("regressionTesting_actionsNotAllowedOrDeclaredAsPartOfThisProcedure", "", ""),
+        PROPERTY_CREATED("propertyCreated", "property created <*1*>", "propiedad creada <*1*>"),
+        PROPERTY_NOT_CREATED("propertyNotCreated", "property created <*1*>", "propiedad creada <*1*>"),
         ;
         private ApiErrorTraping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -214,7 +216,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         userProceduresList=userProceduresList.replace("[", "");
         userProceduresList=userProceduresList.replace("]", "");        
         if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName))
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE.getErrorCode(), new String[]{token.getUserName(), procInstanceName, userProceduresList});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE, new String[]{token.getUserName(), procInstanceName, userProceduresList});
         
         actionName = actionName.toUpperCase();        
         String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).split("\\|");
@@ -228,11 +230,11 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new String[]{procInstanceName, actionName}, true);
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED_RULESNOTFOUND.getErrorCode(), new String[]{procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED_RULESNOTFOUND, new String[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED.getErrorCode(), new String[]{actionName, procInstanceName, Arrays.toString(procedureActions)});            
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED, new String[]{actionName, procInstanceName, Arrays.toString(procedureActions)});            
         }else{
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED.getErrorCode(), new String[]{procInstanceName, actionName});               
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED, new String[]{procInstanceName, actionName});               
         }    
     }    
     /**
@@ -256,11 +258,11 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new Object[]{procInstanceName}, true);
         }
         if ( (procedureActionsUserRoles.length==1 && "".equals(procedureActionsUserRoles[0])) ){
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER.getErrorCode(), new Object[]{procInstanceName, actionName});        
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER, new Object[]{procInstanceName, actionName});        
         }else if(!LPArray.valueInArray(procedureActionsUserRoles, userRole)){    
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ROLENOTINCLUDED.getErrorCode(), new Object[]{procInstanceName, actionName, userRole, Arrays.toString(procedureActionsUserRoles)});        
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ROLENOTINCLUDED, new Object[]{procInstanceName, actionName, userRole, Arrays.toString(procedureActionsUserRoles)});        
         }else{
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});        
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED, new Object[]{procInstanceName, actionName});        
         }            
     }
     
@@ -281,14 +283,14 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
 
         //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
         if (LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, "ALL")){
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED_BY_ALL, new Object[]{procInstanceName, actionName});
         }
         if ( (actionRequiresUserConfirmationRuleValue.length==1 && "".equals(actionRequiresUserConfirmationRuleValue[0])) ){
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
         }else if(!LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, actionName)){    
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
         }else{
-            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});
+            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});
         }    
     }    
 
@@ -309,13 +311,13 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL"))
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED_BY_ALL, new Object[]{procInstanceName, actionName});
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         }else{
-            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});               
+            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.ESIGNREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});               
         }    
     }    
     public static Object[] procActionRequiresJustificationPhrase(String procInstanceName, String actionName, BusinessRules procBusinessRules){
@@ -329,13 +331,13 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL"))
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL.getErrorCode(), new Object[]{procInstanceName, actionName});
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL, new Object[]{procInstanceName, actionName});
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND.getErrorCode(), new Object[]{procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, Arrays.toString(procedureActions)});
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED.getErrorCode(), new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         }else{
-            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED.getErrorCode(), new Object[]{procInstanceName, actionName});               
+            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});               
         }    
     }    
     
@@ -760,7 +762,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         Object[] diagnosis = Rdbms.existsRecord(procInstanceName, configTableName, configTableKeyFieldName, configTableKeyFielValue);
         if (!LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){            
            String[] configTableFilter = LPArray.joinTwo1DArraysInOneOf1DString(configTableKeyFieldName, configTableKeyFielValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
-           return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MISSINGTABLECONFIGCODE.getErrorCode(), new Object[]{tableName, Arrays.toString(configTableFilter), procInstanceName, diagnosis[5]});
+           return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MISSINGTABLECONFIGCODE, new Object[]{tableName, Arrays.toString(configTableFilter), procInstanceName, diagnosis[5]});
         }    
 
         
@@ -803,15 +805,15 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
                         
                         Object specialFunctionReturn = LPNulls.replaceNull(method.invoke(this, fieldNames, fieldValues, procInstanceName));
                         if (specialFunctionReturn.toString().contains("ERROR")) {
-                            return (String[]) ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_RETURNEDERROR.getErrorCode(), new Object[]{currField, aMethod, specialFunctionReturn.toString()});
+                            return (String[]) ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_RETURNEDERROR, new Object[]{currField, aMethod, specialFunctionReturn.toString()});
                         }
                     } catch (NoSuchMethodException | SecurityException|IllegalAccessException|IllegalArgumentException|InvocationTargetException ex) {
-                        return (String[]) ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new Object[]{currField, ex.getCause(), ex.getMessage()});
+                        return (String[]) ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION, new Object[]{currField, ex.getCause(), ex.getMessage()});
                     }
             }
         }         
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFieldName.replace("\\|", ", "));
-        return (String[]) ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.SPECIALFUNCTION_ALLSUCCESS.getErrorCode(), errorDetailVariables);                      
+        return (String[]) ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.SPECIALFUNCTION_ALLSUCCESS, errorDetailVariables);                      
     }
     
 /**
@@ -926,11 +928,11 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         String[] enableRuleValues=enableValuesStr.split("\\|");
         String ruleValue=Parameter.getBusinessRuleProcedureFile(procName, fileSchemaRepository, ruleName);
         if (ruleValue.length()==0) 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND.getErrorCode(), null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND, null);
         for (String curVal: enableRuleValues){
             if (curVal.equalsIgnoreCase(ruleValue))
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformErrorTrapping.RULE_NAME_VALUE.getErrorCode(), new Object[]{ruleName, ruleValue});        
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});        
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.RULE_NAME_VALUE.getErrorCode(), new Object[]{ruleName, ruleValue});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});
     }
 }

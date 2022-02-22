@@ -130,7 +130,7 @@ public class AppProcedureListAPI extends HttpServlet {
     /**
      *
      */
-    public static final String PROC_FLD_NAME="name|version|label_en|label_es";
+    public static final String PROC_FLD_NAME=TblsProcedure.ProcedureInfo.NAME.getName()+"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|label_en|label_es";
 
     /**
      *

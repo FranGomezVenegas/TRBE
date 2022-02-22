@@ -124,7 +124,7 @@ public class ClassEnvMon {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, procInstanceName});
                         this.messageDynamicData=new Object[]{incubationName, batchName};                    
                     }else{
-                        if (actionDiagnoses[4]==DataBatchIncubator.IncubatorBatchErrorTrapping.INCUBATORBATCH_ALREADY_IN_PROCESS.getErrorCode())
+                        if (actionDiagnoses[4]==DataBatchIncubator.IncubatorBatchErrorTrapping.INCUBATORBATCH_ALREADY_IN_PROCESS)
                             this.messageDynamicData=new Object[]{actionDiagnoses[actionDiagnoses.length-2], actionDiagnoses[actionDiagnoses.length-1], procInstanceName};                                  
                         else
                             this.messageDynamicData=new Object[]{batchName, procInstanceName};

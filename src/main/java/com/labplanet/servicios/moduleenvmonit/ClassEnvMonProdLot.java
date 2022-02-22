@@ -64,7 +64,7 @@ public class ClassEnvMonProdLot {
                         messageDynamicData=new Object[]{lotName};
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     }else{
-/*                        if (diagnostic[4]==DataProgramProductionLot.ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode())
+/*                        if (diagnostic[4]==DataProgramProductionLot.ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST)
                             messageDynamicData=new Object[]{diagnostic[diagnostic.length-2], diagnostic[diagnostic.length-1], procInstanceName};                                  
                         else*/
                             messageDynamicData=new Object[]{lotName, procInstanceName};

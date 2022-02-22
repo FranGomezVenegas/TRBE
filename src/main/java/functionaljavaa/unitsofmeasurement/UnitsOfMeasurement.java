@@ -122,17 +122,17 @@ public class UnitsOfMeasurement {
         String procInstanceName=procReqSession.getProcedureInstance();
         Object[] conversion = new Object[6];
         if (currentUnit==null){
-            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.CURRENT_UNITS_NOT_DEFINED.getErrorCode(),
+            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.CURRENT_UNITS_NOT_DEFINED,
                         new Object[]{procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
             return conversion;
         }
         if (newUnit==null){
-            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.NEW_UNITS_NOT_DEFINED.getErrorCode(),
+            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.NEW_UNITS_NOT_DEFINED,
                         new Object[]{procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
             return conversion;
         }
         if (newUnit.equals(currentUnit)){
-            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.SAME_VALUE_NOT_CONVERTED.getErrorCode(),
+            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.SAME_VALUE_NOT_CONVERTED,
                         new Object[]{procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
             conversion = LPArray.addValueToArray1D(conversion, this.getOrigQuantity());
             return conversion;
@@ -156,12 +156,12 @@ public class UnitsOfMeasurement {
         Integer currentUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);
         Integer newUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);
         if ((currentUnitFamilyFieldPosic==-1) || (newUnitFamilyFieldPosic==-1) ){
-            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
+            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY,
                         new Object[]{familyFieldNameDataBase, Arrays.toString(fieldsToGet), procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
             return conversion;
         }
         if (!currentUnitInfo[0][currentUnitFamilyFieldPosic].toString().equalsIgnoreCase(newUnitInfo[0][currentUnitFamilyFieldPosic].toString())){
-            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
+            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY,
                         new Object[]{currentUnit , currentUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
                             newUnit, newUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
                             procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
@@ -212,14 +212,14 @@ public class UnitsOfMeasurement {
         Integer currentUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);
         Integer newUnitFamilyFieldPosic = Arrays.asList(fieldsToGet).indexOf(familyFieldNameDataBase);
         if ((currentUnitFamilyFieldPosic==-1) || (newUnitFamilyFieldPosic==-1) ){
-            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
+            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY,
                         new Object[]{familyFieldNameDataBase, Arrays.toString(fieldsToGet), procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(this.getOrigQuantityUom())+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
             this.convertedFine=false;
             this.conversionErrorDetail=conversion;
             return;
         }
         if (!currentUnitInfo[0][currentUnitFamilyFieldPosic].toString().equalsIgnoreCase(newUnitInfo[0][currentUnitFamilyFieldPosic].toString())){
-            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
+            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY,
                         new Object[]{this.getOrigQuantityUom(), currentUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
                             newUnit, newUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
                             procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(this.getOrigQuantityUom())+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
@@ -262,7 +262,7 @@ public class UnitsOfMeasurement {
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
         if (family==null){
-            Object[] conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY.getErrorCode(),
+            Object[] conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY,
                                     new Object[]{procInstanceName});
             return LPArray.array1dTo2d(conversion, conversion.length);
         }

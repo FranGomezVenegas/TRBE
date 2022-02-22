@@ -25,6 +25,13 @@ public String sampleStagePlateReadingNextChecker(String sch, Integer sampleId) {
       //  return testId+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
     return "LABPLANET_TRUE";
 }
+public String sampleStageIncubationPreviousChecker(String procName, String sch, Integer sampleId) {
+    //var sampleStructure=JSON.parse(sampleData);
+    //var samplingDate = sampleStructure.sampling_date;
+    //if (samplingDate==null){
+      //  return testId+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+    return "LABPLANET_TRUE";
+}
 /*
 var sampleStageIncubationPreviousChecker = function(sampleId, sampleData) {
     sampleStructure=JSON.parse(sampleData);

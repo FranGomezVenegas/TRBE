@@ -146,7 +146,7 @@ public class ClassEnvMonSample {
                                 TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName(), TblsData.SampleAnalysisResult.FLD_UOM.getName(), 
                                 TblsData.SampleAnalysisResult.FLD_UOM_CONVERSION_MODE.getName()});                    
                     if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND.getErrorCode(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND, new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                     else{      
                         String currRawValue = (String) resultData[0][7];
                         if (currRawValue!=null && currRawValue.length()>0 && EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){

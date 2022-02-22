@@ -12,6 +12,7 @@ import databases.Rdbms;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -244,10 +245,9 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
                         Class<?>[] paramTypes = {Rdbms.class, String[].class, String.class, String.class, Integer.class};
                         method = getClass().getDeclaredMethod(aMethod, paramTypes);
                     } catch (NoSuchMethodException | SecurityException ex) {
-                        String errorCode = "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION";
                         Object[] errorDetailVariables = new Object[0];
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, ex.getMessage());
-                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                        
+                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, errorDetailVariables);                        
                     }
                     Object specialFunctionReturn = method.invoke(this, null, procInstanceName, projectTemplate, projectTemplateVersion);      
                     if (specialFunctionReturn.toString().contains("ERROR")){

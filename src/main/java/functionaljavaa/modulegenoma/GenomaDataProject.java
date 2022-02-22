@@ -158,10 +158,9 @@ public Object[] createProject(String projectName, String[] fieldsName, Object[] 
                         Class<?>[] paramTypes = {Rdbms.class, String[].class, String.class, String.class, Integer.class};
                         method = getClass().getDeclaredMethod(aMethod, paramTypes);
                     } catch (NoSuchMethodException | SecurityException ex) {
-                        String errorCode = "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION";
                         Object[] errorDetailVariables = new Object[0];
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, ex.getMessage());
-                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                        
+                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, errorDetailVariables);                        
                     }
                     Object specialFunctionReturn = method.invoke(this, null, procInstanceName, projectTemplate, projectTemplateVersion);      
                     if (specialFunctionReturn.toString().contains("ERROR")){

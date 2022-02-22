@@ -127,9 +127,9 @@ if (iLines==35){
                         procInstanceName+"-"+suffixName, propName, propValue);
                     functionRelatedObjects=new JSONArray();                      
                     if (diagn.toUpperCase().contains("CREATED"))
-                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "propertyCreated <*1*>", new Object[]{diagn});
+                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LPPlatform.ApiErrorTraping.PROPERTY_CREATED, new Object[]{diagn});
                     else
-                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "propertyNOTCreated <*1*>", new Object[]{diagn});
+                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_NOT_CREATED, new Object[]{diagn});
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     
                 }else{    
@@ -189,7 +189,7 @@ if (iLines==35){
                                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                                 fileContentTable1Builder.append(clsEnvMonProdLot.getRowArgsRows());                
                                             }else{
-                                                functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
+                                                functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
                                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                                 fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
                                             }

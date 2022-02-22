@@ -20,7 +20,7 @@ public class TblsProcedureConfig {
     
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.PROCEDURE_CONFIG.getName();
     public enum TablesProcedureConfig implements EnumIntTables{
-        STAGE_TIMING_INTERVAL(null, "stage_timing_interval", SCHEMA_NAME, true, TblsAppProcConfig.InstrumentsFamily.values(), null,
+        STAGE_TIMING_INTERVAL(null, "stage_timing_interval", SCHEMA_NAME, true, StageTimingInterval.values(), null,
             new String[]{StageTimingInterval.SAMPLE_CONFIG_CODE.getName(), StageTimingInterval.SAMPLE_CONFIG_VERSION.getName(), StageTimingInterval.STAGE.getName()}, null, ""),
         ;
         private TablesProcedureConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 

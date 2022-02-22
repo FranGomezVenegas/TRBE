@@ -41,7 +41,9 @@ public final class Investigation {
         OBJECT_ALREADY_ADDED("Investigation_objectAlreadyAdded", "<*1*> <*2*> already added in the investigation <*3*>", ""),
         NOT_FOUND("InvestigationNotFound","InvestigationNotFound <*1*>", ""),
         IS_CLOSED("InvestigationAlreadyClosed", "InvestigationAlreadyClosed  <*1*>", ""),
-        IS_OPEN("investigationIsOpen", "investigation Is Open  <*1*>","")
+        IS_OPEN("investigationIsOpen", "investigation Is Open  <*1*>",""),
+        OBJECT_NOT_IN_INVESTIGATION_YET("objectNotInInvestigationYet", "", ""),
+        NOT_CAPA_FIELD("notCapaField","<*1*> notCapaField",  "<*1*> notCapaField"),
         ;
         private InvestigationErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -192,7 +194,7 @@ public final class Investigation {
                 TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), 
                 checkFieldName, checkFieldValue, fldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invObjectInfo[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "objectNotInInvestigationYet", checkFieldValue);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_IN_INVESTIGATION_YET, checkFieldValue);
         else{
             ResponseMessages messages = instanceForActions.getMessages();
             messages.addMainForError(InvestigationErrorTrapping.OBJECT_ALREADY_ADDED, new Object[]{checkFieldValue[0], checkFieldValue[1], investId});
@@ -260,7 +262,7 @@ public final class Investigation {
     private static Object[] isCapaField(String[] fields){
         String[] allFieldNames = getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
         for (String curFld: fields){
-            if (!LPArray.valueInArray(allFieldNames, curFld)) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
+            if (!LPArray.valueInArray(allFieldNames, curFld)) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_CAPA_FIELD, new Object[]{curFld});
             //if (!curFld.toUpperCase().contains("CAPA")) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllCapaFields:  <*1*>", new Object[]{Arrays.toString(fields)});

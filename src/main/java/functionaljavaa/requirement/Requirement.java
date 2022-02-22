@@ -7,6 +7,7 @@ package functionaljavaa.requirement;
 
 import databases.Rdbms;
 import databases.TblsProcedure;
+import databases.TblsReqs;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -23,10 +24,10 @@ public class Requirement {
     public static final Object[][] getProcedureByProcInstanceName( String procInstanceName){
                 
         String schemaName = GlobalVariables.Schemas.REQUIREMENTS.getName();
-        String tableName = TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName();
+        String tableName = TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName();
         String[] whereFldName = new String[]{TblsProcedure.ProcedureInfo.SCHEMA_PREFIX.getName()};
         Object[] whereFldValue = new Object[]{procInstanceName};
-        String[] fieldsToRetrieve = new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()};
+        String[] fieldsToRetrieve = new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName()};
         
         return Rdbms.getRecordFieldsByFilter(schemaName, tableName, whereFldName, whereFldValue, fieldsToRetrieve);        
     }    

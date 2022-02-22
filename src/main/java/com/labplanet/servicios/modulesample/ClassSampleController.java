@@ -39,7 +39,7 @@ public class ClassSampleController {
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
         }catch(Exception e){
-            //Object[] diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()});                    
+            //Object[] diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()});                    
         }finally{
         }
     }

@@ -13,7 +13,7 @@ import trazit.enums.EnumIntMessages;
  */
 public class TrazitUtiilitiesEnums {
     public enum TrazitUtilitiesErrorTrapping implements EnumIntMessages{ 
-        FIELDS_DUPLICATED("DataSample_FieldsDuplicated", "There are duplicated fields", "Hay campos por duplicado"),
+        FIELDS_DUPLICATED("fieldsDuplicated", "There are duplicated fields", "Hay campos por duplicado"),
         ERRORTRAPPING_EXCEPTION("LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION", "", ""),
         ARRAYS_DIFFERENT_SIZE("DataSample_FieldArraysDifferentSize", "", ""),
         OBJECTOFARRAY_WRONGFORMAT("objectOfArray_wrongFormat", "", ""),
@@ -25,6 +25,10 @@ public class TrazitUtiilitiesEnums {
         VALUE_EMPTY("valueEmpty", "", ""),
         VALUE_NOT_NUMERIC("valueNotNumeric", "", ""),
         COMMA_IS_DECIMAL_SEPARATOR("commaIsTheDecimalsSeparator", "", ""),
+        DATERANGE_WRONG_INTERVAL("dateRange_wrongInterval", "", ""),
+        SPECIAL_FUNCTION_RETURNED_ERROR("SpecialFunctionReturnedERROR", "", ""),
+        
+        
         ;
         private TrazitUtilitiesErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

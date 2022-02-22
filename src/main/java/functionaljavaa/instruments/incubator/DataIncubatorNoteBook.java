@@ -155,7 +155,8 @@ public class DataIncubatorNoteBook {
                 maxIsStrict = Boolean.valueOf(instrInfo[0][LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.InstrIncubator.FLD_IS_MAX_STRICT.getName())].toString());
             Object[] resultCheck = dtSpec.resultCheck(temperature, minVal, maxVal, minIsStrict, maxIsStrict, null, null);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultCheck[0].toString())) return resultCheck;
-            specEval = (String) resultCheck[resultCheck.length - 1];
+            EnumIntMessages checkMsgCode=(EnumIntMessages) resultCheck[resultCheck.length - 1];
+            specEval = checkMsgCode.getErrorCode();
             specEvalDetail = (String) resultCheck[resultCheck.length - 2];
             insFldsName=LPArray.addValueToArray1D(insFldsName, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_SPEC_EVAL.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_SPEC_EVAL_DETAIL.getName()});
             insFldsValue=LPArray.addValueToArray1D(insFldsValue, new Object[]{specEval, specEvalDetail});

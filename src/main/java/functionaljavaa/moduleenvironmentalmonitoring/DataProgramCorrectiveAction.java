@@ -208,7 +208,7 @@ public class DataProgramCorrectiveAction {
             return correctiveActionInfo[0];
         }
         if (statusClosed.equalsIgnoreCase(correctiveActionInfo[0][0].toString())){
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.ACTION_CLOSED.getErrorCode(), new Object[]{correctiveActionId});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.ACTION_CLOSED, new Object[]{correctiveActionId});
         }
         String[] updFldName=new String[]{TblsProcedure.ProgramCorrectiveAction.STATUS.getName()};
         Object[] updFldValue=new Object[]{statusClosed};

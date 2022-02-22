@@ -20,7 +20,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
+import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
+import trazit.enums.EnumIntMessages;
 
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -36,7 +38,7 @@ public class ConfigAnalysisStructure {
     private static final String DIAGNOSES_SUCCESS = "SUCCESS";
     private static final String DIAGNOSES_ERROR = "ERROR";
     
-    public enum ConfigAnalysisErrorTrapping{ 
+    public enum ConfigAnalysisErrorTrapping implements EnumIntMessages{ 
         SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "MissingMandatoryFields <*1*>", ""),
@@ -253,7 +255,7 @@ if (1==1){return "ERROR";}
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, aMethod);
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(specialFunctionReturn));
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE, errorDetailVariables);
                 }
             }
         }      
@@ -274,7 +276,7 @@ if (1==1){return "ERROR";}
         String params = "ProcInstanceName: "+procInstanceName+"code"+code+"configVersion"+configVersion.toString()
                 +"specFieldName"+Arrays.toString(specFieldName)+"specFieldValue"+Arrays.toString(specFieldValue);
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, params);        
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE, errorDetailVariables);
     }
 
     /**
@@ -317,7 +319,7 @@ if (1==1){return "ERROR";}
         if (mandatoryFieldsMissingBuilder.length()>0){
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, mandatoryFieldsMissingBuilder.toString());
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);           
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);                
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, errorDetailVariables);                
         }
 
         String[] specialFields = getSpecialFields();
@@ -348,13 +350,13 @@ if (1==1){return "ERROR";}
                             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
                             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, aMethod);
                             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFunctionReturn.toString());
-                            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR.getErrorCode(), errorDetailVariables);                            
+                            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, errorDetailVariables);                            
                     }                        }     
                     if (specialFunctionReturn.toString().contains(DIAGNOSES_ERROR)){
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, aMethod);
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFunctionReturn.toString());
-                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR.getErrorCode(), errorDetailVariables);                            
+                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, errorDetailVariables);                            
                     }
             }
         }
@@ -365,7 +367,7 @@ if (1==1){return "ERROR";}
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, code);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, configVersion.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND.getErrorCode(), errorDetailVariables);           
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND, errorDetailVariables);           
         }
         try{
             fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.Analysis.FLD_CODE.getName());
@@ -382,14 +384,14 @@ if (1==1){return "ERROR";}
                     code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, code);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ConfigAnalysisErrorTrapping.ANALYSIS_CREATED.getErrorCode(), errorDetailVariables);                   
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ConfigAnalysisErrorTrapping.ANALYSIS_CREATED, errorDetailVariables);                   
             }    
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(ConfigAnalysisStructure.class.getName()).log(Level.SEVERE, null, ex);
         }                    
         String params = "procInstanceName: " + procInstanceName+"specFieldName: "+Arrays.toString(fieldName)+"specFieldValue: "+Arrays.toString(fieldValue);
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, params);
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);                  
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE, errorDetailVariables);                  
     }
     
     /**
@@ -443,9 +445,8 @@ if (1==1){return "ERROR";}
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkTwoArraysSameLength[0])){return checkTwoArraysSameLength;}
 
         if (LPArray.duplicates(fieldName)){
-           errorCode = "DataSample_FieldsDuplicated";
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fieldName));
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                      
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.FIELDS_DUPLICATED, errorDetailVariables);                      
         }                
 
         Integer methodVersion=1;
@@ -492,7 +493,7 @@ if (1==1){return "ERROR";}
         
         if (mandatoryFieldsMissingBuilder.length()>0){           
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, mandatoryFieldsMissingBuilder.toString());
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);    
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, errorDetailVariables);    
         }
         
         String[] specialFields = getSpecialFields();
@@ -523,16 +524,15 @@ if (1==1){return "ERROR";}
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFunctionReturn.toString());
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, aMethod);
-                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR.getErrorCode(), errorDetailVariables);                            
+                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, errorDetailVariables);                            
                     }
                 }
                 catch(InvocationTargetException ite){
-                    errorCode = "LabPLANETPlatform_SpecialFunctionCausedException";
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, aMethod);
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, ite.getMessage());                        
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "Spec Limits");
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaName);
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION, errorDetailVariables);
                 }
             }
         }                    
@@ -544,7 +544,7 @@ if (1==1){return "ERROR";}
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, TblsCnfg.AnalysisMethod.TBL.getName());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(whereFieldsAndValues));                                   
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaName);
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode(), errorDetailVariables);                                            
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, errorDetailVariables);                                            
 */
             String[] anaMethFldName=new String[]{TblsCnfg.AnalysisMethod.FLD_ANALYSIS.getName(), TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.FLD_METHOD_VERSION.getName(),
             TblsCnfg.AnalysisMethod.FLD_CREATED_BY.getName(), TblsCnfg.AnalysisMethod.FLD_CREATED_ON.getName()};
@@ -573,7 +573,7 @@ if (1==1){return "ERROR";}
         }                    
         String params = "procInstanceName: " + procInstanceName+"fieldName: "+Arrays.toString(fieldName)+"fieldValue: "+Arrays.toString(fieldValue);
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, params);
-        diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);                    
+        diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE, errorDetailVariables);                    
         return diagnoses;
     }
 }

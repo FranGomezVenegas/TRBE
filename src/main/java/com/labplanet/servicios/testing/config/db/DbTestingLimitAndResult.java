@@ -10,8 +10,10 @@ import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import functionaljavaa.materialspec.ConfigSpecRule;
+import functionaljavaa.materialspec.ConfigSpecRule.qualitativeRulesErrors;
 import functionaljavaa.materialspec.DataSpec;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -37,6 +39,7 @@ import lbplanet.utilities.LPFrontEnd;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
@@ -194,9 +197,9 @@ Integer currentLine=0;
                         if (specCodeVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "specCodeVersion");
                         if (methodVersion==null)fldsNull=LPArray.addValueToArray1D(fldsNull, "methodVersion");
                         if ((specCodeVersion==null && specCodeVersionStr==null) || (methodVersion==null && methodVersionStr==null))
-                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), fldsNull);
+                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING, fldsNull);
                         else
-                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "ValueNotNumeric", fldsNull);
+                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, fldsNull);
                         resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");                    
                     }else{
                         Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
@@ -214,7 +217,7 @@ Integer currentLine=0;
                             ConfigSpecRule specRule = new ConfigSpecRule();
                             specRule.specLimitsRule(limitId, null);
                             if (!specRule.getRuleIsQualitative() && !specRule.getRuleIsQuantitative())
-                                resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "spec limit "+limitId+" not recognized as quantitative neither qualitative", null);                    
+                                resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE.toString(), qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED, null);                    
                             if (specRule.getRuleIsQualitative()){        
                               resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
                                       specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
@@ -234,7 +237,7 @@ Integer currentLine=0;
                                     if (requiresUnitsConversion && specUomName!=null && specUomName.length()>0){
                                         uom.convertValue(specUomName);
                                         if (!uom.getConvertedFine()) 
-                                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), "", schemaDataName});                  
+                                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERTER_RETURNED_FALSE, new Object[]{limitId.toString(), "", schemaDataName});                  
                                         else
                                             resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        
                                     }

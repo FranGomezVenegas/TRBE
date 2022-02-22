@@ -134,7 +134,7 @@ public class AuditAndUserValidation {
         
         Token token = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-            this.checkUserValidationPassesDiag=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null);                             
+            this.checkUserValidationPassesDiag=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN, null);                             
             return;
         }      
         if (actionName==null){
@@ -169,7 +169,7 @@ public class AuditAndUserValidation {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
             messages.addMainForError(LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()});
-            this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()});                             
+            this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()});                             
             return;
         }
 
@@ -190,18 +190,18 @@ public class AuditAndUserValidation {
             return;
         }
         this.auditReasonPhrase=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE); 
-        this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, AuditAndUserValidationErrorTrapping.CHECK_SUCCESS.getErrorCode(), null);
+        this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, AuditAndUserValidationErrorTrapping.CHECK_SUCCESS, null);
     }
     private Boolean isValidAuditPhrase(String procInstanceName, String actionName, String auditReasonPhrase, BusinessRules busRulesProcInstance){
 //        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
         if (procInstanceName==null){
-            this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.PROC_INSTANCE_NAME_NULL.getErrorCode(), null);
+            this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.PROC_INSTANCE_NAME_NULL, null);
             return false;
         }
         String[] actionAuditReasonInfo = busRulesProcInstance.getProcedureBusinessRule(actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
         //String[] actionAuditReasonInfo = Parameter.getBusinessRuleProcedureFile(procInstanceName.replace("\"", ""), AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getAreaName(), actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
         if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (!LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase)) ){
-            this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.WRONG_PHRASE.getErrorCode(), new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
+            this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.WRONG_PHRASE, new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
             return false;
         }
         return true;

@@ -254,7 +254,7 @@ public class UserMethod {
             }
             return getUserProfileNEW;                
         }catch(SQLException ex){
-            Object[] trpErr=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION.getErrorCode(), new String[]{ex.getMessage()});
+            Object[] trpErr=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION, new String[]{ex.getMessage()});
             return LPArray.array1dTo2d(trpErr, trpErr.length);            
         }
     }

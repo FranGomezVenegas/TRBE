@@ -102,18 +102,18 @@ public class AnalysisMethodCertif {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())){
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
             messages.addMainForError(CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName});
-            return new Object[]{false, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode(), new Object[]{methodName})};            
+            return new Object[]{false, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName})};            
         }else
-            return new Object[]{true, ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, CertificationAnalysisMethodErrorTrapping.USER_IS_CERTIFIED.getErrorCode(), new Object[]{methodName})};                
+            return new Object[]{true, ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, CertificationAnalysisMethodErrorTrapping.USER_IS_CERTIFIED, new Object[]{methodName})};                
     }
     
     public static Object[] isUserCertificationEnabled(){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), CertificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName());
         if (Parameter.isTagValueOneOfEnableOnes(tagValue))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, CertificationAnalysisMethodErrorTrapping.USER_CERTIFICATION_ENABLED.getErrorCode(), null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, CertificationAnalysisMethodErrorTrapping.USER_CERTIFICATION_ENABLED, null);
         else
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.USER_CERTIFICATION_NOT_ENABLED.getErrorCode(), null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.USER_CERTIFICATION_NOT_ENABLED, null);
     }
     public static Object[] newRecord(String methodName, String userName){
         return newRecord(methodName, null, userName, null, null);
@@ -133,13 +133,13 @@ public class AnalysisMethodCertif {
                 new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName()}, 
                 new Object[]{methodName, methodVersion, userName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(recordExist[0].toString())) 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.CERTIF_RECORD_ALREADY_EXISTS.getErrorCode(), new Object[]{methodName, methodVersion, userName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.CERTIF_RECORD_ALREADY_EXISTS, new Object[]{methodName, methodVersion, userName});
         Object[] userIdObj=getPersonByUser(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userIdObj[0].toString())) return userIdObj;
         Object[] userInProcedure=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
                 new String[]{ TblsProcedure.PersonProfile.PERSON_NAME.getName()}, new Object[]{userIdObj[0].toString()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userInProcedure[0].toString())) 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.USER_NOT_INVOLVED_IN_THIS_CERTIFICATION.getErrorCode(), new Object[]{userName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.USER_NOT_INVOLVED_IN_THIS_CERTIFICATION, new Object[]{userName});
         String[] fldsName=CertifGlobalVariables.CertifEventUpdateFieldsAndValues.NEW_RECORD.getFieldsName();
         Object[] fldsValue=CertifGlobalVariables.CertifEventUpdateFieldsAndValues.NEW_RECORD.getFieldsValue();
         fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName());
@@ -332,7 +332,7 @@ public class AnalysisMethodCertif {
         Object[][] userMethodInfo = getUserAnalysisMethod(procInstanceName, userName, methodName);
         if(LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString())){return LPArray.array2dTo1d(userMethodInfo);}
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(userMethodInfo[0][3].toString())){
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING.getErrorCode(), new Object[]{methodName, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING, new Object[]{methodName, procInstanceName});
         }
         String[] updFldNames=new String[]{TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName(), TblsData.CertifUserAnalysisMethod.FLD_STATUS.getName(), TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName()}; 
         Object[] updFldValues=new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()};
@@ -362,7 +362,7 @@ public class AnalysisMethodCertif {
         Object[][] getUserProfileFieldValues = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
                 filterFieldName, filterFieldValue, fieldsToReturn);
         if (getUserProfileFieldValues==null || getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{methodName, userName, procInstanceName});
+            Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.NOT_ASSIGNED_TO_THIS_USER, new Object[]{methodName, userName, procInstanceName});
             return LPArray.array1dTo2d(diagnoses, diagnoses.length);
         }        
         return getUserProfileFieldValues;

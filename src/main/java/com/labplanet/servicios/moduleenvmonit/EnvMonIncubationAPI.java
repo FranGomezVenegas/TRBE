@@ -148,52 +148,6 @@ public class EnvMonIncubationAPI extends HttpServlet {
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
             }               
-/*            
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
-            Object[] messageDynamicData=new Object[]{};
-            RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-            
-            String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
-            Rdbms.setTransactionId(schemaConfigName);        
-            switch (endPoint){
-                case EM_INCUBATION_ACTIVATE:
-                    String instrName=argValues[0].toString();               
-                    actionDiagnoses=ConfigIncubator.activateIncubator(procInstanceName, instrName, token.getPersonName());
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
-                    this.messageDynamicData=new Object[]{instrName};
-                    break;
-                case EM_INCUBATION_DEACTIVATE:
-                    instrName=argValues[0].toString();
-                    actionDiagnoses=ConfigIncubator.deactivateIncubator(procInstanceName, instrName, token.getPersonName());
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
-                    this.messageDynamicData=new Object[]{instrName};
-                    break;
-                case EM_INCUBATION_ADD_TEMP_READING:
-                    instrName=argValues[0].toString();
-                    String temperature=argValues[1].toString();
-                    actionDiagnoses=DataIncubatorNoteBook.newTemperatureReading(procInstanceName, instrName, token.getPersonName(), new BigDecimal(temperature));                    
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), "instrument_incubator_notebook", actionDiagnoses[actionDiagnoses.length-1]);                
-                    this.messageDynamicData=new Object[]{temperature, instrName};
-                    break;                    
-                default:      
-                    Rdbms.closeRdbms(); 
-                    RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
-                    rd.forward(request,response);  
-            }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
-//                Rdbms.rollbackWithSavePoint();
-//                if (!con.getAutoCommit()){
-//                    con.rollback();
-//                    con.setAutoCommit(true);}                
-                rObj.killInstance();
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
-            }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
-                rObj.killInstance();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                
-            } 
-*/            
         }catch(Exception e){  
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};

@@ -123,7 +123,7 @@ public class TestingInspLotRM extends HttpServlet {
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                 fileContentTable1Builder.append(clssSampleQueriesController.getRowArgsRows());                
                             }else{
-                                functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
+                                functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                 fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
                             }

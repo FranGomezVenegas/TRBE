@@ -16,6 +16,7 @@ import javax.json.JsonObject;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntMessages;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -36,18 +37,23 @@ public class AppIncident {
     }
     public enum IncidentAuditEvents{NEW_INCIDENT_CREATED, CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT}
     
-    enum IncidentAPIErrorMessages{
-        AAA_FILE_NAME("errorTrapping"),
-        INCIDENT_CURRENTLY_NOT_ACTIVE("AppIncident_incidentCurrentlyNotActive"),
-        INCIDENT_ALREADY_ACTIVE("AppIncident_incidentAlreadyActive"),
+    enum IncidentAPIErrorMessages implements EnumIntMessages{ 
+        AAA_FILE_NAME("errorTrapping", "", ""),
+        INCIDENT_CURRENTLY_NOT_ACTIVE("AppIncident_incidentCurrentlyNotActive", "", ""),
+        INCIDENT_ALREADY_ACTIVE("AppIncident_incidentAlreadyActive", "", ""),
         ;
-        private IncidentAPIErrorMessages(String sname){
-            name=sname;
-        } 
-        public String getErrorCode(){
-            return this.name;
+        private IncidentAPIErrorMessages(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        private final String name;
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
     }
     
     public AppIncident(Integer incidentId){
@@ -178,8 +184,8 @@ public class AppIncident {
     
     private Object[] isIncidentActive(Integer incidentId){
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();
-        if (IncidentStatuses.CLOSED.toString().equalsIgnoreCase(currentStatus)) return  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_CURRENTLY_NOT_ACTIVE.getErrorCode(), new Object[]{incidentId});
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncidentAPIErrorMessages.INCIDENT_ALREADY_ACTIVE.getErrorCode(), new Object[]{incidentId});
+        if (IncidentStatuses.CLOSED.toString().equalsIgnoreCase(currentStatus)) return  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_CURRENTLY_NOT_ACTIVE, new Object[]{incidentId});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncidentAPIErrorMessages.INCIDENT_ALREADY_ACTIVE, new Object[]{incidentId});
     }
     
 /*    private static Object[] getValueByFldName(String fldName){

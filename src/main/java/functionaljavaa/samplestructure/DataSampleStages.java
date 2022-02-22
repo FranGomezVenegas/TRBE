@@ -34,8 +34,10 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -58,7 +60,7 @@ String previousStage="";
 Integer sampleId=-999;
 Object[][] firstStageData=new Object[0][0];
 
-public enum SampleStageErrorTrapping{ 
+public enum SampleStageErrorTrapping implements EnumIntMessages{
         ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT("actionNotDeclaredToPerformAutoMoveToNext", "The action <*1*> is not declared as to perform auto move to next in procedure <*2*>", ""),
         ;
         private SampleStageErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
@@ -214,7 +216,7 @@ public enum SampleStageErrorTrapping{
         String sampleCurrStage=sampleInfo[0][0].toString();
         String sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName());
         if (LPArray.valuePosicInArray(sampleStagesActionAutoMoveToNext.split("\\|"), actionName)==-1)
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleStageErrorTrapping.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT.getErrorCode(), new Object[]{actionName, procInstanceName});        
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleStageErrorTrapping.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT, new Object[]{actionName, procInstanceName});        
         Object[] moveDiagn=moveToNextStage(sampleId, sampleCurrStage,null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
             dataSampleStagesTimingCapture(sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 
@@ -259,7 +261,7 @@ public enum SampleStageErrorTrapping{
         //    method = getClass().getDeclaredMethod(functionName, paramTypes);
             method = ProcedureSampleStage.class.getDeclaredMethod(functionName, paramTypes);
         } catch (NoSuchMethodException | SecurityException ex) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION", new Object[]{ex.getMessage()});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, new Object[]{ex.getMessage()});
         }
         Object specialFunctionReturn=null;      
         try { 
@@ -268,7 +270,7 @@ public enum SampleStageErrorTrapping{
             Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
         }
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("ERROR")) )
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecialFunctionReturnedERROR", new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("FALSE")) ){
             String errorCode=specialFunctionReturn.toString();
             errorCode=LPNulls.replaceNull(specialFunctionReturn).toString().replace(LPPlatform.LAB_FALSE, "");
