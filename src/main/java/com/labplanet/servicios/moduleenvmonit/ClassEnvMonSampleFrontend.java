@@ -1202,6 +1202,7 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         String[] fldNameArr=null;
         Object[] fldValueArr=null;
         try{
+            if (1==1) return new Object[]{null, null};
             Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
             Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
             if (!isProgramCorrectiveActionEnable(procInstanceName)) return new Object[]{null, null};
