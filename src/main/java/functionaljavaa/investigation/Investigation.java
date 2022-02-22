@@ -137,14 +137,14 @@ public final class Investigation {
         for (String curObj: objectsToAdd.split("\\|")){
             String[] curObjDetail=curObj.split("\\*");
             String[] updFieldName=new String[]{TblsProcedure.InvestObjects.OBJECT_TYPE.getName()};
-            Object[] updFieldValue=new Object[]{curObjDetail[1]};
-            Object[] isNumeric = isNumeric(curObjDetail[0]);
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric[0].toString())){
+            Object[] updFieldValue=new Object[]{curObjDetail[0]};
+            Object[] isNumeric = isNumeric(curObjDetail[1]);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric[1].toString())){
                 updFieldName=LPArray.addValueToArray1D(updFieldName, TblsProcedure.InvestObjects.OBJECT_ID.getName());
-                updFieldValue=LPArray.addValueToArray1D(updFieldValue, Integer.valueOf(curObjDetail[0]));
+                updFieldValue=LPArray.addValueToArray1D(updFieldValue, Integer.valueOf(curObjDetail[1]));
             }else{
                 updFieldName=LPArray.addValueToArray1D(updFieldName, TblsProcedure.InvestObjects.OBJECT_NAME.getName());
-                updFieldValue=LPArray.addValueToArray1D(updFieldValue, curObjDetail[0]);
+                updFieldValue=LPArray.addValueToArray1D(updFieldValue, curObjDetail[1]);
             }
             updFieldName=LPArray.addValueToArray1D(updFieldName, baseFieldName);
             updFieldValue=LPArray.addValueToArray1D(updFieldValue, baseFieldValue);
@@ -153,7 +153,7 @@ public final class Investigation {
                 updFieldName, updFieldValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){                
-                diagnostic=DataProgramCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[1], curObjDetail[0]);
+                diagnostic=DataProgramCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
 
                 String incIdStr=diagnostic[diagnostic.length-1].toString();
@@ -210,15 +210,15 @@ public final class Investigation {
         if (curObjDetail.length!=2)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED, new Object[]{objInfo});
         checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.OBJECT_TYPE.getName());
-        checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[1]);
+        checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[0]);
 
-        Object[] isNumeric = isNumeric(curObjDetail[0]);
+        Object[] isNumeric = isNumeric(curObjDetail[1]);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric[0].toString())){
             checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.OBJECT_ID.getName());
-            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, Integer.valueOf(curObjDetail[0]));
+            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, Integer.valueOf(curObjDetail[1]));
         }else{
             checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.OBJECT_NAME.getName());
-            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[0]);
+            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[1]);
         }  
         return new Object[]{checkFieldName, checkFieldValue};
     }
