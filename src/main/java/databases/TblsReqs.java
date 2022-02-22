@@ -209,7 +209,6 @@ public class TblsReqs {
         WIDGET_TYPE("widget_type", LPDatabase.string(), null, null, null, null),
         WIDGET_LABEL_EN("widget_label_en", LPDatabase.string(), null, null, null, null),
         WIDGET_LABEL_ES("widget_label_es", LPDatabase.string(), null, null, null, null),
-        ROLE_NAME("role_name", LPDatabase.string(), null, null, null, null),
         MODE("mode", LPDatabase.string(), null, null, null, null),
         TYPE("type", LPDatabase.string(), null, null, null, null),
         BRANCH_LEVEL("branch_level", LPDatabase.string(), null, null, null, null),

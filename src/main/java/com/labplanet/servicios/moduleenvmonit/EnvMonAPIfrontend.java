@@ -533,7 +533,9 @@ GlobalAPIsParams.
                     String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
                     String programName = argValues[0].toString();
                     String[] progCorrFldNameList = getFieldsListToRetrieve(argValues[1].toString(), getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()));
-                    String[] progCorrFldSortArray=argValues[2].toString().split("\\|");
+                    String[] progCorrFldSortArray=null;
+                    if (argValues[2].toString().length()>0)
+                        progCorrFldSortArray=argValues[2].toString().split("\\|");
                     Object[][] progCorrInfo=getTableData(procReqInstance, GlobalVariables.Schemas.PROCEDURE.getName(),TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
                         argValues[1].toString(), getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()), 
                         new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName()+"<>"}, 
