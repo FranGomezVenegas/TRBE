@@ -7,7 +7,6 @@ package functionaljavaa.audit;
 
 import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
-import databases.TblsApp;
 import databases.TblsData;
 import databases.TblsDataAudit;
 import databases.Token;
@@ -15,19 +14,16 @@ import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.LPSession;
 import java.util.Arrays;
 import functionaljavaa.requirement.Requirement;
 import functionaljavaa.samplestructure.DataSampleStages;
 import java.util.ArrayList;
 import lbplanet.utilities.LPDate;
-import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
-import static trazit.session.ProcedureRequestSession.getInstanceForActions;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.SessionAuditActions;
@@ -142,17 +138,16 @@ public class SampleAudit {
             fileName=alternativeAuditClass;
             action=alternativeAuditEntry;
         }
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        GenericAuditFields gAuditFlds=new GenericAuditFields(fldNames, fldValues);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
+        String[] fieldNames=gAuditFlds.getFieldNames();
+        Object[] fieldValues=gAuditFlds.getFieldValues();
+        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
 
-        String[] fieldNames = new String[]{TblsDataAudit.Sample.DATE.getName(), 
-            TblsDataAudit.Sample.TABLE_NAME.getName(), TblsDataAudit.Sample.TABLE_ID.getName(),
-            TblsDataAudit.Sample.FIELDS_UPDATED.getName(), TblsDataAudit.Sample.USER_ROLE.getName(),
-            TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.TRANSACTION_ID.getName()};
-        Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp(), tableName, tableId,
-            LPJson.convertArrayRowToJSONObject(fldNames, fldValues).toJSONString(), token.getUserRole(), token.getPersonName(), Rdbms.getTransactionId()};
+        fieldNames = LPArray.addValueToArray1D(fieldNames, new String[]{ 
+            TblsDataAudit.Sample.TABLE_NAME.getName(), TblsDataAudit.Sample.TABLE_ID.getName()});
+        fieldValues = LPArray.addValueToArray1D(fieldValues, new Object[]{tableName, tableId});
 
         for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
             Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
@@ -166,6 +161,7 @@ public class SampleAudit {
                 fieldValues = LPArray.addValueToArray1D(fieldValues, propValue);
             }
         }
+        SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();        
         String actionPrettyEn=action;
         Integer actionPrettyEnPosic = LPArray.valuePosicInArray(fieldNames, TblsDataAudit.Sample.ACTION_PRETTY_EN.getName());
         if (actionPrettyEnPosic>-1)
@@ -174,7 +170,7 @@ public class SampleAudit {
         Integer actionPrettyEsPosic = LPArray.valuePosicInArray(fieldNames, TblsDataAudit.Sample.ACTION_PRETTY_ES.getName());
         if (actionPrettyEsPosic>-1)
             actionPrettyEs=LPNulls.replaceNull(fieldValues[actionPrettyEsPosic]).toString();
-        if (auditActions!=null && auditActions.getLastAuditAction()!=null){
+                if (auditActions!=null && auditActions.getLastAuditAction()!=null){
             action=auditActions.getLastAuditAction().getActionName()+" > "+action;
             actionPrettyEn=auditActions.getLastAuditAction().getActionPrettyEn()+" > "+actionPrettyEn;
             actionPrettyEs=auditActions.getLastAuditAction().getActionPrettyEs()+" > "+actionPrettyEs;
@@ -193,11 +189,6 @@ public class SampleAudit {
 
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
-        Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
-        if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, new String[]{TblsDataAudit.Sample.PROCEDURE.getName(), TblsDataAudit.Sample.PROCEDURE_VERSION.getName()});
-            fieldValues = LPArray.addValueToArray1D(fieldValues, new Object[]{procedureInfo[0][0], procedureInfo[0][1]});
-        }        
         if (sampleId!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.SAMPLE_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, sampleId);
@@ -210,23 +201,9 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.RESULT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, resultId);
         }    
-        if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
-                return appSession;
-            }else{
-                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.APP_SESSION_ID.getName());
-                fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(token.getAppSessionId()));            
-            }
-        }
         if (auditActions!=null && auditActions.getMainParentAuditAction()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getMainParentAuditAction().getAuditId());
-        }    
-        AuditAndUserValidation auditAndUsrValid=getInstanceForActions(null, null, null).getAuditAndUsrValid();
-        if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.REASON.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
         Object[] insertRecordInfo = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), 
                 fieldNames, fieldValues);

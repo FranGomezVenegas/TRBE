@@ -7,15 +7,10 @@ package functionaljavaa.audit;
 
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMDataAudit;
 import databases.Rdbms;
-import databases.TblsApp;
-import databases.TblsDataAudit;
 import databases.Token;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.LPSession;
 import java.util.Arrays;
-import functionaljavaa.requirement.Requirement;
-import lbplanet.utilities.LPDate;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -67,20 +62,12 @@ public class LotAudit {
  */    
     public Object[] lotAuditAdd(String action, String tableName, String tableId, 
                         String lotName, Object[] auditlog, Integer parentAuditId) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        GenericAuditFields gAuditFlds=new GenericAuditFields(null, null);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
+        String[] fieldNames=gAuditFlds.getFieldNames();
+        Object[] fieldValues=gAuditFlds.getFieldValues();
 
-        String[] fieldNames = new String[]{TblsDataAudit.Sample.DATE.getName()};
-        Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
-        
-        Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
-        if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInspLotRMDataAudit.Lot.FLD_PROCEDURE.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
-            fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_PROCEDURE_VERSION.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][1]);        
-        }        
-        
         fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
         fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_TABLE_NAME.getName());
@@ -93,33 +80,9 @@ public class LotAudit {
         }    
         fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_FIELDS_UPDATED.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
-        fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_USER_ROLE.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, token.getUserRole());
-
-        fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_PERSON.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
-        if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
-       
-    //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
-                return appSession;
-            }else{
-
-                fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_APP_SESSION_ID.getName());
-                fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(token.getAppSessionId()));            
-            }
-        }
-        fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_TRANSACTION_ID.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());            
         if (parentAuditId!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
-        }    
-        AuditAndUserValidation auditAndUsrValid=ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
-        if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FLD_REASON.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()),  TblsInspLotRMDataAudit.Lot.TBL.getName(), 
                 fieldNames, fieldValues);

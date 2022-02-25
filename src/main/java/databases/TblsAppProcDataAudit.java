@@ -68,6 +68,8 @@ public class TblsAppProcDataAudit {
         CODE("code", LPDatabase.string(), null, null, null, null),
         CONFIG_VERSION("config_version", LPDatabase.integer(), null, null, null, null),
         USER_ROLE("user_role", LPDatabase.string(), null, null, null, null),
+        PROCEDURE("procedure", LPDatabase.string(), null, null, null, null),
+        PROCEDURE_VERSION("procedure_version", LPDatabase.integer(), null, null, null, null),
         APP_SESSION_ID("app_session_id", LPDatabase.integer(), null, null, null, null),
         PICTURE_BEFORE("picture_before", "json", null, null, null, null),
         PICTURE_AFTER("picture_after", "json", null, null, null, null),

@@ -119,7 +119,7 @@ public class TblsDataAudit {
     }
 
     public enum Sample implements EnumIntTableFields{
-        AUDIT_ID("audit_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)", null, null, null, null),
+        AUDIT_ID("audit_id", LPDatabase.integer(), null, null, null, null),
         TABLE_NAME("table_name", " character varying COLLATE pg_catalog.\"default\"", null, null, null, null),
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
         TABLE_ID("table_id", LPDatabase.integer(), null, null, null, null),
