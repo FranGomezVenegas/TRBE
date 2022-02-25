@@ -99,13 +99,17 @@ public class LPJson {
         jsonArray.addAll(Arrays.asList(normalArray));
         return jsonArray;
     }
-    
+
     public static Object[] convertToJsonObjectStringedObject(String value){
         try{
         JsonParser parser = new JsonParser();
+        JsonObject asJsonObject=new JsonObject();
         String[] valueArr=value.split("\\*");
-        
-        JsonObject asJsonObject = parser.parse(valueArr[0]).getAsJsonObject();
+        if(valueArr.length==1)
+            asJsonObject = parser.parse(valueArr[0]).getAsJsonObject();
+        else
+            // Solo cubre el escenario en el cual el json ref esta en la última posicion del valor.
+            asJsonObject = parser.parse(valueArr[valueArr.length-1]).getAsJsonObject();
         Object[] infoArr=new Object[]{LPPlatform.LAB_TRUE, asJsonObject};
         if (valueArr.length==2) infoArr=LPArray.addValueToArray1D(infoArr, valueArr[1]);
         return infoArr;
