@@ -40,7 +40,7 @@ public final class SampleAPIlogic {
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
         }else{
-            dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue("this.getClass().getSimpleName()", 
+            dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), 
                     endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
         }
         rObj.killInstance();
