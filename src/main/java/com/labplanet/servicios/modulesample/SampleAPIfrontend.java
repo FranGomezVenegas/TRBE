@@ -416,8 +416,6 @@ public class SampleAPIfrontend extends HttpServlet {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
                         Rdbms.closeRdbms();                                          
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-//                        Object[] errMsg = LPFrontEnd.responseError(new String[] {Arrays.toString(LPArray.array2dTo1d(analysisResultList))}, language, null);
-//                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{                
                       JSONArray jArr=new JSONArray();
                       for (Object[] curRow: analysisResultList){

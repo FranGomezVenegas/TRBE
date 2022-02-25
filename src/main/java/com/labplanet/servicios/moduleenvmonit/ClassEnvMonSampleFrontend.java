@@ -262,8 +262,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
                         // Rdbms.closeRdbms();   
                         this.isSuccess=false;
-                        this.responseError=LPArray.array2dTo1d(analysisResultList);
-                        //response.sendError((int) errMsg[0], (String) errMsg[1]);                            
+                        this.responseSuccessJArr=new JSONArray();                       
                     }else{                           
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), sampleId);
                         Object[] objectsIds=getObjectsId(resultFieldToRetrieveArr, analysisResultList, "-");
