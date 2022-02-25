@@ -878,7 +878,7 @@ public class LPTestingOutFormat {
 
             Object[] objToJsonObj = LPJson.convertToJsonObjectStringedObject(value.toString());            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
-               return LPPlatform.LAB_FALSE;
+               return LPPlatform.LAB_FALSE+": "+objToJsonObj[objToJsonObj.length-1];
             if (objToJsonObj.length==3){
                 String h="2";
             }
@@ -899,7 +899,18 @@ public class LPTestingOutFormat {
                     numObjectsFound++;
                     if (numObjectsFound.equals(stepObjectPosic)){
                        String valueReplaced= object.get("object_name").getAsString();
-                       if (objToJsonObj.length==3)valueReplaced=valueReplaced+"*"+objToJsonObj[2].toString();
+                       if (objToJsonObj.length==3){
+                           String objsToJsonObjToStr="";
+                           String[] valueArr=value.toString().split("\\*");
+                           for (int iObjs=0;iObjs<valueArr.length-1;iObjs++){
+                                if (objsToJsonObjToStr.length()>0)
+                                    objsToJsonObjToStr=objsToJsonObjToStr+"*";
+                                objsToJsonObjToStr=objsToJsonObjToStr+valueArr[iObjs].toString();
+                           }
+                           valueReplaced=objsToJsonObjToStr+"*"+valueReplaced;
+                       }
+                       
+//                       if (objToJsonObj.length==3)valueReplaced=valueReplaced+"*"+objToJsonObj[2].toString();
                        return valueReplaced;
                    }
                 }
