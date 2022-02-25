@@ -166,11 +166,14 @@ public final class Investigation {
     }
     public static Object[] newInvestigationChecks(String[] fldNames, Object[] fldValues, String objectsToAdd){
         for (String curObj: objectsToAdd.split("\\|")){
+            Object[] decodeObjectDetail=decodeObjectInfo(curObj);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decodeObjectDetail[0].toString())) return decodeObjectDetail;
+
             Object[] objectAlreadyInInvestigation = isObjectAlreadyInInvestigation(curObj);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(objectAlreadyInInvestigation[0].toString())){  
                 objectAlreadyInInvestigation[0]=LPPlatform.LAB_FALSE;
                 return objectAlreadyInInvestigation;
-            }              
+            }                          
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllWell", null);
     }
@@ -203,6 +206,8 @@ public final class Investigation {
         }
     }    
     private static Object[] decodeObjectInfo(String objInfo){
+        int dataStructObjectTypePosic=0;
+        int dataStructObjectIdPosic=1;
         String[] checkFieldName=new String[]{};
         Object[] checkFieldValue=new Object[]{};
 
@@ -210,15 +215,15 @@ public final class Investigation {
         if (curObjDetail.length!=2)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED, new Object[]{objInfo});
         checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.OBJECT_TYPE.getName());
-        checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[0]);
+        checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[dataStructObjectTypePosic]);
 
-        Object[] isNumeric = isNumeric(curObjDetail[1]);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric[0].toString())){
+        Object[] isNumeric = isNumeric(curObjDetail[dataStructObjectIdPosic]);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric[dataStructObjectIdPosic].toString())){
             checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.OBJECT_ID.getName());
-            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, Integer.valueOf(curObjDetail[1]));
+            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, Integer.valueOf(curObjDetail[dataStructObjectIdPosic]));
         }else{
             checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.OBJECT_NAME.getName());
-            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[1]);
+            checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[dataStructObjectIdPosic]);
         }  
         return new Object[]{checkFieldName, checkFieldValue};
     }
@@ -291,7 +296,7 @@ public final class Investigation {
                     sampleId, testId, null, new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, new Object[]{investId.toString()});
                 return;
             case "SAMPLE_ANALYSIS_RESULT":
-                resultId=(Integer)((Object[])decodeObjectDetail[1])[1];
+                resultId=Integer.valueOf(((Object[])decodeObjectDetail[1])[1].toString());
                 objInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                     new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, 
                     new Object[]{resultId}, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
