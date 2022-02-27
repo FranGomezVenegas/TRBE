@@ -566,10 +566,6 @@ public class TblsCnfg {
      *
      */
     public enum SopMetaData{
-
-        /**
-         *
-         */
         FLD_SOP_ID("sop_id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sop_id_seq'::regclass)")
         ,        
         TBL("sop_meta_data", LPDatabase.createSequence(FLD_SOP_ID.getName())
@@ -577,61 +573,15 @@ public class TblsCnfg {
                 +  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SOP_ID, #FLD_SOP_VERSION, #FLD_SOP_REVISION) )" +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_SOP_NAME("sop_name", LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_SOP_VERSION("sop_version", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_SOP_REVISION("sop_revision", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_CURRENT_STATUS("current_status", LPDatabase.string())
-        
-        ,
-
-        /**
-         *
-         */
-        FLD_ADDED_BY("added_by", LPDatabase.string())
-        
-        ,
-
-        /**
-         *
-         */
-        FLD_FILE_LINK("file_link", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_BRIEF_SUMMARY("brief_summary", LPDatabase.string())
-        ,
+        FLD_SOP_NAME("sop_name", LPDatabase.stringNotNull()),
+        FLD_SOP_VERSION("sop_version", LPDatabase.integer()),
+        FLD_SOP_REVISION("sop_revision", LPDatabase.integer()),
+        FLD_CURRENT_STATUS("current_status", LPDatabase.string()),
+        FLD_ADDED_BY("added_by", LPDatabase.string()),
+        FLD_FILE_LINK("file_link", LPDatabase.string()),
+        FLD_BRIEF_SUMMARY("brief_summary", LPDatabase.string()),
         FLD_EXPIRES("expires", LPDatabase.booleanFld()),
         FLD_HAS_CHILD("has_child", LPDatabase.booleanFld()),
-
-        /**
-         *
-         */
         FLD_AUTHOR("author", LPDatabase.string()),
         FLD_EXPIRY_INTERVAL_INFO(DBFIELDNAME_EXPIRY_INTERVAL_INFO, LPDatabase.string()),        
         FLD_CERTIFICATION_MODE("certification_mode", LPDatabase.string()),

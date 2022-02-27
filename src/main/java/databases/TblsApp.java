@@ -9,7 +9,6 @@ import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
-import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 
@@ -22,16 +21,16 @@ public class TblsApp {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP.getName();
     public enum TablesApp implements EnumIntTables{
         
+        USERS(null, "users", SCHEMA_NAME, true, Users.values(), null,
+            new String[]{Users.USER_NAME.getName()}, null, "instance users declaration"),
+        USER_PROCESS(null, "user_process", SCHEMA_NAME, true, UserProcess.values(), null,
+            new String[]{UserProcess.USER_NAME.getName(), UserProcess.PROC_NAME.getName()}, null, "Processes assigned to the users"),
+        APP_SESSION(null, "app_session", SCHEMA_NAME, true, AppSession.values(), AppSession.SESSION_ID.getName(),
+            new String[]{AppSession.SESSION_ID.getName()}, null, "Id for any user session"),
         IP_WHITE_LIST(null, "ip_white_list", SCHEMA_NAME, true, IPWhiteList.values(), IPWhiteList.ID.getName(),
             new String[]{IPWhiteList.ID.getName()}, null, "White List, when at least one IP added then the access will be limited to those IPs (except if added to blacklist)"),
         IP_BLACK_LIST(null, "ip_black_list", SCHEMA_NAME, true, IPBlackList.values(), IPBlackList.ID.getName(),
             new String[]{IPBlackList.ID.getName()}, null, "Black List, when one IP is added to this table then it is banned, independently of be in the white list too"),
-        APP_SESSION(null, "app_session", SCHEMA_NAME, true, AppSession.values(), AppSession.SESSION_ID.getName(),
-            new String[]{AppSession.SESSION_ID.getName()}, null, "Id for any user session"),
-        USER_PROCESS(null, "user_process", SCHEMA_NAME, true, UserProcess.values(), null,
-            new String[]{UserProcess.USER_NAME.getName(), UserProcess.USER_NAME.getName()}, null, "Processes assigned to the users"),
-        USERS(null, "users", SCHEMA_NAME, true, Users.values(), null,
-            new String[]{Users.USER_NAME.getName()}, null, "instance users declaration"),
         HOLIDAYS_CALENDAR(null, "holidays_calendar", SCHEMA_NAME, true, HolidaysCalendar.values(), null,
             new String[]{HolidaysCalendar.FLD_CODE.getName()}, null, "Holiday Calendars"),
         HOLIDAYS_CALENDAR_DATE(null, "holidays_calendar_date", SCHEMA_NAME, true, HolidaysCalendarDate.values(), HolidaysCalendarDate.ID.getName(),
@@ -42,7 +41,7 @@ public class TblsApp {
             new String[]{VideoTutorial.ID.getName()}, null, "Video Tutorial entries table"),
         ;
         private TablesApp(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
-                String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
+                String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;
             this.tableFields=tblFlds;
@@ -59,7 +58,7 @@ public class TblsApp {
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public String getSeqName() {return this.sequence;}
         @Override        public String[] getPrimaryKey() {return this.primarykey;}
-        @Override        public ForeignkeyFld getForeignKey() {return this.foreignkey;}
+        @Override        public Object[] getForeignKey() {return this.foreignkey;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         private final FldBusinessRules[] getTblBusinessRules;      
@@ -69,7 +68,7 @@ public class TblsApp {
         private final String sequence;
         private final EnumIntTableFields[] tableFields;
         private final String[] primarykey;
-        private final ForeignkeyFld foreignkey;
+        private final Object[] foreignkey;
         private final String tableComment;
     }
     public enum IPWhiteList implements EnumIntTableFields{

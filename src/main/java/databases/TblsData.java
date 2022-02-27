@@ -84,19 +84,19 @@ public class TblsData {
             new String[]{Sample.FLD_SAMPLE_ID.getName()}, null, "sample table"),
         SAMPLE_ANALYSIS(null, "sample_analysis", SCHEMA_NAME, true, SampleAnalysis.values(), Sample.FLD_SAMPLE_ID.getName(),
             new String[]{SampleAnalysis.FLD_TEST_ID.getName()}, 
-            new ForeignkeyFld(SampleAnalysis.FLD_SAMPLE_ID.getName(), SCHEMA_NAME, SAMPLE.getTableName(), Sample.FLD_SAMPLE_ID.getName()), "sample analysis table"),
+            new Object[]{new ForeignkeyFld(SampleAnalysis.FLD_SAMPLE_ID.getName(), SCHEMA_NAME, SAMPLE.getTableName(), Sample.FLD_SAMPLE_ID.getName())}, "sample analysis table"),
         SAMPLE_ANALYSIS_RESULT(null, "sample_analysis_result", SCHEMA_NAME, true, SampleAnalysisResult.values(), Sample.FLD_SAMPLE_ID.getName(),
             new String[]{SampleAnalysisResult.FLD_RESULT_ID.getName()}, 
-            new ForeignkeyFld(SampleAnalysisResult.FLD_TEST_ID.getName(), SCHEMA_NAME, SAMPLE_ANALYSIS.getTableName(), SampleAnalysis.FLD_TEST_ID.getName()), "sample analysis results table"),
+            new Object[]{new ForeignkeyFld(SampleAnalysisResult.FLD_TEST_ID.getName(), SCHEMA_NAME, SAMPLE_ANALYSIS.getTableName(), SampleAnalysis.FLD_TEST_ID.getName())}, "sample analysis results table"),
         SAMPLE_ALIQ(null, "sample_aliq", SCHEMA_NAME, true, SampleAliq.values(), SampleAliq.FLD_ALIQUOT_ID.getName(),
             new String[]{SampleAliq.FLD_ALIQUOT_ID.getName()}, 
-            new ForeignkeyFld(SampleAliq.FLD_SAMPLE_ID.getName(), SCHEMA_NAME, SAMPLE.getTableName(), Sample.FLD_SAMPLE_ID.getName()), "sample aliquot table"),
+            new Object[]{new ForeignkeyFld(SampleAliq.FLD_SAMPLE_ID.getName(), SCHEMA_NAME, SAMPLE.getTableName(), Sample.FLD_SAMPLE_ID.getName())}, "sample aliquot table"),
         SAMPLE_ALIQ_SUB(null, "sample_aliq_sub", SCHEMA_NAME, true, SampleAliqSub.values(), SampleAliqSub.FLD_SUBALIQUOT_ID.getName(),
             new String[]{SampleAliqSub.FLD_SUBALIQUOT_ID.getName()}, 
-            new ForeignkeyFld(SampleAliqSub.FLD_ALIQUOT_ID.getName(), SCHEMA_NAME, SAMPLE_ALIQ.getTableName(), SampleAliq.FLD_ALIQUOT_ID.getName()), "sample sub aliquot table"),
+            new Object[]{new ForeignkeyFld(SampleAliqSub.FLD_ALIQUOT_ID.getName(), SCHEMA_NAME, SAMPLE_ALIQ.getTableName(), SampleAliq.FLD_ALIQUOT_ID.getName())}, "sample sub aliquot table"),
         PRODUCT(null, "product", "data", true, Sample.values(), null, 
             new String[]{Sample.FLD_SAMPLE_ID.getName()}, 
-            new ForeignkeyFld(Sample.FLD_SAMPLE_ID_RELATED.getName(), SCHEMA_NAME, "sample", Sample.FLD_SAMPLE_ID.getName()), "product table comment"),
+            new Object[]{new ForeignkeyFld(Sample.FLD_SAMPLE_ID_RELATED.getName(), SCHEMA_NAME, "sample", Sample.FLD_SAMPLE_ID.getName())}, "product table comment"),
         SAMPLE_COC(new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleChangeOfCustody", false, false, new String[]{"ENABLED"}, null)},
             "sample_coc", SCHEMA_NAME, true, SampleCoc.values(), SampleCoc.FLD_ID.getName(),
             new String[]{SampleCoc.FLD_ID.getName()}, null, ""),
@@ -106,7 +106,7 @@ public class TblsData {
         
         ;
         private TablesData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
-                String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
+                String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;
             this.tableFields=tblFlds;
@@ -123,7 +123,7 @@ public class TblsData {
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public String getSeqName() {return this.sequence;}
         @Override        public String[] getPrimaryKey() {return this.primarykey;}
-        @Override        public ForeignkeyFld getForeignKey() {return this.foreignkey;}
+        @Override        public Object[] getForeignKey() {return this.foreignkey;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         private final FldBusinessRules[] getTblBusinessRules;      
@@ -133,7 +133,7 @@ public class TblsData {
         private final String sequence;
         private final EnumIntTableFields[] tableFields;
         private final String[] primarykey;
-        private final ForeignkeyFld foreignkey;
+        private final Object[] foreignkey;
         private final String tableComment;
     }
     public enum Sample implements EnumIntTableFields{

@@ -10,7 +10,6 @@ import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
-import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
@@ -41,7 +40,7 @@ public class TblsTesting {
             new String[]{ScriptSavePoint.ID.getName()}, null, "Testing scripts table"),
         ;
         private TablesTesting(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
-                String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
+                String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;
             this.tableFields=tblFlds;
@@ -58,7 +57,7 @@ public class TblsTesting {
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public String getSeqName() {return this.sequence;}
         @Override        public String[] getPrimaryKey() {return this.primarykey;}
-        @Override        public ForeignkeyFld getForeignKey() {return this.foreignkey;}
+        @Override        public Object[] getForeignKey() {return this.foreignkey;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         private final FldBusinessRules[] getTblBusinessRules;      
@@ -68,7 +67,7 @@ public class TblsTesting {
         private final String sequence;
         private final EnumIntTableFields[] tableFields;
         private final String[] primarykey;
-        private final ForeignkeyFld foreignkey;
+        private final Object[] foreignkey;
         private final String tableComment;
     }
     

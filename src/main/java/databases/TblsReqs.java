@@ -21,61 +21,84 @@ public class TblsReqs {
     public static final String FIELDS_NAMES_DESCRIPTION="description";
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.REQUIREMENTS.getName();
     public enum TablesReqs implements EnumIntTables{
-        PROCEDURE_INFO(null, "procedure_info", SCHEMA_NAME, false, ProcedureInfo.values(), ProcedureInfo.PROCEDURE_NAME.getName()+"_"+ProcedureInfo.PROCEDURE_VERSION.getName(),
-            new String[]{ProcedureInfo.PROCEDURE_NAME.getName(), ProcedureInfo.PROCEDURE_VERSION.getName()}, null, "This table provides the general info about the process instances"),
-        PROCEDURE_ROLES(null, "procedure_roles", SCHEMA_NAME, false, ProcedureRoles.values(), 
-            ProcedureRoles.PROCEDURE_NAME.getName()+"_"+ProcedureRoles.PROCEDURE_VERSION.getName()+"_"+ProcedureRoles.ROLE_NAME.getName(),
-            new String[]{ProcedureInfo.PROCEDURE_NAME.getName(), ProcedureInfo.PROCEDURE_VERSION.getName(), ProcedureRoles.ROLE_NAME.getName()},
-            new ForeignkeyFld(ProcedureRoles.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+        PROCEDURE_INFO(null, "procedure_info", SCHEMA_NAME, false, ProcedureInfo.values(), ProcedureInfo.PROCEDURE_NAME.getName()+"_"+ProcedureInfo.PROCEDURE_VERSION.getName()+"_"+ProcedureInfo.PROC_INSTANCE_NAME.getName(),
+            new String[]{ProcedureInfo.PROCEDURE_NAME.getName(), ProcedureInfo.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName()}, null, "This table provides the general info about the process instances"),
+        PROCEDURE_ROLES(null, "procedure_roles", SCHEMA_NAME, false, ProcedureRoles.values(), null,
+            new String[]{ProcedureRoles.PROCEDURE_NAME.getName(), ProcedureRoles.PROCEDURE_VERSION.getName(), ProcedureRoles.ROLE_NAME.getName()},
+            new Object[]{new ForeignkeyFld(ProcedureRoles.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureRoles.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureRoles.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
+            },
             "Roles for a given process instance"),
         PROC_USERS(null, "procedure_users", SCHEMA_NAME, false, ProcedureUsers.values(), 
             ProcedureUsers.PROCEDURE_NAME.getName()+"_"+ProcedureUsers.PROCEDURE_VERSION.getName()+"_"+ProcedureUsers.USER_NAME.getName(),
             new String[]{ProcedureUsers.PROCEDURE_NAME.getName(), ProcedureUsers.PROCEDURE_VERSION.getName(), ProcedureUsers.USER_NAME.getName()},
-            new ForeignkeyFld(ProcedureUsers.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+            new Object[]{new ForeignkeyFld(ProcedureUsers.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureUsers.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureUsers.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
+            },
             "Users for a given process instance"),
         PROC_USER_ROLES(null, "procedure_user_role", SCHEMA_NAME, false, ProcedureUserRoles.values(), 
             ProcedureUserRoles.PROCEDURE_NAME.getName()+"_"+ProcedureUserRoles.PROCEDURE_VERSION.getName()+"_"+ProcedureUserRoles.ROLE_NAME.getName()+"_"+ProcedureUserRoles.USER_NAME.getName(),
-            new String[]{ProcedureInfo.PROCEDURE_NAME.getName(), ProcedureInfo.PROCEDURE_VERSION.getName(), ProcedureUserRoles.ROLE_NAME.getName(), ProcedureUserRoles.USER_NAME.getName()},
-            new ForeignkeyFld(ProcedureUserRoles.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+            new String[]{ProcedureUserRoles.PROCEDURE_NAME.getName(), ProcedureUserRoles.PROCEDURE_VERSION.getName(), ProcedureUserRoles.ROLE_NAME.getName(), ProcedureUserRoles.USER_NAME.getName()},
+            new Object[]{new ForeignkeyFld(ProcedureUserRoles.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureUserRoles.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
+            },
             "User Roles for a given process instance"),
         PROCEDURE_SOP_META_DATA(null, "procedure_sop_meta_data", SCHEMA_NAME, false, ProcedureSopMetaData.values(), 
             ProcedureSopMetaData.PROCEDURE_NAME.getName()+"_"+ProcedureSopMetaData.PROCEDURE_VERSION.getName()+"_"+ProcedureSopMetaData.SOP_ID.getName(),
             new String[]{ProcedureSopMetaData.PROCEDURE_NAME.getName(), ProcedureSopMetaData.PROCEDURE_VERSION.getName(), ProcedureSopMetaData.SOP_ID.getName()},
-            new ForeignkeyFld(ProcedureSopMetaData.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+            new Object[]{new ForeignkeyFld(ProcedureSopMetaData.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureSopMetaData.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureSopMetaData.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
+            },
             "SOPs for a given process instance"),
         PROCEDURE_USER_REQS(null, "procedure_user_requirements", SCHEMA_NAME, false, ProcedureUserRequirements.values(), 
             ProcedureUserRequirements.PROCEDURE_NAME.getName()+"_"+ProcedureUserRequirements.PROCEDURE_VERSION.getName()+"_"+ProcedureUserRequirements.ID.getName(),
             new String[]{ProcedureUserRequirements.PROCEDURE_NAME.getName(), ProcedureUserRequirements.PROCEDURE_VERSION.getName(), ProcedureUserRequirements.ID.getName()},
-            new ForeignkeyFld(ProcedureUserRequirements.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+            new Object[]{new ForeignkeyFld(ProcedureUserRequirements.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureUserRequirements.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
+            },
             "URS for a given process instance"),
         PROCEDURE_USER_REQS_EVENTS(null, "procedure_user_requirements_events", SCHEMA_NAME, false, ProcedureUserRequirementsEvents.values(), 
             ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName()+"_"+ProcedureUserRequirementsEvents.PROCEDURE_VERSION.getName()+"_"+ProcedureUserRequirementsEvents.ID.getName(),
             new String[]{ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName(), ProcedureUserRequirementsEvents.PROCEDURE_VERSION.getName(), ProcedureUserRequirementsEvents.ID.getName()},
-            new ForeignkeyFld(ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+            new Object[]{new ForeignkeyFld(ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureUserRequirementsEvents.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureUserRequirementsEvents.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
+            },
             "URS events for a given process instance"),
-        PROC_MODULE_TABLES(null, "procedure_module_tables", SCHEMA_NAME, false, ProcedureModuleTables.values(), 
-            ProcedureModuleTables.PROCEDURE_NAME.getName()+"_"+ProcedureModuleTables.PROCEDURE_VERSION.getName()+"_"+ProcedureModuleTables.SCHEMA_NAME.getName()+"_"+ProcedureModuleTables.TABLE_NAME.getName(),
-            new String[]{ProcedureModuleTables.PROCEDURE_NAME.getName(), ProcedureModuleTables.PROCEDURE_VERSION.getName(), ProcedureModuleTables.SCHEMA_NAME.getName()+"_"+ProcedureModuleTables.TABLE_NAME.getName()},
-            new ForeignkeyFld(ProcedureModuleTables.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+        PROC_MODULE_TABLES(null, "procedure_module_tables", SCHEMA_NAME, false, ProcedureModuleTables.values(), null,
+            new String[]{ProcedureModuleTables.PROCEDURE_NAME.getName(), ProcedureModuleTables.PROCEDURE_VERSION.getName(), ProcedureModuleTables.SCHEMA_NAME.getName(), ProcedureModuleTables.TABLE_NAME.getName()},
+            new Object[]{new ForeignkeyFld(ProcedureModuleTables.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureModuleTables.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureModuleTables.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
+            },
             "Roles for a given process instance"),
-        PROC_BUS_RULES(null, "procedure_business_rules", SCHEMA_NAME, false, ProcedureBusinessRules.values(), 
-            ProcedureBusinessRules.PROCEDURE_NAME.getName()+"_"+ProcedureBusinessRules.PROCEDURE_VERSION.getName()+"_"+ProcedureBusinessRules.FILE_SUFFIX.getName()+"_"+ProcedureBusinessRules.RULE_NAME.getName(),
+        PROC_BUS_RULES(null, "procedure_business_rules", SCHEMA_NAME, false, ProcedureBusinessRules.values(), null,
             new String[]{ProcedureBusinessRules.PROCEDURE_NAME.getName(), ProcedureBusinessRules.PROCEDURE_VERSION.getName(), ProcedureBusinessRules.FILE_SUFFIX.getName(), ProcedureBusinessRules.RULE_NAME.getName()},
-            new ForeignkeyFld(ProcedureBusinessRules.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+            new Object[]{new ForeignkeyFld(ProcedureBusinessRules.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureBusinessRules.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureBusinessRules.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())},
             "Roles for a given process instance"),
-        PROC_MASTER_DATA(null, "procedure_master_data", SCHEMA_NAME, false, ProcedureMasterData.values(), 
-            ProcedureMasterData.PROCEDURE_NAME.getName()+"_"+ProcedureMasterData.PROCEDURE_VERSION.getName()+"_"+ProcedureFEModel.INSTANCE_NAME.getName()+"_"+ProcedureMasterData.OBJECT_TYPE.getName(),
-            new String[]{ProcedureMasterData.PROCEDURE_NAME.getName(), ProcedureMasterData.PROCEDURE_VERSION.getName(), ProcedureFEModel.INSTANCE_NAME.getName(), ProcedureMasterData.OBJECT_TYPE.getName()},
-            new ForeignkeyFld(ProcedureUsers.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+        PROC_MASTER_DATA(null, "procedure_master_data", SCHEMA_NAME, false, ProcedureMasterData.values(), null,
+            new String[]{ProcedureMasterData.PROCEDURE_NAME.getName(), ProcedureMasterData.PROCEDURE_VERSION.getName(), ProcedureFEModel.PROC_INSTANCE_NAME.getName(), ProcedureMasterData.OBJECT_TYPE.getName()},
+            new Object[]{new ForeignkeyFld(ProcedureMasterData.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureMasterData.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureMasterData.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
+            },
             "Master Data for a given process instance"),
-        PROC_FE_MODEL(null, "fe_proc_model", SCHEMA_NAME, false, ProcedureFEModel.values(), 
-            ProcedureFEModel.PROCEDURE_NAME.getName()+"_"+ProcedureFEModel.PROCEDURE_VERSION.getName()+"_"+ProcedureFEModel.INSTANCE_NAME.getName(),
-            new String[]{ProcedureFEModel.PROCEDURE_NAME.getName(), ProcedureFEModel.PROCEDURE_VERSION.getName(), ProcedureFEModel.INSTANCE_NAME.getName()},
-            new ForeignkeyFld(ProcedureFEModel.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+        PROC_FE_MODEL(null, "fe_proc_model", SCHEMA_NAME, false, ProcedureFEModel.values(), null,
+            new String[]{ProcedureFEModel.PROCEDURE_NAME.getName(), ProcedureFEModel.PROCEDURE_VERSION.getName(), ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
+            new Object[]{new ForeignkeyFld(ProcedureFEModel.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
+                new ForeignkeyFld(ProcedureFEModel.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
+                new ForeignkeyFld(ProcedureFEModel.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())},
             "Frontend model definition for a given process instance"),
         ;
         private TablesReqs(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
-                String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
+                String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;
             this.repositoryName=repositoryName;
@@ -92,7 +115,7 @@ public class TblsReqs {
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public String getSeqName() {return this.sequence;}
         @Override        public String[] getPrimaryKey() {return this.primarykey;}
-        @Override        public ForeignkeyFld getForeignKey() {return this.foreignkey;}
+        @Override        public Object[] getForeignKey() {return this.foreignkey;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         private final FldBusinessRules[] getTblBusinessRules;      
@@ -102,7 +125,7 @@ public class TblsReqs {
         private final String sequence;
         private final EnumIntTableFields[] tableFields;
         private final String[] primarykey;
-        private final ForeignkeyFld foreignkey;
+        private final Object[] foreignkey;
         private final String tableComment;
     }
 
@@ -110,7 +133,7 @@ public class TblsReqs {
         PROCEDURE_NAME("procedure_name", LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION("procedure_version", LPDatabase.integerNotNull(), null, null, null, null),
         DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.stringNotNull(), null, null, null, null),
-        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         LABEL_EN("label_en", LPDatabase.stringNotNull(), null, null, null, null),
         LABEL_ES("label_es", LPDatabase.stringNotNull(), null, null, null, null),
         ;
@@ -133,8 +156,9 @@ public class TblsReqs {
     public enum ProcedureRoles implements EnumIntTableFields{
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.stringNotNull(), null, null, null, null),
-        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+        DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
+//        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.stringNotNull(), null, null, null, null),
         ;
         private ProcedureRoles(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -158,11 +182,12 @@ public class TblsReqs {
         SOP_ID("sop_id", LPDatabase.integerNotNull(), null, null, null, null),
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+//        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         SOP_NAME("sop_name", LPDatabase.stringNotNull(), null, null, null, null),
         SOP_VERSION("sop_version", LPDatabase.integerNotNull(), null, null, null, null),
         SOP_REVISION("sop_revision", LPDatabase.integerNotNull(), null, null, null, null),
-        CURRENT_STATUS("current_status", LPDatabase.stringNotNull(), null, null, null, null),
+        CURRENT_STATUS("current_status", LPDatabase.string(), null, null, null, null),
         EXPIRES("expires", LPDatabase.booleanFld(false), null, null, null, null),
         HAS_CHILD("has_child", LPDatabase.booleanFld(false), null, null, null, null),
         FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
@@ -190,6 +215,7 @@ public class TblsReqs {
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
         CODE("code", LPDatabase.string(), null, null, null, null),
@@ -233,10 +259,11 @@ public class TblsReqs {
     }
 
     public enum ProcedureUserRequirementsEvents implements EnumIntTableFields{
-        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+//        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
         NAME("name", LPDatabase.string(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.string(), null, null, null, null),
@@ -273,7 +300,8 @@ public class TblsReqs {
     public enum ProcedureUserRoles implements EnumIntTableFields{
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+//        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         USER_NAME("user_name", LPDatabase.stringNotNull(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.stringNotNull(), null, null, null, null),
         // ....
@@ -301,7 +329,8 @@ public class TblsReqs {
     public enum ProcedureUsers implements EnumIntTableFields{
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+//        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         USER_NAME("user_name", LPDatabase.stringNotNull(), null, null, null, null)
         ;
         private ProcedureUsers(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -327,7 +356,8 @@ public class TblsReqs {
     public enum ProcedureModuleTables implements EnumIntTableFields{
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+//        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         SCHEMA_NAME("schema_name", LPDatabase.stringNotNull(), null, null, null, null),
         TABLE_NAME("table_name", LPDatabase.stringNotNull(), null, null, null, null),
         FIELD_NAME("field_name", LPDatabase.string(), null, null, null, null),
@@ -352,7 +382,8 @@ public class TblsReqs {
     public enum ProcedureBusinessRules implements EnumIntTableFields{
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-//        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+//        PROC_INSTANCE_NAME(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         INSTANCE_NAME("instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         CATEGORY("category", LPDatabase.string(), null, null, null, null),
         EXPLANATION("explanation", LPDatabase.string(), null, null, null, null),
@@ -385,6 +416,7 @@ public class TblsReqs {
     public enum ProcedureMasterData implements EnumIntTableFields{
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),        
         INSTANCE_NAME("instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         DESCRIPTION(LPDatabase.FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
         OBJECT_TYPE("object_type", LPDatabase.string(), null, null, null, null),
@@ -411,7 +443,7 @@ public class TblsReqs {
     public enum ProcedureFEModel implements EnumIntTableFields{
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        INSTANCE_NAME("instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         DESCRIPTION(LPDatabase.FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
         MODEL_JSON("model_json", LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),

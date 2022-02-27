@@ -9,7 +9,6 @@ import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
-import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -24,7 +23,7 @@ public class TblsProcedureConfig {
             new String[]{StageTimingInterval.SAMPLE_CONFIG_CODE.getName(), StageTimingInterval.SAMPLE_CONFIG_VERSION.getName(), StageTimingInterval.STAGE.getName()}, null, ""),
         ;
         private TablesProcedureConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
-                String seqName, String[] primaryK, ForeignkeyFld foreignK, String comment){
+                String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;
             this.tableFields=tblFlds;
@@ -41,7 +40,7 @@ public class TblsProcedureConfig {
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public String getSeqName() {return this.sequence;}
         @Override        public String[] getPrimaryKey() {return this.primarykey;}
-        @Override        public ForeignkeyFld getForeignKey() {return this.foreignkey;}
+        @Override        public Object[] getForeignKey() {return this.foreignkey;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         private final FldBusinessRules[] getTblBusinessRules;      
@@ -51,7 +50,7 @@ public class TblsProcedureConfig {
         private final String sequence;
         private final EnumIntTableFields[] tableFields;
         private final String[] primarykey;
-        private final ForeignkeyFld foreignkey;
+        private final Object[] foreignkey;
         private final String tableComment;
     }
     
