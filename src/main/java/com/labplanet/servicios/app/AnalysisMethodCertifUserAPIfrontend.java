@@ -16,6 +16,7 @@ import databases.TblsCnfg;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.analysis.UserMethod;
+import static functionaljavaa.certification.FrontendCertifObjsUtilities.certifObjCertifModeOwnUserAction;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -226,7 +227,8 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
                 if (!columnsCreated){
                     columns.put("column_"+yProc, fieldsToRetrieve[yProc]);
                 }                       
-            }                    
+            }  
+            anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curCertif));
             myAnaMethCertif.add(anaMethodJObj);
         }    
         columnNames.add(columns);
@@ -295,15 +297,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
                     myAnaMethCertifList.put("procedure_name", currProc);
                     String[] userSopTblAllFields=getAllFieldNames(TblsData.TablesData.USER_SOP.getTableFields());
                     JSONArray jArrPieceOfInfo=new JSONArray();
-                    for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
-                        if (LPArray.valueInArray(userSopTblAllFields, fieldsToRetrieve[iFlds])){
-                            JSONObject jObjPieceOfInfo = new JSONObject();
-                            jObjPieceOfInfo.put("field_name", fieldsToRetrieve[iFlds]);
-                            jObjPieceOfInfo.put("field_value", LPNulls.replaceNull(curAnaMethCertif[iFlds]).toString());
-                            jArrPieceOfInfo.add(jObjPieceOfInfo);
-                        }
-                    }
-                    anaMethCertifJObj.put(GlobalAPIsParams.REQUEST_PARAM_ANA_METH_CERTIF_FIELD_TO_DISPLAY, jArrPieceOfInfo);
+                    anaMethCertifJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curAnaMethCertif));
                     myAnaMethCertif.add(anaMethCertifJObj);
                 }    
                 myPendingAnaMethCertifByProc.add(myAnaMethCertifList);
@@ -362,6 +356,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
                     for (Object[] curAnaMeth : procAnaMethCertif) {                                                
                         JSONObject anaMethodJObj = new JSONObject();
                         anaMethodJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curAnaMeth);
+                        anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curAnaMeth));                            
                         myAnaMethCertif.add(anaMethodJObj);
                     }    
             }
