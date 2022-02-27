@@ -256,6 +256,7 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_ANA_METH_CERTIF_FIELD_TO_DISPLAY = "analysisMethodCertifFieldsToDisplay";
+    public static final String REQUEST_PARAM_CERTIF_OBJECTS_LEVEL = "certification_level";
     
     
     public static final String REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE = "sampleFieldToRetrieve";

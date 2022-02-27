@@ -15,6 +15,7 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.Token;
+import static functionaljavaa.certification.FrontendCertifObjsUtilities.certifObjCertifModeOwnUserAction;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -305,8 +306,10 @@ public class SopUserAPIfrontend extends HttpServlet {
         for (Object[] curSop: userSops){
             JSONObject sop = new JSONObject();
             sop=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curSop);
-            Boolean columnsCreated =false;
-/*            for (int yProc=0; yProc<userSops[0].length; yProc++){
+            sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curSop));                            
+            
+/*            Boolean columnsCreated =false;
+            for (int yProc=0; yProc<userSops[0].length; yProc++){
                 if (!columnsCreated){
                     columns.put("column_"+yProc, fieldsToRetrieve[yProc]);
                 }                       
@@ -372,11 +375,10 @@ public class SopUserAPIfrontend extends HttpServlet {
                 JSONArray mySops = new JSONArray(); 
                 JSONObject mySopsList = new JSONObject();
 
-                for (Object[] userProcSop : userProcSops) {                                                
+                for (Object[] userProcSop : userProcSops) {
                     JSONObject sop = new JSONObject();
-                    for (int yProc = 0; yProc<userProcSops[0].length; yProc++) {
-                        sop.put(fieldsToRetrieve[yProc], userProcSop[yProc]);
-                    }
+                    sop=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, userProcSop);
+                    sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, userProcSop));                            
                     mySopsList.put("pending_sops", mySops);
                     mySopsList.put("procedure_name", currProc);
                     mySops.add(sop);
@@ -434,11 +436,10 @@ public class SopUserAPIfrontend extends HttpServlet {
             JSONObject mySopsList = new JSONObject();
             if ( (procSops.length>0) &&
                  (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procSops[0][0].toString())) ){
-                    for (Object[] procSop : procSops) {                                                
+                    for (Object[] procSop : procSops) {   
                         JSONObject sop = new JSONObject();
-                        for (int yProc = 0; yProc<procSops[0].length; yProc++) {
-                            sop.put(fieldsToRetrieve[yProc], procSop[yProc]);
-                        }
+                        sop=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, procSop);
+                        sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, procSop));                            
                         mySops.add(sop);
                     }    
             }
