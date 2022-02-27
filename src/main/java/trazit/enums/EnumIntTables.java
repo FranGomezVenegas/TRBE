@@ -16,7 +16,7 @@ public interface EnumIntTables {
     EnumIntTableFields[] getTableFields();
     String getSeqName();   
     String[] getPrimaryKey();  
-    ForeignkeyFld getForeignKey();
+    Object[] getForeignKey();
     String getTableComment();
     FldBusinessRules[] getTblBusinessRules();
 }
