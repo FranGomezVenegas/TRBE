@@ -36,6 +36,7 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Properties;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
@@ -49,6 +50,10 @@ import trazit.session.ApiMessageReturn;
  * @author Administrator
  */
 public class Rdbms {    
+
+    static void prepUpQueryWithKey(String configSchemaScript, Object[] object) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     String errorCode = "";
     private static Connection conn = null;
@@ -76,7 +81,7 @@ public class Rdbms {
         RDBMS_RECORD_NOT_FOUND("existsRecord_RecordNotFound", "", ""), RDBMS_RECORD_FOUND("existsRecord_RecordFound", "", ""),
         ARG_VALUE_RES_NULL("res is set to null", "", ""), ARG_VALUE_LBL_VALUES(" Values: ", "", ""),
         RDBMS_RECORD_CREATED("RecordCreated", "", ""), RDBMS_RECORD_NOT_CREATED("RecordNotCreated", "", ""),
-        RDBMS_RECORD_UPDATED("RecordUpdated", "", ""),
+        RDBMS_RECORD_UPDATED("RecordUpdated", "", ""), RDBMS_RECORD_REMOVED("RecordRemoved", "", ""),
         DB_ERROR("dbError", "", ""),
         ;
         RdbmsErrorTrapping(String cl, String msgEn, String msgEs){
@@ -920,15 +925,24 @@ if (1==1){Rdbms.transactionId=1; return;}
         }else{   
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});                         
         }        
-/*        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(deleteRecordDiagnosis[0])){
-            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordDeleted", new String[]{String.valueOf(deleteRecordDiagnosis[1]), query, Arrays.toString(whereFieldValues), schemaName});
-            diagnosis = LPArray.addValueToArray1D(diagnosis, deleteRecordDiagnosis[1]);
-            return diagnosis;
-        }else{
-            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_RecordNotDeleted", new String[]{String.valueOf(deleteRecordDiagnosis[1]), query, Arrays.toString(whereFieldValues), schemaName});
-            diagnosis = LPArray.addValueToArray1D(diagnosis, deleteRecordDiagnosis[1]);
-            return diagnosis;                         
-        }*/
+    }
+    public static RdbmsObject removeRecord(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues){
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
+        SqlStatement sql = new SqlStatement(); 
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("DELETE", schemaName, tableName,
+                whereFieldNames, whereFieldValues, null, null, null,
+                null, null);              
+        String query= hmQuery.keySet().iterator().next();   
+        whereFieldValues = LPArray.encryptTableFieldArray(schemaName, tableName, whereFieldNames, whereFieldValues);
+        Integer deleteRecordDiagnosis = Rdbms.prepUpQuery(query, whereFieldValues); 
+        if (deleteRecordDiagnosis>0){     
+            return new RdbmsObject(true, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.RDBMS_RECORD_REMOVED, null, -999);
+        }else if(deleteRecordDiagnosis==-999){
+            return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.DB_ERROR, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query}); 
+        }else{   
+            return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});
+        }        
+
     }
     public static Object[] insertRecordInTable(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
@@ -959,6 +973,33 @@ if (1==1){Rdbms.transactionId=1; return;}
             Object[] diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
             return diagnosis;                         
+        }
+    }
+    public static RdbmsObject insertRecord(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
+        if (fieldNames.length==0){
+           return new RdbmsObject(false, "", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
+        }
+        if (fieldNames.length!=fieldValues.length){
+           return new RdbmsObject(false, "", TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, new Object[]{Arrays.toString(fieldNames), Arrays.toString(fieldValues)});
+        }
+        SqlStatement sql = new SqlStatement(); 
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("INSERT", schemaName, tableName,
+                null, null, null, fieldNames, fieldValues,
+                null, null);              
+        String query= hmQuery.keySet().iterator().next();   
+        fieldValues = LPArray.encryptTableFieldArray(schemaName, tableName, fieldNames, fieldValues);
+        RdbmsObject insertRecordDiagnosis = Rdbms.prepUpQueryWithKey(query, fieldValues, 1);
+        fieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, fieldNames, (Object[]) fieldValues);
+        if (insertRecordDiagnosis.getRunSuccess()){
+            if (schemaName.toUpperCase().contains("AUDIT")){
+                TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
+                if (tstAuditId!=null)
+                    tstAuditId.AddObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis.getNewRowId().toString()), fieldNames, fieldValues);
+            }
+            return insertRecordDiagnosis;
+        }else{
+            return insertRecordDiagnosis;                         
         }
     }
     
@@ -1092,6 +1133,27 @@ if (1==1){Rdbms.transactionId=1; return;}
         }        
     }
   
+    public static Object[] prepUpQueryWithDiagn(String script, Object [] valoresinterrogaciones) {
+        try (PreparedStatement prep=getConnection().prepareStatement(script)){
+            //PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones);            
+            setTimeout(rdbms.getTimeout());            
+            if (valoresinterrogaciones != null){
+                buildPreparedStatement(valoresinterrogaciones, prep);}
+            return new Object[]{prep.executeUpdate(), "Success"};                
+        }catch (SQLException ex){
+            String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+            String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+            String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+            Integer lineNumber = -999;//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();           
+            LPPlatform.saveMessageInDbErrorLog(script, valoresinterrogaciones, 
+                    new Object[]{className, classFullName, methodName, lineNumber}, ex.getMessage(), new Object[]{});          
+            Logger.getLogger(Rdbms.class.getName()).log(Level.SEVERE, null, ex);
+            if (ex.getMessage().toLowerCase().contains("already exists"))
+                return new Object[]{-999,"already exists"};
+            else
+                return new Object[]{-999,ex.getMessage()};
+        }
+    }
 
     public static Integer prepUpQuery(String consultaconinterrogaciones, Object [] valoresinterrogaciones) {
         try (PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones)){
@@ -1145,6 +1207,41 @@ if (1==1){Rdbms.transactionId=1; return;}
 
     }
     
+    private static RdbmsObject prepUpQueryWithKey(String consultaconinterrogaciones, Object [] valoresinterrogaciones, Integer indexposition) {
+        String newId="";
+        try (PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS)){
+            String pkValue = "";
+            //PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS);            
+            setTimeout(rdbms.getTimeout());
+            buildPreparedStatement(valoresinterrogaciones, prep);         
+            prep.executeUpdate();    
+            ResultSet rs = prep.getGeneratedKeys();
+            if (rs.next()) {
+                newId = rs.getString(indexposition);
+                Integer newIdInt = Integer.parseInt(newId);
+                if (newIdInt==0)
+                    return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsErrorTrapping.RDBMS_RECORD_CREATED, null, -999);
+                else
+                    return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsErrorTrapping.RDBMS_RECORD_CREATED, null, newIdInt);
+            }
+            return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsErrorTrapping.RDBMS_RECORD_CREATED, null, pkValue);
+        } catch (NumberFormatException nfe) {
+            return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsErrorTrapping.RDBMS_RECORD_CREATED, null, newId);
+        }catch (SQLException er){            
+            String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
+            String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
+            String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
+            Integer lineNumber = -999;//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();       
+            String errMsg=er.getMessage();
+            if (errMsg.toLowerCase().contains("already exist")) errMsg="record already exists. "+ Arrays.toString(valoresinterrogaciones);
+            LPPlatform.saveMessageInDbErrorLog(consultaconinterrogaciones, valoresinterrogaciones, 
+                    new Object[]{className, classFullName, methodName, lineNumber}, errMsg, new Object[]{});
+          
+            return new RdbmsObject(false, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsErrorTrapping.DB_ERROR, new Object[]{errMsg}); 
+        }
+
+    }
+
     /**
      *
      * @param schema
@@ -1653,6 +1750,7 @@ if (1==1){Rdbms.transactionId=1; return;}
     public static Object[] dbSchemaExists(String schemaName){
         String query="SELECT TRUE FROM information_schema.schemata WHERE schema_name = ? ";
         try{
+            schemaName=schemaName.replace("\"", "");
             String[] filter=new String[]{schemaName};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
