@@ -19,7 +19,6 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-import org.json.simple.JSONObject;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.Token;
@@ -866,10 +865,10 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
 //            Logger.log(LogTag.JFR, LogLevel.TRACE, msgCode);
             return;
         }
-        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName());
+        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())){
             procInstanceName = "";
-            dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName());
+            dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
                 return;
         }
@@ -882,7 +881,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_ACTION_NAME.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, actionName);
         }        
-        Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzDbErrorLog.TBL.getName(), 
+        Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName(), 
             fldNames, fldValues);
   }    
   
@@ -900,11 +899,11 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             return;
         }
         String procInstanceName = LPNulls.replaceNull(schemaName);
-        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzPropertiesMissing.TBL.getName());
+        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
             procInstanceName = "";
         else{
-            dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.zzzPropertiesMissing.TBL.getName());
+            dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
                 return;
         }        
@@ -920,7 +919,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_ACTION_NAME.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, actionName);
         }
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
+        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName(), 
                 fldNames, fldValues);
     }      
     public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){

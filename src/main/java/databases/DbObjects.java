@@ -15,12 +15,12 @@ import databases.TblsReqs.TablesReqs;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
-import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import java.util.ResourceBundle;
+import trazit.enums.EnumIntTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 
 
@@ -48,10 +48,8 @@ public class DbObjects {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());        
         String[][] tablesToTransferData=new String[][]{
-            {GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.UnitsOfMeasurement.TBL.getName(), dbTrazitModules}
+            {GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.UOM.getTableName(), dbTrazitModules}
         };
-
-        
         String[] schemaNames = new String[]{GlobalVariables.Schemas.APP_AUDIT.getName(),
             GlobalVariables.Schemas.CONFIG.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), 
             GlobalVariables.Schemas.APP.getName()};
@@ -86,7 +84,7 @@ public class DbObjects {
             jsonObj.put(curTbl.getTableName(), scriptLog);
         }
         schemasObj.put("app_audit", jsonObj);
-        
+
         jsonObj=new JSONObject();
         TablesAppConfig[] tblsAppCnfg = TablesAppConfig.values();
         for (TablesAppConfig curTbl: tblsAppCnfg){
@@ -133,57 +131,49 @@ public class DbObjects {
             LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), 
             LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
             LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_TESTING.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()), 
-            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()),        
+            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_CONFIG.getName()),
+            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_AUDIT.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_AUDIT_TESTING.getName()),
+            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()),        
             LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_TESTING.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName())};        
+        JSONObject schemasObj=new JSONObject();
         JSONObject jsonObj=new JSONObject();
+        JSONObject errorsOnlyObj=new JSONObject();
 
-        JSONArray createSchemas = createSchemas(schemaNames, dbName);
-        jsonObj.put("create_schemas", createSchemas);
+        JSONArray createSchemas = createSchemas(schemaNames, procInstanceName);
+        schemasObj.put("create_schemas", createSchemas);
 
-        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PERSON_PROFILE);
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsProcedure.PersonProfile", tblCreateScript);
-
-        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROCEDURE_INFO);
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsTblsProcedureReqs.ProcedureInfo", tblCreateScript);
-
-        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS);
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsProcedure.ProcedureEvents", tblCreateScript);
-
-        tblCreateScript=TblsCnfg.SopMetaData.createTableScript(procInstanceName, new String[]{""});
+/*        tblCreateScript=TblsCnfg.SopMetaData.createTableScript(procInstanceName, new String[]{""});
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsCnfg.SopMetaData", tblCreateScript);
-        
+*/
+/*
         tblCreateScript=createTableScript(TablesData.USER_SOP, procInstanceName);
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsData.UserSop", tblCreateScript);
-
         tblCreateScript=TblsData.ViewUserAndMetaDataSopView.createTableScript(procInstanceName, new String[]{""});
         Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsData.ViewUserAndMetaDataSopView", tblCreateScript);
-        
-        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPT);
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsTesting.Script", tblCreateScript);
-        
-        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPT_STEPS);
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsTesting.ScriptSteps", tblCreateScript);
-
-        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPT_BUS_RULES);
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsTesting.ScriptBusinessRules", tblCreateScript);
-
-        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPTS_COVERAGE);
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsTesting.ScriptsCoverage", tblCreateScript);
-
-        tblCreateScript=createTableScript(TblsTesting.TablesTesting.SCRIPT_SAVE_POINT);
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsTesting.ScriptSavePoint", tblCreateScript);
-
+*/
+        jsonObj=new JSONObject();
+        EnumIntTables[] tblsTesting = new EnumIntTables[]{TblsProcedure.TablesProcedure.PERSON_PROFILE, TblsProcedure.TablesProcedure.PROCEDURE_INFO,
+            TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS,
+            TblsTesting.TablesTesting.SCRIPT, TblsTesting.TablesTesting.SCRIPT_STEPS,
+            TblsTesting.TablesTesting.SCRIPT_BUS_RULES, TblsTesting.TablesTesting.SCRIPTS_COVERAGE, TblsTesting.TablesTesting.SCRIPT_SAVE_POINT,
+            TablesData.USER_SOP};
+        for (EnumIntTables curTbl: tblsTesting){
+            tblCreateScript = createTableScript(curTbl, procInstanceName);
+            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(tblCreateScript, new Object[]{});
+            JSONObject scriptLog=new JSONObject();
+            scriptLog.put("script", tblCreateScript);
+            scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
+            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
+                errorsOnlyObj.put(curTbl.getRepositoryName()+"."+curTbl.getTableName(), scriptLog);
+            jsonObj.put(curTbl.getRepositoryName()+"."+curTbl.getTableName(), scriptLog);
+        }
+        if (errorsOnlyObj.isEmpty())
+            jsonObj.put("summary", "all fine");
+        else
+            jsonObj.put("summary_run_with_errors", errorsOnlyObj);
         return jsonObj;
     }    
     public static JSONArray createSchemas(String[] schemasNames, String dbName){
@@ -195,13 +185,11 @@ public class DbObjects {
     private static JSONArray schemasActions(String[] schemasNames, String dbName, String actionToPerform){
         String schemaAuthRole=SCHEMA_AUTHORIZATION_ROLE;
         Rdbms.stablishDBConection(dbName);
-        JSONObject jsonObj = new JSONObject();
         JSONArray mainLogArr = new JSONArray();
-        String methodName = "createDataBaseSchemas";       
         for (String configSchemaName:schemasNames){
+            JSONObject jsonObj = new JSONObject();
             JSONArray jsSchemaArr = new JSONArray();
             jsSchemaArr.add(configSchemaName);
-            requirementsLogEntry("", methodName, configSchemaName,2);
             if (configSchemaName.contains("-") && (!configSchemaName.startsWith("\""))){            
                 configSchemaName = "\""+configSchemaName+"\"";}
             Object[] dbSchemaExists = Rdbms.dbSchemaExists(configSchemaName);

@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.requirements;
 
+import com.labplanet.servicios.ResponseSuccess;
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
 import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints;
 import databases.DbObjects;
@@ -13,6 +14,8 @@ import databases.Rdbms;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -47,15 +50,15 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response=LPTestingOutFormat.responsePreparation(response);
-        String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File", null, null);
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
         ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint = ProcedureDefinitionAPIEndpoints.DEPLOY_REQUIREMENTS;
         LPAPIArguments[] arguments = endPoint.getArguments();
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, arguments);                
-        String procName = argValues[0].toString(); //request.getParameter("procedureName"); //"process-us";         
+        String procName = argValues[0].toString();
         Integer procVersion= (Integer) argValues[1];
-        String procInstanceName=argValues[2].toString(); //request.getParameter("procInstanceName"); //"process-us";
-        String moduleName=argValues[3].toString();
+        String procInstanceName=argValues[2].toString();
+        String dbName=argValues[3].toString();
+        String moduleName=argValues[4].toString();
         String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
                             , {"Process Name", procName}, {"Process Version", procVersion.toString()}, {"Instance", procInstanceName}
                             , {"CREATE_SCHEMAS_AND_PROC_TBLS", argValues[4].toString()}
@@ -68,60 +71,80 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                             , {"PROC_DEPLOY_TABLES_AND_FIELDS", argValues[11].toString()}
                             , {"PROC_DEPLOY_MASTER_DATA", argValues[12].toString()}
                     };
+        JSONObject mainObj=new JSONObject();
+        JSONObject sectionsSettingJobj=new JSONObject();
+        JSONObject sectionsDetailObj=new JSONObject();
+        JSONObject procInstanceInfo=new JSONObject();
+        procInstanceInfo.put("Process Name", procName);
+        procInstanceInfo.put("Process Version", procVersion);
+        procInstanceInfo.put("Instance Name", procInstanceName);        
+        procInstanceInfo.put("dbName", dbName);        
+        mainObj.put("Procedure Instance Info", procInstanceInfo);
         
-        fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(businessVariablesHeader); 
         try (PrintWriter out = response.getWriter()) {
-            if (Boolean.valueOf(argValues[4].toString()) || CREATE_SCHEMAS_AND_PROC_TBLS){
+            Boolean runSection=Boolean.valueOf(argValues[5].toString()) || CREATE_SCHEMAS_AND_PROC_TBLS;
+            sectionsSettingJobj.put("1) CREATE_SCHEMAS_AND_PROC_TBLS", runSection);
+            if (runSection){            
                 JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(procInstanceName, null);
-                String[][] createDBProcedureInfoTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_INFO"},{createDBProcedureInfo.toJSONString()}};  
-                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureInfoTbl);
-            }   
-            if (Boolean.valueOf(argValues[5].toString()) || PROCDEPL_PROCEDURE_INFO){
+                sectionsDetailObj.put("CREATE_SCHEMAS_AND_PROC_TBLS", createDBProcedureInfo);
+            }               
+            runSection=Boolean.valueOf(argValues[6].toString()) || PROCDEPL_PROCEDURE_INFO;
+            sectionsSettingJobj.put("2) PROCDEPL_PROCEDURE_INFO", runSection);
+            if (runSection){
                 JSONObject createDBProcedureInfo = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureInfo(procName, procVersion, procInstanceName);
-                String[][] createDBProcedureInfoTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_INFO"},{createDBProcedureInfo.toJSONString()}};  
-                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureInfoTbl);
+                sectionsDetailObj.put("PROCDEPL_PROCEDURE_INFO", createDBProcedureInfo);
             }   
-            if (Boolean.valueOf(argValues[6].toString()) || PROCDEPL_PROCEDURE_USER_ROLES){
+            runSection=Boolean.valueOf(argValues[7].toString()) || PROCDEPL_PROCEDURE_USER_ROLES;
+            sectionsSettingJobj.put("3) PROCDEPL_PROCEDURE_USER_ROLES", runSection);
+            if (runSection){
                 JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procName, procVersion, procInstanceName);
-                String[][] createDBProcedureUserRolesTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_USER_ROLES"},{createDBProcedureUserRoles.toJSONString()}};  
-                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureUserRolesTbl);
+                sectionsDetailObj.put("PROCDEPL_PROCEDURE_USER_ROLES", createDBProcedureUserRoles);
             }            
-            if (Boolean.valueOf(argValues[7].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA){
-                JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
-                String[][] createDBProcedureUserRolesTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_SOP_META_DATA"},{createDBProcedureUserRoles.toJSONString()}};  
-                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureUserRolesTbl);
+            runSection=Boolean.valueOf(argValues[8].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA;
+            sectionsSettingJobj.put("4) PROCDEPL_PROCEDURE_SOP_META_DATA", runSection);
+            if (runSection){
+                JSONObject createDBSopMetaDataAndUserSop = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
+                sectionsDetailObj.put("PROCDEPL_PROCEDURE_SOP_META_DATA", createDBSopMetaDataAndUserSop);
             }       
-            if (Boolean.valueOf(argValues[8].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS){
+            runSection=Boolean.valueOf(argValues[9].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS;
+            sectionsSettingJobj.put("5) PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", runSection);
+            if (runSection){
                 JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
-                String[][] createDBProcedureUserRolesTbl = new String[][]{{"Log for PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS"},{createDBProcedureUserRoles.toJSONString()}};  
-                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureUserRolesTbl);
+                sectionsDetailObj.put("PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", createDBProcedureUserRoles);
             }  
-            if (Boolean.valueOf(argValues[9].toString()) || PROCDEPL_PROCEDURE_EVENTS){
+            runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_EVENTS;
+            sectionsSettingJobj.put("6) PROCDEPL_PROCEDURE_EVENTS", runSection);
+            if (runSection){
                 JSONObject createDBProcedureEvents = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureEvents(procName, procVersion, procInstanceName);
-                String[][] createDBProcedureEventsDiagnostic = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_EVENTS"},{createDBProcedureEvents.toJSONString()}};  
-                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureEventsDiagnostic);                
+                sectionsDetailObj.put("PROCDEPL_PROCEDURE_EVENTS", createDBProcedureEvents);
             }
-            if (Boolean.valueOf(argValues[10].toString()) || PROCDEPL_BUSINESS_RULES_PROPTS_FILS){
+            runSection=Boolean.valueOf(argValues[11].toString()) || PROCDEPL_BUSINESS_RULES_PROPTS_FILS;
+            sectionsSettingJobj.put("7) PROCDEPL_BUSINESS_RULES_PROPTS_FILS", runSection);
+            if (runSection){
                 JSONArray createPropBusinessRules = functionaljavaa.requirement.ProcedureDefinitionToInstance.createBusinessRules(procName, procVersion, procInstanceName);
-                String[][] createPropBusinessRulesTbl = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_SOP_META_DATA"},{createPropBusinessRules.toJSONString()}};  
-                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createPropBusinessRulesTbl);                
+                sectionsDetailObj.put("PROCDEPL_BUSINESS_RULES_PROPTS_FILS", createPropBusinessRules);
             }
-            if (Boolean.valueOf(argValues[11].toString()) || PROCDEPL_MODULE_TABLES_AND_FIELDS){
+            runSection=Boolean.valueOf(argValues[12].toString()) || PROCDEPL_MODULE_TABLES_AND_FIELDS;
+            sectionsSettingJobj.put("8) PROCDEPL_MODULE_TABLES_AND_FIELDS", runSection);
+            if (runSection){
                 JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
-                String[][] createDBModuleTablesAndFieldsDiagnostic = new String[][]{{"Log for PROC_DEPLOY_MODULE_TABLES_AND_FIELDS"},{createDBModuleTablesAndFields.toJSONString()}};  
-                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBModuleTablesAndFieldsDiagnostic);                
+                sectionsDetailObj.put("PROCDEPL_MODULE_TABLES_AND_FIELDS", createDBModuleTablesAndFields);
             }
-            if (Boolean.valueOf(argValues[12].toString()) || PROCDEPL_MASTER_DATA){
+            runSection=Boolean.valueOf(argValues[13].toString()) || PROCDEPL_MASTER_DATA;
+            sectionsSettingJobj.put("9) PROCDEPL_MASTER_DATA", runSection);
+            if (runSection){
                 JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.deployMasterData(procName, procVersion, procInstanceName);
-                String[][] createDBModuleTablesAndFieldsDiagnostic = new String[][]{{"Log for PROCDEPL_MASTER_DATA"},{createDBModuleTablesAndFields.toJSONString()}};  
-                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBModuleTablesAndFieldsDiagnostic);                
+                sectionsDetailObj.put("PROCDEPL_MASTER_DATA", createDBModuleTablesAndFields);
             }
-            
-            
-            fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();
-            out.println(fileContent);            
+            mainObj.put("endpoint_call_settings", sectionsSettingJobj);
+            mainObj.put("sections_log", sectionsDetailObj);
+            Rdbms.closeRdbms();
+            LPFrontEnd.servletReturnSuccess(request, response, mainObj);
+        }catch(Exception e){
+            Logger.getLogger(ResponseSuccess.class.getName()).log(Level.SEVERE, null, e.getMessage());
+        }finally{
+            Rdbms.closeRdbms();
         }
-        Rdbms.closeRdbms();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

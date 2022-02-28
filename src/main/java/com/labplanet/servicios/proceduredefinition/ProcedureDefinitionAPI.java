@@ -37,7 +37,8 @@ public class ProcedureDefinitionAPI extends HttpServlet {
         /**
          *
          */
-        PROCEDURE_NAME("procedureName"), PROCEDURE_VERSION("procedureVersion"), PROC_INSTANCENAME("procInstanceName"), MODULE_NAME("moduleName"), MODULE_VERSION("moduleVersion"), USER_NAME("userName"), ROLE_NAME("roleName"),
+        PROCEDURE_NAME("procedureName"), PROCEDURE_VERSION("procedureVersion"), PROC_INSTANCENAME("procInstanceName"), DB_NAME("dbName"), 
+        MODULE_NAME("moduleName"), MODULE_VERSION("moduleVersion"), USER_NAME("userName"), ROLE_NAME("roleName"),
         UOM_NAME("uomName"),UOM_IMPORT_TYPE("importType"),
         CREATE_DATABASE("createDatabase"), CREATE_FILES("createFiles"), MAIN_PATH("mainPath"), 
         NEW_FILE_CAMEL_LOWER("newFileCamelLower"), NEW_FILE_CAMEL("newFileCamel"),
@@ -66,6 +67,7 @@ public class ProcedureDefinitionAPI extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DB_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.MODULE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_SCHEMAS_AND_PROC_TBLS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_INFO.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 11),

@@ -65,7 +65,7 @@ public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
                         specWhereFieldValue=LPArray.addValueToArray1D(specWhereFieldValue, analysisVariationArr[1]);                    
                     }
                 }                 
-                anaName=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.SpecLimits.TBL.getName(), 
+                anaName=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
                         specWhereFieldName, specWhereFieldValue, 
                         new String[]{TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(), TblsCnfg.SpecLimits.FLD_TESTING_GROUP.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(anaName[0][0].toString())){return LPArray.array2dTo1d(anaName);}

@@ -50,28 +50,28 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
-                .add("table", TblsCnfg.Analysis.TBL.getName()).build()).build()),
+                .add("table", TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build()),
         ANALYSIS_UPDATE("ANALYSIS_UPDATE", "analysisNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
-                .add("table", TblsCnfg.Analysis.TBL.getName()).build()).build()),
+                .add("table", TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build()),
         SPEC_NEW("SPEC_NEW", "specNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
-                .add("table", TblsCnfg.Spec.TBL.getName()).build()).build()),
+                .add("table", TblsCnfg.TablesConfig.SPEC.getTableName()).build()).build()),
         SPEC_UPDATE("SPEC_UPDATE", "specUpdate_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
-                .add("table", TblsCnfg.Spec.TBL.getName()).build()).build()),
+                .add("table", TblsCnfg.TablesConfig.SPEC.getTableName()).build()).build()),
         SPEC_LIMIT_NEW("SPEC_LIMIT_NEW", "specLimitNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
@@ -85,7 +85,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 14 ),
                 new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 15 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
-                .add("table", TblsCnfg.Spec.TBL.getName()).build()).build()),
+                .add("table", TblsCnfg.TablesConfig.SPEC.getTableName()).build()).build()),
         ;
         private ConfigMasterDataAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -166,7 +166,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                     }else{
                         messageDynamicData=new Object[]{specFieldName};                
-                        rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                        rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length-2]);
                     }
                 }
                 break;
@@ -186,7 +186,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case ANALYSIS_NEW:
@@ -207,7 +207,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.Analysis.TBL.getName(), TblsCnfg.Analysis.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case ANALYSIS_UPDATE:
@@ -225,7 +225,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.Analysis.TBL.getName(), TblsCnfg.Analysis.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case SPEC_LIMIT_NEW:
@@ -282,7 +282,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.Spec.TBL.getName(), TblsCnfg.Spec.TBL.getName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             default:                

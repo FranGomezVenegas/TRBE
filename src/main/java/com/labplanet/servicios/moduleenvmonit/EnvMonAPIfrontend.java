@@ -515,13 +515,13 @@ GlobalAPIsParams.
                         if (!(specCode==null || specCode=="" || specConfigVersion==null || "".equals(specConfigVersion.toString()))){
                           JSONObject specInfo=SpecFrontEndUtilities.configSpecInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion, 
                                   null, null);
-                          specDefinition.put(TblsCnfg.Spec.TBL.getName(), specInfo);
+                          specDefinition.put(TblsCnfg.TablesConfig.SPEC.getTableName(), specInfo);
                           JSONArray specLimitsInfo=SpecFrontEndUtilities.configSpecLimitsInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion, 
                                   null, new String[]{TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), 
                                   TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(),
                                   TblsCnfg.SpecLimits.FLD_SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_GREEN_AREA_EN.getName(),
                                   TblsCnfg.SpecLimits.FLD_SPEC_TEXT_ES.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_RED_AREA_ES.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_YELLOW_AREA_ES.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_GREEN_AREA_ES.getName()});
-                          specDefinition.put(TblsCnfg.SpecLimits.TBL.getName(), specLimitsInfo);
+                          specDefinition.put(TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), specLimitsInfo);
                         }
                         programJsonObj.put(JSON_TAG_SPEC_DEFINITION, specDefinition); 
                     }          

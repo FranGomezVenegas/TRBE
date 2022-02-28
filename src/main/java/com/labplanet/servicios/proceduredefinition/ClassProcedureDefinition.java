@@ -78,7 +78,7 @@ public class ClassProcedureDefinition {
                     }
                     actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
                             new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(),
-                                TblsReqs.ProcedureUsers.SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()}, 
+                                TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()}, 
                             new Object[]{procedureName, procedureVersion, procInstanceName, userName});
                     JSONObject createDBProcedureUsers = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;
@@ -100,7 +100,7 @@ public class ClassProcedureDefinition {
                     }
                     actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
                             new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
-                                TblsReqs.ProcedureUserRoles.SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()}, 
+                                TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()}, 
                             new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
                     JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;

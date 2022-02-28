@@ -481,7 +481,7 @@ public class UserSop {
         }
         String[] updFldNames=new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}; 
         Object[] updFldValues=new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()};
-        Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.SopMetaData.TBL.getName(), 
+        Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
         else{

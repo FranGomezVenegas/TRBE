@@ -123,7 +123,6 @@ Integer currentLine=0;
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             LPAPIArguments[] arguments = TestingLimitAndResult.DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT.getArguments();
-//numHeaderLines=testingContent.length-1;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 currentLine=iLines;  
@@ -202,7 +201,7 @@ Integer currentLine=0;
                             resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, fldsNull);
                         resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");                    
                     }else{
-                        Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
+                        Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
                             new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), 
                                 TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(),TblsCnfg.SpecLimits.FLD_PARAMETER.getName()}, 
                             new Object[]{specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName}, 

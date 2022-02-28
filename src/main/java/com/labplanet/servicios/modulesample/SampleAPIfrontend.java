@@ -98,7 +98,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 if ("process-us".equalsIgnoreCase(procInstanceName)){
                     filterFieldValue = LPArray.addValueToArray1D(filterFieldValue, "specSamples");
                 }else{filterFieldValue = LPArray.addValueToArray1D(filterFieldValue, "sampleTemplate");}    */
-                Object[][] datas = Rdbms.getRecordFieldsByFilter(schemaConfigName,TblsCnfg.Sample.TBL.getName(), 
+                Object[][] datas = Rdbms.getRecordFieldsByFilter(schemaConfigName,TblsCnfg.TablesConfig.SAMPLE.getTableName(), 
                         filterFieldName, filterFieldValue, new String[] { TblsCnfg.Sample.FLD_JSON_DEFINITION.getName()});
                 Rdbms.closeRdbms();
                 JSONObject proceduresList = new JSONObject();
@@ -334,7 +334,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     }else{   sortFieldsNameArr=null;}  
 
-                    String myData = Rdbms.getRecordFieldsByFilterJSON(schemaConfigName, TblsCnfg.ViewAnalysisMethodsView.TBL.getName(),
+                    String myData = Rdbms.getRecordFieldsByFilterJSON(schemaConfigName, TblsCnfg.ViewsConfig.ANALYSIS_METHODS.getTableName(),
                             new String[]{"code is not null"},new Object[]{true}, fieldToRetrieveArr, sortFieldsNameArr);
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  

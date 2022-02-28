@@ -151,7 +151,7 @@ public class ProcedureDeployment extends HttpServlet {
                         PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_FLD_NAME.split("\\|").length), procUsers2D);
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procUsers2D);
             }
-            Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(procInstanceSchemaConfigName, TblsCnfg.SopMetaData.TBL.getName(),
+            Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(procInstanceSchemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
                     new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"),
                     PROC_DISPLAY_PROC_INSTANCE_SOPS_SORT.split("\\|"), true );
             if (PROC_DISPLAY_PROC_INSTANCE_SOPS){

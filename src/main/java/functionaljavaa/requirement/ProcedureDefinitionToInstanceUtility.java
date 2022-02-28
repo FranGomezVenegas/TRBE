@@ -10,7 +10,6 @@ import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
 import databases.TblsReqs;
-import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
 import functionaljavaa.sop.UserSop;
 import lbplanet.utilities.LPArray;
 import trazit.globalvariables.GlobalVariables;
@@ -95,7 +94,6 @@ public class ProcedureDefinitionToInstanceUtility {
 
         newEntry = " query returns " + contProcUserReqInfo++ + " records.";
         contProcUserReqInfo--;
-        requirementsLogEntry("", methodName, newEntry,1);
 
         for (Integer icontProcUserReqInfo=0; icontProcUserReqInfo<contProcUserReqInfo;icontProcUserReqInfo++){            
             String sopName = (String) procUserReqInfo[icontProcUserReqInfo][2]; 
@@ -103,13 +101,12 @@ public class ProcedureDefinitionToInstanceUtility {
             String role = (String) procUserReqInfo[icontProcUserReqInfo][4];
             
             newEntry = " Parsing record " + (icontProcUserReqInfo+1) + "/" + contProcUserReqInfo + ": Sop=" + sopName + " Section=" + sopSectionName + " Role=" + role;
-            requirementsLogEntry("", methodName, newEntry,2);
 
             if (sopName!=null){                
                 String[] sopNames = sopName.split(",");
                 for (String sp: sopNames){
                     if (sopSectionName!=null){sp = sp+"-"+sopSectionName;}  
-                    Object[] diagnoses = Rdbms.existsRecord(schemaName+"-config", TblsCnfg.SopMetaData.TBL.getName(), 
+                    Object[] diagnoses = Rdbms.existsRecord(schemaName+"-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                             new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sp});
                     if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) && (role!=null) ){                  
                         String[] roles = role.split(",");
@@ -122,7 +119,6 @@ public class ProcedureDefinitionToInstanceUtility {
                             Integer contUser = userProfileInfo.length;     
 
                             newEntry = "Found " + contUser + " users having assigned the role "+procInstanceName+"_"+r;
-                            requirementsLogEntry("", methodName, newEntry,3);
 
                             for (Integer icontUser=0;icontUser<contUser;icontUser++){
                                 UserSop usSop=new UserSop();
@@ -131,7 +127,6 @@ public class ProcedureDefinitionToInstanceUtility {
                                 Object[] newSopUser = usSop.addSopToUserByName(schemaName+"-data", userInfoId, sopName);
 
                                 newEntry = icontUser+"/"+contUser+"  "+newSopUser[newSopUser.length-1].toString();
-                                requirementsLogEntry("", methodName, newEntry,4);
 
                                 sopListBuilder.append(sp).append("|");            
                             }    

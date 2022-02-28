@@ -79,7 +79,7 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
                         specWhereFieldValue=LPArray.addValueToArray1D(specWhereFieldValue, analysisVariationArr[1]);                    
                     }
                 }                 
-                anaName=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.SpecLimits.TBL.getName(), 
+                anaName=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
                         specWhereFieldName, specWhereFieldValue, 
                         new String[]{TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(), TblsCnfg.SpecLimits.FLD_TESTING_GROUP.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(anaName[0][0].toString())){return LPArray.array2dTo1d(anaName);}
@@ -125,7 +125,7 @@ if (1 == 1)
         String status = mandatoryFieldsValue[specialFieldIndex].toString();
         if (status.length() == 0) return "ERROR: The parameter status cannot be null";
         
-        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.SampleRules.TBL.getName(), 
+        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), 
                 new String[]{TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName()}, new Object[]{template, templateVersion});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())) 
             return "ERROR: The sample_rule record for " + template + " does not exist in schema" + schemaConfigName + ". ERROR: " + diagnosis[5];
@@ -136,7 +136,7 @@ if (1 == 1)
         fieldValues[0] = template;
         String[] fieldFilter = new String[]{TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName(), 
             TblsCnfg.SampleRules.FLD_STATUSES.getName(), TblsCnfg.SampleRules.FLD_DEFAULT_STATUS.getName()};
-        Object[][] records = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SampleRules.TBL.getName(), 
+        Object[][] records = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), 
                 fieldNames, fieldValues, fieldFilter);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString())) 
             return "ERROR: Problem on getting sample rules for " + template + " exists but the rule record is missing in the schema " + schemaConfigName;

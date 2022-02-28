@@ -5,27 +5,17 @@
  */
 package databases;
 
-import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ReferenceFld;
-import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
  */
 public class TblsTesting {
-    public static final String getTableCreationScriptFromTestingTable(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "SCRIPT": return createTableScript(TblsTesting.TablesTesting.SCRIPT, schemaNamePrefix);
-            case "SCRIPT_STEPS": return createTableScript(TblsTesting.TablesTesting.SCRIPT_STEPS, schemaNamePrefix);
-            case "SCRIPT_BUS_RULES": return createTableScript(TblsTesting.TablesTesting.SCRIPT_BUS_RULES, schemaNamePrefix);
-            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSCNFGENVMONIT"+LPPlatform.LAB_FALSE;
-        }        
-    }    
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.TESTING.getName();
     public enum TablesTesting implements EnumIntTables{
         SCRIPT(null, "script", SCHEMA_NAME, true, Script.values(), Script.SCRIPT_ID.getName(),
@@ -229,7 +219,7 @@ public class TblsTesting {
     }
     
     public enum ScriptSavePoint implements EnumIntTableFields{
-        ID("script_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)",null, null, "", null),
+        ID("id", LPDatabase.integerNotNull(),null, null, "", null),
         SCRIPT_ID("script_id", LPDatabase.integerNotNull(),null, null, "", null),
         SAVED_DATE("saved_date", LPDatabase.dateTimeWithDefaultNow(),null, null, "", null),
         COMMENT("comment", LPDatabase.string(),null, null, "", null),

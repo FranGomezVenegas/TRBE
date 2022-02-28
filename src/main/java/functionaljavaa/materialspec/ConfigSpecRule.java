@@ -467,7 +467,7 @@ public class ConfigSpecRule {
         String procInstanceName=procReqInstance.getProcedureInstance();
         Object[] errorDetailVariables= new Object[0];      
       StringBuilder ruleBuilder = new StringBuilder(0);
-      Object[][] specDef=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.SpecLimits.TBL.getName(), 
+      Object[][] specDef=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
             new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()}, new Object[]{limitId}, 
             new String[]{TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(), TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(),
               TblsCnfg.SpecLimits.FLD_MIN_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.FLD_MAX_VAL_ALLOWED.getName()  });
@@ -593,7 +593,7 @@ public class ConfigSpecRule {
                 String sampleSpecVariationName, String analysis, String methodName, Integer methodVersion, String paramName, String[] fieldsToRetrieve){
 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.SpecLimits.TBL.getName(), 
+        return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
                 new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), 
                     TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(), 
                     TblsCnfg.SpecLimits.FLD_PARAMETER.getName()}, new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, 

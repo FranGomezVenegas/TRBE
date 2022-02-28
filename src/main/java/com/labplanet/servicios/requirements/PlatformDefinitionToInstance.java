@@ -121,11 +121,13 @@ public class PlatformDefinitionToInstance extends HttpServlet {
             }   
             mainObj.put("endpoint_call_settings", sectionsSettingJobj);
             mainObj.put("sections_log", sectionsDetailObj);
+            Rdbms.closeRdbms();
             LPFrontEnd.servletReturnSuccess(request, response, mainObj);
         }catch(Exception e){
             Logger.getLogger(ResponseSuccess.class.getName()).log(Level.SEVERE, null, e.getMessage());
+        }finally{
+            Rdbms.closeRdbms();
         }
-        Rdbms.closeRdbms();
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

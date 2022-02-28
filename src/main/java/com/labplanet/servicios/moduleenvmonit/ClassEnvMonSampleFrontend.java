@@ -893,7 +893,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         String[] fieldToRetrieveGroupedArr = new String[0];                        
                         if ((prodLotfieldsToRetrieveStr==null) || ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) ) fieldToRetrieveGroupedArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
                         else fieldToRetrieveGroupedArr=prodLotfieldsToRetrieveStr.split("\\|");
-                        Object[][] specLimits=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.SpecLimits.TBL.getName(), 
+                        Object[][] specLimits=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
                                 whereLimitsFieldNames, whereLimitsFieldValues, fieldToRetrieveLimitsArr, new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()});
                         jArr=new JSONArray();
                         for (Object[] currLimit: specLimits){
@@ -1248,7 +1248,7 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
-        fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsCnfg.Methods.TBL.getName());
+        fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsCnfg.TablesConfig.METHODS.getTableName());
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
             
         JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPFalse(                

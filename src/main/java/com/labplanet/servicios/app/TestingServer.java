@@ -344,7 +344,7 @@ if (1==1) return;
             
 if (1==1) return;
             
-            Object[] tableContent = FromInstanceToInstance.tableContent("config", TblsCnfg.UnitsOfMeasurement.TBL.getName(), "labplanet", "modules_trazit");
+            Object[] tableContent = FromInstanceToInstance.tableContent("config", TblsCnfg.TablesConfig.UOM.getTableName(), "labplanet", "modules_trazit");
 //        String tblCreateScript2=TblsProcedureAudit.Investigation.createTableScript("em-demo-a", new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 

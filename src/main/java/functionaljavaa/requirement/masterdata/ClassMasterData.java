@@ -71,7 +71,7 @@ public class ClassMasterData {
                                 , TblsCnfg.Methods.FLD_CREATED_ON.getName(), TblsCnfg.Methods.FLD_CREATED_BY.getName()};
                         Object[] fldValues=new Object[]{methodName, 1, LPDate.getCurrentTimeStamp(), userCreator};
                         Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), 
-                            TblsCnfg.Methods.TBL.getName(), fldNames, fldValues);
+                            TblsCnfg.TablesConfig.METHODS.getTableName(), fldNames, fldValues);
                         
                         fldNames=new String[]{TblsCnfg.Analysis.FLD_ACTIVE.getName(), TblsCnfg.Analysis.FLD_CREATED_ON.getName(), TblsCnfg.Analysis.FLD_CREATED_BY.getName()};
                         fldValues=new Object[]{true, LPDate.getCurrentTimeStamp(), userCreator};
@@ -178,7 +178,7 @@ public class ClassMasterData {
                             fieldValue=LPArray.addValueToArray1D(fieldValue, mSpec.getQualitativeRuleValues());
                         }
                         if (!LPArray.valueInArray(fieldName, TblsCnfg.SpecLimits.FLD_UOM.getName())){
-                            Object[][] paramUOM = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.AnalysisMethodParams.TBL.getName(), 
+                            Object[][] paramUOM = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), 
                                     new String[]{TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName(), TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName(),
                                         TblsCnfg.AnalysisMethodParams.FLD_PARAM_NAME.getName()},
                                     new Object[]{jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName()).getAsString(),
@@ -237,7 +237,7 @@ public class ClassMasterData {
                 case MD_SAMPLES:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.Sample.TBL.getName(), 
+                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SAMPLE.getTableName(), 
                             new String[]{TblsCnfg.Sample.FLD_CODE.getName(), TblsCnfg.Sample.FLD_CODE_VERSION.getName(),
                             TblsCnfg.Sample.FLD_CREATED_ON.getName(), TblsCnfg.Sample.FLD_CREATED_BY.getName()},
                             new Object[]{jO.getAsJsonObject().get(TblsCnfg.Sample.FLD_CODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.Sample.FLD_CODE_VERSION.getName()).getAsInt(), LPDate.getCurrentTimeStamp(), userCreator});
@@ -248,7 +248,7 @@ public class ClassMasterData {
                 case MD_SAMPLE_RULES:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.SampleRules.TBL.getName(), 
+                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), 
                             new String[]{TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName(),
                             TblsCnfg.SampleRules.FLD_ANALYST_ASSIGNMENT_MODE.getName(), TblsCnfg.SampleRules.FLD_TEST_ANALYST_REQUIRED.getName(),
                             TblsCnfg.SampleRules.FLD_CREATED_ON.getName(), TblsCnfg.SampleRules.FLD_CREATED_BY.getName()},

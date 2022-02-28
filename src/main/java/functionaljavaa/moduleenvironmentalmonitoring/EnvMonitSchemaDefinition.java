@@ -9,7 +9,6 @@ import databases.TblsProcedure;
 import databases.Rdbms;
 import functionaljavaa.requirement.ProcedureDefinitionToInstance.JsonTags;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
-import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
@@ -32,13 +31,11 @@ public final class EnvMonitSchemaDefinition {
         Rdbms.stablishDBConection();
         JSONObject jsonObj = new JSONObject();
         
-        String methodName = "createDataBaseSchemas";       
         String[] schemaNames = new String[]{GlobalVariables.Schemas.APP.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), GlobalVariables.Schemas.CONFIG.getName()};
          jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), schemaNames.length);     
         for (String configSchemaName:schemaNames){
             JSONArray jsSchemaArr = new JSONArray();
             jsSchemaArr.add(configSchemaName);
-            requirementsLogEntry("", methodName, configSchemaName,2);
             
             String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+SCHEMA_AUTHORIZATION_ROLE+";"+
                     " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+SCHEMA_AUTHORIZATION_ROLE+ ";";     

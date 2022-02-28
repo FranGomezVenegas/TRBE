@@ -342,7 +342,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
         }
         JSONArray myPendingAnaMethCertifByProc = new JSONArray();                 
         for (String currProc: allUserProcedurePrefix) {                   
-            Object[][] procAnaMethCertif = Rdbms.getRecordFieldsByFilter(currProc+"-config", TblsCnfg.Methods.TBL.getName(), 
+            Object[][] procAnaMethCertif = Rdbms.getRecordFieldsByFilter(currProc+"-config", TblsCnfg.TablesConfig.METHODS.getTableName(), 
                     new String[]{TblsCnfg.Methods.FLD_CODE.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procAnaMethCertif[0]))){
                 Object[] errMsg = LPFrontEnd.responseError(procAnaMethCertif, language, null);

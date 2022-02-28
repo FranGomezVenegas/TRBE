@@ -76,7 +76,7 @@ public class Sop {
 
         Object[][] dbGetSopObjByName = this.dbGetSopObjByName(procInstanceName, this.sopName, fieldNames);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbGetSopObjByName[0][0].toString())){        
-            return Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), fieldNames, fieldValues);
+            return Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), fieldNames, fieldValues);
         }else{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Sop_SopAlreadyExists", new Object[]{this.sopName, procInstanceName});
         }
@@ -91,7 +91,7 @@ public class Sop {
     public Integer dbGetSopIdById( String procInstanceName, Integer sopId) {     
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);
-        Object[][] sopInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
+        Object[][] sopInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                                                                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()}, new Object[]{sopId}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()});
         return (Integer) sopInfo[0][0];
     }                
@@ -105,7 +105,7 @@ public class Sop {
     public static final Integer dbGetSopIdByName( String procInstanceName, String sopName) {
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);
-        Object[][] sopInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
+        Object[][] sopInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                                                                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()});
         return (Integer) sopInfo[0][0];
     }    
@@ -119,7 +119,7 @@ public class Sop {
     public static final Integer dbGetSopNameById( String procInstanceName, Object sopId) {
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);
-        Object[][] sopName = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
+        Object[][] sopName = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                                                                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()}, new Object[]{sopId}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()});
         return (Integer) sopName[0][0];
     }    
@@ -134,7 +134,7 @@ public class Sop {
     public Object[][] dbGetSopObjByName( String procInstanceName, String sopName, String[] fields) {
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);
-        return Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
+        return Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                                                                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName}, fields);
     }
 
@@ -148,7 +148,7 @@ public class Sop {
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName); 
         String errorCode = "";        
-        Object[] diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
+        Object[] diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                             new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName(), TblsCnfg.SopMetaData.FLD_SOP_VERSION.getName(), TblsCnfg.SopMetaData.FLD_SOP_REVISION.getName()},
                             new Object[]{sopName, 1, 1});
         if (LPPlatform.LAB_FALSE.equals(diagnoses[0].toString() )){
@@ -171,7 +171,7 @@ public class Sop {
      */
     public Object[] updateSop(String procInstanceName, String fieldName, String fieldValue){        
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, TblsCnfg.SopMetaData.TBL.getName(), 
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                                         new String[]{fieldName}, new Object[]{fieldValue}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){
             String errorCode = ERROR_TRAPING_SOP_META_DATA_NOT_FOUND;

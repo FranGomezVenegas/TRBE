@@ -33,7 +33,7 @@ public class TblsEnvMonitConfig {
             case "PROGRAM_CALENDAR_DATE": return ProgramCalendarDate.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_CALENDAR_RECURSIVE_ENTRY": return ProgramCalendarRecursiveEntries.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
-            case "ANALYSIS_METHODS_VIEW": return TblsCnfg.ViewAnalysisMethodsView.createTableScript(schemaNamePrefix, fields);
+//            case "ANALYSIS_METHODS_VIEW": return TblsCnfg.ViewAnalysisMethodsView.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSCNFGENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }

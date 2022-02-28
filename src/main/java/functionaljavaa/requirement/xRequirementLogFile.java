@@ -12,16 +12,15 @@ import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import lbplanet.utilities.LPNulls;
-import trazit.session.ApiMessageReturn;
 
 /**
  *
  * @author Administrator
  */
-public class RequirementLogFile {
-    private RequirementLogFile(){    throw new IllegalStateException("Utility class");}    
+public class xRequirementLogFile {
+    private xRequirementLogFile(){    throw new IllegalStateException("Utility class");}    
     
-    static final void requirementLogFileNew(String procedureName){
+    static final void xrequirementLogFileNew(String procedureName){
         String newLogFileName = "Requirements.txt";        
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);        
         String logDir = prop.getString("logDirPath");
@@ -38,8 +37,8 @@ public class RequirementLogFile {
      * @param entryValue
      * @param numTabs
      */
-    public static final void requirementsLogEntry(String logFile, String functionName, String entryValue, Integer numTabs){ 
-        String methodName = ApiMessageReturn.getClassMethodName();
+    public static final void xrequirementsLogEntry(String logFile, String functionName, String entryValue, Integer numTabs){ 
+        String methodName = ""; //ºApiMessageReturn.getClassMethodName();
         FileWriter fw = null;  
         try{
             fw = new FileWriter(logFile, true);                  

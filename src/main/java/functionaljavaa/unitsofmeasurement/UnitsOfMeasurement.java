@@ -8,6 +8,7 @@ import lbplanet.utilities.LPPlatform;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import trazit.enums.EnumIntMessages;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
@@ -137,7 +138,7 @@ public class UnitsOfMeasurement {
             conversion = LPArray.addValueToArray1D(conversion, this.getOrigQuantity());
             return conversion;
         }
-        String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();
+        String tableName = TblsCnfg.TablesConfig.UOM.getTableName();
         String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
 
@@ -185,7 +186,7 @@ public class UnitsOfMeasurement {
         }
 
         Object[] conversion = new Object[6];
-        String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();
+        String tableName = TblsCnfg.TablesConfig.UOM.getTableName();
         String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName();
         BigDecimal valueConverted = this.getOrigQuantity();
 
@@ -258,7 +259,7 @@ public class UnitsOfMeasurement {
     public Object[][] getAllUnitsPerFamily(String family, String[] fieldsToRetrieve ){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=procReqSession.getProcedureInstance();
-        String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();
+        String tableName = TblsCnfg.TablesConfig.UOM.getTableName();
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
         if (family==null){
@@ -283,7 +284,7 @@ public class UnitsOfMeasurement {
     public String getFamilyBaseUnitName(String family){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=procReqSession.getProcedureInstance();
-        String tableName = TblsCnfg.UnitsOfMeasurement.TBL.getName();
+        String tableName = TblsCnfg.TablesConfig.UOM.getTableName();
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
 
@@ -303,9 +304,9 @@ public class UnitsOfMeasurement {
         if (UomImportType.FAMIL.toString().equalsIgnoreCase(importType)){
             whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName()};
         }
-        return Rdbms.insertRecordInTableFromTable(true, TblsCnfg.UnitsOfMeasurement.getAllFieldNames(),
-                GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.UnitsOfMeasurement.TBL.getName(), 
+        return Rdbms.insertRecordInTableFromTable(true,getAllFieldNames(TblsCnfg.TablesConfig.UOM.getTableFields()),
+                GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.UOM.getTableName(), 
                 whereFieldNames, whereFieldValues,
-                LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.UnitsOfMeasurement.TBL.getName(), TblsCnfg.UnitsOfMeasurement.getAllFieldNames());
+                LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.UOM.getTableName(), getAllFieldNames(TblsCnfg.TablesConfig.UOM.getTableFields()));
     }
 }
