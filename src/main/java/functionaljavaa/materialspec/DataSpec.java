@@ -276,14 +276,14 @@ public class DataSpec {
         if (minValAllowed!=null)
             compareTo = result.compareTo(minValAllowed);
         if (minValAllowed!=null && compareTo<0){
-            Object[] diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED, new Object[]{result, minValAllowed});
+            Object[] diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED, new Object[]{result, minValAllowed});
             return LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED);
         }
         if (maxValAllowed!=null)
             compareTo=result.compareTo(maxValAllowed);
         if (maxValAllowed!=null && compareTo>0){
-            Object[] diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED, new Object[]{result, maxValAllowed});
-            return LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED);
+            Object[] diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckSuccessErrorTrapping.QUANTITATIVE_GREATER_THAN_MAX_VAL_ALLOWED, new Object[]{result, maxValAllowed});
+            return LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.QUANTITATIVE_GREATER_THAN_MAX_VAL_ALLOWED);
         }
                 
         if (minStrict==null){minStrict=true;}
@@ -356,7 +356,7 @@ public class DataSpec {
         
         Object[] isCorrectMinMaxSpec = this.resultCheck(result,minSpec,maxSpec, minStrict, maxStrict, minValAllowed, maxValAllowed);
         
-        if (!"IN".equalsIgnoreCase(isCorrectMinMaxSpec[isCorrectMinMaxSpec.length-1].toString())){
+        if (!ResultCheckSuccessErrorTrapping.EVALUATION_IN.toString().equalsIgnoreCase(isCorrectMinMaxSpec[isCorrectMinMaxSpec.length-1].toString())){
             return isCorrectMinMaxSpec;
         }
 
