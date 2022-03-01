@@ -39,7 +39,7 @@ public class TblsCnfg {
             default: return "TABLE "+tableName+" NOT IN TBLSCNFG"+LPPlatform.LAB_FALSE;
         }        
     }*/
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.TESTING.getName();
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     public enum TablesConfig implements EnumIntTables{
         METHODS(null, "methods", SCHEMA_NAME, true, Methods.values(), null,
             new String[]{Methods.FLD_CODE.getName()}, null, "Analysis methods"),
