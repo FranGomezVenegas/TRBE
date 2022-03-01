@@ -10,6 +10,7 @@ import static databases.DbObjects.SchemaActions.DELETE;
 import databases.TblsApp.TablesApp;
 import databases.TblsAppAudit.TablesAppAudit;
 import databases.TblsAppConfig.TablesAppConfig;
+import databases.TblsCnfg.TablesConfig;
 import databases.TblsData.TablesData;
 import databases.TblsReqs.TablesReqs;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
@@ -142,23 +143,12 @@ public class DbObjects {
         JSONArray createSchemas = createSchemas(schemaNames, procInstanceName);
         schemasObj.put("create_schemas", createSchemas);
 
-/*        tblCreateScript=TblsCnfg.SopMetaData.createTableScript(procInstanceName, new String[]{""});
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsCnfg.SopMetaData", tblCreateScript);
-*/
-/*
-        tblCreateScript=createTableScript(TablesData.USER_SOP, procInstanceName);
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsData.UserSop", tblCreateScript);
-        tblCreateScript=TblsData.ViewUserAndMetaDataSopView.createTableScript(procInstanceName, new String[]{""});
-        Rdbms.prepUpQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsData.ViewUserAndMetaDataSopView", tblCreateScript);
-*/
         jsonObj=new JSONObject();
         EnumIntTables[] tblsTesting = new EnumIntTables[]{TblsProcedure.TablesProcedure.PERSON_PROFILE, TblsProcedure.TablesProcedure.PROCEDURE_INFO,
             TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS,
             TblsTesting.TablesTesting.SCRIPT, TblsTesting.TablesTesting.SCRIPT_STEPS,
             TblsTesting.TablesTesting.SCRIPT_BUS_RULES, TblsTesting.TablesTesting.SCRIPTS_COVERAGE, TblsTesting.TablesTesting.SCRIPT_SAVE_POINT,
+            TablesConfig.SOP_META_DATA, TablesConfig.ZZZ_DB_ERROR, TablesConfig.ZZZ_PROPERTIES_ERROR,
             TablesData.USER_SOP};
         for (EnumIntTables curTbl: tblsTesting){
             tblCreateScript = createTableScript(curTbl, procInstanceName);
