@@ -6,7 +6,6 @@
 package functionaljavaa.audit;
 
 import databases.Rdbms;
-import databases.TblsApp;
 import databases.TblsAppAudit;
 import databases.TblsAppProcDataAudit;
 import databases.Token;
@@ -15,7 +14,6 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.LPSession;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -53,14 +51,14 @@ public class GenericAuditFields {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addAppSession( Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
-                errorDetail=appSession;
-                return;
-            }else{
+//            Object[] appSession = LPSession.addAppSession( Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
+//            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
+//                errorDetail=appSession;
+//                return;
+//            }else{
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.APP_SESSION_ID.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(token.getAppSessionId()));            
-            }
+//            }
         }
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.TRANSACTION_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());            

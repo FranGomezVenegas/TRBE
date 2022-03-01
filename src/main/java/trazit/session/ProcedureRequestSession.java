@@ -10,6 +10,7 @@ import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATO
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import databases.Rdbms;
+import databases.TblsApp;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.businessrules.BusinessRules;
@@ -22,6 +23,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.LPSession;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
 
@@ -193,8 +195,14 @@ public class ProcedureRequestSession {
     }
     
     public void killIt(){
-       // if (1==1) return;
-//        if (!this.isForQuery) 
+        LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
+//        if (!this.isForQuery){
+        if (rspMessages!=null){
+//            if ((rspMessages.getIsSuccess()) && (token.getAppSessionId()!=null))                
+//                LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
+            rspMessages.killInstance();
+        }
+//      }
             this.theSession=null;
         if (this.isForQuery!=null && !this.isForQuery){
             this.token=null;
@@ -207,7 +215,6 @@ public class ProcedureRequestSession {
         if (tstAuditObj!=null) tstAuditObj.killIt();
         if (busRuleVisited!=null) busRuleVisited.killIt();
         if (msgCodeVisited!=null) msgCodeVisited.killIt();
-        if (rspMessages!=null) rspMessages.killInstance();
         if (this.auditAndUsrValid!=null) this.auditAndUsrValid.killInstance();
         if (this.busRulesProcInstance!=null) this.busRulesProcInstance=null;
         if (this.busRulesTesting!=null) this.busRulesTesting=null;

@@ -101,16 +101,16 @@ public class GenomaDataAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
+//            Object[] appSession = LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
        
     //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
-                return appSession;
-            }else{
+//            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
+//                return appSession;
+//            }else{
 
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_APP_SESSION_ID.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(token.getAppSessionId()));            
-            }
+//            }
         }
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_TRANSACTION_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());            
