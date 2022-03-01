@@ -68,6 +68,7 @@ public class DataProgramCorrectiveAction {
         }
     }
     public enum ProgramCorrectiveActionErrorTrapping implements EnumIntMessages{ 
+        RECORD_ALREADY_EXISTS("programCorrectiveActionRecord_AlreadyExists", "", ""),
         ACTION_CLOSED("DataProgramCorrectiveAction_actionClosed", "The action <*1*> is already closed, no action can be performed.", "La acción <*1*> está cerrada y no admite cambios."),
         ;
         private ProgramCorrectiveActionErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
@@ -96,6 +97,11 @@ public class DataProgramCorrectiveAction {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
+        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
+                new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName()}, new Object[]{resultId});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{resultId, procInstanceName});
+        
         String statusFirst=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_FIRST.getAreaName(),DataProgramCorrectiveActionBusinessRules.STATUS_FIRST.getTagName());
         String[] sampleFldsToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName(), 
         TblsProcedure.ProgramCorrectiveAction.LOCATION_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.AREA.getName()};
