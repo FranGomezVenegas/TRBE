@@ -122,23 +122,25 @@ public class ProcedureDefinitionToInstance {
      * @return
      */
     public static final JSONObject createDBProcedureInfo(String procedure,  Integer procVersion, String procInstanceName){
+        JSONObject jsonErrorObj = new JSONObject();
         JSONObject jsonObj = new JSONObject();
         String schemaNameDestinationProc=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
          Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 FIELDS_TO_RETRIEVE_REQS_PROCEDURE_INFO_SOURCE.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString())){
-          jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procInfoRecordsSource[0]));
+          jsonErrorObj.put("Record in requirements", "Not exists");  
+          jsonErrorObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procInfoRecordsSource[0]));
         }else{
-            jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procInfoRecordsSource.length);
+            jsonErrorObj.put("Record in requirements", "Found");  
             for (Object[] curRow: procInfoRecordsSource){
                 Object[][] procInfoRecordsDestination = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
                        new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()}, new Object[]{procedure, procVersion}, 
                        FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"));
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsDestination[0][0].toString())){
-                    jsonObj.put("Record in the instance", "Already exists");
+                    jsonErrorObj.put("Record in the new instance", "Already exists");
                 }else{
-                    jsonObj.put("Record in instance", "Not exists");
+                    jsonErrorObj.put("Record in new instance", "Not exists");
                     String[] fldName=FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|");
                     Object[] fldValue=curRow;
                     if (!LPArray.valueInArray(fldName, TblsProcedure.ProcedureInfo.SCHEMA_PREFIX.getName())){
@@ -146,11 +148,20 @@ public class ProcedureDefinitionToInstance {
                         fldValue=LPArray.addValueToArray1D(fldValue, procInstanceName);                        
                     }
                     Object[] insertRecordInTable = Rdbms.insertRecordInTable(schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), fldName, fldValue);
-                    jsonObj.put("Record in the instance inserted?", insertRecordInTable[0].toString());
-                    //if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString())){}
+                    jsonObj = new JSONObject();
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordInTable[0].toString())){
+                        jsonObj.put("Record inserted in the new instance?", true);
+                        return jsonObj;
+                    }else{
+                        jsonObj.put("Record inserted in the new instance?", false);
+                        jsonObj.put("error_detail", jsonErrorObj);
+                        return jsonObj;
+                    }
                 }
             }
         }
+        jsonObj.put("Record inserted in the instance?", false);
+        jsonObj.put("error_detail", jsonErrorObj);
         return jsonObj;
     }     
 

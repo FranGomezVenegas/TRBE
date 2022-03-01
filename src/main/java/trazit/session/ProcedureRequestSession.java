@@ -195,14 +195,10 @@ public class ProcedureRequestSession {
     }
     
     public void killIt(){
-        LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
-//        if (!this.isForQuery){
-        if (rspMessages!=null){
-//            if ((rspMessages.getIsSuccess()) && (token.getAppSessionId()!=null))                
-//                LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
-            rspMessages.killInstance();
-        }
-//      }
+        
+//        LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
+       // if (1==1) return;
+//        if (!this.isForQuery) 
             this.theSession=null;
         if (this.isForQuery!=null && !this.isForQuery){
             this.token=null;
@@ -215,6 +211,7 @@ public class ProcedureRequestSession {
         if (tstAuditObj!=null) tstAuditObj.killIt();
         if (busRuleVisited!=null) busRuleVisited.killIt();
         if (msgCodeVisited!=null) msgCodeVisited.killIt();
+        if (rspMessages!=null) rspMessages.killInstance();
         if (this.auditAndUsrValid!=null) this.auditAndUsrValid.killInstance();
         if (this.busRulesProcInstance!=null) this.busRulesProcInstance=null;
         if (this.busRulesTesting!=null) this.busRulesTesting=null;
