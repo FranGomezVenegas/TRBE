@@ -13,6 +13,20 @@ import trazit.enums.EnumIntMessages;
  * @author User
  */
 public class ResponseMessages {
+
+    /**
+     * @return the isSuccess
+     */
+    public Boolean getIsSuccess() {
+        return isSuccess;
+    }
+
+    /**
+     * @param isSuccess the isSuccess to set
+     */
+    public void setIsSuccess(Boolean isSuccess) {
+        this.isSuccess = isSuccess;
+    }
     
     public enum RelatedObjectsElementNames{
         SCHEMA("schema_name"), TABLE("table_name"), OBJECT_TYPE("object_type"), OBJECT("object_name");
@@ -28,10 +42,12 @@ public class ResponseMessages {
     private static ResponseMessages mainStructureObject;
     private Object[][] messages;
     private Object[][] mainMessage;
+    private Boolean isSuccess;
     
     private ResponseMessages(){
         this.messages=new Object[][]{{}};
         this.mainMessage=new Object[][]{{}};
+        this.isSuccess=false;
     }
     
     public static ResponseMessages getInstance() {
@@ -60,12 +76,15 @@ public class ResponseMessages {
         mainStructureObject.messages=LPArray.array1dTo2d(array2dTo1d, 3);
     }
     public void addMainForSuccess(String className, String messageCode, Object[] msgCodeVariables){
+        this.setIsSuccess((Boolean) true);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{className, messageCode, msgCodeVariables}, 3);
     }
     public void addMainForError(String messageCode, Object[] msgCodeVariables){
+        this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3);
     }
     public void addMainForError(EnumIntMessages messageCode, Object[] msgCodeVariables){
+        this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode.getErrorCode(), msgCodeVariables, new Object[]{}}, 3);
     }
     
