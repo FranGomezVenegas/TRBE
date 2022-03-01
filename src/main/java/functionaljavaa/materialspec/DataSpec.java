@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ApiMessageReturn;
+import trazit.session.ProcedureRequestSession;
+import trazit.session.ResponseMessages;
 
 /**
  *
@@ -263,7 +265,7 @@ public class DataSpec {
     public Object[] resultCheck(BigDecimal result, BigDecimal minSpec, BigDecimal maxSpec, Boolean minStrict, Boolean maxStrict, BigDecimal minValAllowed, BigDecimal maxValAllowed){
         Object [] errorVariables = new Object[0];                
         ConfigSpecRule matQuant = new ConfigSpecRule();
-
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         if (result==null){
             errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrorsErrorTrapping.MANDATORY_FIELD_ARGUMENT_RESULT);
             Object[] diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.NULL_MANDATORY_FIELD, errorVariables);
@@ -276,12 +278,14 @@ public class DataSpec {
         if (minValAllowed!=null)
             compareTo = result.compareTo(minValAllowed);
         if (minValAllowed!=null && compareTo<0){
+            messages.addMainForError(ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED, new Object[]{result, minValAllowed});
             Object[] diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED, new Object[]{result, minValAllowed});
             return LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED);
         }
         if (maxValAllowed!=null)
             compareTo=result.compareTo(maxValAllowed);
         if (maxValAllowed!=null && compareTo>0){
+            messages.addMainForError(ResultCheckSuccessErrorTrapping.QUANTITATIVE_GREATER_THAN_MAX_VAL_ALLOWED, new Object[]{result, maxValAllowed});
             Object[] diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckSuccessErrorTrapping.QUANTITATIVE_GREATER_THAN_MAX_VAL_ALLOWED, new Object[]{result, maxValAllowed});
             return LPArray.addValueToArray1D(diagnoses, ResultCheckSuccessErrorTrapping.QUANTITATIVE_GREATER_THAN_MAX_VAL_ALLOWED);
         }
