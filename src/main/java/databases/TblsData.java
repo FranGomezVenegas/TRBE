@@ -988,7 +988,7 @@ public class TblsData {
                 " SELECT '#SCHEMA_CONFIG'::text AS procedure, usr.id, usr.user_id, metadata.code, usr.method_name, usr.method_version, "+
                 "   usr.assigned_on, usr.assigned_by, usr.status, usr.certification_date, usr.certif_expiry_date," +
                 "   usr.certif_started, usr.certif_completed, usr.sop_name, usr.user_name, usr.light, , usr.training_id,"+
-                "   metadata.active, metadata.expires, metadata.expiry_interval_info " +
+                "   metadata.active, metadata.expires, metadata.expiry_interval_info, metadata.certification_mode " +
                 "   FROM #SCHEMA.certif_user_analysis_method usr," +
                 "    #SCHEMA_CONFIG.methods metadata" +
                 "  WHERE usr.method_name::text = metadata.code::text "+
@@ -1019,7 +1019,8 @@ public class TblsData {
         FLD_TRAINING_ID("training_id", "")        ,
         FLD_METHOD_IS_ACTIVE("active", "method_is_active"),
         FLD_METHOD_EXPIRES("expires", "method_expires"),
-        FLD_METHOD_EXPIRY_INTERVAL_INFO("expiry_interval_info", "method_expiry_interval_info")
+        FLD_METHOD_EXPIRY_INTERVAL_INFO("expiry_interval_info", "method_expiry_interval_info"),
+        FLD_CERTIFICATION_MODE("certification_mode", "method_certification_mode")
         ;
         private ViewUserAndAnalysisMethodCertificationView(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
