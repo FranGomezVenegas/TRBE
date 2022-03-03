@@ -1,12 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.labplanet.servicios.moduleenvmonit;
 
 import databases.DbObjects;
-import databases.TblsCnfg;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPPlatform;
@@ -16,12 +10,9 @@ import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
 import trazit.globalvariables.GlobalVariables;
-/**
- *
- * @author Administrator
- */
+
 public class TblsEnvMonitConfig {
-    public static final String getTableCreationScriptFromConfigTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+/*    public static final String getTableCreationScriptFromConfigTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "INCUB_BATCH": return IncubBatch.createTableScript(schemaNamePrefix, fields);
             case "INSTRUMENT_INCUBATOR": return InstrIncubator.createTableScript(schemaNamePrefix, fields);
@@ -37,71 +28,29 @@ public class TblsEnvMonitConfig {
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSCNFGENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }
-    /**
-     *
-     */
-    
+*/    
     public enum Program{
-
-        /**
-         *
-         */
         TBL("program",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
-
-        /**
-         *
-         */
         FLD_NAME("name",  LPDatabase.stringNotNull(100))
         ,
-
-        /**
-         *
-         */
         FLD_PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull())
         ,
-
-        /**
-         *
-         */
         FLD_PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull())
         ,
-
-        /**
-         *
-         */
         FLD_SPEC_CODE("spec_code", LPDatabase.stringNotNull()),        
-
-        /**
-         *
-         */
         FLD_SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integerNotNull()),
-
-        /**
-         *
-         */
         FLD_SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull()),        
         FLD_SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integerNotNull()),        
         FLD_MAP_IMAGE("map_image", LPDatabase.string()),        
-        
-        /**
-         *
-         */
         FLD_DESCRIPTION_EN("description_en", LPDatabase.string()),        
         FLD_DESCRIPTION_ES("description_es", LPDatabase.string()),        
-
-                
         FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
         FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.stringNotNull(200))
         ,
-
-        /**
-         *
-         */
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime())
         ;
-        
         private Program(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;

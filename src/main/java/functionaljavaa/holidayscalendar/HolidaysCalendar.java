@@ -44,7 +44,7 @@ public static InternalMessage createNewCalendar(String name, String[] fldNames, 
         //instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.CREATION.toString(), name, TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(), name,
         //                fldNames, fldValues);
         messages.addMainForSuccess("HolidaysCalendar", CalendarAPIactionsEndpoints.NEW_CALENDAR.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, CalendarAPIactionsEndpoints.NEW_CALENDAR.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, CalendarAPIactionsEndpoints.NEW_CALENDAR, new Object[]{name}, name);
     }
 
 public static InternalMessage addDateToCalendar(String code, Date newDate, String dayName, String[] fldNames, Object[] fldValues){   

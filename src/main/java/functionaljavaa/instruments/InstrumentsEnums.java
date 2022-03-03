@@ -282,6 +282,7 @@ public class InstrumentsEnums {
     }                           
     public enum InstrumentsErrorTrapping implements EnumIntMessages{ 
         NOT_FOUND("instrumentNotFound","The instrument <*1*> is not found in procedure <*2*>","El instrumento <*1*> no se ha encontrado para el proceso <*2*>"),
+        FAMILY_NOT_FOUND("instrumentFamilyNotFound","The instrument family <*1*> is not found in procedure <*2*>","La familia de instrumento <*1*> no se ha encontrado para el proceso <*2*>"),
         NOT_ONLINE("instrumentNotOnline","The instrument <*1*> is not currently on line","El instrumento <*1*> no está actualmente en línea"),
         NOT_DECOMMISSIONED("instrumentNotDecommissioned","The instrument <*1*> is not currently decommissioned","El instrumento <*1*> no está actualmente retirado"),
         ALREADY_ONLINE("instrumentAlreadyOnline", "The instrument <*1*> is currently on line","El instrumento <*1*> está actualmente en línea"),
@@ -302,6 +303,7 @@ public class InstrumentsEnums {
         AUTHOR_CANNOT_BE_REVIEWER("AuditSamePersonCannotBeAuthorAndReviewer", "Same person cannot review its own actions", "La misma persona no puede revisar sus propias acciones"),
         PARAMETER_MISSING("sampleAuditRevisionMode_ParameterMissing", "", ""),
         DISABLED("instrumentAuditRevisionMode_Disable", "", ""),
+        VARIABLE_TYPE_NOT_RECOGNIZED("variableTypeNotRecognized", "", "")
         ;
         private InstrumentsErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

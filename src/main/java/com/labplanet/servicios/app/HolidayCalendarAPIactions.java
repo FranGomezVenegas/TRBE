@@ -110,7 +110,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
 
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), "incident", incId);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                 
@@ -118,7 +118,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 
                 //rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), "instruments", instrName);                
-                //JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{instrName}, rObj.getRelatedObject());
+                //JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{instrName}, rObj.getRelatedObject());
                 JSONObject dataSampleJSONMsg = new JSONObject();
                 rObj.killInstance();
                 LPFrontEnd.responseJSONDiagnosticLPTrue(request, response, dataSampleJSONMsg);*/
@@ -129,7 +129,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), "incident", incId);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           */

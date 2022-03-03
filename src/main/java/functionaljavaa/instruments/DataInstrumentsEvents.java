@@ -13,6 +13,7 @@ import databases.TblsAppProcData.TablesAppProcData;
 import databases.TblsAppProcDataAudit;
 import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
 import functionaljavaa.instruments.InstrumentsEnums.InstrEventsErrorTrapping;
+import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsBusinessRules;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsErrorTrapping;
 import functionaljavaa.moduleenvironmentalmonitoring.DataStudyObjectsVariableValues;
@@ -162,7 +163,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.NOT_NUMERIC_VALUE,null, null);
         }else if (DataStudyObjectsVariableValues.VariableTypes.TEXT.toString().equalsIgnoreCase(fieldType)){
         }else 
-            return new InternalMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         String[] updFieldsName=new String[]{TblsAppProcData.InstrEventVariableValues.VALUE.getName()};
         Object[] updFieldsValue=new Object[]{newValue};
         diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
@@ -225,7 +226,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.NOT_NUMERIC_VALUE,null, null);
         }else if (DataStudyObjectsVariableValues.VariableTypes.TEXT.toString().equalsIgnoreCase(fieldType)){
         }else 
-            return new InternalMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         String[] updFieldsName=new String[]{TblsAppProcData.InstrEventVariableValues.VALUE.getName()};
         Object[] updFieldsValue=new Object[]{newValue};
         diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
@@ -286,7 +287,10 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             new String[]{TblsAppProcDataAudit.Instruments.REVIEWED.getName(), TblsAppProcDataAudit.Instruments.REVIEWED_BY.getName(), TblsAppProcDataAudit.Instruments.REVIEWED_ON.getName()},
             new Object[]{true, personName, LPDate.getCurrentTimeStamp()}, 
             new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId});
-        return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString()))
+            return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InstrumentsAPIactionsEndpoints.INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED, new Object[]{auditId});
+        else
+            return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InstrumentsErrorTrapping.AUDIT_RECORD_NOT_FOUND, new Object[]{auditId});
     }    
     
 }

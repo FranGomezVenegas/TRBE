@@ -24,6 +24,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
@@ -53,7 +54,7 @@ public class DataInstruments {
     private InternalMessage decisionValueIsCorrect(String decision){
         try{
             Decisions.valueOf(decision);
-            return new InternalMessage(LPPlatform.LAB_TRUE, "", null, null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, TrazitUtilitiesErrorTrapping.CORRECT, null, null);
         }catch(Exception e){
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
             messages.addMainForError(InstrumentsErrorTrapping.WRONG_DECISION, new Object[]{decision, Arrays.toString(Decisions.values())});
@@ -109,6 +110,7 @@ public class DataInstruments {
     }    
     
     public static InternalMessage createNewInstrument(String name, String familyName, String[] fldNames, Object[] fldValues){   
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getToken();
         if (fldNames==null){
             fldNames=new String[]{};
@@ -118,8 +120,10 @@ public class DataInstruments {
             Object[][] instrFamilyInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_CONFIG.getName(), TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY.getTableName(), 
                 new String[]{TblsAppProcConfig.InstrumentsFamily.NAME.getName()}, new Object[]{familyName}, 
                 getAllFieldNames(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY.getTableFields()));
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrFamilyInfo[0][0].toString()))
-                return new InternalMessage(LPPlatform.LAB_FALSE, "instrumentFamilyNotFound", new Object[]{familyName}, null);            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrFamilyInfo[0][0].toString())){
+                messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.FAMILY_NOT_FOUND, new Object[]{familyName});                
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.FAMILY_NOT_FOUND, new Object[]{familyName}, null);            
+            }
             fldNames=LPArray.addValueToArray1D(fldNames, TblsAppProcData.Instruments.FAMILY.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, familyName);
         }
@@ -132,9 +136,8 @@ public class DataInstruments {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
         instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.CREATION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT, new Object[]{name}, name);
     }
     public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues){
         return updateInstrument(fldNames, fldValues, null);
@@ -163,7 +166,7 @@ public class DataInstruments {
         instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.UPDATE_INSTRUMENT.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
             fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.UPDATE_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.UPDATE_INSTRUMENT.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.UPDATE_INSTRUMENT, new Object[]{name}, name);
     }
     public InternalMessage decommissionInstrument(String[] fldNames, Object[] fldValues){
         if (this.isDecommissioned)
@@ -193,7 +196,7 @@ public class DataInstruments {
         instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.DECOMMISSION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
             fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.DECOMMISSION_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.DECOMMISSION_INSTRUMENT.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.DECOMMISSION_INSTRUMENT, new Object[]{name}, name);
     }
     public InternalMessage unDecommissionInstrument(String[] fldNames, Object[] fldValues){
         if (!this.isDecommissioned)
@@ -226,7 +229,7 @@ public class DataInstruments {
         instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.UNDECOMMISSION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
             fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.UNDECOMMISSION_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.UNDECOMMISSION_INSTRUMENT.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.UNDECOMMISSION_INSTRUMENT, new Object[]{name}, name);
     }
 
     public InternalMessage turnOnLine(String[] fldNames, Object[] fldValues){
@@ -257,7 +260,7 @@ public class DataInstruments {
         instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.TURN_ON_LINE.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
             fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_ON_LINE.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_ON_LINE.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_ON_LINE, new Object[]{name}, name);
     }
     public InternalMessage turnOffLine(String[] fldNames, Object[] fldValues){
         if (this.isDecommissioned)
@@ -280,7 +283,7 @@ public class DataInstruments {
         instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.TURN_OFF_LINE.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_OFF_LINE.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_OFF_LINE.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_OFF_LINE, new Object[]{name}, name);
     }
 
     public InternalMessage startCalibration(){
@@ -324,7 +327,7 @@ public class DataInstruments {
             turnOffLine(fldNames, fldValues);
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_CALIBRATION.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_CALIBRATION.getSuccessMessageCode(), new Object[]{name}, insEventIdCreated);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_CALIBRATION, new Object[]{name}, insEventIdCreated);
     }
     public InternalMessage completeCalibration(String decision){
         InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
@@ -380,7 +383,7 @@ public class DataInstruments {
             updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_CALIBRATION.toString());            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{name}, name);
     }
 
     public InternalMessage startPrevMaint(){
@@ -425,7 +428,7 @@ public class DataInstruments {
             turnOffLine(fldNames, fldValues);
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_PREV_MAINT.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_PREV_MAINT.getSuccessMessageCode(), new Object[]{name}, insEventIdCreated);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_PREV_MAINT, new Object[]{name}, insEventIdCreated);
     }
     public InternalMessage completePrevMaint(String decision){
         InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
@@ -478,7 +481,7 @@ public class DataInstruments {
             updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREV_MAINT.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREV_MAINT.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREV_MAINT, new Object[]{name}, name);
     }
     
     public InternalMessage startVerification(){
@@ -522,7 +525,7 @@ public class DataInstruments {
             turnOffLine(fldNames, fldValues);
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_VERIFICATION.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_VERIFICATION.getSuccessMessageCode(), new Object[]{name}, insEventIdCreated);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_VERIFICATION, new Object[]{name}, insEventIdCreated);
     }
     public InternalMessage completeVerification(String decision){
         InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
@@ -570,7 +573,7 @@ public class DataInstruments {
             updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_VERIFICATION.toString());            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{name}, name);
     }
     
     public InternalMessage reopenEvent(Integer instrEventId){
@@ -614,7 +617,7 @@ public class DataInstruments {
             updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.REOPEN_EVENT.toString());            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT.getSuccessMessageCode(), new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT.getSuccessMessageCode(), new Object[]{name}, name);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT, new Object[]{name}, name);
     }
 
 }

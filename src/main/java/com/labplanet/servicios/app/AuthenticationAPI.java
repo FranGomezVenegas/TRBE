@@ -219,7 +219,7 @@ public class AuthenticationAPI extends HttpServlet {
                         return;                             
                     }
                     if(esignPhraseToCheck.equals(token.geteSign())){   
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), null, null);
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), null, null);
                         
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                         return;                                             
@@ -238,7 +238,7 @@ public class AuthenticationAPI extends HttpServlet {
                     
                     token = new Token(myToken);
                     if ( (userToCheck.equals(token.getUserName())) && (passwordToCheck.equals(token.getUsrPw())) ){
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), null, null);                        
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), null, null);                        
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                     }else{                        
 //                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(AuthenticationErrorTrapping.USRPWD_TOCHECK_INVALID.getErrorCode(), new Object[]{userToCheck});
@@ -272,7 +272,7 @@ public class AuthenticationAPI extends HttpServlet {
                     RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
                     jsonObj = new JSONObject();
-                    jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
                     rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
@@ -307,7 +307,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
                     jsonObj = new JSONObject();
-                    jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
                     rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
@@ -336,7 +336,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
                     jsonObj = new JSONObject();
-                    jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
                     rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
@@ -350,7 +350,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagn);   
                     else{
                         rObj=RelatedObjects.getInstanceForActions();
-                        jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                                        
+                        jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                                        
                         rObj.killInstance();
                         LPFrontEnd.servletReturnSuccess(request, response, jsonObj);                        
                     }
