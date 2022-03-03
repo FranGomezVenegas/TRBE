@@ -99,7 +99,7 @@
     </servlet>
     <servlet>
         <servlet-name>AnalysisMethodCertifUserAPIfrontend</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.AnalysisMethodCertifUserAPIfrontend</servlet-class>
+        <servlet-class>com.labplanet.servicios.app.CertifyAnalysisMethodAPIfrontend</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SampleAPI</servlet-name>
@@ -544,7 +544,7 @@
     <servlet-mapping>
         <servlet-name>TestingAPIActions</servlet-name>
         <url-pattern>/testing/platform/TestingAPIActions</url-pattern>
-    </servlet-mapping>    
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HolidayCalendarAPIactions</servlet-name>
         <url-pattern>/app/HolidayCalendarAPIactions</url-pattern>
