@@ -20,9 +20,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -67,6 +69,13 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             //    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7)
             }, EndPointsToRequirements.endpointWithNoOutputObjects),
+        CERTIFUSER_READ_AND_UNDERSTOOD("CERTIFUSER_READ_AND_UNDERSTOOD", "certifUser_markAsReadAndUnderstood_success","",
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, 
+               EndPointsToRequirements.endpointWithNoOutputObjects),
+        CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER("CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER", "certifUser_sendToReviewer_success","",
+                new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        CERTIFUSER_TRAINING_REQUIRED("CERTIFUSER_TRAINING_REQUIRED", "certifUser_trainingRequired_succes","",
+                new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
         private CertifyAnalysisMethodAPIEndpoints(String name, String successMessageCode, String audtEv, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -165,6 +174,7 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), diagnostic[diagnostic.length-1]);
                     
                 break;
+            case CERTIFUSER_READ_AND_UNDERSTOOD:                 
             case USER_MARKIT_AS_COMPLETED:
                 methodName = argValues[0].toString();
                 userName=procReqInstance.getToken().getUserName();
@@ -176,6 +186,10 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                     messageDynamicData=new Object[]{methodName, userName, procReqInstance.getProcedureInstance()};                
                 }
                 break;
+            case CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER:
+            case CERTIFUSER_TRAINING_REQUIRED:
+                diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+                break;                                
             default:                
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                                          

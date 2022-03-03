@@ -6,7 +6,9 @@
 package functionaljavaa.certification;
 
 import databases.TblsCnfg;
+import databases.TblsData;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONObject;
 
 /**
@@ -16,9 +18,9 @@ import org.json.simple.JSONObject;
 public class FrontendCertifObjsUtilities {
     
     public enum CertifModes{
-        READ_AND_UNDERSTOOD("READ_AND_UNDERSTOOD", "Read and understood", "Leido y entendido"),
-        UNDERSTOOD_AND_SENDTOREVIEWER("UNDERSTOOD_AND_SENDTOREVIEWER", "Understood", "Entendido"),
-        TRAINING_REQUIRED("TRAINING_REQUIRED", "Training required", "Requiere entrenamiento"),
+        CERTIFUSER_READ_AND_UNDERSTOOD("CERTIFUSER_READ_AND_UNDERSTOOD", "Read and understood", "Leido y entendido"),
+        CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER("CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER", "Understood", "Entendido"),
+        CERTIFUSER_TRAINING_REQUIRED("CERTIFUSER_TRAINING_REQUIRED", "Training required", "Requiere entrenamiento"),
         ;
         private CertifModes(String endpointName, String labelEn, String labelEs){
             this.endpointName=endpointName;
@@ -53,13 +55,22 @@ public class FrontendCertifObjsUtilities {
     
     public static JSONObject certifObjCertifModeOwnUserAction(String[] objFldNames, Object[] objFldValues){
         JSONObject mainObj=new JSONObject();
-        Integer valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsCnfg.SopMetaData.FLD_CERTIFICATION_MODE.getName());
-        if (valuePosicInArray==-1) return mainObj;
+        Integer valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsData.ViewUserAndAnalysisMethodCertificationView.FLD_LIGHT.getName());
+        if ( valuePosicInArray>1 && "GREEN".equalsIgnoreCase(LPNulls.replaceNull(objFldValues[valuePosicInArray].toString())) ){
+            mainObj.put("action_visible", false);
+            return mainObj;
+        }
+        valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsCnfg.SopMetaData.FLD_CERTIFICATION_MODE.getName());
+        if (valuePosicInArray==-1){
+            mainObj.put("action_visible", false);
+            mainObj.put("error", TblsCnfg.SopMetaData.FLD_CERTIFICATION_MODE.getName()+" field not found to determine the mode, please review definition");
+            return mainObj;
+        }
         String certifMode =objFldValues[valuePosicInArray].toString();
         CertifModes cMode=null;
         try{
             cMode = CertifModes.valueOf(certifMode.toUpperCase());
-            if ( (CertifModes.READ_AND_UNDERSTOOD.toString().equalsIgnoreCase(certifMode)) || (CertifModes.UNDERSTOOD_AND_SENDTOREVIEWER.toString().equalsIgnoreCase(certifMode))){
+            if ( (CertifModes.CERTIFUSER_READ_AND_UNDERSTOOD.toString().equalsIgnoreCase(certifMode)) || (CertifModes.CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER.toString().equalsIgnoreCase(certifMode))){
                 mainObj.put("action_visible", true);
                 mainObj.put("action_enabled", true);
             }else{

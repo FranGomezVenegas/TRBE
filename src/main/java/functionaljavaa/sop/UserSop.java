@@ -310,11 +310,12 @@ public class UserSop {
             if (filterFieldName==null){getUserProfileNEW[0][2]="filterFieldName is null";}else{getUserProfileNEW[0][2]="filterFieldName="+Arrays.toString(filterFieldName);}
             if (filterFieldValue==null){getUserProfileNEW[0][3]="filterFieldValue is null";}else{getUserProfileNEW[0][3]="filterFieldValue="+Arrays.toString(filterFieldValue);}
             return getUserProfileNEW;}       
-                
+        int correctProcess=0;                
         StringBuilder query = new StringBuilder(0);
         for(String currProcInstanceName: procInstanceName){ 
             Object[] viewExistInSchema= Rdbms.dbViewExists(currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())){
+                correctProcess++;
                 query.append("(select ");
                 for(String fRet: fieldsToReturn){
                     if (fRet!=null && fRet.length()>0){
@@ -342,7 +343,7 @@ public class UserSop {
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
         
         
-        Object[] filterFieldValueAllSchemas = new Object[filterFieldValue.length*procInstanceName.length];
+        Object[] filterFieldValueAllSchemas = new Object[filterFieldValue.length*correctProcess];
         Integer iFldValue=0;
         for(String sPref: procInstanceName){
             for(Object fVal: filterFieldValue){

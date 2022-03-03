@@ -41,7 +41,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
  *
  * @author Administrator
  */
-public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
+public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
 
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     public static final String ERRORMSG_ERROR_STATUS_CODE="Error Status Code";
@@ -60,7 +60,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
     public static final String JSON_TAG_VALUE_BRANCH_LEVEL_LEVEL_1="level1";
     public static final String JSON_TAG_VALUE_WINDOWS_URL_HOME="Modulo1/home.js";
      
-    public enum AnaMethCertifUserAPIfrontendEndpoints{
+    public enum CertifyAnalysisMethodAPIfrontendEndpoints{
         ALL_MY_ANA_METHOD_CERTIF("ALL_MY_ANA_METHOD_CERTIF", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
             EndPointsToRequirements.endpointWithNoOutputObjects),
         MY_PENDING_ANA_METHOD_CERTIF("MY_PENDING_ANA_METHOD_CERTIF", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
@@ -70,7 +70,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
         ALL_IN_ONE("ALL_IN_ONE", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
             EndPointsToRequirements.endpointWithNoOutputObjects),
         ; 
-        private AnaMethCertifUserAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private CertifyAnalysisMethodAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -123,9 +123,9 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             
             Token token = new Token(finalToken);
-            AnaMethCertifUserAPIfrontendEndpoints endPoint = null;
+            CertifyAnalysisMethodAPIfrontendEndpoints endPoint = null;
             try{
-                endPoint = AnaMethCertifUserAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = CertifyAnalysisMethodAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
@@ -150,9 +150,9 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
                 //request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                 //jsonObj.put("header_info", AppHeaderAPI(request, response));
                 jsonObj.put("procedures_list", procedureListInfo(request, response));
-                jsonObj.put("all_my_analysis_method_certifications", AnalysisMethodCertifUserAPIfrontend.AllMyAnalysisMethodCertif(request, response));
-                jsonObj.put("my_pending_analysis_method_certifications", AnalysisMethodCertifUserAPIfrontend.MyPendingAnalysisMethodCertif(request, response));
-                jsonObj.put("procedures_analysis_method_certifications", AnalysisMethodCertifUserAPIfrontend.ProceduresAnalysisMethodCertif(request, response));
+                jsonObj.put("all_my_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.AllMyAnalysisMethodCertif(request, response));
+                jsonObj.put("my_pending_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.MyPendingAnalysisMethodCertif(request, response));
+                jsonObj.put("procedures_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.ProceduresAnalysisMethodCertif(request, response));
                 LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                 return;                                                   
             default:                
@@ -184,7 +184,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
         Token token = new Token(finalToken);
         
-        AnaMethCertifUserAPIfrontendEndpoints endPoint = AnaMethCertifUserAPIfrontendEndpoints.ALL_MY_ANA_METHOD_CERTIF;
+        CertifyAnalysisMethodAPIfrontendEndpoints endPoint = CertifyAnalysisMethodAPIfrontendEndpoints.ALL_MY_ANA_METHOD_CERTIF;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
 
@@ -218,21 +218,13 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
         JSONObject myAnaMethCertifList = new JSONObject();
         JSONArray myAnaMethCertifListArr = new JSONArray();
 
-        JSONObject columns = new JSONObject();        
         for (Object[] curCertif: userAnaMethCertifByProcess){            
             JSONObject anaMethodJObj = new JSONObject();
             Boolean columnsCreated =false;
             anaMethodJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curCertif);
-            for (int yProc=0; yProc<userAnaMethCertifByProcess[0].length; yProc++){
-                if (!columnsCreated){
-                    columns.put("column_"+yProc, fieldsToRetrieve[yProc]);
-                }                       
-            }  
             anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curCertif));
             myAnaMethCertif.add(anaMethodJObj);
         }    
-        columnNames.add(columns);
-        myAnaMethCertifList.put("columns_names", columnNames);
         myAnaMethCertifList.put("my_analysis_method_certifications", myAnaMethCertif);
         myAnaMethCertifListArr.add(myAnaMethCertifList);        
         return myAnaMethCertifListArr;
@@ -253,7 +245,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
-        AnaMethCertifUserAPIfrontendEndpoints endPoint = AnaMethCertifUserAPIfrontendEndpoints.MY_PENDING_ANA_METHOD_CERTIF;
+        CertifyAnalysisMethodAPIfrontendEndpoints endPoint = CertifyAnalysisMethodAPIfrontendEndpoints.MY_PENDING_ANA_METHOD_CERTIF;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
         
@@ -321,7 +313,7 @@ public class AnalysisMethodCertifUserAPIfrontend extends HttpServlet {
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
-        AnaMethCertifUserAPIfrontendEndpoints endPoint = AnaMethCertifUserAPIfrontendEndpoints.PROCEDURE_ANA_METHOD_CERTIF;
+        CertifyAnalysisMethodAPIfrontendEndpoints endPoint = CertifyAnalysisMethodAPIfrontendEndpoints.PROCEDURE_ANA_METHOD_CERTIF;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
         
