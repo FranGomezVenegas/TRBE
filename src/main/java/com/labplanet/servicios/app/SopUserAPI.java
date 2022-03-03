@@ -26,9 +26,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -38,7 +40,10 @@ import trazit.session.ProcedureRequestSession;
 public class SopUserAPI extends HttpServlet {
 
     public enum SopUserAPIEndpoints implements EnumIntEndpoints{
-        SOP_MARK_AS_COMPLETED("SOP_MARK_AS_COMPLETED", "appSop_markAsCompleted_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        CERTIFUSER_SOP_MARK_AS_COMPLETED("CERTIFUSER_SOP_MARK_AS_COMPLETED", "certifUser_markAsCompleted_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        CERTIFUSER_READ_AND_UNDERSTOOD("CERTIFUSER_READ_AND_UNDERSTOOD", "certifUser_markAsReadAndUnderstood_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER("CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER", "certifUser_sendToReviewer_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        CERTIFUSER_TRAINING_REQUIRED("CERTIFUSER_TRAINING_REQUIRED", "certifUser_trainingRequired_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),         
         ;
         private SopUserAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -115,7 +120,8 @@ public class SopUserAPI extends HttpServlet {
             Object[] userSopDiagnostic=new Object[0];
             Object[] messageDynamicData=new Object[]{};
             switch (endPoint){
-            case SOP_MARK_AS_COMPLETED:
+            case CERTIFUSER_READ_AND_UNDERSTOOD: 
+            case CERTIFUSER_SOP_MARK_AS_COMPLETED:
                 String sopName = argValues[0].toString();
                 String userName = token.getUserName();
                 userSopDiagnostic=UserSop.userSopMarkedAsCompletedByUser(procInstanceName, userName, sopName);
@@ -125,6 +131,10 @@ public class SopUserAPI extends HttpServlet {
                     messageDynamicData=new Object[]{sopName};                
                 }
                 rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.USER_SOP.getTableName(), TblsData.TablesData.USER_SOP.getTableName(), sopName);
+                break;
+            case CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER:
+            case CERTIFUSER_TRAINING_REQUIRED:
+                userSopDiagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
                 break;
             default:                
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
