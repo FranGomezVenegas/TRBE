@@ -26,9 +26,7 @@ public class TrazitUtiilitiesEnums {
         VALUE_NOT_NUMERIC("valueNotNumeric", "", ""),
         COMMA_IS_DECIMAL_SEPARATOR("commaIsTheDecimalsSeparator", "", ""),
         DATERANGE_WRONG_INTERVAL("dateRange_wrongInterval", "", ""),
-        SPECIAL_FUNCTION_RETURNED_ERROR("SpecialFunctionReturnedERROR", "", ""),
-        
-        
+        SPECIAL_FUNCTION_RETURNED_ERROR("SpecialFunctionReturnedERROR", "", ""),                
         ;
         private TrazitUtilitiesErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
