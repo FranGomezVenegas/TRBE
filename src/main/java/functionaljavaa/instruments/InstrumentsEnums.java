@@ -148,7 +148,14 @@ public class InstrumentsEnums {
                 new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
-        ) 
+        ),                
+        INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED("INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED", "instrumentName", "", "instrumentAuditIdReviewed_success", 
+                new LPAPIArguments[]{
+                //new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments("auditId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
+        ),
         ;
         private InstrumentsAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -188,9 +195,6 @@ public class InstrumentsEnums {
         private final JsonArray outputObjectTypes;
     }
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
-    
-    static final String COMMON_PARAMS="incidentId|note";
-
     
     public enum InstrumentsAPIqueriesEndpoints implements EnumIntEndpoints{
         ACTIVE_INSTRUMENTS_LIST("ACTIVE_INSTRUMENTS_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
@@ -242,7 +246,10 @@ public class InstrumentsEnums {
     }    
     public enum InstrumentsBusinessRules  implements EnumIntBusinessRules{
         xSTART_MULTIPLE_BATCH_IN_PARALLEL("incubationBatch_startMultipleInParallelPerIncubator", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        xSTART_FOR_LOCKED_INCUBATOR_MODE("incubationBatch_startForLockedIncubatorMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')        
+        xSTART_FOR_LOCKED_INCUBATOR_MODE("incubationBatch_startForLockedIncubatorMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        REVISION_MODE("instrumentAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        AUTHOR_CAN_REVIEW_AUDIT_TOO("instrumentAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        CHILD_REVISION_REQUIRED("instrumentAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')        
         ;
         private InstrumentsBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
             this.tagName=tgName;
@@ -288,7 +295,13 @@ public class InstrumentsEnums {
         IS_LOCKED("instrumentIsLocked", "The instrument <*1*> is locked, the reason is <*2*>","El instrumento <*1*> está actualmente bloqueado, la razón es <*2*>"),
         TRYINGUPDATE_RESERVED_FIELD("instrumentTryingToUpdateReservedField", "Not allowed to update the reserved field <*1*>","No permitido modificar el campo reservado <*1*>"),
         ALREADY_DECOMMISSIONED("instrumentAlreadyDecommissioned", "Instrument <*1*> already decommissioned","Instrumento <*1*> ya fue retirado"),
-        WRONG_DECISION("instrumentWrongDecision", "wrongDecision <*1*> is not one of the accepted values(<*2*>)", "wrongDecision <*1*> is not one of the accepted values(<*2*>)")
+        WRONG_DECISION("instrumentWrongDecision", "wrongDecision <*1*> is not one of the accepted values(<*2*>)", "wrongDecision <*1*> is not one of the accepted values(<*2*>)"),
+        AUDIT_RECORDS_PENDING_REVISION("instrumentAuditRecordsPendingRevision", "The sample <*1*> has pending sign audit records.", "La muestra <*1*> tiene registros de auditoría sin firmar"),
+        AUDIT_RECORD_NOT_FOUND("AuditRecordNotFound", "The audit record <*1*> for sample does not exist", "No encontrado un registro de audit para muestra con id <*1*>"),
+        AUDIT_RECORD_ALREADY_REVIEWED("AuditRecordAlreadyReviewed", "The audit record <*1*> was reviewed therefore cannot be reviewed twice.", "El registro de audit para muestra con id <*1*> ya fue revisado, no se puede volver a revisar."),
+        AUTHOR_CANNOT_BE_REVIEWER("AuditSamePersonCannotBeAuthorAndReviewer", "Same person cannot review its own actions", "La misma persona no puede revisar sus propias acciones"),
+        PARAMETER_MISSING("sampleAuditRevisionMode_ParameterMissing", "", ""),
+        DISABLED("instrumentAuditRevisionMode_Disable", "", ""),
         ;
         private InstrumentsErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

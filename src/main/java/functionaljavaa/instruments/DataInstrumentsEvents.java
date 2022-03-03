@@ -10,12 +10,17 @@ import databases.SqlStatement;
 import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
 import databases.TblsAppProcData.TablesAppProcData;
+import databases.TblsAppProcDataAudit;
 import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
 import functionaljavaa.instruments.InstrumentsEnums.InstrEventsErrorTrapping;
+import functionaljavaa.instruments.InstrumentsEnums.InstrumentsBusinessRules;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsErrorTrapping;
 import functionaljavaa.moduleenvironmentalmonitoring.DataStudyObjectsVariableValues;
+import functionaljavaa.parameter.Parameter;
+import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
@@ -231,7 +236,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);        
     }
     public static InternalMessage eventHasNotEnteredVariables(String instrName, Integer instrEventId){
-        String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();        
+        String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())){ 
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
@@ -251,5 +256,37 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_HAS_PENDING_RESULTS, new Object[]{diagn.length},null);
         }        
     }
+    public static InternalMessage instrumentAuditSetAuditRecordAsReviewed(Integer auditId, String personName){
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
+        String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName();
+        String auditReviewMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InstrumentsBusinessRules.REVISION_MODE.getAreaName(), InstrumentsBusinessRules.REVISION_MODE.getTagName());  
+        if (!isTagValueOneOfEnableOnes(auditReviewMode)){
+                messages.addMainForError(InstrumentsErrorTrapping.DISABLED, new Object[]{});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.DISABLED, new Object[]{});                        
+        }
+        String auditAuthorCanBeReviewerMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getAreaName(), InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName());  
+        Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(appProcInstance, TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), 
+            new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId}, 
+            new String[]{TblsAppProcDataAudit.Instruments.PERSON.getName(), TblsAppProcDataAudit.Instruments.REVIEWED.getName()}, new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()});
+        if (!isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode)){//(!"TRUE".equalsIgnoreCase(auditAuthorCanBeReviewerMode)){            
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(auditInfo[0][0].toString())){ 
+                messages.addMainForError(InstrumentsErrorTrapping.DISABLED, new Object[]{});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.DISABLED, new Object[]{});            
+            }
+            if (personName.equalsIgnoreCase(auditInfo[0][0].toString())){
+                messages.addMainForError(InstrumentsErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});                
+            }
+        }
+        if (Boolean.valueOf(auditInfo[0][1].toString())){
+            messages.addMainForError(InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
+        }
+        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(appProcInstance, TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), 
+            new String[]{TblsAppProcDataAudit.Instruments.REVIEWED.getName(), TblsAppProcDataAudit.Instruments.REVIEWED_BY.getName(), TblsAppProcDataAudit.Instruments.REVIEWED_ON.getName()},
+            new Object[]{true, personName, LPDate.getCurrentTimeStamp()}, 
+            new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId});
+        return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
+    }    
     
 }

@@ -5,8 +5,12 @@
  */
 package com.labplanet.servicios.app.procs;
 
+import databases.Rdbms;
 import databases.TblsAppProcData.TablesAppProcData;
+import databases.TblsAppProcDataAudit;
+import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.instruments.DataInstruments;
+import static functionaljavaa.instruments.DataInstrumentsEvents.instrumentAuditSetAuditRecordAsReviewed;
 import static functionaljavaa.instruments.DataInstrumentsEvents.objectVariableChangeValue;
 import static functionaljavaa.instruments.DataInstrumentsEvents.objectVariableSetValue;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
@@ -228,6 +232,26 @@ public class ClassInstruments {
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), 
                             TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
                     break;
+                case INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED:
+//                    ResponseMessages message=ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+//                    message.addMainForError(TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+//                    actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null,null);
+//if (1==2){
+                    String instrumentName=null;
+                    Integer auditId = (Integer) argValues[0];
+                    Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), 
+                        new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId}, 
+                        new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName()}, new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()});
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfo[0][0].toString())){
+                        actionDiagnoses=new InternalMessage(auditInfo[0][0].toString(), SampleAudit.SampleAuditErrorTrapping.AUDIT_RECORD_NOT_FOUND, new Object[]{auditId});
+                        instrumentName=null;
+                    }else{
+                        actionDiagnoses=instrumentAuditSetAuditRecordAsReviewed(auditId, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getPersonName());
+//                    }
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), auditId);
+                    this.messageDynamicData=new Object[]{auditId, instrumentName};
+                    break;
+}
                 default:
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, "endpointNotFound", null);   
                     return;

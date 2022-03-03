@@ -278,12 +278,20 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             ConfigSpecRule specRule = new ConfigSpecRule();
                             String currRowRawValue=curRow[posicRawValueFld].toString();
                             String currRowLimitId=curRow[posicLimitIdFld].toString();
-                            Object[] resultLockData=sampleAnalysisResultLockData(procInstanceName, resultFieldToRetrieveArr, curRow);
                             JSONObject row=new JSONObject();
+
+                            Object[] resultLockData=sampleAnalysisResultLockData(procInstanceName, resultFieldToRetrieveArr, curRow);
                             if (resultLockData!=null && resultLockData[0]!=null)
                                 row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(resultFieldToRetrieveArr, (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
                             else        
                                 row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
+
+//fake warning for FE dev                            
+                            JSONObject reasonObj=new JSONObject();
+                            reasonObj.put("message_en", "warning-demo-en");
+                            reasonObj.put("message_es", "warning-demo-es");
+                            row.put("warning_reason", reasonObj);
+//fake warning for FE dev                            
                             if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
                             specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
                             row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, LPNulls.replaceNull(specRule.getRuleRepresentation()).replace(("R"), "R ("+currRowRawValue+")"));

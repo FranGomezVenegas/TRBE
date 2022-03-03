@@ -38,7 +38,7 @@ public class InstrumentsAPIactions extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);     
         
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
         if (procReqInstance.getHasErrors()){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
@@ -87,6 +87,7 @@ public class InstrumentsAPIactions extends HttpServlet {
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             instr=null;
+            procReqInstance.killIt();
             // release database resources
             try {           
                 procReqInstance.killIt();

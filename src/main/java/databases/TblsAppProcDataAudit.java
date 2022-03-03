@@ -6,6 +6,7 @@
 package databases;
 
 import lbplanet.utilities.LPDatabase;
+import static lbplanet.utilities.LPDatabase.dateTime;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
@@ -72,6 +73,9 @@ public class TblsAppProcDataAudit {
         APP_SESSION_ID("app_session_id", LPDatabase.integer(), null, null, null, null),
         PICTURE_BEFORE("picture_before", "json", null, null, null, null),
         PICTURE_AFTER("picture_after", "json", null, null, null, null),
+        REVIEWED("reviewed", LPDatabase.booleanFld(false), null, null, null, null),
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        REVIEWED_ON("reviewed_on", dateTime(), null, null, null, null),        
         PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer(), null, null, null, null),
         REASON("reason", LPDatabase.string(), null, null, null, null),
         ACTION_PRETTY_EN("action_pretty_en", LPDatabase.string(), null, null, null, null),

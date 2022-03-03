@@ -39,15 +39,9 @@ import trazit.session.ProcedureRequestSession;
 public class EnvMonSampleAPI extends HttpServlet {
     
     
-    /**
-     *
-     */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
     public enum EnvMonSampleAPIEndpoints implements EnumIntEndpoints{
-        /**
-         *
-         */
         LOGSAMPLE("LOGSAMPLE", "sampleLogged_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7), 
