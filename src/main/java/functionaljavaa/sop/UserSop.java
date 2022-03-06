@@ -431,12 +431,12 @@ public class UserSop {
         
         String[] insertFieldNames=new String[]{TblsData.UserSop.USER_ID.getName(), sopIdFieldName, TblsData.UserSop.STATUS.getName(), TblsData.UserSop.LIGHT.getName()};
         Object[] insertFieldValues=new Object[]{personName, sopIdFieldValue, userSopInitialStatus, userSopInitialLight};
-        if ( (TblsCnfg.SopMetaData.FLD_SOP_NAME.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_NAME.getName())) ){
-            insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()); 
+        if ( (TblsCnfg.SopMetaData.SOP_NAME.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.SOP_NAME.getName())) ){
+            insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.SOP_NAME.getName()); 
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopIdByName(procInstanceName, sopIdFieldValue.toString()));
         }
-        if ( (TblsCnfg.SopMetaData.FLD_SOP_ID.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_ID.getName())) ){
-            insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_ID.getName()); 
+        if ( (TblsCnfg.SopMetaData.SOP_ID.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.SOP_ID.getName())) ){
+            insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.SOP_ID.getName()); 
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopNameById(procInstanceName, sopIdFieldValue));
         }     
         if (!LPArray.valueInArray(insertFieldNames, TblsData.UserSop.USER_NAME.getName())){
@@ -483,7 +483,7 @@ public class UserSop {
         String[] updFldNames=new String[]{TblsData.UserSop.READ_COMPLETED.getName(), TblsData.UserSop.STATUS.getName(), TblsData.UserSop.LIGHT.getName()}; 
         Object[] updFldValues=new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()};
         Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
-                new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName});
+                new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName()}, new Object[]{sopName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
         else{
             updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
