@@ -8,6 +8,7 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.JSON_TAG_NAME_SAMPLE_RESULTS;
 import static com.labplanet.servicios.moduleenvmonit.EnvMonIncubBatchAPIfrontend.getActiveBatchData;
+import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewSampleMicroorganismList;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import static com.labplanet.servicios.modulesample.SampleAPIfrontend.samplesByStageData;
@@ -23,6 +24,7 @@ import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
+import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStages;
@@ -289,10 +291,10 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                                 row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
 
 //fake warning for FE dev                            
-                            JSONObject reasonObj=new JSONObject();
+/*                            JSONObject reasonObj=new JSONObject();
                             reasonObj.put("message_en", "warning-demo-en");
                             reasonObj.put("message_es", "warning-demo-es");
-                            row.put("warning_reason", reasonObj);
+                            row.put("warning_reason", reasonObj);*/
 //fake warning for FE dev                            
                             if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
                             specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
@@ -1211,7 +1213,7 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         String[] fldNameArr=null;
         Object[] fldValueArr=null;
         try{
-            if (1==1) return new Object[]{null, null};
+           // if (1==1) return new Object[]{null, null};
             Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.RESULT_ID.getName());
             Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
             if (!isProgramCorrectiveActionEnable(procInstanceName)) return new Object[]{null, null};
@@ -1225,11 +1227,15 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
                 fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
                 fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
                 fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
-
-                JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPTrue(
-                        EnvMonSampleAPI.class.getSimpleName(),
-                        "resultLockedByProgramCorrectiveAction", notClosedProgramCorrreciveAction[0], null);                                
-                fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, "resultLockedByProgramCorrectiveAction");
+                fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_en");
+                String apiName=EnvMonSampleAPIEndpoints.class.getSimpleName();
+                String msgCode="resultLockedByProgramCorrectiveAction";
+                String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en", null, true);
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorTextEn);
+                String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es", null, false);
+                fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_es");
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorTextEs);
                 return new Object[]{fldNameArr, fldValueArr};
             }
             return new Object[]{null, null};
@@ -1253,17 +1259,19 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         
         Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
         if (Boolean.valueOf(userCertified[0].toString())) return new Object[]{null, null};
-                
 
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsCnfg.TablesConfig.METHODS.getTableName());
-        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
-            
-        JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPFalse(                
-                AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode(), new Object[]{methodName});
-        fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
+        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");        
+        String msgCode=AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode();
+        fldValueArr=LPArray.addValueToArray1D(fldValueArr, msgCode);
+        Object[] errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, msgCode, new Object[]{methodName}, "en");
+        Object[] errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, msgCode, new Object[]{methodName}, "es");
+        fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorMsgEn[errorMsgEn.length-1]);
+        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_es");
+        fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorMsgEs[errorMsgEs.length-1]);
         return new Object[]{fldNameArr, fldValueArr};
     }
 
