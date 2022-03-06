@@ -139,10 +139,6 @@ public class TblsProcedure {
         USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
         LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
         ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null),
-        LP_NEW_FRONTEND_PAGE_NAME("lp_new_frontend_page_name", LPDatabase.string(), null, null, null, null),
-        NEW_ICON_NAME("new_icon_name", LPDatabase.string(), null, null, null, null),
-        NEW_ICON_NAME_WHEN_NOT_CERTIFIED("new_icon_name_when_not_certified", LPDatabase.string(), null, null, null, null),
-        NEW_NAME("new_name", LPDatabase.stringNotNull(), null, null, null, null),
         POSITION("position", LPDatabase.string(), null, null, null, null),
         PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),
         ;
@@ -169,7 +165,7 @@ public class TblsProcedure {
     public enum ProcedureInfo implements EnumIntTableFields{
         NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
         VERSION("version", LPDatabase.integerNotNull(), null, null, null, null),
-        SCHEMA_PREFIX("schema_prefix", LPDatabase.stringNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         LABEL_EN("label_en", LPDatabase.string(), null, null, null, null),
         LABEL_ES("label_es", LPDatabase.string(), null, null, null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),

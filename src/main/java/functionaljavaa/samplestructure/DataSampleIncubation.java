@@ -145,7 +145,7 @@ public class DataSampleIncubation {
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
         
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+                sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
             diagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_ENDED_SUCCESS, 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
@@ -183,7 +183,7 @@ public class DataSampleIncubation {
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
             diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_STARTED_SUCCESS, 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});           
@@ -222,25 +222,25 @@ public class DataSampleIncubation {
             if (incubationStage == 2) {
                 if (moment.contains(SampleIncubationMoment.START.toString())){
                     if (batchName!=null){
-                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.FLD_INCUBATION2_BATCH.getName());
+                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.INCUBATION2_BATCH.getName());
                         requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, batchName);                
                     }
-                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION2_START.getName()});
+                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.INCUBATION2_START.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp()});                
                 }else{
-                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION2_END.getName()});
+                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.INCUBATION2_END.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp()});                                
                 }
             }else{
                 if (moment.contains(SampleIncubationMoment.START.toString())){
                     if (batchName!=null){
-                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.FLD_INCUBATION_BATCH.getName());
+                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.INCUBATION_BATCH.getName());
                         requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, batchName);                
                     }
-                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION_START.getName()});
+                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.INCUBATION_START.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp()});                
                 }else{
-                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION_END.getName()});
+                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.INCUBATION_END.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp()});                                
                 }                
             }
@@ -262,29 +262,29 @@ public class DataSampleIncubation {
             if (incubationStage == 2) {
                 if (moment.contains(SampleIncubationMoment.START.toString())){
                     if (batchName!=null){
-                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.FLD_INCUBATION2_BATCH.getName());
+                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.INCUBATION2_BATCH.getName());
                         requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, batchName);                
                     }                    
-                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION2_START.getName(), 
-                        TblsData.Sample.FLD_INCUBATION2_INCUBATOR.getName(), TblsData.Sample.FLD_INCUBATION2_START_TEMP_EVENT_ID.getName(), TblsData.Sample.FLD_INCUBATION2_START_TEMPERATURE.getName(), TblsData.Sample.FLD_INCUBATION2_PASSED.getName()});
+                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.INCUBATION2_START.getName(), 
+                        TblsData.Sample.INCUBATION2_INCUBATOR.getName(), TblsData.Sample.INCUBATION2_START_TEMP_EVENT_ID.getName(), TblsData.Sample.INCUBATION2_START_TEMPERATURE.getName(), TblsData.Sample.INCUBATION2_PASSED.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp(), incubName, tempReadingEvId, tempReading, false});
                 }else if (moment.contains(SampleIncubationMoment.END.toString())){
-                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION2_END.getName(), 
-                        TblsData.Sample.FLD_INCUBATION2_INCUBATOR.getName(), TblsData.Sample.FLD_INCUBATION2_END_TEMP_EVENT_ID.getName(), TblsData.Sample.FLD_INCUBATION2_END_TEMPERATURE.getName(), TblsData.Sample.FLD_INCUBATION2_PASSED.getName()});
+                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.INCUBATION2_END.getName(), 
+                        TblsData.Sample.INCUBATION2_INCUBATOR.getName(), TblsData.Sample.INCUBATION2_END_TEMP_EVENT_ID.getName(), TblsData.Sample.INCUBATION2_END_TEMPERATURE.getName(), TblsData.Sample.INCUBATION2_PASSED.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp(), incubName, tempReadingEvId, tempReading, true});
                     }
             } else {
                 if (moment.contains(SampleIncubationMoment.START.toString())){
                     if (batchName!=null){
-                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.FLD_INCUBATION_BATCH.getName());
+                        requiredFields = LPArray.addValueToArray1D(requiredFields, TblsData.Sample.INCUBATION_BATCH.getName());
                         requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, batchName);                
                     }                    
-                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION_START.getName(), 
-                        TblsData.Sample.FLD_INCUBATION_INCUBATOR.getName(), TblsData.Sample.FLD_INCUBATION_START_TEMP_EVENT_ID.getName(), TblsData.Sample.FLD_INCUBATION_START_TEMPERATURE.getName(), TblsData.Sample.FLD_INCUBATION_PASSED.getName()});
+                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.INCUBATION_START.getName(), 
+                        TblsData.Sample.INCUBATION_INCUBATOR.getName(), TblsData.Sample.INCUBATION_START_TEMP_EVENT_ID.getName(), TblsData.Sample.INCUBATION_START_TEMPERATURE.getName(), TblsData.Sample.INCUBATION_PASSED.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp(), incubName, tempReadingEvId, tempReading, false});
                 }else if (moment.contains(SampleIncubationMoment.END.toString())){
-                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.FLD_INCUBATION_END.getName(), 
-                        TblsData.Sample.FLD_INCUBATION_END_TEMP_EVENT_ID.getName(), TblsData.Sample.FLD_INCUBATION_END_TEMPERATURE.getName(), TblsData.Sample.FLD_INCUBATION_PASSED.getName()});
+                    requiredFields = LPArray.addValueToArray1D(requiredFields, new String[]{TblsData.Sample.INCUBATION_END.getName(), 
+                        TblsData.Sample.INCUBATION_END_TEMP_EVENT_ID.getName(), TblsData.Sample.INCUBATION_END_TEMPERATURE.getName(), TblsData.Sample.INCUBATION_PASSED.getName()});
                     requiredFieldsValue= LPArray.addValueToArray1D(requiredFieldsValue, new Object[]{LPDate.getCurrentTimeStamp(), tempReadingEvId, tempReading, true});                
                 }
             }

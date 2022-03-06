@@ -91,13 +91,13 @@ public class AnalysisMethodCertif {
     }
     public static Object[] isUserCertified(String methodName, String userName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()};        
+        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.ID.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()};        
         Object[] userCertificationEnabled = isUserCertificationEnabled();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) return new Object[]{true, userCertificationEnabled};
         uncertifyExpiredOnes();
         Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
-            new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName(), 
-                TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()},
+            new String[]{TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.USER_NAME.getName(), 
+                TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()},
             new Object[]{methodName, userName, CertifLight.GREEN.toString(), true, true}, fieldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())){
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
@@ -130,7 +130,7 @@ public class AnalysisMethodCertif {
             return userCertificationEnabled;
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
         Object[] recordExist=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
-                new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName()}, 
+                new String[]{TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), TblsData.CertifUserAnalysisMethod.USER_NAME.getName()}, 
                 new Object[]{methodName, methodVersion, userName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(recordExist[0].toString())) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.CERTIF_RECORD_ALREADY_EXISTS, new Object[]{methodName, methodVersion, userName});
@@ -142,23 +142,23 @@ public class AnalysisMethodCertif {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.USER_NOT_INVOLVED_IN_THIS_CERTIFICATION, new Object[]{userName});
         String[] fldsName=CertifGlobalVariables.CertifEventUpdateFieldsAndValues.NEW_RECORD.getFieldsName();
         Object[] fldsValue=CertifGlobalVariables.CertifEventUpdateFieldsAndValues.NEW_RECORD.getFieldsValue();
-        fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName());
+        fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName());
         fldsValue=LPArray.addValueToArray1D(fldsValue, methodName);
-        fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName());
+        fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName());
         fldsValue=LPArray.addValueToArray1D(fldsValue, methodVersion);
-        fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName());
+        fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.USER_NAME.getName());
         fldsValue=LPArray.addValueToArray1D(fldsValue, userName);
-        fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.FLD_USER_ID.getName());
+        fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.USER_ID.getName());
         fldsValue=LPArray.addValueToArray1D(fldsValue, userIdObj[0]);
         if (sopName!=null && sopName.length()>0){
-            fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.FLD_SOP_NAME.getName());
+            fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.SOP_NAME.getName());
             fldsValue=LPArray.addValueToArray1D(fldsValue, sopName);
         }
         if (trainingId!=null){
             Object[] trainingExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.TRAINING.getTableName(), 
-                    new String[]{TblsData.Training.FLD_ID.getName()}, new Object[]{trainingId});
+                    new String[]{TblsData.Training.ID.getName()}, new Object[]{trainingId});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(trainingExists[0].toString())) return trainingExists;
-            fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.FLD_TRAINING_ID.getName());
+            fldsName=LPArray.addValueToArray1D(fldsName, TblsData.CertifUserAnalysisMethod.TRAINING_ID.getName());
             fldsValue=LPArray.addValueToArray1D(fldsValue, trainingId);
         }
         Object[] diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(),
@@ -167,34 +167,34 @@ public class AnalysisMethodCertif {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
         Object[] diagnAudit=CertifTablesAudit.CertifTablesAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), certifId, 
             CertifyAnalysisMethodAPIEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getAuditEvent(), userIdObj[0].toString(), userName, 
-            TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), methodVersion, 
+            TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), methodVersion, 
             LPArray.joinTwo1DArraysInOneOf1DString(fldsName, fldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), trainingId, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return diagnAudit;
         return diagn;
     }
     public static Object[] startCertification(String methodName, String userName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()};
+        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.ID.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()};
         Object[] userCertificationEnabled = isUserCertificationEnabled();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) 
             return userCertificationEnabled;
         Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
-            new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName(), 
-                TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName()},
+            new String[]{TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.USER_NAME.getName(), 
+                TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName()},
             new Object[]{methodName, userName, CertifLight.RED.toString(), false},
-            fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName()});
+            fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())) return certifRowExpDateInfo[0];
-        Integer fldId=(Integer) certifRowExpDateInfo[0][LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_ID.getName())];
+        Integer fldId=(Integer) certifRowExpDateInfo[0][LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName())];
         Object[] diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(),
             CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIF_STARTED.getFieldsName(), 
             CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIF_STARTED.getFieldsValue(), 
-            new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName()}, new Object[]{fldId});
+            new String[]{TblsData.CertifUserAnalysisMethod.ID.getName()}, new Object[]{fldId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
         Object[] userIdObj=getPersonByUser(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userIdObj[0].toString())) return userIdObj;        
         Object[] diagnAudit=CertifTablesAudit.CertifTablesAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), fldId,
             CertifyAnalysisMethodAPIEndpoints.CERTIFY_START_USER_METHOD.getAuditEvent(), userIdObj[0].toString(), userName, 
-            TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), null, 
+            TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), null, 
             LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIF_STARTED.getFieldsName(), 
                     CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIF_STARTED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return diagnAudit;
@@ -214,36 +214,36 @@ public class AnalysisMethodCertif {
     }
     private static Object[] completeCertification(String methodName, String userName, String[] fldNames, Object[] fldValues, String auditEvent, Boolean expiryDateIsIncluded){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()};
+        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.ID.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()};
         Object[] userCertificationEnabled = isUserCertificationEnabled();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) 
             return userCertificationEnabled;
         Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
-            new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName(), 
-                TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()},
+            new String[]{TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.USER_NAME.getName(), 
+                TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()},
             new Object[]{methodName, userName, CertifLight.RED.toString(), true, false},
-            fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName()});
+            fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())) return certifRowExpDateInfo[0];
-        Integer fldId=(Integer) certifRowExpDateInfo[0][LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_ID.getName())];
+        Integer fldId=(Integer) certifRowExpDateInfo[0][LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName())];
 
         if (expiryDateIsIncluded){
             Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), 
                     new String[]{TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName()}, new Object[]{methodName});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
             else{
-                fldNames=LPArray.addValueToArray1D(fldNames, TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName());
+                fldNames=LPArray.addValueToArray1D(fldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
                 fldValues=LPArray.addValueToArray1D(fldValues, expiryIntervalInfo[1]);
             }
         }
         Object[] diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(),
             fldNames, fldValues,            
-            new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName()}, new Object[]{fldId});
+            new String[]{TblsData.CertifUserAnalysisMethod.ID.getName()}, new Object[]{fldId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
         Object[] userIdObj=getPersonByUser(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userIdObj[0].toString())) return userIdObj;
         Object[] diagnAudit=CertifTablesAudit.CertifTablesAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), fldId,
             auditEvent, userIdObj[0].toString(), userName, 
-            TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), null, 
+            TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), null, 
             LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIFIED.getFieldsName(), 
                     CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIFIED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return diagnAudit;
@@ -251,25 +251,25 @@ public class AnalysisMethodCertif {
     }
     public static Object[] revokeCertification(String methodName, String userName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()};
+        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.ID.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()};
         Object[] userCertificationEnabled = isUserCertificationEnabled();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) 
             return userCertificationEnabled;
         Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
-            new String[]{TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName()}, new Object[]{CertifLight.GREEN.toString()},
-            fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName()});
+            new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName()}, new Object[]{CertifLight.GREEN.toString()},
+            fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())) return certifRowExpDateInfo[0];
-        Integer fldId=(Integer) certifRowExpDateInfo[0][LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_ID.getName())];
+        Integer fldId=(Integer) certifRowExpDateInfo[0][LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName())];
         Object[] diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(),
             CertifGlobalVariables.CertifEventUpdateFieldsAndValues.REVOKED.getFieldsName(), 
             CertifGlobalVariables.CertifEventUpdateFieldsAndValues.REVOKED.getFieldsValue(), 
-            new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName()}, new Object[]{fldId});
+            new String[]{TblsData.CertifUserAnalysisMethod.ID.getName()}, new Object[]{fldId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
         Object[] userIdObj=getPersonByUser(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userIdObj[0].toString())) return userIdObj;
         Object[] diagnAudit=CertifTablesAudit.CertifTablesAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), fldId,
             CertifyAnalysisMethodAPIEndpoints.CERTIFY_REVOKE_USER_METHOD.getAuditEvent(), userIdObj[0].toString(), userName, 
-            TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), null, 
+            TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), null, 
             LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.REVOKED.getFieldsName(), 
             CertifGlobalVariables.CertifEventUpdateFieldsAndValues.REVOKED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return diagnAudit;
@@ -278,21 +278,21 @@ public class AnalysisMethodCertif {
     
     public static void uncertifyExpiredOnes(){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName()};
+        String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.ID.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()};
         Object[] userCertificationEnabled = isUserCertificationEnabled();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) return;
         Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
-            new String[]{TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+            new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
             new Object[]{CertifLight.GREEN.toString()},
-            fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName()});
+            fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())) return;
         String fldIdStr="";
         for (Object[] curRow: certifRowExpDateInfo){
             Calendar certifDateCal = Calendar.getInstance();
-            Date certifDate = (Date) curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName())];
+            Date certifDate = (Date) curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName())];
             certifDateCal.setTime(certifDate);
             if (!LPDate.isDateBiggerThanTimeStamp(certifDateCal)){
-                Integer fldId=Integer.valueOf(curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_ID.getName())].toString());
+                Integer fldId=Integer.valueOf(curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName())].toString());
                 if (fldIdStr.length()>0)fldIdStr=fldIdStr+"|";
                 fldIdStr=fldIdStr+fldId.toString();
             }  
@@ -302,7 +302,7 @@ public class AnalysisMethodCertif {
             Object[] diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(),
                 CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsName(), 
                 CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsValue(), 
-                new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()}, new Object[]{fldIdStr});
+                new String[]{TblsData.CertifUserAnalysisMethod.ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()}, new Object[]{fldIdStr});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return;
             //Object[] userIdObj=getPersonByUser(userName);
             //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userIdObj[0].toString())) return userIdObj;
@@ -311,7 +311,7 @@ public class AnalysisMethodCertif {
             for (String curFldId: fldIdStrArr){
                 Object[] diagnAudit=CertifTablesAudit.CertifTablesAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), Integer.valueOf(curFldId),
                     CertifyAnalysisMethodAPIEndpoints.CERTIFY_REVOKE_USER_METHOD.getAuditEvent(), null, null, 
-                    TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), null, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName(), null, 
+                    TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), null, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), null, 
                     LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsName(), 
                     CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return;
@@ -334,18 +334,18 @@ public class AnalysisMethodCertif {
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(userMethodInfo[0][3].toString())){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, CertificationAnalysisMethodErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING, new Object[]{methodName, procInstanceName});
         }
-        String[] updFldNames=new String[]{TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName(), TblsData.CertifUserAnalysisMethod.FLD_STATUS.getName(), TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName()}; 
+        String[] updFldNames=new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName(), TblsData.CertifUserAnalysisMethod.STATUS.getName(), TblsData.CertifUserAnalysisMethod.LIGHT.getName()}; 
         Object[] updFldValues=new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()};
         Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.METHODS.getTableName(), 
                 new String[]{TblsCnfg.Methods.FLD_CODE.getName()}, new Object[]{methodName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[1].toString())) return expiryIntervalInfo;
         else{
-            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName());
+            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
             updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
         }        
         Object[] userAnaMethodDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
             updFldNames, updFldValues,     
-            new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName()}, new Object[]{methodName, userName} );
+            new String[]{TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.USER_NAME.getName()}, new Object[]{methodName, userName} );
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userAnaMethodDiagnostic[0].toString())){
             userAnaMethodDiagnostic[userAnaMethodDiagnostic.length-1]="analysis method assigned";
         }
@@ -356,8 +356,8 @@ public class AnalysisMethodCertif {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) 
             return LPArray.array1dTo2d(userCertificationEnabled, userCertificationEnabled.length-1);
         
-        String[] fieldsToReturn = new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_STATUS.getName(), TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName()};
-        String[] filterFieldName =new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName()};
+        String[] fieldsToReturn = new String[]{TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.STATUS.getName(), TblsData.CertifUserAnalysisMethod.LIGHT.getName()};
+        String[] filterFieldName =new String[]{TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.USER_NAME.getName()};
         Object[] filterFieldValue =new Object[]{methodName, userName};        
         Object[][] getUserProfileFieldValues = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
                 filterFieldName, filterFieldValue, fieldsToReturn);

@@ -15,9 +15,7 @@ import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
 import databases.TblsData;
-import databases.TblsData.CertifUserAnalysisMethod;
 import databases.TblsData.SampleAnalysis;
-import databases.TblsData.Training;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -399,7 +397,7 @@ public class TblsInspLotRMData {
         /**
          *
          */
-        FLD_SAMPLE_ID(TblsData.Sample.FLD_SAMPLE_ID.getName(), "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)")
+        FLD_SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)")
         ,        
         TBL("sample", LPDatabase.createSequence(FLD_SAMPLE_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"
@@ -627,7 +625,7 @@ public class TblsInspLotRMData {
         /**
          *
          */
-        FLD_TEST_ID(SampleAnalysis.FLD_TEST_ID.getName(), "sar.test_id")
+        FLD_TEST_ID(SampleAnalysis.TEST_ID.getName(), "sar.test_id")
         ,
         FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), "sar.sample_id")        ,
         FLD_LOT_NAME("lot_name", "l.lot_name")        ,

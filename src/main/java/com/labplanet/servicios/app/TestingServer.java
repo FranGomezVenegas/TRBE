@@ -12,7 +12,6 @@ import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
 import databases.TblsAppProcDataAudit;
 import databases.TblsCnfg;
-import databases.TblsData;
 import databases.TblsData.TablesData;
 import databases.TblsProcedure;
 import databases.TblsTrazitDocTrazit;
@@ -334,8 +333,8 @@ if (1==1) return;
             Rdbms.stablishDBConection("labplanet");
             
             
-        String tblCreateScript2=TblsData.ViewSampleTestingGroup.createTableScript("proc-deploy", new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+//        String tblCreateScript2=TblsData.ViewSampleTestingGroup.createTableScript("proc-deploy", new String[]{""});
+//        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 
 //            String tblCreateScript = TblsTesting.ScriptsCoverage.createTableScript(procInstanceName, new String[]{""});

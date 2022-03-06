@@ -45,9 +45,9 @@ public class ProcedureSampleStages {
         String stageStartDateStr=sampleStageTimingCaptureInfo[sampleStageTimingCaptureInfo.length-1][0].toString();        
         LocalDateTime stageStartDate=LPDate.stringFormatToLocalDateTime(stageStartDateStr);
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()},    
+            new String[]{TblsData.Sample.SAMPLE_ID.getName()},    
             new Object[]{sampleId},
-            new String[]{TblsData.Sample.FLD_CONFIG_CODE.getName(), TblsData.Sample.FLD_CONFIG_CODE_VERSION.getName()});
+            new String[]{TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))
             return sampleInfo;
         String configCode=sampleInfo[0][0].toString();

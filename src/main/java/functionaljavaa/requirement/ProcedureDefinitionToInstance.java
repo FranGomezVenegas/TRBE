@@ -5,30 +5,18 @@
  */
 package functionaljavaa.requirement;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfigAudit;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMConfig;
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMDataAudit;
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMProcedure;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
-import static databases.Rdbms.dbTableExists;
+import databases.Rdbms.RdbmsErrorTrapping;
 import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp;
 import databases.TblsAppConfig;
 import databases.TblsCnfg;
-import databases.TblsData;
-import databases.TblsDataAudit;
 import databases.TblsProcedure;
 import databases.TblsReqs;
-import databases.TblsTesting;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.masterdata.ClassMasterData;
 import java.util.Arrays;
@@ -37,7 +25,6 @@ import lbplanet.utilities.LPPlatform.LpPlatformBusinessRules;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
-import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -143,8 +130,8 @@ public class ProcedureDefinitionToInstance {
                     jsonErrorObj.put("Record in new instance", "Not exists");
                     String[] fldName=FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|");
                     Object[] fldValue=curRow;
-                    if (!LPArray.valueInArray(fldName, TblsProcedure.ProcedureInfo.SCHEMA_PREFIX.getName())){
-                        fldName=LPArray.addValueToArray1D(fldName, TblsProcedure.ProcedureInfo.SCHEMA_PREFIX.getName());
+                    if (!LPArray.valueInArray(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName())){
+                        fldName=LPArray.addValueToArray1D(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName());
                         fldValue=LPArray.addValueToArray1D(fldValue, procInstanceName);                        
                     }
                     Object[] insertRecordInTable = Rdbms.insertRecordInTable(schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), fldName, fldValue);
@@ -240,7 +227,6 @@ public class ProcedureDefinitionToInstance {
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procUserRolesRecordsSource[0]));
           return jsonObj;
         }
-        jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procUserRolesRecordsSource.length);    
         for (Object[] curRow: procUserRolesRecordsSource){
             Object curUserName = curRow[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SOURCE.split("\\|"), TblsReqs.ProcedureUserRoles.USER_NAME.getName())];
             Object curRoleName = curRow[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SOURCE.split("\\|"), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName())];
@@ -270,11 +256,11 @@ public class ProcedureDefinitionToInstance {
                 
                 // Place to create the user
             }                
-            jsUserRoleObj.put("User exists in the app?", diagnosesForLog); 
+            jsUserRoleObj.put("User exists in the app after running this logic?", LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesForLog)); 
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(existsAppUser[0]))){
                 Object[] existsAppUserProcess = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
                         new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName()}, new Object[]{curUserName.toString(), procInstanceName});
-                jsonObj.put("User was added to the Process at the App level?", existsAppUserProcess[0].toString());  
+                jsonObj.put("User was added to the Process at the App level?",  LPPlatform.LAB_TRUE.equalsIgnoreCase(existsAppUserProcess[0].toString()));  
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUserProcess[0].toString())){
                     Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
                             FIELDS_TO_INSERT_APP_USER_PROCESS.split("\\|"), new Object[]{curUserName.toString(), procInstanceName, true});
@@ -290,6 +276,7 @@ public class ProcedureDefinitionToInstance {
             jsArr.add(jsUserRoleObj);
             jsonObj.put("User "+curUserName+ " & Role "+curRoleName, jsArr);
         }                            
+        jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procUserRolesRecordsSource.length);    
         return jsonObj;
     }
 
@@ -657,15 +644,17 @@ public class ProcedureDefinitionToInstance {
         JSONArray jsonArr = new JSONArray();
         JSONObject jsonObj = new JSONObject();
         Object[][] procBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), 
-                new String[]{TblsReqs.ProcedureBusinessRules.PROCEDURE_NAME.getName(), TblsReqs.ProcedureBusinessRules.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureBusinessRules.INSTANCE_NAME.getName(), TblsReqs.ProcedureBusinessRules.ACTIVE.getName()}, 
+                new String[]{TblsReqs.ProcedureBusinessRules.PROCEDURE_NAME.getName(), TblsReqs.ProcedureBusinessRules.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureBusinessRules.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureBusinessRules.ACTIVE.getName()}, 
                 new Object[]{procedure, procVersion, instanceName, true}, 
                 fildsToGet, new String[]{});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procBusRules[0][0].toString())){
-          jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procBusRules[0]));
+          jsonObj.put(JsonTags.ERROR.getTagValue(), RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode());
+          jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), 0); 
           jsonArr.add(jsonObj);
           return jsonArr;
+        }else{
+            jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procBusRules.length); 
         }
-        jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procBusRules.length); 
         jsonArr.add(jsonObj);
         Parameter parm=new Parameter();
         Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName()));
@@ -686,7 +675,7 @@ public class ProcedureDefinitionToInstance {
         //Build procedureActions and actionEnabled properties
         fildsToGet=new String[]{TblsReqs.ProcedureUserRequirements.WIDGET_ACTION.getName(), TblsReqs.ProcedureUserRequirements.ROLES.getName(), TblsReqs.ProcedureUserRequirements.ESIGN_REQ.getName(), TblsReqs.ProcedureUserRequirements.USERCONFIRM_REQ.getName()};
         Object[][] procActionsEnabledBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
-                new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirements.SCHEMA_PREFIX.getName(), TblsReqs.ProcedureUserRequirements.ACTIVE.getName(), TblsReqs.ProcedureUserRequirements.IN_SYSTEM.getName(), TblsReqs.ProcedureUserRequirements.IN_SCOPE.getName()}, 
+                new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRequirements.ACTIVE.getName(), TblsReqs.ProcedureUserRequirements.IN_SYSTEM.getName(), TblsReqs.ProcedureUserRequirements.IN_SCOPE.getName()}, 
                 new Object[]{procedure, procVersion, instanceName, true, true, true}, 
                 fildsToGet, new String[]{});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsEnabledBusRules[0][0].toString())){

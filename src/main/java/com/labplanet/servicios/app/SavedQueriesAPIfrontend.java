@@ -79,18 +79,18 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
             case ALL_SAVED_QUERIES:              
                 String[] fieldsToRetrieve=getAllFieldNames(TblsData.TablesData.SAVED_QUERIES.getTableFields());
                 Object[][] savedQueriesInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsData.TablesData.SAVED_QUERIES.getTableName(), 
-                        new String[]{TblsData.SavedQueries.FLD_ID.getName()+">"}, 
+                        new String[]{TblsData.SavedQueries.ID.getName()+">"}, 
                         new Object[]{0}, 
-                        fieldsToRetrieve, new String[]{TblsData.SavedQueries.FLD_ID.getName()+" desc"});
+                        fieldsToRetrieve, new String[]{TblsData.SavedQueries.ID.getName()+" desc"});
                 JSONArray savedQryJArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(savedQueriesInfo[0][0].toString())){
                     for (Object[] currSavedQry: savedQueriesInfo){
                         
                         JSONObject savedQryObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currSavedQry);
                         JSONObject json=new JSONObject();
-                        if (LPArray.valueInArray(fieldsToRetrieve, TblsData.SavedQueries.FLD_DEFINITION.getName())){
+                        if (LPArray.valueInArray(fieldsToRetrieve, TblsData.SavedQueries.DEFINITION.getName())){
                             try {
-                                Object qryDefinition=currSavedQry[LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.SavedQueries.FLD_DEFINITION.getName())];
+                                Object qryDefinition=currSavedQry[LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.SavedQueries.DEFINITION.getName())];
                                 JSONParser parser = new JSONParser(); 
                                 json = (JSONObject) parser.parse(qryDefinition.toString());
                             } catch (ParseException ex) {

@@ -62,7 +62,7 @@ public class ClassProcedureQueries {
     static JsonObject feProcModel(String procInstanceName){
         JsonObject jArr = new JsonObject();   
         Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(), 
-                new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName()},
+                new String[]{TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procInstanceName}, 
                 new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName()});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){

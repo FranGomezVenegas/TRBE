@@ -37,6 +37,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntViewFields;
 /**
  *
  * @author Administrator
@@ -195,32 +196,30 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             Rdbms.closeRdbms(); 
             return new JSONArray();
         }
-        String[] fieldsToRetrieve = new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.FLD_METHOD_NAME.getName(), TblsData.ViewUserAndAnalysisMethodCertificationView.FLD_METHOD_VERSION.getName()};
+        String[] fieldsToRetrieve = new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.METHOD_NAME.getName(), TblsData.ViewUserAndAnalysisMethodCertificationView.METHOD_VERSION.getName()};
         String anaMethCertFieldsToRetrieve = argValues[0].toString();
         if (anaMethCertFieldsToRetrieve!=null && anaMethCertFieldsToRetrieve.length()>0) {                
             String[] sopFieldsToRetrieveArr = anaMethCertFieldsToRetrieve.split("\\|");
             for (String fv: sopFieldsToRetrieveArr){
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
-        }else
-            fieldsToRetrieve=TblsData.ViewUserAndAnalysisMethodCertificationView.getAllFieldNames();
+        }else 
+            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW.getViewFields());
         fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, "procedure_name");
         Object[][] userAnaMethCertifByProcess = UserMethod.getUserAnalysisMethodCerttifByProcess( 
-                new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()}, fieldsToRetrieve, allUserProcedurePrefix);
+                new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName()}, new Object[]{token.getUserName()}, fieldsToRetrieve, allUserProcedurePrefix);
         if (userAnaMethCertifByProcess==null)return new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userAnaMethCertifByProcess[0][0]).toString())){
             Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
             Rdbms.closeRdbms();
             return new JSONArray();
         }
-        JSONArray columnNames = new JSONArray(); 
         JSONArray myAnaMethCertif = new JSONArray(); 
         JSONObject myAnaMethCertifList = new JSONObject();
         JSONArray myAnaMethCertifListArr = new JSONArray();
 
         for (Object[] curCertif: userAnaMethCertifByProcess){            
             JSONObject anaMethodJObj = new JSONObject();
-            Boolean columnsCreated =false;
             anaMethodJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curCertif);
             anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curCertif));
             myAnaMethCertif.add(anaMethodJObj);
@@ -230,7 +229,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         return myAnaMethCertifListArr;
     }catch(Exception e){
         JSONArray proceduresList = new JSONArray();
-        proceduresList.add("Error:"+e.getMessage());
+        //proceduresList.add("Error:"+e.getMessage());
         return proceduresList;            
     }
     }
@@ -259,7 +258,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             Rdbms.closeRdbms();
             return new JSONArray();
         }
-        String[] fieldsToRetrieve = new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.FLD_METHOD_NAME.getName(), TblsData.ViewUserAndAnalysisMethodCertificationView.FLD_METHOD_VERSION.getName()};
+        String[] fieldsToRetrieve = new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.METHOD_NAME.getName(), TblsData.ViewUserAndAnalysisMethodCertificationView.METHOD_VERSION.getName()};
         String anaMethCertifFieldsToRetrieve = argValues[0].toString(); 
         if (anaMethCertifFieldsToRetrieve!=null && anaMethCertifFieldsToRetrieve.length()>0) {                
             String[] sopFieldsToRetrieveArr = anaMethCertifFieldsToRetrieve.split("\\|");
@@ -267,7 +266,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
         }else
-            fieldsToRetrieve=TblsData.ViewUserAndAnalysisMethodCertificationView.getAllFieldNames();
+            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW.getViewFields());
         
         JSONArray  myPendingAnaMethCertifByProc = new JSONArray();                 
         for (String currProc: allUserProcedurePrefix) {                   

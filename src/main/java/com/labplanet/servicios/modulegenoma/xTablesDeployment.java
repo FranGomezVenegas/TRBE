@@ -56,9 +56,9 @@ public class xTablesDeployment extends HttpServlet {
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
             out.println("<p>Table "+TblsData.TablesData.USER_SOP.getTableName()+" created.</p>");
 
-            tblCreateScript=TblsData.ViewUserAndMetaDataSopView.createTableScript(schemaNamePrefix, new String[]{""});
+//            tblCreateScript=TblsData.ViewUserAndMetaDataSopView.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsData.ViewUserAndMetaDataSopView.TBL.getName()+" created.</p>");
+//            out.println("<p>Table "+TblsData.ViewUserAndMetaDataSopView.TBL.getName()+" created.</p>");
 
             tblCreateScript=TblsGenomaData.Project.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});

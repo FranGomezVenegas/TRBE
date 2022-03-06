@@ -321,8 +321,8 @@ public class SampleAudit {
             if (!smpStages.isSampleStagesEnable())return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.STAGESDETECTED_BUT_SAMPLESTAGES_NOT_ENABLED, 
                 new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
             Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
+                new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                new String[]{TblsData.Sample.CURRENT_STAGE.getName()});
             String sampleCurrentStage=sampleInfo[0][0].toString();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleCurrentStage)) return LPArray.array2dTo1d(sampleInfo);
             if (LPArray.valuePosicInArray(auditRevisionModeArr, sampleInfo[0][0].toString())==-1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.CURRENTSAMPLESTAGE_NOTREQUIRES_SAMPLEAUDITREVISION, 

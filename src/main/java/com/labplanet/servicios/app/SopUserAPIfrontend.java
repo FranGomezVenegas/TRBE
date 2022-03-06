@@ -37,6 +37,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntViewFields;
 /**
  *
  * @author Administrator
@@ -286,7 +287,8 @@ public class SopUserAPIfrontend extends HttpServlet {
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
         }else
-            fieldsToRetrieve=TblsData.ViewUserAndMetaDataSopView.getAllFieldNames();
+            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewFields());
+        
         fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, "procedure_name");
         UserSop userSop = new UserSop();                               
         Object[][] userSops = UserSop.getUserProfileFieldValues( 
@@ -359,7 +361,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
         }else
-            fieldsToRetrieve=TblsData.ViewUserAndMetaDataSopView.getAllFieldNames();
+            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewFields());
         
         JSONArray  myPendingSopsByProc = new JSONArray();                 
         UserSop userSop = new UserSop();      

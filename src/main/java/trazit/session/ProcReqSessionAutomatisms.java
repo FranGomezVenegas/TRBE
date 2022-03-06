@@ -29,10 +29,10 @@ public class ProcReqSessionAutomatisms {
         for (String curEntity:procedureActionsUserRoles.split("\\*")){
             String[] curEntityInfo=curEntity.split("\\|");
             if (curEntityInfo.length!=4) return;
-            Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1], TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName());
+            Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1], TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) return;
             Object[][] expiredRecordsArr = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1], 
-                    new String[]{TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName()+WHERECLAUSE_TYPES.LESS_THAN.getSqlClause()}, 
+                    new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()+WHERECLAUSE_TYPES.LESS_THAN.getSqlClause()}, 
                     new Object[]{CertifGlobalVariables.CertifLight.GREEN.toString(), LPDate.getCurrentTimeStamp()}, new String[]{curEntityInfo[2]}); 
 //            if (curEntityInfo[1].toString().equalsIgnoreCase(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName())) 
 //                return expiredRecordsArr.length;
@@ -42,7 +42,7 @@ public class ProcReqSessionAutomatisms {
                     if (whereFldValue.length()>0)whereFldValue=whereFldValue+"|";
                     whereFldValue=whereFldValue+curEntityInfo[3].toString()+"*"+curObj[0].toString();
                 }
-                String[] updFldName=new String[]{TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName(), TblsData.CertifUserAnalysisMethod.FLD_STATUS.getName()};
+                String[] updFldName=new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.STATUS.getName()};
                 Object[] updFldValue=new Object[]{CertifGlobalVariables.CertifLight.GREEN.toString(), "NOT_PASS"};
                 Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1], 
                     updFldName, updFldValue, new String[]{curEntityInfo[2].toString()+" "+WHERECLAUSE_TYPES.IN.getSqlClause()},

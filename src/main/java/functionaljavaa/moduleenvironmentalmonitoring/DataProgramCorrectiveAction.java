@@ -135,7 +135,7 @@ public class DataProgramCorrectiveAction {
           if (posicInArray==-1) return new Object[]{LPPlatform.LAB_FALSE};
           sampleId=Integer.valueOf(LPNulls.replaceNull(sampleFieldValues[posicInArray].toString()));
           Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                  new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                  new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                   new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName()});
           if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){return LPArray.array2dTo1d(sampleInfo);}
           programName=sampleInfo[0][0].toString();
@@ -148,7 +148,7 @@ public class DataProgramCorrectiveAction {
           myFldValue=LPArray.addValueToArray1D(myFldValue, resultId);
         }
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFldsToGet);
+                new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFldsToGet);
         for (int iFld=0;iFld<sampleFldsToGet.length;iFld++){
           String currFld=sampleFldsToGet[iFld];
           posicInArray=LPArray.valuePosicInArray(myFldName, currFld);
@@ -158,7 +158,7 @@ public class DataProgramCorrectiveAction {
           }else{myFldValue[posicInArray]=sampleInfo[0][iFld];}      
         }
         Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, sampleAnalysisResultToGet);
+                new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, sampleAnalysisResultToGet);
         for (int iFld=0;iFld<sampleAnalysisResultToGet.length;iFld++){
           String currFld=sampleAnalysisResultToGet[iFld];
           posicInArray=LPArray.valuePosicInArray(myFldName, currFld);

@@ -39,6 +39,7 @@ import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 
@@ -141,7 +142,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 if (whereFieldsValue==null){whereFieldsValue="";}
                 
                 if ( ("".equals(whereFieldsName)) && ("".equals(whereFieldsValue)) ){
-                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.RECEIVED_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
                 }else{
                     whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
@@ -159,7 +160,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
                             whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
                     } 
-                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.RECEIVED_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
                 }  
                 Object[][] smplsData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
@@ -180,7 +181,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 if (whereFieldsName==null){whereFieldsName="";}
                 whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE); 
 
-                whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ANALYSIS_READY_FOR_REVISION.getName());
+                whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ANALYSIS_READY_FOR_REVISION.getName());
                 if (whereFieldsName!=null && whereFieldsName.length()>0)whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
                 
                 if (whereFieldsValue==null || whereFieldsValue.length()==0)whereFieldsValue="true*Boolean";
@@ -190,11 +191,11 @@ public class SampleAPIfrontend extends HttpServlet {
                 
                 String sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE); 
                 if (sampleAnalysisFieldToRetrieve!=null && sampleAnalysisFieldToRetrieve.length()>0) sampleAnalysisFieldToRetrieveArr=sampleAnalysisFieldToRetrieve.split("\\|");
-                else sampleAnalysisFieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();                
+                else sampleAnalysisFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());                
                 String sampleAnalysisSortField = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
                 if (sampleAnalysisSortField!=null && sampleAnalysisSortField.length()>0) sampleAnalysisSortFieldArr=sampleAnalysisSortField.split("\\|");
                 
-                Object[][] smplsAnaData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
+                Object[][] smplsAnaData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(),
                     whereFieldsNameArr, whereFieldsValueArr, sampleAnalysisFieldToRetrieveArr, sampleAnalysisSortFieldArr);
                 JSONArray smplAnaJsArr= new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(smplsAnaData[0][0].toString()))
@@ -231,7 +232,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     }                                    
                 }            
                 if (fieldToRetrieve==null || fieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldToRetrieve))
-                    fieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
+                    fieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
                 else
                     fieldToRetrieveArr=fieldToRetrieve.split("\\|");
                 sortFieldsNameArr = null;
@@ -243,7 +244,7 @@ public class SampleAPIfrontend extends HttpServlet {
                   if (whereFieldsValueArr[iFldV].toString().equalsIgnoreCase("false")){whereFieldsValueArr[iFldV]=Boolean.valueOf(whereFieldsValueArr[iFldV].toString());}
                   if (whereFieldsValueArr[iFldV].toString().equalsIgnoreCase("true")){whereFieldsValueArr[iFldV]=Boolean.valueOf(whereFieldsValueArr[iFldV].toString());}
                 }
-                Object[][] mySamples = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
+                Object[][] mySamples = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(),
                     whereFieldsNameArr, whereFieldsValueArr, fieldToRetrieveArr, sortFieldsNameArr);
                 JSONArray myJSArr = new JSONArray();
                 if (mySamples==null){ 
@@ -370,7 +371,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         sortFieldsNameArr = SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_LIST.split("\\|");                     
                     }  
                     myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
-                            new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()},new Object[]{sampleId}, sampleAnalysisFieldToRetrieveArr, sortFieldsNameArr);
+                            new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()},new Object[]{sampleId}, sampleAnalysisFieldToRetrieveArr, sortFieldsNameArr);
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
                         Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
@@ -393,7 +394,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     if (resultFieldToRetrieve!=null){resultFieldToRetrieveArr=  resultFieldToRetrieve.split("\\|");}
                     resultFieldToRetrieveArr = LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
                     sampleAnalysisWhereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME); 
-                    sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()};
+                    sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
                     if ( (sampleAnalysisWhereFieldsName!=null) && (sampleAnalysisWhereFieldsName.length()>0) ) {
                         sampleAnalysisWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
                     }     
@@ -409,9 +410,9 @@ public class SampleAPIfrontend extends HttpServlet {
                     }else{   
                         sortFieldsNameArr = SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|");     
                     }  
-                    resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
+                    resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
                     Integer posicLimitIdFld=resultFieldToRetrieveArr.length;
-                    Object[][] analysisResultList = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
+                    Object[][] analysisResultList = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(),
                             sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr, resultFieldToRetrieveArr, sortFieldsNameArr);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
                         Rdbms.closeRdbms();                                          
@@ -436,15 +437,16 @@ public class SampleAPIfrontend extends HttpServlet {
                     String testingGroup=argValues[0].toString();
                     fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE); 
                     if (fieldToRetrieve==null || fieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldToRetrieve))
-                        fieldToRetrieveArr=TblsData.ViewSampleTestingGroup.getAllFieldNames();
+                        fieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW.getViewFields());                        
                     else
+                        
                         fieldToRetrieveArr=fieldToRetrieve.split("\\|");
                     
-                    myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.ViewSampleTestingGroup.TBL.getName(),
-                        new String[]{TblsData.ViewSampleTestingGroup.FLD_READY_FOR_REVISION.getName(), TblsData.ViewSampleTestingGroup.FLD_REVIEWED.getName(), TblsData.ViewSampleTestingGroup.FLD_TESTING_GROUP.getName()},
+                    myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW.getViewName(),
+                        new String[]{TblsData.ViewSampleTestingGroup.READY_FOR_REVISION.getName(), TblsData.ViewSampleTestingGroup.REVIEWED.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()},
                         new Object[]{true, false, testingGroup}, 
                         fieldToRetrieveArr,
-                        new String[]{TblsData.ViewSampleTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.FLD_TESTING_GROUP.getName()});
+                        new String[]{TblsData.ViewSampleTestingGroup.SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()});
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
@@ -457,7 +459,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     return;
                 case SAMPLES_PENDING_SAMPLE_REVISION:   
                     sampleFieldToRetrieve = argValues[0].toString();
-                    sampleFieldToRetrieveArr = new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()};
+                    sampleFieldToRetrieveArr = new String[]{TblsData.Sample.SAMPLE_ID.getName()};
                     
                     if ((sampleFieldToRetrieve==null) || (sampleFieldToRetrieve.length()==0) || ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) )
                         sampleFieldToRetrieveArr=getAllFieldNames(TblsData.TablesData.SAMPLE.getTableFields());
@@ -465,10 +467,10 @@ public class SampleAPIfrontend extends HttpServlet {
                         sampleFieldToRetrieveArr=LPArray.addValueToArray1D(sampleFieldToRetrieveArr, sampleFieldToRetrieve.split("\\|"));
                       
                     myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
-                            new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName(), "("+TblsData.Sample.FLD_REVIEWED.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsData.Sample.FLD_REVIEWED.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+")"},
+                            new String[]{TblsData.Sample.READY_FOR_REVISION.getName(), "("+TblsData.Sample.REVIEWED.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsData.Sample.REVIEWED.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+")"},
                             new Object[]{true, false, null}, 
                             sampleFieldToRetrieveArr, 
-                            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()});
+                            new String[]{TblsData.Sample.SAMPLE_ID.getName()});
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
@@ -504,9 +506,9 @@ public class SampleAPIfrontend extends HttpServlet {
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     }else{   
                         sortFieldsNameArr = SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_CHANGEOFCUSTODY_SAMPLE_HISTORY.split("\\|");                    
-                    }                      
-                    myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.ViewSampleCocNames.TBL.getName(),
-                            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()},new Object[]{sampleId}, fieldToRetrieveArr, sortFieldsNameArr);
+                    }                                          
+                    myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.ViewsData.SAMPLE_COC_NAMES_VIEW.getViewName(),
+                            new String[]{TblsData.Sample.SAMPLE_ID.getName()},new Object[]{sampleId}, fieldToRetrieveArr, sortFieldsNameArr);
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
@@ -669,13 +671,13 @@ public class SampleAPIfrontend extends HttpServlet {
         sampleLastLevel=TblsData.TablesData.SAMPLE.getTableName();
     }                                
     if (sampleFieldToRetrieveArr==null || sampleFieldToRetrieveArr[0].length()==0)
-        sampleFieldToRetrieveArr = new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()};
+        sampleFieldToRetrieveArr = new String[]{TblsData.Sample.SAMPLE_ID.getName()};
 
     if (sampleAnalysisFieldToRetrieveArr==null || sampleAnalysisFieldToRetrieveArr[0].length()==0)
-        sampleAnalysisFieldToRetrieveArr = new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()};
+        sampleAnalysisFieldToRetrieveArr = new String[]{TblsData.SampleAnalysis.TEST_ID.getName()};
 
     if (sampleAnalysisFieldToRetrieveArr==null || sampleAnalysisFieldToRetrieveArr[0].length()==0)
-        sampleAnalysisFieldToRetrieveArr = new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()};
+        sampleAnalysisFieldToRetrieveArr = new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()};
 
     String[] whereFieldsNameArr = null; 
     Object[] whereFieldsValueArr = null; 
@@ -721,13 +723,13 @@ public class SampleAPIfrontend extends HttpServlet {
             for (Object[] mySample : mySamples) {
                 JSONObject mySampleJSObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, mySample);                
                 if ("TRUE".equalsIgnoreCase(addSampleAnalysis)){
-                    String[] testWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()};
+                    String[] testWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()};
                     testWhereFieldsNameArr=LPArray.addValueToArray1D(testWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));                                
-                    Integer sampleIdPosicInArray = LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName());
+                    Integer sampleIdPosicInArray = LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.SampleAnalysis.SAMPLE_ID.getName());
                     Object[] testWhereFieldsValueArr = new Object[]{Integer.parseInt(mySample[sampleIdPosicInArray].toString())};
                     testWhereFieldsValueArr=LPArray.addValueToArray1D(testWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
                     if ("TRUE".equalsIgnoreCase(addSampleAnalysisResult))
-                        sampleAnalysisFieldToRetrieveArr=LPArray.addValueToArray1D(sampleAnalysisFieldToRetrieveArr, TblsData.SampleAnalysis.FLD_TEST_ID.getName());
+                        sampleAnalysisFieldToRetrieveArr=LPArray.addValueToArray1D(sampleAnalysisFieldToRetrieveArr, TblsData.SampleAnalysis.TEST_ID.getName());
                     Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                             testWhereFieldsNameArr, testWhereFieldsValueArr, sampleAnalysisFieldToRetrieveArr);
                     JSONArray mySamplesAnaJSArr = new JSONArray();
@@ -737,10 +739,10 @@ public class SampleAPIfrontend extends HttpServlet {
                         for (Object[] mySampleAnalysi : mySampleAnalysis) {
                             JSONObject mySampleAnaJSObj = LPJson.convertArrayRowToJSONObject(sampleAnalysisFieldToRetrieveArr, mySampleAnalysi);
                             if ("TRUE".equalsIgnoreCase(addSampleAnalysisResult)){
-                                String[] sarWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()};
+                                String[] sarWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.TEST_ID.getName()};
                                 if (sampleAnalysisResultWhereFieldsName!=null)
                                     sarWhereFieldsNameArr=LPArray.addValueToArray1D(sarWhereFieldsNameArr, sampleAnalysisResultWhereFieldsName);
-                                Integer testIdPosicInArray = LPArray.valuePosicInArray(sampleAnalysisFieldToRetrieveArr, TblsData.SampleAnalysis.FLD_TEST_ID.getName());
+                                Integer testIdPosicInArray = LPArray.valuePosicInArray(sampleAnalysisFieldToRetrieveArr, TblsData.SampleAnalysis.TEST_ID.getName());
                                 Object[] sarWhereFieldsValueArr = new Object[]{Integer.parseInt(mySampleAnalysi[testIdPosicInArray].toString())};
                                 if (sampleAnalysisResultWhereFieldsValue!=null)
                                     sarWhereFieldsValueArr=LPArray.addValueToArray1D(sarWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(LPNulls.replaceNull(sampleAnalysisResultWhereFieldsValue).split("\\|")));                                            
@@ -781,7 +783,7 @@ public class SampleAPIfrontend extends HttpServlet {
             Integer sampleId = Integer.valueOf(currSample[0].toString());
             JSONObject sampleObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, currSample);                            
             if ( ("TEST".equals(sampleLastLevel)) || ("RESULT".equals(sampleLastLevel)) ) {
-                String[] testWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()};
+                String[] testWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()};
                 Object[] testWhereFieldsValueArr = new Object[]{sampleId};
                 Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                         testWhereFieldsNameArr, testWhereFieldsValueArr, sampleAnalysisFieldToRetrieveArr);          

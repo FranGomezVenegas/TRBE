@@ -29,15 +29,15 @@ public class CertifyQueries {
     public enum CertifObjects{
         ANALYSIS_METHOD(CertificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName(), 
                 TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(),
-                new String[]{TblsData.CertifUserAnalysisMethod.FLD_ID.getName(), TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), 
-                    TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), 
-                    TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()},
+                new String[]{TblsData.CertifUserAnalysisMethod.ID.getName(), TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), 
+                    TblsData.CertifUserAnalysisMethod.USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), 
+                    TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()},
                 getAllFieldNames(TblsDataAudit.TablesDataAudit.CERTIF_USER_ANALYSIS_METHOD.getTableFields())),
         USER_SOP(ProcBusinessRulesQueries.PROCEDURE_USER_SOP_CERTIFICATION_LEVEL.getPropertiesSectionName(), 
                 TblsData.TablesData.USER_SOP.getTableName(),
-                new String[]{TblsData.UserSop.FLD_SOP_ID.getName(), TblsData.UserSop.FLD_SOP_NAME.getName(), 
-                    TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), 
-                    TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()},
+                new String[]{TblsData.UserSop.SOP_ID.getName(), TblsData.UserSop.SOP_NAME.getName(), 
+                    TblsData.CertifUserAnalysisMethod.USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), 
+                    TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()},
                 getAllFieldNames(TblsDataAudit.TablesDataAudit.CERTIF_USER_ANALYSIS_METHOD.getTableFields()))
         ;
         private CertifObjects(String propName, String tblName, String[] fieldsToGet, String[] auditFieldsToGet){
@@ -75,7 +75,7 @@ public class CertifyQueries {
     }
     
     public static JSONArray CertificationsInProgress(String areasToInclude, Boolean includeAuditHistory){
-        String[] fldsName=new String[]{TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.FLD_CERTIF_COMPLETED.getName()};
+        String[] fldsName=new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()};
         Object[] fldsValue=new Object[]{CertifGlobalVariables.CertifLight.RED.toString(), true, false};
         return CertificationsHistory(areasToInclude, fldsName, fldsValue, includeAuditHistory);
     }
@@ -87,8 +87,8 @@ public class CertifyQueries {
         for (CertifObjects curCertifObj: CertifObjects.values()){
             String[] fieldsToGet=curCertifObj.getFieldsToGet();
             if (includeAuditHistory!=null && includeAuditHistory){
-                if (!LPArray.valueInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_ID.getName()))
-                    fieldsToGet=LPArray.addValueToArray1D(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_ID.getName());
+                if (!LPArray.valueInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName()))
+                    fieldsToGet=LPArray.addValueToArray1D(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName());
             }
             if ("ALL".equalsIgnoreCase(areasToInclude) || LPArray.valueInArray(areasToIncludeArr, curCertifObj.toString())){
                 String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, 
@@ -96,7 +96,7 @@ public class CertifyQueries {
                 if (Parameter.isTagValueOneOfEnableOnes(tagValue)){
                     Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), curCertifObj.getTableName(), 
                         fldsName, fldsValue, fieldsToGet,
-                        new String[]{TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName()});
+                        new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())){
                         JSONArray jCertifObjArr=new JSONArray();
                         for (Object[] curRow: certifRowExpDateInfo){
@@ -104,7 +104,7 @@ public class CertifyQueries {
                             if (includeAuditHistory!=null && includeAuditHistory){
                                 Object[][] certifRowAuditInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), curCertifObj.getTableName(), 
                                     new String[]{TblsDataAudit.CertifUserAnalysisMethod.CERTIF_ID.getName()},
-                                    new Object[]{curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.FLD_ID.getName())]},
+                                    new Object[]{curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName())]},
                                     curCertifObj.getAuditFieldsToGet(), 
                                     new String[]{TblsDataAudit.CertifUserAnalysisMethod.AUDIT_ID.getName()});
                                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowAuditInfo[0][0].toString())){

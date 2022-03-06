@@ -47,8 +47,8 @@ public class CertifyAPIfrontend extends HttpServlet {
         USER_CERTIFICATIONS_HISTORY("USER_CERTIFICATIONS_HISTORY", "",new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments("areasToInclude", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
-            new LPAPIArguments(TblsData.CertifUserAnalysisMethod.FLD_CERTIFICATION_DATE.getName().toLowerCase()+"_start", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-            new LPAPIArguments(TblsData.CertifUserAnalysisMethod.FLD_CERTIFICATION_DATE.getName().toLowerCase()+"_end", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
+            new LPAPIArguments(TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName().toLowerCase()+"_start", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+            new LPAPIArguments(TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName().toLowerCase()+"_end", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
             new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 10)},
             new LPAPIEndPointdocumentation("certify-frontend", "USER_CERTIFICATIONS_HISTORY", "", -1,""),
             EndPointsToRequirements.endpointWithNoOutputObjects),
@@ -136,11 +136,11 @@ public class CertifyAPIfrontend extends HttpServlet {
                 case USER_CERTIFICATIONS_HISTORY:
                     String userName=argValues[0].toString();
                     areasToInclude=argValues[1].toString();
-                    String[] whereFldName=new String[]{TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName()};
+                    String[] whereFldName=new String[]{TblsData.CertifUserAnalysisMethod.USER_NAME.getName()};
                     Object[] whereFldValue=new Object[]{userName};
-                    String samplingDayStart = request.getParameter(TblsData.CertifUserAnalysisMethod.FLD_CERTIFICATION_DATE.getName().toLowerCase()+"_start");
-                    String samplingDayEnd = request.getParameter(TblsData.CertifUserAnalysisMethod.FLD_CERTIFICATION_DATE.getName().toLowerCase()+"_end");
-                    Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.CertifUserAnalysisMethod.FLD_CERTIFICATION_DATE.getName().toLowerCase(), samplingDayStart, samplingDayEnd);
+                    String samplingDayStart = request.getParameter(TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName().toLowerCase()+"_start");
+                    String samplingDayEnd = request.getParameter(TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName().toLowerCase()+"_end");
+                    Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName().toLowerCase(), samplingDayStart, samplingDayEnd);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())){
                         whereFldName=LPArray.addValueToArray1D(whereFldName, buildDateRangeFromStrings[1].toString());
                         whereFldValue=LPArray.addValueToArray1D(whereFldValue, buildDateRangeFromStrings[2]);

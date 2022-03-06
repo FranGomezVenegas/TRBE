@@ -181,7 +181,7 @@ public class UserMethod {
     }
     
     public static final Object[][] getUserAnalysisMethodCerttifByProcess(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName){                
-        String viewName = TblsData.ViewUserAndAnalysisMethodCertificationView.TBL.getName();
+        String viewName = TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW.getViewName();
        String DIAGNOSES_ERROR_CODE = "DIAGNOSES_ERROR_CODE";
         
         if (fieldsToReturn.length<=0){
@@ -276,9 +276,9 @@ public class UserMethod {
         Object[] filterFieldValue = new Object[2];
         String[] fieldsToReturn = new String[0];
 
-        filterFieldName[0]=TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName();
+        filterFieldName[0]=TblsData.CertifUserAnalysisMethod.USER_NAME.getName();
         filterFieldValue[0]=userInfoId;
-        filterFieldName[1]=TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName();
+        filterFieldName[1]=TblsData.CertifUserAnalysisMethod.LIGHT.getName();
         filterFieldValue[1]=userSopStatuses.NOTPASS.getLightCode();
         if (fieldsToRetrieve!=null){            
             for (String fv: fieldsToRetrieve){
@@ -287,8 +287,8 @@ public class UserMethod {
                 }
             }
         }else{
-            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName());
-            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.CertifUserAnalysisMethod.FLD_METHOD_VERSION.getName());
+            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName());
+            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName());
         }
         return getUserAnalysisMethodCerttifByProcess(filterFieldName, filterFieldValue, fieldsToReturn, (String[]) userSchemas);     
     }

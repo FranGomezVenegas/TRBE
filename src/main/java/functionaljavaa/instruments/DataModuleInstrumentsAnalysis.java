@@ -43,7 +43,7 @@ public class DataModuleInstrumentsAnalysis implements DataSampleAnalysisStrategy
                 anaName[1][2] = 1;                    
         StringBuilder analysisAdded = new StringBuilder(0);
         for (Object[] anaName1 : anaName) {
-            String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName()};
+            String[] fieldsName = new String[]{TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName(), TblsData.SampleAnalysis.METHOD_VERSION.getName()};
             Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2]};
             functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
@@ -68,7 +68,7 @@ public class DataModuleInstrumentsAnalysis implements DataSampleAnalysisStrategy
 if (1 == 1) 
             return"ERROR: specialFieldCheckSampleAnalysisAnalyst not implemented yet.";
         
-        Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.FLD_STATUS.getName());
+        Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.STATUS.getName());
         String status = mandatoryFieldsValue[specialFieldIndex].toString();
         if (status.length() == 0) return "ERROR: The parameter status cannot be null";
         

@@ -109,7 +109,7 @@ public class ClassSample {
             }
             if (sampleId!=null && !LPArray.valueInArray(exceptionsToSampleReviewArr, endPoint.getName())){
                 Object[][] sampleStatus=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                    new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, new String[]{TblsData.Sample.FLD_STATUS.getName()});
+                    new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, new String[]{TblsData.Sample.STATUS.getName()});
                 diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_REVIEWED, null);
                 if ( (sampleStatus[0][0].toString().equalsIgnoreCase(DataSampleStructureStatuses.SampleStatuses.CANCELED.getStatusCode(""))) ||
                      (sampleStatus[0][0].toString().equalsIgnoreCase(DataSampleStructureStatuses.SampleStatuses.REVIEWED.getStatusCode(""))) ){               
@@ -263,11 +263,11 @@ public class ClassSample {
                     Integer resultId = (Integer) argValues[0];
                     String rawValueResult = argValues[1].toString();
                         Object[][] resultData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                                new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, 
-                                new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_ANALYSIS.getName(), 
-                                    TblsData.SampleAnalysisResult.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysisResult.FLD_METHOD_VERSION.getName(), TblsData.SampleAnalysisResult.FLD_PARAM_NAME.getName(), 
-                                    TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName(), TblsData.SampleAnalysisResult.FLD_UOM.getName(), 
-                                    TblsData.SampleAnalysisResult.FLD_UOM_CONVERSION_MODE.getName()});
+                                new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, 
+                                new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.TEST_ID.getName(), TblsData.SampleAnalysisResult.ANALYSIS.getName(), 
+                                    TblsData.SampleAnalysisResult.METHOD_NAME.getName(), TblsData.SampleAnalysisResult.METHOD_VERSION.getName(), TblsData.SampleAnalysisResult.PARAM_NAME.getName(), 
+                                    TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.RAW_VALUE.getName(), TblsData.SampleAnalysisResult.UOM.getName(), 
+                                    TblsData.SampleAnalysisResult.UOM_CONVERSION_MODE.getName()});
                         if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString()))
                             diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND, new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                         else{            
@@ -418,7 +418,7 @@ public class ClassSample {
                     }else{   sortFieldsNameArr=null;}
 
                     String diagnStr = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
-                            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldToRetrieveArr, sortFieldsNameArr);
+                            new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldToRetrieveArr, sortFieldsNameArr);
                     if (diagnStr.contains(LPPlatform.LAB_FALSE)){
                         LPFrontEnd.responseError(diagnStr.split("\\|"), language, procInstanceName);
                     }else{
@@ -434,7 +434,7 @@ public class ClassSample {
                     ChangeOfCustody coc = new ChangeOfCustody();
                     Integer appSessionId=null;
                     if (token.getAppSessionId()!=null){appSessionId=Integer.valueOf(token.getAppSessionId());}
-                    diagn = coc.cocStartChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), objectId, custodianCandidate);
+                    diagn = coc.cocStartChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.SAMPLE_ID.getName(), objectId, custodianCandidate);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
@@ -442,7 +442,7 @@ public class ClassSample {
                     sampleId = (Integer) argValues[0];
                     String confirmChangeComment = argValues[1].toString();
                     coc =  new ChangeOfCustody();
-                    diagn = coc.cocConfirmedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, confirmChangeComment);
+                    diagn = coc.cocConfirmedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.SAMPLE_ID.getName(), sampleId, confirmChangeComment);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
@@ -450,7 +450,7 @@ public class ClassSample {
                     sampleId = (Integer) argValues[0];
                     String cancelChangeComment = argValues[1].toString();
                     coc =  new ChangeOfCustody();
-                    diagn = coc.cocAbortedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, cancelChangeComment);
+                    diagn = coc.cocAbortedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.SAMPLE_ID.getName(), sampleId, cancelChangeComment);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
@@ -505,8 +505,8 @@ public class ClassSample {
                     if (argValues.length>2 && argValues[2]!=null)sampleStageNext = argValues[2].toString();
                     if ((sampleStage==null) || (sampleStage.equalsIgnoreCase("undefined")) || (sampleStage.length()==0)){
                         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
-                                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                                new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
+                                new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                                new String[]{TblsData.Sample.CURRENT_STAGE.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
                             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, LPArray.array2dTo1d(sampleInfo));
                             return;
@@ -517,7 +517,7 @@ public class ClassSample {
                         diagn=smpStage.moveToNextStage(sampleId, sampleStage, sampleStageNext);
                     if (SampleAPIEndpoints.SAMPLESTAGE_MOVETOPREVIOUS.getName().equalsIgnoreCase(endPoint.getName()))
                         diagn=smpStage.moveToPreviousStage(sampleId, sampleStage, sampleStageNext);
-                    String[] sampleFieldName=new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_PREVIOUS_STAGE.getName()};
+                    String[] sampleFieldName=new String[]{TblsData.Sample.CURRENT_STAGE.getName(), TblsData.Sample.PREVIOUS_STAGE.getName()};
                     Object[] sampleFieldValue=new Object[0];
                     String newSampleStage=diagn[diagn.length-1].toString();
                     if (diagn==null)
@@ -530,7 +530,7 @@ public class ClassSample {
                         diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                                 sampleFieldName, 
                                 sampleFieldValue,
-                                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+                                new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
                         SampleAudit smpAudit = new SampleAudit();
                         smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))

@@ -144,8 +144,8 @@ public class UserSop {
             return LPArray.array1dTo2d(userSchemas, userSchemas.length);
         }    
         
-        String[] fieldsToReturn = new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_SOP_ID.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()};
-        String[] filterFieldName =new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()};
+        String[] fieldsToReturn = new String[]{TblsData.UserSop.SOP_NAME.getName(), TblsData.UserSop.SOP_ID.getName(), TblsData.UserSop.STATUS.getName(), TblsData.UserSop.LIGHT.getName()};
+        String[] filterFieldName =new String[]{TblsData.UserSop.SOP_NAME.getName(), TblsData.UserSop.USER_NAME.getName()};
         Object[] filterFieldValue =new Object[]{sopName, userName};        
         Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{procInstanceName});   
         if (getUserProfileFieldValues==null || getUserProfileFieldValues.length<=0){
@@ -162,7 +162,7 @@ public class UserSop {
      * @return
      */
     public Object[] userSopCertifiedBySopName( String procInstanceNameName, String userInfoId, String sopName ) {    
-        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.FLD_SOP_NAME.getName(), sopName);        
+        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.SOP_NAME.getName(), sopName);        
         }
 
     /**
@@ -173,7 +173,7 @@ public class UserSop {
      * @return
      */        
     public Object[] userSopCertifiedBySopId( String procInstanceNameName, String userInfoId, String sopId ) {
-        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.FLD_SOP_ID.getName(), sopId);        
+        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.SOP_ID.getName(), sopId);        
     }        
     
     private Object[] userSopCertifiedBySopInternalLogic( String procInstanceName, String userInfoId, String sopIdFieldName, String sopIdFieldValue ) {
@@ -203,11 +203,11 @@ public class UserSop {
         Object[] filterFieldValue = new Object[2];
         String[] fieldsToReturn = new String[4];
 
-        fieldsToReturn[0] = TblsData.UserSop.FLD_SOP_ID.getName();
-        fieldsToReturn[1] = TblsData.UserSop.FLD_SOP_NAME.getName();
-        fieldsToReturn[2] = TblsData.UserSop.FLD_STATUS.getName();
-        fieldsToReturn[3] = TblsData.UserSop.FLD_LIGHT.getName();
-        filterFieldName[0]=TblsData.UserSop.FLD_USER_ID.getName();
+        fieldsToReturn[0] = TblsData.UserSop.SOP_ID.getName();
+        fieldsToReturn[1] = TblsData.UserSop.SOP_NAME.getName();
+        fieldsToReturn[2] = TblsData.UserSop.STATUS.getName();
+        fieldsToReturn[3] = TblsData.UserSop.LIGHT.getName();
+        filterFieldName[0]=TblsData.UserSop.USER_ID.getName();
         filterFieldValue[0]=userInfoId;        
         filterFieldName[1]=sopIdFieldName;
         filterFieldValue[1]=sopIdFieldValue;                
@@ -265,9 +265,9 @@ public class UserSop {
         Object[] filterFieldValue = new Object[2];
         String[] fieldsToReturn = new String[0];
 
-        filterFieldName[0]=TblsData.UserSop.FLD_USER_ID.getName();
+        filterFieldName[0]=TblsData.UserSop.USER_ID.getName();
         filterFieldValue[0]=userInfoId;
-        filterFieldName[1]=TblsData.UserSop.FLD_LIGHT.getName();
+        filterFieldName[1]=TblsData.UserSop.LIGHT.getName();
         filterFieldValue[1]=userSopStatuses.NOTPASS.getLightCode();
         if (fieldsToRetrieve!=null){            
             for (String fv: fieldsToRetrieve){
@@ -276,8 +276,8 @@ public class UserSop {
                 }
             }
         }else{
-            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.UserSop.FLD_SOP_ID.getName());
-            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.UserSop.FLD_SOP_NAME.getName());
+            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.UserSop.SOP_ID.getName());
+            fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.UserSop.SOP_NAME.getName());
         }
         return getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, (String[]) userSchemas);     
     }
@@ -295,7 +295,7 @@ public class UserSop {
      */
         
     public static final Object[][] getUserProfileFieldValues(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName){                
-        String viewName = TblsData.ViewUserAndMetaDataSopView.TBL.getName();
+        String viewName = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName();
         
         if (fieldsToReturn.length<=0){
             String[][] getUserProfileNEW = new String[1][2];
@@ -382,7 +382,7 @@ public class UserSop {
      * @return
      */
     public Object[] addSopToUserById( String schemaName, String userInfoId, Integer sopId){
-        return addSopToUserInternalLogic(schemaName, userInfoId, TblsData.UserSop.FLD_SOP_ID.getName(), sopId);
+        return addSopToUserInternalLogic(schemaName, userInfoId, TblsData.UserSop.SOP_ID.getName(), sopId);
     }   
 
     /**
@@ -393,7 +393,7 @@ public class UserSop {
      * @return
      */
     public Object[] addSopToUserById( String schemaName, String userInfoId, String sopId){
-        return addSopToUserInternalLogic(schemaName, userInfoId, TblsData.UserSop.FLD_SOP_ID.getName(), sopId);
+        return addSopToUserInternalLogic(schemaName, userInfoId, TblsData.UserSop.SOP_ID.getName(), sopId);
     }   
 
     /**
@@ -404,7 +404,7 @@ public class UserSop {
      * @return
      */
     public Object[] addSopToUserByName( String schemaName, String userInfoId, String sopName){
-        return addSopToUserInternalLogic(schemaName, userInfoId, TblsData.UserSop.FLD_SOP_NAME.getName(), sopName);
+        return addSopToUserInternalLogic(schemaName, userInfoId, TblsData.UserSop.SOP_NAME.getName(), sopName);
     }    
 
     /**
@@ -419,7 +419,7 @@ public class UserSop {
         Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        Object[] exists = Rdbms.existsRecord(schemaName, TblsData.TablesData.USER_SOP.getTableName(), new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
+        Object[] exists = Rdbms.existsRecord(schemaName, TblsData.TablesData.USER_SOP.getTableName(), new String[]{TblsData.UserSop.USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
                 
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(exists[0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.SOP_ALREADY_ASSIGNED, new Object[]{sopIdFieldValue, personName, schemaName});
@@ -429,7 +429,7 @@ public class UserSop {
         if (userSopInitialStatus.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getCode();
         if (userSopInitialLight.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getLightCode();
         
-        String[] insertFieldNames=new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName, TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()};
+        String[] insertFieldNames=new String[]{TblsData.UserSop.USER_ID.getName(), sopIdFieldName, TblsData.UserSop.STATUS.getName(), TblsData.UserSop.LIGHT.getName()};
         Object[] insertFieldValues=new Object[]{personName, sopIdFieldValue, userSopInitialStatus, userSopInitialLight};
         if ( (TblsCnfg.SopMetaData.FLD_SOP_NAME.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_NAME.getName())) ){
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()); 
@@ -439,8 +439,8 @@ public class UserSop {
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_ID.getName()); 
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopNameById(procInstanceName, sopIdFieldValue));
         }     
-        if (!LPArray.valueInArray(insertFieldNames, TblsData.UserSop.FLD_USER_NAME.getName())){
-            insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsData.UserSop.FLD_USER_NAME.getName()); 
+        if (!LPArray.valueInArray(insertFieldNames, TblsData.UserSop.USER_NAME.getName())){
+            insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsData.UserSop.USER_NAME.getName()); 
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, UserAndRolesViews.getUserByPerson(personName));}
         
         Object[] diagnosis = Rdbms.insertRecordInTable(schemaName, TblsData.TablesData.USER_SOP.getTableName(), insertFieldNames, insertFieldValues);
@@ -480,19 +480,19 @@ public class UserSop {
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING, new Object[]{sopName, procInstanceName});
         }
-        String[] updFldNames=new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}; 
+        String[] updFldNames=new String[]{TblsData.UserSop.READ_COMPLETED.getName(), TblsData.UserSop.STATUS.getName(), TblsData.UserSop.LIGHT.getName()}; 
         Object[] updFldValues=new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()};
         Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                 new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sopName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
         else{
-            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.FLD_CERTIF_EXPIRY_DATE.getName());
+            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
             updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
         }
         
         Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.TablesData.USER_SOP.getTableName(), 
             updFldNames, updFldValues,     
-            new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()}, new Object[]{sopName, userName} );
+            new String[]{TblsData.UserSop.SOP_NAME.getName(), TblsData.UserSop.USER_NAME.getName()}, new Object[]{sopName, userName} );
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userSopDiagnostic[0].toString())){
             userSopDiagnostic[userSopDiagnostic.length-1]="Sop assigned";
         }

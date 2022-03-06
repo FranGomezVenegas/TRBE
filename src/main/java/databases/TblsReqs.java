@@ -384,7 +384,7 @@ public class TblsReqs {
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
 //        PROC_INSTANCE_NAME(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
-        INSTANCE_NAME("instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+//        INSTANCE_NAME("instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         CATEGORY("category", LPDatabase.string(), null, null, null, null),
         EXPLANATION("explanation", LPDatabase.string(), null, null, null, null),
         VALUES_ALLOWED("values_allowed", LPDatabase.string(), null, null, null, null),

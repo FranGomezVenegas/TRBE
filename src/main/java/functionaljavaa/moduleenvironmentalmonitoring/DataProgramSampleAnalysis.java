@@ -48,9 +48,9 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
         DataSampleAnalysis.DataSampleAnalyisAutoAddLevel autoAddAnalysisLevel = DataSampleAnalysis.DataSampleAnalyisAutoAddLevel.valueOf(otro);
         switch (autoAddAnalysisLevel){     
             case SPEC_VARIATION:
-                Object[][] specFields = new Object[][]{{TblsData.Sample.FLD_SPEC_CODE.getName(), "", TblsCnfg.SpecLimits.FLD_CODE.getName()}, 
-                    {TblsData.Sample.FLD_SPEC_CODE_VERSION.getName(), "", TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName()}, 
-                    {TblsData.Sample.FLD_SPEC_VARIATION_NAME.getName(), "", TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName()}};
+                Object[][] specFields = new Object[][]{{TblsData.Sample.SPEC_CODE.getName(), "", TblsCnfg.SpecLimits.FLD_CODE.getName()}, 
+                    {TblsData.Sample.SPEC_CODE_VERSION.getName(), "", TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName()}, 
+                    {TblsData.Sample.SPEC_VARIATION_NAME.getName(), "", TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName()}};
                 String[] specMissingFields = new String[0];
                 for (Object[] curValue: specFields){
                     Integer posicField = LPArray.valuePosicInArray(sampleFieldName, curValue[0].toString());
@@ -59,7 +59,7 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
                 }
                 if (specMissingFields.length>0){
                     Object[][] sampleSpecInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, specMissingFields);
+                            new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, specMissingFields);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecInfo[0][0].toString())){return LPArray.array2dTo1d(sampleSpecInfo);}
 //                      for (String specMissingField : specMissingFields) {
                         // Pasar de sampleSpecInfo a specFields estando los datos en  specMissingFields
@@ -68,7 +68,7 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
                 String[] specWhereFieldName=LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(specFields, 2));
                 Object[] specWhereFieldValue=LPArray.getColumnFromArray2D(specFields, 1);
 
-                Integer posicField = LPArray.valuePosicInArray(sampleFieldName, TblsData.Sample.FLD_SPEC_ANALYSIS_VARIATION.getName());
+                Integer posicField = LPArray.valuePosicInArray(sampleFieldName, TblsData.Sample.SPEC_ANALYSIS_VARIATION.getName());
                 if (posicField > -1){
                     Object analysisVariation= sampleFieldValue[posicField];
                     String[] analysisVariationArr=analysisVariation.toString().split("\\-");
@@ -91,11 +91,11 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
         }
         StringBuilder analysisAdded = new StringBuilder();
         for (Object[] anaName1 : anaName) {
-            String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName()};
+            String[] fieldsName = new String[]{TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName(), TblsData.SampleAnalysis.METHOD_VERSION.getName()};
             Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2]};
             Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())){
-                fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName());
+                fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysis.TESTING_GROUP.getName());
                 fieldsValue= LPArray.addValueToArray1D(fieldsValue, (String) anaName1[3]);
             }
             
@@ -121,7 +121,7 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
 if (1 == 1) 
             return"ERROR: specialFieldCheckSampleAnalysisAnalyst not implemented yet.";
         
-        Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.FLD_STATUS.getName());
+        Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.STATUS.getName());
         String status = mandatoryFieldsValue[specialFieldIndex].toString();
         if (status.length() == 0) return "ERROR: The parameter status cannot be null";
         

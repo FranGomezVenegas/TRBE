@@ -117,7 +117,7 @@ public final class InspLotQueries {
     }
     public static JSONArray dataSampleAnalysisStructure(Integer sampleId, String filterFieldsToRetrieve, String[] orderBy, 
             Boolean includeAnalysisResults){
-        String[] whereFldName=new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()};
+        String[] whereFldName=new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()};
         Object[] whereFldValue=new Object[]{sampleId};
         Object[][] materialInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                     filterFieldsToRetrieve, getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS.getTableFields()), whereFldName, whereFldValue, orderBy);        
@@ -125,7 +125,7 @@ public final class InspLotQueries {
         String[] fieldsToRetrieve=getFieldsListToRetrieve(filterFieldsToRetrieve, getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return jArr;
         for (Object[] currRec: materialInfo){
-            Integer testId=Integer.valueOf(currRec[LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.SampleAnalysis.FLD_TEST_ID.getName())].toString());
+            Integer testId=Integer.valueOf(currRec[LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.SampleAnalysis.TEST_ID.getName())].toString());
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
             if (includeAnalysisResults==null || includeAnalysisResults) jObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), dataSampAnaResStructure(testId, null, new String[]{}, null));            
             jArr.add(jObj);
@@ -134,7 +134,7 @@ public final class InspLotQueries {
     }    
     public static JSONArray dataSampAnaResStructure(Integer testId, String filterFieldsToRetrieve, String[] orderBy, 
             Boolean includeAnalysisResults){
-        String[] whereFldName=new String[]{TblsData.SampleAnalysisResult.FLD_TEST_ID.getName()};
+        String[] whereFldName=new String[]{TblsData.SampleAnalysisResult.TEST_ID.getName()};
         Object[] whereFldValue=new Object[]{testId};
         Object[][] materialInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                     filterFieldsToRetrieve, getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableFields()), whereFldName, whereFldValue, orderBy);        

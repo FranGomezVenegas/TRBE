@@ -18,9 +18,9 @@ public class AnalysisMethodCertifQueries {
     
     public static Object[] analysisMethodCertifiedUsersList(String methodName, Integer methodVersion, String[] fieldsToRetrieve, String[] fieldsToSort){
         if (fieldsToRetrieve==null)
-            fieldsToRetrieve=new String[]{TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName()};
+            fieldsToRetrieve=new String[]{TblsData.CertifUserAnalysisMethod.USER_NAME.getName()};
         if (fieldsToSort==null)
-            fieldsToSort=new String[]{TblsData.CertifUserAnalysisMethod.FLD_USER_NAME.getName()};
+            fieldsToSort=new String[]{TblsData.CertifUserAnalysisMethod.USER_NAME.getName()};
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();  
         AnalysisMethodCertif.uncertifyExpiredOnes();
         Object[] userCertificationEnabled = isUserCertificationEnabled();
@@ -28,7 +28,7 @@ public class AnalysisMethodCertifQueries {
             Object[][] returnObj=new Object[][]{{userCertificationEnabled}};
             return new Object[]{fieldsToRetrieve, returnObj};
         }
-        String[] whereFldName=new String[]{TblsData.CertifUserAnalysisMethod.FLD_METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.FLD_LIGHT.getName()};
+        String[] whereFldName=new String[]{TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.LIGHT.getName()};
         Object[] whereFldValue=new Object[]{methodName, "GREEN"};
         return new Object[]{fieldsToRetrieve, Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
                 whereFldName, whereFldValue, fieldsToRetrieve, fieldsToSort)};

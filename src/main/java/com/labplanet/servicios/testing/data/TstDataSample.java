@@ -357,7 +357,7 @@ public class TstDataSample extends HttpServlet {
                                         fieldsToGet=LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+5]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{Arrays.toString(fieldsToGet), sampleId}));
                                     dataSample2D = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
-                                            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToGet);
+                                            new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToGet);
                                     break;
                                 case ENTERRESULT_LOD:
                                      Integer firstParameter=null;
@@ -385,7 +385,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, custodianCandidate", sampleId.toString()+", "+custodianCandidate}));                              
                                     ChangeOfCustody coc =  new ChangeOfCustody();
-                                    dataSample = coc.cocStartChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, 
+                                    dataSample = coc.cocStartChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.SAMPLE_ID.getName(), sampleId, 
                                             custodianCandidate);
                                     break;
                                 case COC_CONFIRMCHANGE:
@@ -398,7 +398,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, comment", sampleId.toString()+", "+comment}));                                                          
                                     coc =  new ChangeOfCustody();
-                                    dataSample = coc.cocConfirmedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, comment);
+                                    dataSample = coc.cocConfirmedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.SAMPLE_ID.getName(), sampleId, comment);
                                     break;
                                 case COC_ABORTCHANGE:
                                     sampleId = 0;
@@ -410,7 +410,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, comment", sampleId.toString()+", "+comment}));                                                          
                                     coc =  new ChangeOfCustody();
-                                    dataSample = coc.cocAbortedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, comment);
+                                    dataSample = coc.cocAbortedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.SAMPLE_ID.getName(), sampleId, comment);
                                     break;
                                 case RESULT_CHANGE_UOM:
                                     resultId = 0;

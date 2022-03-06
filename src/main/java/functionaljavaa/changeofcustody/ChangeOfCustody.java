@@ -111,17 +111,17 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())) return changeOfCustodyEnable;
 
         Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
-                new String[]{objectFieldName, TblsData.SampleCoc.FLD_STATUS.getName()},
+                new String[]{objectFieldName, TblsData.SampleCoc.STATUS.getName()},
                 new Object[]{objectId, cocStartChangeStatus});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.REQUEST_ALREADY_INCOURSE, new Object[]{objectId, objectTable, procInstanceName});
         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable.toLowerCase(),
-                new String[]{TblsData.SampleCoc.FLD_STARTED_ON.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()},
+                new String[]{TblsData.SampleCoc.STARTED_ON.getName(), TblsData.SampleCoc.CUSTODIAN_CANDIDATE.getName()},
                 new Object[]{LPDate.getCurrentTimeStamp(), custodianCandidate},
                 new String[]{objectFieldName}, new Object[]{objectId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString()))return updateRecordFieldsByFilter;
 
-        String[] sampleFieldName = new String[]{objectFieldName, TblsData.SampleCoc.FLD_CUSTODIAN.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName(), TblsData.SampleCoc.FLD_STARTED_ON.getName(), TblsData.SampleCoc.FLD_STATUS.getName()};
+        String[] sampleFieldName = new String[]{objectFieldName, TblsData.SampleCoc.CUSTODIAN.getName(), TblsData.SampleCoc.CUSTODIAN_CANDIDATE.getName(), TblsData.SampleCoc.STARTED_ON.getName(), TblsData.SampleCoc.STATUS.getName()};
         Object[] sampleFieldValue = new Object[]{objectId, currCustodian, custodianCandidate, LPDate.getCurrentTimeStamp(), cocStartChangeStatus};
 
         Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
@@ -174,9 +174,9 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
             return changeOfCustodyEnable;}
 
         Object[][] startedProcessData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
-                new String[]{objectFieldName, TblsData.SampleCoc.FLD_STATUS.getName()},
+                new String[]{objectFieldName, TblsData.SampleCoc.STATUS.getName()},
                 new Object[]{objectId, cocStartChangeStatus},
-                new String[]{"id", TblsData.SampleCoc.FLD_STATUS.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()});
+                new String[]{"id", TblsData.SampleCoc.STATUS.getName(), TblsData.SampleCoc.CUSTODIAN_CANDIDATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(startedProcessData[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CHANGE_IN_PROGRESS, new Object[]{objectId, objectTable, procInstanceName});
 
@@ -190,22 +190,22 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.NO_CUSTODIAN_CANDIDATE, new Object[]{objectId, objectTable, procInstanceName});
 
 
-        String[] sampleFieldName=new String[]{TblsData.SampleCoc.FLD_STATUS.getName(), TblsData.SampleCoc.FLD_CONFIRMED_ON.getName() };
+        String[] sampleFieldName=new String[]{TblsData.SampleCoc.STATUS.getName(), TblsData.SampleCoc.CONFIRMED_ON.getName() };
         Object[] sampleFieldValue=new Object[]{actionName,LPDate.getCurrentTimeStamp()};
         if (comment!=null){
-            sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.SampleCoc.FLD_NEW_CUSTODIAN_NOTES.getName());
+            sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.SampleCoc.NEW_CUSTODIAN_NOTES.getName());
             sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, comment);
         }
         Object[] updateRecordInTable = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
                 sampleFieldName, sampleFieldValue,
-                new String[]{TblsData.SampleCoc.FLD_ID.getName()}, new Object[]{recordId});
+                new String[]{TblsData.SampleCoc.ID.getName()}, new Object[]{recordId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateRecordInTable[0].toString())){
             return updateRecordInTable;}
 
-         String[] updSampleTblFlds=new String[]{TblsData.SampleCoc.FLD_CONFIRMED_ON.getName(), TblsData.SampleCoc.FLD_CUSTODIAN_CANDIDATE.getName()}; // , "coc_requested_on"
+         String[] updSampleTblFlds=new String[]{TblsData.SampleCoc.CONFIRMED_ON.getName(), TblsData.SampleCoc.CUSTODIAN_CANDIDATE.getName()}; // , "coc_requested_on"
          Object[] updSampleTblVls=new Object[]{LPDate.getCurrentTimeStamp(), "null*String"}; // , "null*Date"
          if (actionName.equalsIgnoreCase(cocConfirmedChangeStatus)){
-            updSampleTblFlds = LPArray.addValueToArray1D(updSampleTblFlds, TblsData.SampleCoc.FLD_CUSTODIAN.getName());
+            updSampleTblFlds = LPArray.addValueToArray1D(updSampleTblFlds, TblsData.SampleCoc.CUSTODIAN.getName());
             updSampleTblVls = LPArray.addValueToArray1D(updSampleTblVls, token.getUserName());
          }
          Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), objectTable.toLowerCase(),

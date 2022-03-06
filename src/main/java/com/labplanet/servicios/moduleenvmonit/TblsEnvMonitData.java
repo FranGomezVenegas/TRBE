@@ -17,8 +17,6 @@ import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
 import databases.TblsData;
-import databases.TblsData.TablesData;
-import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -26,7 +24,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class TblsEnvMonitData {
-    public static final String getTableCreationScriptFromDataTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+/*    public static final String getTableCreationScriptFromDataTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "INCUB_BATCH": return IncubBatch.createTableScript(schemaNamePrefix, fields);
             case "INSTRUMENT_INCUBATOR_NOTEBOOK": return InstrIncubatorNoteBook.createTableScript(schemaNamePrefix, fields);
@@ -47,7 +45,8 @@ public class TblsEnvMonitData {
             case "SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW": return TblsData.ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
         }        
-    }    
+    }
+    */
     /**
      *
      */
@@ -512,7 +511,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_SAMPLE_ID(TblsData.Sample.FLD_SAMPLE_ID.getName(), "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)")
+        FLD_SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)")
         ,        
         TBL("sample", LPDatabase.createSequence(FLD_SAMPLE_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"

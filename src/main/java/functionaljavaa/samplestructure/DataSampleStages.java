@@ -149,7 +149,7 @@ public enum SampleStageErrorTrapping implements EnumIntMessages{
         if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
             this.isSampleStagesTimingCaptureStages=sampleStagesTimingCaptureStages;  
         String stageFirst=Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getTagName(), SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getPreReqs());
-        this.firstStageData=new Object[][]{{TblsData.Sample.FLD_CURRENT_STAGE.getName(), stageFirst}};        
+        this.firstStageData=new Object[][]{{TblsData.Sample.CURRENT_STAGE.getName(), stageFirst}};        
         
   }
 
@@ -210,8 +210,8 @@ public enum SampleStageErrorTrapping implements EnumIntMessages{
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
+                new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                new String[]{TblsData.Sample.CURRENT_STAGE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) return sampleInfo;
         String sampleCurrStage=sampleInfo[0][0].toString();
         String sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName());
@@ -220,11 +220,11 @@ public enum SampleStageErrorTrapping implements EnumIntMessages{
         Object[] moveDiagn=moveToNextStage(sampleId, sampleCurrStage,null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
             dataSampleStagesTimingCapture(sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 
-            String[] sampleFieldName=new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_PREVIOUS_STAGE.getName()};
+            String[] sampleFieldName=new String[]{TblsData.Sample.CURRENT_STAGE.getName(), TblsData.Sample.PREVIOUS_STAGE.getName()};
             Object[] sampleFieldValue=new Object[]{moveDiagn[moveDiagn.length-1], sampleCurrStage};
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
                 Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                    sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+                    sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
                 dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLESTAGE_MOVETONEXT.toString(), TblsData.TablesData.SAMPLE.getTableName(), 

@@ -64,10 +64,6 @@ public class AppProcedureListAPI extends HttpServlet {
      *
      */
     public static final String LABEL_ARRAY_SOPS="sops";
-
-    /**
-     *
-     */
     public static final String LABEL_ARRAY_SOP_LIST="sop_list";
 
     /**
@@ -128,15 +124,15 @@ public class AppProcedureListAPI extends HttpServlet {
     /**
      *
      */
-    public static final String PROC_FLD_NAME=TblsProcedure.ProcedureInfo.NAME.getName()+"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|label_en|label_es";
+    public static final String PROC_FLD_NAME=TblsProcedure.ProcedureInfo.NAME.getName()+"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|label_en|label_es"+"|"+TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName();
 
     /**
      *
      */
-    public static final String PROC_EVENT_FLD_NAME="name|label_en|label_es|branch_level|type|mode|esign_required|lp_frontend_page_name|sop|order_number|parent_name|position|icon_name";
-    public static final String PROC_NEW_EVENT_FLD_NAME="name|label_en|label_es|branch_level|type|mode|esign_required|lp_new_frontend_page_name as lp_frontend_page_name|sop|order_number|parent_name|position|new_icon_name as icon_name|new_name as name|new_icon_name_when_not_certified as icon_name_when_not_certified";
-    public static final String PROC_EVENT_ICONS_UP_FLD_NAME="name|label_en|label_es|icon_name|type|mode|esign_required|lp_frontend_page_name|sop|position";
-    public static final String PROC_EVENT_ICONS_DOWN_FLD_NAME="name|label_en|label_es|icon_name|type|mode|esign_required|lp_frontend_page_name|sop|position";
+    public static final String PROC_EVENT_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|branch_level|type|mode|esign_required|sop|order_number|parent_name|position|icon_name";
+    public static final String PROC_NEW_EVENT_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|branch_level|type|mode|esign_required|sop|order_number|parent_name|position|icon_name|icon_name_when_not_certified";
+    public static final String PROC_EVENT_ICONS_UP_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|icon_name|type|mode|esign_required|sop|position";
+    public static final String PROC_EVENT_ICONS_DOWN_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|icon_name|type|mode|esign_required|sop|position";
     
 /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -188,9 +184,12 @@ public class AppProcedureListAPI extends HttpServlet {
                 if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}           
 
                 Object[][] procInfo = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
-                        new String[]{TblsProcedure.ProcedureInfo.NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_FLD_NAME.split("\\|"));
+                        new String[]{TblsProcedure.ProcedureInfo.NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null
+                        , PROC_FLD_NAME.split("\\|"));
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){
                     procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
+                    
+                    procedure.put("name", procInfo[0][LPArray.valuePosicInArray(PROC_FLD_NAME.split("\\|"), TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName())]);
                     
                     String propValue = "false";
                     
@@ -233,8 +232,8 @@ public class AppProcedureListAPI extends HttpServlet {
         try{
             JsonObject jArr = new JsonObject();   
             Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(), 
-                new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName()},
-                new Object[]{procInstanceName}, 
+                new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
+                new Object[]{procInstanceName, procInstanceName}, 
                 new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName()});            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;
             JsonParser parser = new JsonParser();
@@ -486,10 +485,17 @@ public class AppProcedureListAPI extends HttpServlet {
         String[] procEventFldNameArray = PROC_NEW_EVENT_FLD_NAME.split("\\|");
         String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
         JSONArray procEventsTreeList = new JSONArray();         
-        String[] excludedAttributesForOtherItem=new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName(), TblsProcedure.ProcedureEvents.PARENT_NAME.getName(), TblsProcedure.ProcedureEvents.POSITION.getName(), TblsProcedure.ProcedureEvents.BRANCH_LEVEL.getName()};
-        String[] excludedAttributesForParentIconGroupItem=new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName(), TblsProcedure.ProcedureEvents.PARENT_NAME.getName(), TblsProcedure.ProcedureEvents.POSITION.getName(), TblsProcedure.ProcedureEvents.BRANCH_LEVEL.getName(), TblsProcedure.ProcedureEvents.NAME.getName()
-                , TblsProcedure.ProcedureEvents.ICON_NAME.getName(), TblsProcedure.ProcedureEvents.NEW_NAME.getName(), TblsProcedure.ProcedureEvents.MODE.getName(), TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ICON_NAME.getName(), TblsProcedure.ProcedureEvents.NEW_ICON_NAME_WHEN_NOT_CERTIFIED.getName(), TblsProcedure.ProcedureEvents.SOP.getName(), TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ICON_NAME.getName(), TblsProcedure.ProcedureEvents.ESIGN_REQUIRED.getName(), "new_icon_name as icon_name", "new_name as name","new_icon_name_when_not_certified as icon_name_when_not_certified"};
-        String[] excludedAttributesForIconGroupItem=new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.LP_NEW_FRONTEND_PAGE_NAME.getName(), TblsProcedure.ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName(), TblsProcedure.ProcedureEvents.PARENT_NAME.getName(), TblsProcedure.ProcedureEvents.POSITION.getName(), TblsProcedure.ProcedureEvents.BRANCH_LEVEL.getName(), TblsProcedure.ProcedureEvents.NAME.getName()};
+        String[] excludedAttributesForOtherItem=new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), 
+            TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.PARENT_NAME.getName(), 
+            TblsProcedure.ProcedureEvents.POSITION.getName(), TblsProcedure.ProcedureEvents.BRANCH_LEVEL.getName()};
+        String[] excludedAttributesForParentIconGroupItem=new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), 
+            TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.PARENT_NAME.getName(), 
+            TblsProcedure.ProcedureEvents.POSITION.getName(), TblsProcedure.ProcedureEvents.BRANCH_LEVEL.getName(),             
+            TblsProcedure.ProcedureEvents.MODE.getName(), TblsProcedure.ProcedureEvents.SOP.getName(), TblsProcedure.ProcedureEvents.ESIGN_REQUIRED.getName()};
+        String[] excludedAttributesForIconGroupItem=new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), 
+            TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName(),
+            TblsProcedure.ProcedureEvents.PARENT_NAME.getName(), TblsProcedure.ProcedureEvents.POSITION.getName(), 
+            TblsProcedure.ProcedureEvents.BRANCH_LEVEL.getName()};
         Object[][] procEvent = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
                 new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.TYPE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()}, 
                 new String[]{rolName,elementType.TREE_LIST.toString().toLowerCase().replace("_","-")+"|"+elementType.ICONS_GROUP.toString().toLowerCase().replace("_","-")}, 

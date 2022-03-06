@@ -25,7 +25,7 @@ public class Requirement {
                 
         String schemaName = GlobalVariables.Schemas.REQUIREMENTS.getName();
         String tableName = TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName();
-        String[] whereFldName = new String[]{TblsProcedure.ProcedureInfo.SCHEMA_PREFIX.getName()};
+        String[] whereFldName = new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()};
         Object[] whereFldValue = new Object[]{procInstanceName};
         String[] fieldsToRetrieve = new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName()};
         

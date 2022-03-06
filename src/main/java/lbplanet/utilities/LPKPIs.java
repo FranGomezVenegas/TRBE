@@ -113,7 +113,7 @@ public final class LPKPIs {
             fldToRetrieve=LPArray.addValueToArray1D(fldToRetrieve, alias);
             fldToRetrieve=LPArray.addValueToArray1D(fldToRetrieve, alias+"_perc");
         }
-        subQry=subQry+" from "+LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())+"."+TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName();
+        subQry=subQry+" from "+LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())+"."+TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName();
         subQry=subQry+" where raw_value_num is not null"; 
         if (whereFieldsName!=null && whereFieldsName.length()>0){
             Object[] diagn=giveMeObjectArr(whereFieldsName, whereFieldsValue);                        

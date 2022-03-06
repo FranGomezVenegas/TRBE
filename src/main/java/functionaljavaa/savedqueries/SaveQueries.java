@@ -46,7 +46,7 @@ public class SaveQueries {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Definition field not recognized as Json object, error: <*1*>. Field value: <*2*>",new Object[]{ex.toString(), definition});
         }
         
-        String[] updFieldName=new String[]{TblsData.SavedQueries.FLD_NAME.getName(), TblsData.SavedQueries.FLD_DEFINITION.getName(), TblsData.SavedQueries.FLD_OWNER.getName()};
+        String[] updFieldName=new String[]{TblsData.SavedQueries.NAME.getName(), TblsData.SavedQueries.DEFINITION.getName(), TblsData.SavedQueries.OWNER.getName()};
         Object[] updFieldValue=new Object[]{name, definition, token.getPersonName()};
         
         if ( fldNames!=null && fldValues!=null && fldNames[0].length()>0 && fldValues[0].toString().length()>0){

@@ -64,19 +64,19 @@ public class ClassEnvMonQueries {
                         if (argValues.length>1 && argValues[1]!=null && argValues[1].toString().length()>0) testId=(Integer) argValues[1];
                         Integer resultId=null;
                         if (argValues.length>2 && argValues[2]!=null && argValues[2].toString().length()>0) testId=(Integer) argValues[2];
-                        String[] whereFieldNames=new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()};
+                        String[] whereFieldNames=new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
                         Object[] whereFieldValues=new Object[]{sampleId};
                         if (testId!=null){
-                            whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.SampleAnalysisResult.FLD_TEST_ID.getName());
+                            whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.SampleAnalysisResult.TEST_ID.getName());
                             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, testId);
                         }
                         if (resultId!=null){
-                            whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
+                            whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.SampleAnalysisResult.RESULT_ID.getName());
                             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, resultId);
                         }
                         Object[][] resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                                 whereFieldNames, whereFieldValues, 
-                                new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()});
+                                new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) actionDiagnoses=resultInfo[0];
                         else{
                             for (Object[] curResult: resultInfo){

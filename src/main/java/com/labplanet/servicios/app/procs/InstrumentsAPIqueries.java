@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.*;
 import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
 import databases.TblsAppProcData.TablesAppProcData;
 import databases.TblsAppProcDataAudit;
@@ -222,7 +223,22 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);              
                 break;
-
+            case GET_INSTRUMENT_FAMILY_LIST:
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY.getTableFields());
+                Object[][] instrumentFamily=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_CONFIG.getName(), TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY.getTableName(), 
+                        new String[]{TblsAppProcConfig.InstrumentsFamily.NAME.getName()+"<>"}, 
+                        new Object[]{">>>"}, 
+                        fieldsToRetrieve, new String[]{TblsAppProcConfig.InstrumentsFamily.NAME.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString())){
+                    for (Object[] currInstr: instrumentFamily){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                return;  
             default: 
             }
         }finally {

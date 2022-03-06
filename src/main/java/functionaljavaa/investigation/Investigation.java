@@ -289,8 +289,8 @@ public final class Investigation {
             case "SAMPLE_ANALYSIS":
                 testId=(Integer)((Object[])decodeObjectDetail[1])[1];
                 Object[][] objInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
-                    new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, 
-                    new Object[]{testId}, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
+                    new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, 
+                    new Object[]{testId}, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()});
                 sampleId=Integer.valueOf(objInfo[0][0].toString());
                 smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE.getTableName(), testId, 
                     sampleId, testId, null, new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, new Object[]{investId.toString()});
@@ -298,8 +298,8 @@ public final class Investigation {
             case "SAMPLE_ANALYSIS_RESULT":
                 resultId=Integer.valueOf(((Object[])decodeObjectDetail[1])[1].toString());
                 objInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                    new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, 
-                    new Object[]{resultId}, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()});
+                    new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, 
+                    new Object[]{resultId}, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()});
                 sampleId=Integer.valueOf(objInfo[0][0].toString());
                 smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE.getTableName(), resultId, 
                     sampleId, null, resultId, new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, new Object[]{investId.toString()});

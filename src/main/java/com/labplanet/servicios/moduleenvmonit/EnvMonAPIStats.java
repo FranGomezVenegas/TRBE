@@ -35,6 +35,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -262,20 +263,20 @@ public class EnvMonAPIStats extends HttpServlet {
                 case QUERY_READING_OUT_OF_RANGE:
                     getSampleInfo=true;
                     getInvestigationInfo=false;
-                    filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SPEC_EVAL.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()};
+                    filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SPEC_EVAL.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()};
                     filterFieldValue=new Object[]{"IN"};
                     break;
                 case QUERY_SAMPLER_SAMPLING_HISTORY: 
                     getSampleInfo=true;
                     getInvestigationInfo=false;
-                    filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()};
+                    filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE.getName()};
                     filterFieldValue=new Object[]{samplerSmpTemplate};
                     break;
                 case KPI_PRODUCTION_LOT_SAMPLES: 
                     getSampleInfo=true;
                     getInvestigationInfo=false;
                     prodLotName=argValues[0].toString();
-                    filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PRODUCTION_LOT.getName()};
+                    filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.PRODUCTION_LOT.getName()};
                     filterFieldValue=new Object[]{prodLotName};
                     String prodLotFieldToRetrieve = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROD_LOT_FIELD_TO_RETRIEVE);
                     String[] prodLotFieldToRetrieveArr=new String[0];
@@ -298,8 +299,8 @@ public class EnvMonAPIStats extends HttpServlet {
                         }
                         jObjMainObject.put(TblsEnvMonitData.ProductionLot.TBL.getName(), jObj);
                     }
-                    JSONObject jObjRecoveryData = getRecoveryRate(new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PRODUCTION_LOT.getName()}, 
-                        TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PRODUCTION_LOT.getName(),
+                    JSONObject jObjRecoveryData = getRecoveryRate(new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.PRODUCTION_LOT.getName()}, 
+                        TblsData.ViewSampleAnalysisResultWithSpecLimits.PRODUCTION_LOT.getName(),
                         prodLotName,
                         true, true, true, true, 2);
                     jObjMainObject.put("recovery_rate", jObjRecoveryData);
@@ -379,25 +380,25 @@ public class EnvMonAPIStats extends HttpServlet {
             if (getSampleInfo){
                 String areaName = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_AREA);
                 if (areaName!=null && areaName.length()>0){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_AREA.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.AREA.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,areaName);
                 }
                 String locName = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME);
                 if (locName!=null && locName.length()>0){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOCATION_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.LOCATION_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,locName);
                 }
                 String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);                    
                 String[] sampleFieldToRetrieveArr=new String[0];
                 if ((sampleFieldToRetrieve!=null) && (sampleFieldToRetrieve.length()>0))
-                    if ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) sampleFieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
+                    if ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) sampleFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
                     else sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
                 if (sampleFieldToRetrieve==null)
-                    sampleFieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
+                    sampleFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
 
                 String samplingDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START);
                 String samplingDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END);
-                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLING_DATE.getName(), samplingDayStart, samplingDayEnd);
+                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLING_DATE.getName(), samplingDayStart, samplingDayEnd);
                 //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
                     //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()) && (buildDateRangeFromStrings.length>=2)){
@@ -409,7 +410,7 @@ public class EnvMonAPIStats extends HttpServlet {
 
                 String loginDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START);
                 String loginDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END);
-                buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOGGED_ON.getName(), loginDayStart, loginDayEnd);
+                buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.LOGGED_ON.getName(), loginDayStart, loginDayEnd);
                 //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
                 //    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()) && (buildDateRangeFromStrings.length>=2)){
@@ -421,49 +422,49 @@ public class EnvMonAPIStats extends HttpServlet {
 
                 String includeSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
                 if (includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples)){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,smpTemplate);
                 }
                 String excludeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
                 if (excludeSamplerSamples!=null && excludeSamplerSamples.length()>0 && Boolean.valueOf(excludeSamplerSamples)){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
                 }
 
                 String samplerName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLER);
                 if (samplerName!=null && samplerName.length()>0){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLER.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLER.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerName);
                 }
                 String samplerArea = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA);
                 if (samplerArea!=null && samplerArea.length()>0){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLER_AREA.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLER_AREA.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerArea);
                 }
                 String readingEqual = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_READING_EQUAL);
                 if (readingEqual!=null && readingEqual.length()>0){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,readingEqual);
                 }
                 String readingMin = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_READING_MIN);
                 if (readingMin!=null && readingMin.length()>0){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE_NUM.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE_NUM.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,Integer.valueOf(readingMin));
                 }
                 String readingMax = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_READING_MAX);
                 if (readingMax!=null && readingMax.length()>0){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE_NUM.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LESS_THAN.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE_NUM.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LESS_THAN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,Integer.valueOf(readingMax));
                 }
                 String excludeReadingNotEntered = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED);
                 if (excludeReadingNotEntered!=null && excludeReadingNotEntered.length()>0 && Boolean.valueOf(excludeReadingNotEntered)){
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,"");                
                 }
                 String includeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
                 if (includeSamplerSamples!=null && includeSamplerSamples.length()>0 && Boolean.valueOf(includeSamplerSamples)){
                     if (!(includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples)))
-                        filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
+                        filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
                 }            
                 String includeMicroOrganisms = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS);
@@ -473,14 +474,14 @@ public class EnvMonAPIStats extends HttpServlet {
                 if (microOrganismsToFind!=null && microOrganismsToFind.length()>0){
                     includeMicroOrganisms=Boolean.TRUE.toString();
                     if (!(includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples))){
-                        filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
+                        filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
                         filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
                     }
                 }
 
-                sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), 
                          filterFieldName, filterFieldValue,
-                         sampleFieldToRetrieveArr , new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName()+" desc"} ); 
+                         sampleFieldToRetrieveArr , new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName()+" desc"} ); 
                 jObj=new JSONObject();
                 JSONArray sampleJsonArr = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
@@ -489,7 +490,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     for (Object[] curRec: sampleInfo){
                         jObj= LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRec);
                         if (Boolean.valueOf(includeMicroOrganisms)){
-                            Integer curSampleId = Integer.valueOf(curRec[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName())].toString());
+                            Integer curSampleId = Integer.valueOf(curRec[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName())].toString());
                             Object[][] sampleMicroOrgInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
                                 new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()}, new Object[]{curSampleId},
                                 new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName()} , new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()+" desc"} ); 
@@ -576,7 +577,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     JSONArray sampleGrouperJsonArr = new JSONArray();
                     String[] groupInfo = currGroup.split("\\*");
                     String[] smpGroupFldsArr=groupInfo[0].split(",");
-                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), 
                             smpGroupFldsArr, filterFieldName, filterFieldValue, 
                             null);
                     smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "count");

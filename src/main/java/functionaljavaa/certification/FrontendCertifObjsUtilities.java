@@ -55,7 +55,7 @@ public class FrontendCertifObjsUtilities {
     
     public static JSONObject certifObjCertifModeOwnUserAction(String[] objFldNames, Object[] objFldValues){
         JSONObject mainObj=new JSONObject();
-        Integer valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsData.ViewUserAndAnalysisMethodCertificationView.FLD_LIGHT.getName());
+        Integer valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsData.ViewUserAndAnalysisMethodCertificationView.LIGHT.getName());
         if ( valuePosicInArray>1 && "GREEN".equalsIgnoreCase(LPNulls.replaceNull(objFldValues[valuePosicInArray].toString())) ){
             mainObj.put("action_visible", false);
             return mainObj;
