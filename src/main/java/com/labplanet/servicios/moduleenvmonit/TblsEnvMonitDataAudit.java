@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
