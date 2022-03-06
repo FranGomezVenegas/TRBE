@@ -22,15 +22,15 @@ public class ConfigMicroorganisms {
     public static Object[] adhocMicroorganismAdd(String orgName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken(); 
-        Object[] existsMicroorg = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
-                new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()}, new Object[]{orgName});
+        Object[] existsMicroorg = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableName(), 
+                new String[]{TblsEnvMonitConfig.MicroOrganism.NAME.getName()}, new Object[]{orgName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsMicroorg[0].toString())){
-            Object[] existsMicroorgAhdoc = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.MicroOrganismAdhoc.TBL.getName(), 
-                    new String[]{TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_NAME.getName()}, new Object[]{orgName});            
+            Object[] existsMicroorgAhdoc = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM_ADHOC.getTableName(), 
+                    new String[]{TblsEnvMonitConfig.MicroOrganismAdhoc.NAME.getName()}, new Object[]{orgName});            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsMicroorgAhdoc[0].toString()))
                 return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), 
-                    TblsEnvMonitConfig.MicroOrganismAdhoc.TBL.getName(),                 
-                    new String[]{TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_NAME.getName(), TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_ADDED_BY.getName(), TblsEnvMonitConfig.MicroOrganismAdhoc.FLD_ADDED_ON.getName()}, 
+                    TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM_ADHOC.getTableName(),                 
+                    new String[]{TblsEnvMonitConfig.MicroOrganismAdhoc.NAME.getName(), TblsEnvMonitConfig.MicroOrganismAdhoc.ADDED_BY.getName(), TblsEnvMonitConfig.MicroOrganismAdhoc.ADDED_ON.getName()}, 
                     new Object[]{orgName, token.getPersonName(), LPDate.getCurrentTimeStamp()}); 
             else
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "MicroorganismExistsInMicroorganism", new Object[]{orgName});

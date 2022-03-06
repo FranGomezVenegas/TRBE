@@ -246,8 +246,8 @@ public class DataSampleIncubation {
             }
         }else if (sampleIncubationMode.contains(SampleIncubationLevel.INCUBATOR.toString())){
             if (incubName==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED, null);
-            Object[] incubInfo=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
-                    new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{incubName});
+            Object[] incubInfo=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+                    new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{incubName});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubInfo[0].toString()))
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED, new Object[]{incubName, procInstanceName});
             Integer tempReadingEvId=null;

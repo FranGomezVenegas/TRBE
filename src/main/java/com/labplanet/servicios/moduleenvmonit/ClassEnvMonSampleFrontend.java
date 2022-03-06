@@ -42,6 +42,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
@@ -313,11 +314,11 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     }                    
                     return;                  
                 case GET_MICROORGANISM_LIST:
-                    String[] fieldsToRetrieve=getFieldsListToRetrieve("", TblsEnvMonitConfig.MicroOrganism.getAllFieldNames());                    
-                    Object[][] list=getTableData(GlobalVariables.Schemas.CONFIG.getName(), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
-                        "", TblsEnvMonitConfig.MicroOrganism.getAllFieldNames(), 
-                        new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
-                        new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()});     
+                    String[] fieldsToRetrieve=EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableFields());
+                    Object[][] list=getTableData(GlobalVariables.Schemas.CONFIG.getName(), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableName(), 
+                        "", EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableFields()), 
+                        new String[]{TblsEnvMonitConfig.MicroOrganism.NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+                        new String[]{TblsEnvMonitConfig.MicroOrganism.NAME.getName()});     
                     JSONArray jArr=new JSONArray();
                     for (Object[] curRec: list){
                         JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
@@ -748,16 +749,16 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     
                     prodLotfieldToRetrieveArr=new String[0];
                     if ((prodLotfieldsToRetrieveStr!=null) && (prodLotfieldsToRetrieveStr.length()>0))
-                        if ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) prodLotfieldToRetrieveArr=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();
+                        if ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) prodLotfieldToRetrieveArr=EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableFields());
                         else prodLotfieldToRetrieveArr=prodLotfieldsToRetrieveStr.split("\\|");
-                    prodLotfieldToRetrieveArr=LPArray.addValueToArray1D(prodLotfieldToRetrieveArr, TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName());
+                    prodLotfieldToRetrieveArr=LPArray.addValueToArray1D(prodLotfieldToRetrieveArr, TblsEnvMonitConfig.InstrIncubator.NAME.getName());
                     prodLotfieldToDisplayArr=new String[0];
                     if ((prodLotfieldsToDisplayStr!=null) && (prodLotfieldsToDisplayStr.length()>0))
-                        if ("ALL".equalsIgnoreCase(prodLotfieldsToDisplayStr)) prodLotfieldToDisplayArr=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();                        
+                        if ("ALL".equalsIgnoreCase(prodLotfieldsToDisplayStr)) prodLotfieldToDisplayArr=EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableFields());                        
                         else prodLotfieldToDisplayArr=prodLotfieldsToDisplayStr.split("\\|");
-                    String[] incubTblAllFields=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();
-                    Object[][] incubInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
-                            new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{lotName}, 
+                    String[] incubTblAllFields=EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableFields());
+                    Object[][] incubInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+                            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{lotName}, 
                             incubTblAllFields);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubInfo[0][0].toString())){
                         this.isSuccess=false;

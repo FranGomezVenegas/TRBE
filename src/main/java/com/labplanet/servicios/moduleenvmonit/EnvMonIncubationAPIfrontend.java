@@ -109,13 +109,13 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
         switch (endPoint){
             case INCUBATORS_LIST: 
-                String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_STAGE.getName()};
+                String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.STAGE.getName()};
                 String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};     
-                Object[][] incubatorsList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
-                        new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, new Object[]{true}, 
-                        fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()});
+                Object[][] incubatorsList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+                        new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}, new Object[]{true}, 
+                        fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
                 JSONArray jArr = new JSONArray();
                 for (Object[] currInstrument: incubatorsList){
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrument);

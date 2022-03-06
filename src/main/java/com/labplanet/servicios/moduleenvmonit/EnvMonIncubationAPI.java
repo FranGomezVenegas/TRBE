@@ -40,18 +40,18 @@ public class EnvMonIncubationAPI extends HttpServlet {
         EM_INCUBATION_ACTIVATE("EM_INCUBATION_ACTIVATE", "incubator_activate_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
-                .add("table", TblsEnvMonitConfig.InstrIncubator.TBL.getName()).build()).build()
+                .add("table", TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()).build()).build()
         ),
         EM_INCUBATION_DEACTIVATE("EM_INCUBATION_DEACTIVATE", "incubator_deactivate_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
-                .add("table", TblsEnvMonitConfig.InstrIncubator.TBL.getName()).build()).build()
+                .add("table", TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()).build()).build()
         ),
         EM_INCUBATION_ADD_TEMP_READING("EM_INCUBATION_ADD_TEMP_READING", "incubator_add_temp_reading_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_TEMPERATURE, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), true, 7)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
-                .add("table", TblsEnvMonitConfig.InstrIncubator.TBL.getName()).build())
+                .add("table", TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                     .add("table", TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName()).build()).build()
         ),

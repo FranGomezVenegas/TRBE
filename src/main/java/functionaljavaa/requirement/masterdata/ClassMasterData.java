@@ -23,6 +23,7 @@ import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
@@ -205,10 +206,10 @@ public class ClassMasterData {
                 case MD_INCUBATORS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
-                            new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_DESCRIPTION.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName(),
-                            TblsEnvMonitConfig.InstrIncubator.FLD_CREATED_ON.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_CREATED_BY.getName()},
-                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.FLD_DESCRIPTION.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()).getAsBoolean(), LPDate.getCurrentTimeStamp(), userCreator});
+                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+                            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName(),
+                            TblsEnvMonitConfig.InstrIncubator.CREATED_ON.getName(), TblsEnvMonitConfig.InstrIncubator.CREATED_BY.getName()},
+                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()).getAsBoolean(), LPDate.getCurrentTimeStamp(), userCreator});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }                    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incubators", null);
@@ -216,10 +217,10 @@ public class ClassMasterData {
                 case MD_INCUB_BATCHES:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.IncubBatch.TBL.getName(), 
-                            new String[]{TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_VERSION.getName(), TblsEnvMonitConfig.IncubBatch.FLD_NAME.getName(), TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName(), TblsEnvMonitConfig.IncubBatch.FLD_ACTIVE.getName(),
-                            TblsEnvMonitConfig.IncubBatch.FLD_CREATED_ON.getName(), TblsEnvMonitConfig.IncubBatch.FLD_CREATED_BY.getName()},
-                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName()).getAsInt(), 1, jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.FLD_TYPE.getName()).getAsString(), true, LPDate.getCurrentTimeStamp(), userCreator});
+                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH.getTableName(), 
+                            new String[]{TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_VERSION.getName(), TblsEnvMonitConfig.IncubBatch.NAME.getName(), TblsEnvMonitConfig.IncubBatch.TYPE.getName(), TblsEnvMonitConfig.IncubBatch.ACTIVE.getName(),
+                            TblsEnvMonitConfig.IncubBatch.CREATED_ON.getName(), TblsEnvMonitConfig.IncubBatch.CREATED_BY.getName()},
+                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_CONFIG_ID.getName()).getAsInt(), 1, jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.TYPE.getName()).getAsString(), true, LPDate.getCurrentTimeStamp(), userCreator});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incub batch", null);
@@ -227,9 +228,9 @@ public class ClassMasterData {
                 case MD_MICROORGANISMS: 
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
-                            new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()},
-                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()).getAsString()});
+                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableName(), 
+                            new String[]{TblsEnvMonitConfig.MicroOrganism.NAME.getName()},
+                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.MicroOrganism.NAME.getName()).getAsString()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new microorganisms", null);
@@ -261,34 +262,34 @@ public class ClassMasterData {
                 case MD_PROGRAMS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        String[] fldName=new String[]{TblsEnvMonitConfig.Program.FLD_PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.Program.FLD_PROGRAM_CONFIG_VERSION.getName(),
-                            TblsEnvMonitConfig.Program.FLD_SPEC_CODE.getName(),
-                            TblsEnvMonitConfig.Program.FLD_CREATED_BY.getName(), TblsEnvMonitConfig.Program.FLD_CREATED_ON.getName()};
-                        Object[] fldValue=new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.Program.FLD_PROGRAM_CONFIG_ID.getName()).getAsInt(), 1,
-                            jO.getAsJsonObject().get(TblsEnvMonitConfig.Program.FLD_SPEC_CODE.getName()).getAsString(),
+                        String[] fldName=new String[]{TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName(),
+                            TblsEnvMonitConfig.Program.SPEC_CODE.getName(),
+                            TblsEnvMonitConfig.Program.CREATED_BY.getName(), TblsEnvMonitConfig.Program.CREATED_ON.getName()};
+                        Object[] fldValue=new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()).getAsInt(), 1,
+                            jO.getAsJsonObject().get(TblsEnvMonitConfig.Program.SPEC_CODE.getName()).getAsString(),
                             userCreator, LPDate.getCurrentTimeStamp()};
-                        String[] allFieldNames = TblsEnvMonitConfig.Program.getAllFieldNames();
+                        String[] allFieldNames = EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableFields());
                         for (String curFld:allFieldNames){
                             
                             if (!LPArray.valueInArray(fldName, curFld) && jO.getAsJsonObject().has(curFld)){
                                 fldName=LPArray.addValueToArray1D(fldName, curFld);
-                                if (TblsEnvMonitConfig.Program.FLD_SAMPLE_CONFIG_CODE_VERSION.getName().equalsIgnoreCase(curFld))
+                                if (TblsEnvMonitConfig.Program.SAMPLE_CONFIG_CODE_VERSION.getName().equalsIgnoreCase(curFld))
                                     fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsInt());
-                                else if (TblsEnvMonitConfig.Program.FLD_SPEC_CONFIG_VERSION.getName().equalsIgnoreCase(curFld))
+                                else if (TblsEnvMonitConfig.Program.SPEC_CONFIG_VERSION.getName().equalsIgnoreCase(curFld))
                                     fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsInt());
                                 else
                                     fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsString());
                             }
                         }
-                        if (!LPArray.valueInArray(fldName, TblsEnvMonitConfig.Program.FLD_SAMPLE_CONFIG_CODE_VERSION.getName())){
-                            fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.Program.FLD_SAMPLE_CONFIG_CODE_VERSION.getName());
+                        if (!LPArray.valueInArray(fldName, TblsEnvMonitConfig.Program.SAMPLE_CONFIG_CODE_VERSION.getName())){
+                            fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.Program.SAMPLE_CONFIG_CODE_VERSION.getName());
                             fldValue=LPArray.addValueToArray1D(fldValue, 1);                            
                         }
-                        if (!LPArray.valueInArray(fldName, TblsEnvMonitConfig.Program.FLD_SPEC_CONFIG_VERSION.getName())){
-                            fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.Program.FLD_SPEC_CONFIG_VERSION.getName());
+                        if (!LPArray.valueInArray(fldName, TblsEnvMonitConfig.Program.SPEC_CONFIG_VERSION.getName())){
+                            fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.Program.SPEC_CONFIG_VERSION.getName());
                             fldValue=LPArray.addValueToArray1D(fldValue, 1);                            
                         }
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.Program.TBL.getName(), 
+                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableName(), 
                             fldName, fldValue);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }
@@ -297,27 +298,27 @@ public class ClassMasterData {
                 case MD_PROGRAM_LOCATIONS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        String[] fldName=new String[]{TblsEnvMonitConfig.ProgramLocation.FLD_PROGRAM_ID.getName()};
-                        //    TblsEnvMonitConfig.ProgramLocation.FLD_CREATED_BY.getName(), TblsEnvMonitConfig.ProgramLocation.FLD_CREATED_ON.getName()};
-                        Object[] fldValue=new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.ProgramLocation.FLD_PROGRAM_ID.getName()).getAsInt()};
+                        String[] fldName=new String[]{TblsEnvMonitConfig.ProgramLocation.PROGRAM_ID.getName()};
+                        //    TblsEnvMonitConfig.ProgramLocation.CREATED_BY.getName(), TblsEnvMonitConfig.ProgramLocation.CREATED_ON.getName()};
+                        Object[] fldValue=new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.ProgramLocation.PROGRAM_ID.getName()).getAsInt()};
 //                            userCreator, LPDate.getCurrentTimeStamp()};
-                        String[] allFieldNames = TblsEnvMonitConfig.ProgramLocation.getAllFieldNames();
+                        String[] allFieldNames = EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableFields());
                         for (String curFld:allFieldNames){
                             if (!LPArray.valueInArray(fldName, curFld) && jO.getAsJsonObject().has(curFld)){
                                 fldName=LPArray.addValueToArray1D(fldName, curFld);
-                                if (TblsEnvMonitConfig.ProgramLocation.FLD_REQUIRES_PERSON_ANA.getName().equalsIgnoreCase(curFld))
+                                if (TblsEnvMonitConfig.ProgramLocation.REQUIRES_PERSON_ANA.getName().equalsIgnoreCase(curFld))
                                     fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsBoolean());
-                                else if (TblsEnvMonitConfig.ProgramLocation.FLD_SPEC_CODE_VERSION.getName().equalsIgnoreCase(curFld))
+                                else if (TblsEnvMonitConfig.ProgramLocation.SPEC_CODE_VERSION.getName().equalsIgnoreCase(curFld))
                                     fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsInt());
                                 else
                                     fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsString());
                             }
                         }
-                        if (!LPArray.valueInArray(fldName, TblsEnvMonitConfig.ProgramLocation.FLD_SPEC_CODE_VERSION.getName())){
-                            fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.ProgramLocation.FLD_SPEC_CODE_VERSION.getName());
+                        if (!LPArray.valueInArray(fldName, TblsEnvMonitConfig.ProgramLocation.SPEC_CODE_VERSION.getName())){
+                            fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.ProgramLocation.SPEC_CODE_VERSION.getName());
                             fldValue=LPArray.addValueToArray1D(fldValue, 1);                            
                         }
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.ProgramLocation.TBL.getName(), 
+                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(), 
                             fldName, fldValue);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                     }

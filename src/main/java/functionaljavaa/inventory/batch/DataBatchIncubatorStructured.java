@@ -79,10 +79,10 @@ public final class DataBatchIncubatorStructured {
         } else {
             fldValue[LPArray.valuePosicInArray(fldName, TblsEnvMonitData.IncubBatch.FLD_TYPE.getName())] = DataBatchIncubator.BatchIncubatorType.STRUCTURED.toString();
         }
-        String[] templateFldsToPropagate= new String[]{TblsEnvMonitConfig.IncubBatch.FLD_STRUCT_NUM_ROWS.getName(), TblsEnvMonitConfig.IncubBatch.FLD_STRUCT_NUM_COLS.getName()
-                    , TblsEnvMonitConfig.IncubBatch.FLD_STRUCT_TOTAL_POSITIONS.getName(), TblsEnvMonitConfig.IncubBatch.FLD_STRUCT_ROWS_NAME.getName(), TblsEnvMonitConfig.IncubBatch.FLD_STRUCT_COLS_NAME.getName()};
-        Object[][] templateDefInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.IncubBatch.TBL.getName(), 
-                new String[]{TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.FLD_INCUB_BATCH_VERSION.getName()}, 
+        String[] templateFldsToPropagate= new String[]{TblsEnvMonitConfig.IncubBatch.STRUCT_NUM_ROWS.getName(), TblsEnvMonitConfig.IncubBatch.STRUCT_NUM_COLS.getName()
+                    , TblsEnvMonitConfig.IncubBatch.STRUCT_TOTAL_POSITIONS.getName(), TblsEnvMonitConfig.IncubBatch.STRUCT_ROWS_NAME.getName(), TblsEnvMonitConfig.IncubBatch.STRUCT_COLS_NAME.getName()};
+        Object[][] templateDefInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH.getTableName(), 
+                new String[]{TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_VERSION.getName()}, 
                 new Object[]{bTemplateId, bTemplateVersion}, templateFldsToPropagate);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(templateDefInfo[0][0].toString())) return LPArray.array2dTo1d(templateDefInfo);
         for (int i=0; i<templateFldsToPropagate.length;i++){

@@ -189,10 +189,10 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
             Integer incubPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName());
             JSONArray instrLast10ReadingsjArr = new JSONArray();
             if (incubPosic>-1 && currBatch[incubPosic].toString().length()>0){
-                String[] incubatorFldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_LOCKED_REASON.getName()};
-                whereFieldsNameArr=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()};
+                String[] incubatorFldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.LOCKED_REASON.getName()};
+                whereFieldsNameArr=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()};
                 whereFieldsValueArr=new Object[]{currBatch[incubPosic].toString()};
-                Object[][] instrIncubatorInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
+                Object[][] instrIncubatorInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
                         whereFieldsNameArr, whereFieldsValueArr, incubatorFldsToRetrieve);
                 String[] tempReadingFldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),

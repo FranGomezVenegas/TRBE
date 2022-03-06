@@ -38,8 +38,8 @@ class EnvMonFrontEndUtilities {
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
-    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.Program.TBL.getName(), 
-            new String[]{TblsEnvMonitConfig.Program.FLD_PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.Program.FLD_PROGRAM_CONFIG_VERSION.getName()}, 
+    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableName(), 
+            new String[]{TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName()}, 
             new Object[]{programConfigId, programVersion}, 
             fieldsName, sortFields);
   }
@@ -60,8 +60,8 @@ class EnvMonFrontEndUtilities {
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
-    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
-            new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName()}, 
+    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE.getTableName(), 
+            new String[]{TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID.getName()}, 
             new Object[]{programConfigId,}, 
             fieldsName, sortFields);
   }
