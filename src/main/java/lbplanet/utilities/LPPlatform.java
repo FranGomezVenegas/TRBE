@@ -873,12 +873,12 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
                 return;
         }
 
-        String[] fldNames=new String[]{TblsCnfg.zzzDbErrorLog.FLD_CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY.getName(), TblsCnfg.zzzDbErrorLog.FLD_QUERY_PARAMETERS.getName(),
-        TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()};
+        String[] fldNames=new String[]{TblsCnfg.zzzDbErrorLog.CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.QUERY.getName(), TblsCnfg.zzzDbErrorLog.QUERY_PARAMETERS.getName(),
+        TblsCnfg.zzzDbErrorLog.ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.RESOLVED.getName()};
         Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), query, Arrays.toString(queryParams), msgCode, Arrays.toString(callerInfo), false};
         String actionName=ProcedureRequestSession.getInstanceForActions(null, null, null).getActionName();
         if (actionName!=null){
-            fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_ACTION_NAME.getName());
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.ACTION_NAME.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, actionName);
         }        
         Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName(), 
@@ -907,16 +907,16 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
                 return;
         }        
-        String[] fldNames=new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_AREA.getName(),
-            TblsCnfg.zzzPropertiesMissing.FLD_RULE_NAME.getName(), TblsCnfg.zzzPropertiesMissing.FLD_CLASS_CALLER.getName()};
+        String[] fldNames=new String[]{TblsCnfg.zzzPropertiesMissing.CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.AREA.getName(),
+            TblsCnfg.zzzPropertiesMissing.RULE_NAME.getName(), TblsCnfg.zzzPropertiesMissing.CLASS_CALLER.getName()};
         Object[] fldValues=new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName, Arrays.toString(callerInfo)};
         if (procInstanceName!=null){
-            fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_PROCEDURE.getName());
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.PROCEDURE.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, procInstanceName);
         }
         String actionName=ProcedureRequestSession.getInstanceForActions(null, null, null).getActionName();
         if (actionName!=null){
-            fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.FLD_ACTION_NAME.getName());
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.ACTION_NAME.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, actionName);
         }
         Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName(), 

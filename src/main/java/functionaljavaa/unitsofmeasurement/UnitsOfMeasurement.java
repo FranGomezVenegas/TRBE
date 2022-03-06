@@ -139,15 +139,15 @@ public class UnitsOfMeasurement {
             return conversion;
         }
         String tableName = TblsCnfg.TablesConfig.UOM.getTableName();
-        String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName();
+        String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
 
-        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName(),
-            TblsCnfg.UnitsOfMeasurement.FLD_FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.FLD_OFFSET_VALUE.getName()};
+        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.IS_BASE.getName(),
+            TblsCnfg.UnitsOfMeasurement.FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.OFFSET_VALUE.getName()};
         Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()},  new Object[]{currentUnit}, fieldsToGet );
+                 new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{currentUnit}, fieldsToGet );
         Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()},  new Object[]{newUnit}, fieldsToGet);
+                 new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{newUnit}, fieldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currentUnitInfo[0][0].toString())){
             return currentUnitInfo[0];
         }
@@ -187,18 +187,18 @@ public class UnitsOfMeasurement {
 
         Object[] conversion = new Object[6];
         String tableName = TblsCnfg.TablesConfig.UOM.getTableName();
-        String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName();
+        String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName();
         BigDecimal valueConverted = this.getOrigQuantity();
 
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
 
-        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName(),
-            TblsCnfg.UnitsOfMeasurement.FLD_FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.FLD_OFFSET_VALUE.getName()};
+        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.IS_BASE.getName(),
+            TblsCnfg.UnitsOfMeasurement.FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.OFFSET_VALUE.getName()};
         Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()},  new Object[]{this.getOrigQuantityUom()}, fieldsToGet );
+                 new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{this.getOrigQuantityUom()}, fieldsToGet );
         Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()},  new Object[]{newUnit}, fieldsToGet);
+                 new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{newUnit}, fieldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currentUnitInfo[0][0].toString())){
             this.convertedFine=false;
             this.conversionErrorDetail=currentUnitInfo;
@@ -269,8 +269,8 @@ public class UnitsOfMeasurement {
         }
 
         Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName()},  new Object[]{family}, fieldsToRetrieve,
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.FLD_OFFSET_VALUE.getName()});
+                 new String[]{TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName()},  new Object[]{family}, fieldsToRetrieve,
+                 new String[]{TblsCnfg.UnitsOfMeasurement.FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.OFFSET_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(unitsList[0][0].toString())) return unitsList;
 
         return unitsList;
@@ -289,7 +289,7 @@ public class UnitsOfMeasurement {
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
 
         Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
-                 new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName(), TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName()},  new Object[]{family, true}, new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()});
+                 new String[]{TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName(), TblsCnfg.UnitsOfMeasurement.IS_BASE.getName()},  new Object[]{family, true}, new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()});
         return unitsList[0][0].toString();
     }
     
@@ -299,10 +299,10 @@ public class UnitsOfMeasurement {
         String[] whereFieldNames = new String[0];
         String[] whereFieldValues = new String[]{uomName};
         if (UomImportType.INDIV.toString().equalsIgnoreCase(importType)){
-            whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()};
+            whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()};
         }
         if (UomImportType.FAMIL.toString().equalsIgnoreCase(importType)){
-            whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName()};
+            whereFieldNames=new String[]{TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName()};
         }
         return Rdbms.insertRecordInTableFromTable(true,getAllFieldNames(TblsCnfg.TablesConfig.UOM.getTableFields()),
                 GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.UOM.getTableName(), 

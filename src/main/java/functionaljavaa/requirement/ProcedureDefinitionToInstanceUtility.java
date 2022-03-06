@@ -107,7 +107,7 @@ public class ProcedureDefinitionToInstanceUtility {
                 for (String sp: sopNames){
                     if (sopSectionName!=null){sp = sp+"-"+sopSectionName;}  
                     Object[] diagnoses = Rdbms.existsRecord(schemaName+"-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
-                            new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{sp});
+                            new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName()}, new Object[]{sp});
                     if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) && (role!=null) ){                  
                         String[] roles = role.split(",");
                         for (String r: roles){         

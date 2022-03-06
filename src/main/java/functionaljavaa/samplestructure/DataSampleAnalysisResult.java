@@ -278,11 +278,11 @@ public class DataSampleAnalysisResult {
             sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName});
         }
         Object[][] sampleRulesData = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), 
-                new String[]{TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName()}, 
-                new Object[]{sampleConfigCode, sampleConfigCodeVersion}, new String[]{TblsCnfg.SampleRules.FLD_TEST_ANALYST_REQUIRED.getName()});        
+                new String[]{TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName()}, 
+                new Object[]{sampleConfigCode, sampleConfigCodeVersion}, new String[]{TblsCnfg.SampleRules.TEST_ANALYST_REQUIRED.getName()});        
         if ( (sampleRulesData[0][0]!=null) && (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRulesData[0][0].toString())) ) 
             return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_RULES_NOT_FOUND, 
-                new Object[]{TblsCnfg.SampleRules.FLD_ANALYST_ASSIGNMENT_MODE.getName(), sampleConfigCode, sampleConfigCodeVersion, schemaConfigName})};
+                new Object[]{TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName(), sampleConfigCode, sampleConfigCodeVersion, schemaConfigName})};
         Boolean analystRequired=false;
         if (sampleRulesData[0][0]!=null){analystRequired = Boolean.valueOf(sampleRulesData[0][0].toString());}
         if (analystRequired) {

@@ -152,7 +152,7 @@ public class ProcedureDeployment extends HttpServlet {
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procUsers2D);
             }
             Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(procInstanceSchemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
-                    new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"),
+                    new String[]{TblsCnfg.SopMetaData.SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"),
                     PROC_DISPLAY_PROC_INSTANCE_SOPS_SORT.split("\\|"), true );
             if (PROC_DISPLAY_PROC_INSTANCE_SOPS){
                 procSopInMetaData = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"),
@@ -160,7 +160,7 @@ public class ProcedureDeployment extends HttpServlet {
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procSopInMetaData);
             }
             if (PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE){
-                Object[] procSopMetaDataSopName = LPArray.getColumnFromArray2D(procSopInMetaData, LPArray.valuePosicInArray(PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"), TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()));
+                Object[] procSopMetaDataSopName = LPArray.getColumnFromArray2D(procSopInMetaData, LPArray.valuePosicInArray(PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"), TblsCnfg.SopMetaData.SOP_NAME.getName()));
                 String matching=LPTestingOutFormat.TST_ICON_UNDEFINED + " Not Implemented Yet";
                 HashMap<String, Object[]> procSopsInMetaData = LPArray.evaluateValuesAreInArray(
                         procSopMetaDataSopName, procEventSOPS);

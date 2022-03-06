@@ -60,10 +60,10 @@ public class FrontendCertifObjsUtilities {
             mainObj.put("action_visible", false);
             return mainObj;
         }
-        valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsCnfg.SopMetaData.FLD_CERTIFICATION_MODE.getName());
+        valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsCnfg.SopMetaData.CERTIFICATION_MODE.getName());
         if (valuePosicInArray==-1){
             mainObj.put("action_visible", false);
-            mainObj.put("error", TblsCnfg.SopMetaData.FLD_CERTIFICATION_MODE.getName()+" field not found to determine the mode, please review definition");
+            mainObj.put("error", TblsCnfg.SopMetaData.CERTIFICATION_MODE.getName()+" field not found to determine the mode, please review definition");
             return mainObj;
         }
         String certifMode =objFldValues[valuePosicInArray].toString();

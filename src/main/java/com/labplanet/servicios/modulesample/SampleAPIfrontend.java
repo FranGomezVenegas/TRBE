@@ -93,14 +93,14 @@ public class SampleAPIfrontend extends HttpServlet {
             
             switch (endPoint){
             case GET_SAMPLETEMPLATES:       
-                String[] filterFieldName = new String[]{TblsCnfg.Sample.FLD_JSON_DEFINITION.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
+                String[] filterFieldName = new String[]{TblsCnfg.Sample.JSON_DEFINITION.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
                 Object[] filterFieldValue = new Object[]{""};
 /*                filterFieldName = LPArray.addValueToArray1D(filterFieldName, "code");
                 if ("process-us".equalsIgnoreCase(procInstanceName)){
                     filterFieldValue = LPArray.addValueToArray1D(filterFieldValue, "specSamples");
                 }else{filterFieldValue = LPArray.addValueToArray1D(filterFieldValue, "sampleTemplate");}    */
                 Object[][] datas = Rdbms.getRecordFieldsByFilter(schemaConfigName,TblsCnfg.TablesConfig.SAMPLE.getTableName(), 
-                        filterFieldName, filterFieldValue, new String[] { TblsCnfg.Sample.FLD_JSON_DEFINITION.getName()});
+                        filterFieldName, filterFieldValue, new String[] { TblsCnfg.Sample.JSON_DEFINITION.getName()});
                 Rdbms.closeRdbms();
                 JSONObject proceduresList = new JSONObject();
                 JSONArray jArray = new JSONArray();

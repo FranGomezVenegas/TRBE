@@ -42,18 +42,18 @@ public class SpecFrontEndUtilities {
           }      
         }
         Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC.getTableName(), 
-                new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
+                new String[]{TblsCnfg.Spec.CODE.getName(), TblsCnfg.Spec.CONFIG_VERSION.getName()}, 
                 new Object[]{code, configVersion}, 
                 fieldsName, sortFields);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString()))
             return new JSONObject();
         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsName, records[0]);
-        Integer posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.Spec.FLD_ANALYSES.getName());
+        Integer posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.Spec.ANALYSES.getName());
         if (posicInArr>-1){
           String[] strToArr=records[0][posicInArr].toString().split("\\|");
             jObj.put("analysis_list", LPJson.convertToJSON(strToArr));
         }
-        posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.Spec.FLD_VARIATION_NAMES.getName());
+        posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.Spec.VARIATION_NAMES.getName());
         if (posicInArr>-1){
           String[] strToArr=records[0][posicInArr].toString().split("\\|");
             jObj.put("variation_names_list", LPJson.convertToJSON(strToArr));

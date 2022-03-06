@@ -301,14 +301,14 @@ public class ProcedureDefinitionToInstance {
         }
         jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procSopMetaDataRecordsSource.length);        
         for (Object[] curSopMetaData: procSopMetaDataRecordsSource){
-            Object curSopId = curSopMetaData[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), TblsCnfg.SopMetaData.FLD_SOP_ID.getName())];
-            Object curSopName = curSopMetaData[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), TblsCnfg.SopMetaData.FLD_SOP_NAME.getName())];
+            Object curSopId = curSopMetaData[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), TblsCnfg.SopMetaData.SOP_ID.getName())];
+            Object curSopName = curSopMetaData[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), TblsCnfg.SopMetaData.SOP_NAME.getName())];
             JSONArray jsArr = new JSONArray(); 
             JSONObject jsUserRoleObj = new JSONObject();
             jsUserRoleObj.put("SOP Id", curSopId); jsUserRoleObj.put("SOP Name", curSopName);
 
             Object[][] existsAppUser = Rdbms.getRecordFieldsByFilter(schemaNameDestination, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
-                    new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()}, new Object[]{curSopName.toString()}, new String[]{TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()});
+                    new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName()}, new Object[]{curSopName.toString()}, new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName()});
             String diagnosesForLog = (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) ? JsonTags.NO.getTagValue() : JsonTags.YES.getTagValue();
             jsUserRoleObj.put("SOP exists in the procedure?", diagnosesForLog); 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())){

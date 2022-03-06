@@ -228,7 +228,7 @@ public class AnalysisMethodCertif {
 
         if (expiryDateIsIncluded){
             Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), 
-                    new String[]{TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName()}, new Object[]{methodName});
+                    new String[]{TblsCnfg.AnalysisMethod.METHOD_NAME.getName()}, new Object[]{methodName});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
             else{
                 fldNames=LPArray.addValueToArray1D(fldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
@@ -337,7 +337,7 @@ public class AnalysisMethodCertif {
         String[] updFldNames=new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName(), TblsData.CertifUserAnalysisMethod.STATUS.getName(), TblsData.CertifUserAnalysisMethod.LIGHT.getName()}; 
         Object[] updFldValues=new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()};
         Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.METHODS.getTableName(), 
-                new String[]{TblsCnfg.Methods.FLD_CODE.getName()}, new Object[]{methodName});
+                new String[]{TblsCnfg.Methods.CODE.getName()}, new Object[]{methodName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[1].toString())) return expiryIntervalInfo;
         else{
             updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());

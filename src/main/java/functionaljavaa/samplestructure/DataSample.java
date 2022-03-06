@@ -132,7 +132,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if ((fieldIndexSpecCode!=-1) && (fieldIndexSpecCodeVersion!=-1)){
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, new String[]{TblsData.Sample.SPEC_CODE.getName(), TblsData.Sample.SPEC_CODE_VERSION.getName(), TblsData.Sample.SPEC_VARIATION_NAME.getName()});
             Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC.getTableName(), 
-                    new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
+                    new String[]{TblsCnfg.Spec.CODE.getName(), TblsCnfg.Spec.CONFIG_VERSION.getName()}, 
                     new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion]});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_SPEC_CONFIG_CODE, new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion], procInstanceName});    
@@ -160,7 +160,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{mandatoryFieldsMissingBuilder.toString()});    
         }                       
         Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SAMPLE.getTableName(), 
-                new String[]{TblsCnfg.Sample.FLD_CODE.getName(), TblsCnfg.Sample.FLD_CODE_VERSION.getName()}, new Object[]{sampleTemplate, sampleTemplateVersion});
+                new String[]{TblsCnfg.Sample.CODE.getName(), TblsCnfg.Sample.CODE_VERSION.getName()}, new Object[]{sampleTemplate, sampleTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_CONFIG_CODE, new Object[]{sampleTemplate, sampleTemplateVersion, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), diagnosis[5]});    
         String[] specialFields = labIntChecker.getStructureSpecialFields(sampleLevel+DataSampleBusinessRules.SUFFIX_SAMPLESTRUCTURE.getTagName());
@@ -671,14 +671,14 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String status = mandatoryFieldsValue[specialFieldIndex].toString();     
         if (status.length()==0){myDiagnoses = "ERROR: The parameter status cannot be null"; return myDiagnoses;}
         
-        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), new String[] {TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName()}, new Object[] {template, templateVersion});
+        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), new String[] {TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName()}, new Object[] {template, templateVersion});
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){
             myDiagnoses = "ERROR: The sample_rule record for "+template+" does not exist in schema"+schemaConfigName+". ERROR: "+diagnosis[5];}
         else{    
-            String[] fieldNames = new String[]{TblsCnfg.SampleRules.FLD_CODE.getName()};
+            String[] fieldNames = new String[]{TblsCnfg.SampleRules.CODE.getName()};
             Object[] fieldValues = new Object[]{template};
-            String[] fieldFilter = new String[] {TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName(), 
-                TblsCnfg.SampleRules.FLD_STATUSES.getName(), TblsCnfg.SampleRules.FLD_DEFAULT_STATUS.getName()};            
+            String[] fieldFilter = new String[] {TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName(), 
+                TblsCnfg.SampleRules.STATUSES.getName(), TblsCnfg.SampleRules.DEFAULT_STATUS.getName()};            
             Object[][] records = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), 
                     fieldNames, fieldValues, fieldFilter);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString())){

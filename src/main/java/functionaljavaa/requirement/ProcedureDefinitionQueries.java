@@ -152,7 +152,7 @@ public class ProcedureDefinitionQueries {
     }
     public static JSONObject allProcSops(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
         Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
-                new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISP_PROC_INSTC_SOPS_FLD_NAME.split("\\|"),
+                new String[]{TblsCnfg.SopMetaData.SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISP_PROC_INSTC_SOPS_FLD_NAME.split("\\|"),
                 PROC_DISP_PROC_INSTC_SOPS_SORT.split("\\|"), true );
         JSONArray sopArr=new JSONArray();
         for (Object[] curProcSop: procSopInMetaData){ 

@@ -323,7 +323,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             Rdbms.closeRdbms();
             return new JSONArray();
         }
-        String[] fieldsToRetrieve = new String[]{TblsCnfg.Methods.FLD_CODE.getName(), TblsCnfg.Methods.FLD_CONFIG_VERSION.getName()};
+        String[] fieldsToRetrieve = new String[]{TblsCnfg.Methods.CODE.getName(), TblsCnfg.Methods.CONFIG_VERSION.getName()};
         String anaMethCertifFieldsToRetrieve = argValues[0].toString(); 
         if (anaMethCertifFieldsToRetrieve!=null && anaMethCertifFieldsToRetrieve.length()>0) {                
             String[] sopFieldsToRetrieveArr = anaMethCertifFieldsToRetrieve.split("\\|");
@@ -334,7 +334,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         JSONArray myPendingAnaMethCertifByProc = new JSONArray();                 
         for (String currProc: allUserProcedurePrefix) {                   
             Object[][] procAnaMethCertif = Rdbms.getRecordFieldsByFilter(currProc+"-config", TblsCnfg.TablesConfig.METHODS.getTableName(), 
-                    new String[]{TblsCnfg.Methods.FLD_CODE.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
+                    new String[]{TblsCnfg.Methods.CODE.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procAnaMethCertif[0]))){
                 Object[] errMsg = LPFrontEnd.responseError(procAnaMethCertif, language, null);
                 Rdbms.closeRdbms();

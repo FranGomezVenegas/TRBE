@@ -313,16 +313,16 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String sampleConfigCode = (String) sampleData[0][0];
         Integer sampleConfigCodeVersion = (Integer) sampleData[0][1];
         Object[][] sampleRulesData = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), 
-                new String[]{TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName()}, 
+                new String[]{TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName()}, 
                 new Object[]{sampleConfigCode, sampleConfigCodeVersion}, 
-                new String[]{TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName(), TblsCnfg.SampleRules.FLD_ANALYST_ASSIGNMENT_MODE.getName()});
+                new String[]{TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName(), TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName()});
         String testAssignmentMode = (String) sampleRulesData[0][2];
         if (testAssignmentMode == null) {
             testAssignmentMode = "null";
         }
         if (!assignmentModes.contains(testAssignmentMode)) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSISASSIGNED_MODENOTRECOGNIZED, 
-                    new Object[]{TblsCnfg.SampleRules.FLD_ANALYST_ASSIGNMENT_MODE.getName(), sampleConfigCode, sampleConfigCodeVersion, testAssignmentMode, assignmentModes, procInstanceName,
+                    new Object[]{TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName(), sampleConfigCode, sampleConfigCodeVersion, testAssignmentMode, assignmentModes, procInstanceName,
                     testId, newAnalyst});
         }
         
@@ -382,7 +382,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             myDiagnoses = "ERROR: The parameter method_version cannot be null";
             return myDiagnoses;
         }
-        String[] fieldNames = new String[]{TblsCnfg.AnalysisMethod.FLD_ANALYSIS.getName(), TblsCnfg.AnalysisMethod.FLD_METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.FLD_METHOD_VERSION.getName()};
+        String[] fieldNames = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName()};
         Object[] fieldValues = new Object[]{analysis, methodName, methodVersion};
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), fieldNames, fieldValues);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())) {
@@ -469,9 +469,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             sampleSpecVariationName = (String) sampleSpecData[0][3];
             if (sampleSpecCode != null) {
                 Object[][] specRules = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC_RULES.getTableName(), 
-                        new String[]{TblsCnfg.SpecRules.FLD_CODE.getName(), TblsCnfg.SpecRules.FLD_CONFIG_VERSION.getName()}, 
-                        new Object[]{sampleSpecCode, sampleSpecCodeVersion}, new String[]{TblsCnfg.SpecRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.FLD_ALLOW_MULTI_SPEC.getName(), 
-                            TblsCnfg.SpecRules.FLD_CODE.getName(), TblsCnfg.SpecRules.FLD_CONFIG_VERSION.getName()});
+                        new String[]{TblsCnfg.SpecRules.CODE.getName(), TblsCnfg.SpecRules.CONFIG_VERSION.getName()}, 
+                        new Object[]{sampleSpecCode, sampleSpecCodeVersion}, new String[]{TblsCnfg.SpecRules.ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.ALLOW_MULTI_SPEC.getName(), 
+                            TblsCnfg.SpecRules.CODE.getName(), TblsCnfg.SpecRules.CONFIG_VERSION.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specRules[0][0].toString())) {
                     return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleSpecCode, sampleSpecCodeVersion, schemaDataName});
                 }
@@ -542,7 +542,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         Object value = null;
         Object[] whereResultFieldValue = new Object[0];
         String[] whereResultFieldName = new String[0];
-        String fieldNeed = TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName();
+        String fieldNeed = TblsCnfg.AnalysisMethodParams.ANALYSIS.getName();
         whereResultFieldName = LPArray.addValueToArray1D(whereResultFieldName, fieldNeed);
         specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(fieldNeed);
         if (specialFieldIndex == -1) {
@@ -556,7 +556,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             value = mandatoryFieldsValue[specialFieldIndex];
         }
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
-        fieldNeed = TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName();
+        fieldNeed = TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName();
         whereResultFieldName = LPArray.addValueToArray1D(whereResultFieldName, fieldNeed);
         specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(fieldNeed);
         if (specialFieldIndex == -1) {
@@ -570,7 +570,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             value = mandatoryFieldsValue[specialFieldIndex];
         }
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
-        fieldNeed = TblsCnfg.AnalysisMethodParams.FLD_METHOD_VERSION.getName();
+        fieldNeed = TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName();
         whereResultFieldName = LPArray.addValueToArray1D(whereResultFieldName, fieldNeed);
         specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(fieldNeed);
         if (specialFieldIndex == -1) {
@@ -584,8 +584,8 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             value = mandatoryFieldsValue[specialFieldIndex];
         }
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
-        String[] getResultFields = new String[]{TblsCnfg.AnalysisMethodParams.FLD_PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.FLD_MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName(),
-            TblsCnfg.AnalysisMethodParams.FLD_PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.FLD_NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.FLD_UOM.getName(), TblsCnfg.AnalysisMethodParams.FLD_UOM_CONVERSION_MODE.getName()};
+        String[] getResultFields = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
+            TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName()};
         Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), 
                 whereResultFieldName, whereResultFieldValue, getResultFields);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
@@ -662,7 +662,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             for (int col = 0; col < resultFieldRecords[0].length; col++) {
                 fieldVal = LPArray.addValueToArray1D(fieldVal, resultFieldRecord[col]);
             }
-            valuePosic = Arrays.asList(getResultFields).indexOf(TblsCnfg.AnalysisMethodParams.FLD_NUM_REPLICAS.getName());
+            valuePosic = Arrays.asList(getResultFields).indexOf(TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName());
             Integer numReplicas = 1;
             String resultReplicaFieldName = TblsData.SampleAnalysisResult.REPLICA.getName();
             if (valuePosic == -1) {

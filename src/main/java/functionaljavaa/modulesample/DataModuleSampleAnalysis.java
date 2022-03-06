@@ -73,16 +73,16 @@ if (1 == 1)
         if (status.length() == 0) return "ERROR: The parameter status cannot be null";
         
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), 
-                new String[]{TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName()}, new Object[]{template, templateVersion});
+                new String[]{TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName()}, new Object[]{template, templateVersion});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())) 
             return "ERROR: The sample_rule record for " + template + " does not exist in schema" + schemaConfigName + ". ERROR: " + diagnosis[5];
         
         String[] fieldNames = new String[1];
         Object[] fieldValues = new Object[1];
-        fieldNames[0] = TblsCnfg.SampleRules.FLD_CODE.getName();
+        fieldNames[0] = TblsCnfg.SampleRules.CODE.getName();
         fieldValues[0] = template;
-        String[] fieldFilter = new String[]{TblsCnfg.SampleRules.FLD_CODE.getName(), TblsCnfg.SampleRules.FLD_CODE_VERSION.getName(), 
-            TblsCnfg.SampleRules.FLD_STATUSES.getName(), TblsCnfg.SampleRules.FLD_DEFAULT_STATUS.getName()};
+        String[] fieldFilter = new String[]{TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName(), 
+            TblsCnfg.SampleRules.STATUSES.getName(), TblsCnfg.SampleRules.DEFAULT_STATUS.getName()};
         Object[][] records = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), 
                 fieldNames, fieldValues, fieldFilter);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString())) 

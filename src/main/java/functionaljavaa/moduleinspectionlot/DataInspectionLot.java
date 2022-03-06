@@ -124,7 +124,7 @@ public class DataInspectionLot {
                 TblsInspLotRMConfig.Material.FLD_INVENTORY_MANAGEMENT.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return materialInfo;
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.TablesConfig.SPEC.getTableName(), 
-                new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
+                new String[]{TblsCnfg.Spec.CODE.getName(), TblsCnfg.Spec.CONFIG_VERSION.getName()}, 
                 new Object[]{materialInfo[0][0], materialInfo[0][1]});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.MISSING_SPEC_CONFIG_CODE, new Object[]{materialInfo[0][0], materialInfo[0][1], procPrefix});    
