@@ -28,7 +28,6 @@ public class TblsEnvMonitConfig {
 */   
     
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
-
     public enum TablesEnvMonitConfig implements EnumIntTables{        
         PROGRAM(null, "program", SCHEMA_NAME, true, Program.values(), null, new String[]{Program.NAME.getName()}, null, "program table"),
         PROGRAM_LOCATION(null, "program_location", SCHEMA_NAME, true, ProgramLocation.values(), null, 
@@ -92,6 +91,7 @@ public class TblsEnvMonitConfig {
         private final Object[] foreignkey;
         private final String tableComment;
     }
+
     public enum Program implements EnumIntTableFields{
         NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null), 
         PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
