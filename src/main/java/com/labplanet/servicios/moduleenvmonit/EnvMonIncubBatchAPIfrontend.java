@@ -35,6 +35,7 @@ import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -118,7 +119,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 String[] fieldsToRetrieve=new String[]{};
                 String fieldsRetrieveStr = argValues[0].toString(); 
                 if (fieldsRetrieveStr.length()==0 || "ALL".equalsIgnoreCase(fieldsRetrieveStr))
-                    fieldsToRetrieve=TblsEnvMonitData.IncubBatch.getAllFieldNames();
+                    fieldsToRetrieve=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableFields());
                 else
                     fieldsToRetrieve=fieldsRetrieveStr.split("\\|");
                 String[] whereFieldsNameArr = null;
@@ -131,7 +132,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 if (whereFieldsName.length()>0)
                     whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
                 else
-                    whereFieldsNameArr=new String[]{TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName()};
+                    whereFieldsNameArr=new String[]{TblsEnvMonitData.IncubBatch.ACTIVE.getName()};
                 if (whereFieldsValue.length()>0)
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
                 else
@@ -149,8 +150,8 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
                         whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
                 } 
-                if (!LPArray.valueInArray(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName())){
-                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName());
+                if (!LPArray.valueInArray(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.ACTIVE.getName())){
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.ACTIVE.getName());
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, true);
                 }
                 JSONArray jArr=getActiveBatchData(fieldsToRetrieve, whereFieldsNameArr, whereFieldsValueArr);
@@ -179,14 +180,14 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
     public static JSONArray getActiveBatchData(String[] fieldsToRetrieve, String[] whereFieldsNameArr, Object[] whereFieldsValueArr){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);  
         String procInstanceName= procReqInstance.getProcedureInstance();
-        Object[][] activeBatchesList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+        Object[][] activeBatchesList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), 
                 whereFieldsNameArr, whereFieldsValueArr, 
-                fieldsToRetrieve, new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()});
+                fieldsToRetrieve, new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()});
         JSONArray jArr = new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(activeBatchesList[0][0].toString())) return jArr;
         for (Object[] currBatch: activeBatchesList){
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
-            Integer incubPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName());
+            Integer incubPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.IncubBatch.INCUBATION_INCUBATOR.getName());
             JSONArray instrLast10ReadingsjArr = new JSONArray();
             if (incubPosic>-1 && currBatch[incubPosic].toString().length()>0){
                 String[] incubatorFldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.LOCKED_REASON.getName()};
@@ -194,9 +195,9 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 whereFieldsValueArr=new Object[]{currBatch[incubPosic].toString()};
                 Object[][] instrIncubatorInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
                         whereFieldsNameArr, whereFieldsValueArr, incubatorFldsToRetrieve);
-                String[] tempReadingFldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};
+                String[] tempReadingFldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};
                 if (procReqInstance.getProcedureInstance()==null)
                     ProcedureRequestSession.getInstanceForQueries(null, null, false);
                 Object[][] instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(currBatch[incubPosic].toString(), 10, tempReadingFldsToRetrieve);
@@ -234,8 +235,8 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
     }
     
     public static Object[] incubBatchContentJson(String[] batchFields, Object[] batchValues){
-        if (BatchIncubatorType.UNSTRUCTURED.toString().equalsIgnoreCase(batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.FLD_TYPE.getName())].toString())){
-            String unstructuredContent=LPNulls.replaceNull((String)batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName())]);
+        if (BatchIncubatorType.UNSTRUCTURED.toString().equalsIgnoreCase(batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.TYPE.getName())].toString())){
+            String unstructuredContent=LPNulls.replaceNull((String)batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.UNSTRUCT_CONTENT.getName())]);
             if (unstructuredContent!=null && unstructuredContent.length()>0){ 
                 String fieldsSeparator="\\*";
                 String[] fieldsTag = new String[]{"sample_id", "incubation_moment"};
@@ -249,12 +250,12 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 return new Object[]{jbatchSamplesArr, samplesArr.length};
                 
             }
-        }else if (BatchIncubatorType.STRUCTURED.toString().equalsIgnoreCase(batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.FLD_TYPE.getName())].toString())){
-            Integer totalRows=(Integer)batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_ROWS.getName())]; 
-            Integer totalCols=(Integer)batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.FLD_STRUCT_NUM_COLS.getName())]; 
-            String[] rowsName=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.FLD_STRUCT_ROWS_NAME.getName())].toString().split(DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
-            String[] colsName=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.FLD_STRUCT_COLS_NAME.getName())].toString().split(DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
-            String[] batchContent1D=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName())].toString().split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+        }else if (BatchIncubatorType.STRUCTURED.toString().equalsIgnoreCase(batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.TYPE.getName())].toString())){
+            Integer totalRows=(Integer)batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_NUM_ROWS.getName())]; 
+            Integer totalCols=(Integer)batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_NUM_COLS.getName())]; 
+            String[] rowsName=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_ROWS_NAME.getName())].toString().split(DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+            String[] colsName=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_COLS_NAME.getName())].toString().split(DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+            String[] batchContent1D=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_CONTENT.getName())].toString().split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
             String[][] batchContent2D=LPArray.array1dTo2d(batchContent1D, totalCols);
 
             if (batchContent2D.length==0) return new Object[]{new JSONArray(), ""};  

@@ -84,12 +84,12 @@ public class SpecFrontEndUtilities {
           }      
         }
         Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
-                new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName()}, 
+                new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName()}, 
                 new Object[]{code, configVersion}, 
                 fieldsName, sortFields);
         JSONArray jArr = new JSONArray();
         for (Object[] curRec: records){
-          Integer posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName());
+          Integer posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.SpecLimits.LIMIT_ID.getName());
           if (posicInArr>-1){
             Integer limitId = (Integer) curRec[posicInArr];
             specRule.specLimitsRule(limitId, null);

@@ -53,8 +53,8 @@ public class DataProgramProductionLot{
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
         String[] tblFlds=new String[0];
-        Object[] batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProductionLot.TBL.getName(), 
-                new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});
+        Object[] batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
+                new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{lotName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(batchExists[0].toString())){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST, new Object[]{lotName, procInstanceName});
             //return LPArray.addValueToArray1D(trapMessage, new Object[]{lotName, procInstanceName});
@@ -68,19 +68,19 @@ public class DataProgramProductionLot{
           if (curFld.length()>0 && LPArray.valuePosicInArray(tblFlds, curFld)==-1)return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
                   ProductionLotErrorTrapping.PRODUCTIONLOT_FIELD_NOT_FOUND, new Object[]{curFld, lotName, Arrays.toString(fieldName), Arrays.toString(fieldValue), procInstanceName});
         }
-        fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName());
+        fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.LOT_NAME.getName());
         fieldValue=LPArray.addValueToArray1D(fieldValue, lotName);
-        Integer posicInArr=LPArray.valuePosicInArray(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_BY.getName());
+        Integer posicInArr=LPArray.valuePosicInArray(fieldName, TblsEnvMonitData.ProductionLot.CREATED_BY.getName());
         if (posicInArr==-1){
-          fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_BY.getName());
+          fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.CREATED_BY.getName());
           fieldValue=LPArray.addValueToArray1D(fieldValue, token.getPersonName());
         }else{fieldValue[posicInArr]=token.getPersonName();}
-        posicInArr=LPArray.valuePosicInArray(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName());
+        posicInArr=LPArray.valuePosicInArray(fieldName, TblsEnvMonitData.ProductionLot.CREATED_ON.getName());
         if (posicInArr==-1){
-          fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName());
+          fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.CREATED_ON.getName());
           fieldValue=LPArray.addValueToArray1D(fieldValue, LPDate.getCurrentTimeStamp());
         }else{fieldValue[posicInArr]=LPDate.getCurrentTimeStamp();}
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProductionLot.TBL.getName(), fieldName, fieldValue);
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), fieldName, fieldValue);
     }
 
     /**
@@ -90,7 +90,7 @@ public class DataProgramProductionLot{
      * @return
      */
     public static Object[] activateProgramProductionLot(String lotName, Integer appSessionId) {
-      String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()};
+      String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.ACTIVE.getName()};
       Object[] fieldValue=new Object[]{true};
       return updateProgramProductionLot(lotName, fieldName, fieldValue, appSessionId);
     }    
@@ -104,14 +104,14 @@ public class DataProgramProductionLot{
     public static Object[] deactivateProgramProductionLot(String lotName, Integer appSessionId) {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         String personName = instanceForActions.getToken().getPersonName();
-        String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName(), TblsEnvMonitData.ProductionLot.FLD_CLOSED_ON.getName(),
-        TblsEnvMonitData.ProductionLot.FLD_CLOSED_BY.getName()};
+        String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.ACTIVE.getName(), TblsEnvMonitData.ProductionLot.CLOSED_ON.getName(),
+        TblsEnvMonitData.ProductionLot.CLOSED_BY.getName()};
         Object[] fieldValue=new Object[]{false, LPDate.getCurrentTimeStamp(), personName};
         return updateProgramProductionLot(lotName, fieldName, fieldValue, appSessionId);
     }        
     private static Object[] updateProgramProductionLot(String lotName, String[] fieldName, Object[] fieldValue, Integer appSessionId) {       
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProductionLot.TBL.getName(), 
-              fieldName, fieldValue, new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});                 
+        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
+              fieldName, fieldValue, new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{lotName});                 
     }
 }

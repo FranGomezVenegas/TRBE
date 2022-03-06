@@ -110,9 +110,9 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         switch (endPoint){
             case INCUBATORS_LIST: 
                 String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.STAGE.getName()};
-                String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
-                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};     
+                String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};     
                 Object[][] incubatorsList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
                         new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}, new Object[]{true}, 
                         fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
@@ -136,9 +136,9 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                 String instrName=argValues[0].toString();
                 String numPoints=argValues[1].toString();
                 Integer numPointsInt=null;
-                fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
-                            TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};            
+                fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
+                            TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};            
                 if (numPoints!=null && numPoints.length()>0) numPointsInt=Integer.valueOf(numPoints);                    
                 Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading(instrName, numPointsInt);                    
                 jArr = new JSONArray();

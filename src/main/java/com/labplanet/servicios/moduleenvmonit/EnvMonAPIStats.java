@@ -34,6 +34,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
@@ -281,15 +282,15 @@ public class EnvMonAPIStats extends HttpServlet {
                     String prodLotFieldToRetrieve = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROD_LOT_FIELD_TO_RETRIEVE);
                     String[] prodLotFieldToRetrieveArr=new String[0];
                     if ((prodLotFieldToRetrieve!=null) && (prodLotFieldToRetrieve.length()>0))
-                        if ("ALL".equalsIgnoreCase(prodLotFieldToRetrieve)) prodLotFieldToRetrieveArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
+                        if ("ALL".equalsIgnoreCase(prodLotFieldToRetrieve)) prodLotFieldToRetrieveArr=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields());
                         else prodLotFieldToRetrieveArr=prodLotFieldToRetrieve.split("\\|");
                     if (prodLotFieldToRetrieve==null)
-                        prodLotFieldToRetrieveArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
+                        prodLotFieldToRetrieveArr=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields());
                     JSONObject jObj=new JSONObject();
                     if (!prodLotName.contains("rutina")){
-                        Object[][] prodLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ProductionLot.TBL.getName(), 
-                                new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{prodLotName}
-                                , prodLotFieldToRetrieveArr, new String[]{TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName()+" desc"} ); 
+                        Object[][] prodLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
+                                new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{prodLotName}
+                                , prodLotFieldToRetrieveArr, new String[]{TblsEnvMonitData.ProductionLot.CREATED_ON.getName()+" desc"} ); 
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
                              jObj= noRecordsInTableMessage();                    
                         }else{
@@ -297,7 +298,7 @@ public class EnvMonAPIStats extends HttpServlet {
                              jObj= LPJson.convertArrayRowToJSONObject(prodLotFieldToRetrieveArr, curRec);
                            }
                         }
-                        jObjMainObject.put(TblsEnvMonitData.ProductionLot.TBL.getName(), jObj);
+                        jObjMainObject.put(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), jObj);
                     }
                     JSONObject jObjRecoveryData = getRecoveryRate(new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.PRODUCTION_LOT.getName()}, 
                         TblsData.ViewSampleAnalysisResultWithSpecLimits.PRODUCTION_LOT.getName(),
@@ -491,16 +492,16 @@ public class EnvMonAPIStats extends HttpServlet {
                         jObj= LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRec);
                         if (Boolean.valueOf(includeMicroOrganisms)){
                             Integer curSampleId = Integer.valueOf(curRec[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName())].toString());
-                            Object[][] sampleMicroOrgInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
-                                new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()}, new Object[]{curSampleId},
-                                new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName()} , new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()+" desc"} ); 
+                            Object[][] sampleMicroOrgInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), 
+                                new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()}, new Object[]{curSampleId},
+                                new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()} , new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()+" desc"} ); 
                             String microOrgList="";
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgInfo[0][0].toString())){
                                 for (Object[] curMicroOrg: sampleMicroOrgInfo){
                                     if (microOrgList.length()>0)microOrgList=microOrgList.concat(", ");
                                     microOrgList=microOrgList.concat(curMicroOrg[0].toString());
                                 }
-                                jObj.put(TblsEnvMonitData.SampleMicroorganism.TBL.getName(), microOrgList);
+                                jObj.put(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), microOrgList);
                             }
                             if (microOrganismsToFind!=null && microOrganismsToFind.length()>0 && microOrgList!=null && microOrgList.length()>0){                            
                                 Integer findNumber=0;

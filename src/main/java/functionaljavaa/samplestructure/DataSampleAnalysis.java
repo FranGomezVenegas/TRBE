@@ -476,7 +476,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleSpecCode, sampleSpecCodeVersion, schemaDataName});
                 }
                 if (!Boolean.valueOf(specRules[0][0].toString())) {
-                    String[] specAnalysisFieldName = new String[]{TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName()};
+                    String[] specAnalysisFieldName = new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName()};
                     Object[] specAnalysisFieldValue = new Object[0];
                     for (String iFieldN : specAnalysisFieldName) {
                         specialFieldIndex = Arrays.asList(fieldName).indexOf(iFieldN);
@@ -486,7 +486,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                             specAnalysisFieldValue = LPArray.addValueToArray1D(specAnalysisFieldValue, fieldValue[specialFieldIndex]);                        
                     }
                     specAnalysisFieldName = LPArray.addValueToArray1D(specAnalysisFieldName, 
-                        new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName()});
+                        new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.VARIATION_NAME.getName()});
                     specAnalysisFieldValue = LPArray.addValueToArray1D(specAnalysisFieldValue, 
                         new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName});
 
@@ -494,7 +494,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())){
                         Object[][] analysisTestingGroup = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
                             specAnalysisFieldName, specAnalysisFieldValue, 
-                            new String[]{TblsCnfg.SpecLimits.FLD_TESTING_GROUP.getName()});
+                            new String[]{TblsCnfg.SpecLimits.TESTING_GROUP.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisTestingGroup[0][0].toString())) {
                             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECLIMIT_NOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(specAnalysisFieldName, specAnalysisFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
                         }                    
@@ -687,7 +687,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())].toString(), 
                     (Integer) fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())], 
                     fieldVal[Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.PARAM_NAME.getName())].toString(), 
-                    new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()});
+                    new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName()});
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())){
                       getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.LIMIT_ID.getName());     
                       fieldVal = LPArray.addValueToArray1D(fieldVal, specLimits[0][0]);                           

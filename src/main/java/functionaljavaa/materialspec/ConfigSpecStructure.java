@@ -87,18 +87,18 @@ public class ConfigSpecStructure {
 
     private static String[] getSpecMandatoryFields(){
         return new String[]{};
-        //TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()};
+        //TblsCnfg.Spec.CODE.getName(), TblsCnfg.Spec.CONFIG_VERSION.getName()};
     }
     
     private String[] getSpecLimitsMandatoryFields(){
         String[] myMandatoryFields = new String[7];       
-        myMandatoryFields[0] = TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName();
-        myMandatoryFields[1] = TblsCnfg.SpecLimits.FLD_ANALYSIS.getName();
-        myMandatoryFields[2] = TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName();
-        myMandatoryFields[3] = TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(); 
-        myMandatoryFields[4] = TblsCnfg.SpecLimits.FLD_PARAMETER.getName(); 
-        myMandatoryFields[5] = TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName();  
-        myMandatoryFields[6] = TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName();   
+        myMandatoryFields[0] = TblsCnfg.SpecLimits.VARIATION_NAME.getName();
+        myMandatoryFields[1] = TblsCnfg.SpecLimits.ANALYSIS.getName();
+        myMandatoryFields[2] = TblsCnfg.SpecLimits.METHOD_NAME.getName();
+        myMandatoryFields[3] = TblsCnfg.SpecLimits.METHOD_VERSION.getName(); 
+        myMandatoryFields[4] = TblsCnfg.SpecLimits.PARAMETER.getName(); 
+        myMandatoryFields[5] = TblsCnfg.SpecLimits.RULE_TYPE.getName();  
+        myMandatoryFields[6] = TblsCnfg.SpecLimits.RULE_VARIABLES.getName();   
         return myMandatoryFields;
     }
     
@@ -204,13 +204,13 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
 
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
 
-        Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName());
+        Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.SpecLimits.VARIATION_NAME.getName());
         String varationName = (String) mandatoryFieldValue[specialFieldIndex];
 
-/*        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.Spec.FLD_CODE.getName());
+/*        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.Spec.CODE.getName());
         String specCode = (String) mandatoryFieldValue[specialFieldIndex];
 
-        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.Spec.FLD_CONFIG_VERSION.getName());
+        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.Spec.CONFIG_VERSION.getName());
         Integer specCodeVersion = (Integer) mandatoryFieldValue[specialFieldIndex];
 */
         Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter(schemaName, TblsCnfg.TablesConfig.SPEC.getTableName(), 
@@ -247,15 +247,15 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
 
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
 
-        Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.SpecLimits.FLD_ANALYSIS.getName());
+        Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.SpecLimits.ANALYSIS.getName());
         String analysis =(String)  mandatoryFieldValue[specialFieldIndex];     
         if (analysis.length()==0){return "ERROR: The parameter analysis cannot be null"; }
 
-        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName());
+        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.SpecLimits.METHOD_NAME.getName());
         String methodName = (String) mandatoryFieldValue[specialFieldIndex];     
         if (methodName.length()==0){return "ERROR: The parameter method_name cannot be null";}
 
-        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName());        
+        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.SpecLimits.METHOD_VERSION.getName());        
         Integer methodVersion = (Integer) mandatoryFieldValue[specialFieldIndex];     
         if (methodVersion==null){return "ERROR: The parameter method_version cannot be null";}
                 
@@ -266,7 +266,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){
             return DIAGNOSES_SUCCESS;        }
         else{    
-            diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), 
+            diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.SpecLimits.ANALYSIS.getName(), 
                     new String[]{"code"}, new Object[]{analysis});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){
                 return "ERROR: The analysis " + analysis + " exists but the method " + methodName +" with version "+ methodVersion+ " was not found in the schema "+procInstanceName;            
@@ -550,18 +550,18 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.SPEC_RECORD_ALREADY_EXISTS, errorDetailVariables);           
         }
         try{
-            if (!LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.FLD_CODE.getName())){
-                specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.FLD_CODE.getName());
+            if (!LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.CODE.getName())){
+                specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.CODE.getName());
                 specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCode);
             }
-            if (!LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName())){
-                specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName());
+            if (!LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.CONFIG_VERSION.getName())){
+                specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.CONFIG_VERSION.getName());
                 specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCodeVersion);                        
             }
             diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.TablesConfig.SPEC.getTableName(), specFieldName, specFieldValue);                                   
 //            diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.TablesConfig.SPEC_RULES.getTableName(), 
-//                    new String[]{TblsCnfg.SpecRules.FLD_CODE.getName(), TblsCnfg.SpecRules.FLD_CONFIG_VERSION.getName(), 
-//                        TblsCnfg.SpecRules.FLD_ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.FLD_ALLOW_MULTI_SPEC.getName()}, 
+//                    new String[]{TblsCnfg.SpecRules.CODE.getName(), TblsCnfg.SpecRules.CONFIG_VERSION.getName(), 
+//                        TblsCnfg.SpecRules.ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.ALLOW_MULTI_SPEC.getName()}, 
 //                    new Object[]{specCode, specCodeVersion, false, false});       
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 ConfigTablesAudit.specAuditAdd(SpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.TablesConfig.SPEC.getTableName(), specCode, 
@@ -611,8 +611,8 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
         
         Object[][] variationListArray = Rdbms.getRecordFieldsByFilter(schemaName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
-                new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName()}, new Object[]{specCode}, 
-                new String[]{TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName()});
+                new String[]{TblsCnfg.SpecLimits.CODE.getName()}, new Object[]{specCode}, 
+                new String[]{TblsCnfg.SpecLimits.VARIATION_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variationListArray[0][0].toString())){            
             return LPArray.array2dTo1d(variationListArray);
         }else{
@@ -760,9 +760,9 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaName);
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, errorDetailVariables);                                            
         }else{
-            fieldIndex = Arrays.asList(specFieldName).indexOf(TblsCnfg.SpecLimits.FLD_PARAMETER.getName());
+            fieldIndex = Arrays.asList(specFieldName).indexOf(TblsCnfg.SpecLimits.PARAMETER.getName());
             String parameter = (String) specFieldValue[fieldIndex];            
-            whereFields = new String[]{TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(), "param_name"};
+            whereFields = new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName(), "param_name"};
             whereFieldsValue = new Object[] {analysis, methodName, methodVersion, parameter};            
             diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), whereFields, whereFieldsValue);      
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
@@ -775,9 +775,9 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
                 return diagnoses;}                   
         }
         try{
-            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.FLD_CODE.getName());
+            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.CODE.getName());
             specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCode);
-            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName());
+            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.CONFIG_VERSION.getName());
             specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCodeVersion);            
             diagnoses = Rdbms.insertRecordInTable(schemaName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), specFieldName, specFieldValue); 
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){

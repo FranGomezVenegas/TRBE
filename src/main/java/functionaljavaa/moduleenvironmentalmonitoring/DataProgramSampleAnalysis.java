@@ -48,9 +48,9 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
         DataSampleAnalysis.DataSampleAnalyisAutoAddLevel autoAddAnalysisLevel = DataSampleAnalysis.DataSampleAnalyisAutoAddLevel.valueOf(otro);
         switch (autoAddAnalysisLevel){     
             case SPEC_VARIATION:
-                Object[][] specFields = new Object[][]{{TblsData.Sample.SPEC_CODE.getName(), "", TblsCnfg.SpecLimits.FLD_CODE.getName()}, 
-                    {TblsData.Sample.SPEC_CODE_VERSION.getName(), "", TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName()}, 
-                    {TblsData.Sample.SPEC_VARIATION_NAME.getName(), "", TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName()}};
+                Object[][] specFields = new Object[][]{{TblsData.Sample.SPEC_CODE.getName(), "", TblsCnfg.SpecLimits.CODE.getName()}, 
+                    {TblsData.Sample.SPEC_CODE_VERSION.getName(), "", TblsCnfg.SpecLimits.CONFIG_VERSION.getName()}, 
+                    {TblsData.Sample.SPEC_VARIATION_NAME.getName(), "", TblsCnfg.SpecLimits.VARIATION_NAME.getName()}};
                 String[] specMissingFields = new String[0];
                 for (Object[] curValue: specFields){
                     Integer posicField = LPArray.valuePosicInArray(sampleFieldName, curValue[0].toString());
@@ -73,15 +73,15 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
                     Object analysisVariation= sampleFieldValue[posicField];
                     String[] analysisVariationArr=analysisVariation.toString().split("\\-");
                     if (analysisVariationArr.length==2){
-                        specWhereFieldName=LPArray.addValueToArray1D(specWhereFieldName, TblsCnfg.SpecLimits.FLD_ANALYSIS.getName());
-                        specWhereFieldName=LPArray.addValueToArray1D(specWhereFieldName, TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName());
+                        specWhereFieldName=LPArray.addValueToArray1D(specWhereFieldName, TblsCnfg.SpecLimits.ANALYSIS.getName());
+                        specWhereFieldName=LPArray.addValueToArray1D(specWhereFieldName, TblsCnfg.SpecLimits.METHOD_NAME.getName());
                         specWhereFieldValue=LPArray.addValueToArray1D(specWhereFieldValue, analysisVariationArr[0]);
                         specWhereFieldValue=LPArray.addValueToArray1D(specWhereFieldValue, analysisVariationArr[1]);                    
                     }
                 }                 
                 anaName=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
                         specWhereFieldName, specWhereFieldValue, 
-                        new String[]{TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(), TblsCnfg.SpecLimits.FLD_TESTING_GROUP.getName()});
+                        new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName(), TblsCnfg.SpecLimits.TESTING_GROUP.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(anaName[0][0].toString())){return LPArray.array2dTo1d(anaName);}
                 
                 break;

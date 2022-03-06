@@ -468,9 +468,9 @@ public class ConfigSpecRule {
         Object[] errorDetailVariables= new Object[0];      
       StringBuilder ruleBuilder = new StringBuilder(0);
       Object[][] specDef=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
-            new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()}, new Object[]{limitId}, 
-            new String[]{TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(), TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(),
-              TblsCnfg.SpecLimits.FLD_MIN_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.FLD_MAX_VAL_ALLOWED.getName()  });
+            new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName()}, new Object[]{limitId}, 
+            new String[]{TblsCnfg.SpecLimits.RULE_TYPE.getName(), TblsCnfg.SpecLimits.RULE_VARIABLES.getName(),
+              TblsCnfg.SpecLimits.MIN_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName()  });
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specDef[0][0].toString())) return LPArray.array2dTo1d(specDef);
       String ruleType = specDef[0][0].toString();
       String ruleVariables = specDef[0][1].toString();
@@ -594,13 +594,13 @@ public class ConfigSpecRule {
 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
-                new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), 
-                    TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(), 
-                    TblsCnfg.SpecLimits.FLD_PARAMETER.getName()}, new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, 
+                new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.VARIATION_NAME.getName(), 
+                    TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName(), 
+                    TblsCnfg.SpecLimits.PARAMETER.getName()}, new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, 
                       analysis, methodName, methodVersion, paramName}, 
                 fieldsToRetrieve);
-//                new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(), TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), 
-//                    TblsCnfg.SpecLimits.FLD_UOM.getName(), TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName()});         
+//                new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.RULE_TYPE.getName(), TblsCnfg.SpecLimits.RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(), 
+//                    TblsCnfg.SpecLimits.UOM.getName(), TblsCnfg.SpecLimits.UOM_CONVERSION_MODE.getName()});         
     }
   /**
    * @return the qualitativeRule

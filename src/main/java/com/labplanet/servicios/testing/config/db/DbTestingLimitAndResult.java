@@ -202,11 +202,11 @@ Integer currentLine=0;
                         resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");                    
                     }else{
                         Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
-                            new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_CONFIG_VERSION.getName(), 
-                                TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(),TblsCnfg.SpecLimits.FLD_PARAMETER.getName()}, 
+                            new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName(), 
+                                TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName(),TblsCnfg.SpecLimits.PARAMETER.getName()}, 
                             new Object[]{specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName}, 
-                            new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(),TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(),TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), 
-                                TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), TblsCnfg.SpecLimits.FLD_UOM.getName(), TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName()});
+                            new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(),TblsCnfg.SpecLimits.RULE_TYPE.getName(),TblsCnfg.SpecLimits.RULE_VARIABLES.getName(), 
+                                TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.UOM.getName(), TblsCnfg.SpecLimits.UOM_CONVERSION_MODE.getName()});
                         if ( (LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) ){ //&& (!RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode().equalsIgnoreCase(specLimits[0][4].toString())) ){
                             resSpecEvaluation=specLimits[0];
                             resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla No encontrada ");                    

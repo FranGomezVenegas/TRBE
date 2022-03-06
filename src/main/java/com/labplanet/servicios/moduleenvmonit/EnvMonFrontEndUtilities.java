@@ -11,6 +11,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -82,8 +83,8 @@ class EnvMonFrontEndUtilities {
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
-    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.Program.TBL.getName(), 
-            new String[]{TblsEnvMonitData.Program.FLD_NAME.getName()}, 
+    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.TablesEnvMonitData.PROGRAM.getTableName(), 
+            new String[]{TblsEnvMonitData.Program.NAME.getName()}, 
             new Object[]{programName}, 
             fieldsName, sortFields);
     return LPJson.convertArrayRowToJSONObject(fieldsName, records[0]);
@@ -99,9 +100,9 @@ class EnvMonFrontEndUtilities {
      */
     public static JSONArray dataProgramLocationInfo(String procInstanceName, String programName, String[] fieldsName, String[] sortFields){
     if (fieldsName==null || fieldsName.length==0)
-        fieldsName=TblsEnvMonitData.ProgramLocation.getAllFieldNames();
-    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
-            new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, 
+        fieldsName=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableFields());
+    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableName(), 
+            new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName()}, 
             new Object[]{programName,}, 
             fieldsName, sortFields);
     JSONArray jArr = new JSONArray();

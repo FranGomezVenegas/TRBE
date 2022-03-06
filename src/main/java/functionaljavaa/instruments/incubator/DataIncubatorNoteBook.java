@@ -66,10 +66,10 @@ public class DataIncubatorNoteBook {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName});
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
-                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()}, 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
+                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()}, 
                 new Object[]{instName, EventType.TEMPERATURE_READING.toString(), personName, LPDate.getCurrentTimeStamp(), temperature});
     }
     
@@ -86,9 +86,9 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
-                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()}, 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
+                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName()}, 
                 new Object[]{instName, EventType.ACTIVATE.toString(), personName, LPDate.getCurrentTimeStamp()});
     }
     
@@ -105,9 +105,9 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
-                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()}, 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
+                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName()}, 
                 new Object[]{instName, EventType.DEACTIVATE.toString(), personName, LPDate.getCurrentTimeStamp()});
     }
 
@@ -133,9 +133,9 @@ public class DataIncubatorNoteBook {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName});
-        String[] insFldsName=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};
+        String[] insFldsName=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};
         Object[] insFldsValue=new Object[]{instName, EventType.TEMPERATURE_READING.toString(), personName, LPDate.getCurrentTimeStamp(), temperature};
         String specEval = "";
         String specEvalDetail = "";
@@ -158,10 +158,10 @@ public class DataIncubatorNoteBook {
             EnumIntMessages checkMsgCode=(EnumIntMessages) resultCheck[resultCheck.length - 1];
             specEval = checkMsgCode.getErrorCode();
             specEvalDetail = (String) resultCheck[resultCheck.length - 2];
-            insFldsName=LPArray.addValueToArray1D(insFldsName, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_SPEC_EVAL.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_SPEC_EVAL_DETAIL.getName()});
+            insFldsName=LPArray.addValueToArray1D(insFldsName, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.SPEC_EVAL.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.SPEC_EVAL_DETAIL.getName()});
             insFldsValue=LPArray.addValueToArray1D(insFldsValue, new Object[]{specEval, specEvalDetail});
         }        
-        Object[] diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
+        Object[] diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
                 insFldsName, insFldsValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
         
@@ -189,9 +189,9 @@ public class DataIncubatorNoteBook {
     }
     
     public static Object[][] getLastTemperatureReading(String instName, Integer points, LocalDateTime startDate, LocalDateTime endDate){   
-        String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
-                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};
+        String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
+                    TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};
         return getLastTemperatureReading(instName, points, startDate, endDate, fieldsToRetrieve);
     }
     public static Object[][] getLastTemperatureReading(String instName, Integer points, LocalDateTime startDate, LocalDateTime endDate, String[] fieldsToRetrieve){   
@@ -206,21 +206,21 @@ public class DataIncubatorNoteBook {
             Object[] errDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, " ", new Object[0]);
             return LPArray.array1dTo2d(errDiagn, errDiagn.length);
         }
-        String[] whereFieldName=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName()};
+        String[] whereFieldName=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName()};
         Object[] whereFieldValue=new Object[]{instName};
         if (startDate!=null){
             if (endDate!=null){
-                whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()+" BETWEEN ");
+                whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName()+" BETWEEN ");
                 whereFieldValue=LPArray.addValueToArray1D(whereFieldValue, startDate);
                 whereFieldValue=LPArray.addValueToArray1D(whereFieldValue, endDate);
             }else{
-                whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()+" <= ");
+                whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName()+" <= ");
                 whereFieldValue=LPArray.addValueToArray1D(whereFieldValue, startDate);
             }
         }
-        Object[][] instrNotebook=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
+        Object[][] instrNotebook=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
                 whereFieldName, whereFieldValue, 
-                fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName()+ " desc"});
+                fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ " desc"});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrNotebook[0][0].toString())){
             Object[] errDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataIncubatorNoteBookErrorTrapping.NO_READINGS_LOGGED_YET, new Object[0]);
             return LPArray.array1dTo2d(errDiagn, errDiagn.length);            
@@ -229,7 +229,7 @@ public class DataIncubatorNoteBook {
         Object[] pointsFromLatestActivation= new Object[0];        
         Integer pointsAdded=0;
         for (Object[] currReading: instrNotebook){
-            String currEventType = currReading[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName())].toString();
+            String currEventType = currReading[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName())].toString();
             if ( (EventType.ACTIVATE.toString().equalsIgnoreCase(currEventType)) || (EventType.DEACTIVATE.toString().equalsIgnoreCase(currEventType)) 
                     || (EventType.TEMPERATURE_READING.toString().equalsIgnoreCase(currEventType) && (endDate==null) && (points!=null) && (points<=pointsAdded) )) break;
             if (EventType.TEMPERATURE_READING.toString().equalsIgnoreCase(currEventType)){                

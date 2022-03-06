@@ -41,6 +41,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -312,28 +313,28 @@ GlobalAPIsParams.
             switch (endPoint){
                 case PROGRAMS_LIST: 
                     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
-                    String[] programFldNameArray = getFieldsListToRetrieve(argValues[0].toString(), TblsEnvMonitData.Program.TBL.getAllFieldNames());
+                    String[] programFldNameArray = getFieldsListToRetrieve(argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PROGRAM.getTableFields()));
                     String[] programFldSortArray = getFieldsListToRetrieve(argValues[1].toString(), new String[]{});
-                    String[] programLocationFldNameArray = getFieldsListToRetrieve(argValues[2].toString(), TblsEnvMonitData.ProgramLocation.TBL.getAllFieldNames());
+                    String[] programLocationFldNameArray = getFieldsListToRetrieve(argValues[2].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableFields()));
                     String[] programLocationFldSortArray = getFieldsListToRetrieve(argValues[3].toString(), new String[]{});
-                    String[] programLocationCardInfoFldNameArray = getFieldsListToRetrieve(argValues[4].toString(), TblsEnvMonitData.ProgramLocation.TBL.getAllFieldNames());
+                    String[] programLocationCardInfoFldNameArray = getFieldsListToRetrieve(argValues[4].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableFields()));
                     String[] programLocationCardInfoFldSortArray = getFieldsListToRetrieve(argValues[5].toString(), new String[]{});
                     
-                    if (LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName())==-1){
-                        programLocationFldNameArray = LPArray.addValueToArray1D(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName());
-                        programLocationCardInfoFldNameArray = LPArray.addValueToArray1D(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName());
+                    if (LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName())==-1){
+                        programLocationFldNameArray = LPArray.addValueToArray1D(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName());
+                        programLocationCardInfoFldNameArray = LPArray.addValueToArray1D(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName());
                     }                    
-                    if (LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName())==-1){
-                        programLocationFldNameArray = LPArray.addValueToArray1D(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName());
-                        programLocationCardInfoFldNameArray = LPArray.addValueToArray1D(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName());
+                    if (LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName())==-1){
+                        programLocationFldNameArray = LPArray.addValueToArray1D(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName());
+                        programLocationCardInfoFldNameArray = LPArray.addValueToArray1D(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName());
                     }
                     Object[] statusList = DataSampleUtilities.getSchemaSampleStatusList();
                     Object[] statusListEn = DataSampleUtilities.getSchemaSampleStatusList(GlobalVariables.Languages.EN.getName());
                     Object[] statusListEs = DataSampleUtilities.getSchemaSampleStatusList(GlobalVariables.Languages.ES.getName());
 
-                    Object[][] programInfo=getTableData(procReqInstance, GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.Program.TBL.getName(), 
-                        argValues[0].toString(), TblsEnvMonitData.Program.getAllFieldNames(), 
-                        new String[]{TblsEnvMonitData.Program.FLD_ACTIVE.getName()}, new Object[]{true}, programFldSortArray);        
+                    Object[][] programInfo=getTableData(procReqInstance, GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.TablesEnvMonitData.PROGRAM.getTableName(), 
+                        argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PROGRAM.getTableFields()), 
+                        new String[]{TblsEnvMonitData.Program.ACTIVE.getName()}, new Object[]{true}, programFldSortArray);        
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())) return;
                         JSONArray programsJsonArr = new JSONArray();     
                         for (Object[] curProgram: programInfo){
@@ -341,25 +342,25 @@ GlobalAPIsParams.
                             String curProgramName = curProgram[0].toString();
                             programJsonObj=LPJson.convertArrayRowToJSONObject(programFldNameArray, curProgram);
 
-                            String[] programSampleSummaryFldNameArray = new String[]{TblsEnvMonitData.Sample.FLD_STATUS.getName(), TblsEnvMonitData.Sample.FLD_LOCATION_NAME.getName()};
-                            String[] programSampleSummaryFldSortArray = new String[]{TblsEnvMonitData.Sample.FLD_STATUS.getName()};
-                            Object[][] programSampleSummary = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), 
-                                    new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), }, new String[]{curProgramName}, programSampleSummaryFldNameArray, programSampleSummaryFldSortArray);
+                            String[] programSampleSummaryFldNameArray = new String[]{TblsEnvMonitData.Sample.STATUS.getName(), TblsEnvMonitData.Sample.LOCATION_NAME.getName()};
+                            String[] programSampleSummaryFldSortArray = new String[]{TblsEnvMonitData.Sample.STATUS.getName()};
+                            Object[][] programSampleSummary = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), 
+                                    new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), }, new String[]{curProgramName}, programSampleSummaryFldNameArray, programSampleSummaryFldSortArray);
                             programJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TREE_LIST); 
                             programJsonObj.put(JSON_TAG_NAME_TOTAL, programSampleSummary.length); 
-                            programJsonObj.put("KPI", getKPIInfoFromRequest(request, TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName(), curProgramName));   
+                            programJsonObj.put("KPI", getKPIInfoFromRequest(request, TblsEnvMonitData.Sample.PROGRAM_NAME.getName(), curProgramName));   
 
-                            Object[][] programLocations=getTableData(procReqInstance, GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.ProgramLocation.TBL.getName(), 
-                                argValues[2].toString(), TblsEnvMonitData.ProgramLocation.getAllFieldNames(), 
-                                new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new Object[]{curProgramName}, programLocationFldSortArray);        
+                            Object[][] programLocations=getTableData(procReqInstance, GlobalVariables.Schemas.CONFIG.getName(),TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableName(), 
+                                argValues[2].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableFields()), 
+                                new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName()}, new Object[]{curProgramName}, programLocationFldSortArray);        
     /**/ 
                             if (procReqInstance.getProcedureInstance()==null || procReqInstance.getProcedureInstance().length()==0)
                                 procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
     
-                            String[] fieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.FLD_CURRENT_STAGE.getName()};
-                            Object[][] samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), 
+                            String[] fieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.CURRENT_STAGE.getName()};
+                            Object[][] samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), 
                                     fieldToRetrieveArr, 
-                                    new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new Object[]{curProgramName},
+                                    new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName()}, new Object[]{curProgramName},
                                     new String[]{"COUNTER desc"}); 
                             fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, "COUNTER");                            
                             JSONArray programSampleSummaryByStageJsonArray=new JSONArray();
@@ -370,17 +371,17 @@ GlobalAPIsParams.
                             programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE, programSampleSummaryByStageJsonArray); 
 
                             JSONObject jObj= new JSONObject();
-                            String[] fieldsToRetrieve = new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName(),
-                                TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_ID.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_DATE.getName(),
-                                TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SAMPLE_CONFIG_CODE.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SAMPLE_CONFIG_CODE_VERSION.getName(),
-                                TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName(),            
-                                TblsEnvMonitData.ViewProgramScheduledLocations.FLD_AREA.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_CODE.getName(), 
-                                TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_AREA.getName(), 
-                                TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_VARIATION_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_ANALYSIS_VARIATION.getName() 
+                            String[] fieldsToRetrieve = new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.DATE.getName(),
+                                TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_DAY_ID.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_DAY_DATE.getName(),
+                                TblsEnvMonitData.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE_VERSION.getName(),
+                                TblsEnvMonitData.ViewProgramScheduledLocations.LOCATION_NAME.getName(),            
+                                TblsEnvMonitData.ViewProgramScheduledLocations.AREA.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_CODE.getName(), 
+                                TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.AREA.getName(), 
+                                TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_VARIATION_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_ANALYSIS_VARIATION.getName() 
                             };                            
-                            Object[][] programCalendarDatePending=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ViewProgramScheduledLocations.TBL.getName(), 
-                                    new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
-                                    fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_DATE.getName()});
+                            Object[][] programCalendarDatePending=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ViewsEnvMonData.PROG_SCHED_LOCATIONS_VIEW.getViewName(), 
+                                    new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+                                    fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_DAY_DATE.getName()});
                             JSONArray programConfigScheduledPointsJsonArray=new JSONArray();
                             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString())){
                                 jObj.put("message", "Nothing pending in procedure "+procInstanceName+" for the filter "+LPNulls.replaceNull(programCalendarDatePending[0][programCalendarDatePending.length-1]).toString());
@@ -389,9 +390,9 @@ GlobalAPIsParams.
                                 for (Object[] curRecord: programCalendarDatePending){
                                     jObj= new JSONObject();
                                     for (int i=0;i<curRecord.length;i++){ jObj.put(fieldsToRetrieve[i], curRecord[i].toString());}
-                                    jObj.put("title", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName())].toString());
-                                    jObj.put("content", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName())].toString());
-                                    jObj.put("date",curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName())].toString());
+                                    jObj.put("title", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.LOCATION_NAME.getName())].toString());
+                                    jObj.put("content", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.LOCATION_NAME.getName())].toString());
+                                    jObj.put("date",curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.DATE.getName())].toString());
                                     jObj.put("category","orange");
                                     jObj.put("color","#000");
                                     programConfigScheduledPointsJsonArray.add(jObj);
@@ -401,14 +402,14 @@ GlobalAPIsParams.
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString())){     
                                 JSONArray programLocationsJsonArray = new JSONArray();                              
                                 for (Object[] programLocations1 : programLocations) {
-                                    String locationName = programLocations1[LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName())].toString();
+                                    String locationName = programLocations1[LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName())].toString();
 
                                     JSONObject programLocationJsonObj = new JSONObject();     
                                     for (int yProcEv = 0; yProcEv<programLocations[0].length; yProcEv++) {
                                         programLocationJsonObj.put(programLocationFldNameArray[yProcEv], programLocations1[yProcEv]);
                                     }
-                                    Object[][] programLocationCardInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.ProgramLocation.TBL.getName(), 
-                                            new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, new String[]{curProgramName, locationName}, 
+                                    Object[][] programLocationCardInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableName(), 
+                                            new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName()}, new String[]{curProgramName, locationName}, 
                                             programLocationCardInfoFldNameArray, programLocationCardInfoFldSortArray);
                                     JSONArray programLocationCardInfoJsonArr = new JSONArray(); 
 
@@ -460,10 +461,10 @@ GlobalAPIsParams.
                                         programSampleSummaryJsonArray.add(programSampleSummaryJsonObj);
                                     }
                                     programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY, programSampleSummaryJsonArray); 
-                                    fieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.FLD_CURRENT_STAGE.getName()};
-                                    String[] whereFieldNames=new String[]{TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.Sample.FLD_LOCATION_NAME.getName()}; 
+                                    fieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.CURRENT_STAGE.getName()};
+                                    String[] whereFieldNames=new String[]{TblsEnvMonitData.Sample.PROGRAM_NAME.getName(), TblsEnvMonitData.Sample.LOCATION_NAME.getName()}; 
                                     Object[] whereFieldValues=new Object[]{curProgramName, locationName};
-                                    samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), 
+                                    samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), 
                                             fieldToRetrieveArr, 
                                             whereFieldNames, whereFieldValues,
                                             new String[]{"COUNTER desc"}); 
@@ -505,22 +506,22 @@ GlobalAPIsParams.
                         programsJsonArr.add(programJsonObj);
                         JSONObject programDataTemplateDefinition = new JSONObject();
                         JSONObject templateProgramInfo=EnvMonFrontEndUtilities.dataProgramInfo(procInstanceName, curProgramName, null, null);
-                        programDataTemplateDefinition.put(TblsEnvMonitData.Program.TBL.getName(), templateProgramInfo);
+                        programDataTemplateDefinition.put(TblsEnvMonitData.TablesEnvMonitData.PROGRAM.getTableName(), templateProgramInfo);
                         JSONArray templateProgramLocationInfo=EnvMonFrontEndUtilities.dataProgramLocationInfo(procInstanceName, curProgramName, null, null);
-                        programDataTemplateDefinition.put(TblsEnvMonitData.ProgramLocation.TBL.getName(), templateProgramLocationInfo);
+                        programDataTemplateDefinition.put(TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableName(), templateProgramLocationInfo);
                         programJsonObj.put(JSON_TAG_PROGRAM_DATA_TEMPLATE_DEFINITION, programDataTemplateDefinition); 
-                        Object specCode = templateProgramInfo.get(TblsEnvMonitData.Program.FLD_SPEC_CODE.getName());
-                        Object specConfigVersion = templateProgramInfo.get(TblsEnvMonitData.Program.FLD_SPEC_CONFIG_VERSION.getName());                    
+                        Object specCode = templateProgramInfo.get(TblsEnvMonitData.Program.SPEC_CODE.getName());
+                        Object specConfigVersion = templateProgramInfo.get(TblsEnvMonitData.Program.SPEC_CONFIG_VERSION.getName());                    
                         JSONObject specDefinition = new JSONObject();
                         if (!(specCode==null || specCode=="" || specConfigVersion==null || "".equals(specConfigVersion.toString()))){
                           JSONObject specInfo=SpecFrontEndUtilities.configSpecInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion, 
                                   null, null);
                           specDefinition.put(TblsCnfg.TablesConfig.SPEC.getTableName(), specInfo);
                           JSONArray specLimitsInfo=SpecFrontEndUtilities.configSpecLimitsInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion, 
-                                  null, new String[]{TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), 
-                                  TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(),
-                                  TblsCnfg.SpecLimits.FLD_SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_GREEN_AREA_EN.getName(),
-                                  TblsCnfg.SpecLimits.FLD_SPEC_TEXT_ES.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_RED_AREA_ES.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_YELLOW_AREA_ES.getName(), TblsCnfg.SpecLimits.FLD_SPEC_TEXT_GREEN_AREA_ES.getName()});
+                                  null, new String[]{TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(), 
+                                  TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(),
+                                  TblsCnfg.SpecLimits.SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_EN.getName(),
+                                  TblsCnfg.SpecLimits.SPEC_TEXT_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_ES.getName()});
                           specDefinition.put(TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), specLimitsInfo);
                         }
                         programJsonObj.put(JSON_TAG_SPEC_DEFINITION, specDefinition); 
@@ -551,16 +552,16 @@ GlobalAPIsParams.
                     return;                    
                 case GET_ACTIVE_PRODUCTION_LOTS:
                 case GET_ALL_PRODUCTION_LOTS:                    
-                    String[] whereFldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
+                    String[] whereFldName=new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
                     Object[] whereFldValue=new Object[]{"s"};
                     if ("GET_ACTIVE_PRODUCTION_LOTS".equalsIgnoreCase(endPoint.getName())){
-                        whereFldName=new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName()};
+                        whereFldName=new String[]{TblsEnvMonitData.ProductionLot.ACTIVE.getName()};
                         whereFldValue=new Object[]{true};                   
                     }
-                    String[] prodLotFldToRetrieve = getFieldsListToRetrieve(argValues[0].toString(), TblsEnvMonitData.ProductionLot.TBL.getAllFieldNames());
+                    String[] prodLotFldToRetrieve = getFieldsListToRetrieve(argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields()));
                     String[] prodLotFldToSort = getFieldsListToRetrieve(argValues[1].toString(), new String[]{});                    
-                    programInfo=getTableData(procReqInstance, GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.ProductionLot.TBL.getName(), 
-                        argValues[0].toString(), TblsEnvMonitData.ProductionLot.getAllFieldNames(), 
+                    programInfo=getTableData(procReqInstance, GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
+                        argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields()), 
                         whereFldName, whereFldValue, prodLotFldToSort);        
                     jArr=new JSONArray();   
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())){
@@ -577,11 +578,11 @@ GlobalAPIsParams.
                     String numDays = LPNulls.replaceNull(argValues[0]).toString();
                     if (numDays.length()==0) numDays=String.valueOf(7);
                     int numDaysInt=0-Integer.valueOf(numDays);
-                    String[] fieldsToRetrieve = TblsEnvMonitData.ProductionLot.getAllFieldNames();
-                    Object[][] prodLotsDeactivatedLastDays=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsEnvMonitData.ProductionLot.TBL.getName(), 
-                            new String[]{TblsEnvMonitData.ProductionLot.FLD_ACTIVE.getName(), TblsEnvMonitData.ProductionLot.FLD_CLOSED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
+                    String[] fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields());
+                    Object[][] prodLotsDeactivatedLastDays=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
+                            new String[]{TblsEnvMonitData.ProductionLot.ACTIVE.getName(), TblsEnvMonitData.ProductionLot.CLOSED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
                             new Object[]{false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                            fieldsToRetrieve, new String[]{TblsEnvMonitData.ProductionLot.FLD_CLOSED_ON.getName()+" desc"});
+                            fieldsToRetrieve, new String[]{TblsEnvMonitData.ProductionLot.CLOSED_ON.getName()+" desc"});
                     jArr = new JSONArray();
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString())){
                         for (Object[] currIncident: prodLotsDeactivatedLastDays){

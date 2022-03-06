@@ -75,7 +75,7 @@ public class ClassEnvMon {
                         break;
                     }
                         actionDiagnoses= DataBatchIncubator.createBatch(batchName, batchTemplateId, batchTemplateVersion, fieldNames, fieldValues);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{batchName, procInstanceName};
@@ -83,7 +83,7 @@ public class ClassEnvMon {
                 case EM_BATCH_INCUB_REMOVE:    
                     batchName = argValues[0].toString();
                     actionDiagnoses= DataBatchIncubator.removeBatch(batchName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{batchName, procInstanceName};
@@ -92,8 +92,8 @@ public class ClassEnvMon {
                     batchName = argValues[0].toString();
                     incubationName = argValues[1].toString();
                     String incubStage=argValues[2].toString();
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator", incubationName);                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), "incubator", incubationName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                
                     this.messageDynamicData=new Object[]{batchName, incubationName};
                     actionDiagnoses=DataBatchIncubator.batchAssignIncubator(batchName, incubationName, incubStage);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
@@ -101,7 +101,7 @@ public class ClassEnvMon {
                     break;
                 case EM_BATCH_UPDATE_INFO: 
                     batchName = argValues[0].toString();
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                
                     fieldName = argValues[1].toString();
                     String[] fieldsName = fieldName.split("\\|");
                     fieldValue = argValues[2].toString();
@@ -116,7 +116,7 @@ public class ClassEnvMon {
                     break;
                 case EM_BATCH_INCUB_START:
                     batchName = argValues[0].toString();
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                
                     batchTemplateId = (Integer) argValues[1];
                     batchTemplateVersion = (Integer) argValues[2];
                     actionDiagnoses=DataBatchIncubator.batchStarted(batchName, batchTemplateId, batchTemplateVersion);
@@ -132,7 +132,7 @@ public class ClassEnvMon {
                     break;                    
                 case EM_BATCH_INCUB_END:
                     batchName = argValues[0].toString();
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                
                     batchTemplateId = (Integer) argValues[1];
                     batchTemplateVersion = (Integer) argValues[2];
                     actionDiagnoses=DataBatchIncubator.batchEnded(batchName, batchTemplateId, batchTemplateVersion);

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -40,19 +41,19 @@ public class ClassEnvMonQueries {
             switch (endPoint){
                     case GET_SAMPLE_INFO:
                         sampleId=(Integer) argValues[0];
-                        String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()};
+                        String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()};
                         if (argValues.length>1 && argValues[1]!=null && argValues[1].toString().length()>0){
-                            if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=TblsEnvMonitData.Sample.getAllFieldNames();
+                            if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
                             else fieldsToRetrieve=argValues[1].toString().split("\\|");
                         }
-                        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.Sample.TBL.getName(), 
-                                new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                                fieldsToRetrieve, new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()});
+                        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), 
+                                new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                                fieldsToRetrieve, new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) 
                             actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, sampleInfo[sampleInfo.length-1][0].toString(), new Object[]{sampleId});
                         else{
                             for (Object[] curSample: sampleInfo){
-                                rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), curSample[0], fieldsToRetrieve, curSample); 
+                                rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), curSample[0], fieldsToRetrieve, curSample); 
                             }
                             actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         }

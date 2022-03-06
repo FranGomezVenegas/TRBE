@@ -123,7 +123,7 @@ public class EnvMonSampleAPI extends HttpServlet {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsEnvMonitData.IncubBatch.TBL.getName()).build()).build()
+                .add("table", TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName()).build()).build()
         ),
         EM_BATCH_INCUB_MOVE_SMP("EM_BATCH_INCUB_MOVE_SMP", "batchIncubator_sampleMoved_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -136,7 +136,7 @@ public class EnvMonSampleAPI extends HttpServlet {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsEnvMonitData.IncubBatch.TBL.getName()).build()).build()
+                .add("table", TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName()).build()).build()
         ),
         EM_BATCH_INCUB_REMOVE_SMP("EM_BATCH_INCUB_REMOVE_SMP", "batchIncubator_sampleRemoved_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -146,7 +146,7 @@ public class EnvMonSampleAPI extends HttpServlet {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsEnvMonitData.IncubBatch.TBL.getName()).build()).build()
+                .add("table", TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName()).build()).build()
         )
         ;      
         private EnvMonSampleAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){

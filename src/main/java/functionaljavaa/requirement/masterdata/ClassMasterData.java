@@ -117,17 +117,17 @@ public class ClassMasterData {
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     cSpec = new ConfigSpecStructure();
                     for (JsonElement jO: asJsonArray){
-                        String[] fieldName=new String[]{//TblsCnfg.SpecLimits.FLD_CREATED_ON.getName(), TblsCnfg.SpecLimits.FLD_CREATED_BY.getName(),
-                            TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_TESTING_GROUP.getName(), 
-                            TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(),
-                            TblsCnfg.SpecLimits.FLD_PARAMETER.getName(), TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName()};
+                        String[] fieldName=new String[]{//TblsCnfg.SpecLimits.CREATED_ON.getName(), TblsCnfg.SpecLimits.CREATED_BY.getName(),
+                            TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.TESTING_GROUP.getName(), 
+                            TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(),
+                            TblsCnfg.SpecLimits.PARAMETER.getName(), TblsCnfg.SpecLimits.RULE_TYPE.getName()};
                         Object[] fieldValue=new Object[]{//LPDate.getCurrentTimeStamp(), userCreator,
-                            jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_TESTING_GROUP.getName()).getAsString(), 
-                            jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName()).getAsString(),
-                            jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_PARAMETER.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName()).getAsString()};
+                            jO.getAsJsonObject().get(TblsCnfg.SpecLimits.VARIATION_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.TESTING_GROUP.getName()).getAsString(), 
+                            jO.getAsJsonObject().get(TblsCnfg.SpecLimits.ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.METHOD_NAME.getName()).getAsString(),
+                            jO.getAsJsonObject().get(TblsCnfg.SpecLimits.PARAMETER.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.RULE_TYPE.getName()).getAsString()};
                         
-                        String[] fldsToAdd=new String[]{TblsCnfg.SpecLimits.FLD_MIN_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.FLD_MIN_VAL_FOR_UNDETERMINED.getName(),
-                            TblsCnfg.SpecLimits.FLD_MAX_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.FLD_MAX_VAL_FOR_UNDETERMINED.getName(),
+                        String[] fldsToAdd=new String[]{TblsCnfg.SpecLimits.MIN_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MIN_VAL_FOR_UNDETERMINED.getName(),
+                            TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MAX_VAL_FOR_UNDETERMINED.getName(),
                             };
                         for (String curFldName: fldsToAdd){
                             if (jO.getAsJsonObject().has(curFldName)){
@@ -135,7 +135,7 @@ public class ClassMasterData {
                                fieldValue=LPArray.addValueToArray1D(fieldValue, jO.getAsJsonObject().get(curFldName).getAsFloat());
                             }
                         }
-                        String ruleType=jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName()).getAsString();
+                        String ruleType=jO.getAsJsonObject().get(TblsCnfg.SpecLimits.RULE_TYPE.getName()).getAsString();
                         Object[] resSpecEvaluation = new Object[0];                
                         ConfigSpecRule mSpec = new ConfigSpecRule();
                         String curFldName="";
@@ -178,26 +178,26 @@ public class ClassMasterData {
                             resSpecEvaluation = mSpec.specLimitIsCorrectQualitative(rule,value, separator);
                             fieldValue=LPArray.addValueToArray1D(fieldValue, mSpec.getQualitativeRuleValues());
                         }
-                        if (!LPArray.valueInArray(fieldName, TblsCnfg.SpecLimits.FLD_UOM.getName())){
+                        if (!LPArray.valueInArray(fieldName, TblsCnfg.SpecLimits.UOM.getName())){
                             Object[][] paramUOM = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), 
                                     new String[]{TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName(), TblsCnfg.AnalysisMethodParams.FLD_METHOD_NAME.getName(),
                                         TblsCnfg.AnalysisMethodParams.FLD_PARAM_NAME.getName()},
-                                    new Object[]{jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName()).getAsString(),
-                                        jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_PARAMETER.getName()).getAsString()},
+                                    new Object[]{jO.getAsJsonObject().get(TblsCnfg.SpecLimits.ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.METHOD_NAME.getName()).getAsString(),
+                                        jO.getAsJsonObject().get(TblsCnfg.SpecLimits.PARAMETER.getName()).getAsString()},
                                     new String[]{TblsCnfg.AnalysisMethodParams.FLD_UOM.getName(), TblsCnfg.AnalysisMethodParams.FLD_UOM_CONVERSION_MODE.getName()});
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(paramUOM[0][0].toString()))){
                                 if (paramUOM[0][0]!=null){
-                                    fieldName=LPArray.addValueToArray1D(fieldName, TblsCnfg.SpecLimits.FLD_UOM.getName());
+                                    fieldName=LPArray.addValueToArray1D(fieldName, TblsCnfg.SpecLimits.UOM.getName());
                                     fieldValue=LPArray.addValueToArray1D(fieldValue, LPNulls.replaceNull(paramUOM[0][0].toString()));
-                                    fieldName=LPArray.addValueToArray1D(fieldName, TblsCnfg.SpecLimits.FLD_UOM_CONVERSION_MODE.getName());
+                                    fieldName=LPArray.addValueToArray1D(fieldName, TblsCnfg.SpecLimits.UOM_CONVERSION_MODE.getName());
                                     fieldValue=LPArray.addValueToArray1D(fieldValue, LPNulls.replaceNull(paramUOM[0][1].toString()));
                                 }
                             }                            
                         }
                         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){
-                           curFldName=TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(); 
+                           curFldName=TblsCnfg.SpecLimits.RULE_VARIABLES.getName(); 
                            fieldName=LPArray.addValueToArray1D(fieldName, curFldName);
-                           this.diagnostic=cSpec.specLimitNew(jO.getAsJsonObject().get(TblsCnfg.SpecLimits.FLD_CODE.getName()).getAsString(), 1, fieldName, fieldValue);
+                           this.diagnostic=cSpec.specLimitNew(jO.getAsJsonObject().get(TblsCnfg.SpecLimits.CODE.getName()).getAsString(), 1, fieldName, fieldValue);
                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                         }
                     }                    

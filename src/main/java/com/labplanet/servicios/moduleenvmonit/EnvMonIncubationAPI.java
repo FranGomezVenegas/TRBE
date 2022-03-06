@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.TablesEnvMonitData;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -53,8 +54,8 @@ public class EnvMonIncubationAPI extends HttpServlet {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
                 .add("table", TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
-                    .add("table", TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName()).build()).build()
-        ),
+                    .add("table", TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName()).build()).build()
+        ), 
         ;
         private EnvMonIncubationAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
