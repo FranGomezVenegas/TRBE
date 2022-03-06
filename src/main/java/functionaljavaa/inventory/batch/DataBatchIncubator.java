@@ -600,7 +600,7 @@ public class DataBatchIncubator {
         if (ruleValue.length()==0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "incubationLockingEnabledButModeNotDefined", null);
         if (ruleValue.toUpperCase().contains("DEVIATION")){
-            Object[] createNew = ProcedureDeviationIncubator.createNew(instName, new String[]{TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_BATCH_NAME.getName()}, new Object[]{batchName});
+            Object[] createNew = ProcedureDeviationIncubator.createNew(instName, new String[]{TblsEnvMonitProcedure.ProcedureDeviationIncubator.BATCH_NAME.getName()}, new Object[]{batchName});
         }
         if (ruleValue.toUpperCase().contains("STOP")){
             ResponseMessages messages = instanceForActions.getMessages();

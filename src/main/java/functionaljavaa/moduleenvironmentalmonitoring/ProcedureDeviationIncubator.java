@@ -26,9 +26,9 @@ public class ProcedureDeviationIncubator {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
         String statusFirst=ProcDevIncubStatus.CREATED.toString();
-        String[] sampleFldsToGet= new String[]{TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_BATCH_NAME.getName(), 
-        TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_INCUB_NOTEBOOK_ID.getName()};
-        String[] myFldName=new String[]{TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_INCUB_NAME.getName()};    
+        String[] sampleFldsToGet= new String[]{TblsEnvMonitProcedure.ProcedureDeviationIncubator.BATCH_NAME.getName(), 
+        TblsEnvMonitProcedure.ProcedureDeviationIncubator.INCUB_NOTEBOOK_ID.getName()};
+        String[] myFldName=new String[]{TblsEnvMonitProcedure.ProcedureDeviationIncubator.INCUB_NAME.getName()};    
         Object[] myFldValue=new Object[]{incubator};        
         Integer posicInArray=-1;
         for (int iFld=0;iFld<sampleFldsToGet.length;iFld++){
@@ -39,22 +39,22 @@ public class ProcedureDeviationIncubator {
             myFldValue=LPArray.addValueToArray1D(myFldValue, fieldValues[posicInArray]);
           }      
         }
-        posicInArray=LPArray.valuePosicInArray(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_STATUS.getName());
+        posicInArray=LPArray.valuePosicInArray(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.STATUS.getName());
         if (posicInArray==-1){
-          myFldName=LPArray.addValueToArray1D(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_STATUS.getName());
+          myFldName=LPArray.addValueToArray1D(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.STATUS.getName());
           myFldValue=LPArray.addValueToArray1D(myFldValue, statusFirst);      
         }else{myFldValue[posicInArray]=statusFirst;}
-        posicInArray=LPArray.valuePosicInArray(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_CREATED_BY.getName());
+        posicInArray=LPArray.valuePosicInArray(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.CREATED_BY.getName());
         if (posicInArray==-1){
-          myFldName=LPArray.addValueToArray1D(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_CREATED_BY.getName());
+          myFldName=LPArray.addValueToArray1D(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.CREATED_BY.getName());
           myFldValue=LPArray.addValueToArray1D(myFldValue, token.getPersonName());      
         }else{myFldValue[posicInArray]=token.getPersonName();}
-        posicInArray=LPArray.valuePosicInArray(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_CREATED_ON.getName());
+        posicInArray=LPArray.valuePosicInArray(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.CREATED_ON.getName());
         if (posicInArray==-1){
-          myFldName=LPArray.addValueToArray1D(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.FLD_CREATED_ON.getName());
+          myFldName=LPArray.addValueToArray1D(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.CREATED_ON.getName());
           myFldValue=LPArray.addValueToArray1D(myFldValue, LPDate.getCurrentTimeStamp());      
         }else{myFldValue[posicInArray]=LPDate.getCurrentTimeStamp();}
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.ProcedureDeviationIncubator.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.TablesEnvMonitProcedure.DEVIATION_INCUBATOR.getTableName(), 
                 myFldName, myFldValue);
       }
     

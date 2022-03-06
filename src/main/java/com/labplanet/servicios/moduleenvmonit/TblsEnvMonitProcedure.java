@@ -5,25 +5,19 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import databases.DbObjects;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
-import lbplanet.utilities.LPPlatform;
-import static databases.TblsCnfg.SCHEMATAG;
-import static databases.TblsCnfg.TABLETAG;
-import static databases.TblsCnfg.OWNERTAG;
-import static databases.TblsCnfg.TABLESPACETAG;
-import static databases.TblsCnfg.FIELDSTAG;
-import databases.TblsProcedure;
-import static trazit.enums.deployrepository.DeployTables.createTableScript;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
+import trazit.enums.FldBusinessRules;
+import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
  */
 public class TblsEnvMonitProcedure {
-    public static final String getTableCreationScriptFromDataProcedureTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+/*    public static final String getTableCreationScriptFromDataProcedureTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "INCUBATOR_TEMP_READING_VIOLATIONS": return IncubatorTempReadingViolations.createTableScript(schemaNamePrefix, fields);
             case "PROGRAM_CORRECTIVE_ACTION": createTableScript(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, schemaNamePrefix);
@@ -33,215 +27,118 @@ public class TblsEnvMonitProcedure {
             case "SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION": return createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, schemaNamePrefix);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
         }        
-    }    
-    /**
-     *
-     */ 
-
-    /**
-     *
-     */
-    public enum IncubatorTempReadingViolations{
-
-        /**
-         *
-         */
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)"),
-
-        /**
-         *
-         */
-        TBL("incubator_temp_reading_violations", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-
-        /**
-         *
-         */
-        FLD_INCUBATOR("incubator", LPDatabase.string()),        
-
-        /**
-         *
-         */
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime()),
-
-        /**
-         *
-         */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
-
-        /**
-         *
-         */
-        FLD_STARTED_ON("started_on", dateTime()),
-
-        /**
-         *
-         */
-        FLD_ENDED_ON("ended_on", dateTime()),
-
-        /**
-         *
-         */
-        FLD_REASON("reason", LPDatabase.string()),
-
-        /**
-         *
-         */
-        FLD_STAGE_CURRENT("current_stage", LPDatabase.stringNotNull()),
-
-        /**
-         *
-         */
-        FLD_STAGE_PREVIOUS("stage_previous", LPDatabase.string()),
+    }   */ 
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
+    public enum TablesEnvMonitProcedure implements EnumIntTables{        
+        DEVIATION_INCUBATOR(null, "deviation_incubator", SCHEMA_NAME, true, ProcedureDeviationIncubator.values(), 
+            ProcedureDeviationIncubator.ID.getName(), new String[]{ProcedureDeviationIncubator.ID.getName()}, null, "ProcedureDeviationIncubator table"),
+        INCUB_TEMP_READING_VIOLATIONS(null, "incubator_temp_reading_violations", SCHEMA_NAME, true, IncubatorTempReadingViolations.values(), IncubatorTempReadingViolations.ID.getName(), 
+            new String[]{IncubatorTempReadingViolations.ID.getName()}, null, "IncubatorTempReadingViolations table"),
         ;
-        private IncubatorTempReadingViolations(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private TablesEnvMonitProcedure(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+                String seqName, String[] primaryK, Object[] foreignK, String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.tableName=dbTblName;
+            this.tableFields=tblFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.sequence=seqName;
+            this.primarykey=primaryK;
+            this.foreignkey=foreignK;
+            this.tableComment=comment;
         }
+        @Override        public String getTableName() {return this.tableName;}
+        @Override        public String getTableComment() {return this.tableComment;}
+        @Override        public EnumIntTableFields[] getTableFields() {return this.tableFields;}
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public String getSeqName() {return this.sequence;}
+        @Override        public String[] getPrimaryKey() {return this.primarykey;}
+        @Override        public Object[] getForeignKey() {return this.foreignkey;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String tableName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final String sequence;
+        private final EnumIntTableFields[] tableFields;
+        private final String[] primarykey;
+        private final Object[] foreignkey;
+        private final String tableComment;
+    }
 
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix procedure prefix
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
+    public enum IncubatorTempReadingViolations implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null), 
+        INCUBATOR("incubator", LPDatabase.string(), null, null, null, null), 
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime(), null, null, null, null), 
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null), 
+        STARTED_ON("started_on", dateTime(), null, null, null, null), 
+        ENDED_ON("ended_on", dateTime(), null, null, null, null), 
+        REASON("reason", LPDatabase.string(), null, null, null, null), 
+        STAGE_CURRENT("current_stage", LPDatabase.stringNotNull(), null, null, null, null), 
+        STAGE_PREVIOUS("stage_previous", LPDatabase.string(), null, null, null, null), 
+        ;
+        private IncubatorTempReadingViolations(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = IncubatorTempReadingViolations.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (IncubatorTempReadingViolations obj: IncubatorTempReadingViolations.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }        
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
 
-        /**
-         *
-         * @return get all Table Fields
-         */
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (IncubatorTempReadingViolations obj: IncubatorTempReadingViolations.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }
-        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
     
     /**
      *
      */
 
-    public enum ProcedureDeviationIncubator{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)"),
-        TBL("deviation_incubator", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")                ,
-        FLD_STATUS("status", LPDatabase.stringNotNull())        ,
-        FLD_STATUS_PREVIOUS("status_previous", LPDatabase.stringNotNull())        ,
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime())        ,
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())        ,
-        FLD_INCUB_NAME("incubator_name", LPDatabase.string())        ,
-        FLD_INCUB_NOTEBOOK_ID("notebook_id", LPDatabase.integer())        ,
-        FLD_BATCH_NAME("batch_name", LPDatabase.string()),
-        FLD_REASON("reason", LPDatabase.string())
+    public enum ProcedureDeviationIncubator implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null), 
+        STATUS("status", LPDatabase.stringNotNull(), null, null, null, null), 
+        STATUS_PREVIOUS("status_previous", LPDatabase.stringNotNull(), null, null, null, null), 
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime(), null, null, null, null), 
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null), 
+        INCUB_NAME("incubator_name", LPDatabase.string(), null, null, null, null), 
+        INCUB_NOTEBOOK_ID("notebook_id", LPDatabase.integer(), null, null, null, null), 
+        BATCH_NAME("batch_name", LPDatabase.string(), null, null, null, null), 
+        REASON("reason", LPDatabase.string(), null, null, null, null), 
         ;
-        private ProcedureDeviationIncubator(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private ProcedureDeviationIncubator(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
 
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix procedure prefix
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = ProcedureDeviationIncubator.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (ProcedureDeviationIncubator obj: ProcedureDeviationIncubator.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.PROCEDURE.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }   
-
-        /**
-         *
-         * @return get all table fields
-         */
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (ProcedureDeviationIncubator obj: ProcedureDeviationIncubator.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
     
 }

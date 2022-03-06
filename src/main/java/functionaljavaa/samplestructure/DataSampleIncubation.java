@@ -355,10 +355,10 @@ public class DataSampleIncubation {
         if (finalDiagn) return new Object[]{LPPlatform.LAB_TRUE};  
 
         if (deviationAndStop>0){
-            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
-                    new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_BY.getName(), 
-                        TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_REASON.getName(), 
-                        TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STAGE_CURRENT.getName()}, 
+            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS.getTableName(), 
+                    new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_BY.getName(), 
+                        TblsEnvMonitProcedure.IncubatorTempReadingViolations.STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.REASON.getName(), 
+                        TblsEnvMonitProcedure.IncubatorTempReadingViolations.INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.STAGE_CURRENT.getName()}, 
                     new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), LPDate.getCurrentTimeStamp(), deviationAndStopDiagn[deviationAndStopDiagn.length-1],
                         incubName, "CREATED"});
             return deviationAndStopDiagn;            
@@ -367,10 +367,10 @@ public class DataSampleIncubation {
         if (stoppables>0) return stoppablesDiagn;
         
         if (deviations>0){
-            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
-                    new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_BY.getName(), 
-                        TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_REASON.getName(), 
-                        TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STAGE_CURRENT.getName()}, 
+            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS.getTableName(), 
+                    new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_BY.getName(), 
+                        TblsEnvMonitProcedure.IncubatorTempReadingViolations.STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.REASON.getName(), 
+                        TblsEnvMonitProcedure.IncubatorTempReadingViolations.INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.STAGE_CURRENT.getName()}, 
                     new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), LPDate.getCurrentTimeStamp(), deviationsDiagn[deviationsDiagn.length-1],
                         incubName, "CREATED"});
             deviationsDiagn[0]=LPPlatform.LAB_TRUE;
