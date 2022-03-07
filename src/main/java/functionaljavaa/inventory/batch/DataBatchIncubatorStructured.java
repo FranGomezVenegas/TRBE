@@ -99,7 +99,7 @@ public final class DataBatchIncubatorStructured {
         }                 
         Object[] createBatchDiagn = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), fldName, fldValue);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(createBatchDiagn[0].toString())) {
-            IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.BatchAuditEvents.BATCH_CREATED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), bName, LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+            IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.DataBatchAuditEvents.BATCH_CREATED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), bName, LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         }
         return createBatchDiagn;        
     }
@@ -147,9 +147,9 @@ public final class DataBatchIncubatorStructured {
         
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateBatchContentDiagn[0].toString())) {
             if (byMovement!=null && !byMovement) 
-                IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+                IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.DataBatchAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             else
-                IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_MOVED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+                IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.DataBatchAuditEvents.BATCH_SAMPLE_MOVED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         }
         String batchFldName = "";
         if (null == pendingIncubationStage) {
@@ -168,9 +168,9 @@ public final class DataBatchIncubatorStructured {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString())) {
             SampleAudit smpAudit = new SampleAudit();       
             if (byMovement!=null && !byMovement) 
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, updFieldName, updFieldValue);
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.BATCH_SAMPLE_ADDED, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, updFieldName, updFieldValue);
             else
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_MOVED_TO.toString(), TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, updFieldName, updFieldValue);
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.BATCH_SAMPLE_MOVED_TO, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, updFieldName, updFieldValue);
         }
         return updateSampleInfo;
     }
@@ -253,7 +253,7 @@ public final class DataBatchIncubatorStructured {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateBatchContentDiagn[0].toString())) 
             return updateBatchContentDiagn;
         if (byMovement==null || !byMovement)         
-            IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+            IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.DataBatchAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         
         String batchFldName = "";
         if (null == pendingIncubationStage) {
@@ -272,14 +272,14 @@ public final class DataBatchIncubatorStructured {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString())) {
             SampleAudit smpAudit = new SampleAudit();       
             if (byMovement!=null && !byMovement) 
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.BATCH_SAMPLE_REMOVED, TblsData.TablesData.SAMPLE.getTableName(), 
                         sampleId, sampleId, null, null, updFieldName, updFieldValue);
             else{
                 updFieldName=LPArray.addValueToArray1D(updFieldName, "row");
                 updFieldName=LPArray.addValueToArray1D(updFieldName, "col");                
                 updFieldValue=LPArray.addValueToArray1D(updFieldValue, (valuePosition/batchNumCols)+1);
                 updFieldValue=LPArray.addValueToArray1D(updFieldValue, (valuePosition%batchNumCols)+1);                
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.BATCH_SAMPLE_MOVED_FROM.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.BATCH_SAMPLE_MOVED_FROM, TblsData.TablesData.SAMPLE.getTableName(), 
                         sampleId, sampleId, null, null, updFieldName, updFieldValue);
             }
         }

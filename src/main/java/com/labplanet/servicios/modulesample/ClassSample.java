@@ -532,7 +532,7 @@ public class ClassSample {
                                 sampleFieldValue,
                                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
                         SampleAudit smpAudit = new SampleAudit();
-                        smpAudit.sampleAuditAdd(endPoint.getName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
+                        smpAudit.sampleAuditAdd(endPoint.getAuditEventObj(), TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
                             diagn=ApiMessageReturn.trapMessage(diagn[0].toString(), endPoint, new Object[]{sampleId});
                         if ("END".equalsIgnoreCase(newSampleStage))

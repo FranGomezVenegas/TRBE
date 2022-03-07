@@ -7,7 +7,6 @@ package functionaljavaa.audit;
 
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMDataAudit;
 import databases.Rdbms;
-import databases.Token;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
@@ -63,7 +62,9 @@ public class LotAudit {
     public Object[] lotAuditAdd(String action, String tableName, String tableId, 
                         String lotName, Object[] auditlog, Integer parentAuditId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        GenericAuditFields gAuditFlds=new GenericAuditFields(null, null);
+
+        GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
+
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();

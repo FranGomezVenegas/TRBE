@@ -25,6 +25,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
@@ -150,11 +151,11 @@ public class DataSampleIncubation {
             diagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_ENDED_SUCCESS, 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             SampleAudit smpAudit = new SampleAudit();
-            String sampleAuditEvName="";
+            EnumIntAuditEvents sampleAuditEvName=null;
             if (incubationStage==1)
-                sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_1_ENDED.toString();
+                sampleAuditEvName=SampleAudit.DataSampleAuditEvents.SAMPLE_SET_INCUBATION_1_ENDED;
             else
-                sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_2_ENDED.toString();            
+                sampleAuditEvName=SampleAudit.DataSampleAuditEvents.SAMPLE_SET_INCUBATION_2_ENDED;            
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(sampleAuditEvName, TblsData.TablesData.SAMPLE.getTableName(), 
                     sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
             return new Object[]{diagnoses, sampleAuditAdd};
@@ -188,11 +189,11 @@ public class DataSampleIncubation {
             diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_STARTED_SUCCESS, 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});           
             SampleAudit smpAudit = new SampleAudit();
-            String sampleAuditEvName="";
+            EnumIntAuditEvents sampleAuditEvName=null;
             if (incubationStage==1)
-                sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_1_STARTED.toString();
+                sampleAuditEvName=SampleAudit.DataSampleAuditEvents.SAMPLE_SET_INCUBATION_1_STARTED;
             else
-                sampleAuditEvName=SampleAudit.SampleAuditEvents.SAMPLE_SET_INCUBATION_2_STARTED.toString();            
+                sampleAuditEvName=SampleAudit.DataSampleAuditEvents.SAMPLE_SET_INCUBATION_2_STARTED;
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(sampleAuditEvName, TblsData.TablesData.SAMPLE.getTableName(), 
                 sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
             return new Object[]{diagnoses, sampleAuditAdd};            

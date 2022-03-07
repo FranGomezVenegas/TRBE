@@ -12,7 +12,7 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.Token;
-import functionaljavaa.modulegenoma.GenomaDataAudit.ProjectAuditEvents;
+import functionaljavaa.modulegenoma.GenomaDataAudit.DataGenomaProjectAuditEvents;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntMessages;
@@ -205,7 +205,7 @@ public Object[] createProject(String projectName, String[] fieldsName, Object[] 
         
         diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, tableName, fieldsName, fieldsValue);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.NEW_PROJECT.toString(), tableName, projectName, 
+            GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.NEW_PROJECT.toString(), tableName, projectName, 
                 projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;  
     }    
@@ -234,7 +234,7 @@ public Object[] projectActivate(String projectName){
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.Project.TBL.getName(), 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.Project.FLD_NAME.getName()}, new Object[]{projectName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.ACTIVATE_PROJECT.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
+        GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.ACTIVATE_PROJECT.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }    
@@ -251,7 +251,7 @@ public Object[] projectDeActivate(String projectName){
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.Project.TBL.getName(), 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.Project.FLD_NAME.getName()}, new Object[]{projectName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.DEACTIVATE_PROJECT.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
+        GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.DEACTIVATE_PROJECT.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }   
@@ -267,7 +267,7 @@ public Object[] projectUpdate(String projectName, String[] fieldsName, Object[] 
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.Project.TBL.getName(), 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.Project.FLD_NAME.getName()}, new Object[]{projectName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.ACTIVATE_PROJECT.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
+        GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.ACTIVATE_PROJECT.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 } 
@@ -312,7 +312,7 @@ public Object[] projectUserActivate(String projectName, String userName, String 
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.ProjectUsers.TBL.getName(), 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.ProjectUsers.FLD_PROJECT.getName(), TblsGenomaData.ProjectUsers.FLD_PERSON.getName(), TblsGenomaData.ProjectUsers.FLD_ROLES.getName()}, new Object[]{projectName, userName, userRole});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.PROJECT_USER_ACTIVATE.toString(), TblsGenomaData.ProjectUsers.TBL.getName(), projectName, 
+        GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.PROJECT_USER_ACTIVATE.toString(), TblsGenomaData.ProjectUsers.TBL.getName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }    
@@ -328,7 +328,7 @@ public Object[] projectUserDeActivate(String projectName, String userName, Strin
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.ProjectUsers.TBL.getName(), 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.ProjectUsers.FLD_PROJECT.getName(), TblsGenomaData.ProjectUsers.FLD_PERSON.getName(), TblsGenomaData.ProjectUsers.FLD_ROLES.getName()}, new Object[]{projectName, userName, userRole});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.projectAuditAdd(ProjectAuditEvents.PROJECT_USER_DEACTIVATE.toString(), TblsGenomaData.ProjectUsers.TBL.getName(), projectName, 
+        GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.PROJECT_USER_DEACTIVATE.toString(), TblsGenomaData.ProjectUsers.TBL.getName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }    

@@ -173,7 +173,7 @@ public class UserMethod {
                 updFields = LPArray.addValueToArray1D(updFields, whereFields);
                 updFieldsValue = LPArray.addValueToArray1D(updFieldsValue, whereFieldsValue);
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.UPDATE_LAST_ANALYSIS_USER_METHOD.toString(), UserMethod.TABLENAME_DATA_USER_METHOD, 
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.UPDATE_LAST_ANALYSIS_USER_METHOD, UserMethod.TABLENAME_DATA_USER_METHOD, 
                     testId, sampleId, testId, null, updFields, updFieldsValue);
             }
         }

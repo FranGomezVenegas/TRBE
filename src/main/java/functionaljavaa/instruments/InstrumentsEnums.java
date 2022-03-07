@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
@@ -31,7 +32,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class InstrumentsEnums {
     
-    public enum InstrumentEvents{ 
+    public enum AppInstrumentsAuditEvents implements EnumIntAuditEvents{ 
         CREATION, TURN_ON_LINE, TURN_OFF_LINE, PREVIOUS_USAGE_PERF_CHECK, CALIBRATION, START_CALIBRATION, COMPLETE_CALIBRATION, 
         PREVENTIVE_MAINTENANCE, START_PREVENTIVE_MAINTENANCE, COMPLETE_PREVENTIVE_MAINTENANCE,  
         VERIFICATION, START_VERIFICATION, COMPLETE_VERIFICATION,

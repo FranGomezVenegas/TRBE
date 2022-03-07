@@ -293,13 +293,12 @@ public class TblsTrazitDocTrazit {
                 +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#ID_pkey PRIMARY KEY (#AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
-        AREA("area", LPDatabase.stringNotNull()),
         AUDIT_OBJECT("audit_object", LPDatabase.stringNotNull()),
         EVENT_NAME("event_name", LPDatabase.integer()),
-        CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
-        LAST_UPDATE("last_update", LPDatabase.dateTime()),        
         EVENT_PRETTY_EN("event_pretty_en", LPDatabase.stringNotNull()),
         EVENT_PRETTY_ES("event_pretty_es", LPDatabase.stringNotNull()),
+        CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
+        LAST_UPDATE("last_update", LPDatabase.dateTime()),        
         ;
         private AuditEventsDeclaration(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -326,14 +325,14 @@ public class TblsTrazitDocTrazit {
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = EndpointsDeclaration.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = AuditEventsDeclaration.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.REQUIREMENTS.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (EndpointsDeclaration obj: EndpointsDeclaration.values()){
+            for (AuditEventsDeclaration obj: AuditEventsDeclaration.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
@@ -352,7 +351,7 @@ public class TblsTrazitDocTrazit {
         private final String dbObjTypePostgres;  
         public static String[] getAllFieldNames(){
             String[] tableFields=new String[0];
-            for (EndpointsDeclaration obj: EndpointsDeclaration.values()){
+            for (AuditEventsDeclaration obj: AuditEventsDeclaration.values()){
                 String objName = obj.name();
                 if (!"TBL".equalsIgnoreCase(objName)){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());

@@ -7,7 +7,6 @@ package functionaljavaa.audit;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
 import databases.Rdbms;
-import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
@@ -30,7 +29,9 @@ public final class IncubBatchAudit {
  */    
     public static Object[] incubBatchAuditAdd(String action, String tableName, String batchName, Object[] auditlog, Integer parentAuditId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        GenericAuditFields gAuditFlds=new GenericAuditFields(null, null);
+
+        GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
+
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
@@ -43,8 +44,6 @@ public final class IncubBatchAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, batchName);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FIELDS_UPDATED.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
         if (parentAuditId!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);

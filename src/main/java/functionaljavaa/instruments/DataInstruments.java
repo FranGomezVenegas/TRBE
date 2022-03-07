@@ -14,7 +14,7 @@ import databases.Token;
 import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
 import static functionaljavaa.instruments.DataInstrumentsEvents.addVariableSetToObject;
 import static functionaljavaa.instruments.DataInstrumentsEvents.eventHasNotEnteredVariables;
-import functionaljavaa.instruments.InstrumentsEnums.InstrumentEvents;
+import functionaljavaa.instruments.InstrumentsEnums.AppInstrumentsAuditEvents;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsErrorTrapping;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.util.Arrays;
@@ -134,7 +134,7 @@ public class DataInstruments {
                 fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.CREATION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.CREATION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT, new Object[]{name}, name);
@@ -163,7 +163,7 @@ public class DataInstruments {
                 fldNames, fldValues, new String[]{TblsAppProcData.Instruments.NAME.getName()},new Object[]{name});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.UPDATE_INSTRUMENT.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.UPDATE_INSTRUMENT, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
             fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.UPDATE_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.UPDATE_INSTRUMENT, new Object[]{name}, name);
@@ -193,7 +193,7 @@ public class DataInstruments {
                 fldNames, fldValues, new String[]{TblsAppProcData.Instruments.NAME.getName()},new Object[]{name});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.DECOMMISSION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.DECOMMISSION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
             fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.DECOMMISSION_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.DECOMMISSION_INSTRUMENT, new Object[]{name}, name);
@@ -226,7 +226,7 @@ public class DataInstruments {
                 fldNames, fldValues, new String[]{TblsAppProcData.Instruments.NAME.getName()},new Object[]{name});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.UNDECOMMISSION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.UNDECOMMISSION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
             fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.UNDECOMMISSION_INSTRUMENT.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.UNDECOMMISSION_INSTRUMENT, new Object[]{name}, name);
@@ -257,7 +257,7 @@ public class DataInstruments {
                 fldNames, fldValues, new String[]{TblsAppProcData.Instruments.NAME.getName()},new Object[]{name});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.TURN_ON_LINE.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.TURN_ON_LINE, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
             fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_ON_LINE.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_ON_LINE, new Object[]{name}, name);
@@ -280,7 +280,7 @@ public class DataInstruments {
                 fldNames, fldValues, new String[]{TblsAppProcData.Instruments.NAME.getName()},new Object[]{name});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.TURN_OFF_LINE.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.TURN_OFF_LINE, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_OFF_LINE.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_OFF_LINE, new Object[]{name}, name);
@@ -295,7 +295,7 @@ public class DataInstruments {
         Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.name, InstrumentEvents.CALIBRATION.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
+                new Object[]{this.name, AppInstrumentsAuditEvents.CALIBRATION.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_CALIBRATION, new Object[]{name});
@@ -303,13 +303,13 @@ public class DataInstruments {
         }        
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.name, InstrumentEvents.CALIBRATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.CALIBRATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
         Object[] instCreationDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                 fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
         String insEventIdCreated=instCreationDiagn[instCreationDiagn.length-1].toString();
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.START_CALIBRATION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_CALIBRATION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
         
         String variableSetName=null;
@@ -342,7 +342,7 @@ public class DataInstruments {
         Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.name, InstrumentEvents.CALIBRATION.toString(), ""}, 
+                new Object[]{this.name, AppInstrumentsAuditEvents.CALIBRATION.toString(), ""}, 
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
@@ -367,7 +367,7 @@ public class DataInstruments {
                 new String[]{TblsAppProcData.InstrumentEvent.ID.getName()}, new Object[]{eventId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.COMPLETE_CALIBRATION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);        
         fldNames=new String[]{TblsAppProcData.Instruments.LAST_CALIBRATION.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
@@ -378,9 +378,9 @@ public class DataInstruments {
             fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
         }
         if (!this.onLine && decisionAndFamilyRuleToTurnOn(decision, TblsAppProcConfig.InstrumentsFamily.CALIB_TURN_ON_WHEN_COMPLETED.getName())){
-            turnOnLine(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_CALIBRATION.toString());
+            turnOnLine(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString());
         }else{
-            updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_CALIBRATION.toString());            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString());            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{name}, name);
@@ -395,7 +395,7 @@ public class DataInstruments {
         Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.name, InstrumentEvents.PREVENTIVE_MAINTENANCE.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
+                new Object[]{this.name, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_PREV_MAINT, new Object[]{name});
@@ -403,13 +403,13 @@ public class DataInstruments {
         }        
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.name, InstrumentEvents.PREVENTIVE_MAINTENANCE.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
         Object[] instCreationDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                 fldNames, fldValues);
         String insEventIdCreated=instCreationDiagn[instCreationDiagn.length-1].toString();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.START_PREVENTIVE_MAINTENANCE.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_PREVENTIVE_MAINTENANCE, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
 
         String variableSetName=null;
@@ -443,7 +443,7 @@ public class DataInstruments {
         Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.name, InstrumentEvents.PREVENTIVE_MAINTENANCE.toString(), ""}, 
+                new Object[]{this.name, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), ""}, 
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
@@ -465,7 +465,7 @@ public class DataInstruments {
                 new String[]{TblsAppProcData.InstrumentEvent.ID.getName()}, new Object[]{eventId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);        
         fldNames=new String[]{TblsAppProcData.Instruments.LAST_PM.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
@@ -476,9 +476,9 @@ public class DataInstruments {
             fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
         }
         if (!this.onLine  && decisionAndFamilyRuleToTurnOn(decision, TblsAppProcConfig.InstrumentsFamily.PM_TURN_ON_WHEN_COMPLETED.getName())){
-            turnOnLine(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());
+            turnOnLine(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());
         }else{
-            updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREV_MAINT.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREV_MAINT, new Object[]{name}, name);
@@ -493,7 +493,7 @@ public class DataInstruments {
         Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.name, InstrumentEvents.VERIFICATION.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
+                new Object[]{this.name, AppInstrumentsAuditEvents.VERIFICATION.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_VERIFICATION, new Object[]{name});
@@ -501,13 +501,13 @@ public class DataInstruments {
         }        
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.name, InstrumentEvents.VERIFICATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.VERIFICATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
         Object[] instCreationDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                 fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
         String insEventIdCreated=instCreationDiagn[instCreationDiagn.length-1].toString();
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.START_VERIFICATION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_VERIFICATION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
         String variableSetName=null;
         Integer fldPosic=LPArray.valuePosicInArray(this.familyFieldNames, TblsAppProcConfig.InstrumentsFamily.VERIF_SAME_DAY_VARIABLES_SET.getName());
@@ -541,7 +541,7 @@ public class DataInstruments {
         Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.name, InstrumentEvents.VERIFICATION.toString(), ""}, 
+                new Object[]{this.name, AppInstrumentsAuditEvents.VERIFICATION.toString(), ""}, 
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
@@ -563,14 +563,14 @@ public class DataInstruments {
                 new String[]{TblsAppProcData.InstrumentEvent.ID.getName()}, new Object[]{eventId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.COMPLETE_VERIFICATION.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_VERIFICATION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);        
         fldNames=new String[]{TblsAppProcData.Instruments.LAST_VERIF.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
         if (!this.onLine){
             turnOnLine(fldNames, fldValues);
         }else{
-            updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.COMPLETE_VERIFICATION.toString());            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_VERIFICATION.toString());            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{name}, name);
@@ -607,14 +607,14 @@ public class DataInstruments {
                 new String[]{TblsAppProcData.InstrumentEvent.ID.getName()}, new Object[]{instrEventId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.REOPEN_EVENT.toString(), name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
+        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.REOPEN_EVENT, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);        
         fldNames=new String[]{TblsAppProcData.Instruments.LAST_VERIF.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
         if (this.onLine){
             turnOffLine(fldNames, fldValues);
         }else{
-            updateInstrument(fldNames, fldValues, InstrumentsEnums.InstrumentEvents.REOPEN_EVENT.toString());            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.REOPEN_EVENT.toString());            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getSimpleName(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT.getSuccessMessageCode(), new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT, new Object[]{name}, name);

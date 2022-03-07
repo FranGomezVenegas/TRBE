@@ -18,6 +18,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
@@ -32,7 +33,7 @@ import trazit.session.ApiMessageReturn;
  * @author User
  */
 public final class Investigation {
-    public enum InvestigationAuditEvents{NEW_INVESTIGATION_CREATED, OBJECT_ADDED_TO_INVESTIGATION, CLOSED_INVESTIGATION, CAPA_DECISION
+    public enum DataInvestigationAuditEvents implements EnumIntAuditEvents{NEW_INVESTIGATION_CREATED, OBJECT_ADDED_TO_INVESTIGATION, CLOSED_INVESTIGATION, CAPA_DECISION
     //CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT
     }
     public enum InvestigationErrorTrapping implements EnumIntMessages{ 
@@ -78,7 +79,7 @@ public final class Investigation {
             updFieldName, updFieldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
         String investIdStr=diagnostic[diagnostic.length-1].toString();
-        Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(InvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), Integer.valueOf(investIdStr), investIdStr,  
+        Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), Integer.valueOf(investIdStr), investIdStr,  
                 LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationAuditAdd[0].toString())) return investigationAuditAdd; 
             String investAuditIdStr=investigationAuditAdd[investigationAuditAdd.length-1].toString();
@@ -101,7 +102,7 @@ public final class Investigation {
             new String[]{TblsProcedure.Investigation.ID.getName()}, new Object[]{investId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
         ProcedureInvestigationAudit.investigationAuditAdd(
-                InvestigationAuditEvents.CLOSED_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), 
+                DataInvestigationAuditEvents.CLOSED_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), 
                 investId, investId.toString(),  
                 LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
         Object[][] investObjects = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), 
@@ -112,7 +113,7 @@ public final class Investigation {
             String curObj=curInvObj[0].toString()+"*";
             if (curInvObj[1]!=null && curInvObj[1].toString().length()>0) curObj=curObj+curInvObj[1].toString();
             else curObj=curObj+curInvObj[2].toString();
-            addAuditRecordForObject(curObj, investId, SampleAudit.SampleAuditEvents.INVESTIGATION_CLOSED.toString());                        
+            addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.INVESTIGATION_CLOSED);                        
         }
         return diagnostic;               
     }
@@ -157,9 +158,9 @@ public final class Investigation {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
 
                 String incIdStr=diagnostic[diagnostic.length-1].toString();
-                ProcedureInvestigationAudit.investigationAuditAdd(InvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investId, incIdStr,  
+                ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investId, incIdStr,  
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), parentAuditId, null);
-                addAuditRecordForObject(curObj, investId, SampleAudit.SampleAuditEvents.ADDED_TO_INVESTIGATION.toString());                
+                addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.ADDED_TO_INVESTIGATION);
             }
         }
         return diagnostic;        
@@ -247,7 +248,7 @@ public final class Investigation {
             new String[]{TblsProcedure.Investigation.ID.getName()}, new Object[]{investId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
         Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(
-                InvestigationAuditEvents.CAPA_DECISION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
+                DataInvestigationAuditEvents.CAPA_DECISION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
                 investId, investId.toString(),  
                 LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
         if (closeInvestigation) closeInvestigation(investId);
@@ -273,7 +274,7 @@ public final class Investigation {
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllCapaFields:  <*1*>", new Object[]{Arrays.toString(fields)});
     }
     
-    public static void addAuditRecordForObject(String curObj, Integer investId, String auditActionName){
+    public static void addAuditRecordForObject(String curObj, Integer investId, EnumIntAuditEvents auditActionName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Integer sampleId=null;
         Integer testId=null;

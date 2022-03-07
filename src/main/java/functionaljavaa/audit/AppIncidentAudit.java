@@ -7,7 +7,6 @@ package functionaljavaa.audit;
 
 import databases.Rdbms;
 import databases.TblsAppAudit;
-import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
@@ -18,7 +17,7 @@ public final class AppIncidentAudit {
     public static Object[] incidentAuditAdd(String action, String tableName, Integer incidentId,
                         Object[] auditlog, Integer parentAuditId, String note) {
 
-        GenericAuditFields gAuditFlds=new GenericAuditFields(null, null);
+        GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
@@ -31,8 +30,6 @@ public final class AppIncidentAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, incidentId);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FIELDS_UPDATED.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
         if (note!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.NOTE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, note);

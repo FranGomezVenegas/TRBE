@@ -131,7 +131,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
         switch (objectTable.toLowerCase()){
             case "sample":
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.CHAIN_OF_CUSTODY_STARTED.toString(), objectTable, Integer.valueOf(objectId.toString()),
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.CHAIN_OF_CUSTODY_STARTED, objectTable, Integer.valueOf(objectId.toString()),
                         Integer.valueOf(objectId.toString()), null, null, sampleFieldName, sampleFieldValue);
                 break;
             default:
@@ -217,7 +217,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
         switch (objectTable.toLowerCase()){
             case "sample":
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.CHAIN_OF_CUSTODY_COMPLETED.toString(), objectTable, Integer.valueOf(objectId.toString()),
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.CHAIN_OF_CUSTODY_COMPLETED, objectTable, Integer.valueOf(objectId.toString()),
                         Integer.valueOf(objectId.toString()), null, null, sampleFieldName, sampleFieldValue);
                 break;
             default:

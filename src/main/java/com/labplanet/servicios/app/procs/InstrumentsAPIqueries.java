@@ -153,13 +153,13 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 case INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT:
                     instrName=LPNulls.replaceNull(argValues[0]).toString();
                     fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENT_EVENT.getTableFields());
-                    Object[][] instrumentEvents = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
+                    Object[][] AppInstrumentsAuditEvents = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                         new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName()},
                         new Object[]{instrName},
                         fieldsToRetrieve, new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.CREATED_ON.getName()+" desc"});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentEvents[0][0].toString())){
-                        for (Object[] currInstrEv: instrumentEvents){
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
+                        for (Object[] currInstrEv: AppInstrumentsAuditEvents){
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
                             jArr.add(jObj);
                         }
@@ -176,12 +176,12 @@ public class InstrumentsAPIqueries extends HttpServlet {
                         Object[] convertStringWithDataTypeToObjectArray = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                     }
                     fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENT_EVENT.getTableFields());
-                    instrumentEvents = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
+                    AppInstrumentsAuditEvents = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                         whereFldName, whereFldValue,
                         fieldsToRetrieve, new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.CREATED_ON.getName()+" desc"});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentEvents[0][0].toString())){
-                        for (Object[] currInstrEv: instrumentEvents){
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
+                        for (Object[] currInstrEv: AppInstrumentsAuditEvents){
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
                             jArr.add(jObj);
                         }
@@ -191,13 +191,13 @@ public class InstrumentsAPIqueries extends HttpServlet {
             case INSTRUMENT_EVENT_VARIABLES:
                     Integer instrEventId=(Integer)argValues[0];
                     fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableFields());
-                    instrumentEvents = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
+                    AppInstrumentsAuditEvents = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
                         new String[]{TblsAppProcData.InstrEventVariableValues.EVENT_ID.getName()},
                         new Object[]{instrEventId},
                         fieldsToRetrieve, new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName(), TblsAppProcData.InstrEventVariableValues.CREATED_ON.getName()+" desc"});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentEvents[0][0].toString())){
-                        for (Object[] currInstrEv: instrumentEvents){
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
+                        for (Object[] currInstrEv: AppInstrumentsAuditEvents){
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
                             jArr.add(jObj);
                         }

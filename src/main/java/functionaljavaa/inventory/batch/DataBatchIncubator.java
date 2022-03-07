@@ -21,6 +21,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
@@ -129,7 +130,7 @@ public class DataBatchIncubator {
          */
         UNSTRUCTURED}
     enum BatchIncubatorMoments{START, END}
-    public enum BatchAuditEvents{BATCH_CREATED, BATCH_UPDATED, BATCH_STARTED, BATCH_ENDED, BATCH_SAMPLE_ADDED, BATCH_SAMPLE_MOVED, BATCH_SAMPLE_REMOVED, BATCH_SAMPLE_REMOVED_BY_OVERRIDE, BATCH_ASSIGN_INCUBATOR}
+    public enum DataBatchAuditEvents implements EnumIntAuditEvents{BATCH_CREATED, BATCH_UPDATED, BATCH_STARTED, BATCH_ENDED, BATCH_SAMPLE_ADDED, BATCH_SAMPLE_MOVED, BATCH_SAMPLE_REMOVED, BATCH_SAMPLE_REMOVED_BY_OVERRIDE, BATCH_ASSIGN_INCUBATOR}
 //    enum BatchIncubatorUpdateFieldsNotAllowed{a("f"), b("f")};//    enum BatchIncubatorUpdateFieldsNotAllowed{a("f"), b("f")};
 
     /**
@@ -441,11 +442,11 @@ public class DataBatchIncubator {
         if (BatchIncubatorMoments.START.toString().equalsIgnoreCase(moment)){
             requiredFields = new String[]{TblsEnvMonitData.IncubBatch.INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.INCUBATION_START.getName()};
             requiredFieldsValue= new Object[]{incubName, LPDate.getCurrentTimeStamp()}; 
-            batchAuditEvent=BatchAuditEvents.BATCH_STARTED.toString();
+            batchAuditEvent=DataBatchAuditEvents.BATCH_STARTED.toString();
         }else if (BatchIncubatorMoments.END.toString().equalsIgnoreCase(moment)){
             requiredFields = new String[]{TblsEnvMonitData.IncubBatch.INCUBATION_END.getName(), TblsEnvMonitData.IncubBatch.ACTIVE.getName(), TblsEnvMonitData.IncubBatch.COMPLETED.getName()};
             requiredFieldsValue= new Object[]{LPDate.getCurrentTimeStamp(), false, true};                
-            batchAuditEvent=BatchAuditEvents.BATCH_ENDED.toString();
+            batchAuditEvent=DataBatchAuditEvents.BATCH_ENDED.toString();
         } else return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.MOMENT_NOTDECLARED_IN_BATCHMOMENTSLIST, new Object[]{moment});
         
         Object[] updateDiagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), 
@@ -540,7 +541,7 @@ public class DataBatchIncubator {
                 updFieldName, updFieldValue, 
                 new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()}, new Object[]{batchName});        
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagn[0].toString()))
-            IncubBatchAudit.incubBatchAuditAdd(BatchAuditEvents.BATCH_ASSIGN_INCUBATOR.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName,  
+            IncubBatchAudit.incubBatchAuditAdd(DataBatchAuditEvents.BATCH_ASSIGN_INCUBATOR.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName,  
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return updateDiagn;
     }
@@ -565,7 +566,7 @@ public class DataBatchIncubator {
                 fieldsName, fieldsValue, 
                 new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()}, new Object[]{batchName});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagnostic[0].toString()))
-            IncubBatchAudit.incubBatchAuditAdd(BatchAuditEvents.BATCH_UPDATED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName,
+            IncubBatchAudit.incubBatchAuditAdd(DataBatchAuditEvents.BATCH_UPDATED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName,
                 LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return updateDiagnostic;
     }

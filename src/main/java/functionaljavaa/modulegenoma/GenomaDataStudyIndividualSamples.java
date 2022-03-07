@@ -192,7 +192,7 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
 
             diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.StudyIndividualSample.TBL.getName(), fieldsName, fieldsValue);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-                GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.NEW_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), diagnosesProj[diagnosesProj.length-1].toString(), 
+                GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.NEW_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), diagnosesProj[diagnosesProj.length-1].toString(), 
                     studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             return diagnosesProj;  
         }    
@@ -219,7 +219,7 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyIndividualSample.TBL.getName(), 
                 fieldsName, fieldsValue, new String[]{TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), 
+            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;      
     }    
@@ -238,7 +238,7 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
                 new String[]{TblsGenomaData.StudyIndividualSample.FLD_STUDY.getName(), TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName(), TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName()}, 
                 new Object[]{studyName, indivId, sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), 
+            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;      
     }   
@@ -257,7 +257,7 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
                 new String[]{TblsGenomaData.StudyIndividualSample.FLD_STUDY.getName(), TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName(), TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName()}, 
                 new Object[]{studyName, indivId, sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.UPDATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), 
+            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.UPDATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;      
     } 

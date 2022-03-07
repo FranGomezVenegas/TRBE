@@ -1,10 +1,10 @@
 package com.labplanet.servicios.moduledefinition;
 
 import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIEndpoints;
-import functionaljavaa.platform.doc.AuditEventsDoc;
+import functionaljavaa.platform.doc.AuditEventsToRequirements;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.platform.doc.MessageCodesToRequirements;
-import functionaljavaa.platform.doc.PropertiesToRequirements;
+import functionaljavaa.platform.doc.BusinessRulesToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,11 +35,13 @@ public class ClassTrazitCodeDoc {
                     MessageCodesToRequirements msgToReq=new MessageCodesToRequirements(request, response);
                     break;
                 case DOC_API_BUSINESS_RULES_IN_DB:
-                    PropertiesToRequirements.businessRulesDefinition(request, response);
+                    BusinessRulesToRequirements.businessRulesDefinition(request, response);
                     break;
                 case DOC_API_AUDIT_EVENTS_IN_DB:
-                    AuditEventsDoc.AuditEventsDefinition();
+                    AuditEventsToRequirements evToReq=new AuditEventsToRequirements(request, response);
+                    //AuditEventsDoc.AuditEventsDefinition();
                     break;
+
             }    
         if (actionDiagnoses!=null)
             this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{actionDiagnoses[0]});

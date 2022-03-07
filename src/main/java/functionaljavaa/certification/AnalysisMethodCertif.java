@@ -10,7 +10,7 @@ import functionaljavaa.audit.CertifTablesAudit;
 import functionaljavaa.certification.CertifGlobalVariables.CertifLight;
 import static functionaljavaa.intervals.IntervalsUtilities.applyExpiryInterval;
 import functionaljavaa.parameter.Parameter;
-import static functionaljavaa.platform.doc.PropertiesToRequirements.valuesListForEnableDisable;
+import static functionaljavaa.platform.doc.BusinessRulesToRequirements.valuesListForEnableDisable;
 import functionaljavaa.sop.UserSop.userSopStatuses;
 import trazit.session.ResponseMessages;
 import static functionaljavaa.user.UserAndRolesViews.getPersonByUser;

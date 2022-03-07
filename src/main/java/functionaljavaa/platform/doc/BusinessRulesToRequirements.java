@@ -31,7 +31,7 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class PropertiesToRequirements {
+public class BusinessRulesToRequirements {
 
     public static JSONArray valuesListForEnableDisable(){
         JSONArray vList=new JSONArray();
@@ -47,6 +47,7 @@ public class PropertiesToRequirements {
     public static void businessRulesDefinition(HttpServletRequest request, HttpServletResponse response){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);    
         JSONArray enumsCompleteSuccess = new JSONArray();
+        Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
         Integer classesImplementingInt=-999;
         Integer totalEndpointsVisitedInt=0;
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
@@ -63,17 +64,19 @@ public class PropertiesToRequirements {
                         EnumIntBusinessRules curBusRul=(EnumIntBusinessRules)enumConstantObjects.get(j);
                         String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName()});
                         Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
-                        try{
-                        declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), 
-                        curBusRul.getAreaName(), curBusRul.getTagName(), 
-                        fieldNames, fieldValues, curBusRul.getValuesList(), 
-                        curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
-                        }catch(Exception e){
-                            JSONObject jObj=new JSONObject();
-                            jObj.put("enum",getMine.getName().toString());
-                            jObj.put("endpoint",curBusRul.toString());
-                            jObj.put("error",e.getMessage());
-                            enumsIncomplete.add(jObj);
+                        if (!summaryOnlyMode){
+                            try{
+                                declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), 
+                                curBusRul.getAreaName(), curBusRul.getTagName(), 
+                                fieldNames, fieldValues, curBusRul.getValuesList(), 
+                                curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
+                            }catch(Exception e){
+                                JSONObject jObj=new JSONObject();
+                                jObj.put("enum",getMine.getName().toString());
+                                jObj.put("endpoint",curBusRul.toString());
+                                jObj.put("error",e.getMessage());
+                                enumsIncomplete.add(jObj);
+                            }
                         }
                     }
                     if (enumsIncomplete.size()>0){

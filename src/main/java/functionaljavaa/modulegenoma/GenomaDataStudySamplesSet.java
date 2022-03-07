@@ -196,7 +196,7 @@ public Object[] createStudySamplesSet( String studyName, String sampleSetName, S
             for (String currSample: samples)
                 studySamplesSetAddSample(studyName, sampleSetName, currSample);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.NEW_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.NEW_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;  
     }    
@@ -223,7 +223,7 @@ public Object[] studySamplesSetActivate( String studyName, String sampleSetName)
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudySamplesSet.TBL.getName(), 
             fieldsName, fieldsValue, new String[]{TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{sampleSetName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.ACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.ACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }    
@@ -241,7 +241,7 @@ public Object[] studySamplesSetDeActivate(String studyName, String sampleSetName
             fieldsName, fieldsValue, 
             new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName(), TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{studyName, sampleSetName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.DEACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 }   
@@ -259,7 +259,7 @@ public Object[] studySamplesSetUpdate( String studyName, String sampleSetName, S
             fieldsName, fieldsValue, 
             new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName(), TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{studyName, sampleSetName});
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.UPDATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.UPDATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     return diagnosesProj;      
 } 
@@ -275,7 +275,7 @@ public Object[] studySamplesSetAddSample(String studyName, String sampleSetName,
         return updateSamplesSetSamples;
     }
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
-        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.STUDY_SAMPLES_SET_ADDED_SAMPLE.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.STUDY_SAMPLES_SET_ADDED_SAMPLE.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     }
     return updateSamplesSetSamples;
@@ -293,7 +293,7 @@ public Object[] studySamplesSetRemoveSample(String studyName, String sampleSetNa
     }
     
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
-        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.STUDY_SAMPLES_SET_REMOVED_SAMPLE.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
+        GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.STUDY_SAMPLES_SET_REMOVED_SAMPLE.toString(), TblsGenomaData.StudySamplesSet.TBL.getName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     }
     return updateSamplesSetSamples;

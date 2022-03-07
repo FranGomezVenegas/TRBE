@@ -15,7 +15,7 @@ import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.platform.doc.PropertiesToRequirements;
+import functionaljavaa.platform.doc.BusinessRulesToRequirements;
 import trazit.session.ResponseMessages;
 import static functionaljavaa.samplestructure.ProcedureSampleStages.procedureSampleStagesTimingEvaluateDeviation;
 import java.io.FileNotFoundException;
@@ -84,7 +84,7 @@ public enum SampleStageErrorTrapping implements EnumIntMessages{
         SAMPLE_STAGE_TYPE("sampleStagesLogicType", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*sampleStagesMode"),
         SAMPLE_STAGE_TIMING_CAPTURE_MODE("sampleStagesTimingCaptureMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*sampleStagesMode"),
         SAMPLE_STAGE_TIMING_CAPTURE_STAGES("sampleStagesTimingCaptureStages", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*sampleStagesMode"),
-        SAMPLE_STAGE_TIMING_PROCEDURE_CONFIG_ENABLED("sampleStagesTimingProcedureConfigEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), PropertiesToRequirements.valuesListForEnableDisable(), false, '|', "procedure*sampleStagesMode"),
+        SAMPLE_STAGE_TIMING_PROCEDURE_CONFIG_ENABLED("sampleStagesTimingProcedureConfigEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), BusinessRulesToRequirements.valuesListForEnableDisable(), false, '|', "procedure*sampleStagesMode"),
         ;
         private SampleStageBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, String preReqs){
             this.tagName=tgName;
@@ -227,7 +227,7 @@ public enum SampleStageErrorTrapping implements EnumIntMessages{
                     sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
                 dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLESTAGE_MOVETONEXT.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLESTAGE_MOVETONEXT, TblsData.TablesData.SAMPLE.getTableName(), 
                     sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);        
             }
             if ("END".equalsIgnoreCase(sampleCurrStage)){

@@ -198,9 +198,9 @@ public class DataSampleRevisionTestingGroup{
             new Object[]{sampleId, testingGroup});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateReviewSampleTestingGroup[0].toString())){
             SampleAudit smpAudit = new SampleAudit();
-            Object[] sampleAudit = smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
+            Object[] sampleAudit = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED, TblsData.TablesData.SAMPLE.getTableName(), 
                 sampleId, sampleId, null, null, updFldNames, updFldValues);
-            markSampleAsReadyForRevision(sampleId, SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), Integer.valueOf(LPNulls.replaceNull(sampleAudit[sampleAudit.length-1]).toString()));
+            markSampleAsReadyForRevision(sampleId, SampleAudit.DataSampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), Integer.valueOf(LPNulls.replaceNull(sampleAudit[sampleAudit.length-1]).toString()));
         }
         return updateReviewSampleTestingGroup;        
     }
@@ -243,9 +243,9 @@ public class DataSampleRevisionTestingGroup{
             SampleAudit smpAudit = new SampleAudit(); 
             Object[] isSampleTestingGroupGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getTagName());
 //            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isSampleTestingGroupGenericAutoApproveEnabled[0].toString()))
-//                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_SET_AUTOAPPROVE.toString(), TblsData.SampleRevisionTestingGroup.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
+//                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_TESTINGGROUP_SET_AUTOAPPROVE.toString(), TblsData.SampleRevisionTestingGroup.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, null);
 //            else
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_SET_READY_REVISION.toString(), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(), 
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_TESTINGGROUP_SET_READY_REVISION, TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(), 
                     sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isSampleTestingGroupGenericAutoApproveEnabled[0].toString())){
                 return reviewSampleTestingGroup(sampleId, testingGroup, DataSample.AUTO_APPROVE_USER);

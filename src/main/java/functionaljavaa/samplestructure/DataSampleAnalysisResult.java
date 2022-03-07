@@ -30,6 +30,7 @@ import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import lbplanet.utilities.LPDate;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -113,7 +114,7 @@ public class DataSampleAnalysisResult {
                             fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.STATUS + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + sampleAnalysisResultStatusCanceled);
                             fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.STATUS_PREVIOUS + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + currStatus);
                             SampleAudit smpAudit = new SampleAudit();
-                            smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.BACK_FROM_CANCEL.toString(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                            smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.BACK_FROM_CANCEL, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                                 resultId, sampleId, testId, resultId, fieldsForAudit, null);
                         }
                     } else {
@@ -145,7 +146,7 @@ public class DataSampleAnalysisResult {
                             new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{currTest});
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0])) {
                         SampleAudit smpAudit = new SampleAudit();
-                        smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.BACK_FROM_CANCEL.toString(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
+                        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.BACK_FROM_CANCEL, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                             currTest, sampleId, currTest, null, updFldName, updFldValue);
                     }
                 } else 
@@ -166,7 +167,7 @@ public class DataSampleAnalysisResult {
                         new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{currSample});
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0])) {
                     SampleAudit smpAudit = new SampleAudit();
-                    smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.BACK_FROM_CANCEL.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.BACK_FROM_CANCEL, TblsData.TablesData.SAMPLE.getTableName(), 
                         currSample, currSample, null, null, updFldName, updFldValue);
                 }
             } else {
@@ -317,11 +318,11 @@ public class DataSampleAnalysisResult {
             Object[] sampleAuditAdd=new Object[0];
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 SampleAudit smpAudit = new SampleAudit();
-                sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                     resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
             }
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
+                DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
             }
         }
         Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, analysis, methodName, methodVersion, paramName, 
@@ -340,11 +341,11 @@ public class DataSampleAnalysisResult {
             Object[] sampleAuditAdd=new Object[0];
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 SampleAudit smpAudit = new SampleAudit();
-                sampleAuditAdd=smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                sampleAuditAdd=smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                         resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
             }
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
+                DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
             }
             return new Object[]{diagnoses};
         }
@@ -396,11 +397,11 @@ public class DataSampleAnalysisResult {
                 Object[] sampleAuditAdd=new Object[0];
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     SampleAudit smpAudit = new SampleAudit();
-                    sampleAuditAdd=smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                    sampleAuditAdd=smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                         resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
                 }
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
+                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
                 }
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                   if ((resSpecEvaluation[resSpecEvaluation.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL))
@@ -449,11 +450,11 @@ public class DataSampleAnalysisResult {
                 Object[] sampleAuditAdd=new Object[0];
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     SampleAudit smpAudit = new SampleAudit();
-                    sampleAuditAdd=smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                    sampleAuditAdd=smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                             resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
                 }                
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) 
-                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
+                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId, SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     checkMsgCode=(EnumIntMessages) resSpecEvaluation[resSpecEvaluation.length - 1];
                     specEval = checkMsgCode.getErrorCode();
@@ -495,7 +496,7 @@ public class DataSampleAnalysisResult {
                 updFieldNames, updFieldValues, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString())) return updateRecordFieldsByFilter;
         SampleAudit smpAudit = new SampleAudit();
-        String auditActionName = SampleAudit.SampleAnalysisResultAuditEvents.UOM_CHANGED.toString() + " FOR " + paramName;
+        EnumIntAuditEvents auditActionName = SampleAudit.DataSampleAnalysisResultAuditEvents.UOM_CHANGED; ////AuditEvent To Object, commented	.toString() + " FOR " + paramName;
         smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
             resultId, sampleId, testId, resultId, updFieldNames, updFieldValues);
         return updateRecordFieldsByFilter;
@@ -556,7 +557,7 @@ public class DataSampleAnalysisResult {
                                 new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                             SampleAudit smpAudit = new SampleAudit();
-                            smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNCANCELED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), +
+                            smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNCANCELED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), +
                                     resultId, sampleId, testId, resultId, updFldNames, updFldValues);
                         }
                         diagPerResult = LPArray.addValueToArray1D(diagPerResult, "Result " + resultId.toString() + " UNCANCELED ");
@@ -589,7 +590,7 @@ public class DataSampleAnalysisResult {
                             new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{currTest});
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                         SampleAudit smpAudit = new SampleAudit();
-                        smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_UNCANCELED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
+                        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_UNCANCELED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                             currTest, sampleId, currTest, null, updFldNames, updFldValues);
                     }
                 } else {
@@ -613,7 +614,7 @@ public class DataSampleAnalysisResult {
                         new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{currSample});
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     SampleAudit smpAudit = new SampleAudit();
-                    smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_UNCANCELED.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_UNCANCELED, TblsData.TablesData.SAMPLE.getTableName(), 
                             currSample, currSample, null, null, updFldNames, updFldValues);
                 }
             } else {
@@ -675,7 +676,7 @@ public class DataSampleAnalysisResult {
                             new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                             SampleAudit smpAudit = new SampleAudit();
-                            smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNCANCELED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                            smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNCANCELED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                                 resultId, sampleId, testId, resultId, updFldNames, updFldValues);
                         }
                         diagPerResult = LPArray.addValueToArray1D(diagPerResult, "Result " + resultId.toString() + " UNREVIEWED ");
@@ -708,7 +709,7 @@ public class DataSampleAnalysisResult {
                         new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{currTest});
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                         SampleAudit smpAudit = new SampleAudit();
-                        smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_UNREVIEWED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
+                        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_UNREVIEWED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                             currTest, sampleId, currTest, null, updFldNames, updFldValues);
                     }
                 } else {
@@ -732,7 +733,7 @@ public class DataSampleAnalysisResult {
                     new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{currSample});
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {                    
                     SampleAudit smpAudit = new SampleAudit();
-                    smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_UNREVIEWED.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_UNREVIEWED, TblsData.TablesData.SAMPLE.getTableName(), 
                         currSample, currSample, null, null, updFldNames, updFldValues);
                 }
             } else {
@@ -789,7 +790,7 @@ public class DataSampleAnalysisResult {
                                     new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
                             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                                 SampleAudit smpAudit = new SampleAudit();
-                                smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_CANCELED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_CANCELED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                                     resultId, sampleId, testId, resultId, updFldNames, updFldValues);
                             }
                         } else 
@@ -819,7 +820,7 @@ public class DataSampleAnalysisResult {
                         new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{currTest});
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     SampleAudit smpAudit = new SampleAudit();
-                    smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_CANCELED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_CANCELED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                         currTest, sampleId, currTest, null, updFldNames, updFldValues);
                 }
             } else 
@@ -841,7 +842,7 @@ public class DataSampleAnalysisResult {
                         new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{currSample});
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                     SampleAudit smpAudit = new SampleAudit();
-                    smpAudit.sampleAuditAdd(SampleAudit.SampleAuditEvents.SAMPLE_CANCELED.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_CANCELED, TblsData.TablesData.SAMPLE.getTableName(), 
                             currSample, currSample, null, null, updFldNames, updFldValues);
                 }
             }else 
@@ -994,7 +995,7 @@ public class DataSampleAnalysisResult {
                         updFieldValue = LPArray.addValueToArray1D(updFieldValue, "false");                        
                     }
                     SampleAudit smpAudit = new SampleAudit();
-                    smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.TablesData.SAMPLE.getTableName(), 
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED, TblsData.TablesData.SAMPLE.getTableName(), 
                         sampleId, sampleId, null, null, updFieldName, updFieldValue);
                 }
             }
@@ -1041,10 +1042,10 @@ public class DataSampleAnalysisResult {
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                         sampleAnalysisFinallyReviewed=new Object[]{sampleId};
                         SampleAudit smpAudit = new SampleAudit();
-                        Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
+                        Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                             testId, sampleId, testId, null, updFieldName, updFieldValue);
                         sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId, 
-                                SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), Integer.valueOf(LPNulls.replaceNull(sampleAuditAdd[sampleAuditAdd.length-1]).toString()));
+                                SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), Integer.valueOf(LPNulls.replaceNull(sampleAuditAdd[sampleAuditAdd.length-1]).toString()));
                     }
                 }
             }
@@ -1086,7 +1087,7 @@ public class DataSampleAnalysisResult {
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                         sampleAnalysisResultFinallyReviewed=LPArray.addValueToArray1D(sampleAnalysisResultFinallyReviewed, resultId);
                         SampleAudit smpAudit = new SampleAudit();
-                        smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                             resultId, sampleId, testId, resultId, updFldName, updFldValue);
                     }
                 } 

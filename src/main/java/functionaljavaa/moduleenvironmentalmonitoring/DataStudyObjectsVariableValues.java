@@ -73,7 +73,7 @@ public class DataStudyObjectsVariableValues {
                 diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyVariableValues.TBL.getName(), 
                     fieldsName, fieldsValue);            
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
-                    GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.ADD_VARIABLE_SET_TO_STUDY_OBJECT.toString(), TblsGenomaData.StudyVariableValues.TBL.getName(), Arrays.toString(currVar), 
+                    GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.ADD_VARIABLE_SET_TO_STUDY_OBJECT.toString(), TblsGenomaData.StudyVariableValues.TBL.getName(), Arrays.toString(currVar), 
                         studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);                
             }
         }        
@@ -115,7 +115,7 @@ public class DataStudyObjectsVariableValues {
         diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyVariableValues.TBL.getName(), 
             updFieldsName, updFieldsValue, new String[]{TblsGenomaData.StudyVariableValues.FLD_ID.getName()}, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())});            
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
-            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.StudyAuditEvents.STUDY_OBJECT_SET_VARIABLE_VALUE.toString(), TblsGenomaData.StudyVariableValues.TBL.getName(), newValue, 
+            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.STUDY_OBJECT_SET_VARIABLE_VALUE.toString(), TblsGenomaData.StudyVariableValues.TBL.getName(), newValue, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldsName, updFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);                
         
         return diagn;

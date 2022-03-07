@@ -2,9 +2,9 @@ package functionaljavaa.audit;
 
 import databases.Rdbms;
 import databases.TblsCnfgAudit;
-import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -13,12 +13,12 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class ConfigTablesAudit {
 
-    public enum AnalysisAuditEvents {
+    public enum ConfigAnalysisAuditEvents implements EnumIntAuditEvents{
         ANALYSIS_NEW, ANALYSIS_UPDATE, ANALYSIS_METHOD_NEW, ANALYSIS_METHOD_UPDATE, ANALYSIS_METHOD_DELETE,
         ANALYSIS_METHOD_PARAM_NEW, ANALYSIS_METHOD_PARAM_UPDATE, ANALYSIS_METHOD_PARAM_DELETE
     }
 
-    public enum SpecAuditEvents {
+    public enum ConfigSpecAuditEvents implements EnumIntAuditEvents{
         SPEC_NEW, SPEC_UPDATE, SPEC_LIMIT_NEW
     }
 
@@ -41,7 +41,9 @@ public class ConfigTablesAudit {
     public static Object[] analysisAuditAdd(String action, String tableName, String tableId,
             String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        GenericAuditFields gAuditFlds=new GenericAuditFields(null, null);
+
+        GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
+
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
@@ -60,9 +62,6 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.CONFIG_VERSION.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, specConfigVersion);
         }
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.FIELDS_UPDATED.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
-
         if (parentAuditId != null) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
@@ -90,7 +89,9 @@ public class ConfigTablesAudit {
     public static Object[] specAuditAdd(String action, String tableName, String tableId,
             String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        GenericAuditFields gAuditFlds=new GenericAuditFields(null, null);
+
+        GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
+
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
@@ -109,9 +110,6 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.SPEC_CONFIG_VERSION.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, specConfigVersion);
         }
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.FIELDS_UPDATED.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
-
         if (parentAuditId != null) {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);

@@ -42,6 +42,7 @@ public MessageCodesToRequirements(HttpServletRequest request, HttpServletRespons
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
         Rdbms.getRdbms().startRdbms(dbTrazitModules);
         getMessageCodesFromDatabase();
+        Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
         if (this.fldNames==null) return;
         JSONArray enumsCompleteSuccess = new JSONArray();
         Integer classesImplementingInt=-999;
@@ -65,16 +66,18 @@ public MessageCodesToRequirements(HttpServletRequest request, HttpServletRespons
                         EnumIntMessages curBusRul=(EnumIntMessages)enumConstantObjects.get(j);
                         String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
                         Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
-                        try{
-                        //declareMessageInDatabase(curBusRul.getClass().getSimpleName(), 
-                          //  curBusRul, fieldNames, fieldValues);
+                        if (!summaryOnlyMode){
+                            try{
+                            //declareMessageInDatabase(curBusRul.getClass().getSimpleName(), 
+                              //  curBusRul, fieldNames, fieldValues);
 
-                        }catch(Exception e){
-                            JSONObject jObj=new JSONObject();
-                            jObj.put("enum",getMine.getName().toString());
-                            jObj.put("message_code",curBusRul.toString());
-                            jObj.put("error",e.getMessage());
-                            enumsIncomplete.add(jObj);
+                            }catch(Exception e){
+                                JSONObject jObj=new JSONObject();
+                                jObj.put("enum",getMine.getName().toString());
+                                jObj.put("message_code",curBusRul.toString());
+                                jObj.put("error",e.getMessage());
+                                enumsIncomplete.add(jObj);
+                            }
                         }
                     }
                     if (enumsIncomplete.size()>0){

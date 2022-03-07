@@ -19,8 +19,8 @@ import functionaljavaa.requirement.Requirement;
 import functionaljavaa.samplestructure.DataSampleStages;
 import java.util.ArrayList;
 import lbplanet.utilities.LPDate;
-import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
@@ -63,20 +63,20 @@ public class SampleAudit {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }    
-    public enum SampleAuditEvents{SAMPLE_LOGGED, SAMPLE_RECEIVED, SET_SAMPLING_DATE, SAMPLE_CHANGE_SAMPLING_DATE,
+    public enum DataSampleAuditEvents implements EnumIntAuditEvents{SAMPLE_LOGGED, SAMPLE_RECEIVED, SET_SAMPLING_DATE, SAMPLE_CHANGE_SAMPLING_DATE,
         SET_SAMPLING_DATE_END, SAMPLE_CHANGE_SAMPLING_DATE_END,
         SAMPLE_RECEPTION_COMMENT_ADD, SAMPLE_RECEPTION_COMMENT_REMOVE, SAMPLE_EVALUATE_STATUS, SAMPLE_TESTINGGROUP_REVIEWED, SAMPLE_TESTINGGROUP_SET_AUTOAPPROVE, SAMPLE_TESTINGGROUP_SET_READY_REVISION, SAMPLE_REVIEWED,
         LOG_SAMPLE_ALIQUOT, LOG_SAMPLE_SUBALIQUOT, SAMPLESTAGE_MOVETONEXT, SAMPLESTAGE_MOVETOPREVIOUS,
-        UPDATE_LAST_ANALYSIS_USER_METHOD, CHAIN_OF_CUSTODY_STARTED, CHAIN_OF_CUSTODY_COMPLETED, MICROORGANISM_ADDED, MICROORGANISM_REMOVED, 
+        UPDATE_LAST_ANALYSIS_USER_METHOD, CHAIN_OF_CUSTODY_STARTED, CHAIN_OF_CUSTODY_ABORTED, CHAIN_OF_CUSTODY_COMPLETED, MICROORGANISM_ADDED, MICROORGANISM_REMOVED, 
         SAMPLE_SET_INCUBATION_STARTED, SAMPLE_SET_INCUBATION_ENDED, SAMPLE_SET_INCUBATION_1_STARTED, SAMPLE_SET_INCUBATION_1_ENDED, SAMPLE_SET_INCUBATION_2_STARTED, SAMPLE_SET_INCUBATION_2_ENDED,
-        SAMPLE_CANCELED, SAMPLE_UNCANCELED, SAMPLE_UNREVIEWED, SAMPLE_SET_READY_FOR_REVISION,
+        SAMPLE_CANCELED, SAMPLE_UNCANCELED, SAMPLE_UNREVIEWED, SAMPLE_SET_READY_FOR_REVISION, REVIEWED_AUDIT_ID,
         BATCH_SAMPLE_ADDED, BATCH_SAMPLE_REMOVED, BATCH_SAMPLE_MOVED_FROM, BATCH_SAMPLE_MOVED_TO, SAMPLE_AUTOAPPROVE, ADDED_TO_INVESTIGATION, INVESTIGATION_CLOSED}  
 
-    public enum SampleAnalysisAuditEvents{ SAMPLE_ANALYSIS_REVIEWED, SAMPLE_ANALYSIS_EVALUATE_STATUS, SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, 
+    public enum DataSampleAnalysisAuditEvents implements EnumIntAuditEvents{ SAMPLE_ANALYSIS_REVIEWED, SAMPLE_ANALYSIS_EVALUATE_STATUS, SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, 
         SAMPLE_ANALYSIS_ADDED, SAMPLE_ANALYSIS_CANCELED, SAMPLE_ANALYSIS_UNCANCELED, SAMPLE_ANALYSIS_UNREVIEWED, SAMPLE_ANALYSIS_SET_READY_FOR_REVISION, SAMPLE_ANALYSIS_AUTOAPPROVE}
     
-    public enum SampleAnalysisResultAuditEvents{BACK_FROM_CANCEL, SAMPLE_ANALYSIS_RESULT_ENTERED, UOM_CHANGED, 
-        SAMPLE_ANALYSIS_RESULT_ADDED, SAMPLE_ANALYSIS_RESULT_CANCELED, SAMPLE_ANALYSIS_RESULT_UNCANCELED, SAMPLE_ANALYSIS_RESULT_REVIEWED}
+    public enum DataSampleAnalysisResultAuditEvents implements EnumIntAuditEvents{BACK_FROM_CANCEL, SAMPLE_ANALYSIS_RESULT_ENTERED, UOM_CHANGED, SAMPLE_ANALYSIS_RESULT_REENTERED,
+        SAMPLE_ANALYSIS_RESULT_ADDED, SAMPLE_ANALYSIS_RESULT_CANCELED, SAMPLE_ANALYSIS_RESULT_UNCANCELED, SAMPLE_ANALYSIS_RESULT_REVIEWED, SAMPLE_ANALYSIS_RESULT_UNREVIEWED}
       
     public enum SampleAuditBusinessRules implements EnumIntBusinessRules{
         REVISION_MODE("sampleAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
@@ -122,23 +122,23 @@ public class SampleAudit {
  *      @param resultId Integer - resultId
  * @return  
  */    
-    public Object[] sampleAuditAdd(String action, String tableName, Integer tableId, 
+    public Object[] sampleAuditAdd(EnumIntAuditEvents action, String tableName, Integer tableId, 
                         Integer sampleId, Integer testId, Integer resultId, String[] fldNames, Object[] fldValues) {
         return sampleAuditAdd(action, tableName, tableId, 
             sampleId, testId, resultId, fldNames, fldValues, null, null);
     }
-    public Object[] sampleAuditAdd(String action, String tableName, Integer tableId, 
+    public Object[] sampleAuditAdd(EnumIntAuditEvents action2, String tableName, Integer tableId, 
                         Integer sampleId, Integer testId, Integer resultId, String[] fldNames, Object[] fldValues, String alternativeAuditEntry, String alternativeAuditClass) {
-        String fileName="dataSampleAuditEvents";
+/*        String fileName="dataSampleAuditEvents";
         if (testId!=null)
-            fileName="dataSampleAnalysisAuditEvents";
+            fileName="dataDataSampleConfigAnalysisAuditEvents";
         if (resultId!=null)
-            fileName="dataSampleAnalysisResultAuditEvents";
+            fileName="dataDataSampleAnalysisResultAuditEvents";
         if (alternativeAuditClass!=null){
             fileName=alternativeAuditClass;
             action=alternativeAuditEntry;
-        }
-        GenericAuditFields gAuditFlds=new GenericAuditFields(fldNames, fldValues);
+        }*/
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action2, fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
@@ -149,7 +149,7 @@ public class SampleAudit {
             TblsDataAudit.Sample.TABLE_NAME.getName(), TblsDataAudit.Sample.TABLE_ID.getName()});
         fieldValues = LPArray.addValueToArray1D(fieldValues, new Object[]{tableName, tableId});
 
-        for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
+/*        for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
             Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
                     TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), TblsDataAudit.Sample.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
@@ -189,6 +189,7 @@ public class SampleAudit {
 
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
+*/        
         if (sampleId!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.SAMPLE_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, sampleId);
@@ -201,13 +202,14 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.RESULT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, resultId);
         }    
-        if (auditActions!=null && auditActions.getMainParentAuditAction()!=null){
+/*        if (auditActions!=null && auditActions.getMainParentAuditAction()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getMainParentAuditAction().getAuditId());
-        }    
+        }    */
         Object[] insertRecordInfo = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), 
                 fieldNames, fieldValues);
-        auditActions.addAuditAction(Integer.valueOf(insertRecordInfo[insertRecordInfo.length-1].toString()), action, actionPrettyEn, actionPrettyEs);
+        SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();                
+        auditActions.addAuditAction(Integer.valueOf(insertRecordInfo[insertRecordInfo.length-1].toString()), gAuditFlds.getActionName(), gAuditFlds.getActionPrettyNameEn(), gAuditFlds.getActionPrettyNameEs());
         return insertRecordInfo;
     }
     /**

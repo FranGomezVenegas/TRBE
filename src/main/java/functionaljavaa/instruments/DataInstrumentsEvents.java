@@ -107,7 +107,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
                     fieldsName, fieldsValue);            
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
-                    instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.START_CALIBRATION.toString(), instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
+                    instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_CALIBRATION, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                         fieldsName, fieldsValue);
             }
         }        
@@ -169,7 +169,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
             updFieldsName, updFieldsValue, new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName()}, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())});            
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
-            instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.VALUE_ENTERED.toString(), instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
+            instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_ENTERED, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                 updFieldsName, updFieldsValue);
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);        
     }
@@ -232,7 +232,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
             updFieldsName, updFieldsValue, new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName()}, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())});            
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
-            instrumentsAuditAdd(InstrumentsEnums.InstrumentEvents.VALUE_REENTERED.toString(), instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
+            instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_REENTERED, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                 updFieldsName, updFieldsValue);
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);        
     }

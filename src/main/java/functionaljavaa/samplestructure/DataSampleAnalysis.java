@@ -29,6 +29,7 @@ import trazit.globalvariables.GlobalVariables;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysisResultStatuses;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysisStatuses;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.session.ApiMessageReturn;
 /**
  *
@@ -70,8 +71,8 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     updateFldNames, updateFldValues, new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 SampleAudit smpAudit = new SampleAudit();
-                Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REVIEWED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId, sampleId, testId, null, updateFldNames, updateFldValues);
-                sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId, SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REVIEWED.toString(), (Integer) sampleAuditAdd[sampleAuditAdd.length-1]);
+                Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REVIEWED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId, sampleId, testId, null, updateFldNames, updateFldValues);
+                sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId, SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REVIEWED.toString(), (Integer) sampleAuditAdd[sampleAuditAdd.length-1]);
             }
             return diagnoses;
         } else {
@@ -123,10 +124,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         }
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        String auditActionName = SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_SET_READY_FOR_REVISION.toString();
-        if (parentAuditAction != null) {
-            auditActionName = parentAuditAction +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ auditActionName;
-        }
+        EnumIntAuditEvents auditActionName = SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_SET_READY_FOR_REVISION;
+//AuditEvent To Object, commented	        if (parentAuditAction != null) auditActionName = parentAuditAction +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ auditActionName;
+        
         String[] sampleAnalysisFieldName=new String[]{TblsData.SampleAnalysis.READY_FOR_REVISION.getName()};
         Object[] sampleAnalysisFieldValue=new Object[]{true};
         Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),  
@@ -196,10 +196,8 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        String auditActionName = SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_EVALUATE_STATUS.toString();
-        if (parentAuditAction != null) {
-            auditActionName = parentAuditAction +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ auditActionName;
-        }
+        EnumIntAuditEvents auditActionName = SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_EVALUATE_STATUS;
+//AuditEvent To Object, commented	if (parentAuditAction != null) auditActionName = parentAuditAction +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ auditActionName;
         String sampleAnalysisStatusIncomplete = SampleAnalysisStatuses.INCOMPLETE.getStatusCode("");
         String sampleAnalysisStatusComplete = SampleAnalysisStatuses.COMPLETE.getStatusCode("");
         String smpAnaNewStatus = "";
@@ -247,7 +245,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
     
     public static void sampleAnalysisEvaluateStatusAutomatismForAutoApprove(Integer sampleId, Integer testId,String parentAuditAction,Integer parentAuditId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String auditActionName = SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_AUTOAPPROVE.toString();
+        String auditActionName = SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_AUTOAPPROVE.toString();
         if (parentAuditAction != null) {
             auditActionName = parentAuditAction +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ auditActionName;
         }
@@ -346,7 +344,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSISASSIGNED_SUCCESS, new Object[]{testId, newAnalyst, schemaDataName});
                 SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT.toString(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                         testId, sampleId, testId, null, updateFieldName, updateFieldValue);
                 return diagnoses;
             }
@@ -639,7 +637,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         Object[] diagnoses = Rdbms.insertRecordInTable(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), fieldName, fieldValue);
         Integer testId = Integer.parseInt(diagnoses[diagnoses.length - 1].toString());
         SampleAudit smpAudit = new SampleAudit();
-        smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ADDED.toString(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
+        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ADDED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                 testId, sampleId, testId, null, fieldName, fieldValue);
         Integer valuePosic = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.TEST_ID.getName());
         if (valuePosic == -1) {
@@ -705,7 +703,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 diagnoses = Rdbms.insertRecordInTable(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                         getResultFields, fieldVal);
                 Integer resultId = Integer.parseInt(diagnoses[diagnoses.length - 1].toString());
-                smpAudit.sampleAuditAdd(SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ADDED.toString(), sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                     resultId, sampleId, testId, resultId, getResultFields, fieldVal);
             }
         }

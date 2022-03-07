@@ -12,7 +12,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.TblsCnfg;
 import functionaljavaa.audit.ConfigTablesAudit;
-import functionaljavaa.audit.ConfigTablesAudit.AnalysisAuditEvents;
+import functionaljavaa.audit.ConfigTablesAudit.ConfigAnalysisAuditEvents;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -266,7 +266,7 @@ if (1==1){return "ERROR";}
             whereFieldValues = LPArray.addValueToArray1D(whereFieldValues, configVersion);            
             diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS.getTableName(), specFieldName, specFieldValue, whereFieldNames, whereFieldValues);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_UPDATE.toString(), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), code, 
+                ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_UPDATE.toString(), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), code, 
                     code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);              
            }
            return diagnoses;
@@ -380,7 +380,7 @@ if (1==1){return "ERROR";}
 //                        TblsCnfg.AnalysisRules.ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.AnalysisRules.ALLOW_MULTI_SPEC.getName()}, 
 //                    new Object[]{specCode, specCodeVersion, false, false});       
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), code, 
+                ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), code, 
                     code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, code);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
@@ -551,7 +551,7 @@ if (1==1){return "ERROR";}
             Object[] anaMethFldValue=new Object[]{analysisCode, methodName, methodVersion, fieldValue[LPArray.valuePosicInArray(fieldName, TblsCnfg.AnalysisMethod.CREATED_BY.getName())], LPDate.getCurrentTimeStamp()};
             diagnoses = Rdbms.insertRecordInTable(schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), anaMethFldName, anaMethFldValue); 
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_METHOD_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), analysisCode, 
+                ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_METHOD_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), analysisCode, 
                     analysisCode, analysisCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(anaMethFldName, anaMethFldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             }
         }
@@ -564,7 +564,7 @@ if (1==1){return "ERROR";}
             fieldValue = LPArray.addValueToArray1D(fieldValue, methodVersion);            
             diagnoses = Rdbms.insertRecordInTable(schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), fieldName, fieldValue); 
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                ConfigTablesAudit.analysisAuditAdd(AnalysisAuditEvents.ANALYSIS_METHOD_PARAM_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), analysisCode, 
+                ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_METHOD_PARAM_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), analysisCode, 
                     analysisCode, analysisCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             }
             return diagnoses;
