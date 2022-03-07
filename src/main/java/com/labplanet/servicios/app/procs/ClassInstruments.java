@@ -20,6 +20,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
@@ -253,7 +254,7 @@ public class ClassInstruments {
                     break;
 }
                 default:
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, "endpointNotFound", null);   
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);   
                     return;
             }     
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))

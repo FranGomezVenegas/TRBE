@@ -171,7 +171,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
                 }else{
                     JSONObject dataSampleJSONMsg =new JSONObject();
                     if (endPoint!=null)
-                        dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
+                        dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                     
                     LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                 }            
@@ -267,7 +267,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
             }else{
                 //RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), lotName);
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{lotName}, rObj.getRelatedObject());
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{lotName}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           

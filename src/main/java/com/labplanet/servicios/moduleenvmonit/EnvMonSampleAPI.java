@@ -300,7 +300,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                             con.setAutoCommit(true);}                */
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
                     }else{
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPointSmp.getClass().getSimpleName(), endPointSmp.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointSmp, clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                     } 
                 }                
@@ -328,7 +328,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 }else{
                     JSONObject dataSampleJSONMsg =new JSONObject();
                     if (endPoint!=null)
-                        dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
+                        dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                     
                     LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                 }            
@@ -350,7 +350,7 @@ public class EnvMonSampleAPI extends HttpServlet {
         //                    con.setAutoCommit(true);}                
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
                     }else{
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                     } 
                 }

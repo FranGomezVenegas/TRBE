@@ -83,6 +83,9 @@ public class Rdbms {
         RDBMS_RECORD_CREATED("RecordCreated", "", ""), RDBMS_RECORD_NOT_CREATED("RecordNotCreated", "", ""),
         RDBMS_RECORD_UPDATED("RecordUpdated", "", ""), RDBMS_RECORD_REMOVED("RecordRemoved", "", ""),
         DB_ERROR("dbError", "", ""),
+        TRANSFERRED_RECORDS_BETWEEN_INSTANCES("transferredRecordsBetweenInstances", "", ""),
+        TABLE_WITH_NO_RECORDS("tableWithNoRecords", "", ""),
+        
         ;
         RdbmsErrorTrapping(String cl, String msgEn, String msgEs){
             this.errorCode=cl;
@@ -1638,7 +1641,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         try{
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
-                return new Object[]{LPArray.array1dTo2d(ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}, true), 7), fieldsToRetrieve};
+                return new Object[]{LPArray.array1dTo2d(ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, TrazitUtilitiesErrorTrapping.ALL_THE_SAME, new Object[]{procInstanceName, schemaName1}), 7), fieldsToRetrieve};
             }            
             res.last();
             Integer numRows=res.getRow();
@@ -1657,7 +1660,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                     }         
                     return new Object[]{diagnoses2, fieldsToRetrieve};
             }else{
-                return new Object[]{LPArray.array1dTo2d(ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllTheSame", new Object[]{procInstanceName, schemaName1}, true), 7), fieldsToRetrieve};
+                return new Object[]{LPArray.array1dTo2d(ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, TrazitUtilitiesErrorTrapping.ALL_THE_SAME, new Object[]{procInstanceName, schemaName1}), 7), fieldsToRetrieve};
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     

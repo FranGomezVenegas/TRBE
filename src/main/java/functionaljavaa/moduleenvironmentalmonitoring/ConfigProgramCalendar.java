@@ -195,7 +195,7 @@ public class ConfigProgramCalendar {
     public static Object[] importHolidaysCalendarSchedule(String pName, Integer programCalendarId, String holidaysCalendarCode) {                
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(),  
-              new String[]{TblsApp.HolidaysCalendar.FLD_CODE.getName(),TblsApp.HolidaysCalendar.FLD_ACTIVE.getName()}, 
+              new String[]{TblsApp.HolidaysCalendar.CODE.getName(),TblsApp.HolidaysCalendar.ACTIVE.getName()}, 
               new Object[]{holidaysCalendarCode, true});
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){ return existsRecord;}     
 

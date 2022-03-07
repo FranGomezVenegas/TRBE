@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.TablesEnvMonitData;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -146,7 +145,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
                     con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
             }               
         }catch(Exception e){  

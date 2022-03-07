@@ -101,12 +101,12 @@ schemaName="proc-deploy";
 out.println(schemaName+" "+TablesData.SAMPLE.getTableName()+" >> "+createTableScript(TablesData.SAMPLE, schemaName));
 out.println("");
 out.println(schemaName+" "+TablesData.PRODUCT.getTableName()+" >> "+createTableScript(TablesData.PRODUCT, schemaName));
-out.println("");            
+out.println("");             
 /*            Rdbms.stablishDBConection("labplanet"); 
             schemaName="proc-deploy";
             Object[][] recordFieldsByFilter = getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaName, TablesData.SAMPLE.getRepositoryName()), TablesData.SAMPLE.getTableName(), 
-                new EnumIntTableFields[]{SampleFlds.FLD_STATUS}, new Object[]{"REVIEWED"},
-                new EnumIntTableFields[]{SampleFlds.FLD_LOGGED_ON, SampleFlds.FLD_LOGGED_BY, SampleFlds.FLD_SAMPLER, SampleFlds.FLD_SAMPLE_ID, SampleFlds.FLD_STATUS},
+                new EnumIntTableFields[]{SampleFlds.STATUS}, new Object[]{"REVIEWED"},
+                new EnumIntTableFields[]{SampleFlds.LOGGED_ON, SampleFldsLOGGED_BY, SampleFldsSAMPLER, SampleFldsSAMPLE_ID, SampleFldsSTATUS},
                 null, true);
             out.println(recordFieldsByFilter.length);
             out.println(recordFieldsByFilter[0][0].toString());
@@ -187,9 +187,9 @@ for (EnumIntBusinessRules implClass : loader) {
             }
 
             //getEndPointArguments(curApi.getArguments());
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ENDPOINT_NAME.getName(),  TblsTrazitDocTrazit.EndpointsDeclaration.FLD_SUCCESS_MESSAGE_CODE.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.EndpointsDeclaration.ENDPOINT_NAME.getName(),  TblsTrazitDocTrazit.EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName(), curApi.getSuccessMessageCode()});
-            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
 //            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
             EndPointsToRequirements end=new EndPointsToRequirements();
             end.declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), AuthenticationAPIParams.AuthenticationAPIEndpoints.values().length);
@@ -375,7 +375,7 @@ if (1==1) return;
 //Rdbms.stablishDBConectionTester();
 //insertRecordInTableFromTable(true, TblsReqs.ProcedureUserRequirementsEvents.getAllFieldNames(),
 //        GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), 
-//        new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_SCHEMA_PREFIX.getName()},
+//        new String[]{TblsReqs.ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.SCHEMA_PREFIX.getName()},
 //        new Object[]{"proc-deploy", 1, "proc-deploy"},
 //        LPPlatform.buildSchemaName("proc-deploy", GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
 //            if (1==1) return;            
@@ -572,8 +572,8 @@ out.println("Bye");
             
             String[] errObject = new String[]{"Servlet sampleAPI at " + request.getServletPath()};          
             
-            String[] sampleFieldName = new String[]{TblsData.Sample.FLD_SPEC_CODE_VERSION.getName()};
-            String[][] specFields = new String[][]{{TblsData.Sample.FLD_SPEC_CODE.getName(), ""}, {TblsData.Sample.FLD_SPEC_CODE_VERSION.getName(), ""}, {TblsData.Sample.FLD_SPEC_VARIATION_NAME.getName(), ""}};
+            String[] sampleFieldName = new String[]{TblsData.Sample.SPEC_CODE_VERSION.getName()};
+            String[][] specFields = new String[][]{{TblsData.Sample.SPEC_CODE.getName(), ""}, {TblsData.Sample.SPEC_CODE_VERSION.getName(), ""}, {TblsData.Sample.SPEC_VARIATION_NAME.getName(), ""}};
             String[] specMissingFields = new String[0];
             for (String[] curValue: specFields){
                 Integer posicField = LPArray.valuePosicInArray(sampleFieldName, curValue[0]);
@@ -592,7 +592,7 @@ out.println("Bye");
                 out.println("joining two arrays of "+Arrays.toString(firstArray)+" and "+Arrays.toString(secondArray)+" with the separator "+LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+" I obtained "+Arrays.toString(myJoinedArray));
             
             out.println("The name for the table Session in db is "+ TblsApp.AppSession.valueOf("TBL").getName());
-            out.println("The name for the field Session_id in db is "+TblsApp.AppSession.valueOf("FLD_SESSION_ID").getName());
+            out.println("The name for the field Session_id in db is "+TblsApp.AppSession.valueOf("SESSION_ID").getName());
             String myTableName=TblsApp.TablesApp.USERS.getTableName();
             out.println("The table name with NO valueOf() is "+myTableName);
             myTableName=TblsApp.Users.valueOf("TBL").getName();
@@ -602,15 +602,15 @@ out.println("Bye");
             String procInstanceNameSampleInfo="oil-pl1";
             Integer selSample=134;
             Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceNameSampleInfo, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                    new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{selSample}, 
-                    new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName()});
+                    new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{selSample}, 
+                    new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.STATUS.getName()});
             out.println("Info from "+procInstanceNameSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
 
             procInstanceNameSampleInfo="em-demo-a";
             selSample=160;
             sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceNameSampleInfo, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                    new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{selSample}, 
-                    new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName(), TblsData.Sample.FLD_STATUS_PREVIOUS.getName()});
+                    new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{selSample}, 
+                    new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.STATUS.getName(), TblsData.Sample.STATUS_PREVIOUS.getName()});
             out.println("Info from "+procInstanceNameSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
         
         JSONObject jsonObj = new JSONObject();

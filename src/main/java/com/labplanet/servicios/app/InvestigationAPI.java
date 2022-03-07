@@ -186,7 +186,7 @@ public class InvestigationAPI extends HttpServlet {
                     }else{
                         JSONObject dataSampleJSONMsg =new JSONObject();
                         if (endPoint!=null)
-                            dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clssInv.getMessageDynamicData(), clssInv.getRelatedObj().getRelatedObject());                
+                            dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clssInv.getMessageDynamicData(), clssInv.getRelatedObj().getRelatedObject());                
 
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                     }            

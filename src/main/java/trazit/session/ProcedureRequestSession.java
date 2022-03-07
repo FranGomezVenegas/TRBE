@@ -22,6 +22,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
 
@@ -346,7 +347,7 @@ public class ProcedureRequestSession {
             return null;                             
         }                        */
 
-return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "allFine", null, true);
+return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, TrazitUtilitiesErrorTrapping.ALL_FINE, null);
     }
     public void setBusinessRulesTesting(BusinessRules br){
         this.busRulesTesting=br;

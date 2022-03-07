@@ -14,11 +14,11 @@ import databases.TblsProcedure;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
+import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
@@ -231,11 +231,16 @@ public class ClassSampleQueries {
             fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
             fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
             fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
-            
-            JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPTrue(
-                    EnvMonSampleAPI.class.getSimpleName(),
-                    "resultLockedByProgramCorrectiveAction", notClosedProgramCorrreciveAction[0], null);                                
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
+            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, "resultLockedByProgramCorrectiveAction");
+            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_en");
+            String apiName=EnvMonSampleAPI.EnvMonSampleAPIEndpoints.class.getSimpleName();
+            String msgCode="resultLockedByProgramCorrectiveAction";
+            String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en", null, true);
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorTextEn);
+            String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es", null, false);
+            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_es");
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorTextEs);
         }
         return new Object[]{fldNameArr, fldValueArr};
     }

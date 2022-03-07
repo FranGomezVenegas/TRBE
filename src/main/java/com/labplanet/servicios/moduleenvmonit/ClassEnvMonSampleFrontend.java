@@ -1265,10 +1265,10 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsCnfg.TablesConfig.METHODS.getTableName());
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");        
-        String msgCode=AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode();
-        fldValueArr=LPArray.addValueToArray1D(fldValueArr, msgCode);
-        Object[] errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, msgCode, new Object[]{methodName}, "en");
-        Object[] errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, msgCode, new Object[]{methodName}, "es");
+        
+        fldValueArr=LPArray.addValueToArray1D(fldValueArr, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode());
+        Object[] errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, "en");
+        Object[] errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, "es");
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorMsgEn[errorMsgEn.length-1]);
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_es");
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorMsgEs[errorMsgEs.length-1]);

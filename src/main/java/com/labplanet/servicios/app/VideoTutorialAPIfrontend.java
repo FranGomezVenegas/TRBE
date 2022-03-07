@@ -402,7 +402,7 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                 userSop = new UserSop();      
                 for (String currProc: allUserProcedurePrefix) {                   
                     Object[][] procSops = Rdbms.getRecordFieldsByFilter(currProc+"-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
-                            new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
+                            new String[]{TblsCnfg.SopMetaData.SOP_ID.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procSops[0]))){
                         Object[] errMsg = LPFrontEnd.responseError(procSops, language, null);
                         response.sendError((int) errMsg[0], (String) errMsg[1]);    

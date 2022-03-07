@@ -310,8 +310,6 @@ public class EnvMonAPIStats extends HttpServlet {
                 case QUERY_INVESTIGATION:
                     getSampleInfo=false;
                     getInvestigationInfo=true;                    
-                    //filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SPEC_EVAL.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()};
-                    //filterFieldValue=new Object[]{"IN"};                    
                     break;
                 case KPIS: 
                     getSampleInfo=true;                    

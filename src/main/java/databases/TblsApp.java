@@ -32,7 +32,7 @@ public class TblsApp {
         IP_BLACK_LIST(null, "ip_black_list", SCHEMA_NAME, true, IPBlackList.values(), IPBlackList.ID.getName(),
             new String[]{IPBlackList.ID.getName()}, null, "Black List, when one IP is added to this table then it is banned, independently of be in the white list too"),
         HOLIDAYS_CALENDAR(null, "holidays_calendar", SCHEMA_NAME, true, HolidaysCalendar.values(), null,
-            new String[]{HolidaysCalendar.FLD_CODE.getName()}, null, "Holiday Calendars"),
+            new String[]{HolidaysCalendar.CODE.getName()}, null, "Holiday Calendars"),
         HOLIDAYS_CALENDAR_DATE(null, "holidays_calendar_date", SCHEMA_NAME, true, HolidaysCalendarDate.values(), HolidaysCalendarDate.ID.getName(),
             new String[]{HolidaysCalendarDate.ID.getName()}, null, "Holiday Calendars dates added"),
         INCIDENT(null, "incident", SCHEMA_NAME, true, Incident.values(), Incident.ID.getName(),
@@ -212,11 +212,11 @@ public class TblsApp {
         }
 
     public enum HolidaysCalendar implements EnumIntTableFields{
-        FLD_CODE("code", LPDatabase.string(),null, null, "", null),
-        FLD_ACTIVE("active", LPDatabase.booleanFld(),null, null, "", null),
-        FLD_CREATED_ON("created_on", LPDatabase.dateTime(),null, null, "", null),
-        FLD_CREATED_BY("created_by", LPDatabase.string(),null, null, "", null),
-        FLD_DESCRIPTION("description", LPDatabase.string(),null, null, "", null)
+        CODE("code", LPDatabase.string(),null, null, "", null),
+        ACTIVE("active", LPDatabase.booleanFld(),null, null, "", null),
+        CREATED_ON("created_on", LPDatabase.dateTime(),null, null, "", null),
+        CREATED_BY("created_by", LPDatabase.string(),null, null, "", null),
+        DESCRIPTION("description", LPDatabase.string(),null, null, "", null)
         ;
         private HolidaysCalendar(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

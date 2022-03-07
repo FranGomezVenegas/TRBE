@@ -63,7 +63,7 @@ public MessageCodesToRequirements(HttpServletRequest request, HttpServletRespons
                     totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
                     for (int j=0;j<enumConstantObjects.size();j++) {
                         EnumIntMessages curBusRul=(EnumIntMessages)enumConstantObjects.get(j);
-                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
                         Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
                         try{
                         //declareMessageInDatabase(curBusRul.getClass().getSimpleName(), 
@@ -114,145 +114,145 @@ public MessageCodesToRequirements(HttpServletRequest request, HttpServletRespons
         
         AuditAndUserValidationErrorTrapping[] auditAndUserValidationErrorTrapping = AuditAndUserValidationErrorTrapping.values();
         for (AuditAndUserValidationErrorTrapping curBusRul: auditAndUserValidationErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }        
         ChangeOfCustodyErrorTrapping[] changeOfCustodyErrorTrapping = ChangeOfCustodyErrorTrapping.values();
         for (ChangeOfCustodyErrorTrapping curBusRul: changeOfCustodyErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }        
         ConfigIncubatorErrorTrapping[] configIncubatorErrorTrapping = ConfigIncubatorErrorTrapping.values();
         for (ConfigIncubatorErrorTrapping curBusRul: configIncubatorErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }        
         CertificationAnalysisMethodErrorTrapping[] certificationAnalysisMethodErrorTrapping = CertificationAnalysisMethodErrorTrapping.values();
         for (CertificationAnalysisMethodErrorTrapping curBusRul: certificationAnalysisMethodErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         LpPlatformErrorTrapping[] lpPlatformErrorTrapping = LpPlatformErrorTrapping.values();
         for (LpPlatformErrorTrapping curBusRul: lpPlatformErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         ResultCheckErrorsErrorTrapping[] resultCheckErrorsErrorTrapping = ResultCheckErrorsErrorTrapping.values();
         for (ResultCheckErrorsErrorTrapping curBusRul: resultCheckErrorsErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         ResultCheckSuccessErrorTrapping[] resultCheckSuccessErrorTrapping = ResultCheckSuccessErrorTrapping.values();
         for (ResultCheckSuccessErrorTrapping curBusRul: resultCheckSuccessErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         RdbmsErrorTrapping[] rdbmsErrorTrapping = RdbmsErrorTrapping.values();
         for (RdbmsErrorTrapping curBusRul: rdbmsErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         ParadigmErrorTrapping[] paradigmErrorTrapping = ParadigmErrorTrapping.values();
         for (ParadigmErrorTrapping curBusRul: paradigmErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         DataSampleErrorTrapping[] dataSampleErrorTrapping = DataSampleErrorTrapping.values();
         for (DataSampleErrorTrapping curBusRul: dataSampleErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         DataSampleAnalysisErrorTrapping[] dataSampleAnalysisErrorTrapping = DataSampleAnalysisErrorTrapping.values();
         for (DataSampleAnalysisErrorTrapping curBusRul: dataSampleAnalysisErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         DataSampleAnalysisResultErrorTrapping[] dataSampleAnalysisResultErrorTrapping = DataSampleAnalysisResultErrorTrapping.values();
         for (DataSampleAnalysisResultErrorTrapping curBusRul: dataSampleAnalysisResultErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         DataSampleRevisionTestingGroupErrorTrapping[] dataSampleRevisionTestingGroupErrorTrapping = DataSampleRevisionTestingGroupErrorTrapping.values();
         for (DataSampleRevisionTestingGroupErrorTrapping curBusRul: dataSampleRevisionTestingGroupErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }        
         DataSampleStructureRevisionErrorTrapping[] dataSampleStructureRevisionErrorTrapping = DataSampleStructureRevisionErrorTrapping.values();
         for (DataSampleStructureRevisionErrorTrapping curBusRul: dataSampleStructureRevisionErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         SampleAuditErrorTrapping[] sampleAuditErrorTrapping = SampleAuditErrorTrapping.values();
         for (SampleAuditErrorTrapping curBusRul: sampleAuditErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         DataSampleIncubationErrorTrapping[] dataSampleIncubationErrorTrapping = DataSampleIncubationErrorTrapping.values();
         for (DataSampleIncubationErrorTrapping curBusRul: dataSampleIncubationErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         DataIncubatorNoteBookErrorTrapping[] dataIncubatorNoteBookErrorTrapping = DataIncubatorNoteBookErrorTrapping.values();
         for (DataIncubatorNoteBookErrorTrapping curBusRul: dataIncubatorNoteBookErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         ConfigSpecErrorTrapping[] configSpecErrorTrapping = ConfigSpecErrorTrapping.values();
         for (ConfigSpecErrorTrapping curBusRul: configSpecErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         LotAuditErrorTrapping[] lotAuditErrorTrapping = LotAuditErrorTrapping.values();
         for (LotAuditErrorTrapping curBusRul: lotAuditErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         DataInvRetErrorTrapping[] dataInvRetErrorTrapping = DataInvRetErrorTrapping.values();
         for (DataInvRetErrorTrapping curBusRul: dataInvRetErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         IncubatorBatchErrorTrapping[] incubatorBatchErrorTrapping = IncubatorBatchErrorTrapping.values();
         for (IncubatorBatchErrorTrapping curBusRul: incubatorBatchErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         ProgramCorrectiveActionErrorTrapping[] programCorrectiveActionErrorTrapping = ProgramCorrectiveActionErrorTrapping.values();
         for (ProgramCorrectiveActionErrorTrapping curBusRul: programCorrectiveActionErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         ProductionLotErrorTrapping[] productionLotErrorTrapping = ProductionLotErrorTrapping.values();
         for (ProductionLotErrorTrapping curBusRul: productionLotErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         InvestigationErrorTrapping[] investigationErrorTrapping = InvestigationErrorTrapping.values();
         for (InvestigationErrorTrapping curBusRul: investigationErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
@@ -260,25 +260,25 @@ public MessageCodesToRequirements(HttpServletRequest request, HttpServletRespons
                 
         GenomaDataProjectErrorTrapping[] genomaDataProjectErrorTrapping = GenomaDataProjectErrorTrapping.values();
         for (GenomaDataProjectErrorTrapping curBusRul: genomaDataProjectErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         DataInspLotErrorTrapping[] dataInspLotErrorTrapping = DataInspLotErrorTrapping.values();
         for (DataInspLotErrorTrapping curBusRul: dataInspLotErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         UserSopErrorTrapping[] userSopErrorTrapping = UserSopErrorTrapping.values();
         for (UserSopErrorTrapping curBusRul: userSopErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }
         UomErrorTrapping[] uomErrorTrapping = UomErrorTrapping.values();
         for (UomErrorTrapping curBusRul: uomErrorTrapping){
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName()});
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul});
             declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul, fieldNames, fieldValues);
         }        
@@ -287,15 +287,15 @@ public MessageCodesToRequirements(HttpServletRequest request, HttpServletRespons
     }    
 private void getMessageCodesFromDatabase(){
     Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.MessageCodeDeclaration.TBL.getName(), 
-            new String[]{TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_API_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+            new String[]{TblsTrazitDocTrazit.MessageCodeDeclaration.API_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
             new Object[]{}, TblsTrazitDocTrazit.MessageCodeDeclaration.getAllFieldNames());
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
         return;
     }
     this.fldNames=TblsTrazitDocTrazit.MessageCodeDeclaration.getAllFieldNames();
     this.messageCodeFromDatabase=reqEndpointInfo;
-    Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_API_NAME.getName());
-    Integer propertyNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_PROPERTY_NAME.getName());
+    Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.MessageCodeDeclaration.API_NAME.getName());
+    Integer propertyNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName());
     this.apiName1d = LPArray.array2dTo1d(this.messageCodeFromDatabase, apiNamePosic);
     this.apiName1d=LPArray.getUniquesArray(this.apiName1d);
     this.endpointName1d = LPArray.array2dTo1d(this.messageCodeFromDatabase, propertyNamePosic);
@@ -314,7 +314,7 @@ private void declareMessageInDatabase(String apiName, String tagName, String[] f
         Object[] existsEndPointInDatabase = existsEndPointInDatabase(apiName, tagName);
         Object[] docInfoForMessage=getDocInfoForMessage(apiName, tagName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsEndPointInDatabase[0].toString())){
-            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_CREATION_DATE.getName());
+            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.MessageCodeDeclaration.CREATION_DATE.getName());
             fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
             fieldNames=LPArray.addValueToArray1D(fieldNames, (String[]) docInfoForMessage[0]);
             fieldValues=LPArray.addValueToArray1D(fieldValues, (String[]) docInfoForMessage[1]);
@@ -324,7 +324,7 @@ private void declareMessageInDatabase(String apiName, String tagName, String[] f
             Object[] dbLog = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.MessageCodeDeclaration.TBL.getName(),
                     (String[]) docInfoForMessage[0],
                     (String[]) docInfoForMessage[1],
-                    new String[]{TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_ID.getName()}, 
+                    new String[]{TblsTrazitDocTrazit.MessageCodeDeclaration.ID.getName()}, 
                     new Object[]{fldValues[fldIdPosic]});        */
                 String s="";
         }
@@ -338,8 +338,8 @@ private void declareMessageInDatabase(String apiName, String tagName, String[] f
 public static Object[] getDocInfoForMessage(String apiName, String endpointName){
     Parameter parm=new Parameter();
     try{
-        String[] fldNames=new String[]{TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_BRIEF_SUMMARY_EN.getName(), TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_DOCUMENT_NAME_EN.getName(),
-            TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_DOC_CHAPTER_ID_EN.getName(), TblsTrazitDocTrazit.MessageCodeDeclaration.FLD_DOC_CHAPTER_NAME_EN.getName()};
+        String[] fldNames=new String[]{TblsTrazitDocTrazit.MessageCodeDeclaration.BRIEF_SUMMARY_EN.getName(), TblsTrazitDocTrazit.MessageCodeDeclaration.DOCUMENT_NAME_EN.getName(),
+            TblsTrazitDocTrazit.MessageCodeDeclaration.DOC_CHAPTER_ID_EN.getName(), TblsTrazitDocTrazit.MessageCodeDeclaration.DOC_CHAPTER_NAME_EN.getName()};
         Object[] data=new Object[2];
         String[] fldsToRetrieve=new String[]{};
         Object[] fldsValuesToRetrieve=new String[]{};

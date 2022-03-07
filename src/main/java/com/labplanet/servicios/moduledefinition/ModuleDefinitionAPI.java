@@ -162,7 +162,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
                     con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
             }   
             
@@ -177,7 +177,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
             // Rdbms.closeRdbms();                   
             Object[] errMsg = LPFrontEnd.responseError(new String[]{e.getMessage()}, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, e.getMessage(), null);   
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
         } finally {
             // release database resources
             try {

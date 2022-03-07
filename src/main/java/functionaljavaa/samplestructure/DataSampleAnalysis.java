@@ -258,14 +258,14 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         DataSampleAnalysisResult smpAnaRes = new functionaljavaa.samplestructure.DataSampleAnalysisResult(moduleSmpAnaRes);   
         smpAnaRes.sampleAnalysisResultReview(null, testId, null, DataSample.AUTO_APPROVE_USER);
 /*        String sampleAnalysisStatusReviewed = SampleAnalysisStatuses.REVIEWED.getStatusCode("");
-        String[] updFldsNames=new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName()};
+        String[] updFldsNames=new String[]{TblsData.SampleAnalysis.STATUS.getName()};
         Object[] updFldsValues=new Object[]{sampleAnalysisStatusReviewed};
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
         updFldsNames, updFldsValues,
-        new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId});
+        new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
         String[] fieldsForAudit = new String[0];
-        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS.getName() +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ sampleAnalysisStatusReviewed);
+        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.STATUS.getName() +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ sampleAnalysisStatusReviewed);
         SampleAudit smpAudit = new SampleAudit();
         smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId, sampleId, testId, null, fieldsForAudit, parentAuditId);
         }        */

@@ -23,6 +23,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -70,16 +71,16 @@ public class InstrumentsAPIactions extends HttpServlet {
             ClassInstruments clss = new ClassInstruments(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, null, null);   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[0].toString(), null);   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableName(), "instruments", instrName);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{instrName}, rObj.getRelatedObject());
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{instrName}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){   
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, e.getMessage(), null);   
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
             // Rdbms.closeRdbms();                   
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};

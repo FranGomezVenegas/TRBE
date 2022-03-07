@@ -42,6 +42,8 @@ public class ResponseMessages {
     private static ResponseMessages mainStructureObject;
     private Object[][] messages;
     private Object[][] mainMessage;
+    private EnumIntMessages mainMessageCode;
+    private Object[] mainMessageVariables;
     private Boolean isSuccess;
     
     private ResponseMessages(){
@@ -67,6 +69,12 @@ public class ResponseMessages {
     public Object[][] getMainMessage(){
         return mainMessage;
     }   
+    public EnumIntMessages getMainMessageCode(){
+        return mainMessageCode;
+    }  
+    public Object[] getMainMessageVariables(){
+        return mainMessageVariables;
+    }  
 
     public void add(String messageCode, Object[] msgCodeVariables){
         Object[] array2dTo1d = LPArray.array2dTo1d(messages);
@@ -86,6 +94,8 @@ public class ResponseMessages {
     public void addMainForError(EnumIntMessages messageCode, Object[] msgCodeVariables){
         this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode.getErrorCode(), msgCodeVariables, new Object[]{}}, 3);
+        mainStructureObject.mainMessageCode=messageCode;
+        mainStructureObject.mainMessageVariables=msgCodeVariables;
     }
     
 }

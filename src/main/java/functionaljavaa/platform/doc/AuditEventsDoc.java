@@ -121,10 +121,10 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
 //}
 private static void declareInDatabase(String area, String objectName, String auditName){
     Object[][] reqEvAuditInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), AuditEventsDeclaration.TBL.getName(), 
-            new String[]{AuditEventsDeclaration.FLD_AREA.getName(), AuditEventsDeclaration.FLD_AUDIT_OBJECT.getName(),
-                AuditEventsDeclaration.FLD_EVENT_NAME.getName()},
+            new String[]{AuditEventsDeclaration.AREA.getName(), AuditEventsDeclaration.AUDIT_OBJECT.getName(),
+                AuditEventsDeclaration.EVENT_NAME.getName()},
             new Object[]{area, objectName, auditName}, 
-            new String[]{AuditEventsDeclaration.FLD_ID.getName(), AuditEventsDeclaration.FLD_EVENT_PRETTY_EN.getName(), AuditEventsDeclaration.FLD_EVENT_PRETTY_ES.getName()});
+            new String[]{AuditEventsDeclaration.ID.getName(), AuditEventsDeclaration.EVENT_PRETTY_EN.getName(), AuditEventsDeclaration.EVENT_PRETTY_ES.getName()});
     Object[] docInfoForEndPoint = getDocInfoForAuditEvent(area, objectName, auditName);
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEvAuditInfo[0][0].toString())){
         String[] updFldName=new String[]{};
@@ -132,36 +132,36 @@ private static void declareInDatabase(String area, String objectName, String aud
         String propValueEn = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
             area+objectName, null, auditName, "en", false);
         if (!propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][1].toString())){
-            updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.FLD_EVENT_PRETTY_EN.getName());
+            updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.EVENT_PRETTY_EN.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, propValueEn);
         }
         String propValueEs = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
             area+objectName, null, auditName, "es", false);        
         if (!propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][2].toString())){
-            updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.FLD_EVENT_PRETTY_ES.getName());
+            updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.EVENT_PRETTY_ES.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, propValueEn);
         }
         if (updFldName.length>0){
-            updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.FLD_LAST_UPDATE.getName());
+            updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.LAST_UPDATE.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, LPDate.getCurrentTimeStamp());            
             Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), AuditEventsDeclaration.TBL.getName(),
                 updFldName, updFldValue,
-                new String[]{AuditEventsDeclaration.FLD_ID.getName()}, new Object[]{reqEvAuditInfo[0][0]});
+                new String[]{AuditEventsDeclaration.ID.getName()}, new Object[]{reqEvAuditInfo[0][0]});
             return;
         }
     }else{
         String[] fieldNames=new String[]{};
         Object[] fieldValues=new Object[]{};
-        fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{AuditEventsDeclaration.FLD_CREATION_DATE.getName(), AuditEventsDeclaration.FLD_AREA.getName(),
-            AuditEventsDeclaration.FLD_AUDIT_OBJECT.getName(), AuditEventsDeclaration.FLD_EVENT_NAME.getName()});
+        fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{AuditEventsDeclaration.CREATION_DATE.getName(), AuditEventsDeclaration.AREA.getName(),
+            AuditEventsDeclaration.AUDIT_OBJECT.getName(), AuditEventsDeclaration.EVENT_NAME.getName()});
         fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{LPDate.getCurrentTimeStamp(), area, objectName, auditName});
         String propValueEn = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
             area+objectName, null, auditName, "en", false);
-        fieldNames=LPArray.addValueToArray1D(fieldNames, AuditEventsDeclaration.FLD_EVENT_PRETTY_EN.getName());
+        fieldNames=LPArray.addValueToArray1D(fieldNames, AuditEventsDeclaration.EVENT_PRETTY_EN.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, propValueEn);
         String propValueEs = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
             area+objectName, null, auditName, "es", false);
-        fieldNames=LPArray.addValueToArray1D(fieldNames, AuditEventsDeclaration.FLD_EVENT_PRETTY_ES.getName());
+        fieldNames=LPArray.addValueToArray1D(fieldNames, AuditEventsDeclaration.EVENT_PRETTY_ES.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, propValueEs);
         Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), AuditEventsDeclaration.TBL.getName(), fieldNames, fieldValues);    
         return;

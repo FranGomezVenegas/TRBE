@@ -61,7 +61,7 @@ public class PropertiesToRequirements {
                     totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
                     for (int j=0;j<enumConstantObjects.size();j++) {
                         EnumIntBusinessRules curBusRul=(EnumIntBusinessRules)enumConstantObjects.get(j);
-                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()});
+                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName()});
                         Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
                         try{
                         declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), 
@@ -88,7 +88,8 @@ public class PropertiesToRequirements {
                 }
             }catch(Exception e){
                 ScanResult.closeAll();
-                LPFrontEnd.responseJSONDiagnosticLPFalse(e.getMessage(), null);
+                JSONObject jMainObj=new JSONObject();
+                jMainObj.put("error", e.getMessage());
                 return;
             }
         // Rdbms.closeRdbms();
@@ -110,16 +111,16 @@ private static void declareBusinessRuleInDatabaseOld(String apiName, String area
     String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
     Rdbms.getRdbms().startRdbms(dbTrazitModules);
     Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(), 
-            new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_FILE_AREA.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()},
-            new Object[]{apiName, areaName, tagName}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ID.getName()});
+            new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FILE_AREA.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName()},
+            new Object[]{apiName, areaName, tagName}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.ID.getName()});
     Object[] docInfoForBusinessRule = getDocInfoForBusinessRules(apiName, tagName);
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
-/*        String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ARGUMENTS_ARRAY.getName())].toString();
+/*        String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.ARGUMENTS_ARRAY.getName())].toString();
         if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[0][1].toString())){
             Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(),
-                    new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ARGUMENTS_ARRAY.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_LAST_UPDATE.getName()},
+                    new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.ARGUMENTS_ARRAY.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.LAST_UPDATE.getName()},
                     new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()},
-                    new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
+                    new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
             
             return;
         }else{
@@ -129,11 +130,11 @@ private static void declareBusinessRuleInDatabaseOld(String apiName, String area
                 Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(),
                         (String[]) docInfoForBusinessRule[0],
                         (String[]) docInfoForBusinessRule[1],
-                        new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
+                        new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
             return;
 //        }
     }else{
-        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_CREATION_DATE.getName());
+        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.CREATION_DATE.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
         fieldNames=LPArray.addValueToArray1D(fieldNames, (String[]) docInfoForBusinessRule[0]);
         fieldValues=LPArray.addValueToArray1D(fieldValues, (String[]) docInfoForBusinessRule[1]);
@@ -150,17 +151,17 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
         Rdbms.getRdbms().startRdbms(dbTrazitModules);
         Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(), 
-                new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_FILE_AREA.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_PROPERTY_NAME.getName()},
-                new Object[]{apiName, areaName, tagName}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ID.getName()});
+                new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FILE_AREA.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName()},
+                new Object[]{apiName, areaName, tagName}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.ID.getName()});
         Object[] docInfoForBusinessRule = getDocInfoForBusinessRules(apiName, tagName);
         String[] updFldName=(String[]) docInfoForBusinessRule[0];
         Object[] updFldValue=(String[]) docInfoForBusinessRule[0];
         if (valuesLst==null){
-            updFldName=LPArray.addValueToArray1D(updFldName, TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_VALUES_LIST.getName());
+            updFldName=LPArray.addValueToArray1D(updFldName, TblsTrazitDocTrazit.BusinessRulesDeclaration.VALUES_LIST.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, "TBD");
         }else{
-            updFldName=LPArray.addValueToArray1D(updFldName, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_VALUES_LIST.getName(),
-            TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ALLOW_MULTI_VALUES.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_VALUES_SEPARATOR.getName()});
+            updFldName=LPArray.addValueToArray1D(updFldName, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.VALUES_LIST.getName(),
+            TblsTrazitDocTrazit.BusinessRulesDeclaration.ALLOW_MULTI_VALUES.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.VALUES_SEPARATOR.getName()});
             updFldValue=LPArray.addValueToArray1D(updFldValue, new Object[]{valuesLst.toJSONString()});
             String val="";
             if (allowMultilist==null){ 
@@ -172,12 +173,12 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
         }
 
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
-    /*        String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ARGUMENTS_ARRAY.getName())].toString();
+    /*        String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.ARGUMENTS_ARRAY.getName())].toString();
             if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[0][1].toString())){
                 Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(),
-                        new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ARGUMENTS_ARRAY.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_LAST_UPDATE.getName()},
+                        new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.ARGUMENTS_ARRAY.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.LAST_UPDATE.getName()},
                         new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()},
-                        new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
+                        new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
 
                 return;
             }else{
@@ -186,15 +187,15 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
                 if (updFldName.length>0)
                     Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(),
                             updFldName, updFldValue,
-                            new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
+                            new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.ID.getName()}, new Object[]{reqEndpointInfo[0][0]});
                 return;
     //        }
         }else{
-            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_CREATION_DATE.getName());
+            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.CREATION_DATE.getName());
             fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
             fieldNames=LPArray.addValueToArray1D(fieldNames, updFldName);
             fieldValues=LPArray.addValueToArray1D(fieldValues, updFldValue);
-            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_FILE_AREA.getName());
+            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.FILE_AREA.getName());
             fieldValues=LPArray.addValueToArray1D(fieldValues, areaName);
 
             Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(), fieldNames, fieldValues);    
@@ -208,8 +209,8 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
 public static Object[] getDocInfoForBusinessRules(String apiName, String endpointName){
     Parameter parm=new Parameter();
     try{
-        String[] fldNames=new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_BRIEF_SUMMARY_EN.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_DOCUMENT_NAME_EN.getName(),
-            TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_DOC_CHAPTER_ID_EN.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.FLD_DOC_CHAPTER_NAME_EN.getName()};
+        String[] fldNames=new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.BRIEF_SUMMARY_EN.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.DOCUMENT_NAME_EN.getName(),
+            TblsTrazitDocTrazit.BusinessRulesDeclaration.DOC_CHAPTER_ID_EN.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.DOC_CHAPTER_NAME_EN.getName()};
         Object[] data=new Object[2];
         String[] fldsToRetrieve=new String[]{};
         String[] fldsValuesToRetrieve=new String[]{};

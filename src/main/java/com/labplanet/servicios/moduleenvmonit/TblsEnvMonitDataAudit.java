@@ -24,8 +24,8 @@ public class TblsEnvMonitDataAudit {
     }    */
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA_AUDIT.getName();    
     public enum TablesEnvMonitDataAudit implements EnumIntTables{        
-        INCUB_BATCH(null, "incub_batch", SCHEMA_NAME, true, IncubBatch.values(), IncubBatch.FLD_AUDIT_ID.getName(), 
-            new String[]{IncubBatch.FLD_AUDIT_ID.getName()}, null, "IncubBatch table"),
+        INCUB_BATCH(null, "incub_batch", SCHEMA_NAME, true, IncubBatch.values(), IncubBatch.AUDIT_ID.getName(), 
+            new String[]{IncubBatch.AUDIT_ID.getName()}, null, "IncubBatch table"),
         ;
         private TablesEnvMonitDataAudit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -60,27 +60,27 @@ public class TblsEnvMonitDataAudit {
     }
     
     public enum IncubBatch implements EnumIntTableFields{
-        FLD_AUDIT_ID("audit_id", LPDatabase.integerNotNull(), null, null, null, null), 
-        FLD_TABLE_NAME("table_name", " character varying COLLATE pg_catalog.\"default\"", null, null, null, null), 
-        FLD_TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null), 
-        FLD_TABLE_ID("table_id", LPDatabase.string(), null, null, null, null), 
-        FLD_DATE("date", LPDatabase.dateTime(), null, null, null, null), 
-        FLD_PERSON("person", LPDatabase.string(), null, null, null, null), 
-        FLD_ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null), 
-        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null), 
-        FLD_BATCH_NAME("batch", LPDatabase.string(), null, null, null, null), 
-        FLD_USER_ROLE("user_role", LPDatabase.string(), null, null, null, null), 
-        FLD_PROCEDURE("procedure", LPDatabase.string(), null, null, null, null), 
-        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.integer(), null, null, null, null), 
-        FLD_APP_SESSION_ID("app_session_id", LPDatabase.integer(), null, null, null, null), 
-        FLD_PICTURE_BEFORE("picture_before", "json", null, null, null, null), 
-        FLD_PICTURE_AFTER("picture_after", "json", null, null, null, null), 
-        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(false), null, null, null, null), 
-        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null), 
-        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null), 
-        FLD_REVISION_NOTE("revision_note", LPDatabase.string(), null, null, null, null), 
-        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer(), null, null, null, null), 
-        FLD_REASON("reason", LPDatabase.string(), null, null, null, null), 
+        AUDIT_ID("audit_id", LPDatabase.integerNotNull(), null, null, null, null), 
+        TABLE_NAME("table_name", " character varying COLLATE pg_catalog.\"default\"", null, null, null, null), 
+        TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null), 
+        TABLE_ID("table_id", LPDatabase.string(), null, null, null, null), 
+        DATE("date", LPDatabase.dateTime(), null, null, null, null), 
+        PERSON("person", LPDatabase.string(), null, null, null, null), 
+        ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null), 
+        FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null), 
+        BATCH_NAME("batch", LPDatabase.string(), null, null, null, null), 
+        USER_ROLE("user_role", LPDatabase.string(), null, null, null, null), 
+        PROCEDURE("procedure", LPDatabase.string(), null, null, null, null), 
+        PROCEDURE_VERSION("procedure_version", LPDatabase.integer(), null, null, null, null), 
+        APP_SESSION_ID("app_session_id", LPDatabase.integer(), null, null, null, null), 
+        PICTURE_BEFORE("picture_before", "json", null, null, null, null), 
+        PICTURE_AFTER("picture_after", "json", null, null, null, null), 
+        REVIEWED("reviewed", LPDatabase.booleanFld(false), null, null, null, null), 
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null), 
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null), 
+        REVISION_NOTE("revision_note", LPDatabase.string(), null, null, null, null), 
+        PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer(), null, null, null, null), 
+        REASON("reason", LPDatabase.string(), null, null, null, null), 
         ;
         private IncubBatch(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

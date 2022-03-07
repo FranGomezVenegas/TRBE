@@ -143,7 +143,7 @@ public class SopUserAPI extends HttpServlet {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, userSopDiagnostic[4].toString(), messageDynamicData);                
             }else{                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);     
                 

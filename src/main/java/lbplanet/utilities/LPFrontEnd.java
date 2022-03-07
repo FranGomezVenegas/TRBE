@@ -3,6 +3,7 @@ package lbplanet.utilities;
 import com.github.opendevl.JFlat;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.Token;
 import functionaljavaa.parameter.Parameter;
 import trazit.session.ResponseMessages;
@@ -21,6 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.LANGUAGE_ALL_LANGUAGES;
 import trazit.session.ApiMessageReturn;
@@ -31,7 +34,7 @@ import trazit.session.ProcedureRequestSession;
  * @author Administrator
  */
 public class LPFrontEnd {
-    public static final String ERROR_TRAPPING_TABLE_NO_RECORDS="tableWithNoRecords";
+//    public static final String ERROR_TRAPPING_TABLE_NO_RECORDS="tableWithNoRecords";
 
     public enum ResponseTags{
         DIAGNOSTIC("diagnostic"), CATEGORY("category"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
@@ -139,7 +142,7 @@ public class LPFrontEnd {
      * @param lpFalseStructure
      * @return
      */
-    private static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
+/*    private static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
         JSONObject errJsObj = new JSONObject();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         Object[][] mainMessage = messages.getMainMessage();
@@ -181,7 +184,7 @@ public class LPFrontEnd {
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
         return errJsObj;
     }
-    
+*/    
 
     /**
      *
@@ -189,7 +192,7 @@ public class LPFrontEnd {
      * @return     
      */
     //Esta debe ser privada pero toca convertir GenomaConfigVariableAPI en el formato de usar una Class como ClassStudy 
-    public static JSONObject responseJSONDiagnosticLPTrue(Object[] lpTrueStructure){
+/*    public static JSONObject responseJSONDiagnosticLPTrue(Object[] lpTrueStructure){
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpTrueStructure[0]);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpTrueStructure[lpTrueStructure.length-1]);
@@ -197,7 +200,7 @@ public class LPFrontEnd {
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
         return errJsObj;
     }    
-
+*/
     /**
      *
      * @param apiName
@@ -206,6 +209,7 @@ public class LPFrontEnd {
      * @param relatedObjects
      * @return
      */
+/*
     public static JSONObject responseJSONDiagnosticLPTrue(String apiName, String msgCode, Object[] msgDynamicValues, JSONArray relatedObjects){
 
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
@@ -253,7 +257,7 @@ public class LPFrontEnd {
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
         return errJsObj;
     }    
-    
+*/    
     /**
      *
      * @param errorPropertyName
@@ -463,22 +467,158 @@ public class LPFrontEnd {
             errorCode=(String) mainMessage[0][0];
             msgVariables=(Object[]) mainMessage[0][1];
         }
-        JSONObject errJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(errorCode, msgVariables);
+        JSONObject errJSONMsg = LPFrontEnd.xresponseJSONDiagnosticLPFalse(errorCode, msgVariables);
         request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());          
         servetInvokeResponseErrorServlet(request, response);
-    }    
+    }
+    private static JSONObject xresponseJSONDiagnosticLPFalse(String errorCode, Object[] msgVariables){
+        JSONObject errJsObj = new JSONObject();
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_FALSE);
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+        Object[][] mainMessage = messages.getMainMessage();
+        Object [] errorMsgEn=null;
+        Object [] errorMsgEs=null;
+        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
+        }else{
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
+        }
+        String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
+        String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
+        return errJsObj;
+    }
+    
     /**
      *
      * @param request
      * @param response
      * @param lPTrueObject
      */
-    public static final void servletReturnResponseErrorLPTrueDiagnostic(HttpServletRequest request, HttpServletResponse response, Object[] lPTrueObject){       
+    public static final void servletReturnResponseErrorLPTrueDiagnostic(HttpServletRequest request, HttpServletResponse response, Object[] lPTrueObject){
         JSONObject successJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(lPTrueObject);
         request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), successJSONMsg.toString());        
         servetInvokeResponseErrorServlet(request, response);
     }  
     public static final JSONObject noRecordsInTableMessage(){
-        return LPFrontEnd.responseJSONDiagnosticLPFalse(ERROR_TRAPPING_TABLE_NO_RECORDS, new Object[0]);
+        return LPFrontEnd.responseJSONDiagnosticLPFalse(RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
     }
+
+    private static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
+        JSONObject errJsObj = new JSONObject();
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+        Object[][] mainMessage = messages.getMainMessage();
+        Object [] errorMsgEn=null;
+        Object [] errorMsgEs=null;
+        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
+            String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
+            String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
+            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
+            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
+        }else{
+            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpFalseStructure[lpFalseStructure.length-1]);
+            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpFalseStructure[lpFalseStructure.length-1]);
+        }
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpFalseStructure[0]);
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
+        return errJsObj;
+    }
+    public static JSONObject responseJSONDiagnosticLPTrue(Object[] lpTrueStructure){
+        JSONObject errJsObj = new JSONObject();
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpTrueStructure[0]);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpTrueStructure[lpTrueStructure.length-1]);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpTrueStructure[lpTrueStructure.length-1]);
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
+        return errJsObj;
+    } 
+    public static JSONObject responseJSONDiagnosticPositiveEndpoint(EnumIntEndpoints endpoint, Object[] msgDynamicValues, JSONArray relatedObjects){
+
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+        Object[][] mainMessage = messages.getMainMessage();
+        Object [] errorMsgEn=null;
+        Object [] errorMsgEs=null;
+        String errorTextEn = "";
+        String errorTextEs = "";
+        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){            
+            Object[] msgArg3=new Object[]{};
+            if (mainMessage[0].length>2)
+                msgArg3=(Object[]) mainMessage[0][2];
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
+            errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
+            errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();                        
+        }else{
+            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "en", null, true);
+            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "es", null, false);
+            if (endpoint!=null){
+                if (msgDynamicValues!=null){
+                    for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){
+                        errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
+                        errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
+                    }
+                }        
+                if (errorTextEn.length()==0){
+                    errorTextEn=endpoint+ " (*** This MessageCode, "+endpoint+", has no entry defined in messages property file) ";
+                    if (msgDynamicValues!=null)
+                        errorTextEn=errorTextEn+Arrays.toString(msgDynamicValues);
+                }
+                if (errorTextEs.length()==0){
+                    errorTextEs=endpoint+ " (*** Este CódigoDeMensaje, "+endpoint+", no está definido en los archivos de mensajes) ";
+                    if (msgDynamicValues!=null)
+                        errorTextEs=errorTextEs+Arrays.toString(msgDynamicValues);
+                }
+            }      
+        }        
+        JSONObject errJsObj = new JSONObject();
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_TRUE);
+        errJsObj.put(ResponseTags.CATEGORY.getLabelName(), endpoint.getClass().getSimpleName().toUpperCase().replace("API", ""));
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
+        errJsObj.put(ResponseTags.RELATED_OBJECTS.getLabelName(), relatedObjects);        
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
+        return errJsObj;
+    }    
+    
+    public static JSONObject responseJSONDiagnosticLPFalse(EnumIntMessages errorCode, Object[] msgVariables){
+        JSONObject errJsObj = new JSONObject();
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_FALSE);
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+        Object[][] mainMessage = messages.getMainMessage();
+        Object [] errorMsgEn=null;
+        Object [] errorMsgEs=null;
+        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
+        }else{
+            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
+            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
+        }
+        String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
+        String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
+        return errJsObj;
+    }
+
+    
+    public static final void servletReturnResponseErrorLPFalseDiagnosticBilingue(HttpServletRequest request, HttpServletResponse response, EnumIntMessages errorCode, Object[] msgVariables){       
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages mainMessage = procReqSession.getMessages();
+        Object[][] mainMessageObj = mainMessage.getMainMessage();
+        if (mainMessageObj!=null && mainMessageObj.length>0 && mainMessageObj[0].length>=2){
+            errorCode=mainMessage.getMainMessageCode();
+            msgVariables=mainMessage.getMainMessageVariables();
+        }
+        JSONObject errJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(errorCode, msgVariables);
+        request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());          
+        servetInvokeResponseErrorServlet(request, response);
+    }    
+    
 }

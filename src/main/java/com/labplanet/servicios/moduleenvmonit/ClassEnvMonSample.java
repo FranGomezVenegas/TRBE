@@ -187,9 +187,9 @@ public class ClassEnvMonSample {
                     sampleId = (Integer) argValues[0];
                     rawValueResult = argValues[1].toString();
                     Object[][] sampleAnaResultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
-                        new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.FLD_PARAM_NAME.getName()}, 
+                        new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.PARAM_NAME.getName()}, 
                         new Object[]{sampleId, "Recuento"}, 
-                        new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()});
+                        new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()});
                     actionDiagnoses=null;
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAnaResultInfo[0][0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "No encontrado el parámetro 'Recuento' en la muestra "+sampleId.toString(), null);
@@ -209,7 +209,7 @@ public class ClassEnvMonSample {
                             Object[][] resultInfo=new Object[0][0];
                             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});                    
                             resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                                    new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId}, new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()});
+                                    new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()});
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) sampleId=Integer.valueOf(resultInfo[0][0].toString());
                             dynamicDataObjects=new Object[]{resultInfo[0][0].toString()};
                             rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), resultInfo[0][0]);

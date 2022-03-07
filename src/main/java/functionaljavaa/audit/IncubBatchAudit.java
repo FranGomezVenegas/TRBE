@@ -35,18 +35,18 @@ public final class IncubBatchAudit {
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
         
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_ACTION_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_BATCH_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.BATCH_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, batchName);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_TABLE_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_TABLE_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, batchName);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_FIELDS_UPDATED.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FIELDS_UPDATED.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
         if (parentAuditId!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_PARENT_AUDIT_ID.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsEnvMonitDataAudit.TablesEnvMonitDataAudit.INCUB_BATCH.getTableName(), 

@@ -28,14 +28,14 @@ public static InternalMessage createNewCalendar(String name, String[] fldNames, 
             fldValues=new Object[]{};
         }
         Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(), 
-            new String[]{TblsApp.HolidaysCalendar.FLD_CODE.getName()},
+            new String[]{TblsApp.HolidaysCalendar.CODE.getName()},
             new Object[]{name});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
             messages.addMainForError(CalendarErrorTrapping.CALENDAR_ALREADY_EXISTS, new Object[]{name});
             return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_ALREADY_EXISTS, new Object[]{name}, name);    
         }                
-        fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsApp.HolidaysCalendar.FLD_CODE.getName(), TblsApp.HolidaysCalendar.FLD_ACTIVE.getName(),
-            TblsApp.HolidaysCalendar.FLD_CREATED_ON.getName(), TblsApp.HolidaysCalendar.FLD_CREATED_BY.getName()});
+        fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsApp.HolidaysCalendar.CODE.getName(), TblsApp.HolidaysCalendar.ACTIVE.getName(),
+            TblsApp.HolidaysCalendar.CREATED_ON.getName(), TblsApp.HolidaysCalendar.CREATED_BY.getName()});
         fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{name, true, LPDate.getCurrentTimeStamp(), token.getPersonName()});
         Object[] instCreationDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(), 
                 fldNames, fldValues);

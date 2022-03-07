@@ -226,7 +226,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         }
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new String[]{procInstanceName, actionName}, true);
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL, new String[]{procInstanceName, actionName});
         }
         if ( (procedureActions.length==1 && "".equals(procedureActions[0])) ){
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED_RULESNOTFOUND, new String[]{procInstanceName, Arrays.toString(procedureActions)});
@@ -254,7 +254,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
         
         if (LPArray.valueInArray(procedureActionsUserRoles, "ALL")){
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL.getErrorCode(), new Object[]{procInstanceName}, true);
+            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ENABLED_BYALL, new Object[]{procInstanceName});
         }
         if ( (procedureActionsUserRoles.length==1 && "".equals(procedureActionsUserRoles[0])) ){
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER, new Object[]{procInstanceName, actionName});        

@@ -54,9 +54,9 @@ public class CertifGlobalVariables {
         return getScriptToAddCertifToAnyObjectPostgres(procInstanceName, schemaGroupName, tableName);
     }
     private static String getScriptToAddCertifToAnyObjectPostgres(String procInstanceName, String schemaGroupName, String tableName){            
-        String[] fields=new String[]{//TblsData.CertifUserAnalysisMethod.FLD_USER_ID.getName(),
-        //TblsData.CertifUserAnalysisMethod.FLD_ASSIGNED_ON.getName(), TblsData.CertifUserAnalysisMethod.FLD_ASSIGNED_BY.getName(),
-        //TblsData.CertifUserAnalysisMethod.FLD_STATUS.getName(), 
+        String[] fields=new String[]{//TblsData.CertifUserAnalysisMethod.USER_ID.getName(),
+        //TblsData.CertifUserAnalysisMethod.ASSIGNED_ON.getName(), TblsData.CertifUserAnalysisMethod.ASSIGNED_BY.getName(),
+        //TblsData.CertifUserAnalysisMethod.STATUS.getName(), 
         TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName(),
         TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(),
         TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName(),// TblsData.CertifUserAnalysisMethod.SOP_NAME.getName(),

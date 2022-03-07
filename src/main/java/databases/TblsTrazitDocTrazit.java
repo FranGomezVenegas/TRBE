@@ -23,31 +23,31 @@ public class TblsTrazitDocTrazit {
     public static final String FIELDS_NAMES_DESCRIPTION="description";
 
     public enum EndpointsDeclaration{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
-        ,        TBL("endpoints_declaration", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_ID_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
+        ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
+        ,        TBL("endpoints_declaration", LPDatabase.createSequence(ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#AUDIT_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#ID_pkey PRIMARY KEY (#AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
-        FLD_API_NAME("api_name", LPDatabase.stringNotNull()),
-        FLD_API_VERSION("api_version", LPDatabase.integer()),
-        FLD_ENDPOINT_NAME("endpoint_name", LPDatabase.stringNotNull()),
-        FLD_ENDPOINT_VERSION("endpoint_version", LPDatabase.integer()),
-        FLD_ARGUMENTS("arguments", LPDatabase.stringNotNull()),
-        FLD_ARGUMENTS_ARRAY("arguments_array", LPDatabase.string()),
-        FLD_OUTPUT_OBJECT_TYPES("output_object_types", LPDatabase.string()),        
-        FLD_CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
-        FLD_LAST_UPDATE("last_update", LPDatabase.dateTime()),
-        FLD_BRIEF_SUMMARY_EN("brief_summary_en", LPDatabase.string()),
-        FLD_DOCUMENT_NAME_EN("document_name_en", LPDatabase.string()),
-        FLD_DOC_CHAPTER_NAME_EN("doc_chapter_name_en", LPDatabase.string()),
-        FLD_DOC_CHAPTER_ID_EN("doc_chapter_id_en", LPDatabase.string()),
-        FLD_BRIEF_SUMMARY_ES("brief_summary_es", LPDatabase.string()),
-        FLD_DOCUMENT_NAME_ES("document_name_es", LPDatabase.string()),
-        FLD_DOC_CHAPTER_NAME_ES("doc_chapter_name_es", LPDatabase.string()),
-        FLD_DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string()),
-        FLD_NUM_ENDPOINTS_IN_API("num_endpoints_in_api", LPDatabase.integer()),        
-        FLD_SUCCESS_MESSAGE_CODE("success_message_code", LPDatabase.string()),
+        API_NAME("api_name", LPDatabase.stringNotNull()),
+        API_VERSION("api_version", LPDatabase.integer()),
+        ENDPOINT_NAME("endpoint_name", LPDatabase.stringNotNull()),
+        ENDPOINT_VERSION("endpoint_version", LPDatabase.integer()),
+        ARGUMENTS("arguments", LPDatabase.stringNotNull()),
+        ARGUMENTS_ARRAY("arguments_array", LPDatabase.string()),
+        OUTPUT_OBJECT_TYPES("output_object_types", LPDatabase.string()),        
+        CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
+        LAST_UPDATE("last_update", LPDatabase.dateTime()),
+        BRIEF_SUMMARY_EN("brief_summary_en", LPDatabase.string()),
+        DOCUMENT_NAME_EN("document_name_en", LPDatabase.string()),
+        DOC_CHAPTER_NAME_EN("doc_chapter_name_en", LPDatabase.string()),
+        DOC_CHAPTER_ID_EN("doc_chapter_id_en", LPDatabase.string()),
+        BRIEF_SUMMARY_ES("brief_summary_es", LPDatabase.string()),
+        DOCUMENT_NAME_ES("document_name_es", LPDatabase.string()),
+        DOC_CHAPTER_NAME_ES("doc_chapter_name_es", LPDatabase.string()),
+        DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string()),
+        NUM_ENDPOINTS_IN_API("num_endpoints_in_api", LPDatabase.integer()),        
+        SUCCESS_MESSAGE_CODE("success_message_code", LPDatabase.string()),
         ;
         private EndpointsDeclaration(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -111,32 +111,32 @@ public class TblsTrazitDocTrazit {
     }
 
     public enum BusinessRulesDeclaration{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)"),
-        TBL("business_rules_declaration", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_ID_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
+        ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)"),
+        TBL("business_rules_declaration", LPDatabase.createSequence(ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#AUDIT_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#ID_pkey PRIMARY KEY (#AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
-        FLD_API_NAME("api_name", LPDatabase.stringNotNull()),
-        FLD_API_VERSION("api_version", LPDatabase.integer()),
-        FLD_PROPERTY_NAME("property_name", LPDatabase.stringNotNull()),
-        FLD_VALUES_LIST("values_list", LPDatabase.string()),
-        FLD_ALLOW_MULTI_VALUES("allow_multi_values", LPDatabase.booleanFld()),
-        FLD_VALUES_SEPARATOR("values_separator", LPDatabase.string(1)),
-        FLD_FILE_AREA("file_area", LPDatabase.stringNotNull()),
-//        FLD_ENDPOINT_VERSION("endpoint_version", LPDatabase.integer()),
-//        FLD_ARGUMENTS("arguments", LPDatabase.stringNotNull()),
-//        FLD_ARGUMENTS_ARRAY("arguments_array", LPDatabase.string()),
-        FLD_CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
-        FLD_LAST_UPDATE("last_update", LPDatabase.dateTime()),
-        FLD_BRIEF_SUMMARY_EN("brief_summary_en", LPDatabase.string()),
-        FLD_DOCUMENT_NAME_EN("document_name_en", LPDatabase.string()),
-        FLD_DOC_CHAPTER_NAME_EN("doc_chapter_name_en", LPDatabase.string()),
-        FLD_DOC_CHAPTER_ID_EN("doc_chapter_id_en", LPDatabase.string()),
-        FLD_BRIEF_SUMMARY_ES("brief_summary_es", LPDatabase.string()),
-        FLD_DOCUMENT_NAME_ES("document_name_es", LPDatabase.string()),
-        FLD_DOC_CHAPTER_NAME_ES("doc_chapter_name_es", LPDatabase.string()),
-        FLD_DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string()),
+        API_NAME("api_name", LPDatabase.stringNotNull()),
+        API_VERSION("api_version", LPDatabase.integer()),
+        PROPERTY_NAME("property_name", LPDatabase.stringNotNull()),
+        VALUES_LIST("values_list", LPDatabase.string()),
+        ALLOW_MULTI_VALUES("allow_multi_values", LPDatabase.booleanFld()),
+        VALUES_SEPARATOR("values_separator", LPDatabase.string(1)),
+        FILE_AREA("file_area", LPDatabase.stringNotNull()),
+//        ENDPOINT_VERSION("endpoint_version", LPDatabase.integer()),
+//        ARGUMENTS("arguments", LPDatabase.stringNotNull()),
+//        ARGUMENTS_ARRAY("arguments_array", LPDatabase.string()),
+        CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
+        LAST_UPDATE("last_update", LPDatabase.dateTime()),
+        BRIEF_SUMMARY_EN("brief_summary_en", LPDatabase.string()),
+        DOCUMENT_NAME_EN("document_name_en", LPDatabase.string()),
+        DOC_CHAPTER_NAME_EN("doc_chapter_name_en", LPDatabase.string()),
+        DOC_CHAPTER_ID_EN("doc_chapter_id_en", LPDatabase.string()),
+        BRIEF_SUMMARY_ES("brief_summary_es", LPDatabase.string()),
+        DOCUMENT_NAME_ES("document_name_es", LPDatabase.string()),
+        DOC_CHAPTER_NAME_ES("doc_chapter_name_es", LPDatabase.string()),
+        DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string()),
         ;
         private BusinessRulesDeclaration(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -200,29 +200,29 @@ public class TblsTrazitDocTrazit {
     }
 
     public enum MessageCodeDeclaration{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)"),
-        TBL("message_codes_declaration", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_ID_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
+        ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)"),
+        TBL("message_codes_declaration", LPDatabase.createSequence(ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#AUDIT_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#ID_pkey PRIMARY KEY (#AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
-        FLD_API_NAME("api_name", LPDatabase.stringNotNull()),
-        FLD_API_VERSION("api_version", LPDatabase.integer()),
-        FLD_PROPERTY_NAME("property_name", LPDatabase.stringNotNull()),
-//        FLD_ENDPOINT_VERSION("endpoint_version", LPDatabase.integer()),
-//        FLD_ARGUMENTS("arguments", LPDatabase.stringNotNull()),
-        FLD_MSG_VARS_ARRAY("msg_vars_array", LPDatabase.string()),
-        FLD_TRANSLATIONS_ARRAY("translations_array", LPDatabase.string()),
-        FLD_CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
-        FLD_LAST_UPDATE("last_update", LPDatabase.dateTime()),
-        FLD_BRIEF_SUMMARY_EN("brief_summary_en", LPDatabase.string()),
-        FLD_DOCUMENT_NAME_EN("document_name_en", LPDatabase.string()),
-        FLD_DOC_CHAPTER_NAME_EN("doc_chapter_name_en", LPDatabase.string()),
-        FLD_DOC_CHAPTER_ID_EN("doc_chapter_id_en", LPDatabase.string()),
-        FLD_BRIEF_SUMMARY_ES("brief_summary_es", LPDatabase.string()),
-        FLD_DOCUMENT_NAME_ES("document_name_es", LPDatabase.string()),
-        FLD_DOC_CHAPTER_NAME_ES("doc_chapter_name_es", LPDatabase.string()),
-        FLD_DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string()),
+        API_NAME("api_name", LPDatabase.stringNotNull()),
+        API_VERSION("api_version", LPDatabase.integer()),
+        PROPERTY_NAME("property_name", LPDatabase.stringNotNull()),
+//        ENDPOINT_VERSION("endpoint_version", LPDatabase.integer()),
+//        ARGUMENTS("arguments", LPDatabase.stringNotNull()),
+        MSG_VARS_ARRAY("msg_vars_array", LPDatabase.string()),
+        TRANSLATIONS_ARRAY("translations_array", LPDatabase.string()),
+        CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
+        LAST_UPDATE("last_update", LPDatabase.dateTime()),
+        BRIEF_SUMMARY_EN("brief_summary_en", LPDatabase.string()),
+        DOCUMENT_NAME_EN("document_name_en", LPDatabase.string()),
+        DOC_CHAPTER_NAME_EN("doc_chapter_name_en", LPDatabase.string()),
+        DOC_CHAPTER_ID_EN("doc_chapter_id_en", LPDatabase.string()),
+        BRIEF_SUMMARY_ES("brief_summary_es", LPDatabase.string()),
+        DOCUMENT_NAME_ES("document_name_es", LPDatabase.string()),
+        DOC_CHAPTER_NAME_ES("doc_chapter_name_es", LPDatabase.string()),
+        DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string()),
         ;
         private MessageCodeDeclaration(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -286,20 +286,20 @@ public class TblsTrazitDocTrazit {
     }
 
     public enum AuditEventsDeclaration{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
+        ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
         ,        
-        TBL("audit_events_declaration", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_ID_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
+        TBL("audit_events_declaration", LPDatabase.createSequence(ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#AUDIT_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#ID_pkey PRIMARY KEY (#AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
-        FLD_AREA("area", LPDatabase.stringNotNull()),
-        FLD_AUDIT_OBJECT("audit_object", LPDatabase.stringNotNull()),
-        FLD_EVENT_NAME("event_name", LPDatabase.integer()),
-        FLD_CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
-        FLD_LAST_UPDATE("last_update", LPDatabase.dateTime()),        
-        FLD_EVENT_PRETTY_EN("event_pretty_en", LPDatabase.stringNotNull()),
-        FLD_EVENT_PRETTY_ES("event_pretty_es", LPDatabase.stringNotNull()),
+        AREA("area", LPDatabase.stringNotNull()),
+        AUDIT_OBJECT("audit_object", LPDatabase.stringNotNull()),
+        EVENT_NAME("event_name", LPDatabase.integer()),
+        CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow()),
+        LAST_UPDATE("last_update", LPDatabase.dateTime()),        
+        EVENT_PRETTY_EN("event_pretty_en", LPDatabase.stringNotNull()),
+        EVENT_PRETTY_ES("event_pretty_es", LPDatabase.stringNotNull()),
         ;
         private AuditEventsDeclaration(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

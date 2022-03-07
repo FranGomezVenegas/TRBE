@@ -43,7 +43,6 @@ public class ApiMessageReturn {
         }
         CLIENT_CODE_STACK_INDEX = i;
     }
-
     public static Object[] trapMessage(String evaluation, EnumIntEndpoints endpoint, Object[] msgVariables) {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         int length = Thread.currentThread().getStackTrace().length;
@@ -57,6 +56,20 @@ public class ApiMessageReturn {
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         
         return trapMessage(evaluation, endpoint.getSuccessMessageCode(), msgVariables, null, callerInfo, false);
+    }
+    public static Object[] trapMessage(String evaluation, EnumIntMessages endpoint, Object[] msgVariables, String language) {
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        int length = Thread.currentThread().getStackTrace().length;
+        if (length>CLIENT_CODE_STACK_INDEX) length=CLIENT_CODE_STACK_INDEX;
+        else length=3;
+        String className = Thread.currentThread().getStackTrace()[length-1].getFileName();
+        String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
+        String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
+        Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
+        className = endpoint.getClass().getSimpleName(); //className.replace(".java", "");
+        Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
+        
+        return trapMessage(evaluation, endpoint.getErrorCode(), msgVariables, language, callerInfo, false);
     }
     public static Object[] trapMessage(String evaluation, EnumIntMessages endpoint, Object[] msgVariables) {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
