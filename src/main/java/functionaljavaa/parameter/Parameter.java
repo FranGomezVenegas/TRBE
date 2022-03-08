@@ -30,7 +30,8 @@ public class Parameter {
     public enum PropertyFilesType{TRANSLATION_DIR_PATH("translationDirPath", "="),
         PROCEDURE_BUSINESS_RULES_DIR_PATH("procedureBusinessRulesDirPath", ":"),
         ENDPOINTDOCUMENTATION("EndPointDocumentation", ":"),
-        AUDITEVENTS("AuditEventsDirPath", ":")
+        AUDITEVENTS("AuditEventsDirPath", ":"),
+        ERROR_TRAPING("ErrorTrapingDirPath", ":")
         ;
         private PropertyFilesType(String appConfigParamName, String appConfigSeparator){
             this.appConfigParamName=appConfigParamName;
@@ -217,7 +218,6 @@ public class Parameter {
             }
         }
 
-        //BusinessRules br=new BusinessRules(procInstanceName);
         if (brTesting!=null){
             String brValue=brTesting.getProcedureBusinessRule(parameterName);
             if (brValue.length()>0) return returnBusinessRuleValue(brValue, procInstanceName, suffixFile, parameterName, callerInfo, isOptional);
@@ -278,6 +278,7 @@ public class Parameter {
                 return prop.getString(parameterName);
             }
         } catch (Exception e) {
+            if (!reportMissingProp)return"";
             if (parameterName.toLowerCase().contains("encrypted_")) return "";
             LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, 
                     new Object[]{}, parameterName, reportMissingProp);
@@ -309,14 +310,14 @@ public class Parameter {
                         fw.append(newEntryBuilder.toString());
                         }
                 } catch (IOException ex1) {
-                    Logger.getLogger(Parameter.class.getName()).log(Level.SEVERE, null, ex1);
+                    Logger.getLogger(Parameter.class.getName()).log(Level.SEVERE, null, ex1.getMessage());
                     return ex1.getMessage();
                 }
                 return newLogEntry;
 
 //                return " Exists the tag in " + f.getName() + " for the entry " + entryName + " and value " + entryValue;
-            }catch(MissingResourceException ex)
-            {
+            }catch(MissingResourceException ex){
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex.getMessage());                  
                 String newLogEntry = " created tag in " + f.getName() + " for the entry " + entryName + " and value " + entryValue;
 
                 if (fileName.equalsIgnoreCase("USERNAV")){ newEntryBuilder.append(entryName).append(":").append(entryValue);}
@@ -354,7 +355,7 @@ public class Parameter {
         }
     }
             
-    private String getFileDirByPropertyFileType(String type){
+    public String getFileDirByPropertyFileType(String type){
         PropertyFilesType endPoint = null;
         try{
             endPoint = PropertyFilesType.valueOf(type.toUpperCase());
@@ -362,10 +363,9 @@ public class Parameter {
             try{
             endPoint = PropertyFilesType.valueOf(type);
             }catch(Exception e2){
-                return "argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE, ENDPOINT_DOC_FOLDER";
+                return "argument type value is "+type+"and should be one of ERROR_TRAPING, TRANSLATION, PROCEDURE_BUSINESS_RULE, ENDPOINT_DOC_FOLDER";
             }
         }
-
         String fileDir = "";
         ResourceBundle propConfig = ResourceBundle.getBundle(BUNDLE_TAG_PARAMETER_CONFIG_CONF);  
         switch(endPoint){
@@ -380,6 +380,9 @@ public class Parameter {
                 break;
             case AUDITEVENTS:
                 fileDir = propConfig.getString(PropertyFilesType.AUDITEVENTS.getAppConfigParamName());
+                break;                
+            case ERROR_TRAPING:
+                fileDir = propConfig.getString(PropertyFilesType.ERROR_TRAPING.getAppConfigParamName());
                 break;                
             default:
                 return LPPlatform.LAB_FALSE+"argument type value is "+type+"and should be one of TRANSLATION, PROCEDURE_BUSINESS_RULE, ENDPOINT_DOC_FOLDER";

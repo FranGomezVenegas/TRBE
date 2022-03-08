@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
-import org.json.simple.JSONArray;
 import trazit.enums.EnumIntEndpoints;
 
 /**
@@ -40,9 +39,9 @@ public class BatchAPI extends HttpServlet {
     static final String COMMON_PARAMS="incidentId|note";
 
     public enum BatchAPIEndpoints implements EnumIntEndpoints{
-        CREATE_BATCH_ARRAY("CREATE_BATCH_ARRAY", "incidentNewIncident_success",
+        CREATE_BATCH_ARRAY("CREATE_BATCH_ARRAY", "createBatchArray_success",
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
-        LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", "incidentConfirmIncident_success",
+        LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", "loadBatchArray_success",
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
         ;
         private BatchAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){

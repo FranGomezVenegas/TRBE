@@ -6,6 +6,7 @@
 package functionaljavaa.platform.doc;
 
 import databases.Rdbms;
+import databases.SqlStatement;
 import lbplanet.utilities.LPFrontEnd;
 import databases.TblsTrazitDocTrazit;
 import functionaljavaa.parameter.Parameter;
@@ -17,6 +18,8 @@ import io.github.classgraph.ScanResult;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
@@ -32,7 +35,10 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class BusinessRulesToRequirements {
-
+    Object[][] businessRulesFromDatabase;
+    String[] fldNames;
+    Object[] businessRules1d;
+    
     public static JSONArray valuesListForEnableDisable(){
         JSONArray vList=new JSONArray();
         String rulesNames="businessRulesEnableValues|businessRulesDisableValues";
@@ -44,10 +50,15 @@ public class BusinessRulesToRequirements {
         }
         return vList;
     }
-    public static void businessRulesDefinition(HttpServletRequest request, HttpServletResponse response){
+    public BusinessRulesToRequirements(HttpServletRequest request, HttpServletResponse response){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);    
         JSONArray enumsCompleteSuccess = new JSONArray();
+        JSONArray eventsFound = new JSONArray();
+        JSONArray eventsNotFound = new JSONArray();        
         Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
+        getMessageCodesFromDatabase();
+        String audEvObjStr="";
+        String evName="";
         Integer classesImplementingInt=-999;
         Integer totalEndpointsVisitedInt=0;
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
@@ -57,13 +68,21 @@ public class BusinessRulesToRequirements {
                 classesImplementingInt=classesImplementing.size();
                 for (int i=0;i<classesImplementing.size();i++){
                     ClassInfo getMine = classesImplementing.get(i);  
+                    audEvObjStr=getMine.getSimpleName();
                     List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
                     JSONArray enumsIncomplete = new JSONArray();
                     totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
                     for (int j=0;j<enumConstantObjects.size();j++) {
                         EnumIntBusinessRules curBusRul=(EnumIntBusinessRules)enumConstantObjects.get(j);
+                        audEvObjStr=curBusRul.getAreaName();
+                        evName=curBusRul.getTagName();
                         String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName()});
                         Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
+                        if (LPArray.valueInArray(this.businessRules1d, curBusRul.getAreaName()+"-"+curBusRul.getTagName())){
+                            eventsFound.add(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
+                        }else{
+                            eventsNotFound.add(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
+                        }
                         if (!summaryOnlyMode){
                             try{
                                 declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), 
@@ -91,8 +110,10 @@ public class BusinessRulesToRequirements {
                 }
             }catch(Exception e){
                 ScanResult.closeAll();
-                JSONObject jMainObj=new JSONObject();
-                jMainObj.put("error", e.getMessage());
+                JSONArray errorJArr = new JSONArray();
+                errorJArr.add(audEvObjStr+"_"+evName+":"+e.getMessage()); 
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());
+                LPFrontEnd.servletReturnSuccess(request, response, errorJArr);                
                 return;
             }
         // Rdbms.closeRdbms();
@@ -102,12 +123,13 @@ public class BusinessRulesToRequirements {
         jMainObj.put("01_total_enums",classesImplementingInt.toString());
         jMainObj.put("03_enums_visited_list", enumsCompleteSuccess);
         jMainObj.put("04_total_number_of_endpoints_visited", totalEndpointsVisitedInt);
-        
+        jMainObj.put("05_found", eventsFound);
+        jMainObj.put("06_not_found", eventsNotFound);        
+        jMainObj.put("05_found_total", eventsFound.size());
+        jMainObj.put("06_not_found_total", eventsNotFound.size());        
         LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
         return;
     }
-    
-    
 private static void declareBusinessRuleInDatabaseOld(String apiName, String areaName, String tagName, String[] fieldNames, Object[] fieldValues){
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
     ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
@@ -240,6 +262,26 @@ public static Object[] getDocInfoForBusinessRules(String apiName, String endpoin
         parm=null;
     }
 }
+
+private void getMessageCodesFromDatabase(){
+    Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(), 
+            new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+            new Object[]{}, TblsTrazitDocTrazit.BusinessRulesDeclaration.getAllFieldNames());
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
+        return;
+    }
+    this.fldNames=TblsTrazitDocTrazit.BusinessRulesDeclaration.getAllFieldNames();
+    this.businessRulesFromDatabase=reqEndpointInfo;
+    Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.FILE_AREA.getName());
+    Integer propertyNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName());
+    Object[] apiName1d = LPArray.array2dTo1d(this.businessRulesFromDatabase, apiNamePosic);
+    apiName1d=LPArray.getUniquesArray(apiName1d);
+    Object[] endpointName1d = LPArray.array2dTo1d(this.businessRulesFromDatabase, propertyNamePosic);
+    
+    this.businessRules1d=LPArray.joinTwo1DArraysInOneOf1DString(apiName1d, endpointName1d, "-");
+}
+
+
     
 
 }

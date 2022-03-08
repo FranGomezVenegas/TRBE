@@ -20,6 +20,7 @@ import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.intervals.IntervalsUtilities;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
 import functionaljavaa.materialspec.ConfigSpecRule;
+import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 //import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
@@ -44,6 +45,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.ServiceLoader;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -56,6 +58,7 @@ import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
@@ -80,8 +83,29 @@ public class TestingServer extends HttpServlet {
             throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
-                
-        try (PrintWriter out = response.getWriter()) {
+    try (PrintWriter out = response.getWriter()) {        
+        Parameter parm=new Parameter();
+        String filePrefix="goleef1";
+        String propFileName=Parameter.PropertyFilesType.ERROR_TRAPING.toString();
+        ResourceBundle errorTrapFileEs=null;
+        try{
+            errorTrapFileEs = ResourceBundle.getBundle("parameter.LabPLANET."+filePrefix+"_es");
+            out.println(filePrefix+" file found!");
+            parm.addTagInPropertiesFile(propFileName, filePrefix, "demo", LPNulls.replaceNull("val"));
+        }catch(Exception e){
+            parm.createPropertiesFile(propFileName, filePrefix+"_es");
+            try{
+                String fileDir=parm.getFileDirByPropertyFileType(propFileName);
+                errorTrapFileEs = ResourceBundle.getBundle(fileDir+"."+filePrefix+"_es");
+            }catch(Exception ex){
+                out.println(ex.getMessage());
+                return;
+            }
+            out.println(filePrefix+" file created and found!");
+        }
+        if (1==1)return;
+        
+        
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -93,7 +117,6 @@ public class TestingServer extends HttpServlet {
             out.println("</html>");
         try{
             Rdbms.stablishDBConection("labplanet"); 
-
 String schemaName="em-demo-a";
 out.println(" "+TablesData.SAMPLE.getTableName()+" >> "+createTableScript(TablesData.SAMPLE, schemaName));
 out.println("");

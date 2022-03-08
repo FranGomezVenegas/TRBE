@@ -16,6 +16,8 @@ import io.github.classgraph.ScanResult;
 import lbplanet.utilities.LPFrontEnd;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +26,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -51,6 +54,11 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         
         if (this.fldNames==null) return;
         JSONArray enumsCompleteSuccess = new JSONArray();
+        JSONArray endpointsFound = new JSONArray();
+        JSONArray endpointsNotFound = new JSONArray();
+        String audEvObjStr="";
+        String evName="";
+
         Integer classesImplementingInt=-999;
         Integer totalEndpointsVisitedInt=0;
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
@@ -60,24 +68,26 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                 classesImplementingInt=classesImplementing.size();
                 for (int i=0;i<classesImplementing.size();i++){
                     ClassInfo getMine = classesImplementing.get(i); 
-
-                    String st="";
-                    if ("SampleAuditErrorTrapping".equalsIgnoreCase(getMine.getName().toString())){
-                        st="e";
-                    }
+                    audEvObjStr=getMine.getSimpleName();
                     List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
                     JSONArray enumsIncomplete = new JSONArray();
                     totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
                     for (int j=0;j<enumConstantObjects.size();j++) {
-                        EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
-                        
+                        EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);                        
+                        evName=curEndpoint.getName().toString();
                         
                         String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(),  EndpointsDeclaration.ENDPOINT_NAME.getName(),  EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
                         Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName(), curEndpoint.getSuccessMessageCode()});
                         fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
                         fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curEndpoint.getArguments())});                
                         
+                        if (LPArray.valueInArray(endpointsApiAndEndpointNamesKey, curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString())){
+                            endpointsFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString());
+                        }else{
+                            endpointsNotFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString());
+                        }
                         if (!summaryOnlyMode){
+                            AddCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
                             try{
                                 declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName().toString(), 
                                         fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size());
@@ -103,7 +113,8 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
             }catch(Exception e){
                 ScanResult.closeAll();
                 JSONArray errorJArr = new JSONArray();
-                errorJArr.add(e.getMessage());
+                errorJArr.add(audEvObjStr+"_"+evName+":"+e.getMessage());
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());
                 LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                 return;
             }
@@ -116,8 +127,10 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         jMainObj.put("03_total_visited_enums",enumsCompleteSuccess.size());
         jMainObj.put("04_enums_visited_list", enumsCompleteSuccess);
         jMainObj.put("05_total_number_of_messages_visited", totalEndpointsVisitedInt);
-        
-        
+        jMainObj.put("06_found", endpointsFound);
+        jMainObj.put("06_found_total", endpointsFound.size());
+        jMainObj.put("07_not_found", endpointsNotFound);        
+        jMainObj.put("07_not_found_total", endpointsNotFound.size());
         LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
         return;
     }    
@@ -240,6 +253,42 @@ if ("RESULT_CHANGE_UOM".equalsIgnoreCase(endpointName))
         data[0]=fldsToRetrieve;
         data[1]=fldsValuesToRetrieve;
         return data;
+    }finally{
+        parm=null;
+    }
+}
+public void AddCodeInErrorTrapping(String filePrefix, String entryName, String entryValue){
+    if (LPNulls.replaceNull(entryName).length()==0) return;
+    Parameter parm=new Parameter();
+    String propFileName=Parameter.PropertyFilesType.ERROR_TRAPING.toString();
+    String propValue = "";    
+    filePrefix="apiSuccessMsg_"+filePrefix;
+    try{
+        ResourceBundle errorTrapFileEn=null;
+        ResourceBundle errorTrapFileEs=null;
+        String filePrefixEs=filePrefix+"_es";
+        String filePrefixEn=filePrefix+"_en";
+        try{
+            errorTrapFileEs = ResourceBundle.getBundle("parameter.LabPLANET."+filePrefixEs);
+        }catch(Exception e){
+            parm.createPropertiesFile(propFileName, filePrefix+"_es");
+            errorTrapFileEs = ResourceBundle.getBundle("parameter.LabPLANET."+filePrefixEs);
+        }
+        try{
+            errorTrapFileEn = ResourceBundle.getBundle("parameter.LabPLANET."+filePrefixEn);
+        }catch(Exception e){
+            parm.createPropertiesFile(propFileName, filePrefix+"_en");            
+            errorTrapFileEn = ResourceBundle.getBundle("parameter.LabPLANET."+filePrefixEn);
+        }
+        Object[] data=new Object[2];
+        String[] fldsToRetrieve=new String[]{};
+        String[] fldsValuesToRetrieve=new String[]{};
+        if (!errorTrapFileEn.containsKey(entryName)) 
+            parm.addTagInPropertiesFile(propFileName, filePrefixEn, entryName, LPNulls.replaceNull("X"));
+        if (!errorTrapFileEs.containsKey(entryName)) 
+            parm.addTagInPropertiesFile(propFileName, filePrefixEs, entryName, LPNulls.replaceNull("X"));
+    }catch(Exception e){
+        String s=e.getMessage();
     }finally{
         parm=null;
     }

@@ -74,7 +74,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, "QUERY_SAMPLING_HISTORY"),
         QUERY_SAMPLER_SAMPLING_HISTORY("QUERY_SAMPLER_SAMPLING_HISTORY", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -92,7 +92,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),        
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, "QUERY_SAMPLER_SAMPLING_HISTORY"),        
         QUERY_READING_OUT_OF_RANGE("QUERY_READING_OUT_OF_RANGE", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -110,7 +110,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, "QUERY_READING_OUT_OF_RANGE"),
         KPI_PRODUCTION_LOT_SAMPLES("KPI_PRODUCTION_LOT_SAMPLES", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -129,7 +129,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 21),
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),        
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, "KPI_PRODUCTION_LOT_SAMPLES"),        
         QUERY_INVESTIGATION("QUERY_INVESTIGATION", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -149,7 +149,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
 */ 
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, "QUERY_INVESTIGATION"),
         KPIS("KPIS", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -165,7 +165,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments("showIN", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 16),
                 new LPAPIArguments("showOUT", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 17),
                 new LPAPIArguments("percNumDecimals", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),        
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, "KPIS"),        
         RECOVERY_RATE("RECOVERY_RATE", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -174,14 +174,14 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments("showPresence", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10),
                 new LPAPIArguments("showIN", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 11),
                 new LPAPIArguments("showOUT", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12),
-                new LPAPIArguments("percNumDecimals", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 13),
-                
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),                            
+                new LPAPIArguments("percNumDecimals", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 13),                
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, "RECOVERY_RATE"),                            
         ;
-        private EnvMonAPIstatsEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonAPIstatsEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes, String successMessageCode){
             this.name=name;
             this.arguments=argums;  
-            this.outputObjectTypes=outputObjectTypes;          
+            this.outputObjectTypes=outputObjectTypes;  
+            this.successMessageCode=successMessageCode;
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -198,12 +198,9 @@ public class EnvMonAPIStats extends HttpServlet {
         public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         private final String name;
         private final LPAPIArguments[] arguments;
-        private final JsonArray outputObjectTypes;        
-
-        @Override
-        public String getSuccessMessageCode() {
-            return "Not supported yet."; //To change body of generated methods, choose Tools | Templates.
-        }
+        private final JsonArray outputObjectTypes; 
+        private final String successMessageCode;
+        @Override public String getSuccessMessageCode() {return this.successMessageCode;}
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response){

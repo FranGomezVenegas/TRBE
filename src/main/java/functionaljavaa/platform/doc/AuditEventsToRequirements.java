@@ -16,6 +16,8 @@ import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
@@ -44,73 +46,8 @@ public final class AuditEventsToRequirements {
     
     public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", "no output for testing")
                     .add("table", "no output for testing").build()).build();
-    // Endpoints 'antiguos': AppHeaderAPIEndpoints, IncidentAPIfrontendEndpoints, BatchAPIEndpoints, GenomaVariableAPIEndPoints y todos los de Genoma!
-/*
-    public static Object[] AuditEventsDefinition(){
-        
-    Object[] logMsg=new Object[]{};
-    ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
-    logMsg=LPArray.addValueToArray1D(logMsg, "Begin");
-    String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
-    Boolean startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-        // *** Falta encontrar la manera de tomar la url de un servlet!
-        //"api_url",
-        ConfigAnalysisAuditEvents[] configAnalysisAuditEvents = ConfigAnalysisAuditEvents.values();
-        for (ConfigAnalysisAuditEvents curAudit: configAnalysisAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.CONFIG.getName(), curAudit.getClass().getSimpleName(), curAudit.name());
-        }
-        ConfigSpecAuditEvents[] configSpecAuditEvents = ConfigSpecAuditEvents.values();
-        for (ConfigSpecAuditEvents curAudit: configSpecAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.CONFIG.getName(), curAudit.getClass().getSimpleName(), curAudit.name());
-        }
-        DataSampleAuditEvents[] sampleAuditEvents = DataSampleAuditEvents.values();
-        for (DataSampleAuditEvents curAudit: sampleAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.DATA.getName(), curAudit.getClass().getSimpleName(), curAudit.name());
-        }        
-        DataSampleConfigAnalysisAuditEvents[] dataSampleConfigAnalysisAuditEvents = DataSampleConfigAnalysisAuditEvents.values();
-        for (DataSampleConfigAnalysisAuditEvents curAudit: dataSampleConfigAnalysisAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.DATA.getName(), curAudit.getClass().getSimpleName(), curAudit.name());
-        }
-        DataSampleAnalysisResultAuditEvents[] dataSampleAnalysisResultAuditEvents = DataSampleAnalysisResultAuditEvents.values();
-        for (DataSampleAnalysisResultAuditEvents curAudit: dataSampleAnalysisResultAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.DATA.getName(), curAudit.getClass().getSimpleName(), curAudit.name());
-        }           
-        IncidentAuditEvents[] incidentAuditEvents=IncidentAuditEvents.values();
-        for (IncidentAuditEvents curAudit: incidentAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.DATA.getName(), curAudit.getClass().getSimpleName(), curAudit.name());
-        }
-        DataBatchAuditEvents[] dataBatchAuditEvents=DataBatchAuditEvents.values();
-        for (DataBatchAuditEvents curAudit: dataBatchAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.DATA.getName(), curAudit.getClass().getSimpleName(), curAudit.name());
-        }
-        DataInvestigationAuditEvents[] dataInvestigationAuditEvents=DataInvestigationAuditEvents.values();
-        for (DataInvestigationAuditEvents curAudit: dataInvestigationAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.DATA.getName(), curAudit.getClass().getSimpleName(), curAudit.name());
-        }
-        ProjectAuditEvents[] projectAuditEvents=ProjectAuditEvents.values();
-        for (ProjectAuditEvents curAudit: projectAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.DATA.getName(), "genomaModule"+curAudit.getClass().getSimpleName(), curAudit.name());
-        }
-        StudyAuditEvents[] studyAuditEvents=StudyAuditEvents.values();
-        for (StudyAuditEvents curAudit: studyAuditEvents){
-            startRdbms = Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            declareInDatabase(GlobalVariables.Schemas.DATA.getName(), "genomaModule"+curAudit.getClass().getSimpleName(), curAudit.name());
-        }
-        logMsg=LPArray.addValueToArray1D(logMsg, "End");        
-        Rdbms.closeRdbms();
-        return logMsg;
-}
-*/
-public AuditEventsToRequirements(HttpServletRequest request, HttpServletResponse response){
+
+    public AuditEventsToRequirements(HttpServletRequest request, HttpServletResponse response){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
         Rdbms.getRdbms().startRdbms(dbTrazitModules);
@@ -118,6 +55,8 @@ public AuditEventsToRequirements(HttpServletRequest request, HttpServletResponse
         getAuditEventsFromDatabase();
         if (this.fldNames==null) return;
         JSONArray enumsCompleteSuccess = new JSONArray();
+        JSONArray eventsFound = new JSONArray();
+        JSONArray eventsNotFound = new JSONArray();
         Integer classesImplementingInt=-999;
         Integer totalEndpointsVisitedInt=0;
         String audEvObjStr="";
@@ -138,6 +77,10 @@ public AuditEventsToRequirements(HttpServletRequest request, HttpServletResponse
                     for (int j=0;j<enumConstantObjects.size();j++) {
                         EnumIntAuditEvents curAudEv = (EnumIntAuditEvents) enumConstantObjects.get(j);
                         evName=curAudEv.toString();
+                        if (LPArray.valueInArray(auditObjectAndEventName1d, curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString()))
+                            eventsFound.add(curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString());
+                        else
+                            eventsNotFound.add(curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString());
                         if (!summaryOnlyMode){
                             try{
                                 declareInDatabase(curAudEv.getClass().getSimpleName(), curAudEv.toString());
@@ -164,6 +107,7 @@ public AuditEventsToRequirements(HttpServletRequest request, HttpServletResponse
                 ScanResult.closeAll();
                 JSONArray errorJArr = new JSONArray();
                 errorJArr.add(audEvObjStr+"_"+evName+":"+e.getMessage());
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());                
                 LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                 return;
             }
@@ -171,12 +115,14 @@ public AuditEventsToRequirements(HttpServletRequest request, HttpServletResponse
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
         jMainObj.put("00_total_in_db_before_running", this.auditEventsFromDatabase.length);
-        jMainObj.put("01_total_audit_events_before_running", this.auditObjectAndEventName1d.length);
         jMainObj.put("02_total_enums",classesImplementingInt.toString());
         jMainObj.put("03_total_visited_enums",enumsCompleteSuccess.size());
         jMainObj.put("04_enums_visited_list", enumsCompleteSuccess);
         jMainObj.put("05_total_number_of_messages_visited", totalEndpointsVisitedInt);
-        
+        jMainObj.put("06_found", eventsFound);
+        jMainObj.put("07_not_found", eventsNotFound);
+        jMainObj.put("06_found_total", eventsFound.size());
+        jMainObj.put("07_not_found_total", eventsNotFound.size());
         
         LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
         return;

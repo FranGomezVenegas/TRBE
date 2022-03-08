@@ -3,7 +3,7 @@ package com.labplanet.servicios.moduledefinition;
 import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIEndpoints;
 import functionaljavaa.platform.doc.AuditEventsToRequirements;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
-import functionaljavaa.platform.doc.MessageCodesToRequirements;
+import functionaljavaa.platform.doc.ErrorMessageCodesToRequirements;
 import functionaljavaa.platform.doc.BusinessRulesToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
@@ -31,15 +31,14 @@ public class ClassTrazitCodeDoc {
                 case DOC_API_ENDPOINTS_IN_DB:         
                     EndPointsToRequirements eToReq=new EndPointsToRequirements(request, response);
                     break;
-                case DOC_API_MESSAGE_CODES_IN_DB:
-                    MessageCodesToRequirements msgToReq=new MessageCodesToRequirements(request, response);
+                case DOC_API_ERROR_MESSAGE_CODES_IN_DB:
+                    ErrorMessageCodesToRequirements msgToReq=new ErrorMessageCodesToRequirements(request, response);
                     break;
                 case DOC_API_BUSINESS_RULES_IN_DB:
-                    BusinessRulesToRequirements.businessRulesDefinition(request, response);
+                    new BusinessRulesToRequirements(request, response);
                     break;
                 case DOC_API_AUDIT_EVENTS_IN_DB:
                     AuditEventsToRequirements evToReq=new AuditEventsToRequirements(request, response);
-                    //AuditEventsDoc.AuditEventsDefinition();
                     break;
 
             }    
