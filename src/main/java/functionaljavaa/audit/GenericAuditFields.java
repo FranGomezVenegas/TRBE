@@ -11,7 +11,6 @@ import databases.TblsAppProcDataAudit;
 import databases.TblsDataAudit;
 import databases.Token;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.requirement.Requirement;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -56,13 +55,12 @@ public class GenericAuditFields {
         this.fieldNames = new String[]{TblsAppAudit.Incident.DATE.getName()};
         this.fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         if (procInstanceName!=null){
-            Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
-            if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
-                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PROCEDURE.getName());
-                fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
-                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PROCEDURE_VERSION.getName());
-                fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][1]);        
-            }        
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PROCEDURE.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, token.getProcedureInstanceName(procInstanceName));
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PROCEDURE_VERSION.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, token.getProcedureInstanceVersion(procInstanceName));        
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PROCEDURE_HASH_CODE.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, token.getProcedureInstanceHashCode(procInstanceName));        
         }
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.USER_ROLE.getName());        
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getUserRole());
