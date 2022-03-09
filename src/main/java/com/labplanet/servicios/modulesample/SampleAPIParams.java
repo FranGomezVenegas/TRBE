@@ -45,10 +45,6 @@ public class SampleAPIParams extends HttpServlet {
     public static final String SERVLET_FRONTEND_URL="/frontend/SampleAPIfrontEnd";
     
     public enum SampleAPIEndpoints implements EnumIntEndpoints{
-        /**
-         *
-         */
-
         REVIEWSAMPLE_TESTINGGROUP("REVIEWSAMPLE_TESTINGGROUP", "reviewSampleTestingGroup_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TESTING_GROUP, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, null, DataSampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED),

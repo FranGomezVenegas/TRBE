@@ -43,15 +43,18 @@ public final class EndPointsToRequirements {
     String[] endpointsApiAndEndpointNamesKey;
     Object[] apiName1d;
     Object[] endpointName1d;
+    JSONObject summaryInfo;
     
     
+public JSONObject getSummaryInfo(){return this.summaryInfo;}
 public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse response){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
         Rdbms.getRdbms().startRdbms(dbTrazitModules);
         getEndPointsFromDatabase();
         Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
-        
+        if (!summaryOnlyMode)
+            summaryOnlyMode=Boolean.valueOf(LPNulls.replaceNull(request.getAttribute("summaryOnly")).toString());
         if (this.fldNames==null) return;
         JSONArray enumsCompleteSuccess = new JSONArray();
         JSONArray endpointsFound = new JSONArray();
@@ -67,6 +70,9 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                 ClassInfoList allEnums = scanResult.getAllEnums();
                 classesImplementingInt=classesImplementing.size();
                 for (int i=0;i<classesImplementing.size();i++){
+if (i==45){
+    evName=evName;
+}                    
                     ClassInfo getMine = classesImplementing.get(i); 
                     audEvObjStr=getMine.getSimpleName();
                     List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
@@ -76,8 +82,8 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                         EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);                        
                         evName=curEndpoint.getName().toString();
                         
-                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(),  EndpointsDeclaration.ENDPOINT_NAME.getName(),  EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
-                        Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName(), curEndpoint.getSuccessMessageCode()});
+                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(),  EndpointsDeclaration.ENDPOINT_NAME.getName()});//,  EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
+                        Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName()}); //, curEndpoint.getSuccessMessageCode()});
                         fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
                         fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curEndpoint.getArguments())});                
                         
@@ -93,19 +99,20 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                                         fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size());
                             }catch(Exception e){
                                 JSONObject jObj=new JSONObject();
-                                jObj.put("enum",getMine.getName().toString());
+                                jObj.put("enum",getMine.getSimpleName().toString());
                                 jObj.put("endpoint_code",curEndpoint.toString());
                                 jObj.put("error",e.getMessage());
                                 enumsIncomplete.add(jObj);
                             }
                         }
-                    }
+                        
+                    }                    
                     if (enumsIncomplete.size()>0){
                         LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                         return;
                     }else{
                         JSONObject jObj=new JSONObject();
-                        jObj.put("enum",getMine.getName().toString());
+                        jObj.put("enum",getMine.getSimpleName().toString());
                         jObj.put("messages",enumConstantObjects.size());
                         enumsCompleteSuccess.add(jObj);
                     }
@@ -121,6 +128,10 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         // Rdbms.closeRdbms();
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
+        if (endpointsNotFound.isEmpty())
+            jMainObj.put("summary", "SUCCESS");
+        else
+            jMainObj.put("summary", "WITH ERRORS");
         jMainObj.put("00_total_in_db_before_running", this.endpointsFromDatabase.length);
         jMainObj.put("01_total_apis_in_db_before_running", this.apiName1d.length);
         jMainObj.put("02_total_enums",classesImplementingInt.toString());
@@ -131,7 +142,9 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         jMainObj.put("06_found_total", endpointsFound.size());
         jMainObj.put("07_not_found", endpointsNotFound);        
         jMainObj.put("07_not_found_total", endpointsNotFound.size());
-        LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
+        
+        this.summaryInfo=jMainObj;
+        //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
         return;
     }    
     
@@ -162,10 +175,10 @@ private void getEndPointsFromDatabase(){
     this.endpointsFromDatabase=reqEndpointInfo;
     Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, EndpointsDeclaration.API_NAME.getName());
     Integer endpointNamePosic=LPArray.valuePosicInArray(this.fldNames, EndpointsDeclaration.ENDPOINT_NAME.getName());
-    Object[] apiName1d = LPArray.array2dTo1d(this.endpointsFromDatabase, apiNamePosic);
-    Object[] endpointName1d = LPArray.array2dTo1d(this.endpointsFromDatabase, endpointNamePosic);
-    
+    this.apiName1d = LPArray.array2dTo1d(this.endpointsFromDatabase, apiNamePosic);
+    Object[] endpointName1d = LPArray.array2dTo1d(this.endpointsFromDatabase, endpointNamePosic);    
     this.endpointsApiAndEndpointNamesKey=LPArray.joinTwo1DArraysInOneOf1DString(apiName1d, endpointName1d, "-");
+    this.apiName1d = LPArray.getUniquesArray(apiName1d);
 }
 
 private Object[] existsEndPointInDatabase(String apiName, String endpointName){
@@ -174,7 +187,8 @@ private Object[] existsEndPointInDatabase(String apiName, String endpointName){
     return this.endpointsFromDatabase[valuePosicInArray];    
 }
 public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi){
-//if (1==1)return;
+//if ("InspLotRMQueriesAPIEndpoints".equalsIgnoreCase(apiName) && "GET_LOT_INFO".equalsIgnoreCase(endpointName))
+//    apiName=apiName;
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
     try{
     Object[] reqEndpointInfo=existsEndPointInDatabase(apiName, endpointName);

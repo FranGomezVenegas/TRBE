@@ -79,8 +79,7 @@ public class DataBatchIncubator {
         INCUBATORBATCH_WITH_NO_INCUBATOR("incubatorBatch_withNoIncubator", "", ""),
         BATCH_AVAILABLEFORCHANGES("batchAvailableForChanges", "The Batch <*1*> is available to alter its content", "The Batch <*1*> is available to alter its content"),
         INCUB_BATCH_NOT_ACTIVE_FOR_CHANGES("incubationBatchStart_StoppedByNotActiveForChanges", "", ""), 
-        INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE("incubationBatchStart_StoppedByIncubationLockedBusinessRuleMode", "", ""),
-        
+        INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE("incubationBatchStart_StoppedByIncubationLockedBusinessRuleMode", "", ""),        
         EMPTY_BATCH("incubBatch_emptyBatch", "", ""),
         INCUB_BATCH_STARTED_CHANGEITSCONTENT("IncubatorBatchStartedToChangeItsContent", "", ""),
         SAMPLE_NOTFOUND_IN_BATCH("incubBatch_sampleNotFoundInBatch"," Sample <*1*> not found in batch <*2*> for procedure <*3*>.", ""),

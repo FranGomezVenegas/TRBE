@@ -17,7 +17,6 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.ClassSample;
-import com.labplanet.servicios.modulesample.SampleAPI;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.TblsApp;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
@@ -104,10 +103,10 @@ public class InspLotRMAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
         public String getAuditActionName(){return this.auditActionName;}           
         private final String name;
         private final String successMessageCode;  
@@ -149,10 +148,10 @@ public class InspLotRMAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode; 
         private final LPAPIArguments[] arguments;

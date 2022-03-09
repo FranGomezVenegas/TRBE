@@ -199,15 +199,17 @@ public class InstrumentsEnums {
     
     public enum InstrumentsAPIqueriesEndpoints implements EnumIntEndpoints{
         ACTIVE_INSTRUMENTS_LIST("ACTIVE_INSTRUMENTS_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS("DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS","",
+            new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6)}, 
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        GET_INSTRUMENT_FAMILY_LIST("GET_INSTRUMENT_FAMILY_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT("INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT("INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENTS_INPROGRESS("INSTRUMENT_EVENTS_INPROGRESS","", new LPAPIArguments[]{
             new LPAPIArguments("fieldName", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
             new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENT_VARIABLES("INSTRUMENT_EVENTS_VARIABLES", "",new LPAPIArguments[]{            
-            new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6), }, EndPointsToRequirements.endpointWithNoOutputObjects),
-        DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS("DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS","",new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        GET_INSTRUMENT_FAMILY_LIST("GET_INSTRUMENT_FAMILY_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6), }, EndPointsToRequirements.endpointWithNoOutputObjects)
         ;
         private InstrumentsAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;

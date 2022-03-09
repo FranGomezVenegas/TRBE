@@ -27,6 +27,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -43,7 +44,9 @@ public final class AuditEventsToRequirements {
     String[] fldNames;
     Object[][] auditEventsFromDatabase;
     Object[] auditObjectAndEventName1d;
+    JSONObject summaryInfo;
     
+    public JSONObject getSummaryInfo(){return this.summaryInfo;}
     public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", "no output for testing")
                     .add("table", "no output for testing").build()).build();
 
@@ -52,6 +55,9 @@ public final class AuditEventsToRequirements {
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
         Rdbms.getRdbms().startRdbms(dbTrazitModules);
         Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
+        if (!summaryOnlyMode)
+            summaryOnlyMode=Boolean.valueOf(LPNulls.replaceNull(request.getAttribute("summaryOnly")).toString());
+        
         getAuditEventsFromDatabase();
         if (this.fldNames==null) return;
         JSONArray enumsCompleteSuccess = new JSONArray();
@@ -86,7 +92,7 @@ public final class AuditEventsToRequirements {
                                 declareInDatabase(curAudEv.getClass().getSimpleName(), curAudEv.toString());
                             }catch(Exception e){
                                 JSONObject jObj=new JSONObject();
-                                jObj.put("enum",getMine.getName().toString());
+                                jObj.put("enum",getMine.getSimpleName().toString());
                                 jObj.put("endpoint_code",curAudEv.toString());
                                 jObj.put("error",e.getMessage());
                                 enumsIncomplete.add(jObj);
@@ -98,7 +104,7 @@ public final class AuditEventsToRequirements {
                         return;
                     }else{
                         JSONObject jObj=new JSONObject();
-                        jObj.put("enum",getMine.getName().toString());
+                        jObj.put("enum",getMine.getSimpleName().toString());
                         jObj.put("messages",enumConstantObjects.size());
                         enumsCompleteSuccess.add(jObj);
                     }
@@ -114,6 +120,10 @@ public final class AuditEventsToRequirements {
         // Rdbms.closeRdbms();
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
+        if (eventsNotFound.isEmpty())
+            jMainObj.put("summary", "SUCCESS");
+        else
+            jMainObj.put("summary", "WITH ERRORS");        
         jMainObj.put("00_total_in_db_before_running", this.auditEventsFromDatabase.length);
         jMainObj.put("02_total_enums",classesImplementingInt.toString());
         jMainObj.put("03_total_visited_enums",enumsCompleteSuccess.size());
@@ -123,8 +133,8 @@ public final class AuditEventsToRequirements {
         jMainObj.put("07_not_found", eventsNotFound);
         jMainObj.put("06_found_total", eventsFound.size());
         jMainObj.put("07_not_found_total", eventsNotFound.size());
-        
-        LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
+        this.summaryInfo=jMainObj;
+        //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
         return;
     }    
 

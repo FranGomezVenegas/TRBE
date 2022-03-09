@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -38,6 +39,9 @@ public class BusinessRulesToRequirements {
     Object[][] businessRulesFromDatabase;
     String[] fldNames;
     Object[] businessRules1d;
+    JSONObject summaryInfo;
+    
+    public JSONObject getSummaryInfo(){return this.summaryInfo;}
     
     public static JSONArray valuesListForEnableDisable(){
         JSONArray vList=new JSONArray();
@@ -52,10 +56,13 @@ public class BusinessRulesToRequirements {
     }
     public BusinessRulesToRequirements(HttpServletRequest request, HttpServletResponse response){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);    
-        JSONArray enumsCompleteSuccess = new JSONArray();
+        JSONArray busRulesVisitedSuccess = new JSONArray();
         JSONArray eventsFound = new JSONArray();
         JSONArray eventsNotFound = new JSONArray();        
         Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
+        if (!summaryOnlyMode)
+            summaryOnlyMode=Boolean.valueOf(LPNulls.replaceNull(request.getAttribute("summaryOnly")).toString());
+        
         getMessageCodesFromDatabase();
         String audEvObjStr="";
         String evName="";
@@ -91,7 +98,7 @@ public class BusinessRulesToRequirements {
                                 curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
                             }catch(Exception e){
                                 JSONObject jObj=new JSONObject();
-                                jObj.put("enum",getMine.getName().toString());
+                                jObj.put("enum",getMine.getSimpleName().toString());
                                 jObj.put("endpoint",curBusRul.toString());
                                 jObj.put("error",e.getMessage());
                                 enumsIncomplete.add(jObj);
@@ -103,9 +110,9 @@ public class BusinessRulesToRequirements {
                         return;
                     }else{
                         JSONObject jObj=new JSONObject();
-                        jObj.put("enum",getMine.getName().toString());
+                        jObj.put("enum",getMine.getSimpleName().toString());
                         jObj.put("endpoints",enumConstantObjects.size());
-                        enumsCompleteSuccess.add(jObj);
+                        busRulesVisitedSuccess.add(jObj);
                     }
                 }
             }catch(Exception e){
@@ -119,15 +126,20 @@ public class BusinessRulesToRequirements {
         // Rdbms.closeRdbms();
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
-        jMainObj.put("02_total_visited_enums",enumsCompleteSuccess.size());
+        if (eventsNotFound.isEmpty())
+            jMainObj.put("summary", "SUCCESS");
+        else
+            jMainObj.put("summary", "WITH ERRORS");
+        jMainObj.put("02_total_visited_enums",busRulesVisitedSuccess.size());
         jMainObj.put("01_total_enums",classesImplementingInt.toString());
-        jMainObj.put("03_enums_visited_list", enumsCompleteSuccess);
+        jMainObj.put("03_enums_visited_list", busRulesVisitedSuccess);
         jMainObj.put("04_total_number_of_endpoints_visited", totalEndpointsVisitedInt);
         jMainObj.put("05_found", eventsFound);
         jMainObj.put("06_not_found", eventsNotFound);        
         jMainObj.put("05_found_total", eventsFound.size());
-        jMainObj.put("06_not_found_total", eventsNotFound.size());        
-        LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
+        jMainObj.put("06_not_found_total", eventsNotFound.size());
+        this.summaryInfo=jMainObj;
+        //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
         return;
     }
 private static void declareBusinessRuleInDatabaseOld(String apiName, String areaName, String tagName, String[] fieldNames, Object[] fieldValues){
@@ -275,7 +287,7 @@ private void getMessageCodesFromDatabase(){
     Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.FILE_AREA.getName());
     Integer propertyNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName());
     Object[] apiName1d = LPArray.array2dTo1d(this.businessRulesFromDatabase, apiNamePosic);
-    apiName1d=LPArray.getUniquesArray(apiName1d);
+    //apiName1d=LPArray.getUniquesArray(apiName1d);
     Object[] endpointName1d = LPArray.array2dTo1d(this.businessRulesFromDatabase, propertyNamePosic);
     
     this.businessRules1d=LPArray.joinTwo1DArraysInOneOf1DString(apiName1d, endpointName1d, "-");

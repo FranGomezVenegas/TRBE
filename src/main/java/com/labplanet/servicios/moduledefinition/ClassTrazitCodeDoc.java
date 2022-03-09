@@ -8,7 +8,9 @@ import functionaljavaa.platform.doc.BusinessRulesToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONObject;
 import trazit.session.ApiMessageReturn;
 
 /**
@@ -29,18 +31,38 @@ public class ClassTrazitCodeDoc {
         this.functionFound=true;
             switch (endPoint){
                 case DOC_API_ENDPOINTS_IN_DB:         
-                    EndPointsToRequirements eToReq=new EndPointsToRequirements(request, response);
+                    EndPointsToRequirements endpointToReq=new EndPointsToRequirements(request, response);
+                    LPFrontEnd.servletReturnSuccess(request, response, endpointToReq.getSummaryInfo());
                     break;
                 case DOC_API_ERROR_MESSAGE_CODES_IN_DB:
                     ErrorMessageCodesToRequirements msgToReq=new ErrorMessageCodesToRequirements(request, response);
+                    LPFrontEnd.servletReturnSuccess(request, response, msgToReq.getSummaryInfo());
                     break;
                 case DOC_API_BUSINESS_RULES_IN_DB:
-                    new BusinessRulesToRequirements(request, response);
+                    BusinessRulesToRequirements busRulToReq=new BusinessRulesToRequirements(request, response);
+                    LPFrontEnd.servletReturnSuccess(request, response, busRulToReq.getSummaryInfo());
                     break;
                 case DOC_API_AUDIT_EVENTS_IN_DB:
-                    AuditEventsToRequirements evToReq=new AuditEventsToRequirements(request, response);
+                    AuditEventsToRequirements auditEvToReq=new AuditEventsToRequirements(request, response);
+                    LPFrontEnd.servletReturnSuccess(request, response, auditEvToReq.getSummaryInfo());
                     break;
+                case DOC_API_ALL_IN_ONE:
+                    JSONObject mainObj=new JSONObject();
+                    request.setAttribute("summaryOnly", true);
+                    auditEvToReq=new AuditEventsToRequirements(request, response);
+                    mainObj.put("audit_events_summary", auditEvToReq.getSummaryInfo());
 
+                    busRulToReq=new BusinessRulesToRequirements(request, response);
+                    mainObj.put("business_rules_summary", busRulToReq.getSummaryInfo());
+
+                    msgToReq=new ErrorMessageCodesToRequirements(request, response);
+                    mainObj.put("error_msgcodes_summary", msgToReq.getSummaryInfo());
+                    
+                    endpointToReq=new EndPointsToRequirements(request, response);
+                    mainObj.put("endpoints_summary", endpointToReq.getSummaryInfo());
+
+                    LPFrontEnd.servletReturnSuccess(request, response, mainObj);
+                    break;
             }    
         if (actionDiagnoses!=null)
             this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{actionDiagnoses[0]});

@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Properties;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
@@ -1413,7 +1414,9 @@ if (1==1){Rdbms.transactionId=1; return;}
                         prepsta.setString(indexval, (String) obj.toString()); 
                         break;                          
                     case "class org.json.simple.JSONArray":
-                        prepsta.setString(indexval, (String) obj.toString()); 
+                        JSONArray jArr = (JSONArray)obj;
+                        prepsta.setString(indexval, (String) jArr.toString()); 
+                        break;
                     case "class org.json.simple.JSONObject":
                         JSONObject jObj = (JSONObject)obj;
                         
