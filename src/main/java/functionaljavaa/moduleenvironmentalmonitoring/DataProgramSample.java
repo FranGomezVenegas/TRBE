@@ -126,7 +126,7 @@ public class DataProgramSample{
                 newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
                 return newProjSample; //newProjSample=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, ":"));
-            messages.addMainForSuccess("ClassEnvMonSample", EnvMonSampleAPIEndpoints.LOGSAMPLE.getSuccessMessageCode(), 
+            messages.addMainForSuccess(EnvMonSampleAPIEndpoints.LOGSAMPLE, 
                 new Object[]{newProjSample[newProjSample.length-1], programName, programLocation});            
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataProgram.class.getName()).log(Level.SEVERE, null, ex);

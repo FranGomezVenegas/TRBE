@@ -83,7 +83,7 @@ public class ClassInvestigation {
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                     investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
-                    messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId, argValues[2].toString()});
+                    messages.addMainForSuccess(endPoint, new Object[]{investigationId, argValues[2].toString()});
                     dynamicDataObjects=new Object[]{investigationId, argValues[2].toString()};
                 }                
                 break;
@@ -92,7 +92,7 @@ public class ClassInvestigation {
                 investigationIdStr=argValues[0].toString();
                 if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                    messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId, argValues[1].toString()});
+                    messages.addMainForSuccess(endPoint, new Object[]{investigationId, argValues[1].toString()});
                     dynamicDataObjects=new Object[]{investigationId, argValues[1].toString()};
                 }
                 break;
@@ -101,7 +101,7 @@ public class ClassInvestigation {
                 investigationIdStr=argValues[0].toString();
                 if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                    messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId});
+                    messages.addMainForSuccess(endPoint, new Object[]{investigationId});
                     dynamicDataObjects=new Object[]{investigationId};
                 }
                 break;
@@ -120,7 +120,7 @@ public class ClassInvestigation {
                     investigationIdStr=argValues[0].toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        messages.addMainForSuccess("InvestigationAPI", endPoint.getSuccessMessageCode(), new Object[]{investigationId});
+                        messages.addMainForSuccess(endPoint, new Object[]{investigationId});
                         dynamicDataObjects=new Object[]{investigationId};
                     }
                 }
@@ -134,7 +134,7 @@ public class ClassInvestigation {
         }else{
             rObj=RelatedObjects.getInstanceForActions();
             rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), investigationId);                
-//            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
+//            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint, new Object[]{incId}, rObj.getRelatedObject());
             rObj.killInstance();
 //            LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
         }           

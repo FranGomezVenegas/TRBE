@@ -347,7 +347,7 @@ public class ClassSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
-                        messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.CANCELSAMPLE.getSuccessMessageCode(), this.messageDynamicData);
+                        messages.addMainForSuccess(endPoint, this.messageDynamicData);
                     break;
                 case CANCELTEST:
                     testId = (Integer) argValues[0];
@@ -355,7 +355,7 @@ public class ClassSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId);
                     this.messageDynamicData=new Object[]{sampleId};
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
-                        messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.CANCELTEST.getSuccessMessageCode(), this.messageDynamicData);
+                        messages.addMainForSuccess(endPoint, this.messageDynamicData);
                     break;
                 case CANCELRESULT:
                     resultId = (Integer) argValues[0];
@@ -363,7 +363,7 @@ public class ClassSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), resultId);
                     this.messageDynamicData=new Object[]{sampleId};
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
-                        messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.CANCELRESULT.getSuccessMessageCode(), this.messageDynamicData);
+                        messages.addMainForSuccess(endPoint, this.messageDynamicData);
                     break;
                 case UNCANCELSAMPLE:
                     sampleId = (Integer) argValues[0];
@@ -371,7 +371,7 @@ public class ClassSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
-                        messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.UNCANCELSAMPLE.getSuccessMessageCode(), this.messageDynamicData);
+                        messages.addMainForSuccess(endPoint, this.messageDynamicData);
                     break;
                 case UNREVIEWTEST:
                     testId = (Integer) argValues[0];
@@ -379,7 +379,7 @@ public class ClassSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId);
                     this.messageDynamicData=new Object[]{testId};
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
-                        messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.UNREVIEWTEST.getSuccessMessageCode(), this.messageDynamicData);
+                        messages.addMainForSuccess(endPoint, this.messageDynamicData);
                     break;
                 case UNCANCELTEST:
                     testId = (Integer) argValues[0];
@@ -387,7 +387,7 @@ public class ClassSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId);
                     this.messageDynamicData=new Object[]{testId};
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
-                        messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.UNCANCELTEST.getSuccessMessageCode(), this.messageDynamicData);
+                        messages.addMainForSuccess(endPoint, this.messageDynamicData);
                     break;
                 case UNCANCELRESULT:
                     resultId = (Integer) argValues[0];
@@ -395,7 +395,7 @@ public class ClassSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), resultId);
                     this.messageDynamicData=new Object[]{resultId};
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))
-                        messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.UNCANCELRESULT.getSuccessMessageCode(), this.messageDynamicData);
+                        messages.addMainForSuccess(endPoint, this.messageDynamicData);
                     break;
                 case TESTASSIGNMENT:
                     testId = (Integer) argValues[0];

@@ -121,7 +121,7 @@ public class ClassEnvMonSample {
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                         sampleId=Integer.valueOf(actionDiagnoses[actionDiagnoses.length-1].toString());
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{argValues[0], procInstanceName});
-                        messages.addMainForSuccess(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{sampleId, procInstanceName, (String) argValues[5]});
+                        messages.addMainForSuccess(endPoint, new Object[]{sampleId, procInstanceName, (String) argValues[5]});
                     }
                     break;
                 case ENTERRESULT:                    

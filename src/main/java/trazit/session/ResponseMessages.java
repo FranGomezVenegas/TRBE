@@ -6,6 +6,7 @@
 package trazit.session;
 
 import lbplanet.utilities.LPArray;
+import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
 
 /**
@@ -83,10 +84,14 @@ public class ResponseMessages {
         LPArray.addValueToArray1D(array2dTo1d, new Object[]{});
         mainStructureObject.messages=LPArray.array1dTo2d(array2dTo1d, 3);
     }
-    public void addMainForSuccess(String className, String messageCode, Object[] msgCodeVariables){
+/*    public void addMainForSuccess(String className, String messageCode, Object[] msgCodeVariables){
         this.setIsSuccess((Boolean) true);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{className, messageCode, msgCodeVariables}, 3);
-    }
+    }*/
+    public void addMainForSuccess(EnumIntEndpoints endpoint, Object[] msgCodeVariables){
+        this.setIsSuccess((Boolean) true);
+        mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{endpoint.getClass().getSimpleName(), endpoint.getSuccessMessageCode(), msgCodeVariables}, 3);
+    }    
     public void addMainForError(String messageCode, Object[] msgCodeVariables){
         this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3);
