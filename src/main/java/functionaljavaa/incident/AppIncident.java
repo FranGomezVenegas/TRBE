@@ -185,7 +185,8 @@ public class AppIncident {
     
     private Object[] isIncidentActive(Integer incidentId){
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();
-        if (IncidentStatuses.CLOSED.toString().equalsIgnoreCase(currentStatus)) return  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_CURRENTLY_NOT_ACTIVE, new Object[]{incidentId});
+        if (IncidentStatuses.CLOSED.toString().equalsIgnoreCase(currentStatus)) 
+            return  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_CURRENTLY_NOT_ACTIVE, new Object[]{incidentId});
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncidentAPIErrorMessages.INCIDENT_ALREADY_ACTIVE, new Object[]{incidentId});
     }
     

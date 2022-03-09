@@ -43,12 +43,6 @@ public class InternalMessage {
         this.messageCodeVariables=msgCodeVars;
         this.newObjectId=theNew;
     }
-
-    public InternalMessage(String diag, String msgCode, Object[] msgCodeVars){
-        this.diagnostic=diag;
-        this.messageCode=msgCode;
-        this.messageCodeVariables=msgCodeVars;
-    }
     public InternalMessage(String diag, String msgCode, Object[] msgCodeVars, Object theNew){
         this.diagnostic=diag;
         this.messageCode=msgCode;

@@ -77,18 +77,8 @@ public class ResponseMessages {
         return mainMessageVariables;
     }  
 
-    public void add(String messageCode, Object[] msgCodeVariables){
-        Object[] array2dTo1d = LPArray.array2dTo1d(messages);
-        LPArray.addValueToArray1D(array2dTo1d, messageCode);
-        LPArray.addValueToArray1D(array2dTo1d, msgCodeVariables);
-        LPArray.addValueToArray1D(array2dTo1d, new Object[]{});
-        mainStructureObject.messages=LPArray.array1dTo2d(array2dTo1d, 3);
-    }
-/*    public void addMainForSuccess(String className, String messageCode, Object[] msgCodeVariables){
-        this.setIsSuccess((Boolean) true);
-        mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{className, messageCode, msgCodeVariables}, 3);
-    }*/
     public void addMainForSuccess(EnumIntEndpoints endpoint, Object[] msgCodeVariables){
+        
         this.setIsSuccess((Boolean) true);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{endpoint.getClass().getSimpleName(), endpoint.getSuccessMessageCode(), msgCodeVariables}, 3);
     }    
