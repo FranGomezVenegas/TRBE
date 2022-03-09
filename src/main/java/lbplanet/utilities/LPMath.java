@@ -93,6 +93,7 @@ public class LPMath {
     }
     public static Object[] isNumeric(String strNum){
         if (strNum==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_EMPTY, null);
+        if (strNum.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_EMPTY, null);
         String curDigit="";
         try  {            
             for (int i=0;i<strNum.length();i++){
