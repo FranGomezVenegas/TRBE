@@ -35,6 +35,7 @@ public class ProcedureRequestSession {
     private static ProcedureRequestSession theSession;
     private String procedureInstance;
     private Integer procedureVersion;
+    private String procedureHashCode;
     private String actionName;
     private String dbName;
     private Token token;
@@ -131,6 +132,10 @@ public class ProcedureRequestSession {
                 this.tokenStr=finalToken;
             }
             this.procedureInstance=procInstanceName;
+        }
+        if (this.token!=null){            
+            this.procedureVersion=this.token.getProcedureInstanceVersion(procInstanceName);
+            this.procedureHashCode=this.token.getProcedureInstanceHashCode(procInstanceName);
         }
         if (!isForTesting && !isForUAT && !isQuery && !isPlatform && !isForDocumentation){ 
             Object[] theProcActionEnabled = isTheProcActionEnabled(tokn, procInstanceName, actionName, this.busRulesProcInstance);
@@ -243,6 +248,9 @@ public class ProcedureRequestSession {
     }
     public Integer getProcedureInstanceVersion(){
         return this.procedureVersion;
+    }
+    public String getProcedureHashCode(){
+        return this.procedureHashCode;
     }
     public Boolean getIsForTesting(){
         if (this.isForTesting==null)return false;

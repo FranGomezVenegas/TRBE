@@ -19,6 +19,8 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import static lbplanet.utilities.LPMath.isNumeric;
+import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 /**
  *
@@ -37,6 +39,7 @@ public final class Token {
     private static final String TOKEN_PARAM_APP_SESSION_STARTED_DATE="appSessionStartedDate";
     private static final String TOKEN_PARAM_USER_PROCEDURES="user_procedures";
     private static final String TOKEN_PARAM_DB_NAME="dbName";
+    private static final String TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES="user_procedure_hashcodes";
     
     private static final String TOKEN_PARAM_PREFIX = "TOKEN_";
     
@@ -48,6 +51,7 @@ public final class Token {
     private String appSessionId="";
     private Date appSessionStartedDate;
     private String userProcedures="";    
+    private String userProceduresVersionsAndHashCodes="";     
     private String dbName="";  
     /**
      *
@@ -64,6 +68,7 @@ public final class Token {
         this.eSign = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ESIGN)];     
         this.appSessionId = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_APP_SESSION_ID)];    
         this.userProcedures = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES)]; 
+        this.userProceduresVersionsAndHashCodes=tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES)]; 
         this.dbName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_DB_NAME)]; 
     }
 
@@ -81,6 +86,7 @@ public final class Token {
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_APP_SESSION_STARTED_DATE);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_ESIGN);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_PROCEDURES);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_DB_NAME);
         return diagnoses;
     }  
@@ -159,6 +165,19 @@ public final class Token {
         UserProfile usProf = new UserProfile();
         Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(userDBId);
         myParams.put(TOKEN_PARAM_USER_PROCEDURES, Arrays.toString(allUserProcedurePrefix));
+        String procHashCodes="";
+        for (Object curProcPrefix: allUserProcedurePrefix){            
+            if (procHashCodes.length()>0)procHashCodes=procHashCodes+"|";
+            Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), 
+                TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
+                new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{curProcPrefix.toString()}, 
+                new String[]{TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))
+                return "ERROR: procedure_info into node procedure not found for instance "+curProcPrefix.toString();  
+            else
+                procHashCodes=procHashCodes+curProcPrefix.toString()+"*"+procInfo[0][0].toString()+"*"+procInfo[0][1].toString();            
+        }   
+        myParams.put(TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES, procHashCodes);
         try{
             return JWT.create()
                     .withHeader(myParams)
@@ -205,7 +224,47 @@ public final class Token {
             return new String[]{LPPlatform.LAB_FALSE, ""};
         }
     }
-
+    public String getProcedureInstanceName(String procInstanceName){        
+        return getInfoFromProcedureInstanceVersionsAndHashCode(procInstanceName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME);
+    }
+    public String getProcedureInstanceHashCode(String procInstanceName){        
+        return getInfoFromProcedureInstanceVersionsAndHashCode(procInstanceName, TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE);
+    }
+    public Integer getProcedureInstanceVersion(String procInstanceName){
+        String procVersion = getInfoFromProcedureInstanceVersionsAndHashCode(procInstanceName, TblsProcedure.ProcedureInfo.VERSION);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric(procVersion)[0].toString())) 
+            return Integer.valueOf(procVersion);
+        return -999;
+    }
+    private String getInfoFromProcedureInstanceVersionsAndHashCode(String procInstanceName, TblsProcedure.ProcedureInfo field){
+        String[] splitted = this.userProceduresVersionsAndHashCodes.split("\\|");
+        for (String curVal: splitted){
+            if (curVal.toUpperCase().contains(procInstanceName.toUpperCase())){
+                String[] splittedEntry = curVal.split("\\*");
+                TblsProcedure.ProcedureInfo endPoint = null;  
+                switch (field){
+                    case PROC_INSTANCE_NAME:
+                        if (splittedEntry.length>=1)
+                            return splittedEntry[0];
+                        else
+                            return "ERROR.array has no column [0]";
+                    case VERSION:
+                        if (splittedEntry.length>=2)
+                            return splittedEntry[1];
+                        else
+                            return "ERROR.array has no column [1]";
+                    case PROCEDURE_HASH_CODE:
+                        if (splittedEntry.length>=3)
+                            return splittedEntry[2];
+                        else
+                            return "ERROR.array has no column [2]";
+                    default:
+                        return "";                        
+                }
+            }
+        }
+        return "";
+    }
     /**
      * @return the userName
      */

@@ -121,6 +121,7 @@ public class TblsInspLotRMDataAudit {
          */
         FLD_APP_SESSION_ID("app_session_id", LPDatabase.integer())
         ,
+        PROCEDURE_HASH_CODE("procedure_hash_code", LPDatabase.stringNotNull()), //, null, null, null, null),
 
         /**
          *

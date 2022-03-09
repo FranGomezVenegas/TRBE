@@ -121,14 +121,10 @@ public class AppProcedureListAPI extends HttpServlet {
      */
     public static final String FIELD_NAME_SOP="sop";
     
-    /**
-     *
-     */
-    public static final String PROC_FLD_NAME=TblsProcedure.ProcedureInfo.NAME.getName()+"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|label_en|label_es"+"|"+TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName();
+    public static final String PROC_FLD_NAME=TblsProcedure.ProcedureInfo.NAME.getName()
+            +"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|label_en|label_es"+"|"+TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()
+            +"|"+TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName();
 
-    /**
-     *
-     */
     public static final String PROC_EVENT_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|branch_level|type|mode|esign_required|sop|order_number|parent_name|position|icon_name";
     public static final String PROC_NEW_EVENT_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|branch_level|type|mode|esign_required|sop|order_number|parent_name|position|icon_name|icon_name_when_not_certified";
     public static final String PROC_EVENT_ICONS_UP_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|icon_name|type|mode|esign_required|sop|position";

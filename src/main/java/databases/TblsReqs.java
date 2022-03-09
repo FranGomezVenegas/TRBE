@@ -132,6 +132,7 @@ public class TblsReqs {
     public enum ProcedureInfo implements EnumIntTableFields{
         PROCEDURE_NAME("procedure_name", LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION("procedure_version", LPDatabase.integerNotNull(), null, null, null, null),
+        PROCEDURE_HASH_CODE("procedure_hash_code", LPDatabase.stringNotNull(), null, null, null, null),
         DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.stringNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         LABEL_EN("label_en", LPDatabase.stringNotNull(), null, null, null, null),
