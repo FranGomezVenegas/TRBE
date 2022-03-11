@@ -133,7 +133,7 @@ public class ProcedureRequestSession {
             }
             this.procedureInstance=procInstanceName;
         }
-        if (this.token!=null){            
+        if (this.token!=null && !isPlatform){            
             this.procedureVersion=this.token.getProcedureInstanceVersion(procInstanceName);
             this.procedureHashCode=this.token.getProcedureInstanceHashCode(procInstanceName);
         }

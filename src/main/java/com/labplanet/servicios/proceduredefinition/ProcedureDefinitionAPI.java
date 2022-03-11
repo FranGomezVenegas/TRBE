@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
@@ -32,7 +33,10 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class ProcedureDefinitionAPI extends HttpServlet {
-
+    public int ProcedureHashCode(String procName, Integer procVersion, String procInstanceName) {
+        String valueStr = LPDate.getCurrentTimeStamp().toString()+procName+procVersion.toString()+procInstanceName;
+        return valueStr.hashCode();
+    }
     public enum ProcedureDefinitionpParametersEndpoints{
         /**
          *
