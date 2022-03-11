@@ -287,24 +287,24 @@ public class SopUserAPIfrontend extends HttpServlet {
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
         }else
-            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewFields());
+            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndMetaDataSopView.values());
         
-        fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, "procedure_name");
+        fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
         UserSop userSop = new UserSop();                               
         Object[][] userSops = UserSop.getUserProfileFieldValues( 
-                new String[]{"user_id"}, new Object[]{token.getPersonName()}, fieldsToRetrieve, allUserProcedurePrefix);
+                new String[]{TblsData.ViewUserAndMetaDataSopView.USER_ID.getName()}, new Object[]{token.getPersonName()}, fieldsToRetrieve, allUserProcedurePrefix);
         if (userSops==null)return new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userSops[0][0]).toString())){
             Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
             Rdbms.closeRdbms();
             return new JSONArray();
         }
-        JSONArray columnNames = new JSONArray(); 
+       // JSONArray columnNames = new JSONArray(); 
         JSONArray mySops = new JSONArray(); 
         JSONObject mySopsList = new JSONObject();
         JSONArray mySopsListArr = new JSONArray();
 
-        JSONObject columns = new JSONObject();        
+        //JSONObject columns = new JSONObject();        
         for (Object[] curSop: userSops){
             JSONObject sop = new JSONObject();
             sop=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curSop);
@@ -318,7 +318,7 @@ public class SopUserAPIfrontend extends HttpServlet {
             }                    */
             mySops.add(sop);
         }    
-        columnNames.add(columns);
+        //columnNames.add(columns);
 //        mySopsList.put("columns_names", columnNames);
         mySopsList.put("my_sops", mySops);
         mySopsListArr.add(mySopsList);        
@@ -361,7 +361,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
         }else
-            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewFields());
+            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndMetaDataSopView.values());
         
         JSONArray  myPendingSopsByProc = new JSONArray();                 
         UserSop userSop = new UserSop();      

@@ -295,8 +295,8 @@ public class UserSop {
      */
         
     public static final Object[][] getUserProfileFieldValues(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName){                
-        String viewName = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName();
-        
+        //String sopView = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName();
+        String viewName = "user_and_meta_data_sop_vw"; //sopView.getViewName();
         if (fieldsToReturn.length<=0){
             String[][] getUserProfileNEW = new String[1][2];
             getUserProfileNEW[0][0]=DIAGNOSES_ERROR_CODE;
