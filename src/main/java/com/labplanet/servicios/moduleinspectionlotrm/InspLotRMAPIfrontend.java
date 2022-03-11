@@ -35,8 +35,8 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilities;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
-import static trazit.queries.QueryUtilities.getTableData;
 /**
  *
  * @author User
@@ -133,7 +133,7 @@ public class InspLotRMAPIfrontend extends HttpServlet {
             if (includesMaterialInfo && fieldsToRetrieveStr.length()>0 && !fieldsToRetrieveStr.contains(TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName()))
                 fieldsToRetrieveStr=fieldsToRetrieveStr + "|"+TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName();
             String[] fieldsToRetrieve=getFieldsListToRetrieve(fieldsToRetrieveStr, TblsInspLotRMData.Lot.getAllFieldNames());
-            Object[][] lotInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.Lot.TBL.getName(), 
+            Object[][] lotInfo=QueryUtilities.getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.Lot.TBL.getName(), 
                 fieldsToRetrieveStr, TblsInspLotRMData.Lot.getAllFieldNames(), 
                 new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()}, new Object[]{lotName}, new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()});        
             JSONArray jArr = new JSONArray();

@@ -13,7 +13,8 @@ import lbplanet.utilities.LPArray;
  */
 public interface EnumIntViewFields {
     String getName();   
-    String getViewAliasName();  
+    String getViewAliasName(); 
+    EnumIntTableFields getTableField();
     String getFieldMask();  
     String getFieldComment(); 
     FldBusinessRules[] getFldBusinessRules();

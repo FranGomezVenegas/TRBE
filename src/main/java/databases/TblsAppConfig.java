@@ -17,9 +17,10 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsAppConfig {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_CONFIG.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = false;
     public enum TablesAppConfig implements EnumIntTables{
         
-        PERSON(null, "person", SCHEMA_NAME, true, TblsAppConfig.Person.values(), null,
+        PERSON(null, "person", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppConfig.Person.values(), null,
             new String[]{TblsAppConfig.Person.PERSON_ID.getName()}, null, ""),
         ;
         private TablesAppConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
@@ -57,9 +58,10 @@ public class TblsAppConfig {
     public enum Person implements EnumIntTableFields{
         PERSON_ID("person_id", LPDatabase.stringNotNull(), null, null, null, null),
         FIRST_NAME("first_name", LPDatabase.stringNotNull(), null, null, null, null),
-        LAST_NAME("last_name", LPDatabase.stringNotNull(), null, null, null, null),
+        LAST_NAME("last_name", LPDatabase.string(), null, null, null, null),
         BIRTH_DATE("birth_date", LPDatabase.date(), null, null, null, null),
-        PHOTO("photo", LPDatabase.stringNotNull(), null, null, null, null),
+        PHOTO("photo", LPDatabase.string(), null, null, null, null),
+        ALIAS("alias", LPDatabase.string(), null, null, null, null),
         ;
         private Person(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

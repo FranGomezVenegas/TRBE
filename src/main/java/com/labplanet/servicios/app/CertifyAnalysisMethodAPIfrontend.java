@@ -204,7 +204,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
         }else 
-            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW.getViewFields());
+            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndAnalysisMethodCertificationView.values());
         fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, "procedure_name");
         Object[][] userAnaMethCertifByProcess = UserMethod.getUserAnalysisMethodCerttifByProcess( 
                 new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName()}, new Object[]{token.getUserName()}, fieldsToRetrieve, allUserProcedurePrefix);
@@ -266,7 +266,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
         }else
-            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW.getViewFields());
+            fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndAnalysisMethodCertificationView.values());
         
         JSONArray  myPendingAnaMethCertifByProc = new JSONArray();                 
         for (String currProc: allUserProcedurePrefix) {                   

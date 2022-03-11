@@ -168,6 +168,7 @@ public class TblsCnfg {
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         EXPIRES("expires", LPDatabase.booleanFld(), null, null, null, null),
         EXPIRY_INTERVAL_INFO(DBFIELDNAME_EXPIRY_INTERVAL_INFO, LPDatabase.string(), null, null, null, null),
+        CERTIFICATION_MODE("certification_mode", LPDatabase.string(), null, null, null, null)
         ;
         private Methods(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

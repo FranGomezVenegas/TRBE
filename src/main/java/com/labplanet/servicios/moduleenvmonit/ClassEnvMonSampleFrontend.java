@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPDate.dateStringFormatToLocalDateTime;
-import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
@@ -51,6 +50,7 @@ import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
 import static trazit.queries.QueryUtilities.getTableData;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 
 /**
@@ -227,7 +227,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
             switch (endPoint){
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
                     Integer sampleId = (Integer) argValues[0];                        
-                    String[] resultFieldToRetrieveArr=getFieldsListToRetrieve(argValues[1].toString(), EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields()));
+                    String[] resultFieldToRetrieveArr=getFieldsListToRetrieve(argValues[1].toString(), EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values()));
 
                     resultFieldToRetrieveArr = LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
                     
@@ -258,9 +258,8 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
                         posicLimitIdFld=resultFieldToRetrieveArr.length;
                     }
-                    resultFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
-                    Object[][] analysisResultList=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), 
-                        argValues[1].toString(), resultFieldToRetrieveArr, 
+                    Object[][] analysisResultList=QueryUtilitiesEnums.getViewData(procReqInstance, GlobalVariables.Schemas.DATA.getName(), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), 
+                        argValues[1].toString(), TblsData.ViewSampleAnalysisResultWithSpecLimits.values(), 
                         sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
                         sortFieldsNameArr);     
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
@@ -317,7 +316,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     return;                  
                 case GET_MICROORGANISM_LIST:
                     String[] fieldsToRetrieve=EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableFields());
-                    Object[][] list=getTableData(GlobalVariables.Schemas.CONFIG.getName(), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableName(), 
+                    Object[][] list=getTableData(procReqInstance, GlobalVariables.Schemas.CONFIG.getName(), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableName(), 
                         "", EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableFields()), 
                         new String[]{TblsEnvMonitConfig.MicroOrganism.NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                         new String[]{TblsEnvMonitConfig.MicroOrganism.NAME.getName()});     
@@ -357,7 +356,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     whereFieldsValueArr=LPArray.addValueToArray1D(whereFieldsValueArr, new Object[]{"MicroorganismIdentification"});
                     ViewSampleMicroorganismList[] fieldsList = TblsEnvMonitData.ViewSampleMicroorganismList.values();
                     if (fieldsNameToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldsNameToRetrieve))
-                        fieldsToRetrieve = EnumIntViewFields.getAllFieldNames(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW.getViewFields());
+                        fieldsToRetrieve = EnumIntViewFields.getAllFieldNames(TblsEnvMonitData.ViewSampleMicroorganismList.values());
                     else 
                         fieldsToRetrieve = fieldsNameToRetrieve.split("\\|");
                     list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW.getViewName(), 
@@ -868,9 +867,9 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     else
                         numTotalRecords=Integer.valueOf(LPNulls.replaceNull(argValues[2].toString()));
                     if ((prodLotfieldsToRetrieveStr!=null) && (prodLotfieldsToRetrieveStr.length()>0)){
-                        if ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) prodLotfieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
+                        if ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) prodLotfieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());
                         else prodLotfieldToRetrieveArr=prodLotfieldsToRetrieveStr.split("\\|");
-                    }else prodLotfieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
+                    }else prodLotfieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());
                     if (grouped==null || !Boolean.valueOf(grouped)){
                         whereFieldNames = new String[0];
                         whereFieldValues = new Object[0];                    
@@ -903,7 +902,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             TblsCnfg.SpecLimits.RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.UOM.getName()};
                         String[] limitsFieldNamesToFilter=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SPEC_CODE.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.SPEC_VARIATION_NAME.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.ANALYSIS.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.METHOD_NAME.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.PARAMETER.getName()};
                         String[] fieldToRetrieveGroupedArr = new String[0];                        
-                        if ((prodLotfieldsToRetrieveStr==null) || ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) ) fieldToRetrieveGroupedArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
+                        if ((prodLotfieldsToRetrieveStr==null) || ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) ) fieldToRetrieveGroupedArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());
                         else fieldToRetrieveGroupedArr=prodLotfieldsToRetrieveStr.split("\\|");
                         Object[][] specLimits=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
                                 whereLimitsFieldNames, whereLimitsFieldValues, fieldToRetrieveLimitsArr, new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName()});
@@ -1168,7 +1167,7 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
             return jArrMainObj;
         case "PLATEREADING":
         case "MICROORGANISMIDENTIFICATION":
-            String[] tblAllFlds=EnumIntViewFields.getAllFieldNames(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW.getViewFields());
+            String[] tblAllFlds=EnumIntViewFields.getAllFieldNames(TblsEnvMonitData.ViewSampleMicroorganismList.values());
             Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW.getViewName(), 
                     new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                     tblAllFlds, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.TEST_ID.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.RESULT_ID.getName()});                    

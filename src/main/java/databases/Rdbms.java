@@ -40,7 +40,6 @@ import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
-import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -65,7 +64,7 @@ public class Rdbms {
     Savepoint savepoint=null;      
     
     private static Rdbms rdbms;
-    private static final String SQLSELECT = "SELECT";
+    public static final String SQLSELECT = "SELECT";
     /**
      *
      */
@@ -784,7 +783,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      * @param whereFieldNames
      * @param whereFieldValues
      * @param fieldsToRetrieve
-     * @param orderBy
+     * @param orderByc
      * @return
      */
     public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy){
@@ -1879,7 +1878,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{Arrays.toString(fieldsToGroupAltered)});
         return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                        
     }
-    public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, EnumIntTableFields[] whereFields, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct){
+/*    public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, EnumIntTableFields[] whereFields, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct){
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
         if (whereFields.length==0){
            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
@@ -1926,7 +1925,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);             
         }                    
     }
-    
+*/    
 /*
 private static final int CLIENT_CODE_STACK_INDEX;
     

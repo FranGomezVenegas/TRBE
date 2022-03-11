@@ -19,25 +19,26 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsApp {
 
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = false;
     public enum TablesApp implements EnumIntTables{
         
-        USERS(null, "users", SCHEMA_NAME, true, Users.values(), null,
+        USERS(null, "users", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Users.values(), null,
             new String[]{Users.USER_NAME.getName()}, null, "instance users declaration"),
-        USER_PROCESS(null, "user_process", SCHEMA_NAME, true, UserProcess.values(), null,
+        USER_PROCESS(null, "user_process", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, UserProcess.values(), null,
             new String[]{UserProcess.USER_NAME.getName(), UserProcess.PROC_NAME.getName()}, null, "Processes assigned to the users"),
-        APP_SESSION(null, "app_session", SCHEMA_NAME, true, AppSession.values(), AppSession.SESSION_ID.getName(),
+        APP_SESSION(null, "app_session", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, AppSession.values(), AppSession.SESSION_ID.getName(),
             new String[]{AppSession.SESSION_ID.getName()}, null, "Id for any user session"),
-        IP_WHITE_LIST(null, "ip_white_list", SCHEMA_NAME, true, IPWhiteList.values(), IPWhiteList.ID.getName(),
+        IP_WHITE_LIST(null, "ip_white_list", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, IPWhiteList.values(), IPWhiteList.ID.getName(),
             new String[]{IPWhiteList.ID.getName()}, null, "White List, when at least one IP added then the access will be limited to those IPs (except if added to blacklist)"),
-        IP_BLACK_LIST(null, "ip_black_list", SCHEMA_NAME, true, IPBlackList.values(), IPBlackList.ID.getName(),
+        IP_BLACK_LIST(null, "ip_black_list", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, IPBlackList.values(), IPBlackList.ID.getName(),
             new String[]{IPBlackList.ID.getName()}, null, "Black List, when one IP is added to this table then it is banned, independently of be in the white list too"),
-        HOLIDAYS_CALENDAR(null, "holidays_calendar", SCHEMA_NAME, true, HolidaysCalendar.values(), null,
+        HOLIDAYS_CALENDAR(null, "holidays_calendar", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, HolidaysCalendar.values(), null,
             new String[]{HolidaysCalendar.CODE.getName()}, null, "Holiday Calendars"),
-        HOLIDAYS_CALENDAR_DATE(null, "holidays_calendar_date", SCHEMA_NAME, true, HolidaysCalendarDate.values(), HolidaysCalendarDate.ID.getName(),
+        HOLIDAYS_CALENDAR_DATE(null, "holidays_calendar_date", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, HolidaysCalendarDate.values(), HolidaysCalendarDate.ID.getName(),
             new String[]{HolidaysCalendarDate.ID.getName()}, null, "Holiday Calendars dates added"),
-        INCIDENT(null, "incident", SCHEMA_NAME, true, Incident.values(), Incident.ID.getName(),
+        INCIDENT(null, "incident", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Incident.values(), Incident.ID.getName(),
             new String[]{Incident.ID.getName()}, null, "Incidents table"),
-        VIDEO_TUTORIAL(null, "video_tutorial", SCHEMA_NAME, true, VideoTutorial.values(), VideoTutorial.ID.getName(),
+        VIDEO_TUTORIAL(null, "video_tutorial", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, VideoTutorial.values(), VideoTutorial.ID.getName(),
             new String[]{VideoTutorial.ID.getName()}, null, "Video Tutorial entries table"),
         ;
         private TablesApp(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
@@ -115,7 +116,7 @@ public class TblsApp {
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null), 
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null), 
         ADDED_ON("added_on", LPDatabase.dateTime(), null, null, null, null),
-        ADDED_BY("added_by", LPDatabase.string(), null, null, null, null), 
+        ADDED_BY("added_by", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), null, null), 
         IP_VALUE1("ip_value1", LPDatabase.stringNotNull(),null, null, "", null),
         IP_VALUE2("ip_value2", LPDatabase.stringNotNull(),null, null, "", null),
         IP_VALUE3("ip_value3", LPDatabase.stringNotNull(),null, null, "", null),
@@ -144,7 +145,7 @@ public class TblsApp {
     public enum AppSession implements EnumIntTableFields{
         SESSION_ID("session_id", LPDatabase.integerNotNull(),null, null, "", null),
         DATE_STARTED("date_started", LPDatabase.date(),null, null, "", null),
-        PERSON("person", LPDatabase.string(),null, null, "", null),
+        PERSON("person", LPDatabase.string(),null, new ReferenceFld("config", "person", "person_id"), "", null),
         ROLE_NAME("role_name", LPDatabase.string(),null, null, "", null),
         IP_ADDRESS("ip_address", LPDatabase.string(),null, null, "", null),
         PROCEDURES("procedures", LPDatabase.string(),null, null, "", null);
@@ -262,7 +263,7 @@ public class TblsApp {
     public enum Incident implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, "", null),
         DATE_CREATION("date_creation", LPDatabase.dateTime(), null, null, "", null),
-        PERSON_CREATION("person_creation", LPDatabase.string(), null, null, "", null),
+        PERSON_CREATION("person_creation", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), "", null),
         DATE_CONFIRMED("date_confirmed", LPDatabase.dateTime(), null, null, "", null),
         PERSON_CONFIRMED("person_confirmed", LPDatabase.string(), null, null, "", null),
         DATE_RESOLUTION("date_resolution", LPDatabase.dateTime(), null, null, "", null),
@@ -271,8 +272,8 @@ public class TblsApp {
         PERSON_LAST_UPDATE("person_last_update", LPDatabase.string(), null, null, "", null),
         STATUS("status", LPDatabase.string(), null, null, "", null),
         STATUS_PREVIOUS("status_previous", LPDatabase.string(), null, null, "", null),    
-        USER_NAME("user_name", LPDatabase.string(), null, null, "", null),
-        PERSON_NAME("person_name", LPDatabase.string(), null, null, "", null),
+        USER_NAME("user_name", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), "", null),
+        PERSON_NAME("person_name", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), "", null),
         USER_ROLE("user_role", LPDatabase.string(), null, null, "", null),
         TITLE("item_title", LPDatabase.string(), null, null, "", null),
         DETAIL("item_detail", LPDatabase.string(), null, null, "", null),

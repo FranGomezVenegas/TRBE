@@ -14,8 +14,6 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
-import trazit.enums.EnumIntTableFields;
-import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 
 /**
@@ -378,7 +376,7 @@ public class SqlStatement {
         }        
         return separator;
     }
-    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, 
+/*    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, 
             
             EnumIntTableFields[] whereFields, Object[] whereFieldValues, 
             EnumIntTableFields[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
@@ -488,8 +486,8 @@ public class SqlStatement {
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
     }
-    
-    private String buildFieldsToRetrieve(EnumIntTableFields[] fieldsToRetrieve) {
+*/    
+/*    private String buildFieldsToRetrieve(EnumIntTableFields[] fieldsToRetrieve) {
         StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
         if (fieldsToRetrieve != null) {
             String fn="";
@@ -523,5 +521,5 @@ public class SqlStatement {
             fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
         }
         return fieldsToRetrieveStr.toString();
-    }
+    }*/
 }

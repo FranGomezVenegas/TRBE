@@ -5,6 +5,7 @@
  */
 package trazit.session;
 
+import functionaljavaa.testingscripts.TestingMessageCodeVisited;
 import lbplanet.utilities.LPArray;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
@@ -78,15 +79,31 @@ public class ResponseMessages {
     }  
 
     public void addMainForSuccess(EnumIntEndpoints endpoint, Object[] msgCodeVariables){
-        
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
+        String procName=procReqSession.getProcedureInstance();
+        if (testingMessageCodeVisitedObj!=null)
+            testingMessageCodeVisitedObj.AddObject(procName, "", endpoint.getSuccessMessageCode(), endpoint.getSuccessMessageCode());        
         this.setIsSuccess((Boolean) true);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{endpoint.getClass().getSimpleName(), endpoint.getSuccessMessageCode(), msgCodeVariables}, 3);
     }    
     public void addMainForError(String messageCode, Object[] msgCodeVariables){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
+        String procName=procReqSession.getProcedureInstance();
+        if (testingMessageCodeVisitedObj!=null)
+            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode, messageCode);        
+        this.setIsSuccess((Boolean) true);
         this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3);
     }
     public void addMainForError(EnumIntMessages messageCode, Object[] msgCodeVariables){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
+        String procName=procReqSession.getProcedureInstance();
+        if (testingMessageCodeVisitedObj!=null)
+            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode.getErrorCode(), messageCode.getErrorCode());        
+        this.setIsSuccess((Boolean) true);
         this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode.getErrorCode(), msgCodeVariables, new Object[]{}}, 3);
         mainStructureObject.mainMessageCode=messageCode;

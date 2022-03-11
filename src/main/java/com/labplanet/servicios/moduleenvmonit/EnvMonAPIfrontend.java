@@ -48,6 +48,7 @@ import trazit.globalvariables.GlobalVariables;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
 import static trazit.queries.QueryUtilities.getKPIInfoFromRequest;
 import static trazit.queries.QueryUtilities.getTableData;
+import trazit.queries.QueryUtilitiesEnums;
 /**
  *
  * @author Administrator
@@ -560,8 +561,8 @@ GlobalAPIsParams.
                     }
                     String[] prodLotFldToRetrieve = getFieldsListToRetrieve(argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields()));
                     String[] prodLotFldToSort = getFieldsListToRetrieve(argValues[1].toString(), new String[]{});                    
-                    programInfo=getTableData(procReqInstance, GlobalVariables.Schemas.DATA.getName(),TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
-                        argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields()), 
+                    programInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT,
+                        EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, argValues[0]),
                         whereFldName, whereFldValue, prodLotFldToSort);        
                     jArr=new JSONArray();   
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())){

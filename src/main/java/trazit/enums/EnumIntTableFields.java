@@ -26,6 +26,16 @@ public interface EnumIntTableFields {
         }
         return flds;
     }
+    
+    public static EnumIntTableFields[] getTableFieldsFromString(EnumIntTables tblObj, Object flds){
+        if (flds==null || flds.toString().length()==0) return tblObj.getTableFields();
+        if ("ALL".equalsIgnoreCase(flds.toString())) return tblObj.getTableFields();
+/*        EnumIntTableFields[] custFlds=null;
+        for (String curFld: flds.toString.split("\\|")){
+            if ()
+        }*/
+        return tblObj.getTableFields();
+    }
 
 }
 

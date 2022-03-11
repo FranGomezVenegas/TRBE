@@ -9,6 +9,7 @@ import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
 import static lbplanet.utilities.LPDatabase.dateTimeWithDefaultNow;
 import databases.TblsData;
+import databases.TblsData.SampleAnalysisResult;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViewFields;
@@ -50,38 +51,38 @@ public class TblsEnvMonitData {
     }
     */
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
-
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesEnvMonitData implements EnumIntTables{        
-        PROGRAM(null, "program", SCHEMA_NAME, true, 
+        PROGRAM(null, "program", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, 
             Program.values(), null, 
             new String[]{TblsEnvMonitData.Program.NAME.getName()}, null, "program table"),
-        PROGRAM_LOCATION(null, "program_location", SCHEMA_NAME, true, TblsEnvMonitData.ProgramLocation.values(), null, 
+        PROGRAM_LOCATION(null, "program_location", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProgramLocation.values(), null, 
             new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName(), TblsEnvMonitData.ProgramLocation.AREA.getName()}, 
             new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), 
                     SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName()
             )}, "program locations table"),
-        PROGRAM_DAY(null, "program_day", SCHEMA_NAME, true, TblsEnvMonitData.ProgramDay.values(), null, 
+        PROGRAM_DAY(null, "program_day", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProgramDay.values(), null, 
             new String[]{TblsEnvMonitData.ProgramDay.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitData.ProgramDay.PROGRAM_CONFIG_VERSION.getName()}, 
             new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramDay.PROGRAM_CONFIG_ID.getName(), 
                     SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.PROGRAM_CONFIG_ID.getName()
             )}, "program_day table"),
-        PROGRAM_CALENDAR_DATE(null, "program_calendar_date", SCHEMA_NAME, true, TblsEnvMonitData.ProgramCalendarDate.values(), TblsEnvMonitData.ProgramCalendarDate.ID.getName(), 
+        PROGRAM_CALENDAR_DATE(null, "program_calendar_date", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProgramCalendarDate.values(), TblsEnvMonitData.ProgramCalendarDate.ID.getName(), 
             new String[]{TblsEnvMonitData.ProgramCalendarDate.ID.getName()}, 
             new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramCalendarDate.PROGRAM_ID.getName(), 
                     SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.PROGRAM_CONFIG_ID.getName()
             )}, "ProgramCalendarDate table"),
-        SAMPLE(null, "sample", SCHEMA_NAME, true, TblsEnvMonitData.Sample.values(), Sample.SAMPLE_ID.getName()
+        SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.Sample.values(), Sample.SAMPLE_ID.getName()
             , new String[]{Sample.SAMPLE_ID.getName()}, null, "sample table"),
-        SAMPLE_MICROORGANISM(null, "sample_microorganism", SCHEMA_NAME, true, TblsEnvMonitData.SampleMicroorganism.values(), SampleMicroorganism.ID.getName()
+        SAMPLE_MICROORGANISM(null, "sample_microorganism", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.SampleMicroorganism.values(), SampleMicroorganism.ID.getName()
             , new String[]{SampleMicroorganism.ID.getName()}, 
             new Object[]{new ForeignkeyFld(TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), 
                     SCHEMA_NAME, TablesEnvMonitData.SAMPLE.getTableName(), TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName())}
             , "SampleMicroorganism table"),
-        PRODUCTION_LOT(null, "production_lot", SCHEMA_NAME, true, TblsEnvMonitData.ProductionLot.values(), null,
+        PRODUCTION_LOT(null, "production_lot", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProductionLot.values(), null,
             new String[]{ProductionLot.LOT_NAME.getName()}, null, "ProductionLot table"),
-        INSTRUMENT_INCUB_NOTEBOOK(null, "instrument_incubator_notebook", SCHEMA_NAME, true, TblsEnvMonitData.InstrIncubatorNoteBook.values(), InstrIncubatorNoteBook.ID.getName()
+        INSTRUMENT_INCUB_NOTEBOOK(null, "instrument_incubator_notebook", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.InstrIncubatorNoteBook.values(), InstrIncubatorNoteBook.ID.getName()
             , new String[]{InstrIncubatorNoteBook.ID.getName()}, null, "instrument_incubator_notebook table"),
-        INCUB_BATCH(null, "incub_batch", SCHEMA_NAME, true, TblsEnvMonitData.IncubBatch.values(), null
+        INCUB_BATCH(null, "incub_batch", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.IncubBatch.values(), null
             , new String[]{IncubBatch.NAME.getName()}, null, "incub_batch table"),
         ;
         ;private TablesEnvMonitData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
@@ -559,76 +560,82 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
     public enum ViewProgramScheduledLocations implements EnumIntViewFields{
-        SAMPLE_CONFIG_CODE("sample_config_code", "dpr.sample_config_code", null, null, null),
-        SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", "dpr.sample_config_code_version", null, null, null),
-        PROGRAM_NAME("program_name", "cnfpcd.program_id as program_name", null, null, null),
-        PROGRAM_DAY_ID("program_day_id", "cnfpcd.id as program_day_id", null, null, null),
-        PROGRAM_DAY_DATE("program_day_date", "cnfpcd.date as program_day_date", null, null, null),
-        AREA("area", "dpl.area", null, null, null),
-        SPEC_CODE("spec_code", "dpl.spec_code", null, null, null),
-        SPEC_CODE_VERSION("spec_code_version", "dpl.spec_code_version", null, null, null),
-        SPEC_VARIATION_NAME("spec_variation_name", "dpl.spec_variation_name", null, null, null),
-        SPEC_ANALYSIS_VARIATION("spec_analysis_variation", "dpl.spec_analysis_variation", null, null, null),
-        REQUIRES_PERSON_ANA("requires_person_ana", "dpl.requires_person_ana", null, null, null),
-        PERSON_ANA_DEFINITION("person_ana_definition", "dpl.person_ana_definition", null, null, null),
-        LOCATION_NAME("location_name", "cnfpcd.location_name", null, null, null),
-        ID("id", "cnfpcd.id", null, null, null),
-        PROGRAM_ID("program_id", "cnfpcd.program_id", null, null, null),
-        DATE("date", "cnfpcd.date", null, null, null),
+        SAMPLE_CONFIG_CODE("sample_config_code", "dpr.sample_config_code", Program.SAMPLE_CONFIG_CODE, null, null, null),
+        SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", "dpr.sample_config_code_version", Program.SAMPLE_CONFIG_CODE_VERSION, null, null, null),
+        PROGRAM_NAME("program_name", "cnfpcd.program_id as program_name", Program.NAME, null, null, null),
+        PROGRAM_DAY_ID("program_day_id", "cnfpcd.id as program_day_id", TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID, null, null, null),
+        PROGRAM_DAY_DATE("program_day_date", "cnfpcd.date as program_day_date", ProgramCalendarDate.DATE, null, null, null),
+        AREA("area", "dpl.area", ProgramLocation.AREA, null, null, null),
+        SPEC_CODE("spec_code", "dpl.spec_code", ProgramLocation.SPEC_CODE, null, null, null),
+        SPEC_CODE_VERSION("spec_code_version", "dpl.spec_code_version", ProgramLocation.SPEC_CODE_VERSION, null, null, null),
+        SPEC_VARIATION_NAME("spec_variation_name", "dpl.spec_variation_name", ProgramLocation.SPEC_VARIATION_NAME, null, null, null),
+        SPEC_ANALYSIS_VARIATION("spec_analysis_variation", "dpl.spec_analysis_variation", ProgramLocation.SPEC_ANALYSIS_VARIATION, null, null, null),
+        REQUIRES_PERSON_ANA("requires_person_ana", "dpl.requires_person_ana", ProgramLocation.REQUIRES_PERSON_ANA, null, null, null),
+        PERSON_ANA_DEFINITION("person_ana_definition", "dpl.person_ana_definition", ProgramLocation.PERSON_ANA_DEFINITION, null, null, null),
+        LOCATION_NAME("location_name", "cnfpcd.location_name", ProgramLocation.LOCATION_NAME, null, null, null),
+        ID("id", "cnfpcd.id", TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID, null, null, null),
+        PROGRAM_ID("program_id", "cnfpcd.program_id", TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID, null, null, null),
+        DATE("date", "cnfpcd.date", TblsEnvMonitConfig.ProgramCalendarDate.DATE, null, null, null),
         ;
-        private ViewProgramScheduledLocations(String name, String vwAliasName, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewProgramScheduledLocations(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
         }
         private final String fldName;
         private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;
+        private final FldBusinessRules[] fldBusinessRules;        
         @Override public String getName() {return fldName;}
         @Override public String getViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
     public enum ViewSampleMicroorganismList implements EnumIntViewFields{
-        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "", null, null, null),
-        SAMPLE_TEMPLATE("sample_config_code", "", null, null, null),
-        STATUS("status", "", null, null, null),
-        CURRENT_STAGE("current_stage", "", null, null, null),
-        SAMPLING_DATE("sampling_date", "", null, null, null),
-        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, "", null, null, null),
-        LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME, "", null, null, null),
-        INCUBATION_START(FIELDS_NAMES_INCUBATION_START, "", null, null, null),
-        INCUBATION_END(FIELDS_NAMES_INCUBATION_END, "", null, null, null),
-        INCUBATION2_START(FIELDS_NAMES_INCUBATION2_START, "", null, null, null),
-        INCUBATION2_END(FIELDS_NAMES_INCUBATION2_END, "", null, null, null),
-        RESULT_ID(FIELDS_NAMES_INCUBATION2_START, "", null, null, null),
-        TEST_ID(FIELDS_NAMES_INCUBATION2_END, "", null, null, null),
-        RAW_VALUE("raw_value","", null, null, null),
-        MICROORGANISM_COUNT("microorganism_count", "", null, null, null),
-        MICROORGANISM_LIST("microorganism_list", "", null, null, null),
+        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "", Sample.SAMPLE_ID, null, null, null),
+        SAMPLE_TEMPLATE("sample_config_code", "", Sample.CONFIG_CODE, null, null, null),
+        STATUS("status", "", Sample.STATUS, null, null, null),
+        CURRENT_STAGE("current_stage", "", Sample.CURRENT_STAGE, null, null, null),
+        SAMPLING_DATE("sampling_date", "", Sample.SAMPLING_DATE, null, null, null),
+        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, "", Sample.PROGRAM_NAME, null, null, null),
+        LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME, "", Sample.LOCATION_NAME, null, null, null),
+        INCUBATION_START(FIELDS_NAMES_INCUBATION_START, "", Sample.INCUBATION2_START, null, null, null),
+        INCUBATION_END(FIELDS_NAMES_INCUBATION_END, "", Sample.INCUBATION2_END, null, null, null),
+        INCUBATION2_START(FIELDS_NAMES_INCUBATION2_START, "", Sample.INCUBATION2_START, null, null, null),
+        INCUBATION2_END(FIELDS_NAMES_INCUBATION2_END, "", Sample.INCUBATION2_END, null, null, null),
+        RESULT_ID(FIELDS_NAMES_INCUBATION2_START, "", SampleAnalysisResult.RESULT_ID, null, null, null),
+        TEST_ID(FIELDS_NAMES_INCUBATION2_END, "", SampleAnalysisResult.TEST_ID, null, null, null),
+        RAW_VALUE("raw_value","", SampleAnalysisResult.RAW_VALUE, null, null, null),
+        MICROORGANISM_COUNT("microorganism_count", "", SampleAnalysisResult.RESULT_ID,  null, null, null),
+        MICROORGANISM_LIST("microorganism_list", "", SampleAnalysisResult.RAW_VALUE, null, null, null),
        ;
-        private ViewSampleMicroorganismList(String name, String vwAliasName, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewSampleMicroorganismList(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
         }
         private final String fldName;
         private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;
+        private final FldBusinessRules[] fldBusinessRules;        
         @Override public String getName() {return fldName;}
         @Override public String getViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
    }           
 
 }

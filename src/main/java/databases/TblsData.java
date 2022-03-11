@@ -5,6 +5,11 @@
  */
 package databases;
 
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
+import databases.TblsCnfg.Methods;
+import databases.TblsCnfg.SpecLimits;
+import databases.TblsProcedure.InvestObjects;
+import databases.TblsProcedure.ProgramCorrectiveAction;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -21,40 +26,40 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsData {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
-
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesData implements EnumIntTables{        
-        CERTIF_USER_ANALYSIS_METHOD(null, "certif_user_analysis_method", SCHEMA_NAME, true, CertifUserAnalysisMethod.values(), CertifUserAnalysisMethod.ID.getName(),
+        CERTIF_USER_ANALYSIS_METHOD(null, "certif_user_analysis_method", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, CertifUserAnalysisMethod.values(), CertifUserAnalysisMethod.ID.getName(),
             new String[]{CertifUserAnalysisMethod.ID.getName()}, null, "certif_user_analysis_method table, manage user analysis method certification tracking"),
-        TRAINING(null, "training", SCHEMA_NAME, true, Training.values(), Training.ID.getName(),
+        TRAINING(null, "training", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Training.values(), Training.ID.getName(),
             new String[]{Training.ID.getName()}, null, "Training table"),
-        USER_SOP(null, "user_sop", SCHEMA_NAME, true, UserSop.values(), UserSop.SOP_ID.getName(),
+        USER_SOP(null, "user_sop", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, UserSop.values(), UserSop.SOP_ID.getName(),
             new String[]{UserSop.SOP_ID.getName()}, null, "Training table"),
         USER_ANALYSIS_METHOD(null, "user_analysis_method", SCHEMA_NAME, true, UserAnalysisMethod.values(), UserAnalysisMethod.USER_ANALYSIS_METHOD_ID.getName(),
             new String[]{UserAnalysisMethod.USER_ANALYSIS_METHOD_ID.getName()}, null, "Training table"),
-        SAVED_QUERIES(null, "saved_queries", SCHEMA_NAME, true, SavedQueries.values(), SavedQueries.ID.getName(),
+        SAVED_QUERIES(null, "saved_queries", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SavedQueries.values(), SavedQueries.ID.getName(),
             new String[]{SavedQueries.ID.getName()}, null, "Training table"),
-        SAMPLE(null, "sample", SCHEMA_NAME, true, Sample.values(), Sample.SAMPLE_ID.getName(),
+        SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Sample.values(), Sample.SAMPLE_ID.getName(),
             new String[]{Sample.SAMPLE_ID.getName()}, null, "sample table"),
-        SAMPLE_ANALYSIS(null, "sample_analysis", SCHEMA_NAME, true, SampleAnalysis.values(), Sample.SAMPLE_ID.getName(),
+        SAMPLE_ANALYSIS(null, "sample_analysis", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleAnalysis.values(), Sample.SAMPLE_ID.getName(),
             new String[]{SampleAnalysis.TEST_ID.getName()}, 
             new Object[]{new ForeignkeyFld(SampleAnalysis.SAMPLE_ID.getName(), SCHEMA_NAME, SAMPLE.getTableName(), Sample.SAMPLE_ID.getName())}, "sample analysis table"),
-        SAMPLE_ANALYSIS_RESULT(null, "sample_analysis_result", SCHEMA_NAME, true, SampleAnalysisResult.values(), Sample.SAMPLE_ID.getName(),
+        SAMPLE_ANALYSIS_RESULT(null, "sample_analysis_result", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleAnalysisResult.values(), Sample.SAMPLE_ID.getName(),
             new String[]{SampleAnalysisResult.RESULT_ID.getName()}, 
             new Object[]{new ForeignkeyFld(SampleAnalysisResult.TEST_ID.getName(), SCHEMA_NAME, SAMPLE_ANALYSIS.getTableName(), SampleAnalysis.TEST_ID.getName())}, "sample analysis results table"),
-        SAMPLE_ALIQ(null, "sample_aliq", SCHEMA_NAME, true, SampleAliq.values(), SampleAliq.ALIQUOT_ID.getName(),
+        SAMPLE_ALIQ(null, "sample_aliq", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleAliq.values(), SampleAliq.ALIQUOT_ID.getName(),
             new String[]{SampleAliq.ALIQUOT_ID.getName()}, 
             new Object[]{new ForeignkeyFld(SampleAliq.SAMPLE_ID.getName(), SCHEMA_NAME, SAMPLE.getTableName(), Sample.SAMPLE_ID.getName())}, "sample aliquot table"),
-        SAMPLE_ALIQ_SUB(null, "sample_aliq_sub", SCHEMA_NAME, true, SampleAliqSub.values(), SampleAliqSub.SUBALIQUOT_ID.getName(),
+        SAMPLE_ALIQ_SUB(null, "sample_aliq_sub", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleAliqSub.values(), SampleAliqSub.SUBALIQUOT_ID.getName(),
             new String[]{SampleAliqSub.SUBALIQUOT_ID.getName()}, 
             new Object[]{new ForeignkeyFld(SampleAliqSub.ALIQUOT_ID.getName(), SCHEMA_NAME, SAMPLE_ALIQ.getTableName(), SampleAliq.ALIQUOT_ID.getName())}, "sample sub aliquot table"),
-        PRODUCT(null, "product", "data", true, Sample.values(), null, 
+        PRODUCT(null, "product", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Sample.values(), null, 
             new String[]{Sample.SAMPLE_ID.getName()}, 
             new Object[]{new ForeignkeyFld(Sample.SAMPLE_ID_RELATED.getName(), SCHEMA_NAME, "sample", Sample.SAMPLE_ID.getName())}, "product table comment"),
         SAMPLE_COC(new FldBusinessRules[]{new FldBusinessRules("procedure", "sampleChangeOfCustody", false, false, new String[]{"ENABLED"}, null)},
-            "sample_coc", SCHEMA_NAME, true, SampleCoc.values(), SampleCoc.ID.getName(),
+            "sample_coc", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleCoc.values(), SampleCoc.ID.getName(),
             new String[]{SampleCoc.ID.getName()}, null, ""),
         SAMPLE_REVISION_TESTING_GROUP(new FldBusinessRules[]{new FldBusinessRules("procedure", "revisionTestinGroupRequired", false, false, new String[]{"ENABLED"}, null)},
-            "sample_revision_testing_group", SCHEMA_NAME, true, SampleRevisionTestingGroup.values(), null,
+            "sample_revision_testing_group", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleRevisionTestingGroup.values(), null,
             new String[]{SampleRevisionTestingGroup.SAMPLE_ID.getName(), SampleRevisionTestingGroup.TESTING_GROUP.getName()}, null, ""),
         
         ;
@@ -97,7 +102,7 @@ public class TblsData {
                 "    left outer join #SCHEMA_PROCEDURE.program_corrective_action pca on pca.result_id=sar.result_id " +
                 "    left outer join #SCHEMA_PROCEDURE.invest_objects io on io.object_id=sar.result_id and io.object_type='sample_analysis_result' ;" +                        
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
-            null, "sample_analysis_result_with_spec_limits", SCHEMA_NAME, true, ViewSampleAnalysisResultWithSpecLimits.values(), "ViewSampleAnalysisResultWithSpecLimits"),        
+            null, "sample_analysis_result_with_spec_limits", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleAnalysisResultWithSpecLimits.values(), "ViewSampleAnalysisResultWithSpecLimits"),        
         SAMPLE_COC_NAMES_VIEW(" SELECT smp_coc.sample_id, smp_coc.custodian, smp_coc.custodian_candidate, smp_coc.coc_started_on, smp_coc.coc_confirmed_on, smp_coc.coc_custodian_notes, "
                 + "          smp_coc.coc_new_custodian_notes, smp_coc.sample_picture, smp_coc.id, smp_coc.status, usr_custodian.user_name AS custodian_name," +
                     "         usr_candidate.user_name AS candidate_name " +
@@ -108,7 +113,7 @@ public class TblsData {
                     "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
                     "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;"
         ,
-            null, "sample_coc_names", SCHEMA_NAME, true, ViewSampleCocNames.values(), "ViewSampleCocNames"),        
+            null, "sample_coc_names", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleCocNames.values(), "ViewSampleCocNames"),        
         USER_AND_META_DATA_SOP_VIEW(" SELECT '#SCHEMA_CONFIG'::text AS procedure, usr.user_sop_id, usr.user_id, usr.sop_id, usr.sop_list_id, usr.assigned_on, usr.assigned_by, usr.status, usr.mandatory_level," +
                 "            usr.read_started, usr.read_completed, usr.understood, usr.expiration_date, usr.sop_name, usr.user_name, usr.light, metadata.brief_summary, metadata.file_link, metadata.author " +
                 "   FROM #SCHEMA.user_sop usr," +
@@ -116,7 +121,7 @@ public class TblsData {
                 "  WHERE usr.sop_name::text = metadata.sop_name::text; "+
                     "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
                     "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;",
-            null, "analysis_methods_view", SCHEMA_NAME, true, ViewUserAndMetaDataSopView.values(), "ViewUserAndMetaDataSopView"),        
+            null, "user_and_meta_data_sop_vw", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewUserAndMetaDataSopView.values(), "ViewUserAndMetaDataSopView"),        
         USER_AND_ANALYSISMETHOD_CERTIF_VIEW(" SELECT '#SCHEMA_CONFIG'::text AS procedure, usr.id, usr.user_id, metadata.code, usr.method_name, usr.method_version, "+
                 "   usr.assigned_on, usr.assigned_by, usr.status, usr.certification_date, usr.certif_expiry_date," +
                 "   usr.certif_started, usr.certif_completed, usr.sop_name, usr.user_name, usr.light, , usr.training_id,"+
@@ -127,11 +132,11 @@ public class TblsData {
                 "    and usr.method_version::integer =metadata.config_version::integer;"+
                     "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
                     "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;",
-            null, "user_and_analysis_method_certification_vw", SCHEMA_NAME, true, ViewUserAndAnalysisMethodCertificationView.values(), "ViewUserAndMetaDataSopView"),
+            null, "user_and_analysis_method_certification_vw", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewUserAndAnalysisMethodCertificationView.values(), "ViewUserAndMetaDataSopView"),
         SAMPLE_TESTING_GROUP_VIEW(" SELECT #FLDS from #SCHEMA_CONFIG.sample s " +
                 "   INNER JOIN #SCHEMA_CONFIG.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
                 "ALTER VIEW  #SCHEMA_CONFIG.#TBL  OWNER TO #OWNER;",
-            null, "sample_testing_group_view", SCHEMA_NAME, true, ViewSampleTestingGroup.values(), "ViewUserAndMetaDataSopView"),        
+            null, "sample_testing_group_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleTestingGroup.values(), "ViewUserAndMetaDataSopView"),        
         ;
         private ViewsData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
                 String comment){
@@ -265,6 +270,7 @@ public class TblsData {
         CURRENT_STAGE("current_stage", LPDatabase.stringNotNull(), null, null, null, null),
         PREVIOUS_STAGE("previous_stage", LPDatabase.string(), null, null, null, null),
         READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
+        REVIEWER("reviewer", LPDatabase.string(), null, null, null, null),
         REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null), 
         REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null), 
         REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null)
@@ -739,249 +745,264 @@ public class TblsData {
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
     public enum ViewSampleCocNames implements EnumIntViewFields{
-        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "", null, null, null),
-        CUSTODIAN(FIELDS_NAMES_CUSTODIAN, "", null, null, null),
-        CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE, "", null, null, null),
-        COC_STARTED_ON("coc_started_on", "", null, null, null),
-        COC_CONFIRMED_ON(FIELDS_NAMES_COC_CONFIRMED_ON, "", null, null, null),
-        COC_CUSTODIAN_NOTES("coc_custodian_notes", "", null, null, null),
-        NEW_CUSTODIAN_NOTES("coc_new_custodian_notes","", null, null, null),
-        SAMPLE_PICTURE("sample_picture", "", null, null, null),
-        ID("id", "", null, null, null),
-        STATUS(FIELDS_NAMES_STATUS, "", null, null, null),
-        CUSTODIAN_NAME("custodian_name", "", null, null, null),
-        CANDIDATE_NAME("candidate_name", "", null, null, null),
+        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "", Sample.SAMPLE_ID, null, null, null),
+        CUSTODIAN(FIELDS_NAMES_CUSTODIAN, "", Sample.CUSTODIAN, null, null, null),
+        CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE, "", Sample.CUSTODIAN_CANDIDATE, null, null, null),
+        COC_STARTED_ON("coc_started_on", "", SampleCoc.STARTED_ON, null, null, null),
+        COC_CONFIRMED_ON(FIELDS_NAMES_COC_CONFIRMED_ON, "", SampleCoc.CONFIRMED_ON, null, null, null),
+        COC_CUSTODIAN_NOTES("coc_custodian_notes", "", SampleCoc.CUSTODIAN_NOTES, null, null, null),
+        NEW_CUSTODIAN_NOTES("coc_new_custodian_notes","", SampleCoc.NEW_CUSTODIAN_NOTES, null, null, null),
+        SAMPLE_PICTURE("sample_picture", "", SampleCoc.SAMPLE_PICTURE, null, null, null),
+        ID("id", "", SampleCoc.ID, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, "", SampleCoc.STATUS, null, null, null),
+        CUSTODIAN_NAME("custodian_name", "", SampleCoc.CUSTODIAN, null, null, null),
+        CANDIDATE_NAME("candidate_name", "", SampleCoc.CUSTODIAN_CANDIDATE, null, null, null),
         ;
-        private ViewSampleCocNames(String name, String vwAliasName, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewSampleCocNames(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
         }
         private final String fldName;
         private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;
+        private final FldBusinessRules[] fldBusinessRules;        
         @Override public String getName() {return fldName;}
         @Override public String getViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
     public enum ViewUserAndMetaDataSopView implements EnumIntViewFields{
-        PROCEDURE("procedure", "", null, null, null),
-        USER_SOP_ID("user_sop_id", "", null, null, null),
-        USER_ID(FIELDS_NAMES_USER_ID, "", null, null, null),
-        SOP_LIST_ID("sop_list_id", "", null, null, null),
-        ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, "", null, null, null),
-        STATUS(FIELDS_NAMES_STATUS, "", null, null, null),
-        MANDATORY_LEVEL(FIELDS_NAMES_MANDATORY_LEVEL, "", null, null, null),
-        READ_STARTED("read_started","", null, null, null),
-        READ_COMPLETED("read_completed", "", null, null, null),
-        UNDERSTOOD("understood", "", null, null, null),
-        EXPIRATION_DATE(FIELDS_NAMES_EXPIRATION_DATE, "", null, null, null),
-        SOP_NAME(FIELDS_NAMES_SOP_NAME, "", null, null, null),
-        USER_NAME(FIELDS_NAMES_USER_NAME, "", null, null, null),
-        LIGHT(FIELDS_NAMES_LIGHT, "", null, null, null),
-        BRIEF_SUMMARY("brief_summary", "", null, null, null),
-        FILE_LINK("file_link", "", null, null, null),
-        AUTHOR("author", "", null, null, null),
-        CERTIFICATION_MODE("certification_mode", "", null, null, null),        
+        PROCEDURE("procedure", "", UserSop.USER_NAME, null, null, null),
+        USER_SOP_ID("user_sop_id", "", UserSop.USER_SOP_ID, null, null, null),
+        USER_ID(FIELDS_NAMES_USER_ID, "", UserSop.USER_ID, null, null, null),
+        SOP_LIST_ID("sop_list_id", "", UserSop.SOP_LIST_ID, null, null, null),
+        ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, "", UserSop.ASSIGNED_ON, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, "", UserSop.STATUS, null, null, null),
+        MANDATORY_LEVEL(FIELDS_NAMES_MANDATORY_LEVEL, "", UserSop.MANDATORY_LEVEL, null, null, null),
+        READ_STARTED("read_started","", UserSop.READ_STARTED, null, null, null),
+        READ_COMPLETED("read_completed", "", UserSop.READ_COMPLETED, null, null, null),
+        UNDERSTOOD("understood", "", UserSop.UNDERSTOOD, null, null, null),
+        EXPIRATION_DATE(FIELDS_NAMES_EXPIRATION_DATE, "", UserSop.EXPIRATION_DATE, null, null, null),
+        SOP_NAME(FIELDS_NAMES_SOP_NAME, "", UserSop.SOP_NAME, null, null, null),
+        USER_NAME(FIELDS_NAMES_USER_NAME, "", UserSop.USER_NAME, null, null, null),
+        LIGHT(FIELDS_NAMES_LIGHT, "", UserSop.LIGHT, null, null, null),
+        BRIEF_SUMMARY("brief_summary", "", TblsCnfg.SopMetaData.BRIEF_SUMMARY, null, null, null),
+        FILE_LINK("file_link", "", TblsCnfg.SopMetaData.FILE_LINK, null, null, null),
+        AUTHOR("author", "", TblsCnfg.SopMetaData.AUTHOR, null, null, null),
+        CERTIFICATION_MODE("certification_mode", "", TblsCnfg.SopMetaData.CERTIFICATION_MODE, null, null, null),        
         ;
-        private ViewUserAndMetaDataSopView(String name, String vwAliasName, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewUserAndMetaDataSopView(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
         }
         private final String fldName;
         private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;
+        private final FldBusinessRules[] fldBusinessRules;        
         @Override public String getName() {return fldName;}
         @Override public String getViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
 
     public enum ViewUserAndAnalysisMethodCertificationView implements EnumIntViewFields{
-        PROCEDURE("procedure", "", null, null, null),
-        ID("id", "", null, null, null),
-        USER_ID(FIELDS_NAMES_USER_ID, "", null, null, null),
-        METHOD_CODE("code", "", null, null, null),
-        METHOD_NAME("method_name", "", null, null, null),
-        METHOD_VERSION("method_version", "", null, null, null),
-        ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, "", null, null, null),
-        ASSIGNED_BY(FIELDS_NAMES_ASSIGNED_BY, "", null, null, null),
-        STATUS(FIELDS_NAMES_STATUS, "", null, null, null),
-        CERTIFICATION_DATE("certification_date", "", null, null, null),
-        CERTIF_EXPIRY_DATE("certif_expiry_date", "", null, null, null),
-        CERTIF_STARTED("certif_started","", null, null, null),
-        CERTIF_COMPLETED("certif_completed", "", null, null, null),
-        SOP_NAME(FIELDS_NAMES_SOP_NAME, "", null, null, null),
-        USER_NAME(FIELDS_NAMES_USER_NAME, "", null, null, null),
-        LIGHT(FIELDS_NAMES_LIGHT, "", null, null, null),
-        TRAINING_ID("training_id", "", null, null, null),
-        METHOD_IS_ACTIVE("active", "method_is_active", null, null, null),
-        METHOD_EXPIRES("expires", "method_expires", null, null, null),
-        METHOD_EXPIRY_INTERVAL_INFO("expiry_interval_info", "method_expiry_interval_info", null, null, null),
-        CERTIFICATION_MODE("certification_mode", "method_certification_mode", null, null, null),
+        PROCEDURE("procedure", "", CertifUserAnalysisMethod.USER_NAME, null, null, null),
+        ID("id", "", CertifUserAnalysisMethod.ID, null, null, null),
+        USER_ID(FIELDS_NAMES_USER_ID, "", CertifUserAnalysisMethod.USER_ID, null, null, null),
+        METHOD_CODE("code", "", Methods.CODE, null, null, null),
+        METHOD_NAME("method_name", "", CertifUserAnalysisMethod.METHOD_NAME, null, null, null),
+        METHOD_VERSION("method_version", "", CertifUserAnalysisMethod.METHOD_VERSION, null, null, null),
+        ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, "", CertifUserAnalysisMethod.ASSIGNED_ON, null, null, null),
+        ASSIGNED_BY(FIELDS_NAMES_ASSIGNED_BY, "", CertifUserAnalysisMethod.ASSIGNED_BY, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, "", CertifUserAnalysisMethod.STATUS, null, null, null),
+        CERTIFICATION_DATE("certification_date", "", CertifUserAnalysisMethod.CERTIFICATION_DATE, null, null, null),
+        CERTIF_EXPIRY_DATE("certif_expiry_date", "", CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE, null, null, null),
+        CERTIF_STARTED("certif_started","", CertifUserAnalysisMethod.CERTIF_STARTED, null, null, null),
+        CERTIF_COMPLETED("certif_completed", "", CertifUserAnalysisMethod.CERTIF_COMPLETED, null, null, null),
+        SOP_NAME(FIELDS_NAMES_SOP_NAME, "", CertifUserAnalysisMethod.SOP_NAME, null, null, null),
+        USER_NAME(FIELDS_NAMES_USER_NAME, "", CertifUserAnalysisMethod.USER_NAME, null, null, null),
+        LIGHT(FIELDS_NAMES_LIGHT, "", CertifUserAnalysisMethod.LIGHT, null, null, null),
+        TRAINING_ID("training_id", "", CertifUserAnalysisMethod.TRAINING_ID, null, null, null),
+        METHOD_IS_ACTIVE("active", "method_is_active", Methods.ACTIVE, null, null, null),
+        METHOD_EXPIRES("expires", "method_expires", Methods.EXPIRES, null, null, null),
+        METHOD_EXPIRY_INTERVAL_INFO("expiry_interval_info", "method_expiry_interval_info", Methods.EXPIRY_INTERVAL_INFO, null, null, null),
+        CERTIFICATION_MODE("certification_mode", "method_certification_mode", Methods.CERTIFICATION_MODE, null, null, null),
         ;
-        private ViewUserAndAnalysisMethodCertificationView(String name, String vwAliasName, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewUserAndAnalysisMethodCertificationView(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
         }
         private final String fldName;
         private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;
+        private final FldBusinessRules[] fldBusinessRules;        
         @Override public String getName() {return fldName;}
         @Override public String getViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
 
     public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
-        RESULT_ID("result_id", "sar.result_id", null, null, null),
-        TEST_ID(SampleAnalysis.TEST_ID.getName(), "sar.test_id", null, null, null),
-        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "sar.sample_id", null, null, null),
-        STATUS(FIELDS_NAMES_STATUS, "sar.status", null, null, null),
-        STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, "sar.status_previous", null, null, null),
-        ANALYSIS(FIELDS_NAMES_ANALYSIS, "sar.analysis", null, null, null),
-        METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, "sar.method_name", null, null, null),
-        METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, "sar.method_version", null, null, null),
-        REPLICA(FIELDS_NAMES_REPLICA, "sar.replica", null, null, null),
-        PARAM_NAME("param_name", "sar.param_name", null, null, null),
-        PARAM_TYPE("param_type", "sar.param_type", null, null, null),
-        MANDATORY("mandatory", "sar.mandatory", null, null, null),
-        REQUIRES_LIMIT("requires_limit", "sar.requires_limit", null, null, null),
-        RAW_VALUE("raw_value", "sar.raw_value", null, null, null),
-        RAW_VALUE_NUM("raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end", null, null, null),
-        PRETTY_VALUE("pretty_value", "sar.pretty_value", null, null, null),
-        ENTERED_ON("entered_on", "sar.entered_on", null, null, null),
-        ENTERED_BY("entered_by", "sar.entered_by", null, null, null),
-        REENTERED("reentered", "sar.reentered", null, null, null),
-        SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, "sar.spec_eval", null, null, null),
-        SPEC_EVAL_DETAIL("spec_eval_detail", "sar.spec_eval_detail", null, null, null),
-        UOM("uom", "sar.uom", null, null, null),
-        UOM_CONVERSION_MODE("uom_conversion_mode", "sar.uom_conversion_mode", null, null, null),
-        ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, "sar.aliquot_id", null, null, null),
-        SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, "sar.subaliquot_id", null, null, null),
-        MAX_DP("max_dp", "sar.max_dp", null, null, null),
-        MIN_ALLOWED("min_allowed", "sar.min_allowed", null, null, null),
-        MAX_ALLOWED("max_allowed", "sar.max_allowed", null, null, null),
-        LIST_ENTRY("list_entry", "sar.list_entry", null, null, null),
-        SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), null, null, null),
-        SAMPLE_STATUS("sample_status", "s.status", null, null, null),
-        CURRENT_STAGE("current_stage", "s.current_stage", null, null, null),
-        PROGRAM_NAME("program_name", "s.program_name", null, null, null),
-        SAMPLING_DATE("sampling_date", "s.sampling_date", null, null, null),
-        SHIFT("shift", "s.shift", null, null, null),
-        AREA("area", "s.area", null, null, null),
-        LOCATION_NAME("location_name", "s.location_name", null, null, null),
-        PRODUCTION_LOT("production_lot", "s.production_lot", null, null, null),
-        PROGRAM_DAY_ID("program_day_id", "s.program_day_id", null, null, null),
-        PROGRAM_DAY_DATE("program_day_date", "s.program_day_date", null, null, null),
-        SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status", null, null, null),
-        SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.Sample.READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.READY_FOR_REVISION.getName(), null, null, null),
-        TESTING_GROUP("testing_group", "sa.testing_group", null, null, null),
-        LOGGED_ON("logged_on", "s.logged_on", null, null, null),
-        LIMIT_ID("limit_id", "spcLim.limit_id", null, null, null),
-        SAMPLER("sampler", "s.sampler", null, null, null),
-        SAMPLER_AREA("sampler_area", "s.sampler_area", null, null, null),
-        READY_FOR_REVISION(TblsData.Sample.READY_FOR_REVISION.getName(), "s."+TblsData.Sample.READY_FOR_REVISION.getName(), null, null, null),
-        SPEC_CODE("spec_code", "spcLim.code", null, null, null),
-        SPEC_CONFIG_VERSION("spec_config_version", "spcLim.config_version", null, null, null),
-        SPEC_VARIATION_NAME("spec_variation_name", "spcLim.variation_name", null, null, null),
-        ANALYSIS_SPEC_LIMITS("analysis_spec_limits", "spcLim.analysis", null, null, null),
-        METHOD_NAME_SPEC_LIMITS("method_name_spec_limits", "spcLim.method_name", null, null, null),
-        METHOD_VERSION_SPEC_LIMITS("method_version_spec_limits", "spcLim.method_version", null, null, null),
-        PARAMETER("parameter", "spcLim.parameter", null, null, null),
-        RULE_TYPE("rule_type", "spcLim.rule_type", null, null, null),
-        RULE_VARIABLES("rule_variables", "spcLim.rule_variables", null, null, null),
-        UOM_SPEC_LIMITS("uom_spec_limits", "spcLim.uom", null, null, null),
-        UOM_CONVERSION_MODE_SPEC_LIMITS("uom_conversion_mode_spec_limits", "spcLim.uom_conversion_mode", null, null, null),
-        MIN_VAL_ALLOWED("min_val_allowed", "spcLim.min_val_allowed", null, null, null),
-        MAX_VAL_ALLOWED("max_val_allowed", "spcLim.max_val_allowed", null, null, null),
-        MIN_VAL_ALLOWED_IS_STRICT("min_allowed_strict", "spcLim.min_allowed_strict", null, null, null),
-        MAX_VAL_ALLOWED_IS_STRICT("max_allowed_strict", "spcLim.max_allowed_strict", null, null, null),
-        MIN_VAL_FOR_UNDETERMINED("min_undetermined", "spcLim.min_undetermined", null, null, null),
-        MAX_VAL_FOR_UNDETERMINED("max_undetermined", "spcLim.max_undetermined", null, null, null),
-        MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", "spcLim.min_undet_strict", null, null, null),
-        MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", "spcLim.max_undet_strict", null, null, null),
-        HAS_PREINVEST("has_pre_invest", "CASE WHEN pca.id IS NULL THEN 'NO' ELSE 'YES' END", null, null, null),
-        PREINVEST_ID("pre_invest_id", "pca.id", null, null, null),
-        HAS_INVEST("has_invest", "CASE WHEN io.id IS NULL THEN 'NO' ELSE 'YES' END", null, null, null),
-        INVEST_ID("invest_id", "io.invest_id", null, null, null),
-        INVEST_OBJECT_ID("invest_object_id", "io.id", null, null, null),
-        SAMPLE_REVIEWER("sample_reviewer", "s.reviewer", null, null, null),
-        TEST_REVIEWER("test_reviewer", "sa.reviewer", null, null, null),
+        RESULT_ID("result_id", "sar.result_id", SampleAnalysisResult.RESULT_ID, null, null, null),
+        TEST_ID(SampleAnalysis.TEST_ID.getName(), "sar.test_id", SampleAnalysisResult.TEST_ID, null, null, null),
+        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "sar.sample_id", SampleAnalysisResult.SAMPLE_ID, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, "sar.status", SampleAnalysisResult.STATUS, null, null, null),
+        STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, "sar.status_previous", SampleAnalysisResult.STATUS_PREVIOUS, null, null, null),
+        ANALYSIS(FIELDS_NAMES_ANALYSIS, "sar.analysis", SampleAnalysisResult.ANALYSIS, null, null, null),
+        METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, "sar.method_name", SampleAnalysisResult.METHOD_NAME, null, null, null),
+        METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, "sar.method_version", SampleAnalysisResult.METHOD_VERSION, null, null, null),
+        REPLICA(FIELDS_NAMES_REPLICA, "sar.replica", SampleAnalysisResult.REPLICA, null, null, null),
+        PARAM_NAME("param_name", "sar.param_name", SampleAnalysisResult.PARAM_NAME, null, null, null),
+        PARAM_TYPE("param_type", "sar.param_type", SampleAnalysisResult.PARAM_TYPE, null, null, null),
+        MANDATORY("mandatory", "sar.mandatory", SampleAnalysisResult.MANDATORY, null, null, null),
+        REQUIRES_LIMIT("requires_limit", "sar.requires_limit", SampleAnalysisResult.REQUIRES_LIMIT, null, null, null),
+        RAW_VALUE("raw_value", "sar.raw_value", SampleAnalysisResult.RAW_VALUE, null, null, null),
+        RAW_VALUE_NUM("raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end", SampleAnalysisResult.REPLICA, null, null, null),
+        PRETTY_VALUE("pretty_value", "sar.pretty_value", SampleAnalysisResult.PRETTY_VALUE, null, null, null),
+        ENTERED_ON("entered_on", "sar.entered_on", SampleAnalysisResult.ENTERED_ON, null, null, null),
+        ENTERED_BY("entered_by", "sar.entered_by", SampleAnalysisResult.ENTERED_BY, null, null, null),
+        REENTERED("reentered", "sar.reentered", SampleAnalysisResult.REENTERED, null, null, null),
+        SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, "sar.spec_eval", SampleAnalysisResult.SPEC_EVAL, null, null, null),
+        SPEC_EVAL_DETAIL("spec_eval_detail", "sar.spec_eval_detail", SampleAnalysisResult.SPEC_EVAL_DETAIL, null, null, null),
+        UOM("uom", "sar.uom", SampleAnalysisResult.UOM, null, null, null),
+        UOM_CONVERSION_MODE("uom_conversion_mode", "sar.uom_conversion_mode", SampleAnalysisResult.UOM_CONVERSION_MODE, null, null, null),
+        ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, "sar.aliquot_id", SampleAnalysisResult.ALIQUOT_ID, null, null, null),
+        SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, "sar.subaliquot_id", SampleAnalysisResult.SUBALIQUOT_ID, null, null, null),
+        MAX_DP("max_dp", "sar.max_dp", SampleAnalysisResult.MAX_DP, null, null, null),
+        MIN_ALLOWED("min_allowed", "sar.min_allowed", SampleAnalysisResult.MIN_ALLOWED, null, null, null),
+        MAX_ALLOWED("max_allowed", "sar.max_allowed", SampleAnalysisResult.MAX_ALLOWED, null, null, null),
+        LIST_ENTRY("list_entry", "sar.list_entry", SampleAnalysisResult.LIST_ENTRY, null, null, null),
+        SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), Sample.CONFIG_CODE, null, null, null),
+        SAMPLE_STATUS("sample_status", "s.status", Sample.STATUS, null, null, null),
+        CURRENT_STAGE("current_stage", "s.current_stage", Sample.CURRENT_STAGE, null, null, null),
+        PROGRAM_NAME("program_name", "s.program_name", TblsEnvMonitData.Sample.PROGRAM_NAME, null, null, null),
+        SAMPLING_DATE("sampling_date", "s.sampling_date", Sample.SAMPLING_DATE, null, null, null),
+        SHIFT("shift", "s.shift", TblsEnvMonitData.Sample.SHIFT, null, null, null),
+        AREA("area", "s.area", TblsEnvMonitData.Sample.AREA, null, null, null),
+        LOCATION_NAME("location_name", "s.location_name", TblsEnvMonitData.Sample.LOCATION_NAME, null, null, null),
+        PRODUCTION_LOT("production_lot", "s.production_lot", TblsEnvMonitData.Sample.PRODUCTION_LOT, null, null, null),
+        PROGRAM_DAY_ID("program_day_id", "s.program_day_id", TblsEnvMonitData.Sample.PROG_DAY_ID, null, null, null),
+        PROGRAM_DAY_DATE("program_day_date", "s.program_day_date", TblsEnvMonitData.Sample.PROG_DAY_DATE, null, null, null),
+        SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status", SampleAnalysis.STATUS, null, null, null),
+        SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.Sample.READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.READY_FOR_REVISION.getName(), SampleAnalysis.READY_FOR_REVISION, null, null, null),
+        TESTING_GROUP("testing_group", "sa.testing_group", SampleAnalysis.TESTING_GROUP, null, null, null),
+        LOGGED_ON("logged_on", "s.logged_on", Sample.LOGGED_ON, null, null, null),
+        LIMIT_ID("limit_id", "spcLim.limit_id", SpecLimits.LIMIT_ID, null, null, null),
+        SAMPLER("sampler", "s.sampler", Sample.SAMPLER, null, null, null),
+        SAMPLER_AREA("sampler_area", "s.sampler_area", TblsEnvMonitData.Sample.SAMPLER_AREA, null, null, null),
+        READY_FOR_REVISION(TblsData.Sample.READY_FOR_REVISION.getName(), "s."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.Sample.READY_FOR_REVISION, null, null, null),
+        SPEC_CODE("spec_code", "spcLim.code", SpecLimits.CODE, null, null, null),
+        SPEC_CONFIG_VERSION("spec_config_version", "spcLim.config_version", SpecLimits.CONFIG_VERSION, null, null, null),
+        SPEC_VARIATION_NAME("spec_variation_name", "spcLim.variation_name", SpecLimits.VARIATION_NAME, null, null, null),
+        ANALYSIS_SPEC_LIMITS("analysis_spec_limits", "spcLim.analysis", SpecLimits.ANALYSIS, null, null, null),
+        METHOD_NAME_SPEC_LIMITS("method_name_spec_limits", "spcLim.method_name", SpecLimits.METHOD_NAME, null, null, null),
+        METHOD_VERSION_SPEC_LIMITS("method_version_spec_limits", "spcLim.method_version", SpecLimits.METHOD_VERSION, null, null, null),
+        PARAMETER("parameter", "spcLim.parameter", SpecLimits.PARAMETER, null, null, null),
+        RULE_TYPE("rule_type", "spcLim.rule_type", SpecLimits.RULE_TYPE, null, null, null),
+        RULE_VARIABLES("rule_variables", "spcLim.rule_variables", SpecLimits.RULE_VARIABLES, null, null, null),
+        UOM_SPEC_LIMITS("uom_spec_limits", "spcLim.uom", SpecLimits.UOM, null, null, null),
+        UOM_CONVERSION_MODE_SPEC_LIMITS("uom_conversion_mode_spec_limits", "spcLim.uom_conversion_mode", SpecLimits.UOM_CONVERSION_MODE, null, null, null),
+        MIN_VAL_ALLOWED("min_val_allowed", "spcLim.min_val_allowed", SpecLimits.MIN_VAL_ALLOWED, null, null, null),
+        MAX_VAL_ALLOWED("max_val_allowed", "spcLim.max_val_allowed", SpecLimits.MAX_VAL_ALLOWED, null, null, null),
+        MIN_VAL_ALLOWED_IS_STRICT("min_allowed_strict", "spcLim.min_allowed_strict", SpecLimits.MIN_VAL_ALLOWED_IS_STRICT, null, null, null),
+        MAX_VAL_ALLOWED_IS_STRICT("max_allowed_strict", "spcLim.max_allowed_strict", SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        MIN_VAL_FOR_UNDETERMINED("min_undetermined", "spcLim.min_undetermined", SpecLimits.MIN_VAL_FOR_UNDETERMINED, null, null, null),
+        MAX_VAL_FOR_UNDETERMINED("max_undetermined", "spcLim.max_undetermined", SpecLimits.MAX_VAL_FOR_UNDETERMINED, null, null, null),
+        MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", "spcLim.min_undet_strict", SpecLimits.MIN_VAL_UNDETERMINED_IS_STRICT, null, null, null),
+        MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", "spcLim.max_undet_strict", SpecLimits.MAX_VAL_UNDETERMINED_IS_STRICT, null, null, null),
+        HAS_PREINVEST("has_pre_invest", "CASE WHEN pca.id IS NULL THEN 'NO' ELSE 'YES' END", SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        PREINVEST_ID("pre_invest_id", "pca.id", ProgramCorrectiveAction.ID, null, null, null),
+        HAS_INVEST("has_invest", "CASE WHEN io.id IS NULL THEN 'NO' ELSE 'YES' END", SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        INVEST_ID("invest_id", "io.invest_id", InvestObjects.INVEST_ID, null, null, null),
+        INVEST_OBJECT_ID("invest_object_id", "io.id", InvestObjects.OBJECT_ID, null, null, null),
+        SAMPLE_REVIEWER("sample_reviewer", "s.reviewer", Sample.REVIEWER, null, null, null),
+        TEST_REVIEWER("test_reviewer", "sa.reviewer", SampleAnalysis.REVIEWER, null, null, null),
         ;
-        private ViewSampleAnalysisResultWithSpecLimits(String name, String vwAliasName, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewSampleAnalysisResultWithSpecLimits(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
         }
         private final String fldName;
         private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;
+        private final FldBusinessRules[] fldBusinessRules;        
         @Override public String getName() {return fldName;}
         @Override public String getViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
 
     public enum ViewSampleTestingGroup implements EnumIntViewFields{
-        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "s.sample_id", null, null, null),
-        SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), null, null, null),
-        SAMPLE_STATUS("sample_status", "s.status", null, null, null),
-        CURRENT_STAGE("current_stage", "s.current_stage", null, null, null),
-        PROGRAM_NAME("program_name", "s.program_name", null, null, null),
-        SAMPLING_DATE("sampling_date", "s.sampling_date", null, null, null),
-        SHIFT("shift", "s.shift", null, null, null),
-        AREA("area", "s.area", null, null, null),
-        LOCATION_NAME("location_name", "s.location_name", null, null, null),
-        PRODUCTION_LOT("production_lot", "s.production_lot", null, null, null),
-        PROGRAM_DAY_ID("program_day_id", "s.program_day_id", null, null, null),
-        PROGRAM_DAY_DATE("program_day_date", "s.program_day_date", null, null, null),
-        TESTING_GROUP("testing_group", "stg.testing_group", null, null, null),
-        READY_FOR_REVISION("ready_for_revision", "stg.ready_for_revision", null, null, null),
-        REVIEWED("reviewed", "stg.reviewed", null, null, null),
-        REVISION_ON("revision_on", "stg.revision_on", null, null, null),
-        REVISION_BY("revision_by", "stg.revision_by", null, null, null)
+        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "s.sample_id", Sample.SAMPLE_ID, null, null, null),
+        SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), Sample.CONFIG_CODE, null, null, null),
+        SAMPLE_STATUS("sample_status", "s.status", Sample.STATUS, null, null, null),
+        CURRENT_STAGE("current_stage", "s.current_stage", Sample.CURRENT_STAGE, null, null, null),
+        PROGRAM_NAME("program_name", "s.program_name", TblsEnvMonitData.Sample.PROGRAM_NAME, null, null, null),
+        SAMPLING_DATE("sampling_date", "s.sampling_date", Sample.SAMPLING_DATE, null, null, null),
+        SHIFT("shift", "s.shift", TblsEnvMonitData.Sample.SHIFT, null, null, null),
+        AREA("area", "s.area", TblsEnvMonitData.Sample.AREA, null, null, null),
+        LOCATION_NAME("location_name", "s.location_name", TblsEnvMonitData.Sample.LOCATION_NAME, null, null, null),
+        PRODUCTION_LOT("production_lot", "s.production_lot", TblsEnvMonitData.Sample.PRODUCTION_LOT, null, null, null),
+        PROGRAM_DAY_ID("program_day_id", "s.program_day_id", TblsEnvMonitData.Sample.PROG_DAY_ID, null, null, null),
+        PROGRAM_DAY_DATE("program_day_date", "s.program_day_date", TblsEnvMonitData.Sample.PROG_DAY_DATE, null, null, null),
+        TESTING_GROUP("testing_group", "stg.testing_group", TblsData.SampleRevisionTestingGroup.TESTING_GROUP, null, null, null),
+        READY_FOR_REVISION("ready_for_revision", "stg.ready_for_revision", TblsData.SampleRevisionTestingGroup.READY_FOR_REVISION, null, null, null),
+        REVIEWED("reviewed", "stg.reviewed", TblsData.SampleRevisionTestingGroup.REVIEWED, null, null, null),
+        REVISION_ON("revision_on", "stg.revision_on", TblsData.SampleRevisionTestingGroup.REVISION_ON, null, null, null),
+        REVISION_BY("revision_by", "stg.revision_by", TblsData.SampleRevisionTestingGroup.REVISION_BY, null, null, null)
         ;
-        private ViewSampleTestingGroup(String name, String vwAliasName, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewSampleTestingGroup(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
         }
         private final String fldName;
         private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;
+        private final FldBusinessRules[] fldBusinessRules;        
         @Override public String getName() {return fldName;}
         @Override public String getViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     } 
     
 }

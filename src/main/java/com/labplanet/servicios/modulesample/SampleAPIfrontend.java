@@ -191,7 +191,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 
                 String sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE); 
                 if (sampleAnalysisFieldToRetrieve!=null && sampleAnalysisFieldToRetrieve.length()>0) sampleAnalysisFieldToRetrieveArr=sampleAnalysisFieldToRetrieve.split("\\|");
-                else sampleAnalysisFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());                
+                else sampleAnalysisFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());                
                 String sampleAnalysisSortField = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
                 if (sampleAnalysisSortField!=null && sampleAnalysisSortField.length()>0) sampleAnalysisSortFieldArr=sampleAnalysisSortField.split("\\|");
                 
@@ -232,7 +232,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     }                                    
                 }            
                 if (fieldToRetrieve==null || fieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldToRetrieve))
-                    fieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
+                    fieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());
                 else
                     fieldToRetrieveArr=fieldToRetrieve.split("\\|");
                 sortFieldsNameArr = null;
@@ -437,7 +437,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     String testingGroup=argValues[0].toString();
                     fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE); 
                     if (fieldToRetrieve==null || fieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldToRetrieve))
-                        fieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW.getViewFields());                        
+                        fieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleTestingGroup.values());
                     else
                         
                         fieldToRetrieveArr=fieldToRetrieve.split("\\|");

@@ -387,10 +387,10 @@ public class EnvMonAPIStats extends HttpServlet {
                 String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);                    
                 String[] sampleFieldToRetrieveArr=new String[0];
                 if ((sampleFieldToRetrieve!=null) && (sampleFieldToRetrieve.length()>0))
-                    if ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) sampleFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
+                    if ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) sampleFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());
                     else sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
                 if (sampleFieldToRetrieve==null)
-                    sampleFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
+                    sampleFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());
 
                 String samplingDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START);
                 String samplingDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END);

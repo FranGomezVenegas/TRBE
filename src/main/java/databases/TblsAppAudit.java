@@ -19,10 +19,11 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsAppAudit {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_AUDIT.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = false;
     public enum TablesAppAudit implements EnumIntTables{
-        SESSION(null, "session", SCHEMA_NAME, true, Session.values(), Session.SESSION_ID.getName(),
+        SESSION(null, "session", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Session.values(), Session.SESSION_ID.getName(),
             new String[]{Session.SESSION_ID.getName()}, null, "Audit for User Sessions"),
-        INCIDENT(null, "incident", SCHEMA_NAME, true, Incident.values(), Incident.AUDIT_ID.getName(),
+        INCIDENT(null, "incident", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Incident.values(), Incident.AUDIT_ID.getName(),
             new String[]{Incident.AUDIT_ID.getName()}, null, "Audit for Incident objects"),
         ;
         private TablesAppAudit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
@@ -63,7 +64,7 @@ public class TblsAppAudit {
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
         TABLE_ID("table_id", LPDatabase.string(), null, null, null, null),
         DATE("date", LPDatabase.dateTime(), null, null, null, null),
-        PERSON("person", LPDatabase.string(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), null, null),
         ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
         FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null),
         INCIDENT_ID("incident_id", LPDatabase.integer(), null, null, null, null),

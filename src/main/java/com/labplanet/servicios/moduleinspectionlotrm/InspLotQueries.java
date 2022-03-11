@@ -13,6 +13,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilities;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
 import static trazit.queries.QueryUtilities.getTableData;
 
@@ -26,7 +27,7 @@ public final class InspLotQueries {
             Boolean includeMatCertificate, Boolean includeMatInventoryPlan, Boolean includeMatSamplingPlan){
         String[] whereFldName=new String[]{TblsInspLotRMConfig.Material.FLD_NAME.getName()};
         Object[] whereFldValue=new Object[]{name};
-        Object[][] materialInfo=getTableData(GlobalVariables.Schemas.CONFIG.getName(), TblsInspLotRMConfig.Material.TBL.getName(), 
+        Object[][] materialInfo=QueryUtilities.getTableData(GlobalVariables.Schemas.CONFIG.getName(), TblsInspLotRMConfig.Material.TBL.getName(), 
                     filterFieldsToRetrieve, TblsInspLotRMConfig.Material.getAllFieldNames(), whereFldName, whereFldValue, orderBy);        
         JSONArray jArr = new JSONArray();
         String[] fieldsToRetrieve=getFieldsListToRetrieve(filterFieldsToRetrieve, TblsInspLotRMConfig.Material.getAllFieldNames());
