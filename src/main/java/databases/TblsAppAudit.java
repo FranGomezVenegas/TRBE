@@ -64,7 +64,7 @@ public class TblsAppAudit {
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
         TABLE_ID("table_id", LPDatabase.string(), null, null, null, null),
         DATE("date", LPDatabase.dateTime(), null, null, null, null),
-        PERSON("person", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
         FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null),
         INCIDENT_ID("incident_id", LPDatabase.integer(), null, null, null, null),

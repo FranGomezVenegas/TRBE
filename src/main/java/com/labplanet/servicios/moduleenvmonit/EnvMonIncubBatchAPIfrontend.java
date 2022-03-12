@@ -38,6 +38,7 @@ import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 /**
  *
  * @author User
@@ -180,9 +181,10 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
     public static JSONArray getActiveBatchData(String[] fieldsToRetrieve, String[] whereFieldsNameArr, Object[] whereFieldsValueArr){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);  
         String procInstanceName= procReqInstance.getProcedureInstance();
-        Object[][] activeBatchesList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), 
-                whereFieldsNameArr, whereFieldsValueArr, 
-                fieldsToRetrieve, new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()});
+        Object[][] activeBatchesList=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, 
+            EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, fieldsToRetrieve),
+            whereFieldsNameArr, whereFieldsValueArr, 
+            new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()});
         JSONArray jArr = new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(activeBatchesList[0][0].toString())) return jArr;
         for (Object[] currBatch: activeBatchesList){

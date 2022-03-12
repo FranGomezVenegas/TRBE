@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import databases.TblsAppConfig;
 import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
 import static lbplanet.utilities.LPDatabase.dateTimeWithDefaultNow;
@@ -323,7 +324,7 @@ public class TblsEnvMonitData {
         LOGGED_ON("logged_on", LPDatabase.date(), null, null, null, null),
         LOGGED_BY("logged_by", LPDatabase.string(), null, null, null, null),
         RECEIVED_ON("received_on", LPDatabase.date(), null, null, null, null),
-        RECEIVED_BY("received_by", LPDatabase.string(), null, null, null, null),
+        RECEIVED_BY("received_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(), null, null, null, null),
         VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.string(), null, null, null, null),
         ALIQUOTED("aliquoted", LPDatabase.booleanFld(false), null, null, null, null),
@@ -407,7 +408,7 @@ public class TblsEnvMonitData {
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         SAMPLE_ID(Sample.SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTimeWithDefaultNow(), null, null, null, null),
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         MICROORG_NAME("microorganism_name", LPDatabase.string(), null, null, null, null),
         NOTE("note", LPDatabase.string(), null, null, null, null),
         ;
@@ -437,9 +438,9 @@ public class TblsEnvMonitData {
     public enum ProductionLot implements EnumIntTableFields{
         LOT_NAME("lot_name",LPDatabase.stringNotNull(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTimeWithDefaultNow(), null, null, null, null),
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CLOSED_ON("closed_on", dateTimeWithDefaultNow(), null, null, null, null),
-        CLOSED_BY("closed_by", LPDatabase.string(), null, null, null, null),
+        CLOSED_BY("closed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         ;
         private ProductionLot(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,

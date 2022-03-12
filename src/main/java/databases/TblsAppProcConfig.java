@@ -109,7 +109,7 @@ public class TblsAppProcConfig {
         REQUIRED("required", LPDatabase.string(), null, null, null, null),
         ALLOWED_VALUES("allowed_values", LPDatabase.string(), null, null, null, null),
         CREATED_ON("created_on", dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         STARTED_ON("started_on", dateTime(), null, null, null, null),
         ENDED_ON("ended_on", dateTime(), null, null, null, null),
         ;
@@ -143,7 +143,7 @@ public class TblsAppProcConfig {
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
         VARIABLES_LIST("variables_list", LPDatabase.string(), null, null, null, null),
         CREATED_ON("created_on", dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         STARTED_ON("started_on", dateTime(), null, null, null, null),
         ENDED_ON("ended_on", dateTime(), null, null, null, null),        
         ;

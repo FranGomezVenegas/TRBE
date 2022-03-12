@@ -116,7 +116,7 @@ public class TblsApp {
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null), 
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null), 
         ADDED_ON("added_on", LPDatabase.dateTime(), null, null, null, null),
-        ADDED_BY("added_by", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), null, null), 
+        ADDED_BY("added_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null), 
         IP_VALUE1("ip_value1", LPDatabase.stringNotNull(),null, null, "", null),
         IP_VALUE2("ip_value2", LPDatabase.stringNotNull(),null, null, "", null),
         IP_VALUE3("ip_value3", LPDatabase.stringNotNull(),null, null, "", null),
@@ -145,7 +145,7 @@ public class TblsApp {
     public enum AppSession implements EnumIntTableFields{
         SESSION_ID("session_id", LPDatabase.integerNotNull(),null, null, "", null),
         DATE_STARTED("date_started", LPDatabase.date(),null, null, "", null),
-        PERSON("person", LPDatabase.string(),null, new ReferenceFld("config", "person", "person_id"), "", null),
+        PERSON("person", LPDatabase.string(),null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         ROLE_NAME("role_name", LPDatabase.string(),null, null, "", null),
         IP_ADDRESS("ip_address", LPDatabase.string(),null, null, "", null),
         PROCEDURES("procedures", LPDatabase.string(),null, null, "", null);
@@ -263,7 +263,7 @@ public class TblsApp {
     public enum Incident implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, "", null),
         DATE_CREATION("date_creation", LPDatabase.dateTime(), null, null, "", null),
-        PERSON_CREATION("person_creation", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), "", null),
+        PERSON_CREATION("person_creation", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         DATE_CONFIRMED("date_confirmed", LPDatabase.dateTime(), null, null, "", null),
         PERSON_CONFIRMED("person_confirmed", LPDatabase.string(), null, null, "", null),
         DATE_RESOLUTION("date_resolution", LPDatabase.dateTime(), null, null, "", null),
@@ -272,8 +272,8 @@ public class TblsApp {
         PERSON_LAST_UPDATE("person_last_update", LPDatabase.string(), null, null, "", null),
         STATUS("status", LPDatabase.string(), null, null, "", null),
         STATUS_PREVIOUS("status_previous", LPDatabase.string(), null, null, "", null),    
-        USER_NAME("user_name", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), "", null),
-        PERSON_NAME("person_name", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), "", null),
+        USER_NAME("user_name", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
+        PERSON_NAME("person_name", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         USER_ROLE("user_role", LPDatabase.string(), null, null, "", null),
         TITLE("item_title", LPDatabase.string(), null, null, "", null),
         DETAIL("item_detail", LPDatabase.string(), null, null, "", null),

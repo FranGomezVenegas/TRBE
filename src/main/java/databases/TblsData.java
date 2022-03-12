@@ -208,7 +208,7 @@ public class TblsData {
         STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(),null, null, null, null),
         STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.stringNotNull(),null, null, null, null),
         LOGGED_ON("logged_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
-        LOGGED_BY("logged_by", LPDatabase.string(), null, new ReferenceFld("config", "person", "person_id"), null, null),
+        LOGGED_BY("logged_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         RECEIVED_ON("received_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
         RECEIVED_BY("received_by", LPDatabase.string(),null, null, null, null),
         VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(),null, null, null, null),
