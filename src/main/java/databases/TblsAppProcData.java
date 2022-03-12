@@ -27,12 +27,13 @@ public class TblsAppProcData {
     }
 
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_PROC_DATA.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = false;
     public enum TablesAppProcData implements EnumIntTables{
-        INSTRUMENTS(null, "instruments", SCHEMA_NAME, true, Instruments.values(), Instruments.NAME.getName(),
+        INSTRUMENTS(null, "instruments", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Instruments.values(), Instruments.NAME.getName(),
             new String[]{Instruments.NAME.getName()}, null, ""),
-        INSTRUMENT_EVENT(null, "instrument_event", SCHEMA_NAME, true, TblsAppProcData.InstrumentEvent.values(), TblsAppProcData.InstrumentEvent.ID.getName(),
+        INSTRUMENT_EVENT(null, "instrument_event", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppProcData.InstrumentEvent.values(), TblsAppProcData.InstrumentEvent.ID.getName(),
             new String[]{TblsAppProcData.InstrumentEvent.ID.getName()}, null, ""),
-        INSTR_EVENT_VARIABLE_VALUES(null, "instr_event_variable_values", SCHEMA_NAME, true, TblsAppProcData.InstrEventVariableValues.values(), TblsAppProcData.InstrumentEvent.ID.getName(),
+        INSTR_EVENT_VARIABLE_VALUES(null, "instr_event_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppProcData.InstrEventVariableValues.values(), TblsAppProcData.InstrumentEvent.ID.getName(),
             new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName()}, null, ""),
         ;
         private TablesAppProcData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 

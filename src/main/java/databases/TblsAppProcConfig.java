@@ -19,13 +19,14 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsAppProcConfig {
     
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_PROC_CONFIG.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = false;
     public enum TablesAppProcConfig implements EnumIntTables{
         
-        INSTRUMENTS_FAMILY(null, "instruments_family", SCHEMA_NAME, true, InstrumentsFamily.values(), null,
+        INSTRUMENTS_FAMILY(null, "instruments_family", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, InstrumentsFamily.values(), null,
             new String[]{InstrumentsFamily.NAME.getName()}, null, ""),
-        VARIABLES(null, "variables", SCHEMA_NAME, true, Variables.values(), null,
+        VARIABLES(null, "variables", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Variables.values(), null,
             new String[]{Variables.PARAM_NAME.getName()}, null, ""),
-        VARIABLES_SET(null, "variables_set", SCHEMA_NAME, true, VariablesSet.values(), null,
+        VARIABLES_SET(null, "variables_set", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, VariablesSet.values(), null,
             new String[]{VariablesSet.NAME.getName()}, null, ""),
         ;
         private TablesAppProcConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
