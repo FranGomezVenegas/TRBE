@@ -26,8 +26,10 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
-import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -49,7 +51,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
         response=LPHttp.responsePreparation(response);
 
         String language = LPFrontEnd.setLanguage(request); 
-
+        ProcedureRequestSession instanceForQueries = ProcedureRequestSession.getInstanceForQueries(request, response, Boolean.FALSE);
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
@@ -78,10 +80,11 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
         switch (endPoint){
             case ALL_SAVED_QUERIES:              
                 String[] fieldsToRetrieve=getAllFieldNames(TblsData.TablesData.SAVED_QUERIES.getTableFields());
-                Object[][] savedQueriesInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsData.TablesData.SAVED_QUERIES.getTableName(), 
-                        new String[]{TblsData.SavedQueries.ID.getName()+">"}, 
-                        new Object[]{0}, 
-                        fieldsToRetrieve, new String[]{TblsData.SavedQueries.ID.getName()+" desc"});
+                Object[][] savedQueriesInfo=QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAVED_QUERIES, 
+                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAVED_QUERIES, "ALL"),
+                    new String[]{TblsData.SavedQueries.ID.getName()+">"}, 
+                    new Object[]{0}, 
+                    new String[]{TblsData.SavedQueries.ID.getName()+" desc"});
                 JSONArray savedQryJArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(savedQueriesInfo[0][0].toString())){
                     for (Object[] currSavedQry: savedQueriesInfo){
