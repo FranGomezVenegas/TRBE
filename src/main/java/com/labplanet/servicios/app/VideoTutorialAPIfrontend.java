@@ -27,8 +27,9 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import org.json.simple.parser.JSONParser;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
-import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 
 
 /**
@@ -218,9 +219,9 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
             switch (endPoint){
             case ALL_ACTIVE_VIDEO_TUTORIALS:
                 JSONArray jArr=new JSONArray();
-                Object[][] videoTutorialItems=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL.getTableName(), 
-                    new String[]{TblsApp.VideoTutorial.ACTIVE.getName()}, new Object[]{true},
-                    getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), 
+                Object[][] videoTutorialItems=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.VIDEO_TUTORIAL, 
+                    EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.VIDEO_TUTORIAL, "ALL"),
+                    new String[]{TblsApp.VideoTutorial.ACTIVE.getName()}, new Object[]{true},                     
                     new String[]{TblsApp.VideoTutorial.PARENT_ID.getName(), TblsApp.VideoTutorial.ORDER_NUMBER.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(videoTutorialItems[0][0].toString())){
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);

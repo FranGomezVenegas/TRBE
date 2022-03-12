@@ -27,38 +27,39 @@ public class TblsEnvMonitConfig {
     }
 */   
     
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesEnvMonitConfig implements EnumIntTables{        
-        PROGRAM(null, "program", SCHEMA_NAME, true, Program.values(), null, new String[]{Program.NAME.getName()}, null, "program table"),
-        PROGRAM_LOCATION(null, "program_location", SCHEMA_NAME, true, ProgramLocation.values(), null, 
+        PROGRAM(null, "program", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Program.values(), null, new String[]{Program.NAME.getName()}, null, "program table"),
+        PROGRAM_LOCATION(null, "program_location", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramLocation.values(), null, 
             new String[]{ProgramLocation.PROGRAM_NAME.getName(), ProgramLocation.LOCATION_NAME.getName(), ProgramLocation.AREA.getName()}, 
             new Object[]{new ForeignkeyFld(ProgramLocation.PROGRAM_NAME.getName(), 
                     SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName()
             )}, "program locations table"),
-        PROGRAM_DAY(null, "program_day", SCHEMA_NAME, true, ProgramDay.values(), null, 
+        PROGRAM_DAY(null, "program_day", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramDay.values(), null, 
             new String[]{ProgramDay.PROGRAM_CONFIG_ID.getName(), ProgramDay.PROGRAM_CONFIG_VERSION.getName()}, 
             new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramDay.PROGRAM_CONFIG_ID.getName(), 
                     SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()
             )}, "program_day table"),
-        PROGRAM_CALENDAR(null, "program_calendar", SCHEMA_NAME, true, ProgramCalendar.values(), ProgramCalendar.CALENDAR_ID.getName(), 
+        PROGRAM_CALENDAR(null, "program_calendar", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramCalendar.values(), ProgramCalendar.CALENDAR_ID.getName(), 
             new String[]{ProgramCalendar.CALENDAR_ID.getName()}, 
             new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendar.PROGRAM_ID.getName(), 
                     SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()
             )}, "program_calendar table"),
-        PROGRAM_CALENDAR_DATE(null, "program_calendar_date", SCHEMA_NAME, true, ProgramCalendarDate.values(), ProgramCalendarDate.CALENDAR_ID.getName(), 
+        PROGRAM_CALENDAR_DATE(null, "program_calendar_date", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramCalendarDate.values(), ProgramCalendarDate.CALENDAR_ID.getName(), 
             new String[]{ProgramCalendarDate.CALENDAR_ID.getName()}, 
             new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID.getName(), 
                     SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()
             )}, "ProgramCalendarDate table"),
-        PROGRAM_CALENDAR_RECURSIVE_ENTRY(null, "program_calendar_recursive_entry", SCHEMA_NAME, true, ProgramCalendarRecursiveEntries.values(), ProgramCalendarRecursiveEntries.ID.getName(), 
+        PROGRAM_CALENDAR_RECURSIVE_ENTRY(null, "program_calendar_recursive_entry", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramCalendarRecursiveEntries.values(), ProgramCalendarRecursiveEntries.ID.getName(), 
             new String[]{ProgramCalendarRecursiveEntries.ID.getName()}, 
             new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.PROGRAM_ID.getName(), 
                     SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()
             )}, "program_calendar_recursive_entry table"),
-        MICROORGANISM(null, "microorganism", SCHEMA_NAME, true, MicroOrganism.values(), null, new String[]{MicroOrganism.NAME.getName()}, null, "program table"),
-        MICROORGANISM_ADHOC(null, "microorganism_adhoc", SCHEMA_NAME, true, MicroOrganismAdhoc.values(), null, new String[]{MicroOrganismAdhoc.NAME.getName()}, null, "program table"),
-        INSTRUMENT_INCUBATOR(null, "instrument_incubator", SCHEMA_NAME, true, InstrIncubator.values(), null, new String[]{InstrIncubator.NAME.getName()}, null, "instrument_incubator table"),
-        INCUB_BATCH(null, "incub_batch", SCHEMA_NAME, true, IncubBatch.values(), null, new String[]{IncubBatch.INCUB_BATCH_CONFIG_ID.getName(), IncubBatch.INCUB_BATCH_VERSION.getName()}, null, "incub_batch table"),
+        MICROORGANISM(null, "microorganism", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, MicroOrganism.values(), null, new String[]{MicroOrganism.NAME.getName()}, null, "program table"),
+        MICROORGANISM_ADHOC(null, "microorganism_adhoc", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, MicroOrganismAdhoc.values(), null, new String[]{MicroOrganismAdhoc.NAME.getName()}, null, "program table"),
+        INSTRUMENT_INCUBATOR(null, "instrument_incubator", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, InstrIncubator.values(), null, new String[]{InstrIncubator.NAME.getName()}, null, "instrument_incubator table"),
+        INCUB_BATCH(null, "incub_batch", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, IncubBatch.values(), null, new String[]{IncubBatch.INCUB_BATCH_CONFIG_ID.getName(), IncubBatch.INCUB_BATCH_VERSION.getName()}, null, "incub_batch table"),
         ;
         private TablesEnvMonitConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){

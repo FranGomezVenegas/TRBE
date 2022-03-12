@@ -51,13 +51,14 @@ public class TblsDataAudit {
         public static OtherEnumClass getCell(int i) {return helper.getCell(i);}
     }
 
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG_AUDIT.getName();
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA_AUDIT.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesDataAudit implements EnumIntTables{
-        SAMPLE(null, "sample", SCHEMA_NAME, true, Sample.values(), Sample.AUDIT_ID.getName(),
+        SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Sample.values(), Sample.AUDIT_ID.getName(),
             new String[]{Sample.AUDIT_ID.getName()}, null, "Sample Audit Trial"),
-        CERTIF_USER_ANALYSIS_METHOD(null, "certif_user_analysis_method", SCHEMA_NAME, true, CertifUserAnalysisMethod.values(), CertifUserAnalysisMethod.AUDIT_ID.getName(),
+        CERTIF_USER_ANALYSIS_METHOD(null, "certif_user_analysis_method", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, CertifUserAnalysisMethod.values(), CertifUserAnalysisMethod.AUDIT_ID.getName(),
             new String[]{CertifUserAnalysisMethod.AUDIT_ID.getName()}, null, "certif_user_analysis_method Audit Trial"),
-        SESSION(null, "session", SCHEMA_NAME, true, Session.values(), Session.SESSION_ID.getName(),
+        SESSION(null, "session", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Session.values(), Session.SESSION_ID.getName(),
             new String[]{Session.SESSION_ID.getName()}, null, "Process Session Audit Trial"),
         ;
         private TablesDataAudit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 

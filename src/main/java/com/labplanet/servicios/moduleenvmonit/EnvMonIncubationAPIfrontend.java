@@ -6,7 +6,6 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import databases.Rdbms;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -24,12 +23,14 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 /**
  *
  * @author User
@@ -39,7 +40,7 @@ public class EnvMonIncubationAPIfrontend extends HttpServlet {
     public enum EnvMonIncubationAPIfrontendEndpoints implements EnumIntEndpoints{
         INCUBATOR_TEMP_READINGS("INCUBATOR_TEMP_READINGS", "", 
                 new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),}, null),
+                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),}, null),
         INCUBATORS_LIST("INCUBATORS_LIST", "", 
                 new LPAPIArguments[]{new LPAPIArguments("incubStage", LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, null),
         ;
@@ -59,10 +60,10 @@ public class EnvMonIncubationAPIfrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -113,9 +114,10 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                 String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};     
-                Object[][] incubatorsList=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
-                        new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}, new Object[]{true}, 
-                        fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
+                Object[][] incubatorsList=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                    EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, LPArray.convertArrayToString(fieldsToRetrieve, "\\|", "")),
+                    new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}, new Object[]{true}, 
+                    new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
                 JSONArray jArr = new JSONArray();
                 for (Object[] currInstrument: incubatorsList){
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrument);
@@ -134,7 +136,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                 break;
             case INCUBATOR_TEMP_READINGS:
                 String instrName=argValues[0].toString();
-                String numPoints=argValues[1].toString();
+                String numPoints=LPNulls.replaceNull(argValues[1]).toString();
                 Integer numPointsInt=null;
                 fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),

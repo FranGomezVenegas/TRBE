@@ -21,8 +21,10 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 /**
  *
@@ -59,7 +61,9 @@ public class DataIncubatorNoteBook {
      */
     public static Object[] temperatureReading(String instName, BigDecimal temperature, String personName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+        Object[][] instrInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+            EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}),
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
@@ -81,9 +85,12 @@ public class DataIncubatorNoteBook {
      */
     public static Object[] activation(String instName, String personName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+
+        Object[][] instrInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+            EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}),
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName}, 
-                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
@@ -100,9 +107,12 @@ public class DataIncubatorNoteBook {
      */
     public static Object[] deactivation(String instName, String personName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+
+        Object[][] instrInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+            EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}),
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName}, 
-                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
@@ -126,9 +136,12 @@ public class DataIncubatorNoteBook {
             fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.LOCKED_REASON.getName()});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbMaxFldExists[0].toString()))
             fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, new String[]{TblsEnvMonitConfig.InstrIncubator.MIN.getName(), TblsEnvMonitConfig.InstrIncubator.IS_MIN_STRICT.getName(), TblsEnvMonitConfig.InstrIncubator.MAX.getName(), TblsEnvMonitConfig.InstrIncubator.IS_MAX_STRICT.getName()});
-        Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+
+        Object[][] instrInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+            EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                fieldsToRetrieve),
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName}, 
-                fieldsToRetrieve);
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
@@ -195,14 +208,18 @@ public class DataIncubatorNoteBook {
         return getLastTemperatureReading(instName, points, startDate, endDate, fieldsToRetrieve);
     }
     public static Object[][] getLastTemperatureReading(String instName, Integer points, LocalDateTime startDate, LocalDateTime endDate, String[] fieldsToRetrieve){   
+        EnumIntTableFields[] fieldsToRetrieveObj=EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
         if (procInstanceName==null) return LPArray.array1dTo2d(new String[]{LPPlatform.LAB_FALSE},1);
-        Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
-                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName}, 
-                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
+        Object[][] instrInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+            fieldsToRetrieveObj,
+            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
+            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) return instrInfo;
         
-        if (!Boolean.valueOf(instrInfo[0][1].toString())){
+        Integer activeFldPosic=EnumIntTableFields.getFldPosicInArray(fieldsToRetrieveObj, TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName());
+        if (!Boolean.valueOf(instrInfo[0][activeFldPosic].toString())){
             Object[] errDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, " ", new Object[0]);
             return LPArray.array1dTo2d(errDiagn, errDiagn.length);
         }
@@ -218,9 +235,11 @@ public class DataIncubatorNoteBook {
                 whereFieldValue=LPArray.addValueToArray1D(whereFieldValue, startDate);
             }
         }
-        Object[][] instrNotebook=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
-                whereFieldName, whereFieldValue, 
-                fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ " desc"});
+        fieldsToRetrieveObj=EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, 
+            fieldsToRetrieve);        
+        Object[][] instrNotebook=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, 
+            fieldsToRetrieveObj, whereFieldName, whereFieldValue, 
+            new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ " desc"});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrNotebook[0][0].toString())){
             Object[] errDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataIncubatorNoteBookErrorTrapping.NO_READINGS_LOGGED_YET, new Object[0]);
             return LPArray.array1dTo2d(errDiagn, errDiagn.length);            
@@ -228,8 +247,9 @@ public class DataIncubatorNoteBook {
         
         Object[] pointsFromLatestActivation= new Object[0];        
         Integer pointsAdded=0;
+        Integer eventTypeFldPosic=EnumIntTableFields.getFldPosicInArray(fieldsToRetrieveObj, TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName());
         for (Object[] currReading: instrNotebook){
-            String currEventType = currReading[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName())].toString();
+            String currEventType = currReading[eventTypeFldPosic].toString();
             if ( (EventType.ACTIVATE.toString().equalsIgnoreCase(currEventType)) || (EventType.DEACTIVATE.toString().equalsIgnoreCase(currEventType)) 
                     || (EventType.TEMPERATURE_READING.toString().equalsIgnoreCase(currEventType) && (endDate==null) && (points!=null) && (points<=pointsAdded) )) break;
             if (EventType.TEMPERATURE_READING.toString().equalsIgnoreCase(currEventType)){                
@@ -253,9 +273,11 @@ public class DataIncubatorNoteBook {
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), TblsEnvMonitConfig.InstrIncubator.LOCKED.getName())[0].toString())) 
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lockedFieldNotPresentInIncubatorForProcedure", new Object[]{procInstanceName});
             incubFldNames=new String[]{TblsEnvMonitConfig.InstrIncubator.LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.LOCKED_REASON.getName()};        
-            Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+
+            Object[][] instrInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,incubFldNames),
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName}, 
-                incubFldNames);
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) return instrInfo[0];
             incubFldValues=instrInfo[0];        
         }
