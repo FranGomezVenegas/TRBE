@@ -716,7 +716,7 @@ public class TblsData {
     public enum SavedQueries implements EnumIntTableFields{
         ID("id", LPDatabase.integer(), null, null, null, null),
         NAME("name", LPDatabase.string(), null, null, null, null),
-        OWNER("owner", LPDatabase.string(), null, null, null, null),
+        OWNER("owner", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         PRIVATE("private", LPDatabase.booleanFld(), null, null, null, null),
         READABLE_BY("readable_by", LPDatabase.string(), null, null, null, null),
         DEFINITION("definition", LPDatabase.string(), null, null, null, null),
@@ -867,7 +867,7 @@ public class TblsData {
     }        
 
     public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
-        RESULT_ID("result_id", "sar.result_id", SampleAnalysisResult.RESULT_ID, null, null, null),
+        RESULT_ID(SampleAnalysisResult.RESULT_ID.getName(), "sar.result_id", SampleAnalysisResult.RESULT_ID, null, null, null),
         TEST_ID(SampleAnalysis.TEST_ID.getName(), "sar.test_id", SampleAnalysisResult.TEST_ID, null, null, null),
         SAMPLE_ID(Sample.SAMPLE_ID.getName(), "sar.sample_id", SampleAnalysisResult.SAMPLE_ID, null, null, null),
         STATUS(FIELDS_NAMES_STATUS, "sar.status", SampleAnalysisResult.STATUS, null, null, null),
@@ -908,13 +908,13 @@ public class TblsData {
         PROGRAM_DAY_ID("program_day_id", "s.program_day_id", TblsEnvMonitData.Sample.PROG_DAY_ID, null, null, null),
         PROGRAM_DAY_DATE("program_day_date", "s.program_day_date", TblsEnvMonitData.Sample.PROG_DAY_DATE, null, null, null),
         SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status", SampleAnalysis.STATUS, null, null, null),
-        SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.Sample.READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.READY_FOR_REVISION.getName(), SampleAnalysis.READY_FOR_REVISION, null, null, null),
+        SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.SampleAnalysis.READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.READY_FOR_REVISION.getName(), SampleAnalysis.READY_FOR_REVISION, null, null, null),
         TESTING_GROUP("testing_group", "sa.testing_group", SampleAnalysis.TESTING_GROUP, null, null, null),
         LOGGED_ON("logged_on", "s.logged_on", Sample.LOGGED_ON, null, null, null),
-        LIMIT_ID("limit_id", "spcLim.limit_id", SpecLimits.LIMIT_ID, null, null, null),
         SAMPLER("sampler", "s.sampler", Sample.SAMPLER, null, null, null),
         SAMPLER_AREA("sampler_area", "s.sampler_area", TblsEnvMonitData.Sample.SAMPLER_AREA, null, null, null),
         READY_FOR_REVISION(TblsData.Sample.READY_FOR_REVISION.getName(), "s."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.Sample.READY_FOR_REVISION, null, null, null),
+        LIMIT_ID("limit_id", "spcLim.limit_id", SpecLimits.LIMIT_ID, null, null, null),
         SPEC_CODE("spec_code", "spcLim.code", SpecLimits.CODE, null, null, null),
         SPEC_CONFIG_VERSION("spec_config_version", "spcLim.config_version", SpecLimits.CONFIG_VERSION, null, null, null),
         SPEC_VARIATION_NAME("spec_variation_name", "spcLim.variation_name", SpecLimits.VARIATION_NAME, null, null, null),
@@ -940,15 +940,22 @@ public class TblsData {
         INVEST_ID("invest_id", "io.invest_id", InvestObjects.INVEST_ID, null, null, null),
         INVEST_OBJECT_ID("invest_object_id", "io.id", InvestObjects.OBJECT_ID, null, null, null),
         SAMPLE_REVIEWER("sample_reviewer", "s.reviewer", Sample.REVIEWER, null, null, null),
-        TEST_REVIEWER("test_reviewer", "sa.reviewer", SampleAnalysis.REVIEWER, null, null, null),
+        TEST_REVIEWER("test_reviewer", "sa.reviewer", SampleAnalysis.REVIEWER, null, null, null),        
         ;
         private ViewSampleAnalysisResultWithSpecLimits(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+//            try{
+//            this.fldName="";
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
+/*            }catch(Exception e){
+                String s= e.getMessage();
+                //String s2=name;
+                this.fldName="";
+            }*/
         }
         private final String fldName;
         private final String fldAliasInView;

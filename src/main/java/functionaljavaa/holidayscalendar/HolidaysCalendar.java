@@ -54,9 +54,9 @@ public static InternalMessage addDateToCalendar(String code, Date newDate, Strin
             fldNames=new String[]{};
             fldValues=new Object[]{};
         }
-        Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(), 
-            new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.DATE.getName()},
-            new Object[]{code, newDate});
+        Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(), 
+            new String[]{TblsApp.HolidaysCalendar.CODE.getName()},
+            new Object[]{code});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){
             messages.addMainForError(CalendarErrorTrapping.CALENDAR_NOT_EXISTS, new Object[]{code});
             return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_NOT_EXISTS, new Object[]{code}, code);    

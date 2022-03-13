@@ -402,11 +402,11 @@ public class TblsCnfg {
     }        
 
     public enum SpecLimits implements EnumIntTableFields{
-        LIMIT_ID("limit_id", LPDatabase.integerNotNull(), null, null, null, null),
+        LIMIT_ID("limit_id", LPDatabase.integer(), null, null, null, null),
         CODE("code", LPDatabase.stringNotNull(), null, null, null, null),
         CONFIG_VERSION("config_version", LPDatabase.integerNotNull(), null, null, null, null),
         VARIATION_NAME("variation_name", LPDatabase.string(), null, null, null, null),
-        ANALYSIS(TablesConfig.ANALYSIS.getTableName(), LPDatabase.stringNotNull(), null, null, null, null),
+        ANALYSIS("analysis", LPDatabase.stringNotNull(), null, null, null, null),
         METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string(), null, null, null, null),
         METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
         PARAMETER("parameter", LPDatabase.string(), null, null, null, null),

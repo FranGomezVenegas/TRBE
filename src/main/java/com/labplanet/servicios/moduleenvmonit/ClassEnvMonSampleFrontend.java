@@ -226,10 +226,10 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
         this.functionFound=true;
             switch (endPoint){
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
+                    String[] vwFlds=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());
                     Integer sampleId = (Integer) argValues[0];                        
-                    String[] resultFieldToRetrieveArr=getFieldsListToRetrieve(argValues[1].toString(), EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values()));
-
-                    resultFieldToRetrieveArr = LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
+                    String[] resultFieldToRetrieveArr=getFieldsListToRetrieve(argValues[1].toString(), vwFlds);
+                    resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
                     
                     String[] sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
                     Object[] sampleAnalysisWhereFieldsValueArr = new Object[]{sampleId};
@@ -246,7 +246,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     if ( (sortFieldsName!=null) && (sortFieldsName.length()>0) ) 
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     else
-                        sortFieldsNameArr = SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|");     
+                        sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
                     
                     Integer posicRawValueFld=LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
                     if (posicRawValueFld==-1){
@@ -258,8 +258,8 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
                         posicLimitIdFld=resultFieldToRetrieveArr.length;
                     }
-                    Object[][] analysisResultList=QueryUtilitiesEnums.getViewData(procReqInstance, GlobalVariables.Schemas.DATA.getName(), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), 
-                        argValues[1].toString(), TblsData.ViewSampleAnalysisResultWithSpecLimits.values(), 
+                    Object[][] analysisResultList=QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, 
+                        EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, resultFieldToRetrieveArr),                        
                         sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
                         sortFieldsNameArr);     
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  

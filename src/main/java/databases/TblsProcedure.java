@@ -22,24 +22,25 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsProcedure {
 
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.PROCEDURE.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesProcedure implements EnumIntTables{
-        INVESTIGATION(null, "investigation", SCHEMA_NAME, true, Investigation.values(), TblsProcedure.Investigation.ID.getName(),
+        INVESTIGATION(null, "investigation", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Investigation.values(), TblsProcedure.Investigation.ID.getName(),
             new String[]{TblsProcedure.Investigation.ID.getName()}, null, "Investigation objects"),
-        INVEST_OBJECTS(null, "invest_objects", SCHEMA_NAME, true, InvestObjects.values(), TblsProcedure.InvestObjects.ID.getName(),
+        INVEST_OBJECTS(null, "invest_objects", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, InvestObjects.values(), TblsProcedure.InvestObjects.ID.getName(),
             new String[]{TblsProcedure.InvestObjects.ID.getName()}, null, "Objects added to one given investigation"),
-        PERSON_PROFILE(null, "person_profile", SCHEMA_NAME, true, PersonProfile.values(), null,
+        PERSON_PROFILE(null, "person_profile", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, PersonProfile.values(), null,
             new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName()}, null, "Objects added to one given investigation"),
-        PROCEDURE_INFO(null, "procedure_info", SCHEMA_NAME, true, ProcedureInfo.values(), null,
+        PROCEDURE_INFO(null, "procedure_info", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureInfo.values(), null,
             new String[]{TblsProcedure.ProcedureInfo.NAME.getName()}, null, "Procedure Info"),
-        PROCEDURE_BUSINESS_RULE(null, "procedure_business_rules", SCHEMA_NAME, true, ProcedureBusinessRules.values(), null,
+        PROCEDURE_BUSINESS_RULE(null, "procedure_business_rules", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureBusinessRules.values(), null,
             new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), ProcedureBusinessRules.RULE_NAME.getName()}, null, "Procedure Business Rules Info"),
-        PROCEDURE_EVENTS(null, "procedure_events", SCHEMA_NAME, true, ProcedureEvents.values(), null,
+        PROCEDURE_EVENTS(null, "procedure_events", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureEvents.values(), null,
             new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), ProcedureEvents.ROLE_NAME.getName()}, null, "Procedure Events Info"),
-        PROGRAM_CORRECTIVE_ACTION(null, "program_corrective_action", SCHEMA_NAME, true, TblsProcedure.ProgramCorrectiveAction.values(), TblsProcedure.ProgramCorrectiveAction.ID.getName(),
+        PROGRAM_CORRECTIVE_ACTION(null, "program_corrective_action", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsProcedure.ProgramCorrectiveAction.values(), TblsProcedure.ProgramCorrectiveAction.ID.getName(),
             new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, null, "Program Corrective Action for results OOS and/or OOC Info"),
-        SAMPLE_STAGE_TIMING_CAPTURE(null, "sample_stage_timing_capture", SCHEMA_NAME, true, SampleStageTimingCapture.values(), TblsProcedure.SampleStageTimingCapture.ID.getName(),
+        SAMPLE_STAGE_TIMING_CAPTURE(null, "sample_stage_timing_capture", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleStageTimingCapture.values(), TblsProcedure.SampleStageTimingCapture.ID.getName(),
             new String[]{TblsProcedure.SampleStageTimingCapture.ID.getName()}, null, "Sample Stage Timing Capture Info"),
-        SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION(null, "sample_stage_timing_interval_deviation", SCHEMA_NAME, true, SampleStageTimingIntervalDeviation.values(), TblsProcedure.SampleStageTimingIntervalDeviation.ID.getName(),
+        SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION(null, "sample_stage_timing_interval_deviation", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleStageTimingIntervalDeviation.values(), TblsProcedure.SampleStageTimingIntervalDeviation.ID.getName(),
             new String[]{TblsProcedure.SampleStageTimingIntervalDeviation.ID.getName()}, null, "SampleStageTimingIntervalDeviation Info"),
         ;
         private TablesProcedure(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
