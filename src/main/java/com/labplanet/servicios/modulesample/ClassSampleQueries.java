@@ -59,7 +59,7 @@ public class ClassSampleQueries {
                     String resultFieldToRetrieve = argValues[1].toString();
                     String[] resultFieldToRetrieveArr=null;
                     if (resultFieldToRetrieve!=null && resultFieldToRetrieve.length()>0){resultFieldToRetrieveArr=  resultFieldToRetrieve.split("\\|");}
-                    resultFieldToRetrieveArr = LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
+                    resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
                     
                     String sampleAnalysisWhereFieldsName = argValues[2].toString();
                     String[] sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
@@ -76,7 +76,7 @@ public class ClassSampleQueries {
                     if ( (sortFieldsName!=null) && (sortFieldsName.length()>0) ) 
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     else
-                        sortFieldsNameArr = SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|");     
+                        sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
                     
                     resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
                     Integer posicRawValueFld=resultFieldToRetrieveArr.length;
