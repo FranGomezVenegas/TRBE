@@ -580,10 +580,11 @@ GlobalAPIsParams.
                     if (numDays.length()==0) numDays=String.valueOf(7);
                     int numDaysInt=0-Integer.valueOf(numDays);
                     String[] fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields());
-                    Object[][] prodLotsDeactivatedLastDays=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
-                            new String[]{TblsEnvMonitData.ProductionLot.ACTIVE.getName(), TblsEnvMonitData.ProductionLot.CLOSED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
-                            new Object[]{false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                            fieldsToRetrieve, new String[]{TblsEnvMonitData.ProductionLot.CLOSED_ON.getName()+" desc"});
+                    Object[][] prodLotsDeactivatedLastDays=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, 
+                        EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, "ALL"),
+                        new String[]{TblsEnvMonitData.ProductionLot.ACTIVE.getName(), TblsEnvMonitData.ProductionLot.CLOSED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
+                        new Object[]{false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                        new String[]{TblsEnvMonitData.ProductionLot.CLOSED_ON.getName()+" desc"});
                     jArr = new JSONArray();
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString())){
                         for (Object[] currIncident: prodLotsDeactivatedLastDays){
