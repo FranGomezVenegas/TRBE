@@ -249,7 +249,7 @@ public class SampleAudit {
             fieldValues = LPArray.addValueToArray1D(fieldValues, subaliquotId);
         }    
         if (aliquotId!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, "aliquot_id");
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.ALIQUOT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, aliquotId);
         }    
         if (sampleId!=null){
