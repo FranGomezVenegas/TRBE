@@ -29,16 +29,19 @@ public interface EnumIntTableFields {
     
     public static EnumIntTableFields[] getTableFieldsFromString(EnumIntTables tblObj, Object flds){
         if (flds==null || flds.toString().length()==0) return tblObj.getTableFields();
-        if ("ALL".equalsIgnoreCase(flds.toString())) return tblObj.getTableFields();
-        return getTableFieldsFromStringArr(tblObj, flds.toString().split("\\|"));
+        if ("ALL".equalsIgnoreCase(flds.toString())) return tblObj.getTableFields();        
+        return getTableFieldsFromString(tblObj, flds.toString().split("\\|"));
     }
-    public static EnumIntTableFields[] getTableFieldsFromStringArr(EnumIntTables tblObj, String[] flds){
+    public static EnumIntTableFields[] getTableFieldsFromString(EnumIntTables tblObj, String[] flds){
         if (flds==null || flds.length==0) return tblObj.getTableFields();
-/*        EnumIntTableFields[] custFlds=null;
-        for (String curFld: flds.toString.split("\\|")){
-            if ()
-        }*/
-        return tblObj.getTableFields();
+        EnumIntTableFields[] custFlds=new EnumIntTableFields[flds.length];
+        EnumIntTableFields[] tableFields = tblObj.getTableFields();
+        for (EnumIntTableFields curFld: tableFields){
+            Integer valuePosicInArray = LPArray.valuePosicInArray(flds, curFld.getName());
+            if (valuePosicInArray>-1)
+                custFlds[valuePosicInArray]=curFld;
+        }
+        return custFlds;
     }
     public static Integer getFldPosicInArray(EnumIntTableFields[] tblFlds, String fldName){
         for (int i=0;i<tblFlds.length;i++){

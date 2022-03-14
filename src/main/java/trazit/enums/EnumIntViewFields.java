@@ -30,15 +30,18 @@ public interface EnumIntViewFields {
     public static EnumIntViewFields[] getViewFieldsFromString(EnumIntViews tblObj, Object flds){
         if (flds==null || flds.toString().length()==0) return tblObj.getViewFields();
         if ("ALL".equalsIgnoreCase(flds.toString())) return tblObj.getViewFields();
-        return getViewFieldsFromStringArr(tblObj, flds.toString().split("\\|"));
+        return getViewFieldsFromString(tblObj, flds.toString().split("\\|"));
     }
-    public static EnumIntViewFields[] getViewFieldsFromStringArr(EnumIntViews tblObj, String[] flds){
+    public static EnumIntViewFields[] getViewFieldsFromString(EnumIntViews tblObj, String[] flds){
         if (flds==null || flds.length==0) return tblObj.getViewFields();
-/*        EnumIntTableFields[] custFlds=null;
-        for (String curFld: flds.toString.split("\\|")){
-            if ()
-        }*/
-        return tblObj.getViewFields();
+        EnumIntViewFields[] custFlds=new EnumIntViewFields[flds.length];
+        EnumIntViewFields[] ViewFields = tblObj.getViewFields();
+        for (EnumIntViewFields curFld: ViewFields){
+            Integer valuePosicInArray = LPArray.valuePosicInArray(flds, curFld.getName());
+            if (valuePosicInArray>-1)
+                custFlds[valuePosicInArray]=curFld;
+        }
+        return custFlds;
     }
     //No funciona para vistas, falta revisarlo.
     public static Integer xgetFldPosicInArray(EnumIntViews[] tblFlds, String fldName){
