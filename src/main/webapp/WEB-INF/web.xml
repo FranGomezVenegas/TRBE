@@ -326,6 +326,14 @@
         <servlet-name>TestingCoverageRun</servlet-name>
         <servlet-class>com.labplanet.servicios.app.TestingCoverageRun</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>PlatformAdminQueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminQueries</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PlatformAdminActions</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminActions</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DownloadFileServlet</servlet-name>
         <url-pattern>/DownloadFileServlet</url-pattern>
@@ -656,6 +664,14 @@
     <servlet-mapping>
         <servlet-name>TestingCoverageRun</servlet-name>
         <url-pattern>/testing/platform/TestingCoverageRun</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PlatformAdminQueries</servlet-name>
+        <url-pattern>/app/PlatformAdminQueries</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PlatformAdminActions</servlet-name>
+        <url-pattern>/app/PlatformAdminActions</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
