@@ -18,8 +18,10 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
@@ -48,9 +50,9 @@ public class AppIncident {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -58,10 +60,11 @@ public class AppIncident {
     }
     
     public AppIncident(Integer incidentId){
-        this.fieldNames=getAllFieldNames(TblsApp.TablesApp.INCIDENT.getTableFields());
-        Object[][] dbInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
-                new String[]{TblsApp.Incident.ID.getName()}, new Object[]{incidentId}, 
-                this.fieldNames, new String[]{TblsApp.Incident.ID.getName()});
+        this.fieldNames=getAllFieldNames(TblsApp.TablesApp.INCIDENT.getTableFields());        
+        Object[][] dbInfo=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.INCIDENT,
+            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, this.fieldNames),
+            new String[]{TblsApp.Incident.ID.getName()}, new Object[]{incidentId}, 
+            new String[]{TblsApp.Incident.ID.getName()});
         this.fieldValues=dbInfo[0];
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dbInfo[0][0].toString())) this.fieldValuesCorrect=true;
     }

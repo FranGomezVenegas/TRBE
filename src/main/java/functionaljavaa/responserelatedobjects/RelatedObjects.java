@@ -17,7 +17,7 @@ import org.json.simple.JSONObject;
 public class RelatedObjects {
     
     public enum RelatedObjectsElementNames{
-        SCHEMA("schema_name"), TABLE("table_name"), OBJECT_TYPE("object_type"), OBJECT("object_name");
+        SCHEMA("schema_name"), OBJECT_TYPE("object_type"), OBJECT("object_name");
         private RelatedObjectsElementNames(String labelName){
             this.labelName=labelName;            
         }    
@@ -49,13 +49,12 @@ public class RelatedObjects {
         return jArrMainObject;
     }   
 
-    public void addSimpleNode(String schema, String table, String objectType, Object object){
-        addSimpleNode(schema, table, objectType, object, null, null);
+    public void addSimpleNode(String schema, String objectType, Object object){
+        addSimpleNode(schema, objectType, object, null, null);
     }
-    public void addSimpleNode(String schema, String table, String objectType, Object object, String[] fldName, Object[] fldValue){
+    public void addSimpleNode(String schema, String objectType, Object object, String[] fldName, Object[] fldValue){
         JSONObject jObj=new JSONObject();
         jObj.put(RelatedObjectsElementNames.SCHEMA.getLabelName(), schema);
-        jObj.put(RelatedObjectsElementNames.TABLE.getLabelName(),  table);
         jObj.put(RelatedObjectsElementNames.OBJECT_TYPE.getLabelName(),  objectType);
         jObj.put(RelatedObjectsElementNames.OBJECT.getLabelName(),  object);   
         if ( (fldName!=null && fldValue!=null) && (LPPlatform.LAB_TRUE.equalsIgnoreCase(LPArray.checkTwoArraysSameLength(fldValue, fldValue)[0])) )

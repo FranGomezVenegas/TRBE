@@ -25,7 +25,9 @@ import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
@@ -266,9 +268,10 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.DISABLED, new Object[]{});                        
         }
         String auditAuthorCanBeReviewerMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getAreaName(), InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName());  
-        Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(appProcInstance, TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), 
+        Object[][] auditInfo=QueryUtilitiesEnums.getTableData(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, 
+            EnumIntTableFields.getTableFieldsFromString(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, new String[]{TblsAppProcDataAudit.Instruments.PERSON.getName(), TblsAppProcDataAudit.Instruments.REVIEWED.getName()}),
             new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId}, 
-            new String[]{TblsAppProcDataAudit.Instruments.PERSON.getName(), TblsAppProcDataAudit.Instruments.REVIEWED.getName()}, new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()});
+            new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()});
         if (!isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode)){//(!"TRUE".equalsIgnoreCase(auditAuthorCanBeReviewerMode)){            
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(auditInfo[0][0].toString())){ 
                 messages.addMainForError(InstrumentsErrorTrapping.DISABLED, new Object[]{});

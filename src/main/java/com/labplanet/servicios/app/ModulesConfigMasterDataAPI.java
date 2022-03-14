@@ -166,7 +166,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                     }else{
                         messageDynamicData=new Object[]{specFieldName};                
-                        rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length-2]);
+                        rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length-2]);
                     }
                 }
                 break;
@@ -186,7 +186,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case ANALYSIS_NEW:
@@ -207,7 +207,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case ANALYSIS_UPDATE:
@@ -225,7 +225,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             case SPEC_LIMIT_NEW:
@@ -282,7 +282,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     messageDynamicData=new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                 }else{
                     messageDynamicData=new Object[]{specFieldName};                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length-2]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length-2]);
                 }
                 break;
             default:                

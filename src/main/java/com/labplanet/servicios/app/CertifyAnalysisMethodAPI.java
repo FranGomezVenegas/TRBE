@@ -171,7 +171,7 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                     messageDynamicData=new Object[]{methodName, userName, procReqInstance.getProcedureInstance()};                
                 }
                 if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getName()))
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), diagnostic[diagnostic.length-1]);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), diagnostic[diagnostic.length-1]);
                     
                 break;
             case CERTIFUSER_READ_AND_UNDERSTOOD:                 

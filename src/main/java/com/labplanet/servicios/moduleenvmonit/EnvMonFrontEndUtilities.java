@@ -5,14 +5,13 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import databases.Rdbms;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
-import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 /**
  *
  * @author Administrator
@@ -39,10 +38,10 @@ class EnvMonFrontEndUtilities {
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
-    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableName(), 
-            new String[]{TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName()}, 
-            new Object[]{programConfigId, programVersion}, 
-            fieldsName, sortFields);
+    return QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM, 
+        EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM, fieldsName),
+        new String[]{TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName()}, 
+        new Object[]{programConfigId, programVersion}, sortFields);
   }
 
     /**
@@ -61,10 +60,11 @@ class EnvMonFrontEndUtilities {
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
-    return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE.getTableName(), 
-            new String[]{TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID.getName()}, 
-            new Object[]{programConfigId,}, 
-            fieldsName, sortFields);
+    return QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, 
+        EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, fieldsName),
+        new String[]{TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID.getName()}, 
+        new Object[]{programConfigId,}, 
+        sortFields);
   }
 
     /**
@@ -83,10 +83,10 @@ class EnvMonFrontEndUtilities {
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
-    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.TablesEnvMonitData.PROGRAM.getTableName(), 
-            new String[]{TblsEnvMonitData.Program.NAME.getName()}, 
-            new Object[]{programName}, 
-            fieldsName, sortFields);
+    Object[][] records=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.PROGRAM, 
+        EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.PROGRAM, fieldsName),
+        new String[]{TblsEnvMonitData.Program.NAME.getName()}, 
+        new Object[]{programName}, sortFields);
     return LPJson.convertArrayRowToJSONObject(fieldsName, records[0]);
   }
 
@@ -101,10 +101,11 @@ class EnvMonFrontEndUtilities {
     public static JSONArray dataProgramLocationInfo(String procInstanceName, String programName, String[] fieldsName, String[] sortFields){
     if (fieldsName==null || fieldsName.length==0)
         fieldsName=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableFields());
-    Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableName(), 
-            new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName()}, 
-            new Object[]{programName,}, 
-            fieldsName, sortFields);
+    Object[][] records=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION, 
+        EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION, fieldsName),
+        new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName()}, 
+        new Object[]{programName,}, 
+        sortFields);
     JSONArray jArr = new JSONArray();
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString())){
         for (Object[] curRec: records)

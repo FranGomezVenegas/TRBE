@@ -133,7 +133,7 @@ public class ClassInvestigation {
             
         }else{
             rObj=RelatedObjects.getInstanceForActions();
-            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), investigationId);                
+            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), investigationId);                
 //            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint, new Object[]{incId}, rObj.getRelatedObject());
             rObj.killInstance();
 //            LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);

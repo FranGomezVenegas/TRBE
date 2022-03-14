@@ -25,8 +25,10 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 /**
  *
@@ -256,9 +258,10 @@ public class DataProgramSample{
             whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_NAME.getName());
             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);
         }
-        Object[][] programCalendarDatePending=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.ViewsEnvMonData.PROG_SCHED_LOCATIONS_VIEW.getViewName(), 
-                whereFieldNames, whereFieldValues, 
-                fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.DATE.getName()});
+        Object[][] programCalendarDatePending=QueryUtilitiesEnums.getViewData(TblsEnvMonitData.ViewsEnvMonData.PROG_SCHED_LOCATIONS_VIEW, 
+            EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitData.ViewsEnvMonData.PROG_SCHED_LOCATIONS_VIEW, fieldsToRetrieve),
+            whereFieldNames, whereFieldValues, 
+            new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
         StringBuilder newSamplesLogged=new StringBuilder();

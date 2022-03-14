@@ -352,7 +352,7 @@ public class DataInstruments {
         String instrName=instrEventInfo[0][0].toString();
         Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);                
+        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);                
         
         InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())){
@@ -453,7 +453,7 @@ public class DataInstruments {
         String instrName=instrEventInfo[0][0].toString();
         Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);
+        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);
         
         InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) return eventHasNotEnteredVariables;
@@ -551,7 +551,7 @@ public class DataInstruments {
         String instrName=instrEventInfo[0][0].toString();
         Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);                
+        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);                
         
         InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) return eventHasNotEnteredVariables;
@@ -593,7 +593,7 @@ public class DataInstruments {
         String eventCompletedOn=LPNulls.replaceNull(instrEventInfo[0][0]).toString();
         String eventDecision=LPNulls.replaceNull(instrEventInfo[0][1]).toString();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), instrEventId);                
+        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), instrEventId);                
         
         if (eventCompletedOn.length()==0 || eventDecision.length()==0){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId});

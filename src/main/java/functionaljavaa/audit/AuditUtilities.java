@@ -32,7 +32,7 @@ public final class AuditUtilities {
         }
         return new String[]{};
     }
-    public static Object[] getProcAuditTablesList(String procInstanceName){
+    public static Object[] xgetProcAuditTablesList(String procInstanceName){
         if (procInstanceName.length()>0)
             return dbSchemaTablesList(procInstanceName);
         return new Object[]{};

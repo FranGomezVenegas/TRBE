@@ -783,7 +783,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      * @param whereFieldNames
      * @param whereFieldValues
      * @param fieldsToRetrieve
-     * @param orderByc
+     * @param orderBy
      * @return
      */
     public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy){

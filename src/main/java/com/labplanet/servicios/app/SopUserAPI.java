@@ -130,7 +130,7 @@ public class SopUserAPI extends HttpServlet {
                 }else{
                     messageDynamicData=new Object[]{sopName};                
                 }
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.USER_SOP.getTableName(), TblsData.TablesData.USER_SOP.getTableName(), sopName);
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.USER_SOP.getTableName(), sopName);
                 break;
             case CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER:
             case CERTIFUSER_TRAINING_REQUIRED:

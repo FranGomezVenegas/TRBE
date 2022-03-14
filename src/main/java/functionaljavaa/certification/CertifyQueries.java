@@ -5,7 +5,6 @@
  */
 package functionaljavaa.certification;
 
-import databases.Rdbms;
 import databases.TblsData;
 import databases.TblsDataAudit;
 import functionaljavaa.certification.AnalysisMethodCertif.CertificationAnalysisMethodBusinessRules;
@@ -16,8 +15,11 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -28,30 +30,30 @@ public class CertifyQueries {
     
     public enum CertifObjects{
         ANALYSIS_METHOD(CertificationAnalysisMethodBusinessRules.CERTIFICATION_ANALYSIS_METHOD_MODE.getTagName(), 
-                TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(),
+                TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD,
                 new String[]{TblsData.CertifUserAnalysisMethod.ID.getName(), TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), 
                     TblsData.CertifUserAnalysisMethod.USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), 
                     TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()},
                 getAllFieldNames(TblsDataAudit.TablesDataAudit.CERTIF_USER_ANALYSIS_METHOD.getTableFields())),
         USER_SOP(ProcBusinessRulesQueries.PROCEDURE_USER_SOP_CERTIFICATION_LEVEL.getPropertiesSectionName(), 
-                TblsData.TablesData.USER_SOP.getTableName(),
+                TblsData.TablesData.USER_SOP,
                 new String[]{TblsData.UserSop.SOP_ID.getName(), TblsData.UserSop.SOP_NAME.getName(), 
                     TblsData.CertifUserAnalysisMethod.USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), 
                     TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()},
                 getAllFieldNames(TblsDataAudit.TablesDataAudit.CERTIF_USER_ANALYSIS_METHOD.getTableFields()))
         ;
-        private CertifObjects(String propName, String tblName, String[] fieldsToGet, String[] auditFieldsToGet){
+        private CertifObjects(String propName, EnumIntTables tblObj, String[] fieldsToGet, String[] auditFieldsToGet){
             this.propertyName=propName;
-            this.tableName=tblName;
+            this.table=tblObj;
             this.fieldsToGet=fieldsToGet;
             this.auditFieldsToGet=auditFieldsToGet;
         }     
         private final String propertyName;
-        private final String tableName; 
+        private final EnumIntTables table; 
         private final String[] fieldsToGet; 
         private final String[] auditFieldsToGet; 
         public String getPropertyName(){return this.propertyName;}
-        public String getTableName(){return this.tableName;}
+        public EnumIntTables getTable(){return this.table;}
         public String[] getFieldsToGet(){return this.fieldsToGet;}
         public String[] getAuditFieldsToGet(){return this.auditFieldsToGet;}
     };
@@ -65,7 +67,7 @@ public class CertifyQueries {
             tagValueOneOfEnableOnes = Parameter.isTagValueOneOfEnableOnes(tagValue);
             if (!includeOnlyEnabled || tagValueOneOfEnableOnes){
                 JSONObject jObj=new JSONObject();
-                jObj.put("table", curCertifObj.getTableName());
+                jObj.put("table", curCertifObj.getTable().getTableName());
                 jObj.put("business_rule_to_enable_id", curCertifObj.getPropertyName());
                 jObj.put("business_rule_value", tagValue);
                 jGlobalArr.add(jObj);
@@ -94,18 +96,18 @@ public class CertifyQueries {
                 String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, 
                         GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), curCertifObj.getPropertyName());
                 if (Parameter.isTagValueOneOfEnableOnes(tagValue)){
-                    Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), curCertifObj.getTableName(), 
-                        fldsName, fldsValue, fieldsToGet,
-                        new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
+                    Object[][] certifRowExpDateInfo=QueryUtilitiesEnums.getTableData(curCertifObj.getTable(),
+                        EnumIntTableFields.getTableFieldsFromString(curCertifObj.getTable(), fieldsToGet),
+                        fldsName, fldsValue, new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())){
                         JSONArray jCertifObjArr=new JSONArray();
                         for (Object[] curRow: certifRowExpDateInfo){
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(curCertifObj.getFieldsToGet(), curRow);
                             if (includeAuditHistory!=null && includeAuditHistory){
-                                Object[][] certifRowAuditInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), curCertifObj.getTableName(), 
+                                Object[][] certifRowAuditInfo = QueryUtilitiesEnums.getTableData(curCertifObj.getTable(), 
+                                    EnumIntTableFields.getTableFieldsFromString(curCertifObj.getTable(), curCertifObj.getAuditFieldsToGet()),
                                     new String[]{TblsDataAudit.CertifUserAnalysisMethod.CERTIF_ID.getName()},
                                     new Object[]{curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName())]},
-                                    curCertifObj.getAuditFieldsToGet(), 
                                     new String[]{TblsDataAudit.CertifUserAnalysisMethod.AUDIT_ID.getName()});
                                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowAuditInfo[0][0].toString())){
                                     JSONArray jCertifAuditObjArr=new JSONArray();

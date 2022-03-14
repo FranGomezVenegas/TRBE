@@ -1,10 +1,10 @@
 package functionaljavaa.certification;
 
-import databases.Rdbms;
 import databases.TblsData;
 import static functionaljavaa.certification.AnalysisMethodCertif.isUserCertificationEnabled;
 import lbplanet.utilities.LPPlatform;
-import trazit.globalvariables.GlobalVariables;
+import trazit.enums.EnumIntTableFields;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -30,8 +30,9 @@ public class AnalysisMethodCertifQueries {
         }
         String[] whereFldName=new String[]{TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), TblsData.CertifUserAnalysisMethod.LIGHT.getName()};
         Object[] whereFldValue=new Object[]{methodName, "GREEN"};
-        return new Object[]{fieldsToRetrieve, Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
-                whereFldName, whereFldValue, fieldsToRetrieve, fieldsToSort)};
+        return new Object[]{fieldsToRetrieve, QueryUtilitiesEnums.getTableData(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, 
+            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, fieldsToRetrieve),
+            whereFldName, whereFldValue, fieldsToSort)};
         //return new Object[][]{{LPPlatform.LAB_FALSE.toString()}, {LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "notImplementedYet", null)}};
     }
     

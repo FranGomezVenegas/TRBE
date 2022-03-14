@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
-import static com.labplanet.servicios.app.AppBusinessRules.AllAppBusinessRules;
+import static functionaljavaa.platformadmin.AppBusinessRules.AllAppBusinessRules;
 import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPI;
 import static com.labplanet.servicios.app.AppProcedureListAPI.procedureListInfo;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
@@ -270,7 +270,7 @@ public class AuthenticationAPI extends HttpServlet {
                             token.geteSign(), token.getDbName());
                     Rdbms.closeRdbms();  
                     RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
                     jsonObj = new JSONObject();
                     jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
@@ -305,7 +305,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                             token.geteSign(), token.getDbName());
                     Rdbms.closeRdbms();  
                     rObj=RelatedObjects.getInstanceForActions();
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
                     jsonObj = new JSONObject();
                     jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
@@ -334,7 +334,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     // Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
                     rObj=RelatedObjects.getInstanceForActions();
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
                     jsonObj = new JSONObject();
                     jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
