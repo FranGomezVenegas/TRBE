@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Calendar;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
@@ -286,16 +287,22 @@ public class AnalysisMethodCertif {
         String[] fieldsToGet=new String[]{TblsData.CertifUserAnalysisMethod.ID.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()};
         Object[] userCertificationEnabled = isUserCertificationEnabled();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) return;
-        Object[][] certifRowExpDateInfo=QueryUtilitiesEnums.getTableData(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, 
+        //The mask will kill this feature! :)
+/*        Object[][] certifRowExpDateInfo=QueryUtilitiesEnums.getTableData(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, 
             EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, fieldsToGet),
             new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
             new Object[]{CertifLight.GREEN.toString()},
-            new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
+            new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});*/
+        Object[][] certifRowExpDateInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), 
+            new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+            new Object[]{CertifLight.GREEN.toString()},
+            fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())) return;
         String fldIdStr="";
         for (Object[] curRow: certifRowExpDateInfo){
             Calendar certifDateCal = Calendar.getInstance();
-            Date certifDate = (Date) curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName())];
+            String expDateStr=LPNulls.replaceNull(curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName())]).toString();
+            Date certifDate = LPDate.stringFormatToDate(expDateStr);
             certifDateCal.setTime(certifDate);
             if (!LPDate.isDateBiggerThanTimeStamp(certifDateCal)){
                 Integer fldId=Integer.valueOf(curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName())].toString());
