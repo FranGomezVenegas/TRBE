@@ -34,6 +34,7 @@ public interface EnumIntTableFields {
     }
     public static EnumIntTableFields[] getTableFieldsFromString(EnumIntTables tblObj, String[] flds){
         if (flds==null || flds.length==0) return tblObj.getTableFields();
+        flds=LPArray.getUniquesArray(flds);
         EnumIntTableFields[] custFlds=new EnumIntTableFields[flds.length];
         EnumIntTableFields[] tableFields = tblObj.getTableFields();
         for (EnumIntTableFields curFld: tableFields){

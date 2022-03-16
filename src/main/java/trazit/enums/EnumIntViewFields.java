@@ -34,6 +34,7 @@ public interface EnumIntViewFields {
     }
     public static EnumIntViewFields[] getViewFieldsFromString(EnumIntViews tblObj, String[] flds){
         if (flds==null || flds.length==0) return tblObj.getViewFields();
+        flds=LPArray.getUniquesArray(flds);
         EnumIntViewFields[] custFlds=new EnumIntViewFields[flds.length];
         EnumIntViewFields[] ViewFields = tblObj.getViewFields();
         for (EnumIntViewFields curFld: ViewFields){
