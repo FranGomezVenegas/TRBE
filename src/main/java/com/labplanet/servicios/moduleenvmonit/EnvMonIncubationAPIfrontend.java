@@ -114,14 +114,15 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                 String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};     
+                EnumIntTableFields[] fieldsToRetrieveObj=EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, fieldsToRetrieve);
                 Object[][] incubatorsList=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
-                    EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, LPArray.convertArrayToString(fieldsToRetrieve, "\\|", "")),
+                    fieldsToRetrieveObj,
                     new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}, new Object[]{true}, 
                     new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
                 JSONArray jArr = new JSONArray();
                 for (Object[] currInstrument: incubatorsList){
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrument);
-                    Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading( currInstrument[0].toString(), 5);                    
+                    Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading( currInstrument[EnumIntTableFields.getFldPosicInArray(fieldsToRetrieveObj, TblsEnvMonitConfig.InstrIncubator.NAME.getName())].toString(), 5);                    
                     JSONArray jReadingsArr = new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString()))
                         jObj.put("LAST_READINGS", "No readings");
