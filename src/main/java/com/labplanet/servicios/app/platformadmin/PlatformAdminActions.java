@@ -6,7 +6,6 @@
 package com.labplanet.servicios.app.platformadmin;
 
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
-import databases.TblsAppProcData;
 import functionaljavaa.platformadmin.PlatformAdminEnums;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
@@ -24,7 +23,6 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
-import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
@@ -72,15 +70,15 @@ public class PlatformAdminActions extends HttpServlet {
         argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
         try (PrintWriter out = response.getWriter()) {
-
             ClassPlatformAdmin clss = new ClassPlatformAdmin(request, endPoint);
-            Object[] diagnostic=clss.getDiagnostic();
-            if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[0].toString(), null);   
+            Object[] diagnostic=clss.getDiagnostic();            
+            if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){ 
+                InternalMessage diagnosticObj=clss.getDiagnosticObj();
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableName(), null);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, null, rObj.getRelatedObject());
+//                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableName(), null);                
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{""}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
