@@ -16,6 +16,9 @@ import lbplanet.utilities.LPPlatform;
  * @author User
  */
 public class ProcedureSampleStage {  
+    public String sampleStageSamplingPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
+        return LPPlatform.LAB_FALSE+"Sampling is the first stage, has no previous.";
+    }
     public String sampleStageSamplingNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
@@ -40,8 +43,14 @@ public class ProcedureSampleStage {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
-        Boolean incubationPassed=sampleStructure.get("incubation_passed").getAsBoolean();
-        Boolean incubation2Passed=sampleStructure.get("incubation2_passed").getAsBoolean();
+        if (sampleStructure.get("incubation_passed").isJsonNull())
+            return "stagesCheckerPendingFirstIncubation"+"@"+sampleId; //" Pendiente 1a Incubacion para la muestra "+sampleId;}
+        if (sampleStructure.get("incubation2_passed").isJsonNull())
+            return "stagesCheckerPendingSecondIncubation"+"@"+sampleId; //" Pendiente 2a Incubacion para la muestra "+sampleId;}        
+        String incubationPassedStr=sampleStructure.get("incubation_passed").getAsString();
+        Boolean incubationPassed=Boolean.valueOf(incubationPassedStr);
+        String incubation2PassedStr=sampleStructure.get("incubation2_passed").getAsString();
+        Boolean incubation2Passed=Boolean.valueOf(incubation2PassedStr);
         if (!incubationPassed){
             return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (!incubation2Passed){
@@ -54,8 +63,14 @@ public class ProcedureSampleStage {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
-        Boolean incubationPassed=sampleStructure.get("incubation_passed").getAsBoolean();
-        Boolean incubation2Passed=sampleStructure.get("incubation2_passed").getAsBoolean();
+        if (sampleStructure.get("incubation_passed").isJsonNull())
+            return "stagesCheckerPendingFirstIncubation"+"@"+sampleId; //" Pendiente 1a Incubacion para la muestra "+sampleId;}
+        if (sampleStructure.get("incubation2_passed").isJsonNull())
+            return "stagesCheckerPendingSecondIncubation"+"@"+sampleId; //" Pendiente 2a Incubacion para la muestra "+sampleId;}
+        String incubationPassedStr=sampleStructure.get("incubation_passed").getAsString();
+        Boolean incubationPassed=Boolean.valueOf(incubationPassedStr);
+        String incubation2PassedStr=sampleStructure.get("incubation2_passed").getAsString();
+        Boolean incubation2Passed=Boolean.valueOf(incubation2PassedStr);
         if (!incubationPassed){
             return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (!incubation2Passed){
@@ -113,5 +128,8 @@ public class ProcedureSampleStage {
     public String sampleStageENDPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         return LPPlatform.LAB_TRUE;
     }    
+    public String sampleStageENDNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
+        return LPPlatform.LAB_FALSE+"END is the last stage, has no next one.";
+    }
 }
 
