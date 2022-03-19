@@ -87,6 +87,7 @@ class EnvMonFrontEndUtilities {
         EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.PROGRAM, fieldsName),
         new String[]{TblsEnvMonitData.Program.NAME.getName()}, 
         new Object[]{programName}, sortFields);
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString())) return new JSONObject();
     return LPJson.convertArrayRowToJSONObject(fieldsName, records[0]);
   }
 
