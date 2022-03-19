@@ -36,6 +36,7 @@ public class ClassInstruments {
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
+    InternalMessage actionDiagnosesObj=null;
     private Boolean functionFound=false;
 
     public ClassInstruments(HttpServletRequest request, InstrumentsAPIactionsEndpoints endPoint){
@@ -241,9 +242,10 @@ public class ClassInstruments {
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);   
                     return;
             }     
+        this.actionDiagnosesObj=actionDiagnoses;
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))
             this.diagnostic=ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(),actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
-        else
+        else            
             this.diagnostic=ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(),endPoint, actionDiagnoses.getMessageCodeVariables());
         this.relatedObj=rObj;
         rObj.killInstance();
@@ -275,6 +277,9 @@ public class ClassInstruments {
      */
     public Object[] getDiagnostic() {
         return diagnostic;
+    }
+    public InternalMessage getDiagnosticObj() {
+        return this.actionDiagnosesObj;
     }
 
     /**
