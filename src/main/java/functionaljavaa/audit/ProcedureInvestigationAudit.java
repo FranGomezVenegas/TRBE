@@ -41,8 +41,8 @@ public final class ProcedureInvestigationAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.FIELDS_UPDATED.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
+//        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.FIELDS_UPDATED.getName());
+//        fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
 
         if (parentAuditId!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.PARENT_AUDIT_ID.getName());
