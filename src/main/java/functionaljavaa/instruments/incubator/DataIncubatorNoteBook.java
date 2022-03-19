@@ -190,32 +190,42 @@ public class DataIncubatorNoteBook {
      * @param points
      * @return
      */
+    
+    public static Object[][] getLastTemperatureReadingNoMask(String instName, Integer points){
+        return getLastTemperatureReading(instName, points, null, null, false);
+    }
     public static Object[][] getLastTemperatureReading(String instName, Integer points){
-        return getLastTemperatureReading(instName, points, null, null);
+        return getLastTemperatureReading(instName, points, null, null, true);
     }
 
     public static Object[][] getLastTemperatureReading(String instName, Integer points, LocalDateTime date){
-        return getLastTemperatureReading(instName, points, date, null);
+        return getLastTemperatureReading(instName, points, date, null, true);
     }
     public static Object[][] getLastTemperatureReading(String instName, Integer points, String[] fieldsToRetrieve){
-        return getLastTemperatureReading(instName, points, null, null, fieldsToRetrieve);
+        return getLastTemperatureReading(instName, points, null, null, fieldsToRetrieve, true);
     }
     
-    public static Object[][] getLastTemperatureReading(String instName, Integer points, LocalDateTime startDate, LocalDateTime endDate){   
+    public static Object[][] getLastTemperatureReading(String instName, Integer points, LocalDateTime startDate, LocalDateTime endDate, Boolean withMask){   
         String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};
-        return getLastTemperatureReading(instName, points, startDate, endDate, fieldsToRetrieve);
+        return getLastTemperatureReading(instName, points, startDate, endDate, fieldsToRetrieve, withMask);
     }
-    public static Object[][] getLastTemperatureReading(String instName, Integer points, LocalDateTime startDate, LocalDateTime endDate, String[] fieldsToRetrieve){   
+    public static Object[][] getLastTemperatureReading(String instName, Integer points, LocalDateTime startDate, LocalDateTime endDate, String[] fieldsToRetrieve, Boolean withMask){   
         EnumIntTableFields[] fieldsToRetrieveObj=EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
             new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
         if (procInstanceName==null) return LPArray.array1dTo2d(new String[]{LPPlatform.LAB_FALSE},1);
-        Object[][] instrInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
-            fieldsToRetrieveObj,
-            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
-            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
+        Object[][] instrInfo=null;
+        if (withMask)
+            instrInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                fieldsToRetrieveObj,
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
+        else
+            instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName}, 
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) return instrInfo;
         
         Integer activeFldPosic=EnumIntTableFields.getFldPosicInArray(fieldsToRetrieveObj, TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName());
@@ -237,9 +247,15 @@ public class DataIncubatorNoteBook {
         }
         fieldsToRetrieveObj=EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, 
             fieldsToRetrieve);        
-        Object[][] instrNotebook=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, 
-            fieldsToRetrieveObj, whereFieldName, whereFieldValue, 
-            new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ " desc"});
+        Object[][] instrNotebook=null;
+        if (withMask)
+            instrNotebook=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, 
+                fieldsToRetrieveObj, whereFieldName, whereFieldValue, 
+                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ " desc"});
+        else
+            instrNotebook=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
+                whereFieldName, whereFieldValue, 
+                fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ " desc"});         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrNotebook[0][0].toString())){
             Object[] errDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataIncubatorNoteBookErrorTrapping.NO_READINGS_LOGGED_YET, new Object[0]);
             return LPArray.array1dTo2d(errDiagn, errDiagn.length);            
