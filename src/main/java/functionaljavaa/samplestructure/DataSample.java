@@ -1,5 +1,6 @@
 package functionaljavaa.samplestructure;
 
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPParadigm;
@@ -16,6 +17,7 @@ import databases.TblsDataAudit;
 import databases.Token;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleBusinessRules;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
 import static functionaljavaa.samplestructure.DataSampleStructureRevisionRules.sampleReviewRulesAllowed;
@@ -234,7 +236,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             this.parentAuditId=Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString());            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditAdd[0].toString()))
                 return sampleAuditAdd;
-            
+            if (iNumSamplesToLog<=10){
+                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), sampleId);                                                
+            }
             Integer transactionId = null;
             this.smpAna.autoSampleAnalysisAdd(sampleId, sampleFieldName, sampleFieldValue);
             
