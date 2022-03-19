@@ -107,7 +107,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 case INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT:
                     String instrName=LPNulls.replaceNull(argValues[0]).toString();
                     fieldsToRetrieve=getAllFieldNames(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableFields());
-                    if (LPArray.valueInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()))
+                    if (!LPArray.valueInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()))
                         fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName());
                     instrumentAudit=QueryUtilitiesEnums.getTableData(TablesAppProcDataAudit.INSTRUMENTS,
                         EnumIntTableFields.getTableFieldsFromString(TablesAppProcDataAudit.INSTRUMENTS, "ALL"),
