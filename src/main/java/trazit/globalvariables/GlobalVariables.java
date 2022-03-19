@@ -11,7 +11,7 @@ package trazit.globalvariables;
  */
 public class GlobalVariables {
     
-    public enum Schemas{APP("app"), APP_AUDIT("app-audit"), APP_BUSINESS_RULES("app-business-rules"),
+    public enum Schemas{APP("app"), APP_AUDIT("app-audit"),
         APP_CONFIG("config"), APP_TESTING("app-testing"), 
         APP_PROC_CONFIG("app-proc-config"), APP_PROC_DATA("app-proc-data"), APP_PROC_DATA_AUDIT("app-proc-data-audit"),
         CONFIG("config"), CONFIG_AUDIT("config-audit"), REQUIREMENTS("requirements"),
