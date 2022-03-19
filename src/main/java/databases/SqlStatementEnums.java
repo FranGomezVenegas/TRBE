@@ -537,37 +537,45 @@ public class SqlStatementEnums {
     
     private String buildTableFieldsToRetrieve(EnumIntTableFields[] fieldsToRetrieve) {
         StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
-        if (fieldsToRetrieve != null) {
-            String fn="";
-            for (EnumIntTableFields curFld : fieldsToRetrieve) {
-                fn=curFld.getName();
-                if (curFld.getReferenceTable()!=null){ 
-                    if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
-                       && "person".equalsIgnoreCase(curFld.getReferenceTable().getTableName())
-                       && "person_id".equalsIgnoreCase(curFld.getReferenceTable().getFieldName()))
-                    fn="(select alias from config.person where person_id="+curFld.getName()+")";
-                }
-                if (curFld.getFieldMask()!=null)
-                    fn=curFld.getFieldMask(); 
-                else{                    
-                    if ("DATE".equalsIgnoreCase(curFld.getFieldType()))
-                        fn="to_char("+fn+",'YYYY-MM-DD')";                
-                    else if ("DATETIME".equalsIgnoreCase(curFld.getFieldType()))
-                        fn="to_char("+fn+",'DD.MON.YY HH:MI')";                
-                    else if (curFld.getFieldType().toString().toLowerCase().contains("timestamp"))
-                        fn="to_char("+fn+",'DD.MON.YY HH:MI')";                
-                    else if (fn.toUpperCase().contains(" IN")) {
-                        Integer posicINClause = fn.toUpperCase().indexOf("IN");
-                        fn = fn.substring(0, posicINClause - 1);
+        try{
+            if (fieldsToRetrieve != null) {
+                String fn="";
+                for (EnumIntTableFields curFld : fieldsToRetrieve) {
+                    if (curFld!=null){
+                        fn=curFld.getName();
+                        if (curFld.getReferenceTable()!=null){ 
+                            if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
+                               && "person".equalsIgnoreCase(curFld.getReferenceTable().getTableName())
+                               && "person_id".equalsIgnoreCase(curFld.getReferenceTable().getFieldName()))
+                            fn="(select alias from config.person where person_id="+curFld.getName()+")";
+                        }
+                        if (curFld.getFieldMask()!=null)
+                            fn=curFld.getFieldMask(); 
+                        else{                    
+                            if ("DATE".equalsIgnoreCase(curFld.getFieldType()))
+                                fn="to_char("+fn+",'YYYY-MM-DD')";                
+                            else if ("DATETIME".equalsIgnoreCase(curFld.getFieldType()))
+                                fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
+                            else if (curFld.getFieldType().toString().toLowerCase().contains("timestamp"))
+                                fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
+                            else if (fn.toUpperCase().contains(" IN")) {
+                                Integer posicINClause = fn.toUpperCase().indexOf("IN");
+                                fn = fn.substring(0, posicINClause - 1);
+                                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+                            }
+                        }
                         fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
                     }
                 }
-                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+                fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
+                fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
             }
-            fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
-            fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
+            return fieldsToRetrieveStr.toString();
+        }catch(Exception e){
+            String errMsg=e.getMessage();
+            String s=fieldsToRetrieveStr.toString()+">"+fieldsToRetrieve.length;  
+            return "*";
         }
-        return fieldsToRetrieveStr.toString();
     }
     
     private String buildViewFieldsToRetrieve(EnumIntViewFields[] fieldsToRetrieve) {
