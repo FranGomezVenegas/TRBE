@@ -79,7 +79,7 @@ public class Rdbms {
     public enum RdbmsErrorTrapping  implements EnumIntMessages{
         RDBMS_DT_SQL_EXCEPTION("Rdbms_dtSQLException", "", ""), RDBMS_NOT_FILTER_SPECIFIED("Rdbms_NotFilterSpecified", "", ""),
         RDBMS_RECORD_NOT_FOUND("existsRecord_RecordNotFound", "", ""), RDBMS_RECORD_FOUND("existsRecord_RecordFound", "", ""),
-        ARG_VALUE_RES_NULL("res is set to null", "", ""), ARG_VALUE_LBL_VALUES(" Values: ", "", ""),
+        ARG_VALUE_RES_NULL("resIsSetToNull", "", ""), ARG_VALUE_LBL_VALUES("values", " Values: ", " Valores: "),
         RDBMS_RECORD_CREATED("RecordCreated", "", ""), RDBMS_RECORD_NOT_CREATED("RecordNotCreated", "", ""),
         RDBMS_RECORD_UPDATED("RecordUpdated", "", ""), RDBMS_RECORD_REMOVED("RecordRemoved", "", ""),
         DB_ERROR("dbError", "", ""),
