@@ -6,8 +6,8 @@
 package functionaljavaa.platformadmin;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import databases.Rdbms;
 import databases.SqlStatement;
+import databases.TblsProcedure;
 import databases.Token;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -15,7 +15,8 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
-import trazit.globalvariables.GlobalVariables;
+import trazit.enums.EnumIntTableFields;
+import trazit.queries.QueryUtilitiesEnums;
 
 /**
  *
@@ -31,10 +32,15 @@ public class AppBusinessRules {
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
         Token token = new Token(finalToken);
         
-        Object[][] appBusRulesInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_BUSINESS_RULES.getName(), "business_rules", 
+        Object[][] appBusRulesInfo = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
+            EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
+                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}), 
+            new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+            new Object[]{""}, null, "app");
+/*        Object[][] appBusRulesInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_BUSINESS_RULES.getName(), "business_rules", 
             new String[]{"rule_value"+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{""}, 
             new String[]{"rule_name", "rule_value"}, new String[]{"area", "order_number"});
-
+*/
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(appBusRulesInfo[0][0]).toString())){
             return new JSONObject();
         }
