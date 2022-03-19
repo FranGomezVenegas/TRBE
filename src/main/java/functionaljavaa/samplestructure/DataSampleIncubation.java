@@ -16,6 +16,7 @@ import functionaljavaa.parameter.Parameter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -253,7 +254,7 @@ public class DataSampleIncubation {
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED, new Object[]{incubName, procInstanceName});
             Integer tempReadingEvId=null;
             if (tempReading==null){
-                Object[][] incubLastTempReading=DataIncubatorNoteBook.getLastTemperatureReading(incubName, 1);
+                Object[][] incubLastTempReading=DataIncubatorNoteBook.getLastTemperatureReadingNoMask(incubName, 1);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubLastTempReading[0][0].toString())) return LPArray.array2dTo1d(incubLastTempReading);
                 tempReadingEvId= Integer.valueOf(incubLastTempReading[0][0].toString());
                 tempReading= BigDecimal.valueOf(Double.valueOf(incubLastTempReading[0][4].toString()));                
@@ -300,8 +301,15 @@ public class DataSampleIncubation {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String sampleIncubationTempReadingBusinessRulevalue = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleIncubationBusinessRules.SAMPLE_INCUB_TEMP_READING_BUSRULE.getAreaName(), DataSampleIncubationBusinessRules.SAMPLE_INCUB_TEMP_READING_BUSRULE.getTagName());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime tempReadingDateDateTime = LocalDateTime.parse(tempReadingDate.toString().substring(0, 19), formatter);
+        String formatMask="yyyy-MM-dd HH:mm:ss";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatMask);
+        String tmpReadingDateToStr=tempReadingDate.toString().substring(0, formatMask.length());
+        LocalDateTime tempReadingDateDateTime = null;
+        try{
+            tempReadingDateDateTime = LocalDateTime.parse(tmpReadingDateToStr, formatter);
+        }catch(DateTimeParseException e){
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "error parsing <*1*><*2*>", new Object[]{e.getMessage(), tmpReadingDateToStr} );
+        }
         if (sampleIncubationTempReadingBusinessRulevalue.length()==0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubationTempReadingBusinessRule procedure property not found for procedure <*1*>.", new Object[]{procInstanceName} );
         if (TempReadingBusinessRules.DISABLE.toString().equalsIgnoreCase(sampleIncubationTempReadingBusinessRulevalue))
