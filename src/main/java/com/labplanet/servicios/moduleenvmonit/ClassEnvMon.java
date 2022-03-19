@@ -91,8 +91,8 @@ public class ClassEnvMon {
                 case EM_BATCH_ASSIGN_INCUB: 
                     batchName = argValues[0].toString();
                     incubationName = argValues[1].toString();
-                    String incubStage=argValues[2].toString();
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), incubationName);                
+                    String incubStage=argValues[2].toString(); 
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), "incubator", incubationName);  // TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()               
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                
                     this.messageDynamicData=new Object[]{batchName, incubationName};
                     actionDiagnoses=DataBatchIncubator.batchAssignIncubator(batchName, incubationName, incubStage);
