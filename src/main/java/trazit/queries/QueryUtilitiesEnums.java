@@ -59,14 +59,16 @@ public class QueryUtilitiesEnums {
            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
         }
+        String query=null;
+        //if (orderBy==null) orderBy=new String[]{};
+        try{            
         SqlStatementEnums sql = new SqlStatementEnums(); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(Rdbms.SQLSELECT, schemaName, tableName,
                 whereFieldNames, whereFieldValues,
                 fieldsToRetrieve,  null, null, orderBy, null, inforceDistinct);            
-        String query= hmQuery.keySet().iterator().next();   
+        query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);
    
-        try{            
             ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
                 Object[] errorLog=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{Rdbms.RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + Rdbms.RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES+ Arrays.toString(whereFieldValues)});
