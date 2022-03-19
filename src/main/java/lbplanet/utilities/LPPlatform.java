@@ -67,11 +67,11 @@ public class LPPlatform {
      */
     public static final String CONFIG_FILES_API_ERRORTRAPING = "api-platform";
     public static final String CONFIG_FILES_API_SUCCESSMESSAGE = "apiSuccessMsg_";
+    public static final String CONFIG_FILES_LOCKING_REASONS = "lockingReasons";
+    public static final String CONFIG_FILES_WARNING_REASONS = "warningReasons";
     
     
-    /**
-     *
-     */
+    
     public enum ApiErrorTraping  implements EnumIntMessages{
         EXCEPTION_RAISED("exceptionRaised", "", ""),
         PROPERTY_DATABASE_NOT_CONNECTED("databaseConnectivityError", "", ""),
@@ -89,9 +89,9 @@ public class LPPlatform {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -123,12 +123,12 @@ public class LPPlatform {
             this.multiValueSeparator=separator;
             this.isOptional=opt;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
-        public Boolean getIsOptional(){return this.isOptional;}
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional(){return this.isOptional;}
         
         private final String tagName;
         private final String areaName;
@@ -146,7 +146,6 @@ public class LPPlatform {
 public enum LpPlatformErrorTrapping implements EnumIntMessages{  
         RULE_NAME_VALUE("LpPlatform_ruleNameValue", "Rule name = <*1*>", "Nombre de la regla = <*1*>"),
         BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND("LpPlatform_BusinessRulesampleTestingByGroup_ReviewByTestingGroupNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
-        ACTION_ENABLED_BY_ALL("ACTION_ENABLED_BY_ALL", "", ""),
         USER_NOTASSIGNED_TOPROCEDURE("userNotAssignedToProcedure", "", ""),
         USRROLACTIONENABLED_DENIED_RULESNOTFOUND("userRoleActionEnabled_denied_rulesNotFound", "", ""),
         USRROLACTIONENABLED_DENIED("userRoleActionEnabled_denied", "", ""),
@@ -155,15 +154,15 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         USRROLACTIONENABLED_ACTIONENABLEDFORROLES_BUSRULE_NOTFOUND("userRoleActionEnabled_actionEnabledForRolesBusRuleNotFound", "", ""),
         USRROLACTIONENABLED_MISSEDPARAMETER("userRoleActionEnabled_missedParameter", "", ""),
         USRROLACTIONENABLED_ROLENOTINCLUDED("userRoleActionEnabled_roleNotIncluded", "", ""),
-        VERIFYUSERREQUIRED_ENABLED_BY_ALL("VERIFY_USER_REQUIRED_BY_ALL", "", ""),
+        VERIFYUSERREQUIRED_ENABLED_BY_ALL("verifyUserRequired_ALL", "", ""),
         VERIFYUSERREQUIRED_DENIED_RULENOTFOUND("verifyUserRequired_denied_ruleNotFound", "", ""),
         VERIFYUSERREQUIRED_DENIED("verifyUserRequired_denied", "", ""),
         VERIFYUSERREQUIRED_ENABLED("verifyUserRequired_enabled", "", ""),
-        ESIGNREQUIRED_ENABLED_BY_ALL("VERIFY_USER_REQUIRED_BY_ALL", "", ""),
-        ESIGNREQUIRED_DENIED_RULENOTFOUND("verifyUserRequired_denied_ruleNotFound", "", ""),
-        ESIGNREQUIRED_DENIED("verifyUserRequired_denied", "", ""),
-        ESIGNREQUIRED_ENABLED("verifyUserRequired_enabled", "", ""),
-        JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL("JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL", "", ""),
+        ESIGNREQUIRED_ENABLED_BY_ALL("esignRequired_ALL", "", ""),
+        ESIGNREQUIRED_DENIED_RULENOTFOUND("esign_denied_ruleNotFound", "", ""),
+        ESIGNREQUIRED_DENIED("esignRequired_denied", "", ""),
+        ESIGNREQUIRED_ENABLED("esignRequired_enabled", "", ""),
+        JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL("justificationPhraseRequired_ALL", "", ""),
         JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND("justificationPhraseRequired_denied_ruleNotFound", "", ""),
         JUSTIFPHRASEREQUIRED_DENIED("justificationPhraseRequired_denied", "", ""),
         JUSTIFPHRASEREQUIRED_ENABLED("justificationPhraseRequired_enabled", "", ""),
@@ -171,7 +170,6 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         SPECIALFUNCTION_RETURNEDERROR("LabPLANETPlatform_SpecialFunctionReturnedERROR", "", ""),
         SPECIALFUNCTION_CAUSEDEXCEPTION("LabPLANETPlatform_SpecialFunctionCausedException", "", ""),
         SPECIALFUNCTION_ALLSUCCESS("LabPLANETPlatform_SpecialFunctionAllSuccess", "", ""),
-          
         ; 
         private LpPlatformErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
