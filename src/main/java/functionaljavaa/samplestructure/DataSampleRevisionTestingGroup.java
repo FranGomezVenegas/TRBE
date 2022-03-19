@@ -70,7 +70,6 @@ public class DataSampleRevisionTestingGroup{
         SAMPLETESTINGBYGROUP_NOPENDING_TESTINGGROUPREVISION("DataSampleRevision_NoPendingTestingGroupRevision", "No testing group revision pending for sample <*1*> in procedure <*2*>", "No testing group revision pending for sample <*1*> in procedure <*2*>"),
         SAMPLETESTINGBYGROUP_ALREADY_READYFORREVISION("DataSampleRevision_alreadyReadyForRevision", "Already ready for revision", "Ya está marcado para revisión"),
         SAMPLETESTINGBYGROUP_ALREADY_REVIEWED("DataSampleRevision_alreadyReviewer", "Already reviewed", "Ya está revisado"),
-        READY_FOR_REVISION("DataSampleRevision_readyForRevision", "Ready for revision", "Listo para la revisión"),
         NOT_READY_FOR_REVISION("DataSampleRevision_notReadyForRevision", "Not ready for revision", "No listo para la revisión"),
         SAMPLETESTINGBYGROUP_PENDINGRESULTSINTESTINGGROUP("DataSampleRevision_PendingResultsInTestingGroup","There are pending results for the testing group <*1*> for the sample <*2*> in procedure <*3*>","There are pending results for the testing group <*1*> for the sample <*2*> in procedure <*3*>")
         ;
@@ -141,7 +140,7 @@ public class DataSampleRevisionTestingGroup{
         Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(),  
                 new String[] {TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName()}, new Object[]{sampleId, testingGroup}, sampleAnalysisFieldName);
         if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleRevisionTestingGroupErrorTrapping.READY_FOR_REVISION, new Object[]{sampleId, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureEnums.DataSampleErrorTrapping.READY_FOR_REVISION, new Object[]{sampleId, procInstanceName});
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.NOT_READY_FOR_REVISION, new Object[]{sampleId, procInstanceName});
         //return diagnoses;
     }  

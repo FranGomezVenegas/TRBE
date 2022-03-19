@@ -20,7 +20,6 @@ public class DataSampleStructureEnums {
         SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE ("SetSamplingDate_notAllowChangePreviousValue", "", ""),
         SAMPLINGDATE_REQUIRED_FOR_SAMPLINGDATEEND("SamplingDateRequiredForSampleDateEnd", "", ""),
         SAMPLINGDATEEND_NOTREQUIRED_ASTOPERFORMTHEACTION("SamplingDateEndNotRequiredAsToPerformTheAction", "", ""),
-        SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
         SAMPLE_STATUS_MANDATORY("SampleStatusMandatory", "", ""),
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "", ""),
@@ -31,11 +30,12 @@ public class DataSampleStructureEnums {
         VOLUME_SHOULD_BE_GREATER_THAN_ZERO("sampleAliquoting_volumeCannotBeNegativeorZero", "", ""),
         ALIQUOT_CREATED_BUT_ID_NOT_GOT("AliquotCreatedButIdNotGotToContinueApplyingAutomatisms", "Object created but aliquot id cannot be get back to continue with the logic", ""),
         SAMPLEASUBLIQUOTING_VOLUME_AND_UOM_REQUIRED ("sampleSubAliquoting_volumeAndUomMandatory", "", ""),        
+        SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         SAMPLE_FIELDNOTFOUND("SampleFieldNotFound", "", ""),
+        SAMPLE_RULES_NOT_FOUND("SampleRulesNotFound", "", ""),
         READY_FOR_REVISION("readyForRevision", "", ""),
         NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
         SAMPLE_ALREADY_REVIEWED("sampleAlreadyReviewed", "", ""),
-        SAMPLE_RULES_NOT_FOUND("DataSample_SampleRulesNotFound", "", ""),
         SAMPLE_ALREADY_READY_FOR_REVISION("alreadyReadyForRevision", "", "")
         ;
         private DataSampleErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
