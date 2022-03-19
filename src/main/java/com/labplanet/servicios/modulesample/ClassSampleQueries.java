@@ -229,21 +229,39 @@ public class ClassSampleQueries {
                 new Object[]{resultId,DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()}, 
                 SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString())){
-            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
-            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
-            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
-            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, "resultLockedByProgramCorrectiveAction");
-            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_en");
-            String apiName=EnvMonSampleAPI.EnvMonSampleAPIEndpoints.class.getSimpleName();
-            String msgCode="resultLockedByProgramCorrectiveAction";
-            String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en", null, true);
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorTextEn);
-            String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es", null, false);
-            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_es");
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorTextEs);
+            String notifMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STILLOPEN_NOTIFMODE.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STILLOPEN_NOTIFMODE.getTagName());
+            switch(notifMode.toLowerCase()){
+            case "silent":
+                return new Object[]{fldNameArr, fldValueArr};
+            case "warning":
+                fldNameArr=LPArray.addValueToArray1D(fldNameArr, "has_warning");
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
+                fldNameArr=LPArray.addValueToArray1D(fldNameArr, "warning_object");                
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
+                
+                String msgCode="resultLockedByProgramCorrectiveActionInProgress";
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, msgCode);
+                String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "en", null, true);
+                String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "es", null, false);
+                JSONObject reasonInfo=new JSONObject();
+                reasonInfo.put("message_en", errorTextEn);
+                reasonInfo.put("message_es", errorTextEs);
+                return new Object[]{fldNameArr, fldValueArr, "warning_reason", reasonInfo};
+            case "locking":
+            default:
+                fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
+                fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
+                msgCode="resultLockedByProgramCorrectiveActionInProgress";
+                fldValueArr=LPArray.addValueToArray1D(fldValueArr, msgCode);
+                errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "en", null, true);
+                errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false);
+                reasonInfo=new JSONObject();
+                reasonInfo.put("message_en", errorTextEn);
+                reasonInfo.put("message_es", errorTextEs);
+                return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};
+            }
         }
         return new Object[]{fldNameArr, fldValueArr};
     }
