@@ -187,7 +187,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     
                     procedure.put("name", procInfo[0][LPArray.valuePosicInArray(PROC_FLD_NAME.split("\\|"), TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName())]);
                     
-                    String propValue = "false";
+                    String propValue = "NO";
                     
                     Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
                         new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.AREA.getName()},
