@@ -36,7 +36,6 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
-import lbplanet.utilities.TrazitUtiilitiesEnums;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
