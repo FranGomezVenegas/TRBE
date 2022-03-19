@@ -126,13 +126,13 @@ public class ClassEnvMonSample {
                     break;
                 case ENTERRESULT:                    
                 case REENTERRESULT:
-                case PLATE_READING_ENTERED:
-                case PLATE_READING_REENTERED:
+                case ENTER_PLATE_READING:
+                case REENTER_PLATE_READING:
                     String altAuditEntry=null;
                     String altAuditClass=null;
-                    if ("PLATE_READING_ENTERED".equalsIgnoreCase(endPoint.getName()) || "PLATE_READING_ENTERED".equalsIgnoreCase(endPoint.getName())){
+                    if ("ENTER_PLATE_READING".equalsIgnoreCase(endPoint.getName()) || "REENTER_PLATE_READING".equalsIgnoreCase(endPoint.getName())){
                         altAuditClass="DateEnvMonitSampleEvents";
-                        if ("PLATE_READING_ENTERED".equalsIgnoreCase(endPoint.getName()))
+                        if ("ENTER_PLATE_READING".equalsIgnoreCase(endPoint.getName()))
                             altAuditEntry="PLATE_READING_ENTERED";
                         else
                             altAuditEntry="PLATE_READING_REENTERED";
@@ -153,8 +153,8 @@ public class ClassEnvMonSample {
                             procReqSession.killIt();                            
                             if ("ENTERRESULT".equalsIgnoreCase(endPoint.getName()))
                                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTERRESULT.getName());
-                            if ("PLATE_READING_ENTERED".equalsIgnoreCase(endPoint.getName())){
-                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.PLATE_READING_REENTERED.getName());
+                            if ("ENTER_PLATE_READING".equalsIgnoreCase(endPoint.getName())){
+                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTER_PLATE_READING.getName());
                                 altAuditEntry="PLATE_READING_REENTERED";
                             }
                             procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
