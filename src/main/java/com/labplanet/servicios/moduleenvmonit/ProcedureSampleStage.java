@@ -47,10 +47,17 @@ public class ProcedureSampleStage {
             return "stagesCheckerPendingFirstIncubation"+"@"+sampleId; //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (sampleStructure.get("incubation2_passed").isJsonNull())
             return "stagesCheckerPendingSecondIncubation"+"@"+sampleId; //" Pendiente 2a Incubacion para la muestra "+sampleId;}        
+        boolean incubationStartIsNull = sampleStructure.get("incubation_start").isJsonNull();
+        boolean incubation2StartIsNull = sampleStructure.get("incubation2_start").isJsonNull();
+        String incubationStartStr=sampleStructure.get("incubation_start").getAsString();
         String incubationPassedStr=sampleStructure.get("incubation_passed").getAsString();
         Boolean incubationPassed=Boolean.valueOf(incubationPassedStr);
         String incubation2PassedStr=sampleStructure.get("incubation2_passed").getAsString();
         Boolean incubation2Passed=Boolean.valueOf(incubation2PassedStr);
+        if ((!incubationStartIsNull) && (!incubationPassed))
+            return "stagesCheckerIncubationInProgress"+"@"+sampleId;;
+        if ((!incubation2StartIsNull) && (!incubation2Passed))
+            return "stagesCheckerIncubationInProgress"+"@"+sampleId;;
         if (!incubationPassed){
             return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (!incubation2Passed){

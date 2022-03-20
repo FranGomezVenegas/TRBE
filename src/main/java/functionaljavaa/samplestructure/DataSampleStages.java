@@ -271,7 +271,7 @@ public enum SampleStageErrorTrapping implements EnumIntMessages{
         }
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("ERROR")) )
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
-        if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("FALSE")) ){
+        if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && !specialFunctionReturn.toString().contains("TRUE")) ){
             String errorCode=specialFunctionReturn.toString();
             errorCode=LPNulls.replaceNull(specialFunctionReturn).toString().replace(LPPlatform.LAB_FALSE, "");
             String[] errorCodeArr=errorCode.split("@");
