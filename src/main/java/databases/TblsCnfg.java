@@ -41,6 +41,8 @@ public class TblsCnfg {
     }*/
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     public enum TablesConfig implements EnumIntTables{
+        UOM(null, "units_of_measurement", SCHEMA_NAME, true, UnitsOfMeasurement.values(), UnitsOfMeasurement.NAME.getName(),
+            new String[]{UnitsOfMeasurement.NAME.getName()}, null, "UnitsOfMeasurement"),
         METHODS(null, "methods", SCHEMA_NAME, true, Methods.values(), null,
             new String[]{Methods.CODE.getName()}, null, "Analysis methods"),
         ANALYSIS(null, "analysis", SCHEMA_NAME, true, Analysis.values(), null,
@@ -51,7 +53,9 @@ public class TblsCnfg {
             }, "Analysis Method"),
         ANALYSIS_METHOD_PARAMS(null, "analysis_method_params", SCHEMA_NAME, true, AnalysisMethodParams.values(), null,
             new String[]{AnalysisMethodParams.PARAM_NAME.getName(), AnalysisMethodParams.ANALYSIS.getName(), AnalysisMethodParams.METHOD_NAME.getName(), AnalysisMethodParams.METHOD_VERSION.getName()}, 
-            new Object[]{new ForeignkeyFld(AnalysisMethodParams.METHOD_NAME.getName(), SCHEMA_NAME, TablesConfig.ANALYSIS.getTableName(), Analysis.CODE.getName())}, "Analysis Method Params"),
+            new Object[]{new ForeignkeyFld(AnalysisMethodParams.METHOD_NAME.getName(), SCHEMA_NAME, TablesConfig.METHODS.getTableName(), Methods.CODE.getName()),
+                new ForeignkeyFld(AnalysisMethodParams.UOM.getName(), SCHEMA_NAME, TablesConfig.UOM.getTableName(), UnitsOfMeasurement.NAME.getName())}
+            , "Analysis Method Params"),
         SAMPLE(null, "sample", SCHEMA_NAME, true, Sample.values(), null,
             new String[]{Sample.CODE.getName(), Sample.CODE_VERSION.getName()}, null, "Sample config"),
         SAMPLE_RULES(null, "sample_rules", SCHEMA_NAME, true, SampleRules.values(), null,
@@ -69,8 +73,6 @@ public class TblsCnfg {
         SPEC_RULES(null, "spec_rules", SCHEMA_NAME, true, SpecRules.values(), null,
             new String[]{SpecRules.CODE.getName()}, 
             new Object[]{new ForeignkeyFld(SpecRules.CODE.getName(), SCHEMA_NAME, TablesConfig.SPEC.getTableName(), Spec.CODE.getName())}, "spec_rules"),
-        UOM(null, "units_of_measurement", SCHEMA_NAME, true, UnitsOfMeasurement.values(), UnitsOfMeasurement.NAME.getName(),
-            new String[]{UnitsOfMeasurement.NAME.getName()}, null, "UnitsOfMeasurement"),
         ZZZ_DB_ERROR(null, "zzz_db_error_log", SCHEMA_NAME, true, zzzDbErrorLog.values(), zzzDbErrorLog.ID.getName(),
             new String[]{zzzDbErrorLog.ID.getName()}, null, "zzzDbErrorLog"),
         ZZZ_PROPERTIES_ERROR(null, "zzz_properties_error", SCHEMA_NAME, true, zzzPropertiesMissing.values(), zzzPropertiesMissing.ID.getName(),
