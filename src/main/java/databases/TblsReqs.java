@@ -360,9 +360,11 @@ public class TblsReqs {
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
 //        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         SCHEMA_NAME("schema_name", LPDatabase.stringNotNull(), null, null, null, null),
-        TABLE_NAME("table_name", LPDatabase.stringNotNull(), null, null, null, null),
+        TABLE_NAME("table_name", LPDatabase.string(), null, null, null, null),
+        IS_VIEW("is_view", LPDatabase.booleanFld(), null, null, null, null),
         FIELD_NAME("field_name", LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null)
         ;
         private ProcedureModuleTables(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -418,7 +420,7 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),        
-        INSTANCE_NAME("instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
         DESCRIPTION(LPDatabase.FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
         OBJECT_TYPE("object_type", LPDatabase.string(), null, null, null, null),
         JSON_OBJ("json_obj", LPDatabase.string(), null, null, null, null),
@@ -446,7 +448,8 @@ public class TblsReqs {
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         DESCRIPTION(LPDatabase.FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
-        MODEL_JSON("model_json", LPDatabase.string(), null, null, null, null),
+        MODEL_JSON("model_json", LPDatabase.json(), null, null, null, null),
+        MODEL_JSON_MOBILE("model_json_mobile", LPDatabase.json(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
         ;
         private ProcedureFEModel(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,

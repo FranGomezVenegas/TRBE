@@ -13,7 +13,6 @@ import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 
 public class TblsCnfgAudit {
-    
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG_AUDIT.getName();
     public enum TablesCfgAudit implements EnumIntTables{
         ANALYSIS(null, "analysis", SCHEMA_NAME, true, Analysis.values(), Analysis.AUDIT_ID.getName(),
