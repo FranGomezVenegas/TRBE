@@ -13,7 +13,7 @@ import trazit.enums.EnumIntMessages;
  */
 public class InventoryGlobalVariables {
         public enum DataInvRetErrorTrapping implements EnumIntMessages{ 
-        RECEPTION_FIELD_NOT_RETRIEVED("errorInCode, receptionFieldNotRetrieved", "", ""),
+        RECEPTION_FIELD_NOT_RETRIEVED("receptionFieldNotRetrieved", "", ""),
         ITEM_ALREADY_RECEIVED("retainRowAlreadyReceived", "", ""),
         NOT_ENOUGH_QUANTITY("NotEnoughQuantity", "", ""),
         CONVERSION_NOT_ALLOWED("_retainExtraction_ConversionNotAllowed", "", ""),

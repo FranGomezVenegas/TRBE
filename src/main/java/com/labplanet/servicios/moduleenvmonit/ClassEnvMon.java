@@ -80,7 +80,7 @@ public class ClassEnvMon {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{batchName, procInstanceName};
                     break;   
-                case EM_BATCH_INCUB_REMOVE:    
+                case EM_BATCH_INCUB_REMOVE:
                     batchName = argValues[0].toString();
                     actionDiagnoses= DataBatchIncubator.removeBatch(batchName);
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                

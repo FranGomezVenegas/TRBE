@@ -16,10 +16,12 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class DataSampleStructureEnums {
-    public enum DataSampleSuccess  implements EnumIntMessages{
-        READY_FOR_REVISION("readyForRevision", "", ""),        
+    public enum DataSampleStructureSuccess  implements EnumIntMessages{
+        READY_FOR_REVISION("Sample_readyForRevision", "", ""),    
+        SAMPLEANALYSISASSIGNED_SUCCESS("SampleAnalysisAssignment_Successfully", "", ""),        
+        SAMPLEANALYSIS_CANCELED("SampleAnalysisCanceled", "", ""),
         ;
-        DataSampleSuccess(String cl, String msgEn, String msgEs){
+        DataSampleStructureSuccess(String cl, String msgEn, String msgEs){
             this.errorCode=cl;
             this.defaultTextWhenNotInPropertiesFileEn=msgEn;
             this.defaultTextWhenNotInPropertiesFileEs=msgEs;
@@ -185,7 +187,6 @@ public class DataSampleStructureEnums {
         SPECRULE_NOTFOUND("DataSample_SpecRuleNotFound", "", ""),
         SAMPLEANALYSISASSIGNED_MODENOTRECOGNIZED("DataSample_SampleAnalysisAssignment_AssignmentModeNotRecognized", "", ""),
         SAMPLEANALYSISASSIGNED_MODENOTIMPLEMENTED("DataSample_SampleAnalysisAssignment_AssignmentModeNotImplemented", "", ""),
-        SAMPLEANALYSISASSIGNED_SUCCESS("DataSample_SampleAnalysisAssignment_Successfully", "", ""),
         DB_RETURNEDERROR("DataSample_SampleAnalysisAssignment_databaseReturnedError", "", ""),
         ESCAPE_UNHANDLEDEXCEPTION("DataSample_SampleAnalysisAssignment_EscapeByUnhandledException", "", ""),
         SAMPLEANALYSIS_NOTFOUND("DataSample_SampleAnalysisNotFound", "", ""),
@@ -196,7 +197,6 @@ public class DataSampleStructureEnums {
         RESULT_NOT_REVIEWABLE("DataSample_SampleAnalysisResultNotReviewable", "", ""),
         RULE_ANALYST_NOT_ASSIGNED("DataSample_SampleAnalysisRuleAnalystNotAssigned", "", ""),
         RULE_OTHERANALYSIS_ENTER_RESULT("DataSample_SampleAnalysisRuleOtherAnalystEnterResult", "", ""),
-        SAMPLEANALYSIS_CANCELED("DataSample_SampleAnalysisCanceled", "", ""),
         ALREADY_REVIEWED("DataSample_SampleAnalysisAlreadyReviewed","", "")
         ;
         
@@ -268,7 +268,7 @@ public class DataSampleStructureEnums {
         RESULT_LOCKED("DataSampleAnalysisResult_SampleAnalysisResultLocked", "", ""),
         SAME_RESULT_VALUE("DataSampleAnalysisResult_SampleAnalysisResultSameValue", "", ""),
         CONVERSION_NOT_ALLOWED("DataSample_SampleAnalysisResult_ConversionNotAllowed", "", ""),
-        CONVERTER_RETURNED_FALSE("DataSample_SampleAnalysisResult_ConverterFALSE", "", ""),
+        CONVERTER_RETURNED_FALSE("SampleAnalysisResult_ConverterFALSE", "", ""),
         NOT_NUMERIC_VALUE("DataSampleAnalysisResult_ValueNotNumericForQuantitativeParam", "", ""),
         SPECRULE_NOTIMPLEMENTED("DataSample_SampleAnalysisResult_SpecRuleNotImplemented", "", ""),
         FORRESULTUNCANCEL_STATUS_NOT_EXPECTED("DataSample_SampleUnCancel_StatusNotExpected", "", ""),

@@ -5,6 +5,7 @@
  */
 package functionaljavaa.samplestructure;
 
+import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
@@ -149,7 +150,7 @@ public class DataSampleIncubation {
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                 sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-            diagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_ENDED_SUCCESS, 
+            diagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonSampleAPIEndpoints.SINGLE_SAMPLE_INCUB_END.getSuccessMessageCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             SampleAudit smpAudit = new SampleAudit();
             EnumIntAuditEvents sampleAuditEvName=null;
@@ -187,7 +188,7 @@ public class DataSampleIncubation {
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
-            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleIncubationErrorTrapping.SAMPLEINCUBATION_STARTED_SUCCESS, 
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonSampleAPIEndpoints.SINGLE_SAMPLE_INCUB_START.getSuccessMessageCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});           
             SampleAudit smpAudit = new SampleAudit();
             EnumIntAuditEvents sampleAuditEvName=null;
@@ -391,8 +392,6 @@ public class DataSampleIncubation {
     
     public enum DataSampleIncubationErrorTrapping implements EnumIntMessages{ 
         INCUBATORBATCH_NOT_STARTED("IncubatorBatchNotStartedYet", "The batch <*1*> was not started yet for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
-        SAMPLEINCUBATION_STARTED_SUCCESS("SampleIncubationStartedSuccessfully", "", ""),
-        SAMPLEINCUBATION_ENDED_SUCCESS("SampleIncubationEndedSuccessfully", "", ""),
         TEMPERATUREREADYDAY_ISNOTTODAY("TemperatureReadingDayIsNotToday", "", ""),
         INCUBATION_STAGE_NOTRECOGNIZED("incubationStageNotRecognized", "", ""),
         INCUBATION_OBJECT_NOTRECOGNIZED("incubationObjectNotRecognized", "", ""),

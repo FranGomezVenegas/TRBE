@@ -138,7 +138,17 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add("table", TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName()).build()).build()
-        )
+        ),
+        SINGLE_SAMPLE_INCUB_START("SINGLE_SAMPLE_INCUB_START", "SampleIncubationStartedSuccessfully",  
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
+        ),
+        SINGLE_SAMPLE_INCUB_END("SINGLE_SAMPLE_INCUB_END", "SampleIncubationEndedSuccessfully",  
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
+        ),        
         ;      
         private EnvMonSampleAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;

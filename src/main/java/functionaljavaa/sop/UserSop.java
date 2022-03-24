@@ -5,6 +5,7 @@
  */
 package functionaljavaa.sop;
 
+import com.labplanet.servicios.app.SopUserAPI.SopUserAPIEndpoints;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsData;
@@ -53,15 +54,11 @@ public class UserSop {
     }
     
     public enum UserSopErrorTrapping implements EnumIntMessages{ 
-        MARKEDASCOMPLETED_NOT_PENDING("sopMarkedAsCompletedNotPending", "", ""),
+        MARKEDASCOMPLETED_NOT_PENDING("UserSop_SopMarkedAsCompletedNotPending", "", ""),
         NOT_ASSIGNED_TO_THIS_USER("UserSop_SopNotAssignedToThisUser", "", ""),
         USER_WITHNOROLE_FORGIVENSCHEMA("UserSop_UserWithNoRolesForThisGivenSchema", "", ""),
         USER_NOT_CERTIFIED_FOR_SOP("UserSop_UserNotCertifiedForSop", "", ""),
         SOP_ALREADY_ASSIGNED("UserSop_sopAlreadyAssignToUser", "", ""),
-        SOP_ADDED_TO_USER("UserSop_sopAddedToUser", "", "")
-
-
-        
         ;
         private UserSopErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -447,7 +444,7 @@ public class UserSop {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
             return diagnosis;
         else
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, UserSopErrorTrapping.SOP_ADDED_TO_USER, new Object[]{sopIdFieldValue, personName, schemaName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SopUserAPIEndpoints.ADD_SOP_TO_USER.getSuccessMessageCode(), new Object[]{sopIdFieldValue, personName, schemaName});
     }    
     
     /**

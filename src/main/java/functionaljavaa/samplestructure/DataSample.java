@@ -20,7 +20,7 @@ import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleBusinessRules;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
-import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleSuccess;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleStructureSuccess;
 import static functionaljavaa.samplestructure.DataSampleStructureRevisionRules.sampleReviewRulesAllowed;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
 import java.lang.reflect.InvocationTargetException;
@@ -298,7 +298,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),  
                     new String[] {TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleAnalysisFieldName);
             if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleSuccess.READY_FOR_REVISION, new Object[]{sampleId, procInstanceName});            
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.READY_FOR_REVISION, new Object[]{sampleId, procInstanceName});            
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.NOT_IMPLEMENTED, new Object[]{sampleId, procInstanceName});
         //return diagnoses;

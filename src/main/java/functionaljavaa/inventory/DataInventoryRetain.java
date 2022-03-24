@@ -40,13 +40,15 @@ public final class DataInventoryRetain {
         return newInvRec;
     }
     
+
+    
     public static Object[] retainReception(String lotName, Integer id){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String[] extraFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
         Object[] isRetAvailable=isRetainAvailable(lotName, id, extraFldName, new Object[]{""}, new String[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRetAvailable[0].toString())) return isRetAvailable;
         Integer recepFieldPosic=LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName());
-        if (recepFieldPosic==-1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.RECEPTION_FIELD_NOT_RETRIEVED, null);
+        if (recepFieldPosic==-1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.RECEPTION_FIELD_NOT_RETRIEVED, new Object[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName()});
         recepFieldPosic=recepFieldPosic+(isRetAvailable.length/2);
         if (isRetAvailable[recepFieldPosic]!=null && isRetAvailable[recepFieldPosic].toString().length()>0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.ITEM_ALREADY_RECEIVED, null);

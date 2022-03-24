@@ -34,53 +34,66 @@ public class ChangeOfCustody {
      *
      */
     public enum ChangeOfCustodyBusinessRules implements EnumIntBusinessRules{
-        CUSTODIAN_FUNCTIONALITY_MODE("custodianFunctionalityMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
+        CUSTODIAN_FUNCTIONALITY_MODE("custodianFunctionalityMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null)
         ;
-        private ChangeOfCustodyBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private ChangeOfCustodyBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean isOptional,ArrayList<String[]> getPreReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOptional;
+            this.getPreReqs=getPreReqs;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional() {return false; }
+        @Override        public ArrayList<String[]> getPreReqs() {return this.getPreReqs;}
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
-
-        @Override
-        public Boolean getIsOptional() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ArrayList<String[]> getPreReqs() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        private final Boolean isOptional;
+        private final ArrayList<String[]> getPreReqs;
     }
-public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{ 
+
+public enum ChangeOfCustodySuccess implements EnumIntMessages{ 
+        REQUEST_STARTED("ChainOfCustody_requestStarted","", ""),
         REQUEST_COMPLETED("ChainOfCustody_requestCompleted", "", ""),
+        ;
+        private ChangeOfCustodySuccess(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
+public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{ 
         NO_CUSTODIAN_CANDIDATE("ChainOfCustody_noCustodianCandidate", "", ""),
         SAME_CUSTODIAN("ChainOfCustody_sameCustodian","", ""),
         REQUEST_ALREADY_INCOURSE("ChainOfCustody_requestAlreadyInCourse","", ""),
         NO_CHANGE_IN_PROGRESS("ChainOfCustody_noChangeInProgress","", ""),
-        REQUEST_STARTED("ChainOfCustody_requestStarted","", ""),
         ;
         private ChangeOfCustodyErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -137,7 +150,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
             default:
                 break;
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodyErrorTrapping.REQUEST_STARTED, new Object[]{objectId, objectTable, procInstanceName});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodySuccess.REQUEST_STARTED, new Object[]{objectId, objectTable, procInstanceName});
     }
 
     /**
@@ -223,7 +236,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
             default:
                 break;
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodyErrorTrapping.REQUEST_COMPLETED, new Object[]{procInstanceName, objectTable, objectId, actionName.toLowerCase()});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ChangeOfCustodySuccess.REQUEST_COMPLETED, new Object[]{procInstanceName, objectTable, objectId, actionName.toLowerCase()});
     }
 
     /**

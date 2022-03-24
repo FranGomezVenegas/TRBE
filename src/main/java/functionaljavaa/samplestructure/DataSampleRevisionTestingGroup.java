@@ -140,7 +140,7 @@ public class DataSampleRevisionTestingGroup{
         Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(),  
                 new String[] {TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName()}, new Object[]{sampleId, testingGroup}, sampleAnalysisFieldName);
         if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureEnums.DataSampleSuccess.READY_FOR_REVISION, new Object[]{sampleId, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureEnums.DataSampleStructureSuccess.READY_FOR_REVISION, new Object[]{sampleId, procInstanceName});
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.NOT_READY_FOR_REVISION, new Object[]{sampleId, procInstanceName});
         //return diagnoses;
     }  

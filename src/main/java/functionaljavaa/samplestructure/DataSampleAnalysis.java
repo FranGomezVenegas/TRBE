@@ -27,6 +27,7 @@ import java.util.Arrays;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleStructureSuccess;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysisResultStatuses;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysisStatuses;
 import trazit.enums.EnumIntAuditEvents;
@@ -153,7 +154,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String sampleIdStr=sampleAnalysisInfo[0][0].toString();
         String currStatus=sampleAnalysisInfo[0][1].toString();
         if (sampleAnalysisStatusCanceled.equalsIgnoreCase(currStatus))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_CANCELED, new Object[]{testId, Integer.valueOf(sampleIdStr), procInstanceName});            
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureSuccess.SAMPLEANALYSIS_CANCELED, new Object[]{testId, Integer.valueOf(sampleIdStr), procInstanceName});            
         if (sampleAnalysisStatusReviewed.equalsIgnoreCase(currStatus)) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ALREADY_REVIEWED, new Object[]{testId, Integer.valueOf(sampleIdStr), procInstanceName});            
              
@@ -342,7 +343,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), updateFieldName, updateFieldValue, 
                     new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSISASSIGNED_SUCCESS, new Object[]{testId, newAnalyst, schemaDataName});
+                diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLEANALYSISASSIGNED_SUCCESS, new Object[]{testId, newAnalyst, sampleId});
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                         testId, sampleId, testId, null, updateFieldName, updateFieldValue);

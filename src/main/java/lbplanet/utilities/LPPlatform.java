@@ -97,30 +97,31 @@ public class LPPlatform {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
    public enum LpPlatformBusinessRules implements EnumIntBusinessRules {
-        PROCEDURE_ACTIONS("procedureActions", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
-        ACTION_ENABLED_ROLES("actionEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
-        ESIGN_REQUIRED("eSignRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
-        VERIFYUSER_REQUIRED("verifyUserRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
-        ACTIONCONFIRM_REQUIRED("actionConfirmRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
-        AUDIT_JUSTIF_REASON_REQUIRED("auditJustifReasonRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
-        AUDITREASON_PHRASE("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true),
-        TABLE_MANDATORYFIELDS_ACTIONNAME("_mandatoryFields", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false),
-        SUFFIX_CONFIGTABLENAME("_configTableName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true),
-        SUFFIX_CONFIGTABLEKEYFIELDS("_configTableKeyFields", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true),
-        SUFFIX_SPECIALFIELDNAME("_specialFieldsCheck", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true),
-        SUFFIX_SPECIALFIELDMETHODNAME("_specialFieldsCheck_methodName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true),
-        PREFIX_ENCRYPTED_TABLENAME("encrypted_", "", null, null, '|', true),
-        MIDDLEOF_FIELDSADDINGMANDATORY("_fieldsAddingMandatory", "", null, null, '|', true),
-        MARK_EXPIRED_OBJECTS("markExpiredObjects", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true),
-        MARK_EXPIRED_OBJECTS_LAST_RUN("markExpiredObjectsLastRun", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true),        
+        PROCEDURE_ACTIONS("procedureActions", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
+        ACTION_ENABLED_ROLES("actionEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
+        ESIGN_REQUIRED("eSignRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
+        VERIFYUSER_REQUIRED("verifyUserRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
+        ACTIONCONFIRM_REQUIRED("actionConfirmRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
+        AUDIT_JUSTIF_REASON_REQUIRED("auditJustifReasonRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
+        AUDITREASON_PHRASE("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true, null),
+        TABLE_MANDATORYFIELDS_ACTIONNAME("_mandatoryFields", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
+        SUFFIX_CONFIGTABLENAME("_configTableName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true, null),
+        SUFFIX_CONFIGTABLEKEYFIELDS("_configTableKeyFields", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true, null),
+        SUFFIX_SPECIALFIELDNAME("_specialFieldsCheck", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true, null),
+        SUFFIX_SPECIALFIELDMETHODNAME("_specialFieldsCheck_methodName", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', true, null),
+        PREFIX_ENCRYPTED_TABLENAME("encrypted_", "", null, null, '|', true, null),
+        MIDDLEOF_FIELDSADDINGMANDATORY("_fieldsAddingMandatory", "", null, null, '|', true, null),
+        MARK_EXPIRED_OBJECTS("markExpiredObjects", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true, null),
+        MARK_EXPIRED_OBJECTS_LAST_RUN("markExpiredObjectsLastRun", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', true, null),
         ;
-        private LpPlatformBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean opt){
+        private LpPlatformBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean opt, ArrayList<String[]> getPreReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
             this.isOptional=opt;
+            this.getPreReqs=getPreReqs;
         }       
         @Override        public String getTagName(){return this.tagName;}
         @Override        public String getAreaName(){return this.areaName;}
@@ -128,19 +129,15 @@ public class LPPlatform {
         @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
         @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         @Override        public Boolean getIsOptional(){return this.isOptional;}
-        
+        @Override        public ArrayList<String[]> getPreReqs() {return this.getPreReqs;}        
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;  
         private final Boolean isOptional;
-
-        @Override
-        public ArrayList<String[]> getPreReqs() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-    }
+        private final ArrayList<String[]> getPreReqs;
+   }
 public enum LpPlatformSuccess implements EnumIntMessages{  
         USRROLACTIONENABLED_ENABLED("userRoleActionEnabled_enabled", "", ""),
         USRROLACTIONENABLED_ENABLED_BYALL("userRoleActionEnabled_ALL", "", ""),
