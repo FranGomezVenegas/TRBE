@@ -7,7 +7,6 @@ package com.labplanet.servicios.app;
 
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import databases.Rdbms;
-import databases.TblsApp;
 import databases.TblsTesting;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -29,6 +28,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -130,70 +130,16 @@ public class TestingAPIActions extends HttpServlet {
             }
             argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
-            Integer incId=null;
             switch (endPoint){
                 case SCRIPT_SAVE_POINT:
-                    String[] scriptFldToRetrieve=getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields());
-                    //String[] scriptFldToRetrieve=new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.DATE_CREATION.getName()};
-                    Object[][] scriptInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
-                        new String[]{TblsTesting.Script.SCRIPT_ID.getName()},
-                        new Object[]{(Integer)argValues[0]},
-                        scriptFldToRetrieve);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptInfo[0][0].toString())){
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TestingAPIErrorTrapping.SCRIPT_NOT_FOUND, new Object[]{argValues[0]});
-                        break;
-                    }
-                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, scriptInfo[0]);
-                    Object[][] scriptStepsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
-                        new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()},
-                        new Object[]{(Integer)argValues[0]},
-                        getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableFields()));
-                    JSONArray scriptStepsJArr=new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsInfo[0][0].toString())){
-                        for (Object[] curStep: scriptStepsInfo){
-                            scriptStepsJArr.add(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curStep));
-                        }
-                    }
-                    jObj.put("steps", scriptStepsJArr);
-                    Object[][] scriptBusRulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableName(), 
-                        new String[]{TblsTesting.ScriptBusinessRules.SCRIPT_ID.getName()},
-                        new Object[]{(Integer)argValues[0]},
-                        getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableFields()));
-                    JSONArray scriptBusRulesJArr=new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptBusRulesInfo[0][0].toString())){
-                        for (Object[] curBusRules: scriptBusRulesInfo){
-                            scriptBusRulesJArr.add(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curBusRules));
-                        }
-                    }
-                    jObj.put("business_rules", scriptBusRulesJArr);
-                    String[] updFldName=new String[]{TblsTesting.ScriptSavePoint.SCRIPT_ID.getName(), TblsTesting.ScriptSavePoint.SAVED_DATE.getName(), 
-                            TblsTesting.ScriptSavePoint.CONTENT.getName()};
-                    Object[] updFldValue=new Object[]{(Integer)argValues[0], LPDate.getCurrentTimeStamp(), jObj};
-                    if (argValues[1]!=null && argValues[1].toString().length()>0){
-                        updFldName=LPArray.addValueToArray1D(updFldName, TblsTesting.ScriptSavePoint.COMMENT.getName());
-                        updFldValue=LPArray.addValueToArray1D(updFldValue, argValues[1].toString());
-                    }
-                    String[] scriptFldsForRecord=new String[]{TblsTesting.ScriptSavePoint.DATE_CREATION.getName(), TblsTesting.ScriptSavePoint.DATE_EXECUTION.getName(),
-                        TblsTesting.ScriptSavePoint.PURPOSE.getName(), TblsTesting.ScriptSavePoint.TESTER_NAME.getName(),
-                        TblsTesting.ScriptSavePoint.TIME_STARTED.getName(), TblsTesting.ScriptSavePoint.TIME_COMPLETED.getName(),
-                        TblsTesting.ScriptSavePoint.TIME_CONSUME.getName(), TblsTesting.ScriptSavePoint.RUN_SUMMARY.getName()};
-                    for (String curFld:scriptFldsForRecord){
-                        Integer fldPosicInArray = LPArray.valuePosicInArray(scriptFldToRetrieve, curFld);
-                        if (fldPosicInArray>-1){
-                            updFldName=LPArray.addValueToArray1D(updFldName, curFld);
-                            updFldValue=LPArray.addValueToArray1D(updFldValue, scriptInfo[0][fldPosicInArray]);
-                        }
-                    }
-                    actionDiagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_SAVE_POINT.getTableName(), 
-                        updFldName, updFldValue);
+                    scriptSavePoint((Integer) argValues[0], LPNulls.replaceNull(argValues[1]).toString());
                     break;
             }    
             if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), incId);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{incId}, rObj.getRelatedObject());
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{argValues[0]}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
@@ -214,6 +160,72 @@ public class TestingAPIActions extends HttpServlet {
 
     }
 
+    public static void scriptSavePoint(Integer scriptId, String comment){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false, true);
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            //LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            return;
+        }
+        Object[] actionDiagnoses = null;
+        String[] scriptFldToRetrieve=getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields());
+        //String[] scriptFldToRetrieve=new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.DATE_CREATION.getName()};
+        Object[][] scriptInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
+            new String[]{TblsTesting.Script.SCRIPT_ID.getName()},
+            new Object[]{scriptId},
+            scriptFldToRetrieve);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptInfo[0][0].toString())){
+            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TestingAPIErrorTrapping.SCRIPT_NOT_FOUND, new Object[]{scriptId});
+            return;
+        }
+        JSONObject jObj=LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, scriptInfo[0]);
+        Object[][] scriptStepsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
+            new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()},
+            new Object[]{scriptId},
+            getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableFields()));
+        JSONArray scriptStepsJArr=new JSONArray();
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsInfo[0][0].toString())){
+            for (Object[] curStep: scriptStepsInfo){
+                scriptStepsJArr.add(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curStep));
+            }
+        }
+        jObj.put("steps", scriptStepsJArr);
+        Object[][] scriptBusRulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableName(), 
+            new String[]{TblsTesting.ScriptBusinessRules.SCRIPT_ID.getName()},
+            new Object[]{scriptId},
+            getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableFields()));
+        JSONArray scriptBusRulesJArr=new JSONArray();
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptBusRulesInfo[0][0].toString())){
+            for (Object[] curBusRules: scriptBusRulesInfo){
+                scriptBusRulesJArr.add(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curBusRules));
+            }
+        }
+        jObj.put("business_rules", scriptBusRulesJArr);
+        String[] updFldName=new String[]{TblsTesting.ScriptSavePoint.SCRIPT_ID.getName(), TblsTesting.ScriptSavePoint.SAVED_DATE.getName(), 
+                TblsTesting.ScriptSavePoint.CONTENT.getName()};
+        Object[] updFldValue=new Object[]{scriptId, LPDate.getCurrentTimeStamp(), jObj};
+        if (comment!=null && comment.length()>0){
+            updFldName=LPArray.addValueToArray1D(updFldName, TblsTesting.ScriptSavePoint.COMMENT.getName());
+            updFldValue=LPArray.addValueToArray1D(updFldValue, comment);
+        }
+        updFldName=LPArray.addValueToArray1D(updFldName, TblsTesting.ScriptSavePoint.DATE_EXECUTION.getName());
+        updFldValue=LPArray.addValueToArray1D(updFldValue, LPDate.getCurrentTimeStamp());
+        
+        String[] scriptFldsForRecord=new String[]{TblsTesting.ScriptSavePoint.DATE_CREATION.getName(),
+            TblsTesting.ScriptSavePoint.PURPOSE.getName(), TblsTesting.ScriptSavePoint.TESTER_NAME.getName(),
+            TblsTesting.ScriptSavePoint.TIME_STARTED.getName(), TblsTesting.ScriptSavePoint.TIME_COMPLETED.getName(),
+            TblsTesting.ScriptSavePoint.TIME_CONSUME.getName(), TblsTesting.ScriptSavePoint.RUN_SUMMARY.getName()};
+        for (String curFld:scriptFldsForRecord){
+            Integer fldPosicInArray = LPArray.valuePosicInArray(scriptFldToRetrieve, curFld);
+            if (fldPosicInArray>-1){
+                updFldName=LPArray.addValueToArray1D(updFldName, curFld);
+                updFldValue=LPArray.addValueToArray1D(updFldValue, scriptInfo[0][fldPosicInArray]);
+            }
+        }
+        actionDiagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_SAVE_POINT.getTableName(), 
+            updFldName, updFldValue);
+        return;
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

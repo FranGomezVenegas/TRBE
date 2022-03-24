@@ -20,6 +20,8 @@ public class LPTestingParams {
     public static final String TESTING_SOURCE="testingSource";
     public static final String NUM_EVAL_ARGS="numEvalArgs";
     public static final String SCRIPT_ID="scriptId";
+    public static final String SAVE_POINT_WHEN_SUCCESS="savePointWhenSuccess";
+    
     public static final String SCHEMA_PREFIX="procInstanceName";
     
     public static void handleAlternativeToken(LPTestingOutFormat tstOut, Integer lineNumber){
