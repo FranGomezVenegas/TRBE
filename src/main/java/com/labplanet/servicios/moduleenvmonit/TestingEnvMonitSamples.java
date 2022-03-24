@@ -94,9 +94,9 @@ public class TestingEnvMonitSamples extends HttpServlet {
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
 //out.println(iLines+" "+actionName);      
-if (iLines==35){
-    out.println("stop here");
-}
+//if (iLines==35){
+//    out.println("stop here");
+//}
                 LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 LPTestingParams.handleAlternativeToken(tstOut, iLines);
                 
@@ -127,7 +127,7 @@ if (iLines==35){
                         procInstanceName+"-"+suffixName, propName, propValue);
                     functionRelatedObjects=new JSONArray();                      
                     if (diagn.toUpperCase().contains("CREATED"))
-                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LPPlatform.ApiErrorTraping.PROPERTY_CREATED, new Object[]{diagn});
+                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.PROPERTY_CREATED, new Object[]{diagn});
                     else
                         functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_NOT_CREATED, new Object[]{diagn});
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
