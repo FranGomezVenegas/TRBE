@@ -6,7 +6,7 @@
 package functionaljavaa.datatransfer;
 
 import databases.Rdbms;
-import databases.Rdbms.RdbmsErrorTrapping;
+import databases.Rdbms.RdbmsSuccess;
 import databases.SqlStatement;
 import java.util.HashMap;
 import lbplanet.utilities.LPArray;
@@ -43,7 +43,7 @@ public class FromInstanceToInstance {
         }
         String diagn=LPPlatform.LAB_FALSE;
         if (numRecsTransferred==recordsInSourceDB.length) diagn=LPPlatform.LAB_TRUE;
-        return ApiMessageReturn.trapMessage(diagn, RdbmsErrorTrapping.TRANSFERRED_RECORDS_BETWEEN_INSTANCES, new Object[]{numRecsTransferred, recordsInSourceDB.length});
+        return ApiMessageReturn.trapMessage(diagn, RdbmsSuccess.TRANSFERRED_RECORDS_BETWEEN_INSTANCES, new Object[]{numRecsTransferred, recordsInSourceDB.length});
     }
     
 }
