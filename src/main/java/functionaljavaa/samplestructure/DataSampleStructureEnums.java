@@ -16,6 +16,24 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class DataSampleStructureEnums {
+    public enum DataSampleSuccess  implements EnumIntMessages{
+        READY_FOR_REVISION("readyForRevision", "", ""),        
+        ;
+        DataSampleSuccess(String cl, String msgEn, String msgEs){
+            this.errorCode=cl;
+            this.defaultTextWhenNotInPropertiesFileEn=msgEn;
+            this.defaultTextWhenNotInPropertiesFileEs=msgEs;
+        }
+
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
     public enum DataSampleErrorTrapping implements EnumIntMessages{  
         SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE ("SetSamplingDate_notAllowChangePreviousValue", "", ""),
         SAMPLINGDATE_REQUIRED_FOR_SAMPLINGDATEEND("SamplingDateRequiredForSampleDateEnd", "", ""),
@@ -33,7 +51,6 @@ public class DataSampleStructureEnums {
         SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         SAMPLE_FIELDNOTFOUND("SampleFieldNotFound", "", ""),
         SAMPLE_RULES_NOT_FOUND("SampleRulesNotFound", "", ""),
-        READY_FOR_REVISION("readyForRevision", "", ""),
         NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
         SAMPLE_ALREADY_REVIEWED("sampleAlreadyReviewed", "", ""),
         SAMPLE_ALREADY_READY_FOR_REVISION("alreadyReadyForRevision", "", "")
