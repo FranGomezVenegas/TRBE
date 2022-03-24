@@ -28,29 +28,6 @@ public class TblsEnvMonitData {
     
     private static final String FIELDS_NAMES_LOCATION_NAME = "location_name";
     private static final String FIELDS_NAMES_PROGRAM_NAME = "program_name";
-/*    public static final String getTableCreationScriptFromDataTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "INCUB_BATCH": return IncubBatch.createTableScript(schemaNamePrefix, fields);
-            case "INSTRUMENT_INCUBATOR_NOTEBOOK": return InstrIncubatorNoteBook.createTableScript(schemaNamePrefix, fields);
-            case "PRODUCTION_LOT": return ProductionLot.createTableScript(schemaNamePrefix, fields);
-            //case "PROGRAM": return Program.createTableScript(schemaNamePrefix, fields);
-            //case "PROGRAM_CALENDAR_DATE": return ProgramCalendarDate.createTableScript(schemaNamePrefix, fields);
-            //case "PROGRAM_DAY": return ProgramDay.createTableScript(schemaNamePrefix, fields);
-            //case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE": return createTableScript(TablesData.SAMPLE, schemaNamePrefix);
-            case "SAMPLE_ANALYSIS": return createTableScript(TablesData.SAMPLE_ANALYSIS, schemaNamePrefix);
-            case "SAVED_QUERIES": return createTableScript(TablesData.SAVED_QUERIES, schemaNamePrefix);
-            case "SAMPLE_MICROORGANISM": return SampleMicroorganism.createTableScript(schemaNamePrefix, fields);
-            case "PR_SCHEDULED_LOCATIONS_VIEW": return ViewProgramScheduledLocations.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_MICROORGANISM_LIST_VW": return ViewSampleMicroorganismList.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_REVISION_TESTING_GROUP": return createTableScript(TablesData.SAMPLE_REVISION_TESTING_GROUP, schemaNamePrefix);
-            case "USER_ANALYSIS_METHOD_CERTIF": return createTableScript(TablesData.CERTIF_USER_ANALYSIS_METHOD, schemaNamePrefix);
-            case "SAMPLE_TESTING_GROUP_VIEW": return TblsData.ViewSampleTestingGroup.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW": return TblsData.ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, fields);
-            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
-        }        
-    }
-    */
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesEnvMonitData implements EnumIntTables{        
@@ -60,17 +37,17 @@ public class TblsEnvMonitData {
         PROGRAM_LOCATION(null, "program_location", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProgramLocation.values(), null, 
             new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName(), TblsEnvMonitData.ProgramLocation.AREA.getName()}, 
             new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName()
+                    SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.NAME.getName()
             )}, "program locations table"),
         PROGRAM_DAY(null, "program_day", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProgramDay.values(), null, 
-            new String[]{TblsEnvMonitData.ProgramDay.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitData.ProgramDay.PROGRAM_CONFIG_VERSION.getName()}, 
-            new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramDay.PROGRAM_CONFIG_ID.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.PROGRAM_CONFIG_ID.getName()
+            new String[]{TblsEnvMonitData.ProgramDay.PROGRAM_NAME.getName()}, 
+            new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramDay.PROGRAM_NAME.getName(), 
+                    SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.NAME.getName()
             )}, "program_day table"),
         PROGRAM_CALENDAR_DATE(null, "program_calendar_date", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProgramCalendarDate.values(), TblsEnvMonitData.ProgramCalendarDate.ID.getName(), 
             new String[]{TblsEnvMonitData.ProgramCalendarDate.ID.getName()}, 
-            new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramCalendarDate.PROGRAM_ID.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.PROGRAM_CONFIG_ID.getName()
+            new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramCalendarDate.PROGRAM_NAME.getName(), 
+                    SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.NAME.getName()
             )}, "ProgramCalendarDate table"),
         SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.Sample.values(), Sample.SAMPLE_ID.getName()
             , new String[]{Sample.SAMPLE_ID.getName()}, null, "sample table"),
@@ -169,6 +146,8 @@ public class TblsEnvMonitData {
         NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null), 
         PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
         PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.stringNotNull(200), null, null, null, null), 
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),         
         SPEC_CODE("spec_code", LPDatabase.string(), null, null, null, null), 
         SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integer(), null, null, null, null), 
         SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.string(), null, null, null, null), 
@@ -250,7 +229,7 @@ public class TblsEnvMonitData {
     public enum ProgramCalendarDate implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, null, null), 
         CALENDAR_ID("calendar_id", LPDatabase.integerNotNull(), null, null, null, null), 
-        PROGRAM_ID(TblsEnvMonitConfig.FIELDS_NAMES_PROGRAM_ID,LPDatabase.stringNotNull(), null, null, null, null), 
+        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME,LPDatabase.stringNotNull(), null, null, null, null), 
         RECURSIVE_ID("recursive_id", LPDatabase.integerNotNull(), null, null, null, null), 
         IS_HOLIDAYS("is_holidays", LPDatabase.booleanFld(false), null, null, null, null), 
         DATE("date", LPDatabase.date(), null, null, null, null), 
@@ -286,8 +265,7 @@ public class TblsEnvMonitData {
     }
     
     public enum ProgramDay implements EnumIntTableFields{
-        PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
-        PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
+        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, LPDatabase.string(), null, null, null, null), 
         DAY_ID("day_id", LPDatabase.integer(), null, null, null, null), 
         DATE("date", LPDatabase.date(), null, null, null, null), 
         ;
