@@ -28,9 +28,6 @@ public class TrazitUtiilitiesEnums {
         RECORD_ALREADY_EXISTS("recordAlreadyExists", "", ""),
         DATERANGE_WRONG_INTERVAL("dateRange_wrongInterval", "", ""),
         SPECIAL_FUNCTION_RETURNED_ERROR("SpecialFunctionReturnedERROR", "", ""),
-        CORRECT("correct", "", ""),
-        ALL_FINE("allFine", "", ""),
-        ALL_THE_SAME("allTheSame", "", "")
         ;
         private TrazitUtilitiesErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
