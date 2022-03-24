@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.proceduredefinition;
 
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import databases.Rdbms;
 import databases.TblsReqs;
@@ -59,15 +58,24 @@ public class ClassProcedureQueries {
         }
         return jBlockObj;
     }
-    static JsonObject feProcModel(String procInstanceName){
-        JsonObject jArr = new JsonObject();   
+    static JSONArray feProcModel(String procInstanceName){
+        JSONArray jArr = new JSONArray();   
         Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(), 
                 new String[]{TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procInstanceName}, 
-                new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName()});
+                new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON_MOBILE.getName()});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){
             JsonParser parser = new JsonParser();
-            return parser.parse(ruleValue[0][0].toString()).getAsJsonObject();
+            JSONObject jObj= new JSONObject();
+            jObj.put("laptop_mode", parser.parse(ruleValue[0][0].toString()).getAsJsonObject());
+            jArr.add(jObj);
+            jObj= new JSONObject();
+            if (ruleValue[0][1]==null || ruleValue[0][1].toString().length()==0)
+                jObj.put("mobile_mode", "no mobile version");
+            else
+                jObj.put("mobile_mode", parser.parse(ruleValue[0][1].toString()).getAsJsonObject());
+            jArr.add(jObj);
+            
         }  
         return jArr;        
     }
