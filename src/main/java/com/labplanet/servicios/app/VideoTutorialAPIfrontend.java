@@ -146,6 +146,7 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
      
     public enum VideoTutorialAPIfrontendEndpoints{
         ALL_ACTIVE_VIDEO_TUTORIALS("ALL_ACTIVE_VIDEO_TUTORIALS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
+        ALL_ACTIVE_VIDEO_TUTORIALS_TABLE("ALL_ACTIVE_VIDEO_TUTORIALS_TABLE", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
 //        ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY("ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
 //        ALL_USER_VIDEO_TUTORIALS("ALL_USER_VIDEO_TUTORIALS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
         ; 
@@ -219,6 +220,29 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
             switch (endPoint){
             case ALL_ACTIVE_VIDEO_TUTORIALS:
                 JSONArray jArr=new JSONArray();
+                Object[][] videoTutorialsJson=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.VIDEO_TUTORIAL_JSON, 
+                    new EnumIntTableFields[]{TblsApp.VideoTutorialJson.AREA, TblsApp.VideoTutorialJson.CONTENT},
+                    new String[]{TblsApp.VideoTutorialJson.ACTIVE.getName()}, new Object[]{true},                     
+                    new String[]{TblsApp.VideoTutorialJson.ORDER_NUMBER.getName()}); 
+/*                Object[][] videoTutorialsJson = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL_JSON.getTableName(), 
+                    new String[]{TblsApp.VideoTutorialJson.ACTIVE.getName()},
+                    new Object[]{true}, 
+                    new String[]{TblsApp.VideoTutorialJson.AREA.getName(), TblsApp.VideoTutorialJson.CONTENT.getName()},
+                    new String[]{TblsApp.VideoTutorialJson.ORDER_NUMBER.getName()});
+*/                
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(videoTutorialsJson[0][0].toString())){
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    return;
+                }
+                JSONObject vidObj=new JSONObject();
+                for (Object[] curVid: videoTutorialsJson){
+                    vidObj.put(curVid[0].toString(), curVid[1]);
+                }
+                LPFrontEnd.servletReturnSuccess(request, response, vidObj);
+                return;
+            case ALL_ACTIVE_VIDEO_TUTORIALS_TABLE:    
+                if (1==1)return;
+                jArr=new JSONArray();
                 Object[][] videoTutorialItems=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.VIDEO_TUTORIAL, 
                     EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.VIDEO_TUTORIAL, "ALL"),
                     new String[]{TblsApp.VideoTutorial.ACTIVE.getName()}, new Object[]{true},                     
