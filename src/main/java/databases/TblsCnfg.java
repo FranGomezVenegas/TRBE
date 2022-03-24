@@ -18,27 +18,7 @@ public class TblsCnfg {
     public static final String OWNERTAG = "#OWNER";
     public static final String TABLESPACETAG = "#TABLESPACE";
     public static final String FIELDSTAG = "#FLDS";
-         
-    
-/*    public static final String getTableCreationScriptFromCnfgTable(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "METHODS": return Methods.createTableScript(schemaNamePrefix, fields);
-            case "ANALYSIS": return Analysis.createTableScript(schemaNamePrefix, fields);
-            case "ANALYSIS_METHOD": return AnalysisMethod.createTableScript(schemaNamePrefix, fields);
-            case "ANALYSIS_METHOD_PARAMS": return AnalysisMethodParams.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_RULES": return SampleRules.createTableScript(schemaNamePrefix, fields);
-            case "SOP_META_DATA": return SopMetaData.createTableScript(schemaNamePrefix, fields);
-            case "SPEC": return Spec.createTableScript(schemaNamePrefix, fields);
-            case "SPEC_LIMITS": return SpecLimits.createTableScript(schemaNamePrefix, fields);
-            case "SPEC_RULES": return SpecRules.createTableScript(schemaNamePrefix, fields);
-            case "UNITS_OF_MEASUREMENT": return UnitsOfMeasurement.createTableScript(schemaNamePrefix, fields);
-            case "ANALYSIS_METHODS_VIEW": return ViewAnalysisMethodsView.createTableScript(schemaNamePrefix, fields);
-            case "ZZZ_DB_ERROR_LOG": return zzzDbErrorLog.createTableScript(schemaNamePrefix, fields);
-            case "ZZZ_PROPERTIES_ERROR": return zzzPropertiesMissing.createTableScript(schemaNamePrefix, fields);
-            default: return "TABLE "+tableName+" NOT IN TBLSCNFG"+LPPlatform.LAB_FALSE;
-        }        
-    }*/
+
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     public enum TablesConfig implements EnumIntTables{
         UOM(null, "units_of_measurement", SCHEMA_NAME, true, UnitsOfMeasurement.values(), UnitsOfMeasurement.NAME.getName(),
