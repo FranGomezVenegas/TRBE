@@ -24,6 +24,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
@@ -54,7 +55,7 @@ public class DataInstruments {
     private InternalMessage decisionValueIsCorrect(String decision){
         try{
             Decisions.valueOf(decision);
-            return new InternalMessage(LPPlatform.LAB_TRUE, TrazitUtilitiesErrorTrapping.CORRECT, null, null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null);
         }catch(Exception e){
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
             messages.addMainForError(InstrumentsErrorTrapping.WRONG_DECISION, new Object[]{decision, Arrays.toString(Decisions.values())});
