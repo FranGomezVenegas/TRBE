@@ -129,7 +129,7 @@ public class AppProcedureListAPI extends HttpServlet {
     public static final String PROC_NEW_EVENT_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|branch_level|type|mode|esign_required|sop|order_number|parent_name|position|icon_name|icon_name_when_not_certified";
     public static final String PROC_EVENT_ICONS_UP_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|icon_name|type|mode|esign_required|sop|position";
     public static final String PROC_EVENT_ICONS_DOWN_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|icon_name|type|mode|esign_required|sop|position";
-    
+    public static final Integer SIZE_WHEN_CONSIDERED_MOBILE=960;
 /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
@@ -158,8 +158,13 @@ public class AppProcedureListAPI extends HttpServlet {
             if (finalToken==null || finalToken.length()==0)
                 finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
             Token token = new Token(finalToken);
-                        
-           if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}               
+
+            Integer sizeValue=SIZE_WHEN_CONSIDERED_MOBILE+1;
+            String sizeValueStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SIZE_VALUE);
+            if (sizeValueStr!=null && sizeValueStr.length()>0)
+                sizeValue=Integer.valueOf(sizeValueStr);
+
+            if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}               
          
             String rolName = token.getUserRole();
             UserProfile usProf = new UserProfile();
@@ -185,7 +190,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){
                     procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
                     
-                    procedure.put("name", procInfo[0][LPArray.valuePosicInArray(PROC_FLD_NAME.split("\\|"), TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName())]);
+                    //procedure.put("name", procInfo[0][LPArray.valuePosicInArray(PROC_FLD_NAME.split("\\|"), TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName())]);
                     
                     String propValue = "NO";
                     
@@ -211,7 +216,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 procedure.put("audit_sign_mode", auditSignMode(curProc.toString()));
                 String includeProcModelInfo = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_PROC_MODEL_INFO);    
                 if (includeProcModelInfo!=null && Boolean.valueOf(includeProcModelInfo))                
-                    procedure.put("procModel", procModel(curProc.toString()));
+                    procedure.put("procModel", procModel(curProc.toString(), sizeValue));
                 procedures.add(procedure);
             }
             procFldNameArray = LPArray.addValueToArray1D(procFldNameArray, LABEL_PROC_SCHEMA);
@@ -224,15 +229,17 @@ public class AppProcedureListAPI extends HttpServlet {
             return proceduresList;            
         }
     } 
-    public static JsonObject procModel(String procInstanceName){
+    public static JsonObject procModel(String procInstanceName, Integer sizeValue){
         try{
             JsonObject jArr = new JsonObject();   
             Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(), 
                 new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procInstanceName, procInstanceName}, 
-                new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName()});            
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;
+                new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON_MOBILE.getName()});            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;            
             JsonParser parser = new JsonParser();
+            if (sizeValue<=SIZE_WHEN_CONSIDERED_MOBILE && ruleValue[0][1]!=null && ruleValue[0][1].toString().length()>0)
+                return parser.parse(ruleValue[0][1].toString()).getAsJsonObject();
             return parser.parse(ruleValue[0][0].toString()).getAsJsonObject();
         }catch(JsonSyntaxException e){
             JsonObject jArr = new JsonObject();   
