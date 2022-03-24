@@ -313,7 +313,6 @@ GlobalAPIsParams.
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
             switch (endPoint){
                 case PROGRAMS_LIST: 
-                    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
                     String[] programFldNameArray = getFieldsListToRetrieve(argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PROGRAM.getTableFields()));
                     String[] programFldSortArray = getFieldsListToRetrieve(argValues[1].toString(), new String[]{});
                     String[] programLocationFldNameArray = getFieldsListToRetrieve(argValues[2].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableFields()));
@@ -409,6 +408,7 @@ GlobalAPIsParams.
                                     for (int yProcEv = 0; yProcEv<programLocations[0].length; yProcEv++) {
                                         programLocationJsonObj.put(programLocationFldNameArray[yProcEv], programLocations1[yProcEv]);
                                     }
+                    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());                                    
                                     Object[][] programLocationCardInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableName(), 
                                             new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName()}, new String[]{curProgramName, locationName}, 
                                             programLocationCardInfoFldNameArray, programLocationCardInfoFldSortArray);
