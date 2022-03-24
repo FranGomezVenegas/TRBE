@@ -7,6 +7,7 @@ package functionaljavaa.testingscripts;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import static com.labplanet.servicios.app.TestingAPIActions.scriptSavePoint;
 import databases.Rdbms;
 import static databases.Rdbms.dbGetIndexLastNumberInUse;
 import databases.TblsTesting;
@@ -34,9 +35,9 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
+import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
-import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
@@ -209,13 +210,17 @@ public class LPTestingOutFormat {
             updFldValues=LPArray.addValueToArray1D(updFldValues, secondsInDateRange);            
         }
         if (numEvaluationArguments>0){
-            if ("DB".equals(this.inputMode)){
+            Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));            
+            if ("DB".equals(this.inputMode)){                
                 if (summaryPhrase==null){
                     if (numEvaluationArguments==0) summaryPhrase="COMPLETED ALL STEPS";
                     else{
-                        if (tstAssertSummary.getTotalSyntaxisMatch()==testingContent.length)
+                        if (tstAssertSummary.getTotalSyntaxisMatch()==testingContent.length){
                             summaryPhrase="COMPLETED SUCCESSFULLY";
-                        else{
+                            String savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SAVE_POINT_WHEN_SUCCESS)).toString();
+                            if (Boolean.valueOf(savePoint))
+                                scriptSavePoint(scriptId, summaryPhrase);
+                        }else{
                             summaryPhrase="COMPLETED WITH UNEXPECTED RESULTS. ";
                             if (tstAssertSummary.getTotalSyntaxisUnMatch()>0) summaryPhrase=summaryPhrase+"Unmatched="+tstAssertSummary.getTotalSyntaxisUnMatch()+". ";
                             if (tstAssertSummary.getTotalSyntaxisUndefined()>0) summaryPhrase=summaryPhrase+"Undefined="+tstAssertSummary.getTotalSyntaxisUndefined()+". ";
@@ -226,7 +231,6 @@ public class LPTestingOutFormat {
                 fileContentBuilder.append(fileContentSummary);
                 
                 if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}
-                Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
                 String procInstanceName=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
                 String repositoryName=LPPlatform.buildSchemaName(GlobalVariables.Schemas.APP_TESTING.getName(), "");
                 if (procInstanceName!=null && procInstanceName.length()>0)
@@ -997,7 +1001,7 @@ public class LPTestingOutFormat {
             }
         }
         if (missingValues.length()==0)
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, TrazitUtilitiesErrorTrapping.ALL_FINE, null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
         else
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING, new Object[]{missingValues});
     }
