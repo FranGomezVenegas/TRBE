@@ -16,12 +16,6 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class TblsEnvMonitDataAudit {
-/*    public static final String getTableCreationScriptFromDataAuditTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "INCUB_BATCH": return IncubBatch.createTableScript(schemaNamePrefix, fields);
-            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
-        }        
-    }    */
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA_AUDIT.getName();    
     public enum TablesEnvMonitDataAudit implements EnumIntTables{        
         INCUB_BATCH(null, "incub_batch", SCHEMA_NAME, true, IncubBatch.values(), IncubBatch.AUDIT_ID.getName(), 
