@@ -40,6 +40,8 @@ public class TblsApp {
             new String[]{Incident.ID.getName()}, null, "Incidents table"),
         VIDEO_TUTORIAL(null, "video_tutorial", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, VideoTutorial.values(), VideoTutorial.ID.getName(),
             new String[]{VideoTutorial.ID.getName()}, null, "Video Tutorial entries table"),
+        VIDEO_TUTORIAL_JSON(null, "video_tutorial_json", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, VideoTutorialJson.values(), null,
+            new String[]{VideoTutorialJson.AREA.getName()}, null, "Video Tutorial JSON entries table"),
         ;
         private TablesApp(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -327,4 +329,29 @@ public class TblsApp {
         private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }    
+
+    public enum VideoTutorialJson implements EnumIntTableFields{
+        AREA("area", LPDatabase.stringNotNull(), null, null, "", null),
+        DESCRIPTION("description", LPDatabase.string(), null, null, "", null),
+        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, "", null),
+        ACTIVE("active", LPDatabase.booleanFld(), null, null, "", null),
+        CONTENT("content", LPDatabase.json(), null, null, "", null),
+        ;
+        private VideoTutorialJson(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }    
+    
 }
