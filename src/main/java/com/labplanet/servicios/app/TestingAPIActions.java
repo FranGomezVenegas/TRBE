@@ -132,7 +132,7 @@ public class TestingAPIActions extends HttpServlet {
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
             switch (endPoint){
                 case SCRIPT_SAVE_POINT:
-                    scriptSavePoint((Integer) argValues[0], LPNulls.replaceNull(argValues[1]).toString());
+                    scriptExecutionEvidenceSave((Integer) argValues[0], LPNulls.replaceNull(argValues[1]).toString());
                     break;
             }    
             if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
@@ -160,7 +160,7 @@ public class TestingAPIActions extends HttpServlet {
 
     }
 
-    public static void scriptSavePoint(Integer scriptId, String comment){
+    public static void scriptExecutionEvidenceSave(Integer scriptId, String comment){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false, true);
         if (procReqInstance.getHasErrors()){
             procReqInstance.killIt();

@@ -7,7 +7,7 @@ package functionaljavaa.testingscripts;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import static com.labplanet.servicios.app.TestingAPIActions.scriptSavePoint;
+import static com.labplanet.servicios.app.TestingAPIActions.scriptExecutionEvidenceSave;
 import databases.Rdbms;
 import static databases.Rdbms.dbGetIndexLastNumberInUse;
 import databases.TblsTesting;
@@ -217,9 +217,11 @@ public class LPTestingOutFormat {
                     else{
                         if (tstAssertSummary.getTotalSyntaxisMatch()==testingContent.length){
                             summaryPhrase="COMPLETED SUCCESSFULLY";
-                            String savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SAVE_POINT_WHEN_SUCCESS)).toString();
+                            String savePoint= LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
+                            if (savePoint==null || savePoint.length()==0)
+                                savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
                             if (Boolean.valueOf(savePoint))
-                                scriptSavePoint(scriptId, summaryPhrase);
+                                scriptExecutionEvidenceSave(scriptId, summaryPhrase);
                         }else{
                             summaryPhrase="COMPLETED WITH UNEXPECTED RESULTS. ";
                             if (tstAssertSummary.getTotalSyntaxisUnMatch()>0) summaryPhrase=summaryPhrase+"Unmatched="+tstAssertSummary.getTotalSyntaxisUnMatch()+". ";
