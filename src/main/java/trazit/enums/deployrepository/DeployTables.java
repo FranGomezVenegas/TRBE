@@ -35,7 +35,7 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
     seqScript=seqScript+sequenceScript(tableObj, procInstanceName);
     seqScript=seqScript+createTableBeginScript(tableObj, procInstanceName);
     seqScript=seqScript+primaryKeyScript(tableObj);
-    seqScript=seqScript+foreignKeyScript(tableObj);
+    seqScript=seqScript+foreignKeyScript(tableObj, procInstanceName);
     seqScript=seqScript+createTableEndScript();
         
     seqScript=seqScript+alterTableScript(tableObj, procInstanceName);
@@ -61,7 +61,7 @@ private static String sequenceScript(EnumIntTables tableObj, String procInstance
     }
     return seqScript;
 }
-private static String foreignKeyScript(EnumIntTables tableObj){
+private static String foreignKeyScript(EnumIntTables tableObj, String procInstanceName){
     String seqScript="";
     if (tableObj.getForeignKey()!=null){
         seqScript=", CONSTRAINT #TBL_fkey FOREIGN KEY ";
@@ -76,7 +76,7 @@ private static String foreignKeyScript(EnumIntTables tableObj){
             if (refKeys.length()==0)refKeys=refKeys+"(";
             frKeys=frKeys+curForKey.getForeignKeyFld()+", ";
             refKeys=refKeys+curForKey.getReferencedField()+", ";
-            refTable=" REFERENCES "+ curForKey.getReferencedSchema()+"."+curForKey.getReferencedTable();
+            refTable=" REFERENCES "+ LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curForKey.getReferencedSchema())+"."+curForKey.getReferencedTable();
         }
         frKeys=frKeys.substring(0, frKeys.length()-2)+")";
         refKeys=refKeys.substring(0, refKeys.length()-2)+")";
