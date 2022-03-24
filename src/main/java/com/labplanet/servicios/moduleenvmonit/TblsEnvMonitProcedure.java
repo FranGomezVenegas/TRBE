@@ -5,8 +5,16 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import databases.TblsCnfg.TablesConfig;
+import databases.TblsCnfgAudit.TablesCfgAudit;
+import databases.TblsData.TablesData;
+import databases.TblsDataAudit.TablesDataAudit;
+import databases.TblsProcedure.TablesProcedure;
+import databases.TblsProcedureAudit.TablesProcedureAudit;
+import databases.TblsProcedureConfig.TablesProcedureConfig;
 import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
+import trazit.enums.EnumIntModuleTablesDeployment;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
@@ -17,17 +25,26 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class TblsEnvMonitProcedure {
-/*    public static final String getTableCreationScriptFromDataProcedureTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "INCUBATOR_TEMP_READING_VIOLATIONS": return IncubatorTempReadingViolations.createTableScript(schemaNamePrefix, fields);
-            case "PROGRAM_CORRECTIVE_ACTION": createTableScript(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, schemaNamePrefix);
-            case "INVESTIGATION": return createTableScript(TblsProcedure.TablesProcedure.INVESTIGATION, schemaNamePrefix);
-            case "INVEST_OBJECTS": return createTableScript(TblsProcedure.TablesProcedure.INVEST_OBJECTS, schemaNamePrefix);
-            case "SAMPLE_STAGE_TIMING_CAPTURE": return createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, schemaNamePrefix);
-            case "SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION": return createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, schemaNamePrefix);
-            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
-        }        
-    }   */ 
+    
+    public enum EnvMonitTablesDeployment implements EnumIntModuleTablesDeployment{
+        CONFIG(TblsEnvMonitConfig.TablesEnvMonitConfig.values(), TablesConfig.values()),
+        CONFIG_AUDIT(TblsEnvMonitConfigAudit.TablesEnvMonitConfigAudit.values(), TablesCfgAudit.values()),
+        DATA(TblsEnvMonitData.TablesEnvMonitData.values(), TablesData.values()),
+        DATA_AUDIT(TblsEnvMonitDataAudit.TablesEnvMonitDataAudit.values(), TablesDataAudit.values()),
+        PROCEDURE(TblsEnvMonitProcedure.TablesEnvMonitProcedure.values(), TablesProcedure.values()),
+        PROCEDURE_CONFIG(TablesProcedureConfig.values(), null),
+        PROCEDURE_AUDIT(TablesProcedureAudit.values(), null),
+        ;
+        private EnvMonitTablesDeployment(EnumIntTables[] tableFieldsObj, EnumIntTables[] alternativeTblFldsObj){
+            this.tableFieldsObj=tableFieldsObj;
+            this.alternativeTableFieldsObj=alternativeTblFldsObj;
+        }
+        @Override        public EnumIntTables[] getMainTablesObj() {return this.tableFieldsObj;}
+        @Override        public EnumIntTables[] getAlternativeTablesObj() {return this.alternativeTableFieldsObj;}  
+        private final EnumIntTables[] tableFieldsObj;
+        private final EnumIntTables[] alternativeTableFieldsObj;
+    }
+    
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
     public enum TablesEnvMonitProcedure implements EnumIntTables{        
         DEVIATION_INCUBATOR(null, "deviation_incubator", SCHEMA_NAME, true, ProcedureDeviationIncubator.values(), 
