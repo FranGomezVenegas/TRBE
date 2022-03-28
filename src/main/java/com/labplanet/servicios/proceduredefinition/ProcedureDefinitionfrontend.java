@@ -8,6 +8,7 @@ package com.labplanet.servicios.proceduredefinition;
 import static com.labplanet.servicios.app.AppProcedureListAPI.LABEL_ARRAY_PROCEDURES;
 import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_FLD_NAME;
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.app.TestingRegressionUAT;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsReqs;
@@ -30,6 +31,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -50,6 +52,11 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
         ALL_PROCEDURE_DEFINITION("ALL_PROCEDURE_DEFINITION", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ONE_PROCEDURE_DEFINITION("ONE_PROCEDURE_DEFINITION", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ENABLE_ACTIONS_AND_ROLES("ENABLE_ACTIONS_AND_ROLES", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        PROC_DEPLOY_CHECKER("PROC_DEPLOY_CHECKER", "deployRequirements_success", 
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionAPI.ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(ProcedureDefinitionAPI.ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                new LPAPIArguments(ProcedureDefinitionAPI.ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments(ProcedureDefinitionAPI.ProcedureDefinitionpParametersEndpoints.DB_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
         private ProcedureDefinitionAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -162,6 +169,39 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
             case ENABLE_ACTIONS_AND_ROLES:  
                 LPFrontEnd.servletReturnSuccess(request, response, 
                         getProcBusinessRulesQueriesInfo(procInstanceName, ProcBusinessRulesQueries.PROCEDURE_ACTIONS_AND_ROLES.toString()));
+                return;
+            case PROC_DEPLOY_CHECKER:
+                String procedureName=argValues[0].toString();
+                Integer procedureVersion = (Integer) argValues[1];  
+                procInstanceName=argValues[2].toString();       
+                Object[] actionDiagnosesAll = TestingRegressionUAT.procedureRepositoryMirrors(procInstanceName);
+                Rdbms.closeRdbms();                    
+                JSONObject jObj=new JSONObject();
+                String[] actionDiagnoses=(String[]) actionDiagnosesAll[0];
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                    jObj.put("All mirrored", "Success");
+                    LPFrontEnd.servletReturnSuccess(request, response, jObj);
+                }else{
+                    if (actionDiagnosesAll.length==17){
+                        jObj.put("errors found", "");
+                        LPFrontEnd.servletReturnSuccess(request, response, jObj);
+                    }else{                             
+                        JSONArray jArr=new JSONArray();
+                        Object[] fldNamesObj=(Object[]) actionDiagnosesAll[1];
+                        String[] fldNames=new String[fldNamesObj.length];
+                        for (int i=0;i<fldNamesObj.length;i++){
+                            fldNames[i]=fldNamesObj[i].toString();
+                        }                           
+                        Object[] mismatchTables=(Object[])actionDiagnosesAll[2];
+                        for (int i=8;i<mismatchTables.length;i++){
+                            jArr.add(LPJson.convertArrayRowToJSONObject(fldNames, (Object[]) mismatchTables[i]));
+
+                        }
+                        jObj=new JSONObject();
+                        jObj.put("fields expected to be mirrored", jArr);
+                        LPFrontEnd.servletReturnSuccess(request, response, jObj);
+                    }
+                }
                 return;
             default:                
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              

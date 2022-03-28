@@ -80,7 +80,9 @@ public class Rdbms {
     public enum RdbmsSuccess  implements EnumIntMessages{
         RDBMS_RECORD_CREATED("RecordCreated", "", ""), RDBMS_RECORD_UPDATED("RecordUpdated", "", ""), 
         RDBMS_RECORD_REMOVED("RecordRemoved", "", ""),
-        TRANSFERRED_RECORDS_BETWEEN_INSTANCES("transferredRecordsBetweenInstances", "", "")        
+        RDBMS_RECORD_FOUND("existsRecord_RecordFound", "", ""),
+        TRANSFERRED_RECORDS_BETWEEN_INSTANCES("transferredRecordsBetweenInstances", "", ""), 
+        ANALYSIS_CREATED("analysisRecord_createdSuccessfully", "", ""), 
         ;
         RdbmsSuccess(String cl, String msgEn, String msgEs){
             this.errorCode=cl;
@@ -88,9 +90,9 @@ public class Rdbms {
             this.defaultTextWhenNotInPropertiesFileEs=msgEs;
         }
 
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -99,7 +101,7 @@ public class Rdbms {
     public enum RdbmsErrorTrapping  implements EnumIntMessages{
         RDBMS_DT_SQL_EXCEPTION("Rdbms_dtSQLException", "", ""), RDBMS_NOT_FILTER_SPECIFIED("Rdbms_NotFilterSpecified", "", ""),
         RDBMS_TABLE_NOT_FOUND("existsTable_TableNotFound", "", ""),
-        RDBMS_RECORD_NOT_FOUND("existsRecord_RecordNotFound", "", ""), RDBMS_RECORD_FOUND("existsRecord_RecordFound", "", ""),
+        RDBMS_RECORD_NOT_FOUND("existsRecord_RecordNotFound", "", ""),
         ARG_VALUE_RES_NULL("resIsSetToNull", "", ""), ARG_VALUE_LBL_VALUES("values", " Values: ", " Valores: "),
         RDBMS_RECORD_NOT_CREATED("RecordNotCreated", "", ""), DB_ERROR("dbError", "", ""),
         TABLE_WITH_NO_RECORDS("tableWithNoRecords", "", ""),
@@ -111,9 +113,9 @@ public class Rdbms {
             this.defaultTextWhenNotInPropertiesFileEs=msgEs;
         }
 
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -596,7 +598,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND, new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
             }else{
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{Arrays.toString(filteredValues), tableName, schemaName});                
             }
@@ -1593,7 +1595,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                Object[] diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND, filter);                
+                Object[] diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, filter);                
                 diagn=LPArray.addValueToArray1D(diagn, res.getObject(1));
                 return diagn;
             }else{
@@ -1626,7 +1628,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND, new Object[]{"", tableName, schemaName});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{"", tableName, schemaName});                
             }else{
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_TABLE_NOT_FOUND, new Object[]{"",tableName, schemaName});                
             }
@@ -1635,7 +1637,46 @@ if (1==1){Rdbms.transactionId=1; return;}
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
         }  
     }
-    
+    public static Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(String procInstanceName, String schemaName1){
+        String schema=LPPlatform.buildSchemaName(procInstanceName, schemaName1).replace("\"", "");
+        String[] filter=new String[]{schema};
+        String query=" SELECT distinct table_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema in (?)";
+        if (GlobalVariables.Schemas.PROCEDURE.toString().equalsIgnoreCase(schemaName1)){
+            query=query+" and table_name not in(";
+            for (int i=0;i<ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone.length;i++){
+                if (i>0)query=query+",";
+                query=query+"?";
+            }
+            query=query+")";
+            filter=LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone);
+        }
+        try{            
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res==null){
+                return new Object[]{LPArray.array1dTo2d(ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, new Object[]{procInstanceName, schemaName1}), 7), null};
+            }            
+            res.last();
+            Integer numRows=res.getRow();
+            if (numRows>0){
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;                
+                Object[] diagnoses = new Object[totalLines];
+                while(icurrLine<=totalLines-1) {
+                    Object currValue = res.getObject(1);
+                    diagnoses[icurrLine] =  LPNulls.replaceNull(currValue);
+                    res.next();
+                    icurrLine++;
+                }         
+                return diagnoses;
+            }else{
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, new Object[]{procInstanceName, schemaName1});
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});
+        }          
+    }
     public static Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(String procInstanceName, String schemaName1, String schemaName2){
         return dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, schemaName1, schemaName2, null);
     }
@@ -1760,7 +1801,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND, new Object[]{"", viewName, schemaName});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{"", viewName, schemaName});                
             }else{
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{"",viewName, schemaName});                
             }
@@ -1782,7 +1823,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND, new Object[]{"", schemaName});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{"", schemaName});                
             }else{
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{"",schemaName});                
             }
@@ -1803,7 +1844,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND, new Object[]{"", dbName});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{"", dbName});                
             }else{
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{"",dbName});                
             }
@@ -1824,7 +1865,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND, new Object[]{"", dbName});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{"", dbName});                
             }else{
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{"",dbName});                
             }

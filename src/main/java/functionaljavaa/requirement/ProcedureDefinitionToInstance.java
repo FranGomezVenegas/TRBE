@@ -5,6 +5,7 @@
  */
 package functionaljavaa.requirement;
 
+import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig.TablesEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfigAudit.TablesEnvMonitConfigAudit;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.TablesEnvMonitData;
@@ -370,44 +371,27 @@ public class ProcedureDefinitionToInstance {
             curTblJsonObj.put("repository_name", curSchemaName);
             curTblJsonObj.put("fields_name", curFieldName);
             Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
+            Object[] dbTableTestingExists=dbTableExists;
+            String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
+            if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
+                dbTableTestingExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, schemaForTesting), curTableName);
             String diagn="";
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString()))
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString()) && LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableTestingExists[0].toString()))
                 curTblJsonObj.put("diagnostic", "table already exists in this repository");
             else{
                 diagn ="table NOT exists in this repository";
                 String tblCreateScript =null;
+                String tblCreateScriptTesting=null;
                 switch (moduleName.toUpperCase()){
                     case "ENVIRONMENTAL_MONITORING":       
                         Boolean cont=true;
                         try{
                             switch (curSchemaName.toString().toLowerCase()){                            
-                                case "data":
-                                    if (curIsView==null || !Boolean.valueOf(curIsView)){
-                                        try{
-                                            tblCreateScript = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
-                                        }catch(Exception e){
-                                            tblCreateScript = createTableScript(TablesData.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
-                                        }
-                                    }else{
-                                        try{
-                                            tblCreateScript = ViewsEnvMonData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
-                                        }catch(Exception e){
-                                            tblCreateScript = ViewsData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
-                                        }                                        
-                                    }
-                                    break;
                                 case "config":
                                     try{
                                         tblCreateScript = createTableScript(TablesEnvMonitConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
                                     }catch(Exception e){                                        
                                         tblCreateScript = createTableScript(TablesConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
-                                    }
-                                    break;
-                                case "data-audit":
-                                    try{
-                                        tblCreateScript = createTableScript(TablesEnvMonitDataAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
-                                    }catch(Exception e){
-                                        tblCreateScript = createTableScript(TablesDataAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
                                     }
                                     break;
                                 case "config-audit":
@@ -417,11 +401,42 @@ public class ProcedureDefinitionToInstance {
                                         tblCreateScript = createTableScript(TablesCfgAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));                                        
                                     }
                                     break;
+                                case "data":
+                                    if (curIsView==null || !Boolean.valueOf(curIsView)){
+                                        try{
+                                            tblCreateScript = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
+                                            tblCreateScriptTesting = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting);
+                                        }catch(Exception e){
+                                            tblCreateScript = createTableScript(TablesData.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
+                                            tblCreateScriptTesting = createTableScript(TablesData.valueOf(curTableName.toUpperCase()), schemaForTesting);
+                                        }
+                                    }else{
+                                        try{
+                                            tblCreateScript = ViewsEnvMonData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
+                                            tblCreateScriptTesting = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting);
+                                        }catch(Exception e){
+                                            tblCreateScript = ViewsData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
+                                        }                                        
+                                    }
+                                    break;
+                                case "data-audit":
+                                    try{
+                                        tblCreateScript = createTableScript(TablesEnvMonitDataAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
+                                        tblCreateScriptTesting = createTableScript(TablesEnvMonitDataAudit.valueOf(curTableName.toUpperCase()), schemaForTesting);
+                                    }catch(Exception e){
+                                        tblCreateScript = createTableScript(TablesDataAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
+                                        tblCreateScriptTesting = createTableScript(TablesDataAudit.valueOf(curTableName.toUpperCase()), schemaForTesting);
+                                    }
+                                    break;
                                 case "procedure":
                                     try{
                                         tblCreateScript = createTableScript(TablesEnvMonitProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
+                                        if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
+                                            tblCreateScriptTesting = createTableScript(TablesEnvMonitProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting);
                                     }catch(Exception e){
                                         tblCreateScript = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));                                        
+                                        if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
+                                            tblCreateScriptTesting = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting);
                                     }
                                     break;
                                 case "procedure-audit":
@@ -445,13 +460,12 @@ public class ProcedureDefinitionToInstance {
                             JSONObject scriptLog=new JSONObject();
                             scriptLog.put("1) creator_diagn", prepUpQuery[prepUpQuery.length-1]);
                             scriptLog.put("1) script", tblCreateScript);                            
-                            String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
-                            if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))){
+                            schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
+                            if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)) && tblCreateScriptTesting!=null){
                                 curTblJsonObj.put("requires_testing_clone", true);
-                                tblCreateScript = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting);
-                                prepUpQuery = Rdbms.prepUpQueryWithDiagn(tblCreateScript, new Object[]{});
-                                scriptLog.put("2) script_testing", tblCreateScript);
-                                scriptLog.put("2) creator_diagn_testing", prepUpQuery[prepUpQuery.length-1]);
+                                Object[] prepUpQueryTesting = Rdbms.prepUpQueryWithDiagn(tblCreateScriptTesting, new Object[]{});
+                                scriptLog.put("2) script_testing", tblCreateScriptTesting);
+                                scriptLog.put("2) creator_diagn_testing", prepUpQuery[prepUpQueryTesting.length-1]);
                             }else
                                 curTblJsonObj.put("requires_testing_clone", false);
 
@@ -695,6 +709,12 @@ public class ProcedureDefinitionToInstance {
 
     public static final  JSONObject deployMasterData(String procedure,  Integer procVersion, String instanceName){
         JSONObject jsonObjSummary = new JSONObject();
+        Object[] actionDiagnosesAll = TestingRegressionUAT.procedureRepositoryMirrors(instanceName);
+        Object[][] actionDiagnoses=(Object[][]) actionDiagnosesAll[0];
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0][0].toString())){
+            jsonObjSummary.put("summary", "tables for testing are not mirror");
+            return jsonObjSummary;            
+        }
         try{
             JSONArray jsonArr=new JSONArray();
             JSONObject jsonObj = new JSONObject();
