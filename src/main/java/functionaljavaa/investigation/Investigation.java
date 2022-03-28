@@ -36,6 +36,22 @@ public final class Investigation {
     public enum DataInvestigationAuditEvents implements EnumIntAuditEvents{NEW_INVESTIGATION_CREATED, OBJECT_ADDED_TO_INVESTIGATION, CLOSED_INVESTIGATION, CAPA_DECISION
     //CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT
     }
+    public enum InvestigationSuccess implements EnumIntMessages{ 
+        IS_OPEN("investigationIsOpen", "investigation Is Open  <*1*>",""),
+        ;
+        private InvestigationSuccess(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
     public enum InvestigationErrorTrapping implements EnumIntMessages{ 
         AAA_FILE_NAME("errorTrapping", "", ""),
         OBJECT_NOT_RECOGNIZED("objectNotRecognized", "ObjectNotRecognized <*1*>, should be two pieces of data separated by *", ""),
@@ -51,9 +67,9 @@ public final class Investigation {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
 
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -262,7 +278,7 @@ public final class Investigation {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_FOUND, new Object[]{investId});
         if ("FALSE".equalsIgnoreCase(investigationInfo[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, InvestigationErrorTrapping.IS_OPEN, new Object[]{investId});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, InvestigationSuccess.IS_OPEN, new Object[]{investId});
         else return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.IS_CLOSED, new Object[]{investId});
     }
     private static Object[] isCapaField(String[] fields){

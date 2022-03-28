@@ -9,11 +9,11 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
 import databases.TblsCnfg;
+import functionaljavaa.inventory.InventoryGlobalVariables.DataInvRetErrorTrapping;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.ConfigSpecRule.qualitativeRulesErrors;
 import functionaljavaa.materialspec.DataSpec;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
-import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -236,7 +236,7 @@ Integer currentLine=0;
                                     if (requiresUnitsConversion && specUomName!=null && specUomName.length()>0){
                                         uom.convertValue(specUomName);
                                         if (!uom.getConvertedFine()) 
-                                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERTER_RETURNED_FALSE, new Object[]{limitId.toString(), "", schemaDataName});                  
+                                            resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{limitId.toString(), "", schemaDataName});                  
                                         else
                                             resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        
                                     }

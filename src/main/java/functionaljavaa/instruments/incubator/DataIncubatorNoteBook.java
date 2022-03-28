@@ -13,7 +13,7 @@ import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorBusi
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorErrorTrapping;
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorLockingReason;
 import functionaljavaa.materialspec.DataSpec;
-import functionaljavaa.materialspec.DataSpec.ResultCheckSuccessErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleStructureSuccess;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lbplanet.utilities.LPArray;
@@ -300,7 +300,7 @@ public class DataIncubatorNoteBook {
         Object[] updateRecordFieldsByFilter=null;
         String[] updFldName=null;
         Object[] updFldValue=null;
-        if (ResultCheckSuccessErrorTrapping.EVALUATION_IN.getErrorCode().equalsIgnoreCase(specEvalInfo[0].toString())){
+        if (DataSampleStructureSuccess.EVALUATION_IN.getErrorCode().equalsIgnoreCase(specEvalInfo[0].toString())){
             if ("TRUE".equalsIgnoreCase(LPNulls.replaceNull(incubFldValues[LPArray.valuePosicInArray(incubFldNames, TblsEnvMonitConfig.InstrIncubator.LOCKED.getName())].toString())) ){
                 updFldName=new String[]{TblsEnvMonitConfig.InstrIncubator.LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.LOCKED_REASON.getName()};
                 updFldValue=new Object[]{false,""};

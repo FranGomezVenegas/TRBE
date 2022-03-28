@@ -35,39 +35,56 @@ import trazit.session.ApiMessageReturn;
 public class DataBatchIncubator {
     
     public enum BatchBusinessRules implements EnumIntBusinessRules{
-        START_MULTIPLE_BATCH_IN_PARALLEL("incubationBatch_startMultipleInParallelPerIncubator", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        START_FOR_LOCKED_INCUBATOR_MODE("incubationBatch_startForLockedIncubatorMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
+        START_MULTIPLE_BATCH_IN_PARALLEL("incubationBatch_startMultipleInParallelPerIncubator", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        START_FOR_LOCKED_INCUBATOR_MODE("incubationBatch_startForLockedIncubatorMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null)
         
         ;
-        private BatchBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private BatchBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean isOptional, ArrayList<String[]> preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOptional;
+            this.preReq=preReqs;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional() {return this.isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs() {return this.preReq;}
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
-        private final char multiValueSeparator;        
+        private final char multiValueSeparator;   
+        private final Boolean isOptional;
+        private final ArrayList<String[]> preReq;
 
-        @Override
-        public Boolean getIsOptional() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ArrayList<String[]> getPreReqs() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
     }  
+public enum IncubatorBatchSuccess implements EnumIntMessages{  
+        BATCH_AVAILABLEFORCHANGES("batchAvailableForChanges", "The Batch <*1*> is available to alter its content", "The Batch <*1*> is available to alter its content"),
+        CREATEBATCH_TYPECHECKER_SUCCESS("createBatchTypeCheckerSuccess", "", ""),
+        SAMPLES_IN_BATCH_SET_AS_BATCHSTARTED("allSamplesInBatchSetAsBatchStarted", "", ""),
+        SAMPLES_IN_BATCH_SET_AS_BATCHENDED("allSamplesInBatchSetAsBatchEnded", "", ""),
+        ; 
+        private IncubatorBatchSuccess(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
     public enum IncubatorBatchErrorTrapping implements EnumIntMessages{ 
         INCUBATORBATCH_NOT_STARTED("IncubatorBatchNotStartedYet", "The batch <*1*> was not started yet for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
         INCUBATORBATCH_ALREADY_STARTED("IncubatorBatchAlreadyStarted", "The batch <*1*> was already started and cannot be started twice for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
@@ -77,15 +94,11 @@ public class DataBatchIncubator {
         INCUBATORBATCH_NOT_ACTIVE("incubatorBatchNotActive","The Batch <*1*> is not active","The Batch <*1*> is not active"),
         INCUBATORBATCH_TEMPLATE_NOT_ACTIVE("incubatorBatchTemplateNotActive","The Batch template <*1*> and version <*2*> is not active","The Batch template <*1*> and version <*2*> is not active"),
         INCUBATORBATCH_WITH_NO_INCUBATOR("incubatorBatch_withNoIncubator", "", ""),
-        BATCH_AVAILABLEFORCHANGES("batchAvailableForChanges", "The Batch <*1*> is available to alter its content", "The Batch <*1*> is available to alter its content"),
         INCUB_BATCH_NOT_ACTIVE_FOR_CHANGES("incubationBatchStart_StoppedByNotActiveForChanges", "", ""), 
         INCUB_BATCH_START_STOPPED_BY_BUSINESSRULEMODE("incubationBatchStart_StoppedByIncubationLockedBusinessRuleMode", "", ""),        
         EMPTY_BATCH("incubBatch_emptyBatch", "", ""),
         INCUB_BATCH_STARTED_CHANGEITSCONTENT("IncubatorBatchStartedToChangeItsContent", "", ""),
         SAMPLE_NOTFOUND_IN_BATCH("incubBatch_sampleNotFoundInBatch"," Sample <*1*> not found in batch <*2*> for procedure <*3*>.", ""),
-        SAMPLES_IN_BATCH_SET_AS_BATCHSTARTED("allSamplesInBatchSetAsBatchStarted", "", ""),
-        SAMPLES_IN_BATCH_SET_AS_BATCHENDED("allSamplesInBatchSetAsBatchEnded", "", ""),
-        CREATEBATCH_TYPECHECKER_SUCCESS("createBatchTypeCheckerSuccess", "", ""),
         INCUBATORBATCH_NOTEMPTY_TOBEREMOVED("IncubatorBatchNotEmptyToRemove", "", ""),
         INCUBATORBATCH_NOTEMPTY_TOCHANGEINCUBATOR("IncubatorBatchNotEmptyToChangeIncubator", "", ""),
         BATCHTYPE_NOT_RECOGNIZED("incubatorBatchType_notRecognized", "batchType <*1*> Not recognized", "batchType <*1*> Not recognized"),
@@ -105,9 +118,9 @@ public class DataBatchIncubator {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -198,7 +211,7 @@ public class DataBatchIncubator {
         Object[] batchTypeExist=batchTypeExists(batchType);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchTypeExist[0].toString())) return batchTypeExist;
         
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchErrorTrapping.CREATEBATCH_TYPECHECKER_SUCCESS, null);        
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchSuccess.CREATEBATCH_TYPECHECKER_SUCCESS, null);        
     }
     
     /**
@@ -512,6 +525,7 @@ public class DataBatchIncubator {
      *
      * @param batchName
      * @param incubName
+     * @param incubStage
      * @return
      */
     public static Object[] batchAssignIncubator(String batchName, String incubName, String incubStage){
@@ -579,8 +593,9 @@ public class DataBatchIncubator {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUB_BATCH_NOT_ACTIVE_FOR_CHANGES, new Object[]{batchName}); 
         if (batchInfo[0][1]!=null && batchInfo[0][1].toString().length()>0) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUB_BATCH_STARTED_CHANGEITSCONTENT, new Object[]{batchName}); 
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchErrorTrapping.BATCH_AVAILABLEFORCHANGES, new Object[]{batchName}); 
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchSuccess.BATCH_AVAILABLEFORCHANGES, new Object[]{batchName}); 
     }
+    
     public static Object[] incubatorIsLocked(String batchName, String instName){
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=instanceForActions.getProcedureInstance();        

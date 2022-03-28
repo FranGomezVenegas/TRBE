@@ -152,7 +152,9 @@ public enum LpPlatformSuccess implements EnumIntMessages{
         COMMA_IS_DECIMAL_SEPARATOR("commaIsTheDecimalsSeparator", "", ""),
         CORRECT("correct", "", ""),
         ALL_FINE("allFine", "", ""),
-        ALL_THE_SAME("allTheSame", "", "")
+        ALL_THE_SAME("allTheSame", "", ""),
+        USER_CERTIFICATION_IS_ENABLED ("isUserCertificationEnabled_yes", "", ""),
+        AUDIT_AND_USER_VALIDATION_CHECK_SUCCESS ("checkUserValidationPassesSuccess", "", ""),        
         ; 
         private LpPlatformSuccess(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

@@ -20,6 +20,27 @@ public class DataSampleStructureEnums {
         READY_FOR_REVISION("Sample_readyForRevision", "", ""),    
         SAMPLEANALYSISASSIGNED_SUCCESS("SampleAnalysisAssignment_Successfully", "", ""),        
         SAMPLEANALYSIS_CANCELED("SampleAnalysisCanceled", "", ""),
+        SAMPLE_ANALYSIS_ADDED_SUCCESS("SampleAnalysisAddedSuccessfully", "", ""),
+        ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT("actionNotDeclaredToPerformAutoMoveToNext", "The action <*1*> is not declared as to perform auto move to next in procedure <*2*>", ""),
+
+        QUANTITATIVE_IN("IN", "", ""),
+        QUANTITATIVE_IN_ALERT_MAX("inAlertMax", "", ""), QUANTITATIVE_IN_ALERT_MAX_STRICT("inAlertMaxStrict", "", ""),
+        QUANTITATIVE_IN_ALERT_MIN("inAlertMin", "", ""), QUANTITATIVE_IN_ALERT_MIN_STRICT("inAlertMinStrict", "", ""),
+        OUT_SPEC_MIN("outOfSpecMin", "", ""), OUT_SPEC_MAX("outOfSpecMax", "", ""),
+        OUT_SPEC_MIN_STRICT("outOfSpecMinStrict", "", ""), OUT_SPEC_MAX_STRICT("outOfSpecMaxStrict", "", ""),
+        QUALITATIVE_IN("IN", "", ""),
+        QUALITATIVE_OUT_EQUAL_TO("outEqualTo", "", ""), 
+        QUALITATIVE_OUT_NOT_EQUAL_TO("outNotEqualTo", "", ""),
+        QUALITATIVE_OUT_CONTAINS("outContains", "", ""), 
+        QUALITATIVE_OUT_NOT_CONTAINS("outNotContains", "", ""),
+        QUALITATIVE_OUT_IS_ONE_OF("outIsOneOf", "", ""), 
+        QUALITATIVE_OUT_IS_NOT_ONE_OF("outIsNotOneOf", "", ""),
+        EVALUATION_IN("IN", "", ""), 
+        EVALUATION_OUT("OUT", "", ""),
+        EVALUATION_UPON_CONTROL_MIN("inAlertMin", "", ""), 
+        EVALUATION_UPON_CONTROL_MAX("inAlertMax", "", ""),
+        
+        
         ;
         DataSampleStructureSuccess(String cl, String msgEn, String msgEs){
             this.errorCode=cl;
@@ -27,9 +48,9 @@ public class DataSampleStructureEnums {
             this.defaultTextWhenNotInPropertiesFileEs=msgEs;
         }
 
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -55,16 +76,16 @@ public class DataSampleStructureEnums {
         SAMPLE_RULES_NOT_FOUND("SampleRulesNotFound", "", ""),
         NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
         SAMPLE_ALREADY_REVIEWED("sampleAlreadyReviewed", "", ""),
-        SAMPLE_ALREADY_READY_FOR_REVISION("alreadyReadyForRevision", "", "")
+        SAMPLE_ALREADY_READY_FOR_REVISION("alreadyReadyForRevision", "", ""),
         ;
         private DataSampleErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -177,12 +198,11 @@ public class DataSampleStructureEnums {
         
     }
     public enum DataSampleAnalysisErrorTrapping implements EnumIntMessages{ 
-        MARK_READYFORREVISION_WHENALLRESULTSENTERED_NOTACTIVE_SUCCESS("markAsReadyForRevisionWhenAllResultsEnteredNotActive", "", ""),
-        SAMPLE_ANALYSIS_ADDED_SUCCESS("SampleAnalysisAddedSuccessfully", "", ""),
-        ALREADY_READYFORREVISION("alreadyReadyForRevision", "", ""),
+        MARK_READYFORREVISION_WHENALLRESULTSENTERED_NOTACTIVE_SUCCESS("DataSample_markAsReadyForRevisionWhenAllResultsEnteredNotActive", "", ""),
+        ALREADY_READYFORREVISION("DataSample_alreadyReadyForRevision", "", ""),
         ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS("DataSample_sampleAnalaysisAddToSample_MissingMandatoryFields", "", ""),
         ANALYSISMETHOD_PARAMSNOTFOUND("DataSample_AnalysisMethodParamsNotFound", "", ""),
-        PENDING_REVISION("SampleAnalysisPendingRevision", "", ""),
+        PENDING_REVISION("DataSample_SampleAnalysisPendingRevision", "", ""),
         SPECLIMIT_NOTFOUND("DataSample_SpecLimitNotFound", "", ""),
         SPECRULE_NOTFOUND("DataSample_SpecRuleNotFound", "", ""),
         SAMPLEANALYSISASSIGNED_MODENOTRECOGNIZED("DataSample_SampleAnalysisAssignment_AssignmentModeNotRecognized", "", ""),
@@ -192,8 +212,8 @@ public class DataSampleStructureEnums {
         SAMPLEANALYSIS_NOTFOUND("DataSample_SampleAnalysisNotFound", "", ""),
         SAME_ANALYST("DataSample_SampleAnalysisAssignment_SameAnalyst", "", ""),
         SAMPLEANALYSIS_LOCKED("DataSample_SampleAnalysisAssignment_SampleAnalysisLocked", "", ""),
-        READY_FOR_REVISION("readyForRevision", "", ""),
-        NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
+        READY_FOR_REVISION("DataSample_readyForRevision", "", ""),
+        NOT_IMPLEMENTED("DataSample_notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
         RESULT_NOT_REVIEWABLE("DataSample_SampleAnalysisResultNotReviewable", "", ""),
         RULE_ANALYST_NOT_ASSIGNED("DataSample_SampleAnalysisRuleAnalystNotAssigned", "", ""),
         RULE_OTHERANALYSIS_ENTER_RESULT("DataSample_SampleAnalysisRuleOtherAnalystEnterResult", "", ""),
@@ -268,7 +288,6 @@ public class DataSampleStructureEnums {
         RESULT_LOCKED("DataSampleAnalysisResult_SampleAnalysisResultLocked", "", ""),
         SAME_RESULT_VALUE("DataSampleAnalysisResult_SampleAnalysisResultSameValue", "", ""),
         CONVERSION_NOT_ALLOWED("DataSample_SampleAnalysisResult_ConversionNotAllowed", "", ""),
-        CONVERTER_RETURNED_FALSE("SampleAnalysisResult_ConverterFALSE", "", ""),
         NOT_NUMERIC_VALUE("DataSampleAnalysisResult_ValueNotNumericForQuantitativeParam", "", ""),
         SPECRULE_NOTIMPLEMENTED("DataSample_SampleAnalysisResult_SpecRuleNotImplemented", "", ""),
         FORRESULTUNCANCEL_STATUS_NOT_EXPECTED("DataSample_SampleUnCancel_StatusNotExpected", "", ""),
@@ -281,9 +300,9 @@ public class DataSampleStructureEnums {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;

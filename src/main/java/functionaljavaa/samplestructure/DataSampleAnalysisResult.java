@@ -15,6 +15,7 @@ import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.certification.AnalysisMethodCertif;
+import functionaljavaa.inventory.InventoryGlobalVariables.DataInvRetErrorTrapping;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.DataSpec;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
@@ -367,7 +368,7 @@ public class DataSampleAnalysisResult {
                 UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue.toString()), resultUomName);
                 uom.convertValue(specUomName);
                 if (!uom.getConvertedFine()) 
-                    return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERTER_RETURNED_FALSE, new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName})};
+                    return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName})};
                 resultConverted = uom.getConvertedQuantity();
             }
         }
@@ -488,7 +489,7 @@ public class DataSampleAnalysisResult {
         UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(currValue), curruom);
         uom.convertValue(newuom);
         if (!uom.getConvertedFine()) 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERTER_RETURNED_FALSE, new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
         BigDecimal resultConverted = uom.getConvertedQuantity();
         String[] updFieldNames = new String[]{TblsData.SampleAnalysisResult.RAW_VALUE.getName(), TblsData.SampleAnalysisResult.UOM.getName()};
         Object[] updFieldValues = new Object[]{resultConverted.toString(), newuom};

@@ -7,7 +7,7 @@ package functionaljavaa.analysis;
 
 import lbplanet.utilities.LPNulls;
 import databases.Rdbms;
-import databases.Rdbms.RdbmsErrorTrapping;
+import databases.Rdbms.RdbmsSuccess;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.TblsCnfg;
@@ -42,8 +42,7 @@ public class ConfigAnalysisStructure {
         SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "MissingMandatoryFields <*1*>", ""),
-        MISSING_CONFIG_CODE("MissingConfigCode", "", ""),   
-        ANALYSIS_CREATED("analysisRecord_createdSuccessfully", "", ""),   
+        MISSING_CONFIG_CODE("MissingConfigCode", "", ""),             
         
         ;
         private ConfigAnalysisErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
@@ -367,7 +366,7 @@ if (1==1){return "ERROR";}
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, code);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, configVersion.toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_FOUND, errorDetailVariables);           
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsSuccess.RDBMS_RECORD_FOUND, errorDetailVariables);           
         }
         try{
             fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.Analysis.CODE.getName());
@@ -384,7 +383,7 @@ if (1==1){return "ERROR";}
                     code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, code);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ConfigAnalysisErrorTrapping.ANALYSIS_CREATED, errorDetailVariables);                   
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.ANALYSIS_CREATED, errorDetailVariables);                   
             }    
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(ConfigAnalysisStructure.class.getName()).log(Level.SEVERE, null, ex);

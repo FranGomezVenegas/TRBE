@@ -18,6 +18,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
@@ -35,7 +36,6 @@ import trazit.session.ResponseMessages;
 public class AuditAndUserValidation {
 
     public enum AuditAndUserValidationErrorTrapping implements EnumIntMessages{ 
-        CHECK_SUCCESS ("checkUserValidationPassesSuccess", "", ""),
         WRONG_PHRASE ("wrongAuditReasonPhrase", "", ""),
         PROC_INSTANCE_NAME_NULL ("procInstanceNameNull", "", ""),
         ;
@@ -44,45 +44,42 @@ public class AuditAndUserValidation {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     public enum AuditAndUserValidationBusinessRules implements EnumIntBusinessRules{     
-        PREFIX_AUDITREASONPHRASE ("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        PREFIX_AUDITREASONPHRASE ("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         ;
-        private AuditAndUserValidationBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private AuditAndUserValidationBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator
+        , Boolean isOpt, ArrayList<String[]> preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOpt;
+            this.preReqs=preReqs;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional() {return isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs() {return this.preReqs;}
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
-
-        @Override
-        public Boolean getIsOptional() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ArrayList<String[]> getPreReqs() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        private final Boolean isOptional;
+        private final ArrayList<String[]> preReqs;
     }
 
     private static AuditAndUserValidation auditUserVal;
@@ -190,7 +187,7 @@ public class AuditAndUserValidation {
             return;
         }
         this.auditReasonPhrase=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE); 
-        this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, AuditAndUserValidationErrorTrapping.CHECK_SUCCESS, null);
+        this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.AUDIT_AND_USER_VALIDATION_CHECK_SUCCESS, null);
     }
     private Boolean isValidAuditPhrase(String procInstanceName, String actionName, String auditReasonPhrase, BusinessRules busRulesProcInstance){
 //        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        

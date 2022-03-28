@@ -712,7 +712,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             Object[] addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup[0].toString())) return addSampleRevisionByTestingGroup;
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
     }
     public static Object[] isAllsampleAnalysisReviewed(Integer sampleId, String[] whereFieldName, Object[] whereFieldValue) {    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
