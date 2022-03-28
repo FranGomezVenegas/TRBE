@@ -137,27 +137,6 @@ public class ClassProcedureDefinition {
                     }
                     actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Completed", null);
                     break;                    
-
-                    //String procName = request.getParameter("procedureName"); //"process-us"; 
-                    //String procInstanceName=request.getParameter("procInstanceName"); //"process-us";
-
-                    
-//                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
-                     
-/*                    String programName=argValues[0].toString();
-                    Integer correctiveActionId = (Integer) argValues[1];                    
-                    actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(procInstanceName, token, correctiveActionId);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){                        
-                        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
-                            new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.ID.getName()}, new Object[]{correctiveActionId},
-                            new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.SAMPLE_ID.getName()});
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName}); 
-                        this.messageDynamicData=new Object[]{correctiveActionId, correctiveActionInfo[0][0], procInstanceName};   
-                    }else{
-                        this.messageDynamicData=new Object[]{correctiveActionId, procInstanceName};                           
-                    }                    
-                    break;
-*/
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
