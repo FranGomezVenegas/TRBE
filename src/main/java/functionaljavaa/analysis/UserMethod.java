@@ -79,10 +79,6 @@ public class UserMethod {
      *
      */
     public static final String FIELDNAME_DATA_USER_METHOD_LAST_SAMPLE_ANALYSIS="last_sample_analysis";
-
-    /**
-     *
-     */
     public static final String FIELDNAME_DATA_USER_METHOD_METHOD_NAME="method_name";
 
     /**

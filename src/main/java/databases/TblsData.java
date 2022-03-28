@@ -61,7 +61,8 @@ public class TblsData {
         SAMPLE_REVISION_TESTING_GROUP(new FldBusinessRules[]{new FldBusinessRules("procedure", "revisionTestinGroupRequired", false, false, new String[]{"ENABLED"}, null)},
             "sample_revision_testing_group", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleRevisionTestingGroup.values(), null,
             new String[]{SampleRevisionTestingGroup.SAMPLE_ID.getName(), SampleRevisionTestingGroup.TESTING_GROUP.getName()}, null, ""),
-        
+//        USER_METHOD(null, "user_method", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, UserMethod.values(), UserSop.SOP_ID.getName(),
+//            new String[]{UserSop.SOP_ID.getName()}, null, "user_method table, log for methods and its last performed one"),
         ;
         private TablesData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
