@@ -34,36 +34,28 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class ProcedureDeployment extends HttpServlet {
-        private static final Boolean PROC_DISPLAY_PROC_DEF_REQUIREMENTS=false;
+    private static final Boolean PROC_DISPLAY_PROC_DEF_REQUIREMENTS=false;
 
-        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS=false;
-
-    /**
-     *
-     */
-    public static final String      PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_FLD_NAME="name|order_number|label_en|label_es|branch_level|type|mode|esign_required|lp_frontend_page_name|sop";
-
-    /**
-     *
-     */
-        public static final String      PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_SORT="branch_level|order_number";
-        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_ROLES=false;
-        private static final String     PROC_DISPLAY_PROC_INSTANCE_ROLES_FLD_NAME="role_name";
-        private static final String     PROC_DISPLAY_PROC_INSTANCE_ROLES_SORT="role_name";
-        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_USERS=false;
-        private static final String     PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_FLD_NAME="person_name";
-        private static final String     PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_SORT="person_name";
-        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_SOPS=false;
-        private static final String     PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME="sop_id|sop_name";
-        private static final String     PROC_DISPLAY_PROC_INSTANCE_SOPS_SORT="sop_id";
+    private static final Boolean PROCDISP_PROCINSTNC_REQUIREMENTS=false;
+    public  static final String  PROCDISP_PROCINSTNC_REQS_FLD_NAME="name|order_number|label_en|label_es|branch_level|type|mode|esign_required|lp_frontend_page_name|sop";
+    public  static final String  PROCDISP_PROCINSTNC_REQS_SORT="branch_level|order_number";
+    private static final Boolean PROCDISP_PROCINSTNC_ROLES=false;
+    private static final String  PROCDISP_PROCINSTNC_ROLES_FLD_NAME="role_name";
+    private static final String  PROCDISP_PROCINSTNC_ROLES_SORT="role_name";
+    private static final Boolean PROC_DISPLAY_PROC_INSTANCE_USERS=false;
+    private static final String  PROCDISP_PROCINSTNC_USRSPRS_FLDNAME="person_name";
+    private static final String  PROCDISP_PROCINSTNC_USRSPERS_SRT="person_name";
+    private static final Boolean PROC_DISPLAY_PROC_INSTANCE_SOPS=false;
+    private static final String  PROCDISP_PROCINSTNC_SOPS_FLD_NAME="sop_id|sop_name";
+    private static final String  PROCDISP_PROCINSTNC_SOPS_SORT="sop_id";
         
-        private static final Boolean PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE=false;
-        
-        private static final Boolean PROC_DEPLOYMENT_DB_CREATE_SCHEMAS=false;
-        private static final Boolean PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES=true;
-        private static final Boolean PROC_DEPLOYMENT_ENTIRE_PROCEDURE=false;
-        private static final Boolean PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS=false;
-        private static final Boolean PROC_DEPLOYMENT_ASSIGN_USER_SOPS=false;
+    private static final Boolean PROCCHECKR_INSTNC_REQSOPSINSOPTBL=false;
+
+    private static final Boolean PROC_DEPLOYMENT_DB_CREATE_SCHEMAS=false;
+    private static final Boolean PROCDEPLOYT_DB_CREATE_SCHEMA_TABLES=true;
+    private static final Boolean PROC_DEPLOYMENT_ENTIRE_PROCEDURE=false;
+    private static final Boolean PROCDEPLOY_CREATE_MIS_PRCEVENT_SOPS=false;
+    private static final Boolean PROC_DEPLOYMENT_ASSIGN_USER_SOPS=false;
         
         
     /**
@@ -87,15 +79,15 @@ public class ProcedureDeployment extends HttpServlet {
         String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File need", null, null);
         String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}
                             , {"PROC_DISPLAY_PROC_DEF_REQUIREMENTS", PROC_DISPLAY_PROC_DEF_REQUIREMENTS.toString()}
-                            , {"PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS", PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS.toString()}
-                            , {"PROC_DISPLAY_PROC_INSTANCE_ROLES", PROC_DISPLAY_PROC_INSTANCE_ROLES.toString()}    
+                            , {"PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS", PROCDISP_PROCINSTNC_REQUIREMENTS.toString()}
+                            , {"PROC_DISPLAY_PROC_INSTANCE_ROLES", PROCDISP_PROCINSTNC_ROLES.toString()}    
                             , {"PROC_DISPLAY_PROC_INSTANCE_USERS", PROC_DISPLAY_PROC_INSTANCE_USERS.toString()}                
                             , {"PROC_DISPLAY_PROC_INSTANCE_SOPS", PROC_DISPLAY_PROC_INSTANCE_SOPS.toString()}      
                             , {"PROC_DEPLOYMENT_DB_CREATE_SCHEMAS", PROC_DEPLOYMENT_DB_CREATE_SCHEMAS.toString()}
-                            , {"PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES", PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES.toString()}
+                            , {"PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES", PROCDEPLOYT_DB_CREATE_SCHEMA_TABLES.toString()}
                 
                             , {"PROC_DEPLOYMENT_ENTIRE_PROCEDURE", PROC_DEPLOYMENT_ENTIRE_PROCEDURE.toString()}
-                            , {"PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS", PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS.toString()}
+                            , {"PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS", PROCDEPLOY_CREATE_MIS_PRCEVENT_SOPS.toString()}
                 
                             , {"PROC_DEPLOYMENT_ASSIGN_USER_SOPS", PROC_DEPLOYMENT_ASSIGN_USER_SOPS.toString()}};
         fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(businessVariablesHeader);            
@@ -108,8 +100,8 @@ public class ProcedureDeployment extends HttpServlet {
                 Requirement.getProcedureByProcInstanceName(procName);
             }
             Object[][] procEvent = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
-                    new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_FLD_NAME.split("\\|"),
-                    PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_SORT.split("\\|"), true );
+                    new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROCDISP_PROCINSTNC_REQS_FLD_NAME.split("\\|"),
+                    PROCDISP_PROCINSTNC_REQS_SORT.split("\\|"), true );
             Object[][] procEventSOPStemp = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
                     new String[]{TblsProcedure.ProcedureEvents.SOP+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, new String[]{TblsProcedure.ProcedureEvents.SOP.getName()},
                     new String[]{TblsProcedure.ProcedureEvents.SOP.getName()} );
@@ -123,44 +115,43 @@ public class ProcedureDeployment extends HttpServlet {
                     }
                 }
             }
-            if (PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS){
-                procEvent = LPArray.joinTwo2DArrays(
-                        LPArray.array1dTo2d(PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_FLD_NAME.split("\\|"),
-                                PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_FLD_NAME.split("\\|").length), procEvent);
+            if (PROCDISP_PROCINSTNC_REQUIREMENTS){
+                procEvent = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROCDISP_PROCINSTNC_REQS_FLD_NAME.split("\\|"),
+                                PROCDISP_PROCINSTNC_REQS_FLD_NAME.split("\\|").length), procEvent);
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procEvent);
             }
-            if (PROC_DISPLAY_PROC_INSTANCE_ROLES){
+            if (PROCDISP_PROCINSTNC_ROLES){
                 Object[][] procRoles = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
                         new String[]{TblsProcedure.PersonProfile.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""},
-                        PROC_DISPLAY_PROC_INSTANCE_ROLES_FLD_NAME.split("\\|"), PROC_DISPLAY_PROC_INSTANCE_ROLES_SORT.split("\\|"), true );
-                procRoles = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROC_DISPLAY_PROC_INSTANCE_ROLES_FLD_NAME.split("\\|"),
-                        PROC_DISPLAY_PROC_INSTANCE_ROLES_FLD_NAME.split("\\|").length), procRoles);
+                        PROCDISP_PROCINSTNC_ROLES_FLD_NAME.split("\\|"), PROCDISP_PROCINSTNC_ROLES_SORT.split("\\|"), true );
+                procRoles = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROCDISP_PROCINSTNC_ROLES_FLD_NAME.split("\\|"),
+                        PROCDISP_PROCINSTNC_ROLES_FLD_NAME.split("\\|").length), procRoles);
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procRoles);
             }
             if (PROC_DISPLAY_PROC_INSTANCE_USERS){
                 Object[][] procUserPerson = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
-                        new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_FLD_NAME.split("\\|"),
-                        PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_SORT.split("\\|"), true );
+                        new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROCDISP_PROCINSTNC_USRSPRS_FLDNAME.split("\\|"),
+                        PROCDISP_PROCINSTNC_USRSPERS_SRT.split("\\|"), true );
                 
                 Object[] procUsers = new Object[0];
                 for (Object[] curPerson: procUserPerson){
                     procUsers=LPArray.addValueToArray1D(procUsers, UserAndRolesViews.getUserByPerson((String) curPerson[0]));
                 }
                 Object[][] procUsers2D = LPArray.array1dTo2d(procUsers, 1);
-                procUsers2D = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_FLD_NAME.split("\\|"),
-                        PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_FLD_NAME.split("\\|").length), procUsers2D);
+                procUsers2D = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROCDISP_PROCINSTNC_USRSPRS_FLDNAME.split("\\|"),
+                        PROCDISP_PROCINSTNC_USRSPRS_FLDNAME.split("\\|").length), procUsers2D);
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procUsers2D);
             }
             Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(procInstanceSchemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
-                    new String[]{TblsCnfg.SopMetaData.SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"),
-                    PROC_DISPLAY_PROC_INSTANCE_SOPS_SORT.split("\\|"), true );
+                    new String[]{TblsCnfg.SopMetaData.SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|"),
+                    PROCDISP_PROCINSTNC_SOPS_SORT.split("\\|"), true );
             if (PROC_DISPLAY_PROC_INSTANCE_SOPS){
-                procSopInMetaData = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"),
-                        PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|").length), procSopInMetaData);            
+                procSopInMetaData = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|"),
+                        PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|").length), procSopInMetaData);            
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procSopInMetaData);
             }
-            if (PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE){
-                Object[] procSopMetaDataSopName = LPArray.getColumnFromArray2D(procSopInMetaData, LPArray.valuePosicInArray(PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"), TblsCnfg.SopMetaData.SOP_NAME.getName()));
+            if (PROCCHECKR_INSTNC_REQSOPSINSOPTBL){
+                Object[] procSopMetaDataSopName = LPArray.getColumnFromArray2D(procSopInMetaData, LPArray.valuePosicInArray(PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|"), TblsCnfg.SopMetaData.SOP_NAME.getName()));
                 String matching=LPTestingOutFormat.TST_ICON_UNDEFINED + " Not Implemented Yet";
                 HashMap<String, Object[]> procSopsInMetaData = LPArray.evaluateValuesAreInArray(
                         procSopMetaDataSopName, procEventSOPS);
@@ -177,7 +168,7 @@ public class ProcedureDeployment extends HttpServlet {
             }
             fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(dataIntegrityInstanceTable);
             if (PROC_DEPLOYMENT_DB_CREATE_SCHEMAS) ProcedureDefinitionToInstance.createDBProcessSchemas(procInstanceName);            
-            if (PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES) createDBProcessTables(procInstanceName, "", new String[]{});
+            if (PROCDEPLOYT_DB_CREATE_SCHEMA_TABLES) createDBProcessTables(procInstanceName, "", new String[]{});
             //if (PROC_DEPLOYMENT_ENTIRE_PROCEDURE){reqDep.procedureDeployment(procName, procVersion);}
             //if (PROC_DEPLOYMENT_ASSIGN_USER_SOPS){reqDep.procedureDeployment(procName, procVersion);}
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();
