@@ -34,40 +34,37 @@ public class DataProgramCorrectiveAction {
     public enum ProgramCorrectiveStatus{CREATED, CLOSED} 
 
     public enum DataProgramCorrectiveActionBusinessRules implements EnumIntBusinessRules{
-        STATUS_CLOSED("programCorrectiveAction_statusClosed", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        STATUS_FIRST("programCorrectiveAction_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        ACTION_MODE("programCorrectiveActionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        STATUS_CLOSED("programCorrectiveAction_statusClosed", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
+        STATUS_FIRST("programCorrectiveAction_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
+        ACTION_MODE("programCorrectiveActionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         STILLOPEN_NOTIFMODE("programCorrectiveActionNotifModeStillInProgress", GlobalVariables.Schemas.PROCEDURE.getName(),
-            null, false, '|'), //(JSONArray) Json.createArrayBuilder().add("locking").add("warning").add("silent").build()
+            null, false, '|', null, null), //(JSONArray) Json.createArrayBuilder().add("locking").add("warning").add("silent").build()
         ;
-        private DataProgramCorrectiveActionBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private DataProgramCorrectiveActionBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator
+        , Boolean isOpt, ArrayList<String[]> preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOpt;
+            this.preReqs=preReqs;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional() {return isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs() {return this.preReqs;}
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
-
-        @Override
-        public Boolean getIsOptional() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ArrayList<String[]> getPreReqs() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        private final Boolean isOptional;
+        private final ArrayList<String[]> preReqs;
     }
     public enum ProgramCorrectiveActionErrorTrapping implements EnumIntMessages{ 
         RECORD_ALREADY_EXISTS("programCorrectiveActionRecord_AlreadyExists", "", ""),

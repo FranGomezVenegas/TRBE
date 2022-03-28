@@ -23,37 +23,34 @@ public final class GenomaBusinessRules {
     private GenomaBusinessRules() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
     public enum GenomaBusnessRules implements EnumIntBusinessRules{
-        SUFFIX_ACTIVEONCREATION("_activeOnCreation", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
-        SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT("_specialFieldsLockedForProjectUpdateEndPoint", GlobalVariables.Schemas.DATA.getName(), null, null, '|'),
+        SUFFIX_ACTIVEONCREATION("_activeOnCreation", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
+        SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT("_specialFieldsLockedForProjectUpdateEndPoint", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
         ;
-        private GenomaBusnessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private GenomaBusnessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator
+        , Boolean isOpt, ArrayList<String[]> preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOpt;
+            this.preReqs=preReqs;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional() {return isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs() {return this.preReqs;}
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
-
-        @Override
-        public Boolean getIsOptional() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ArrayList<String[]> getPreReqs() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        private final Boolean isOptional;
+        private final ArrayList<String[]> preReqs;
     }    
     public static Boolean activateOnCreation(String schemaSuffix, String tableName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

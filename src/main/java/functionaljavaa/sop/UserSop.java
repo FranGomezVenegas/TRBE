@@ -65,40 +65,42 @@ public class UserSop {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     public enum UserSopBusinessRules  implements EnumIntBusinessRules{
-        USERSOP_MODE("userSopMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, false, ' ', null),
-        ACTIONENABLED_USERSOP_CERTIFICATION("actionEnabledUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
-        WINDOWOPENABLE_WHENNOTSOPCERTIFIED("windowOpenableWhenNotSopCertifiedUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
-        CERTIF_LEVEL_IMAGE_ERROR("userSopCertificationLevelImage_ERROR", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
-        CERTIF_LEVEL_IMAGE_NOTASSIGNED("userSopCertificationLevelImage_NotAssigned", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
-        CERTIF_LEVEL_IMAGE_CERTIFIED("userSopCertificationLevelImage_Certified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
-        CERTIF_LEVEL_IMAGE_NOTCERTIFIED("userSopCertificationLevelImage_NotCertified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*userSopMode"),
+        USERSOP_MODE("userSopMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, false, ' ', null, null),
+        ACTIONENABLED_USERSOP_CERTIFICATION("actionEnabledUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*userSopMode"),
+        WINDOWOPENABLE_WHENNOTSOPCERTIFIED("windowOpenableWhenNotSopCertifiedUserSopCertification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*userSopMode"),
+        CERTIF_LEVEL_IMAGE_ERROR("userSopCertificationLevelImage_ERROR", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*userSopMode"),
+        CERTIF_LEVEL_IMAGE_NOTASSIGNED("userSopCertificationLevelImage_NotAssigned", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*userSopMode"),
+        CERTIF_LEVEL_IMAGE_CERTIFIED("userSopCertificationLevelImage_Certified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*userSopMode"),
+        CERTIF_LEVEL_IMAGE_NOTCERTIFIED("userSopCertificationLevelImage_NotCertified", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*userSopMode"),
 
-        USERSOP_INITIAL_STATUS("userSopInitialStatus", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', "procedure*userSopMode"),
-        USERSOP_INITIAL_LIGHT("userSopInitialLight", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', "procedure*userSopMode")
+        USERSOP_INITIAL_STATUS("userSopInitialStatus", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', null, "procedure*userSopMode"),
+        USERSOP_INITIAL_LIGHT("userSopInitialLight", GlobalVariables.Schemas.CONFIG.getName(), null, null, '|', null, "procedure*userSopMode")
         ;
-        private UserSopBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, String preReqs){
+        private UserSopBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean isOpt, String preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOpt;
             this.preReqsBusRules=preReqs;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
-        public ArrayList<String[]> getPreReqs(){
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional() {return isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs(){
             ArrayList<String[]> d = new ArrayList<String[]>();
             if (preReqsBusRules!=null && preReqsBusRules.length()>0){
                 String[] rulesArr=preReqsBusRules.split("\\|");
@@ -109,20 +111,14 @@ public class UserSop {
                 }
             }
             return d;
-        }
-        
+        }        
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
-        private final char multiValueSeparator;    
+        private final char multiValueSeparator;  
+        private final Boolean isOptional;
         private final String preReqsBusRules;        
-
-        @Override
-        public Boolean getIsOptional() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-        
     }
     /**
      *

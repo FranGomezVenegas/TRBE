@@ -16,6 +16,7 @@ import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.BusinessRulesToRequirements;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleStructureSuccess;
 import trazit.session.ResponseMessages;
 import static functionaljavaa.samplestructure.ProcedureSampleStages.procedureSampleStagesTimingEvaluateDeviation;
 import java.io.FileNotFoundException;
@@ -37,7 +38,6 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
-import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -60,47 +60,31 @@ String previousStage="";
 Integer sampleId=-999;
 Object[][] firstStageData=new Object[0][0];
 
-public enum SampleStageErrorTrapping implements EnumIntMessages{
-        ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT("actionNotDeclaredToPerformAutoMoveToNext", "The action <*1*> is not declared as to perform auto move to next in procedure <*2*>", ""),
-        ;
-        private SampleStageErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
-            this.errorCode=errCode;
-            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
-            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
-        }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
-    
-        private final String errorCode;
-        private final String defaultTextWhenNotInPropertiesFileEn;
-        private final String defaultTextWhenNotInPropertiesFileEs;
-    }
-
    public enum SampleStageBusinessRules implements EnumIntBusinessRules {
-        SAMPLE_STAGES_FIRST("sampleStagesFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|', "procedure*sampleStagesMode"),
-        ACTION_AUTOMOVETONEXT("sampleStagesActionAutoMoveToNext", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*sampleStagesMode"),
-        SAMPLE_STAGE_MODE("sampleStagesMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null),
-        SAMPLE_STAGE_TYPE("sampleStagesLogicType", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*sampleStagesMode"),
-        SAMPLE_STAGE_TIMING_CAPTURE_MODE("sampleStagesTimingCaptureMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*sampleStagesMode"),
-        SAMPLE_STAGE_TIMING_CAPTURE_STAGES("sampleStagesTimingCaptureStages", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', "procedure*sampleStagesMode"),
-        SAMPLE_STAGE_TIMING_PROCEDURE_CONFIG_ENABLED("sampleStagesTimingProcedureConfigEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), BusinessRulesToRequirements.valuesListForEnableDisable(), false, '|', "procedure*sampleStagesMode"),
+        SAMPLE_STAGES_FIRST("sampleStagesFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, "procedure*sampleStagesMode"),
+        ACTION_AUTOMOVETONEXT("sampleStagesActionAutoMoveToNext", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*sampleStagesMode"),
+        SAMPLE_STAGE_MODE("sampleStagesMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        SAMPLE_STAGE_TYPE("sampleStagesLogicType", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*sampleStagesMode"),
+        SAMPLE_STAGE_TIMING_CAPTURE_MODE("sampleStagesTimingCaptureMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*sampleStagesMode"),
+        SAMPLE_STAGE_TIMING_CAPTURE_STAGES("sampleStagesTimingCaptureStages", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*sampleStagesMode"),
+        SAMPLE_STAGE_TIMING_PROCEDURE_CONFIG_ENABLED("sampleStagesTimingProcedureConfigEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), BusinessRulesToRequirements.valuesListForEnableDisable(), false, '|', null, "procedure*sampleStagesMode"),
         ;
-        private SampleStageBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, String preReqs){
+        private SampleStageBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator, Boolean isOpt, String preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOpt;
             this.preReqsBusRules=preReqs;
         }       
-        
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
-        public ArrayList<String[]> getPreReqs(){
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional() {return isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs(){
             ArrayList<String[]> d = new ArrayList<String[]>();
             if (preReqsBusRules!=null && preReqsBusRules.length()>0){
                 String[] rulesArr=preReqsBusRules.split("\\|");
@@ -112,18 +96,13 @@ public enum SampleStageErrorTrapping implements EnumIntMessages{
             }
             return d;
         }
-                
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
-        private final char multiValueSeparator;   
+        private final char multiValueSeparator;  
+        private final Boolean isOptional;
         private final String preReqsBusRules;
-
-        @Override
-        public Boolean getIsOptional() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
     }
     public enum SampleStageTimingCapturePhases{START, END}
     public static final String SAMPLE_STAGES_MODE_ENABLING_STATUSES="ENABLE";
@@ -216,7 +195,7 @@ public enum SampleStageErrorTrapping implements EnumIntMessages{
         String sampleCurrStage=sampleInfo[0][0].toString();
         String sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName());
         if (LPArray.valuePosicInArray(sampleStagesActionAutoMoveToNext.split("\\|"), actionName)==-1)
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleStageErrorTrapping.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT, new Object[]{actionName, procInstanceName});        
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureSuccess.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT, new Object[]{actionName, procInstanceName});        
         Object[] moveDiagn=moveToNextStage(sampleId, sampleCurrStage,null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
             dataSampleStagesTimingCapture(sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 

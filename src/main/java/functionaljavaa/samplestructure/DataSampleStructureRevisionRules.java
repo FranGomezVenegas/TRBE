@@ -29,43 +29,40 @@ public class DataSampleStructureRevisionRules {
 
     public enum DataSampleStructureRevisionRls  implements EnumIntBusinessRules{
         //SAMPLE_REVIEW_REVIEWER_MODE("sampleReviewReviewerMode",GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleEnums.sampleReviewReviewerModeValues.getValuesInOne(), null, '|'),
-        SAMPLE_REVIEW_CAN_BE_ANY_AUTHOR("sampleReviewer_canBeAnyResultAuthor", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        SAMPLE_REVIEW_CAN_BE_ANY_TEST_REVIEWER("sampleReviewer_canBeAnyTestReviewer", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        SAMPLE_REVIEW_CAN_BE_ANY_TESTING_GROUP_REVIEWER("sampleReviewer_canBeAnyTestingGroupReviewer", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        SAMPLE_REVIEW_CAN_BE_ANY_AUTHOR("sampleReviewer_canBeAnyResultAuthor", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        SAMPLE_REVIEW_CAN_BE_ANY_TEST_REVIEWER("sampleReviewer_canBeAnyTestReviewer", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        SAMPLE_REVIEW_CAN_BE_ANY_TESTING_GROUP_REVIEWER("sampleReviewer_canBeAnyTestingGroupReviewer", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
 
-        TESTING_GROUP_REVIEWER_CANBE_TEST_REVIEWER("testingGroupReviewer_canBeTestReviewer", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
+        TESTING_GROUP_REVIEWER_CANBE_TEST_REVIEWER("testingGroupReviewer_canBeTestReviewer", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
 
-        SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO("sampleAnalysisAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),
-        REVISION_SAMPLEANALYSIS_REQUIRED("revisionSampleAnalysisRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|'),        
+        SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO("sampleAnalysisAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        REVISION_SAMPLEANALYSIS_REQUIRED("revisionSampleAnalysisRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         ;
-        private DataSampleStructureRevisionRls(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private DataSampleStructureRevisionRls(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator
+        , Boolean isOpt, ArrayList<String[]> preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
-        }             
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+            this.isOptional=isOpt;
+            this.preReqs=preReqs;
+        }       
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional() {return isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs() {return this.preReqs;}
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
-        private final char multiValueSeparator;       
-
-        @Override
-        public Boolean getIsOptional() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ArrayList<String[]> getPreReqs() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        private final char multiValueSeparator;        
+        private final Boolean isOptional;
+        private final ArrayList<String[]> preReqs;
     }
     
     public enum DataSampleStructureRevisionErrorTrapping implements EnumIntMessages{ 
