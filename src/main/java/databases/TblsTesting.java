@@ -65,6 +65,7 @@ public class TblsTesting {
         SCRIPT_ID("script_id", LPDatabase.integerNotNull(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
         DATE_CREATION("date_creation", LPDatabase.dateTimeWithDefaultNow(), null, null, null, null),
+        SAVE_EXEC_EVID_ON_SUCCESS("save_execution_evidence_on_success", LPDatabase.booleanFld(false), null, null, null, null),        
         DATE_EXECUTION("date_execution", LPDatabase.dateTime(), null, null, null, null),
         TIME_STARTED("time_started", LPDatabase.dateTime(), null, null, null, null),
         TIME_COMPLETED("time_completed", LPDatabase.dateTime(), null, null, null, null),
