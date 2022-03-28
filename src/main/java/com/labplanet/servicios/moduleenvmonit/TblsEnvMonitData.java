@@ -31,24 +31,6 @@ public class TblsEnvMonitData {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesEnvMonitData implements EnumIntTables{        
-        PROGRAM(null, "program", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, 
-            Program.values(), null, 
-            new String[]{TblsEnvMonitData.Program.NAME.getName()}, null, "program table"),
-        PROGRAM_LOCATION(null, "program_location", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProgramLocation.values(), null, 
-            new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName(), TblsEnvMonitData.ProgramLocation.AREA.getName()}, 
-            new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.NAME.getName()
-            )}, "program locations table"),
-        PROGRAM_DAY(null, "program_day", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProgramDay.values(), null, 
-            new String[]{TblsEnvMonitData.ProgramDay.PROGRAM_NAME.getName()}, 
-            new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramDay.PROGRAM_NAME.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.NAME.getName()
-            )}, "program_day table"),
-        PROGRAM_CALENDAR_DATE(null, "program_calendar_date", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.ProgramCalendarDate.values(), TblsEnvMonitData.ProgramCalendarDate.ID.getName(), 
-            new String[]{TblsEnvMonitData.ProgramCalendarDate.ID.getName()}, 
-            new Object[]{new ForeignkeyFld(TblsEnvMonitData.ProgramCalendarDate.PROGRAM_NAME.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitData.PROGRAM.getTableName(), TblsEnvMonitData.Program.NAME.getName()
-            )}, "ProgramCalendarDate table"),
         SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.Sample.values(), Sample.SAMPLE_ID.getName()
             , new String[]{Sample.SAMPLE_ID.getName()}, null, "sample table"),
         SAMPLE_MICROORGANISM(null, "sample_microorganism", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsEnvMonitData.SampleMicroorganism.values(), SampleMicroorganism.ID.getName()
@@ -95,13 +77,6 @@ public class TblsEnvMonitData {
         private final String tableComment;
     }
     public enum ViewsEnvMonData implements EnumIntViews{
-        PROG_SCHED_LOCATIONS_VIEW(" select  dpr.sample_config_code, dpr.sample_config_code_version, "+
-                "         cnfpcd.*, dpl.area, dpl.spec_code, dpl.spec_variation_name, dpl.spec_analysis_variation, dpl.spec_code_version, dpl.requires_person_ana, dpl.person_ana_definition "+
-                "   from #SCHEMA_CONFIG.program_calendar_date  cnfpcd"+
-                "  inner join #SCHEMA_CONFIG.program  dpr on dpr.name=cnfpcd.program_id "+
-                "  inner join #SCHEMA_CONFIG.program_location dpl on dpl.program_name=cnfpcd.program_id and dpl.location_name=cnfpcd.location_name;"+
-                "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
-            null, "pr_scheduled_locations", SCHEMA_NAME, true, TblsEnvMonitData.ViewProgramScheduledLocations.values(), "pr_scheduled_locations"),
         SAMPLE_MICROORGANISM_LIST_VIEW(" SELECT distinct s.sample_id, s.sample_config_code, s.status, s.sampling_date, s.current_stage, s.program_name, s.location_name, s.incubation_start, s.incubation_end, s.incubation2_start, s.incubation2_end, "
                + "sar.raw_value, sar.result_id, sar.test_id, count(distinct sorg.id) as microorganism_count,"
                + "  array_to_string(array_agg(distinct sorg.microorganism_name), ', ') as microorganism_list" 
@@ -142,157 +117,6 @@ public class TblsEnvMonitData {
     }
     
     
-    public enum Program implements EnumIntTableFields{
-        NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null), 
-        PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
-        PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.stringNotNull(200), null, null, null, null), 
-        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),         
-        SPEC_CODE("spec_code", LPDatabase.string(), null, null, null, null), 
-        SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integer(), null, null, null, null), 
-        SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.string(), null, null, null, null), 
-        MAP_IMAGE("map_image", LPDatabase.string(), null, null, null, null), 
-        SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer(), null, null, null, null), 
-        DESCRIPTION_EN("description_en", LPDatabase.string(), null, null, null, null), 
-        DESCRIPTION_ES("description_es", LPDatabase.string(), null, null, null, null), 
-        ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null), 
-        // ...
-        ;
-        private Program(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
-            this.fieldName=dbObjName;
-            this.fieldType=dbObjType;
-            this.fieldMask=fieldMask;
-            this.reference=refer;
-            this.fieldComment=comment;
-            this.fldBusinessRules=fldBusRules;
-        }
-        private final String fieldName;
-        private final String fieldType;
-        private final String fieldMask;
-        private final ReferenceFld reference;
-        private final String fieldComment;
-        private final FldBusinessRules[] fldBusinessRules;
-
-        @Override        public String getName(){return this.fieldName;}
-        @Override        public String getFieldType() {return this.fieldType;}
-        @Override        public String getFieldMask() {return this.fieldMask;}
-        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
-        @Override        public String getFieldComment(){return this.fieldComment;}
-        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
-    }
-    public enum ProgramLocation implements EnumIntTableFields{
-        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, LPDatabase.stringNotNull(100), null, null, null, null), 
-        LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.string(200), null, null, null, null),
-        AREA("area",  LPDatabase.string(), null, null, null, null), 
-        ORDER_NUMBER("order_number",  LPDatabase.integer(), null, null, null, null), 
-        DESCRIPTION_EN("description_en",  LPDatabase.string(), null, null, null, null), 
-        DESCRIPTION_ES("description_es",  LPDatabase.string(), null, null, null, null), 
-        REQUIRES_PERSON_ANA("requires_person_ana", LPDatabase.booleanFld(), null, null, null, null), 
-        PERSON_ANA_DEFINITION("person_ana_definition",LPDatabase.string(), null, null, null, null), 
-        SPEC_CODE("spec_code",  LPDatabase.string(), null, null, null, null), 
-        SPEC_CODE_VERSION("spec_code_version",  LPDatabase.integer(), null, null, null, null), 
-        SPEC_VARIATION_NAME("spec_variation_name",  LPDatabase.string(), null, null, null, null), 
-        SPEC_ANALYSIS_VARIATION("spec_analysis_variation",  LPDatabase.string(), null, null, null, null), 
-        TESTING_GROUP("testing_group",  LPDatabase.string(), null, null, null, null), 
-        MAP_ICON("map_icon",  LPDatabase.string(), null, null, null, null), 
-        MAP_ICON_H("map_icon_h",  LPDatabase.string(), null, null, null, null), 
-        MAP_ICON_W("map_icon_w",  LPDatabase.string(), null, null, null, null), 
-        MAP_ICON_TOP("map_icon_top",  LPDatabase.string(), null, null, null, null), 
-        MAP_ICON_LEFT("map_icon_left",  LPDatabase.string(), null, null, null, null), 
-        REQ_SAMPLING_END("requires_tracking_sampling_end",  LPDatabase.booleanFld(), null, null, null, null), 
-        ;        
-        private ProgramLocation(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
-            this.fieldName=dbObjName;
-            this.fieldType=dbObjType;
-            this.fieldMask=fieldMask;
-            this.reference=refer;
-            this.fieldComment=comment;
-            this.fldBusinessRules=fldBusRules;
-        }
-        private final String fieldName;
-        private final String fieldType;
-        private final String fieldMask;
-        private final ReferenceFld reference;
-        private final String fieldComment;
-        private final FldBusinessRules[] fldBusinessRules;
-
-        @Override        public String getName(){return this.fieldName;}
-        @Override        public String getFieldType() {return this.fieldType;}
-        @Override        public String getFieldMask() {return this.fieldMask;}
-        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
-        @Override        public String getFieldComment(){return this.fieldComment;}
-        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
-    }
-
-    public enum ProgramCalendarDate implements EnumIntTableFields{
-        ID("id", LPDatabase.integerNotNull(), null, null, null, null), 
-        CALENDAR_ID("calendar_id", LPDatabase.integerNotNull(), null, null, null, null), 
-        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME,LPDatabase.stringNotNull(), null, null, null, null), 
-        RECURSIVE_ID("recursive_id", LPDatabase.integerNotNull(), null, null, null, null), 
-        IS_HOLIDAYS("is_holidays", LPDatabase.booleanFld(false), null, null, null, null), 
-        DATE("date", LPDatabase.date(), null, null, null, null), 
-        CONFLICT("conflict", LPDatabase.string(), null, null, null, null), 
-        CONFLICT_DETAIL("conflict_detail", LPDatabase.string(), null, null, null, null), 
-        LOCATION_NAME("location_name", LPDatabase.string(), null, null, null, null), 
-        SPEC("spec", LPDatabase.string(), null, null, null, null), 
-        VARIATION_NAME("variation_name", LPDatabase.string(), null, null, null, null), 
-        ANALYSIS_VARIATION("analysis_variation", LPDatabase.string(), null, null, null, null), 
-        ;        
-        private ProgramCalendarDate(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
-            this.fieldName=dbObjName;
-            this.fieldType=dbObjType;
-            this.fieldMask=fieldMask;
-            this.reference=refer;
-            this.fieldComment=comment;
-            this.fldBusinessRules=fldBusRules;
-        }
-        private final String fieldName;
-        private final String fieldType;
-        private final String fieldMask;
-        private final ReferenceFld reference;
-        private final String fieldComment;
-        private final FldBusinessRules[] fldBusinessRules;
-
-        @Override        public String getName(){return this.fieldName;}
-        @Override        public String getFieldType() {return this.fieldType;}
-        @Override        public String getFieldMask() {return this.fieldMask;}
-        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
-        @Override        public String getFieldComment(){return this.fieldComment;}
-        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
-    }
-    
-    public enum ProgramDay implements EnumIntTableFields{
-        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, LPDatabase.string(), null, null, null, null), 
-        DAY_ID("day_id", LPDatabase.integer(), null, null, null, null), 
-        DATE("date", LPDatabase.date(), null, null, null, null), 
-        ;
-        private ProgramDay(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
-            this.fieldName=dbObjName;
-            this.fieldType=dbObjType;
-            this.fieldMask=fieldMask;
-            this.reference=refer;
-            this.fieldComment=comment;
-            this.fldBusinessRules=fldBusRules;
-        }
-        private final String fieldName;
-        private final String fieldType;
-        private final String fieldMask;
-        private final ReferenceFld reference;
-        private final String fieldComment;
-        private final FldBusinessRules[] fldBusinessRules;
-
-        @Override        public String getName(){return this.fieldName;}
-        @Override        public String getFieldType() {return this.fieldType;}
-        @Override        public String getFieldMask() {return this.fieldMask;}
-        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
-        @Override        public String getFieldComment(){return this.fieldComment;}
-        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
-    }
-
     public enum Sample implements EnumIntTableFields{
         SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), LPDatabase.integerNotNull(), null, null, null, null),
         CONFIG_CODE("sample_config_code", LPDatabase.string(), null, null, null, null),
@@ -538,45 +362,6 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
-    public enum ViewProgramScheduledLocations implements EnumIntViewFields{
-        SAMPLE_CONFIG_CODE("sample_config_code", "dpr.sample_config_code", Program.SAMPLE_CONFIG_CODE, null, null, null),
-        SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", "dpr.sample_config_code_version", Program.SAMPLE_CONFIG_CODE_VERSION, null, null, null),
-        PROGRAM_NAME("program_name", "cnfpcd.program_id as program_name", Program.NAME, null, null, null),
-        PROGRAM_DAY_ID("program_day_id", "cnfpcd.id as program_day_id", TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID, null, null, null),
-        PROGRAM_DAY_DATE("program_day_date", "cnfpcd.date as program_day_date", ProgramCalendarDate.DATE, null, null, null),
-        AREA("area", "dpl.area", ProgramLocation.AREA, null, null, null),
-        SPEC_CODE("spec_code", "dpl.spec_code", ProgramLocation.SPEC_CODE, null, null, null),
-        SPEC_CODE_VERSION("spec_code_version", "dpl.spec_code_version", ProgramLocation.SPEC_CODE_VERSION, null, null, null),
-        SPEC_VARIATION_NAME("spec_variation_name", "dpl.spec_variation_name", ProgramLocation.SPEC_VARIATION_NAME, null, null, null),
-        SPEC_ANALYSIS_VARIATION("spec_analysis_variation", "dpl.spec_analysis_variation", ProgramLocation.SPEC_ANALYSIS_VARIATION, null, null, null),
-        REQUIRES_PERSON_ANA("requires_person_ana", "dpl.requires_person_ana", ProgramLocation.REQUIRES_PERSON_ANA, null, null, null),
-        PERSON_ANA_DEFINITION("person_ana_definition", "dpl.person_ana_definition", ProgramLocation.PERSON_ANA_DEFINITION, null, null, null),
-        LOCATION_NAME("location_name", "cnfpcd.location_name", ProgramLocation.LOCATION_NAME, null, null, null),
-        ID("id", "cnfpcd.id", TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID, null, null, null),
-        PROGRAM_ID("program_id", "cnfpcd.program_id", TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID, null, null, null),
-        DATE("date", "cnfpcd.date", TblsEnvMonitConfig.ProgramCalendarDate.DATE, null, null, null),
-        ;
-        private ViewProgramScheduledLocations(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
-            this.fldName=name;
-            this.fldAliasInView=vwAliasName;
-            this.fldMask=fldMask;
-            this.fldComment=comment;
-            this.fldBusinessRules=busRules;
-            this.fldObj=fldObj;
-        }
-        private final String fldName;
-        private final String fldAliasInView;
-        private final EnumIntTableFields fldObj;
-        private final String fldMask;
-        private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;        
-        @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
-        @Override public String getFieldMask() {return this.fldMask;}
-        @Override public String getFieldComment() {return this.fldComment;}
-        @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
-        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
-    }        
     public enum ViewSampleMicroorganismList implements EnumIntViewFields{
         SAMPLE_ID(Sample.SAMPLE_ID.getName(), "", Sample.SAMPLE_ID, null, null, null),
         SAMPLE_TEMPLATE("sample_config_code", "", Sample.CONFIG_CODE, null, null, null),

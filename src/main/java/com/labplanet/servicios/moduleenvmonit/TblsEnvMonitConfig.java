@@ -3,12 +3,15 @@ package com.labplanet.servicios.moduleenvmonit;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntViewFields;
+import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 
 public class TblsEnvMonitConfig {
+    
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesEnvMonitConfig implements EnumIntTables{        
@@ -75,10 +78,50 @@ public class TblsEnvMonitConfig {
         private final String tableComment;
     }
 
+    
+    public enum ViewsEnvMonConfig implements EnumIntViews{
+        PROG_SCHED_LOCATIONS_VIEW(" select  dpr.sample_config_code, dpr.sample_config_code_version, "+
+                "         cnfpcd.*, dpl.area, dpl.spec_code, dpl.spec_variation_name, dpl.spec_analysis_variation, dpl.spec_code_version, dpl.requires_person_ana, dpl.person_ana_definition "+
+                "   from #SCHEMA_CONFIG.program_calendar_date  cnfpcd"+
+                "  inner join #SCHEMA_CONFIG.program  dpr on dpr.name=cnfpcd.program_id "+
+                "  inner join #SCHEMA_CONFIG.program_location dpl on dpl.program_name=cnfpcd.program_id and dpl.location_name=cnfpcd.location_name;"+
+                "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
+            null, "pr_scheduled_locations", SCHEMA_NAME, true, TblsEnvMonitConfig.ViewProgramScheduledLocations.values(), "pr_scheduled_locations"),
+        ;
+        private ViewsEnvMonConfig(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
+                String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.viewName=dbVwName;
+            this.viewFields=vwFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.viewComment=comment;
+            this.viewScript=viewScript;
+        }
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public String getViewCreatecript() {return this.viewScript;}
+        @Override        public String getViewName() {return this.viewName;}
+        @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
+        @Override        public String getViewComment() {return this.viewComment;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String viewName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final EnumIntViewFields[] viewFields;
+        private final String viewComment;
+        private final String viewScript;
+    }
+
     public enum Program implements EnumIntTableFields{
         NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null), 
         PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
         PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.stringNotNull(200), null, null, null, null), 
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null), 
+        ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null), 
         SPEC_CODE("spec_code", LPDatabase.stringNotNull(), null, null, null, null), 
         SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
         SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull(), null, null, null, null), 
@@ -86,9 +129,6 @@ public class TblsEnvMonitConfig {
         MAP_IMAGE("map_image", LPDatabase.string(), null, null, null, null), 
         DESCRIPTION_EN("description_en", LPDatabase.string(), null, null, null, null), 
         DESCRIPTION_ES("description_es", LPDatabase.string(), null, null, null, null), 
-        ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null), 
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.stringNotNull(200), null, null, null, null), 
-        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null), 
         ;
         private Program(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -134,7 +174,7 @@ public class TblsEnvMonitConfig {
         MAP_ICON_W("map_icon_w",  LPDatabase.string(), null, null, null, null), 
         MAP_ICON_TOP("map_icon_top",  LPDatabase.string(), null, null, null, null), 
         MAP_ICON_LEFT("map_icon_left",  LPDatabase.string(), null, null, null, null), 
-        
+        REQ_SAMPLING_END("requires_tracking_sampling_end",  LPDatabase.booleanFld(), null, null, null, null),         
 //        , PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.String())
         // ...
         ;        
@@ -452,5 +492,44 @@ public class TblsEnvMonitConfig {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
+    public enum ViewProgramScheduledLocations implements EnumIntViewFields{
+        SAMPLE_CONFIG_CODE("sample_config_code", "dpr.sample_config_code", Program.SAMPLE_CONFIG_CODE, null, null, null),
+        SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", "dpr.sample_config_code_version", Program.SAMPLE_CONFIG_CODE_VERSION, null, null, null),
+        PROGRAM_NAME("program_name", "cnfpcd.program_id as program_name", Program.NAME, null, null, null),
+        PROGRAM_DAY_ID("program_day_id", "cnfpcd.id as program_day_id", TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID, null, null, null),
+        PROGRAM_DAY_DATE("program_day_date", "cnfpcd.date as program_day_date", TblsEnvMonitConfig.ProgramCalendarDate.DATE, null, null, null),
+        AREA("area", "dpl.area", TblsEnvMonitConfig.ProgramLocation.AREA, null, null, null),
+        SPEC_CODE("spec_code", "dpl.spec_code", TblsEnvMonitConfig.ProgramLocation.SPEC_CODE, null, null, null),
+        SPEC_CODE_VERSION("spec_code_version", "dpl.spec_code_version", TblsEnvMonitConfig.ProgramLocation.SPEC_CODE_VERSION, null, null, null),
+        SPEC_VARIATION_NAME("spec_variation_name", "dpl.spec_variation_name", TblsEnvMonitConfig.ProgramLocation.SPEC_VARIATION_NAME, null, null, null),
+        SPEC_ANALYSIS_VARIATION("spec_analysis_variation", "dpl.spec_analysis_variation", TblsEnvMonitConfig.ProgramLocation.SPEC_ANALYSIS_VARIATION, null, null, null),
+        REQUIRES_PERSON_ANA("requires_person_ana", "dpl.requires_person_ana", TblsEnvMonitConfig.ProgramLocation.REQUIRES_PERSON_ANA, null, null, null),
+        PERSON_ANA_DEFINITION("person_ana_definition", "dpl.person_ana_definition", TblsEnvMonitConfig.ProgramLocation.PERSON_ANA_DEFINITION, null, null, null),
+        LOCATION_NAME("location_name", "cnfpcd.location_name", TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME, null, null, null),
+        ID("id", "cnfpcd.id", TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID, null, null, null),
+        PROGRAM_ID("program_id", "cnfpcd.program_id", TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID, null, null, null),
+        DATE("date", "cnfpcd.date", TblsEnvMonitConfig.ProgramCalendarDate.DATE, null, null, null),
+        ;
+        private ViewProgramScheduledLocations(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+            this.fldName=name;
+            this.fldAliasInView=vwAliasName;
+            this.fldMask=fldMask;
+            this.fldComment=comment;
+            this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
+        }
+        private final String fldName;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;        
+        @Override public String getName() {return fldName;}
+        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFieldMask() {return this.fldMask;}
+        @Override public String getFieldComment() {return this.fldComment;}
+        @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+    }        
   
 }

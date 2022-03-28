@@ -6,6 +6,7 @@
 package functionaljavaa.moduleenvironmentalmonitoring;
 
 import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIEndpoints;
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
@@ -37,36 +38,33 @@ import trazit.session.ApiMessageReturn;
 public class DataProgramSample{
     
     public enum DataProgramSampleBusinessRules implements EnumIntBusinessRules{
-        SAMPLER_SAMPLE_TEMPLATE("samplerSampleTemplate", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|')
+        SAMPLER_SAMPLE_TEMPLATE("samplerSampleTemplate", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null)
         ;
-        private DataProgramSampleBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator){
+        private DataProgramSampleBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator
+        , Boolean isOpt, ArrayList<String[]> preReqs){
             this.tagName=tgName;
             this.areaName=areaNm;
             this.valuesList=valuesList;  
             this.allowMultiValue=allowMulti;
             this.multiValueSeparator=separator;
+            this.isOptional=isOpt;
+            this.preReqs=preReqs;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional() {return isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs() {return this.preReqs;}
         
         private final String tagName;
         private final String areaName;
         private final JSONArray valuesList;  
         private final Boolean allowMultiValue;
         private final char multiValueSeparator;        
-
-        @Override
-        public Boolean getIsOptional() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public ArrayList<String[]> getPreReqs() {
-            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-        }
+        private final Boolean isOptional;
+        private final ArrayList<String[]> preReqs;
     }
     /**
      *
@@ -102,12 +100,12 @@ public class DataProgramSample{
                 fieldValue = LPArray.addValueToArray1D(fieldValue, programLocation);
             }else
                 fieldValue[programLocationPosic] = programLocation;
-            String[] specFldNames=new String[]{TblsEnvMonitData.ProgramLocation.SPEC_CODE.getName(), TblsEnvMonitData.ProgramLocation.SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ProgramLocation.SPEC_ANALYSIS_VARIATION.getName(), TblsEnvMonitData.ProgramLocation.AREA.getName(), TblsEnvMonitData.ProgramLocation.SPEC_VARIATION_NAME.getName()};
-            Object[] dbTableExists = dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableName(),TblsEnvMonitData.ProgramLocation.REQ_SAMPLING_END.getName());
+            String[] specFldNames=new String[]{TblsEnvMonitConfig.ProgramLocation.SPEC_CODE.getName(), TblsEnvMonitConfig.ProgramLocation.SPEC_CODE_VERSION.getName(), TblsEnvMonitConfig.ProgramLocation.SPEC_ANALYSIS_VARIATION.getName(), TblsEnvMonitConfig.ProgramLocation.AREA.getName(), TblsEnvMonitConfig.ProgramLocation.SPEC_VARIATION_NAME.getName()};
+            Object[] dbTableExists = dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(),TblsEnvMonitConfig.ProgramLocation.REQ_SAMPLING_END.getName());
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString()))
-                specFldNames=LPArray.addValueToArray1D(specFldNames, TblsEnvMonitData.ProgramLocation.REQ_SAMPLING_END.getName());
-            Object[][] diagnosis = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableName(),
-                new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName()}, 
+                specFldNames=LPArray.addValueToArray1D(specFldNames, TblsEnvMonitConfig.ProgramLocation.REQ_SAMPLING_END.getName());
+            Object[][] diagnosis = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getRepositoryName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(),
+                new String[]{TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME.getName()}, 
                 new Object[]{programName, programLocation}, 
                 specFldNames, true);            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0][0].toString()))
@@ -143,10 +141,10 @@ public class DataProgramSample{
         
         String samplerSmpTemplate=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramSampleBusinessRules.SAMPLER_SAMPLE_TEMPLATE.getAreaName(), DataProgramSampleBusinessRules.SAMPLER_SAMPLE_TEMPLATE.getTagName());  
         
-        Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitData.TablesEnvMonitData.PROGRAM_LOCATION.getTableName(), 
-                new String[]{TblsEnvMonitData.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.LOCATION_NAME.getName()}, 
+        Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(), 
+                new String[]{TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME.getName()}, 
                 new Object[]{programName, programLocation}, 
-                new String[]{TblsEnvMonitData.ProgramLocation.REQUIRES_PERSON_ANA.getName(), TblsEnvMonitData.ProgramLocation.PERSON_ANA_DEFINITION.getName()});
+                new String[]{TblsEnvMonitConfig.ProgramLocation.REQUIRES_PERSON_ANA.getName(), TblsEnvMonitConfig.ProgramLocation.PERSON_ANA_DEFINITION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocationPersonalInfo[0][0].toString())) return new Object[]{LPPlatform.LAB_TRUE};
         Boolean requiresPersonalAnalysis=Boolean.valueOf(LPNulls.replaceNull(programLocationPersonalInfo[0][0]).toString());
         if (!requiresPersonalAnalysis) return new Object[]{LPPlatform.LAB_TRUE};
@@ -232,21 +230,21 @@ public class DataProgramSample{
     }
     public  Object[] logProgramSampleScheduled(String programName, LocalDateTime dateStart, LocalDateTime dateEnd) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String[] fieldsToRetrieve = new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.DATE.getName(),
-            TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_DAY_ID.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_DAY_DATE.getName(),
-            TblsEnvMonitData.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE_VERSION.getName(),
-            TblsEnvMonitData.ViewProgramScheduledLocations.LOCATION_NAME.getName(),            
-            TblsEnvMonitData.ViewProgramScheduledLocations.AREA.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_CODE.getName(), 
-            TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.AREA.getName(), 
-            TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_VARIATION_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_ANALYSIS_VARIATION.getName() 
+        String[] fieldsToRetrieve = new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName(),
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_DAY_ID.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_DAY_DATE.getName(),
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE_VERSION.getName(),
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.LOCATION_NAME.getName(),            
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.AREA.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_CODE.getName(), 
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_CODE_VERSION.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.AREA.getName(), 
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_VARIATION_NAME.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_ANALYSIS_VARIATION.getName() 
         };        
-        String[] fieldName = new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.LOCATION_NAME.getName(), 
-            TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_DAY_ID.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_DAY_DATE.getName(),
-            TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_CODE.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_CODE_VERSION.getName(), 
-            TblsEnvMonitData.ViewProgramScheduledLocations.AREA.getName(), 
-            TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_VARIATION_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.SPEC_ANALYSIS_VARIATION.getName() 
+        String[] fieldName = new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.LOCATION_NAME.getName(), 
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_DAY_ID.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_DAY_DATE.getName(),
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_CODE.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_CODE_VERSION.getName(), 
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.AREA.getName(), 
+            TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_VARIATION_NAME.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_ANALYSIS_VARIATION.getName() 
         };      
-        String[] whereFieldNames=new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.DATE.getName()+" BETWEEN"};
+        String[] whereFieldNames=new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName()+" BETWEEN"};
         Object[] whereFieldValues=new Object[0];
         if (dateStart==null && dateEnd==null)
             whereFieldValues=new Object[]{LPDate.getCurrentTimeStamp(), LPDate.getCurrentTimeStamp().plusDays(1)};
@@ -255,13 +253,13 @@ public class DataProgramSample{
         if (dateStart!=null &&dateEnd!=null)
             whereFieldValues=new Object[]{LPDate.dateStringFormatToLocalDateTime(dateStart.toString()), LPDate.dateStringFormatToLocalDateTime(dateEnd.toString())};
         if (programName!=null){
-            whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_NAME.getName());
+            whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME.getName());
             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);
         }
-        Object[][] programCalendarDatePending=QueryUtilitiesEnums.getViewData(TblsEnvMonitData.ViewsEnvMonData.PROG_SCHED_LOCATIONS_VIEW, 
-            EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitData.ViewsEnvMonData.PROG_SCHED_LOCATIONS_VIEW, fieldsToRetrieve),
+        Object[][] programCalendarDatePending=QueryUtilitiesEnums.getViewData(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, 
+            EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, fieldsToRetrieve),
             whereFieldNames, whereFieldValues, 
-            new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.DATE.getName()});
+            new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
         StringBuilder newSamplesLogged=new StringBuilder();
@@ -272,11 +270,11 @@ public class DataProgramSample{
                 fieldValue=LPArray.addValueToArray1D(fieldValue, curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, curFld)]);
             }
             Object[] diagn=logProgramSample(
-                    curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE.getName())].toString(), 
-                    (Integer) curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE_VERSION.getName())], 
+                    curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE.getName())].toString(), 
+                    (Integer) curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE_VERSION.getName())], 
                     fieldName, fieldValue, 
-                    curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.PROGRAM_NAME.getName())].toString(), 
-                    curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.LOCATION_NAME.getName())].toString());
+                    curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME.getName())].toString(), 
+                    curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.LOCATION_NAME.getName())].toString());
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
                 newSamplesCounter++;
                 newSamplesLogged.append(" ").append(diagn[diagn.length-1].toString());
