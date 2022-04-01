@@ -234,9 +234,9 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
                 }
-                JSONObject vidObj=new JSONObject();
+                JSONArray vidObj=new JSONArray();
                 for (Object[] curVid: videoTutorialsJson){
-                    vidObj.put(curVid[0].toString(), curVid[1]);
+                    vidObj.add(curVid[1]);
                 }
                 LPFrontEnd.servletReturnSuccess(request, response, vidObj);
                 return;
