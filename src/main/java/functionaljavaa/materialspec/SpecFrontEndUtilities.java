@@ -91,7 +91,7 @@ public class SpecFrontEndUtilities {
         for (Object[] curRec: records){
           Integer posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.SpecLimits.LIMIT_ID.getName());
           if (posicInArr>-1){
-            Integer limitId = (Integer) curRec[posicInArr];
+            Integer limitId = Integer.valueOf(curRec[posicInArr].toString());
             specRule.specLimitsRule(limitId, null);
             if (LPArray.valuePosicInArray(fieldsName, ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED)==-1)
               fieldsName=LPArray.addValueToArray1D(fieldsName,ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED);
