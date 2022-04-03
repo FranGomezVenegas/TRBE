@@ -18,29 +18,33 @@ public class TblsEnvMonitConfig {
         PROGRAM(null, "program", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Program.values(), null, new String[]{Program.NAME.getName()}, null, "program table"),
         PROGRAM_LOCATION(null, "program_location", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramLocation.values(), null, 
             new String[]{ProgramLocation.PROGRAM_NAME.getName(), ProgramLocation.LOCATION_NAME.getName(), ProgramLocation.AREA.getName()}, 
-            new Object[]{new ForeignkeyFld(ProgramLocation.PROGRAM_NAME.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName()
-            )}, "program locations table"),
+            //new Object[]{new ForeignkeyFld(ProgramLocation.PROGRAM_NAME.getName(), 
+            //        SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.NAME.getName()
+            //)}
+            new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramLocation.PROGRAM_CONFIG_ID.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()),
+                new ForeignkeyFld(TblsEnvMonitConfig.ProgramLocation.PROGRAM_CONFIG_VERSION.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName())
+            },            
+            "program locations table"),
         PROGRAM_DAY(null, "program_day", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramDay.values(), null, 
             new String[]{ProgramDay.PROGRAM_CONFIG_ID.getName(), ProgramDay.PROGRAM_CONFIG_VERSION.getName()}, 
-            new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramDay.PROGRAM_CONFIG_ID.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()
-            )}, "program_day table"),
+            new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramDay.PROGRAM_CONFIG_ID.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()),
+                new ForeignkeyFld(TblsEnvMonitConfig.ProgramDay.PROGRAM_CONFIG_VERSION.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName())
+            }, "program_day table"),
         PROGRAM_CALENDAR(null, "program_calendar", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramCalendar.values(), ProgramCalendar.CALENDAR_ID.getName(), 
             new String[]{ProgramCalendar.CALENDAR_ID.getName()}, 
-            new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendar.PROGRAM_ID.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()
-            )}, "program_calendar table"),
+            new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendar.PROGRAM_CONFIG_ID.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()),
+                new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendar.PROGRAM_CONFIG_VERSION.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName())
+            }, "program_calendar table"),
         PROGRAM_CALENDAR_DATE(null, "program_calendar_date", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramCalendarDate.values(), ProgramCalendarDate.CALENDAR_ID.getName(), 
             new String[]{ProgramCalendarDate.CALENDAR_ID.getName()}, 
-            new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()
-            )}, "ProgramCalendarDate table"),
+            new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_CONFIG_ID.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()),
+                new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_CONFIG_VERSION.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName())
+            }, "ProgramCalendarDate table"),
         PROGRAM_CALENDAR_RECURSIVE_ENTRY(null, "program_calendar_recursive_entry", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramCalendarRecursiveEntries.values(), ProgramCalendarRecursiveEntries.ID.getName(), 
             new String[]{ProgramCalendarRecursiveEntries.ID.getName()}, 
-            new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.PROGRAM_ID.getName(), 
-                    SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()
-            )}, "program_calendar_recursive_entry table"),
+            new Object[]{new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.PROGRAM_CONFIG_ID.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName()),
+                new ForeignkeyFld(TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.PROGRAM_CONFIG_VERSION.getName(), SCHEMA_NAME, TablesEnvMonitConfig.PROGRAM.getTableName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName())
+            }, "program_calendar_recursive_entry table"),
         MICROORGANISM(null, "microorganism", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, MicroOrganism.values(), null, new String[]{MicroOrganism.NAME.getName()}, null, "program table"),
         MICROORGANISM_ADHOC(null, "microorganism_adhoc", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, MicroOrganismAdhoc.values(), null, new String[]{MicroOrganismAdhoc.NAME.getName()}, null, "program table"),
         INSTRUMENT_INCUBATOR(null, "instrument_incubator", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, InstrIncubator.values(), null, new String[]{InstrIncubator.NAME.getName()}, null, "instrument_incubator table"),
@@ -156,7 +160,8 @@ public class TblsEnvMonitConfig {
 
     public enum ProgramLocation implements EnumIntTableFields{
         PROGRAM_NAME("program_name", LPDatabase.stringNotNull(100), null, null, null, null), 
-        PROGRAM_ID(FIELDS_NAMES_PROGRAM_ID, LPDatabase.integerNotNull(), null, null, null, null), 
+        PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
+        PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null),             
         LOCATION_NAME("location_name",  LPDatabase.string(200), null, null, null, null), 
         AREA("area",  LPDatabase.string(), null, null, null, null), 
         ORDER_NUMBER("order_number",  LPDatabase.integer(), null, null, null, null), 
@@ -202,7 +207,6 @@ public class TblsEnvMonitConfig {
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
     
-    static final String FIELDS_NAMES_PROGRAM_ID = "program_id";
     public enum ProgramDay implements EnumIntTableFields{
         PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
         PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
@@ -239,7 +243,8 @@ public class TblsEnvMonitConfig {
      */
     public enum ProgramCalendar implements EnumIntTableFields{
         CALENDAR_ID("calendar_id", LPDatabase.integer(), null, null, null, null), 
-        PROGRAM_ID(FIELDS_NAMES_PROGRAM_ID,LPDatabase.stringNotNull(), null, null, null, null), 
+        PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
+        PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
         SCHEDULE_SIZE_UNIT("schedule_size_unit",LPDatabase.stringNotNull(), null, null, null, null), 
         SCHEDULE_SIZE("schedule_size", LPDatabase.integerNotNull(), null, null, null, null), 
         START_DATE("start_date", LPDatabase.date(), null, null, null, null), 
@@ -276,7 +281,8 @@ public class TblsEnvMonitConfig {
     public enum ProgramCalendarRecursiveEntries implements EnumIntTableFields{
         ID("id", LPDatabase.integer(), null, null, null, null),
         CALENDAR_ID("calendar_id", LPDatabase.integerNotNull(), null, null, null, null),
-        PROGRAM_ID(FIELDS_NAMES_PROGRAM_ID,LPDatabase.stringNotNull(), null, null, null, null),
+        PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
+        PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
         RULE("rule",LPDatabase.stringNotNull(), null, null, null, null),
         START_DATE("start_date", LPDatabase.date(), null, null, null, null),
         END_DATE("end_date", LPDatabase.date(), null, null, null, null),
@@ -311,7 +317,8 @@ public class TblsEnvMonitConfig {
      */
     public enum ProgramCalendarDate implements EnumIntTableFields{
         CALENDAR_ID("calendar_id", LPDatabase.integerNotNull(), null, null, null, null),
-        PROGRAM_ID(FIELDS_NAMES_PROGRAM_ID,LPDatabase.stringNotNull(), null, null, null, null),
+        PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
+        PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
         RECURSIVE_ID("recursive_id", LPDatabase.integerNotNull(), null, null, null, null),
         IS_HOLIDAYS("is_holidays", LPDatabase.booleanFld(false), null, null, null, null),
         DATE("date", LPDatabase.date(), null, null, null, null),
@@ -495,7 +502,7 @@ public class TblsEnvMonitConfig {
     public enum ViewProgramScheduledLocations implements EnumIntViewFields{
         SAMPLE_CONFIG_CODE("sample_config_code", "dpr.sample_config_code", Program.SAMPLE_CONFIG_CODE, null, null, null),
         SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", "dpr.sample_config_code_version", Program.SAMPLE_CONFIG_CODE_VERSION, null, null, null),
-        PROGRAM_NAME("program_name", "cnfpcd.program_id as program_name", Program.NAME, null, null, null),
+        PROGRAM_NAME("program_name", "cnfpcd.program_name as program_name", Program.NAME, null, null, null),
         PROGRAM_DAY_ID("program_day_id", "cnfpcd.id as program_day_id", TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID, null, null, null),
         PROGRAM_DAY_DATE("program_day_date", "cnfpcd.date as program_day_date", TblsEnvMonitConfig.ProgramCalendarDate.DATE, null, null, null),
         AREA("area", "dpl.area", TblsEnvMonitConfig.ProgramLocation.AREA, null, null, null),
@@ -507,7 +514,7 @@ public class TblsEnvMonitConfig {
         PERSON_ANA_DEFINITION("person_ana_definition", "dpl.person_ana_definition", TblsEnvMonitConfig.ProgramLocation.PERSON_ANA_DEFINITION, null, null, null),
         LOCATION_NAME("location_name", "cnfpcd.location_name", TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME, null, null, null),
         ID("id", "cnfpcd.id", TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID, null, null, null),
-        PROGRAM_ID("program_id", "cnfpcd.program_id", TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID, null, null, null),
+        PROGRAM_CONFIG_ID("program_config_id", "cnfpcd.program_config_id", TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_CONFIG_ID, null, null, null),
         DATE("date", "cnfpcd.date", TblsEnvMonitConfig.ProgramCalendarDate.DATE, null, null, null),
         ;
         private ViewProgramScheduledLocations(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
