@@ -62,7 +62,7 @@ class EnvMonFrontEndUtilities {
     }
     return QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, 
         EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, fieldsName),
-        new String[]{TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_ID.getName()}, 
+        new String[]{TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_CONFIG_ID.getName()}, 
         new Object[]{programConfigId,}, 
         sortFields);
   }
