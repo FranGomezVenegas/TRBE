@@ -29,7 +29,7 @@ import databases.TblsData.ViewsData;
 import databases.TblsDataAudit.TablesDataAudit;
 import databases.TblsProcedure;
 import databases.TblsProcedure.TablesProcedure;
-import databases.TblsProcedureAudit;
+import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsReqs;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.masterdata.ClassMasterData;
@@ -63,58 +63,17 @@ public class ProcedureDefinitionToInstance {
         
         private final String tagValue;
     }
-    
-
-    /**
-     *
-     */
     public static final String SCHEMA_AUTHORIZATION_ROLE = "labplanet";
-    
-    /**
-     *
-     */
-    public static final String FIELDS_TO_RETRIEVE_REQS_PROCEDURE_INFO_SOURCE=TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName()+"|"+TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_EN.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_ES.getName();
-    public static final String FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE=TblsProcedure.ProcedureInfo.NAME.getName()+"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_EN.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_ES.getName();
-
-    /**
-     *
-     */
-    public static final String FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SOURCE="user_name|role_name";
-
-    /**
-     *
-     */
-    public static final String FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SORT="user_name";
-
-    /**
-     *
-     */
+    public static final String FLDSTORETR_REQS_PROCINFOSRC=TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName()+"|"+TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_EN.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_ES.getName();
+    public static final String FLDSTORETR_PROCEDURE_INFO_SOURCE=TblsProcedure.ProcedureInfo.NAME.getName()+"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_EN.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_ES.getName();
+    public static final String FLDSTORETR_PROCEDURE_USR_ROLE_SRC="user_name|role_name";
+    public static final String FLDSTORETR_PROCEDURE_USR_ROLE_SRT="user_name";
     public static final String FIELDS_TO_INSERT_APP_USER_PROCESS=TblsApp.UserProcess.USER_NAME.getName()+"|"+TblsApp.UserProcess.PROC_NAME.getName()+"|"+TblsApp.UserProcess.ACTIVE.getName();
-
-    /**
-     *
-     */
-    public static final String FIELDS_TO_INSERT_PROCEDURE_USER_ROLE_DESTINATION="person_name|role_name|active";
-
-    /**
-     *
-     */
-    public static final String FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE="sop_id|sop_name|sop_version|sop_revision|current_status|expires|has_child|file_link|brief_summary";
-
-    /**
-     *
-     */
-    public static final String FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SORT="sop_id";
-
-    /**
-     *
-     */
-    public static final String FIELDS_TO_INSERT_PROCEDURE_SOP_META_DATA_DESTINATION="person_name|role_name|active";
-
-    /**
-     *
-     */
-    public static final String FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION="name|role_name|sop";
+    public static final String FLDSTO_INSERT_PROC_USR_ROLE_DEST="person_name|role_name|active";
+    public static final String FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRC="sop_id|sop_name|sop_version|sop_revision|current_status|expires|has_child|file_link|brief_summary";
+    public static final String FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRT="sop_id";
+    public static final String FLDSTO_INSERT_PROC_SOPMTDATA_DEST="person_name|role_name|active";
+    public static final String FLDSTO_RETRIEVE_PROC_EVENT_DEST="name|role_name|sop";
 
     /**
      *
@@ -129,7 +88,7 @@ public class ProcedureDefinitionToInstance {
         String schemaNameDestinationProc=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
          Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
-                FIELDS_TO_RETRIEVE_REQS_PROCEDURE_INFO_SOURCE.split("\\|"));
+                FLDSTORETR_REQS_PROCINFOSRC.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString())){
           jsonErrorObj.put("Record in requirements", "Not exists");  
           jsonErrorObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procInfoRecordsSource[0]));
@@ -138,12 +97,12 @@ public class ProcedureDefinitionToInstance {
             for (Object[] curRow: procInfoRecordsSource){
                 Object[][] procInfoRecordsDestination = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
                        new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()}, new Object[]{procedure, procVersion}, 
-                       FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|"));
+                       FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|"));
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsDestination[0][0].toString())){
                     jsonErrorObj.put("Record in the new instance", "Already exists");
                 }else{
                     jsonErrorObj.put("Record in new instance", "Not exists");
-                    String[] fldName=FIELDS_TO_RETRIEVE_PROCEDURE_INFO_SOURCE.split("\\|");
+                    String[] fldName=FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|");
                     Object[] fldValue=curRow;
                     if (!LPArray.valueInArray(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName())){
                         fldName=LPArray.addValueToArray1D(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName());
@@ -237,14 +196,14 @@ public class ProcedureDefinitionToInstance {
         String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
          Object[][] procUserRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
                 new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
-                FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SOURCE.split("\\|"), FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SORT.split("\\|"));
+                FLDSTORETR_PROCEDURE_USR_ROLE_SRC.split("\\|"), FLDSTORETR_PROCEDURE_USR_ROLE_SRT.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserRolesRecordsSource[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procUserRolesRecordsSource[0]));
           return jsonObj;
         }
         for (Object[] curRow: procUserRolesRecordsSource){
-            Object curUserName = curRow[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SOURCE.split("\\|"), TblsReqs.ProcedureUserRoles.USER_NAME.getName())];
-            Object curRoleName = curRow[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_USER_ROLE_SOURCE.split("\\|"), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName())];
+            Object curUserName = curRow[LPArray.valuePosicInArray(FLDSTORETR_PROCEDURE_USR_ROLE_SRC.split("\\|"), TblsReqs.ProcedureUserRoles.USER_NAME.getName())];
+            Object curRoleName = curRow[LPArray.valuePosicInArray(FLDSTORETR_PROCEDURE_USR_ROLE_SRT.split("\\|"), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName())];
             JSONArray jsArr = new JSONArray(); 
             JSONObject jsUserRoleObj = new JSONObject();
             jsUserRoleObj.put("User", curUserName); jsUserRoleObj.put("Role", curRoleName);
@@ -285,7 +244,7 @@ public class ProcedureDefinitionToInstance {
             Object curPersonName = existsAppUser[0][0];                
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())){
                 Object[] insertRecordInTable = Rdbms.insertRecordInTable(schemaNameDestinationProcedure, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
-                        FIELDS_TO_INSERT_PROCEDURE_USER_ROLE_DESTINATION.split("\\|"), new Object[]{curPersonName.toString(), curRoleName.toString(), true});
+                        FLDSTO_INSERT_PROC_USR_ROLE_DEST.split("\\|"), new Object[]{curPersonName.toString(), curRoleName.toString(), true});
                 jsonObj.put("User Role inserted in the instance?", insertRecordInTable[0].toString());                    
             }
             jsArr.add(jsUserRoleObj);
@@ -308,7 +267,7 @@ public class ProcedureDefinitionToInstance {
         
          Object[][] procSopMetaDataRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
                 new String[]{TblsReqs.ProcedureSopMetaData.PROCEDURE_NAME.getName(), TblsReqs.ProcedureSopMetaData.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureSopMetaData.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
-                FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SORT.split("\\|"));
+                FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRC.split("\\|"), FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRT.split("\\|"));
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procSopMetaDataRecordsSource[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procSopMetaDataRecordsSource));
@@ -316,8 +275,8 @@ public class ProcedureDefinitionToInstance {
         }
         jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procSopMetaDataRecordsSource.length);        
         for (Object[] curSopMetaData: procSopMetaDataRecordsSource){
-            Object curSopId = curSopMetaData[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), TblsCnfg.SopMetaData.SOP_ID.getName())];
-            Object curSopName = curSopMetaData[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), TblsCnfg.SopMetaData.SOP_NAME.getName())];
+            Object curSopId = curSopMetaData[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRC.split("\\|"), TblsCnfg.SopMetaData.SOP_ID.getName())];
+            Object curSopName = curSopMetaData[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRC.split("\\|"), TblsCnfg.SopMetaData.SOP_NAME.getName())];
             JSONArray jsArr = new JSONArray(); 
             JSONObject jsUserRoleObj = new JSONObject();
             jsUserRoleObj.put("SOP Id", curSopId); jsUserRoleObj.put("SOP Name", curSopName);
@@ -328,7 +287,7 @@ public class ProcedureDefinitionToInstance {
             jsUserRoleObj.put("SOP exists in the procedure?", diagnosesForLog); 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())){
                 Object[] insertRecordInTable = Rdbms.insertRecordInTable(schemaNameDestination, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
-                        FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), curSopMetaData);
+                        FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRC.split("\\|"), curSopMetaData);
                 diagnosesForLog = (LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString())) ? JsonTags.NO.getTagValue() : JsonTags.YES.getTagValue();
                 jsonObj.put("SOP inserted in the instance?", diagnosesForLog);
                 //if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString())){}
@@ -440,7 +399,12 @@ public class ProcedureDefinitionToInstance {
                                     }
                                     break;
                                 case "procedure-audit":
-                                    tblCreateScript = createTableScript(TblsProcedureAudit.TablesProcedureAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));
+                                    try{
+                                        tblCreateScript = createTableScript(TablesProcedureAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName));                                        
+                                        if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
+                                            tblCreateScriptTesting = createTableScript(TablesProcedureAudit.valueOf(curTableName.toUpperCase()), schemaForTesting);
+                                    }catch(Exception e){
+                                    }
                                     break;
                                 default:
                                     cont=false;
@@ -451,7 +415,7 @@ public class ProcedureDefinitionToInstance {
                             curTblJsonObj.put("unexpected_error", e.getMessage());
                         }
                         if (cont){
-                            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(tblCreateScript, new Object[]{});
+                            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScript, new Object[]{});
                             if ("-999".equalsIgnoreCase(prepUpQuery[0].toString()))
                                 diagn=diagn+" and not created, "+prepUpQuery[prepUpQuery.length-1];                                
                             else
@@ -463,7 +427,7 @@ public class ProcedureDefinitionToInstance {
                             schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
                             if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)) && tblCreateScriptTesting!=null){
                                 curTblJsonObj.put("requires_testing_clone", true);
-                                Object[] prepUpQueryTesting = Rdbms.prepUpQueryWithDiagn(tblCreateScriptTesting, new Object[]{});
+                                Object[] prepUpQueryTesting = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScriptTesting, new Object[]{});
                                 scriptLog.put("2) script_testing", tblCreateScriptTesting);
                                 scriptLog.put("2) creator_diagn_testing", prepUpQuery[prepUpQueryTesting.length-1]);
                             }else
@@ -529,7 +493,7 @@ public class ProcedureDefinitionToInstance {
         String schemaNameDestinationProc=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
         Object[][] procEventSopsRecordsSource = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
                 new String[]{TblsProcedure.ProcedureEvents.SOP.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{""}, 
-                FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), new String[]{"sop"});
+                FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), new String[]{"sop"});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventSopsRecordsSource[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procEventSopsRecordsSource));
           return jsonObj;
@@ -538,9 +502,9 @@ public class ProcedureDefinitionToInstance {
         
         String[] existingSopRole = new String[0];
         for (Object[] curProcEventSops: procEventSopsRecordsSource){
-            Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.NAME.getName())];
-            Object curSops = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.SOP.getName())];
-            Object curRoleName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.ROLE_NAME.getName())];
+            Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), TblsProcedure.ProcedureEvents.NAME.getName())];
+            Object curSops = curProcEventSops[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), TblsProcedure.ProcedureEvents.SOP.getName())];
+            Object curRoleName = curProcEventSops[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), TblsProcedure.ProcedureEvents.ROLE_NAME.getName())];
             JSONArray jsArr = new JSONArray(); 
             JSONObject jsUserRoleObj = new JSONObject();
             jsUserRoleObj.put("Procedure Event", curProcEventName); jsUserRoleObj.put("SOP Name", curSops); jsUserRoleObj.put("Role Name", curRoleName);
@@ -709,12 +673,17 @@ public class ProcedureDefinitionToInstance {
 
     public static final  JSONObject deployMasterData(String procedure,  Integer procVersion, String instanceName){
         JSONObject jsonObjSummary = new JSONObject();
-        Object[] actionDiagnosesAll = TestingRegressionUAT.procedureRepositoryMirrors(instanceName);
-        Object[][] actionDiagnoses=(Object[][]) actionDiagnosesAll[0];
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0][0].toString())){
-            jsonObjSummary.put("summary", "tables for testing are not mirror");
-            return jsonObjSummary;            
-        }
+        Object[] allMismatchesDiagnAll = TestingRegressionUAT.procedureRepositoryMirrors(instanceName);
+        Object[] allMismatchesDiagn=(Object[]) allMismatchesDiagnAll[0];
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn[0].toString())){
+            Object[][] allMismatches= (Object[][])allMismatchesDiagnAll[1];
+            JSONArray jArr=new JSONArray();
+            for (int i=1;i<allMismatches.length;i++){
+                    jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(allMismatches[0]), allMismatches[i]));
+            }
+            jsonObjSummary.put("error_not_mirror_tables",jArr);
+            return jsonObjSummary; 
+        }        
         try{
             JSONArray jsonArr=new JSONArray();
             JSONObject jsonObj = new JSONObject();
