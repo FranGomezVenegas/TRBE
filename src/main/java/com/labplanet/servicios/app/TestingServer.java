@@ -83,7 +83,19 @@ public class TestingServer extends HttpServlet {
             throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
-    try (PrintWriter out = response.getWriter()) {        
+    try (PrintWriter out = response.getWriter()) {
+        
+        
+//@Override
+            //public int hashCode() {
+            // TODO Auto-generated method stub
+            //return 
+//         Objects.hash(nombre,apellidos);
+            //}
+            int hashCode=LPDate.getCurrentTimeStamp().hashCode();
+            //int hashCode = this.getClass().hashCode();
+        out.println(hashCode);
+if (1==1)return;        
         Parameter parm=new Parameter();
         String filePrefix="goleef1";
         String propFileName=Parameter.PropertyFilesType.ERROR_TRAPING.toString();

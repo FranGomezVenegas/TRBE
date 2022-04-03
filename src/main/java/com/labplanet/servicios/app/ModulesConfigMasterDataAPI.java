@@ -158,7 +158,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 Object[] specFieldValueArr=new Object[]{};
                 if (specFieldName!=null && specFieldName.length()>0) specFieldNameArr=specFieldName.split("\\|");
                 if (specFieldValue!=null && specFieldValue.length()>0) specFieldValueArr=LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
-                if (specFieldValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString()))
+                if (specFieldValueArr!=null && specFieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString()))
                     diagnostic=specFieldValueArr;
                 else{
                     diagnostic = spcStr.specNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr, null, null);
@@ -300,6 +300,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED.getErrorCode(), new Object[]{e.getMessage(), this.getServletName()}, language);                   
         } finally {
+            procReqInstance.killIt();
             // release database resources
             try {
                 // Rdbms.closeRdbms();   

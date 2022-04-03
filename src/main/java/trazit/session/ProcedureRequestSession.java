@@ -23,6 +23,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
+import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
 
@@ -44,6 +45,9 @@ public class ProcedureRequestSession {
     private String language;
     private Boolean isForTesting;
     private Boolean isForQuery;
+    private Boolean isQuery;
+    private Boolean isPlatform;
+    private Boolean isForDocumentation;
     private Boolean hasErrors;
     private String errorMessage;
     private AuditAndUserValidation auditAndUsrValid;
@@ -54,10 +58,17 @@ public class ProcedureRequestSession {
     private BusinessRules busRulesProcInstance;
     private BusinessRules busRulesTesting;
     private SessionAuditActions sessionAuditActions;
+    private EnumIntEndpoints actionEndpoint;    
+    private Boolean newProcedureHashCodeGenerated;
     
-    private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
+    private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, EnumIntEndpoints actionEndpoint, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
         try{
         if (request==null) return;
+        this.newProcedureHashCodeGenerated=false;
+        this.isQuery=isQuery;
+        this.isPlatform=isPlatform;
+        this.isForDocumentation=isForDocumentation;
+        if (actionEndpoint!=null) this.actionEndpoint=actionEndpoint;
         busRuleVisited=new TestingBusinessRulesVisited();
         this.language = LPFrontEnd.setLanguage(request); 
         this.isForTesting=isForTesting;
@@ -114,7 +125,12 @@ public class ProcedureRequestSession {
             this.hasErrors=true;
             this.errorMessage="db connection not stablished";
             return;
-        }           
+        }    
+/*        Rdbms.rollbackWithSavePoint();
+        if (!con.getAutoCommit()){
+            con.rollback();
+            con.setAutoCommit(true);}                
+*/        
         if (!isPlatform)
             this.busRulesProcInstance= new BusinessRules(procInstanceName, null);        
         
@@ -204,7 +220,7 @@ public class ProcedureRequestSession {
        // if (1==1) return;
 //        if (!this.isForQuery) 
             this.theSession=null;
-        if (this.isForQuery!=null && !this.isForQuery){
+        if (this.getIsForQuery()!=null && !this.getIsForQuery()){
             this.token=null;
             this.previousToken=null;
         }
@@ -292,39 +308,71 @@ public class ProcedureRequestSession {
     public BusinessRules getBusinessRulesTesting(){
         return this.busRulesTesting;
     }
+    
    
     public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
         return getInstanceForQueries(req, resp, isTesting, false);
     }
+    public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting){
+        return getInstanceForQueries(req, resp, isTesting, false);
+    }
     public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform){
         if (theSession==null || theSession.getTokenString()==null){
-            theSession=new ProcedureRequestSession(req, resp, isTesting, false, true, null, isPlatform, false);
+            theSession=new ProcedureRequestSession(req, resp, null, isTesting, false, true, null, isPlatform, false);
+        }            
+        return theSession;
+    }
+    public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting, Boolean isPlatform){
+        if (theSession==null || theSession.getTokenString()==null){
+            theSession=new ProcedureRequestSession(req, resp, endPoint, isTesting, false, true, null, isPlatform, false);
         }            
         return theSession;
     }
     public static ProcedureRequestSession getInstanceForDocumentation(HttpServletRequest req, HttpServletResponse resp){
         if (theSession==null || theSession.getTokenString()==null){
-            theSession=new ProcedureRequestSession(req, resp, false, false, true, null, false, true);
+            theSession=new ProcedureRequestSession(req, resp, null, false, false, true, null, false, true);
+        }            
+        return theSession;
+    }
+    public static ProcedureRequestSession getInstanceForDocumentation(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint){
+        if (theSession==null || theSession.getTokenString()==null){
+            theSession=new ProcedureRequestSession(req, resp, null, false, false, true, null, false, true);
         }            
         return theSession;
     }
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
-        return getInstanceForActions(req, resp, isTesting, false);
+        return getInstanceForActions(req, resp, null, isTesting, false);
+    }
+    public static ProcedureRequestSession getInstanceForActionsWithEndpoint(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting){
+        return getInstanceForActions(req, resp, endPoint, isTesting, false);
     }
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform){
         if (theSession==null || theSession.getTokenString()==null){
-            theSession=new ProcedureRequestSession(req, resp, isTesting, false, false, null, isPlatform, false);
+            theSession=new ProcedureRequestSession(req, resp, null, isTesting, false, false, null, isPlatform, false);
         }
         return theSession;
     }
-
+    public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting, Boolean isPlatform){
+        if (theSession==null || theSession.getTokenString()==null){
+            theSession=new ProcedureRequestSession(req, resp, endPoint, isTesting, false, false, null, isPlatform, false);
+        }
+        return theSession;
+    }
     public static ProcedureRequestSession getInstanceForUAT(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, String theActionName){
 
         if (theSession==null || theSession.getTokenString()==null){
-            theSession=new ProcedureRequestSession(req, resp, isTesting, true, false, theActionName, false, false);
+            theSession=new ProcedureRequestSession(req, resp, null, isTesting, true, false, theActionName, false, false);
         }
         return theSession;
     }
+    public static ProcedureRequestSession getInstanceForUAT(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting, String theActionName){
+
+        if (theSession==null || theSession.getTokenString()==null){
+            theSession=new ProcedureRequestSession(req, resp, endPoint, isTesting, true, false, theActionName, false, false);
+        }
+        return theSession;
+    }
+
     public static Object[]  isTheProcActionEnabled(Token tokn, String procInstanceName, String actionNm, BusinessRules procBusinessRules){
         Boolean passCheckers=true;
 //        String actionNm = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
@@ -376,6 +424,51 @@ return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_F
     public void setMainToken(){        
         this.token=new Token(this.tokenStr);
         this.previousToken=new Token(this.tokenStr);
+    }
+    public void setNewProcedureHashCode(String newHashCode){
+        this.procedureHashCode=newHashCode;
+        this.newProcedureHashCodeGenerated=true;
+    }
+    /**
+     * @return the actionEndpoint
+     */
+    public EnumIntEndpoints getActionEndpoint() {
+        return actionEndpoint;
+    }
+
+    /**
+     * @return the newProcedureHashCodeGenerated
+     */
+    public Boolean getNewProcedureHashCodeGenerated() {
+        return newProcedureHashCodeGenerated;
+    }
+
+    /**
+     * @return the isForQuery
+     */
+    public Boolean getIsForQuery() {
+        return isForQuery;
+    }
+
+    /**
+     * @return the isQuery
+     */
+    public Boolean getIsQuery() {
+        return isQuery;
+    }
+
+    /**
+     * @return the isPlatform
+     */
+    public Boolean getIsPlatform() {
+        return isPlatform;
+    }
+
+    /**
+     * @return the isForDocumentation
+     */
+    public Boolean getIsForDocumentation() {
+        return isForDocumentation;
     }
 
 }

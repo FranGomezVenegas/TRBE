@@ -18,7 +18,10 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsProcedureAudit {
     
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.PROCEDURE_AUDIT.getName();
+    
     public enum TablesProcedureAudit implements EnumIntTables{
+        PROC_HASH_CODES(null, "proc_hashcodes_history", SCHEMA_NAME, true, procHashCodesHistory.values(),procHashCodesHistory.ID.getName(),
+            new String[]{procHashCodesHistory.ID.getName()}, null, ""),
         INVESTIGATION(null, "investigation", SCHEMA_NAME, true, Investigation.values(), Investigation.AUDIT_ID.getName(),
             new String[]{Investigation.AUDIT_ID.getName()}, null, "Analysis Audit Trial"),
         ;
@@ -54,9 +57,42 @@ public class TblsProcedureAudit {
         private final String tableComment;
     }
     
+    public enum procHashCodesHistory implements EnumIntTableFields{
+        ID("id", LPDatabase.integer(), null, null, null, null),
+        DATE("date", LPDatabase.dateTime(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, null, null, null),
+        ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
+        NEW_HASHCODE("new_hashcode", LPDatabase.string(), null, null, null, null),
+        //PREVIOUS_HASHCODE("previous_hashcode", LPDatabase.string(), null, null, null, null),
+        PICTURE("picture", LPDatabase.json(),null, null, null, null)
+        ;
+        private procHashCodesHistory(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+            
     public enum Investigation implements EnumIntTableFields{
         AUDIT_ID("audit_id", LPDatabase.integer(), null, null, null, null),
-        TABLE_NAME("table_name", " character varying COLLATE pg_catalog.\"default\"", null, null, null, null),
+        TABLE_NAME("table_name", LPDatabase.string(), null, null, null, null),
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
         TABLE_ID("table_id", LPDatabase.string(), null, null, null, null),
         DATE("date", LPDatabase.dateTime(), null, null, null, null),
