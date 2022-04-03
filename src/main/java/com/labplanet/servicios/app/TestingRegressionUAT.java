@@ -6,7 +6,6 @@
 package com.labplanet.servicios.app;
 
 import databases.Rdbms;
-import databases.TblsReqs;
 import databases.TblsTesting;
 import databases.Token;
 import functionaljavaa.businessrules.BusinessRules;
@@ -32,6 +31,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.LAB_FALSE;
 import static lbplanet.utilities.LPPlatform.LAB_TRUE;
+import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -124,6 +124,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 repositoryName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
                 fileContentBuilder=procedureRepositoryMirrorsTable(procInstanceName, scriptId);
                 if (fileContentBuilder.length()>0){
+                    out.println("Mirror stopped this testing");
                     out.println(fileContentBuilder.toString());
                     return;
                 }
@@ -290,45 +291,49 @@ public class TestingRegressionUAT extends HttpServlet {
     }
     private StringBuilder procedureRepositoryMirrorsTable(String procInstanceName, Integer scriptId){
         StringBuilder fileContentBuilder = new StringBuilder(0); 
-        Object[] allMismatchesDiagn = procedureRepositoryMirrors(procInstanceName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn[0].toString()))
-            return fileContentBuilder.append(allMismatchesDiagn[allMismatchesDiagn.length-1]);
-        Object[][] allMismatches= (Object[][])allMismatchesDiagn[allMismatchesDiagn.length-1];
-        if (allMismatches!=null && allMismatches.length>0){
-            fileContentBuilder.append(procInstanceName+" has mirror mismatches, "+allMismatches.length+", further detail below:");    
-
-            StringBuilder htmlStyleHdr = new StringBuilder(0);
-            htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), "", scriptId, procInstanceName));
-            fileContentBuilder.append(htmlStyleHdr);
-
-            //out.println(fileContentBuilder.toString());        
-
-            StringBuilder fileContentTable1Builder = new StringBuilder(0);
-            //fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(LPArray.convertArrayToString((String[]) mirrorCheckDiagn[1], TESTING_FILES_FIELD_SEPARATOR, ""), 0));
-            for (Object[] curRow:allMismatches){
-                fileContentTable1Builder.append(LPTestingOutFormat.rowStart()).append(rowAddFields(curRow));
-                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
+        try{
+            Object[] allMismatchesDiagnAll = procedureRepositoryMirrors(procInstanceName);
+            Object[] allMismatchesDiagn=(Object[]) allMismatchesDiagnAll[0];
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(allMismatchesDiagn[0].toString()))
+                return fileContentBuilder;
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn[0].toString())){
+                Object[][] allMismatches= (Object[][])allMismatchesDiagnAll[1];
+                fileContentBuilder.append(allMismatchesDiagn[allMismatchesDiagn.length-1]).append("<br>");
+                for (int i=1;i<allMismatches.length;i++){
+                    for (int iCols=0;iCols<allMismatches[0].length;iCols++){
+                        fileContentBuilder.append(allMismatches[0][iCols]).append(":").append(allMismatches[i][iCols]).append("<br>");
+                    }
+                }
+                return fileContentBuilder;
             }
+            Object[][] allMismatches= (Object[][])allMismatchesDiagnAll[1];
+            if (allMismatches!=null && allMismatches.length>0){
+                fileContentBuilder.append(procInstanceName+" has mirror mismatches, "+allMismatches.length+", further detail below:");    
 
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
-            return fileContentBuilder;                
-        }        
-        return fileContentBuilder;         
+                StringBuilder htmlStyleHdr = new StringBuilder(0);
+                htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), "", scriptId, procInstanceName));
+                fileContentBuilder.append(htmlStyleHdr);
+
+                //out.println(fileContentBuilder.toString());        
+
+                StringBuilder fileContentTable1Builder = new StringBuilder(0);
+                //fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(LPArray.convertArrayToString((String[]) mirrorCheckDiagn[1], TESTING_FILES_FIELD_SEPARATOR, ""), 0));
+                for (Object[] curRow:allMismatches){
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowStart()).append(rowAddFields(curRow));
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
+                }
+
+                fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+                fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+                return fileContentBuilder;                
+            }        
+            return fileContentBuilder;         
+        }catch(Exception e){
+            return fileContentBuilder.append(e.getMessage());
+        }
     }
     public static Object[] procedureRepositoryMirrors(String procInstanceName){
-        
-        Object[][] procInRequirements=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
-            new String[]{TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureModuleTables.ACTIVE.getName()},
-            new Object[]{procInstanceName, true}, 
-            new String[]{TblsReqs.ProcedureModuleTables.TABLE_NAME.getName()});
-
-        //if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) 
-        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInRequirements[0][0].toString())){
-            Object[] trapMessage = ApiMessageReturn.trapMessage(LAB_FALSE, "noTablesDefinedInRequirementsForThisProcedure", new Object[]{procInstanceName});
-            return LPArray.addValueToArray1D(trapMessage, new Object[][]{{}});            
-        }
+        Object[] summaryInfo=new Object[3];
         String[][] schemasToCheck=new String[][]{{GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName()}, 
             {GlobalVariables.Schemas.DATA_AUDIT.getName(), GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()}, 
             {GlobalVariables.Schemas.PROCEDURE.getName(), GlobalVariables.Schemas.PROCEDURE_TESTING.getName()},
@@ -337,16 +342,6 @@ public class TestingRegressionUAT extends HttpServlet {
         Object[][] allMismatches=null;
         Object[] mirrorCheckDiagn =null;
         for (String[] curSchToCheck:schemasToCheck){
-/*            Object[][] tablesToCheckQry=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
-                    new String[]{TblsReqs.ProcedureModuleTables.PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.ACTIVE.getName()},
-                    new Object[]{procInstanceName, curSchToCheck[0], true}, 
-                    new String[]{TblsReqs.ProcedureModuleTables.TABLE_NAME.getName()});
-            Object[] tablesToCheck=new String[]{"sample"};
-            tablesToCheck=LPArray.getColumnFromArray2D(tablesToCheckQry, 0);
-
-//        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())){
-//            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) 
-*/
             Object[] tablesToCheck=Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, curSchToCheck[0]);
             mirrorCheckDiagn = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, curSchToCheck[0], curSchToCheck[1], tablesToCheck);
             Object[][] mismatchesArr=(Object[][]) mirrorCheckDiagn[0];
@@ -355,15 +350,21 @@ public class TestingRegressionUAT extends HttpServlet {
                     allMismatches=LPArray.joinTwo2DArrays(allMismatches, new String[][]{{"schema family",curSchToCheck[0].toString(), "counter"}});
                     allMismatches=LPArray.joinTwo2DArrays(allMismatches, mismatchesArr);
                 }
-            }else{
-                return LPArray.addValueToArray1D(mirrorCheckDiagn, new Object[][]{{}}); 
+            //}else{
+            //    summaryInfo[0]=mirrorCheckDiagn;
+            //    return LPArray.addValueToArray1D(mirrorCheckDiagn, new Object[][]{{}}); 
             }
         }
         if (allMismatches!=null && allMismatches.length>0){
-            Object[] trapMessage = ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformSuccess.ALL_THE_SAME, null);
-            return LPArray.addValueToArray1D(trapMessage, allMismatches);
+            Object[] trapMessage = ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MIRROR_MISMATCHES, null);
+            summaryInfo[0]=trapMessage;
+            summaryInfo[1]=allMismatches;
+            return summaryInfo; //LPArray.addValueToArray1D(trapMessage, allMismatches);
         }
-        return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, null);
+        Object[] trapMessage = ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, null);
+        summaryInfo[0]=trapMessage;
+        //summaryInfo[1]=allMismatches;
+        return summaryInfo; //LPArray.addValueToArray1D(trapMessage, allMismatches);        
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
