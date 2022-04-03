@@ -168,10 +168,10 @@ public class EnvMonSampleAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -225,15 +225,45 @@ public class EnvMonSampleAPI extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+        String actionName = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+        if (actionName==null || actionName.length()==0)
+            actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+        String language = LPFrontEnd.setLanguage(request); 
+        EnvMonSampleAPIEndpoints endPoint = null;
+        try{
+            endPoint = EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
+        }catch(Exception e){
+            SampleAPIEndpoints endPointSmp = null;
+            try{
+                endPointSmp = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception er){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }                
+            ClassSample clssSmp=new ClassSample(request, endPointSmp);
+            if (clssSmp.getEndpointExists()){
+                Object[] diagnostic=clssSmp.getDiagnostic();
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+    /*                Rdbms.rollbackWithSavePoint();
+                    if (!con.getAutoCommit()){
+                        con.rollback();
+                        con.setAutoCommit(true);}                */
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
+                }else{
+                    JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointSmp, clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
+                    LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
+                } 
+            }                
+        }        
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActionsWithEndpoint(request, response, endPoint, false);
         if (procReqInstance.getHasErrors()){
 //            procReqInstance.killIt();
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
             return;
         }
-        String actionName=procReqInstance.getActionName();
-        String language=procReqInstance.getLanguage();
+        actionName=procReqInstance.getActionName();
+        language=procReqInstance.getLanguage();
         String procInstanceName = procReqInstance.getProcedureInstance();
         
 
@@ -280,32 +310,7 @@ public class EnvMonSampleAPI extends HttpServlet {
 //        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
 //        Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
-            EnvMonSampleAPIEndpoints endPoint = null;
-            try{
-                endPoint = EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
-            }catch(Exception e){
-                SampleAPIEndpoints endPointSmp = null;
-                try{
-                    endPointSmp = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
-                }catch(Exception er){
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
-                    return;                   
-                }                
-                ClassSample clssSmp=new ClassSample(request, endPointSmp);
-                if (clssSmp.getEndpointExists()){
-                    Object[] diagnostic=clssSmp.getDiagnostic();
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-        /*                Rdbms.rollbackWithSavePoint();
-                        if (!con.getAutoCommit()){
-                            con.rollback();
-                            con.setAutoCommit(true);}                */
-                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
-                    }else{
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointSmp, clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
-                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
-                    } 
-                }                
-            }
+
             Object[] areMandatoryParamsInResponse=new Object[]{};
             if (endPoint!=null && endPoint.getArguments()!=null)
                 areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
