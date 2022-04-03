@@ -189,6 +189,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         MISSINGTABLECONFIGCODE("LabPLANETPlatform_MissingTableConfigCode", "", ""),
         SPECIALFUNCTION_RETURNEDERROR("LabPLANETPlatform_SpecialFunctionReturnedERROR", "", ""),
         SPECIALFUNCTION_CAUSEDEXCEPTION("LabPLANETPlatform_SpecialFunctionCausedException", "", ""),
+        MIRROR_MISMATCHES("ProcedureDeployment_mirrorMismatches", "", ""),
         ; 
         private LpPlatformErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -306,7 +307,9 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         }else if(!LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, actionName)){    
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
         }else{
-            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformSuccess.VERIFYUSERREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});
+            String diagnStr = LAB_TRUE;
+            diagnStr=diagnStr+LPNulls.replaceNull(auditReasonType(procInstanceName, actionName));
+            return ApiMessageReturn.trapMessage(diagnStr, LpPlatformSuccess.VERIFYUSERREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});
         }    
     }    
 
@@ -358,7 +361,9 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
     }    
     
     private static String auditReasonType(String procInstanceName, String actionName){
-        String auditReasonType = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(), actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName()).toString();
+        String auditReasonType = LPNulls.replaceNull(Parameter.getBusinessRuleProcedureFile(procInstanceName, 
+            LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(), 
+            actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName())).toString();
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
         if (auditReasonType.length()==0)return "TEXT";
         if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("DISABLE"))return "";
