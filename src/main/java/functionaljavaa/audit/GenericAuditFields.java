@@ -80,15 +80,21 @@ public class GenericAuditFields {
         }           
     }
     private void internalAuditActionField(EnumIntAuditEvents actionObj){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        String fileName=actionObj.toString(); //"AppInstrumentsAuditEvents";
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=instanceForActions.getProcedureInstance();        
+        String fileName=actionObj.getClass().getSimpleName(); //actionObj.toString(); //"AppInstrumentsAuditEvents";
         SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
         for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
             Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
                     TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), TblsAppProcDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
-                String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-                    fileName, null, actionObj.toString(), curLang.getName(), false);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){                
+                String propValue = "";
+                if (instanceForActions.getActionEndpoint()!=null)
+                    propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
+                        instanceForActions.getActionEndpoint().getClass().getSimpleName(), null, instanceForActions.getActionEndpoint().getName(), curLang.getName(), false);
+                if (LPNulls.replaceNull(propValue).length()==0)
+                    propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
+                        fileName, null, actionObj.toString(), curLang.getName(), false);
                 if (propValue==null || propValue.length()==0)propValue=actionObj.toString();
                 fieldNames = LPArray.addValueToArray1D(fieldNames, 
                         TblsAppProcDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
@@ -129,8 +135,7 @@ public class GenericAuditFields {
         if (auditActions.getMainParentAuditAction()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getMainParentAuditAction().getAuditId());
-        }    
-        
+        }            
     }
     
     /**
