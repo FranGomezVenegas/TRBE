@@ -29,6 +29,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
@@ -220,8 +221,12 @@ public class ClassEnvMonSample {
                 case ADD_SAMPLE_MICROORGANISM: 
                 case ADD_ADHOC_SAMPLE_MICROORGANISM:
                     sampleId=(Integer) argValues[0];
+                    Integer numItems=1;
+                    String numItemsStr=LPNulls.replaceNull(argValues[2]).toString();
+                    if (numItemsStr.length()>0 && LPPlatform.LAB_TRUE.equalsIgnoreCase(LPMath.isNumeric(numItemsStr)[0].toString())) 
+                        numItems=Integer.valueOf(numItemsStr);
                     for (String orgName: (String[]) argValues[1].toString().split("\\|")){
-                        actionDiagnoses = DataProgramSample.addSampleMicroorganism((Integer) argValues[0], orgName);
+                        actionDiagnoses = DataProgramSample.addSampleMicroorganism((Integer) argValues[0], orgName, numItems);
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), actionDiagnoses[actionDiagnoses.length-1]);
                     }
                     if (EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ADD_ADHOC_SAMPLE_MICROORGANISM.getName().equalsIgnoreCase(endPoint.getName()) && actionDiagnoses!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
@@ -236,8 +241,12 @@ public class ClassEnvMonSample {
                     break;
                 case REMOVE_SAMPLE_MICROORGANISM: 
                     sampleId=(Integer) argValues[0];
+                    numItems=1;
+                    numItemsStr=LPNulls.replaceNull(argValues[2]).toString();
+                    if (numItemsStr.length()>0 && LPPlatform.LAB_TRUE.equalsIgnoreCase(LPMath.isNumeric(numItemsStr)[0].toString())) 
+                        numItems=Integer.valueOf(numItemsStr);
                     for (String orgName: (String[]) argValues[1].toString().split("\\|")){
-                        actionDiagnoses = DataProgramSample.removeSampleMicroorganism((Integer) argValues[0], orgName);
+                        actionDiagnoses = DataProgramSample.removeSampleMicroorganism((Integer) argValues[0], orgName, numItems);
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), actionDiagnoses[actionDiagnoses.length-1]);
                     }
                     if (actionDiagnoses!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))

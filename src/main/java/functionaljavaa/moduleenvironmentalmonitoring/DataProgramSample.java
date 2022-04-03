@@ -183,20 +183,24 @@ public class DataProgramSample{
      * @param microorganismName
      * @return
      */
-    public static Object[] addSampleMicroorganism(Integer sampleId, String microorganismName){
+    public static Object[] addSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
+        if (items==null)items=1;
+        Object[] diagnostic=null;
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-      Object[] diagnostic= Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), 
-              new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName(), 
-                TblsEnvMonitData.SampleMicroorganism.CREATED_BY.getName(), TblsEnvMonitData.SampleMicroorganism.CREATED_ON.getName()}, 
-              new Object[]{sampleId, microorganismName, token.getPersonName(), LPDate.getCurrentTimeStamp()});
-      if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
-        SampleAudit smpAudit = new SampleAudit();
-        String[] fieldsForAudit=new String[]{"Added microorganism "+microorganismName};
-        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.MICROORGANISM_ADDED, TblsData.TablesData.SAMPLE.getTableName(), 
-            sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
-      }
-      return diagnostic;
+        for (int i=0;i<items;i++){
+            diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), 
+                    new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName(), 
+                      TblsEnvMonitData.SampleMicroorganism.CREATED_BY.getName(), TblsEnvMonitData.SampleMicroorganism.CREATED_ON.getName()}, 
+                    new Object[]{sampleId, microorganismName, token.getPersonName(), LPDate.getCurrentTimeStamp()});
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
+              SampleAudit smpAudit = new SampleAudit();
+              String[] fieldsForAudit=new String[]{"Added microorganism "+microorganismName};
+              smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.MICROORGANISM_ADDED, TblsData.TablesData.SAMPLE.getTableName(), 
+                  sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
+            }
+        }
+        return diagnostic;
     }
     /**
      *
@@ -204,7 +208,9 @@ public class DataProgramSample{
      * @param microorganismName
      * @return
      */
-    public static Object[] removeSampleMicroorganism(Integer sampleId, String microorganismName){
+    public static Object[] removeSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
+        if (items==null)items=1;
+        Object[] diagnostic=null;
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] sampleMicroOrgRow=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
@@ -213,19 +219,16 @@ public class DataProgramSample{
                 new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgRow[0][0].toString())) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "microorganismNotFound", new  Object[]{microorganismName, sampleId});
-        Object[] diagnostic=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
-                new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName(), TblsEnvMonitData.SampleMicroorganism.ID.getName()},
-                new Object[]{sampleId, microorganismName, sampleMicroOrgRow[0][0]});
-/*        Object[] diagnostic= Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), 
-            new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName(), 
-            TblsEnvMonitData.SampleMicroorganism.CREATED_BY.getName(), TblsEnvMonitData.SampleMicroorganism.CREATED_ON.getName()}, 
-            new Object[]{sampleId, microorganismName, token.getPersonName(), LPDate.getCurrentTimeStamp()});
-*/
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
-        SampleAudit smpAudit = new SampleAudit();
-        String[] fieldsForAudit=new String[]{"Removed microorganism "+microorganismName};
-        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.MICROORGANISM_REMOVED, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
-      }
+        for (int i=0;i<items;i++){
+            diagnostic=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
+                    new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName(), TblsEnvMonitData.SampleMicroorganism.ID.getName()},
+                    new Object[]{sampleId, microorganismName, sampleMicroOrgRow[0][0]});
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
+                SampleAudit smpAudit = new SampleAudit();
+                String[] fieldsForAudit=new String[]{"Removed microorganism "+microorganismName};
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.MICROORGANISM_REMOVED, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
+            }
+        }
       return diagnostic;
     }
     public  Object[] logProgramSampleScheduled(String programName, LocalDateTime dateStart, LocalDateTime dateEnd) {

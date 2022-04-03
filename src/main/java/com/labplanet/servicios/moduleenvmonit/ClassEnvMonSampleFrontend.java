@@ -412,7 +412,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                               //jMicArr.add(curMic);
                               JSONObject jmicObj=new JSONObject();
                               jmicObj.put("name", curMic[0]);
-                              jmicObj.put("count", curMic[1]);
+                              jmicObj.put("items", curMic[1]);
                               jMicArr.add(jmicObj);
                           }
                           jObj.put("microorganism_list_array", jMicArr);
