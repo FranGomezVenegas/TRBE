@@ -39,8 +39,6 @@ public class TblsTrazitDocModules {
             new String[]{ProcedureModuleTablesAndFields.PROCEDURE_NAME.getName(), ProcedureModuleTablesAndFields.PROCEDURE_VERSION.getName(), ProcedureModuleTablesAndFields.SCHEMA_NAME.getName(), ProcedureModuleTablesAndFields.TABLE_NAME.getName()}, null, ""),
         ENDPOINTS_DECLARATION(null, "endpoints_declaration", SCHEMA_NAME, true, EndpointsDeclaration.values(), EndpointsDeclaration.ID.getName(),
             new String[]{EndpointsDeclaration.ID.getName()}, null, ""),
-        MODULE_FRONTEND(null, "module_frontend", SCHEMA_NAME, true, ModuleFrontend.values(), null,
-            new String[]{ModuleFrontend.MODULE_NAME.getName(), ModuleFrontend.MODULE_VERSION.getName(), ModuleFrontend.FILE_NAME.getName()}, null, ""),
         ;
         private TablesTrazitDocModules(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -467,39 +465,5 @@ public class TblsTrazitDocModules {
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
 
-    public enum ModuleFrontend implements EnumIntTableFields{
-        MODULE_NAME("module_name", LPDatabase.string(), null, null, null, null),
-        MODULE_VERSION("module_version", LPDatabase.integer(), null, null, null, null),
-        FILE_NAME("file_name", LPDatabase.stringNotNull(), null, null, null, null),
-        SOURCE_CODE("source_code", LPDatabase.stringNotNull(), null, null, null, null),
-        CAMEL_LOWER("camel_lower_current_value", LPDatabase.string(), null, null, null, null),
-        CAMEL("camel_current_value", LPDatabase.string(), null, null, null, null),
-        PROC_NAME("proc_name_current_value", LPDatabase.string(), null, null, null, null),
-        ALIASES_UNDERSCORE("aliases_underscore_current_value", LPDatabase.string(), null, null, null, null),  
-        DESTINATION_PATH("destination_path", LPDatabase.string(), null, null, null, null),
-        ;
-        private ModuleFrontend(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
-            this.fieldName=dbObjName;
-            this.fieldType=dbObjType;
-            this.fieldMask=fieldMask;
-            this.reference=refer;
-            this.fieldComment=comment;
-            this.fldBusinessRules=fldBusRules;
-        }
-        private final String fieldName;
-        private final String fieldType;
-        private final String fieldMask;
-        private final ReferenceFld reference;
-        private final String fieldComment;
-        private final FldBusinessRules[] fldBusinessRules;
-
-        @Override        public String getName(){return this.fieldName;}
-        @Override        public String getFieldType() {return this.fieldType;}
-        @Override        public String getFieldMask() {return this.fieldMask;}
-        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
-        @Override        public String getFieldComment(){return this.fieldComment;}
-        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
-    }   
     
 }

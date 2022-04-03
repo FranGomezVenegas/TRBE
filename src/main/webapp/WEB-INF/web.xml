@@ -311,10 +311,6 @@
         <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPIfrontend</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>FrontendDefinition</servlet-name>
-        <servlet-class>com.labplanet.servicios.requirements.FrontendDefinition</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>AppTrazitInitSession</servlet-name>
         <servlet-class>com.labplanet.servicios.app.AppTrazitInitSession</servlet-class>
     </servlet>
@@ -648,10 +644,6 @@
     <servlet-mapping>
         <servlet-name>InspLotRMAPIfrontend</servlet-name>
         <url-pattern>/moduleinsplotrm/InspLotRMAPIfrontend</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>FrontendDefinition</servlet-name>
-        <url-pattern>/app/FrontendDefinitionAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AppTrazitInitSession</servlet-name>
