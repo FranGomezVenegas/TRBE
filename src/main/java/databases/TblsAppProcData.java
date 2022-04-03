@@ -9,6 +9,8 @@ import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntViewFields;
+import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ReferenceFld;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
@@ -66,6 +68,44 @@ public class TblsAppProcData {
         private final String[] primarykey;
         private final Object[] foreignkey;
         private final String tableComment;
+    }
+
+    public enum ViewsAppProcData implements EnumIntViews{
+        NOT_DECOM_INSTR_EVENT_DATA_VW(""
+                + "select ie.id, ie.instrument, ie.event_type, ie.created_on, ie.completed_on, ie.decision, ie.attachment, " +
+                "ie.created_by, ie.completed_by, ie.completed_decision, " +
+                "i.on_line, i.decommissioned, i.is_locked, i.locked_reason, i.last_calibration, i.next_calibration, " +
+                "i.last_prev_maint, i.next_prev_maint, i.last_verification " +
+                "from #SCHEMA_DATA.instruments i, #SCHEMA_DATA.instrument_event ie " +
+                "where ie.instrument=i.name and i.decommissioned=false"+
+                "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
+            null, "not_decom_instr_event_data_vw", SCHEMA_NAME, true, TblsAppProcData.ViewNotDecommInstrumentAndEventData.values(), "pr_scheduled_locations"),
+        ;
+        private ViewsAppProcData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
+                String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.viewName=dbVwName;
+            this.viewFields=vwFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.viewComment=comment;
+            this.viewScript=viewScript;
+        }
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public String getViewCreatecript() {return this.viewScript;}
+        @Override        public String getViewName() {return this.viewName;}
+        @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
+        @Override        public String getViewComment() {return this.viewComment;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String viewName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final EnumIntViewFields[] viewFields;
+        private final String viewComment;
+        private final String viewScript;
     }
     
     public enum Instruments implements EnumIntTableFields{
@@ -190,5 +230,41 @@ public class TblsAppProcData {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
+    
+    public enum ViewNotDecommInstrumentAndEventData implements EnumIntViewFields{
+        ID("id", "ie.id", InstrumentEvent.ID, null, null, null),
+        INSTRUMENT("instrument", "ie.instrument", InstrumentEvent.INSTRUMENT, null, null, null),
+        EVENT_TYPE("event_type", "ie.event_type", InstrumentEvent.EVENT_TYPE, null, null, null),
+        CREATED_ON("created_on", "ie.created_on", InstrumentEvent.CREATED_ON, null, null, null),
+        CREATED_BY("created_by", "ie.created_by", InstrumentEvent.CREATED_BY, null, null, null),
+        COMPLETED_ON("completed_on", "ie.completed_on", InstrumentEvent.COMPLETED_ON, null, null, null),
+        COMPLETED_BY("completed_by", "ie.completed_by", InstrumentEvent.COMPLETED_BY, null, null, null),
+        DECISION("decision", "ie.decision", InstrumentEvent.DECISION, null, null, null),
+        INST_ONLINE("on_line", "i.on_line", Instruments.ON_LINE, null, null, null),
+        INST_DECOM("decommissioned", "i.decommissioned", Instruments.DECOMMISSIONED, null, null, null),
+        INST_ISLOCKED("is_locked", "i.is_locked", Instruments.IS_LOCKED, null, null, null),
+        INST_LOCKED_REASON("locked_reason", "i.locked_reason", Instruments.LOCKED_REASON, null, null, null),
+        ;
+        private ViewNotDecommInstrumentAndEventData(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+            this.fldName=name;
+            this.fldAliasInView=vwAliasName;
+            this.fldMask=fldMask;
+            this.fldComment=comment;
+            this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
+        }
+        private final String fldName;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;        
+        @Override public String getName() {return fldName;}
+        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFieldMask() {return this.fldMask;}
+        @Override public String getFieldComment() {return this.fldComment;}
+        @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+    }        
     
 }

@@ -587,6 +587,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
  * @return String
  */    
     public static String buildSchemaName(String procInstanceName, String schemaName){
+        if (procInstanceName==null) return schemaName; 
         if (procInstanceName.length()>0){
             //Remove this to re-create the schemaName when not called for the first time.
             procInstanceName = procInstanceName.replace("\"", "");
