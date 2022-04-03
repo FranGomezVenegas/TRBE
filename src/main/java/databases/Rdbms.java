@@ -708,7 +708,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                 res.next();
                 icurrLine++;
              }         
-             diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+             diagnoses2 = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
              return diagnoses2;
         }else{
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
@@ -782,7 +782,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                 res.next();
                 icurrLine++;
              }
-                diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName[0], fieldsToRetrieve, diagnoses2);
+                diagnoses2 = DbEncryption.decryptTableFieldArray(schemaName, tableName[0], fieldsToRetrieve, diagnoses2);
                 return diagnoses2;
             }else{
                 String[] errorDetailVariables = new String[]{Arrays.toString(whereFieldValues), Arrays.toString(tableName), schemaName};
@@ -855,7 +855,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                 res.next();
                 icurrLine++;
              }
-                //diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+                //diagnoses2 = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
                 return diagnoses2;
             }else{
                 Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
@@ -912,7 +912,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                     icurrLine++;
                 }
                 fieldsToGroupAltered=LPArray.addValueToArray1D(fieldsToGroupAltered, "GROUPER");
-                entireArr = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToGroupAltered, entireArr);
+                entireArr = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldsToGroupAltered, entireArr);
                 return entireArr;
             }else{
                 Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
@@ -939,9 +939,10 @@ if (1==1){Rdbms.transactionId=1; return;}
                 whereFieldNames, whereFieldValues, null, null, null,
                 null, null);              
         String query= hmQuery.keySet().iterator().next();   
-        whereFieldValues = LPArray.encryptTableFieldArray(schemaName, tableName, whereFieldNames, whereFieldValues);
+        whereFieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, whereFieldNames, whereFieldValues);
         Integer deleteRecordDiagnosis = Rdbms.prepUpQuery(query, whereFieldValues); 
         if (deleteRecordDiagnosis>0){     
+            dbProcHashcode.procHashCodeHandler(schemaName, tableName);            
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordUpdated", new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});   
         }else if(deleteRecordDiagnosis==-999){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query});   
@@ -956,9 +957,10 @@ if (1==1){Rdbms.transactionId=1; return;}
                 whereFieldNames, whereFieldValues, null, null, null,
                 null, null);              
         String query= hmQuery.keySet().iterator().next();   
-        whereFieldValues = LPArray.encryptTableFieldArray(schemaName, tableName, whereFieldNames, whereFieldValues);
+        whereFieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, whereFieldNames, whereFieldValues);
         Integer deleteRecordDiagnosis = Rdbms.prepUpQuery(query, whereFieldValues); 
-        if (deleteRecordDiagnosis>0){     
+        if (deleteRecordDiagnosis>0){    
+            dbProcHashcode.procHashCodeHandler(schemaName, tableName);            
             return new RdbmsObject(true, query+" "+Arrays.toString(whereFieldValues), RdbmsSuccess.RDBMS_RECORD_REMOVED, null, -999);
         }else if(deleteRecordDiagnosis==-999){
             return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.DB_ERROR, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query}); 
@@ -980,9 +982,9 @@ if (1==1){Rdbms.transactionId=1; return;}
                 null, null, null, fieldNames, fieldValues,
                 null, null);              
         String query= hmQuery.keySet().iterator().next();   
-        fieldValues = LPArray.encryptTableFieldArray(schemaName, tableName, fieldNames, fieldValues);
+        fieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, fieldNames, fieldValues);
         String[] insertRecordDiagnosis = Rdbms.prepUpQueryK(query, fieldValues, 1);
-        fieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, fieldNames, (Object[]) fieldValues);
+        fieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldNames, (Object[]) fieldValues);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])){
             if (schemaName.toUpperCase().contains("AUDIT")){
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
@@ -991,6 +993,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             }
             Object[] diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
+            dbProcHashcode.procHashCodeHandler(schemaName, tableName);
             return diagnosis;
         }else{
             Object[] diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
@@ -1011,15 +1014,16 @@ if (1==1){Rdbms.transactionId=1; return;}
                 null, null, null, fieldNames, fieldValues,
                 null, null);              
         String query= hmQuery.keySet().iterator().next();   
-        fieldValues = LPArray.encryptTableFieldArray(schemaName, tableName, fieldNames, fieldValues);
-        RdbmsObject insertRecordDiagnosis = Rdbms.prepUpQueryWithKey(query, fieldValues, 1);
-        fieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, fieldNames, (Object[]) fieldValues);
+        fieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, fieldNames, fieldValues);
+        RdbmsObject insertRecordDiagnosis = Rdbms.prepUpQueryWithKey(schemaName, tableName, query, fieldValues, 1);
+        fieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldNames, (Object[]) fieldValues);
         if (insertRecordDiagnosis.getRunSuccess()){
             if (schemaName.toUpperCase().contains("AUDIT")){
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
                 if (tstAuditId!=null)
                     tstAuditId.AddObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis.getNewRowId().toString()), fieldNames, fieldValues);
             }
+            dbProcHashcode.procHashCodeHandler(schemaName, tableName);
             return insertRecordDiagnosis;
         }else{
             return insertRecordDiagnosis;                         
@@ -1060,9 +1064,10 @@ if (1==1){Rdbms.transactionId=1; return;}
         String[] insertRecordDiagnosis = Rdbms.prepUpQueryK(query, whereFieldValuesFrom, 1);
 //        fieldValues = LPArray.decryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNames, (Object[]) whereFieldValuesFrom);
         Object[] diagnosis = new Object[0];
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0]))
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])){
             diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});
-        else
+            dbProcHashcode.procHashCodeHandler(schemaNameFrom, tableNameTo);
+        }else
             diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});                
         diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
         return diagnosis;
@@ -1080,13 +1085,13 @@ if (1==1){Rdbms.transactionId=1; return;}
      */
     public static Object[] updateRecordFieldsByFilter(String schemaName, String tableName, String[] updateFieldNames, Object[] updateFieldValues, String[] whereFieldNames, Object[] whereFieldValues) {
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
-        updateFieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues);        
+        updateFieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues);        
         if (whereFieldNames.length==0){
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
         }
         SqlStatement sql = new SqlStatement();       
 
-        updateFieldValues = LPArray.encryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues); 
+        updateFieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("UPDATE", schemaName, tableName,
                 whereFieldNames, whereFieldValues, null, updateFieldNames, updateFieldValues,
                 null, null);         
@@ -1156,12 +1161,13 @@ if (1==1){Rdbms.transactionId=1; return;}
         }        
     }
   
-    public static Object[] prepUpQueryWithDiagn(String script, Object [] valoresinterrogaciones) {
+    public static Object[] prepUpQueryWithDiagn(String schemaName, String tableName, String script, Object [] valoresinterrogaciones) {
         try (PreparedStatement prep=getConnection().prepareStatement(script)){
             //PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones);            
             setTimeout(rdbms.getTimeout());            
             if (valoresinterrogaciones != null){
                 buildPreparedStatement(valoresinterrogaciones, prep);}
+            dbProcHashcode.procHashCodeHandler(schemaName, tableName);            
             return new Object[]{prep.executeUpdate(), "Success"};                
         }catch (SQLException ex){
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
@@ -1230,7 +1236,7 @@ if (1==1){Rdbms.transactionId=1; return;}
 
     }
     
-    private static RdbmsObject prepUpQueryWithKey(String consultaconinterrogaciones, Object [] valoresinterrogaciones, Integer indexposition) {
+    private static RdbmsObject prepUpQueryWithKey(String schemaName, String tableName, String consultaconinterrogaciones, Object [] valoresinterrogaciones, Integer indexposition) {
         String newId="";
         try (PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS)){
             String pkValue = "";
@@ -1242,6 +1248,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             if (rs.next()) {
                 newId = rs.getString(indexposition);
                 Integer newIdInt = Integer.parseInt(newId);
+                dbProcHashcode.procHashCodeHandler(schemaName, tableName);
                 if (newIdInt==0)
                     return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsSuccess.RDBMS_RECORD_CREATED, null, -999);
                 else
@@ -1475,7 +1482,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      *
      * @return
      */
-    public Connection createTransaction(){
+    public Connection createTransactionNoTransaction(){
         try {
             conn.setAutoCommit(false);
         } catch (SQLException ex) {
@@ -1628,9 +1635,9 @@ if (1==1){Rdbms.transactionId=1; return;}
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{"", tableName, schemaName});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{tableName, schemaName});                
             }else{
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_TABLE_NOT_FOUND, new Object[]{"",tableName, schemaName});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_TABLE_NOT_FOUND, new Object[]{tableName, schemaName});                
             }
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
@@ -1765,7 +1772,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                 res.next();
                 icurrLine++;
              }         
-             diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+             diagnoses2 = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
              hm.put(fieldsToRetrieve, diagnoses2);
              return hm; //diagnoses2;
             }else{
@@ -1890,7 +1897,8 @@ if (1==1){Rdbms.transactionId=1; return;}
             return schemaName;
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())){
             if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) 
-                schemaName=schemaName+"_testing";
+                if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
+                else schemaName=schemaName+"_testing";
         }
         return schemaName;
     }
