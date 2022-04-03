@@ -9,7 +9,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
@@ -332,9 +331,11 @@ public class ClassMasterData {
                 case MD_PROGRAM_LOCATIONS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        String[] fldName=new String[]{TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName()};
+                        String[] fldName=new String[]{TblsEnvMonitConfig.ProgramLocation.PROGRAM_CONFIG_ID.getName(), 
+                            TblsEnvMonitConfig.ProgramLocation.PROGRAM_CONFIG_VERSION.getName(), TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName()};
                         //    TblsEnvMonitConfig.ProgramLocation.CREATED_BY.getName(), TblsEnvMonitConfig.ProgramLocation.CREATED_ON.getName()};
-                        Object[] fldValue=new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName()).getAsInt()};
+                        Object[] fldValue=new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.ProgramLocation.PROGRAM_CONFIG_ID.getName()).getAsInt(),
+                            jO.getAsJsonObject().get(TblsEnvMonitConfig.ProgramLocation.PROGRAM_CONFIG_VERSION.getName()).getAsInt(), jO.getAsJsonObject().get(TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName()).getAsString()};
 //                            userCreator, LPDate.getCurrentTimeStamp()};
                         String[] allFieldNames = EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableFields());
                         for (String curFld:allFieldNames){
