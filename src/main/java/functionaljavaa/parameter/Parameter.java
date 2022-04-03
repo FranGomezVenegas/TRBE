@@ -50,7 +50,7 @@ public class Parameter {
     /**
      *  Get the parameter value or blank otherwise.
      * @param parameterFolder - The directoy name LabPLANET (api messages/error trapping)/config (procedure business rules) (if null then config)
-     * @param procName - procedureName
+     * @param propFilePrefix - procedureName
      * @param schemaSuffix - The procedure schema: config/data/procedure. 
      * @param parameterName - Tag name
      * @param language - Language
@@ -59,20 +59,20 @@ public class Parameter {
 /*    public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
         return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, true);       
     }*/
-    public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Object[] callerInfo, Boolean reportMissingProp) {
+    public static String getMessageCodeValue(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Object[] callerInfo, Boolean reportMissingProp) {
         if (reportMissingProp==null) reportMissingProp=true;
-        return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, null, callerInfo);       
+        return getMessageCodeValue(parameterFolder, propFilePrefix, schemaSuffix, parameterName, language, reportMissingProp, null, callerInfo);       
     }
-    public static String parameterBundleExists(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {
-        return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, true, null);        
+    public static String parameterBundleExists(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {
+        return getMessageCodeValue(parameterFolder, propFilePrefix, schemaSuffix, parameterName, language, reportMissingProp, true, null);        
     }
-    public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {    
-        return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, reportMissingProp, null, null);
+    public static String getMessageCodeValue(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {    
+        return getMessageCodeValue(parameterFolder, propFilePrefix, schemaSuffix, parameterName, language, reportMissingProp, null, null);
     }
-    private static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp, Boolean returnFalseIfMissing, Object[] callerInfo) {
+    private static String getMessageCodeValue(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp, Boolean returnFalseIfMissing, Object[] callerInfo) {
         ResourceBundle prop = null;
         if (parameterFolder==null){parameterFolder="config";}
-        String filePath = "parameter."+parameterFolder+"."+procName;
+        String filePath = "parameter."+parameterFolder+"."+propFilePrefix;
         if (schemaSuffix!=null){filePath=filePath+"-"+LPNulls.replaceNull(schemaSuffix);}
         if (language != null) {filePath=filePath+"_" +LPNulls.replaceNull(language);}        
         else{ 
@@ -83,19 +83,19 @@ public class Parameter {
             prop = ResourceBundle.getBundle(filePath);
             if ((!prop.containsKey(parameterName)) && reportMissingProp!=null && reportMissingProp) {  
                 if (parameterName.toLowerCase().contains("encrypted_")) return ""; 
-                LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
+                LPPlatform.saveParameterPropertyInDbErrorLog(propFilePrefix, parameterFolder, 
                         //new Object[]{className, classFullName, methodName, lineNumber}, 
                         callerInfo,
                         parameterName, reportMissingProp);
                 TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
                 if (testingMessageCodeVisitedObj!=null)
-                    testingMessageCodeVisitedObj.AddObject(procName, schemaSuffix, parameterName, "Not found!");
+                    testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, "Not found!");
                 return "";
             } else {
                 String parameterValue = prop.getString(parameterName);
                 TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
                 if (testingMessageCodeVisitedObj!=null)
-                    testingMessageCodeVisitedObj.AddObject(procName, schemaSuffix, parameterName, parameterValue);
+                    testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, parameterValue);
                 return parameterValue;
             }
         } catch (Exception e) {            
@@ -103,13 +103,13 @@ public class Parameter {
                 return LPPlatform.LAB_FALSE;
             if (reportMissingProp!=null && !reportMissingProp) return "";
             if (parameterName.toLowerCase().contains("encrypted_")) return "";            
-            LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, 
+            LPPlatform.saveParameterPropertyInDbErrorLog(propFilePrefix, parameterFolder, 
                     //new Object[]{className, classFullName, methodName, lineNumber}, 
                     callerInfo,
                     parameterName, reportMissingProp);
             TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
             if (testingMessageCodeVisitedObj!=null)
-                testingMessageCodeVisitedObj.AddObject(procName, schemaSuffix, parameterName, "ERROR: Not Found!");            
+                testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, "ERROR: Not Found!");            
             return "";
         }
     }
