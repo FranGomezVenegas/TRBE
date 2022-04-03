@@ -21,9 +21,6 @@ import trazit.enums.EnumIntEndpoints;
  */
 public class PlatformDefinition {
     public enum PlatformDefinitionAPIEndpoints implements EnumIntEndpoints{
-        /**
-         *
-         */
         CREATE_PLATFORM_INSTANCE_STRUCTURE("CREATE_PLATFORM_INSTANCE_STRUCTURE", "createPlatformInstanceStructure_success", 
                 new LPAPIArguments[]{new LPAPIArguments("platformName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionAPI.ProcedureDefinitionpParametersEndpoints.CREATE_DATABASE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -47,27 +44,13 @@ public class PlatformDefinition {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}     
+        @Override        public JsonArray getOutputObjectTypes() {return EndPointsToRequirements.endpointWithNoOutputObjects;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
-
-        @Override
-        public JsonArray getOutputObjectTypes() {
-            return EndPointsToRequirements.endpointWithNoOutputObjects;
-        }
     }
     
 }

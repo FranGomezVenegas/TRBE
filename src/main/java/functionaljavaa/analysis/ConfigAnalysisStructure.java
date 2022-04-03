@@ -50,9 +50,9 @@ public class ConfigAnalysisStructure {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -101,10 +101,8 @@ public class ConfigAnalysisStructure {
     public Object specialFieldCheckSpecAnalyses(Object[] parameters){
 if (1==1) return DIAGNOSES_SUCCESS;        
         String[] mandatoryFields = new String[1];
-        Object[] mandatoryFieldValue = new String[0];
-                
-        String myDiagnoses = "";
-        
+        Object[] mandatoryFieldValue = new String[0];                
+        String myDiagnoses = "";        
         Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf("code");        
         String specCode = (String) mandatoryFieldValue[specialFieldIndex];
 
