@@ -15,7 +15,7 @@ public class TblsEnvMonitConfig {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesEnvMonitConfig implements EnumIntTables{        
-        PROGRAM(null, "program", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Program.values(), null, new String[]{Program.NAME.getName()}, null, "program table"),
+        PROGRAM(null, "program", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Program.values(), null, new String[]{Program.PROGRAM_CONFIG_ID.getName(), Program.PROGRAM_CONFIG_VERSION.getName()}, null, "program table"),
         PROGRAM_LOCATION(null, "program_location", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProgramLocation.values(), null, 
             new String[]{ProgramLocation.PROGRAM_NAME.getName(), ProgramLocation.LOCATION_NAME.getName(), ProgramLocation.AREA.getName()}, 
             //new Object[]{new ForeignkeyFld(ProgramLocation.PROGRAM_NAME.getName(), 
