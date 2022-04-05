@@ -140,8 +140,9 @@ public class TblsProcedure {
         USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
         LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
         ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null),
+        ICON_NAME_WHENNOTCERTIF("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null),        
         POSITION("position", LPDatabase.string(), null, null, null, null),
-        PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),
+        PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),        
         ;
         private ProcedureEvents(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
