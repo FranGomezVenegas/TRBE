@@ -33,7 +33,7 @@ public class TblsData {
         TRAINING(null, "training", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Training.values(), Training.ID.getName(),
             new String[]{Training.ID.getName()}, null, "Training table"),
         USER_SOP(null, "user_sop", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, UserSop.values(), UserSop.SOP_ID.getName(),
-            new String[]{UserSop.SOP_ID.getName()}, null, "Training table"),
+            new String[]{UserSop.SOP_ID.getName()}, null, "User SOPS table"),
         USER_ANALYSIS_METHOD(null, "user_analysis_method", SCHEMA_NAME, true, UserAnalysisMethod.values(), UserAnalysisMethod.USER_ANALYSIS_METHOD_ID.getName(),
             new String[]{UserAnalysisMethod.USER_ANALYSIS_METHOD_ID.getName()}, null, "Training table"),
         SAVED_QUERIES(null, "saved_queries", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SavedQueries.values(), SavedQueries.ID.getName(),

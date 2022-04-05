@@ -409,8 +409,10 @@ public class UserSop {
      * @return
      */
     private Object[] addSopToUserInternalLogic( String procInstanceName, String personName, String sopIdFieldName, Object sopIdFieldValue){
-        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
+// 2022-04-04. During demoplatform em air/em-air-spr2 found that this prevents this addition, 
+//      commented as we considered in that moment that SOPs can be added to the procedure independently of any business rule, probablys this should be refreshed in the future, by now it worked! ;)
+//        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
+//        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         Object[] exists = Rdbms.existsRecord(schemaName, TblsData.TablesData.USER_SOP.getTableName(), new String[]{TblsData.UserSop.USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
                 
