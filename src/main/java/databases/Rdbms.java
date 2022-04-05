@@ -81,6 +81,7 @@ public class Rdbms {
         RDBMS_RECORD_CREATED("RecordCreated", "", ""), RDBMS_RECORD_UPDATED("RecordUpdated", "", ""), 
         RDBMS_RECORD_REMOVED("RecordRemoved", "", ""),
         RDBMS_RECORD_FOUND("existsRecord_RecordFound", "", ""),
+        RDBMS_TABLE_FOUND("existsTable_TableFound", "", ""),
         TRANSFERRED_RECORDS_BETWEEN_INSTANCES("transferredRecordsBetweenInstances", "", ""), 
         ANALYSIS_CREATED("analysisRecord_createdSuccessfully", "", ""), 
         ;
@@ -1436,6 +1437,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                         Array array = conn.createArrayOf("VARCHAR", (Object []) obj);
                         prepsta.setArray(indexval, array);
                         break;
+//                    case "class org.postgresql.util.PGobject":
                     case "class com.google.gson.JsonObject":    
                         prepsta.setString(indexval, (String) obj.toString()); 
                         break;                          
@@ -1635,7 +1637,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             res.first();
             Integer numRows=res.getRow();
             if (numRows>0){
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{tableName, schemaName});                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_TABLE_FOUND, new Object[]{tableName, schemaName});                
             }else{
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_TABLE_NOT_FOUND, new Object[]{tableName, schemaName});                
             }
@@ -1648,7 +1650,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         String schema=LPPlatform.buildSchemaName(procInstanceName, schemaName1).replace("\"", "");
         String[] filter=new String[]{schema};
         String query=" SELECT distinct table_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema in (?)";
-        if (GlobalVariables.Schemas.PROCEDURE.toString().equalsIgnoreCase(schemaName1)){
+        if (GlobalVariables.Schemas.PROCEDURE.getName().toString().equalsIgnoreCase(schemaName1)){
             query=query+" and table_name not in(";
             for (int i=0;i<ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone.length;i++){
                 if (i>0)query=query+",";
@@ -1656,6 +1658,15 @@ if (1==1){Rdbms.transactionId=1; return;}
             }
             query=query+")";
             filter=LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone);
+        }
+        if (GlobalVariables.Schemas.PROCEDURE_AUDIT.getName().toString().equalsIgnoreCase(schemaName1)){
+            query=query+" and table_name not in(";
+            for (int i=0;i<ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone.length;i++){
+                if (i>0)query=query+",";
+                query=query+"?";
+            }
+            query=query+")";
+            filter=LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone);
         }
         try{            
             ResultSet res = Rdbms.prepRdQuery(query, filter);
@@ -1895,10 +1906,17 @@ if (1==1){Rdbms.transactionId=1; return;}
         }     
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_CONFIG.getName()))
             return schemaName;
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName()))
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName)){ 
+                if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
+                else schemaName=schemaName+"_testing";
+            return schemaName;
+        }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())){
             if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) 
                 if (schemaName.endsWith("\"")) schemaName=schemaName.substring(0, schemaName.length()-1)+"_testing\"";
                 else schemaName=schemaName+"_testing";
+            return schemaName;
         }
         return schemaName;
     }

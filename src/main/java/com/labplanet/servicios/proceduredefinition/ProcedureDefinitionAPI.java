@@ -83,8 +83,8 @@ public class ProcedureDefinitionAPI extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                new LPAPIArguments("NEW"+ProcedureDefinitionpParametersEndpoints.MODULE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
-                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.CREATE_FILES.getName(), LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 16)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+                new LPAPIArguments("NEW"+ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                new LPAPIArguments("continueIfExistsNew", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         SET_PROCEDURE_BUSINESS_RULES("SET_PROCEDURE_BUSINESS_RULES", "setProcedureBusinessRules_success", 
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments("suffixName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -124,10 +124,10 @@ public class ProcedureDefinitionAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;

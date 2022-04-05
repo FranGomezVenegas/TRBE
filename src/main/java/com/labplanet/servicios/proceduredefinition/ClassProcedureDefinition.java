@@ -1,7 +1,9 @@
 package com.labplanet.servicios.proceduredefinition;
 
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.TblsReqs;
+import databases.TblsReqs.TablesReqs;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.procedureRolesList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -9,6 +11,7 @@ import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomImportType;
 import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import static functionaljavaa.user.UserAndRolesViews.getPersonByUser;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -19,9 +22,15 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 /**
  *
@@ -136,7 +145,63 @@ public class ClassProcedureDefinition {
                         Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Completed", null);
-                    break;                    
+                    break;   
+                case DEPLOY_REQUIREMENTS_CLONE_SPRINT:
+                    procedureName=argValues[0].toString();
+                    procedureVersion = (Integer) argValues[1];  
+                    procInstanceName=argValues[2].toString();
+                    String newProcInstanceName=argValues[3].toString();
+                    Boolean continueIfNewExists=Boolean.valueOf(LPNulls.replaceNull(argValues[4]).toString());
+                    String[] clonableProcInstanceFldName=new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()};
+                    Object[] clonableProcInstanceFldValue=new Object[]{procedureName, procedureVersion, procInstanceName};                    
+                    Object[] existsRecord = Rdbms.existsRecord(TablesReqs.PROCEDURE_INFO.getRepositoryName(), TablesReqs.PROCEDURE_INFO.getTableName(), 
+                        clonableProcInstanceFldName, clonableProcInstanceFldValue);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, null);
+                        break;
+                    }
+                    if (!continueIfNewExists){
+                        existsRecord = Rdbms.existsRecord(TablesReqs.PROCEDURE_INFO.getRepositoryName(), TablesReqs.PROCEDURE_INFO.getTableName(), 
+                            new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()},
+                            new Object[]{procedureName, procedureVersion, newProcInstanceName});
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
+                            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.RECORD_ALREADY_EXISTS, null);
+                            break;
+                        }
+                    }
+                    String[] tblsArr=null;
+                    String[] tblsWithErrorArr=null;
+                    for (EnumIntTables curTbl: TablesReqs.values()){
+                        Integer valuePosicInArray = null;
+                        tblsArr=LPArray.addValueToArray1D(tblsArr, curTbl.getTableName());
+                        if ("fe_proc_model".equalsIgnoreCase(curTbl.getTableName()) )
+                            valuePosicInArray=-1;
+                        String[] curTblAllFields=EnumIntTableFields.getAllFieldNames(curTbl.getTableFields());
+                        Object[][] curTblInfo=QueryUtilitiesEnums.getTableData(curTbl, 
+                            EnumIntTableFields.getTableFieldsFromString(curTbl, "ALL"),
+                            clonableProcInstanceFldName, clonableProcInstanceFldValue, clonableProcInstanceFldName);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(curTblInfo[0][0].toString()))
+                            tblsWithErrorArr=LPArray.addValueToArray1D(tblsWithErrorArr, curTbl.getTableName());
+                        else{
+                            valuePosicInArray = LPArray.valuePosicInArray(curTblAllFields, TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName());
+                            if (valuePosicInArray==-1)
+                                tblsWithErrorArr=LPArray.addValueToArray1D(tblsWithErrorArr, curTbl.getTableName());
+                            else{
+                                curTblInfo=LPArray.setColumnValueToArray2D(curTblInfo, valuePosicInArray, newProcInstanceName);
+                                for (Object[] curTblRec: curTblInfo){
+                                    Object[] insertRecordInTable = Rdbms.insertRecordInTable(curTbl.getRepositoryName(), curTbl.getTableName(), 
+                                            curTblAllFields, curTblRec);
+                                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString()))
+                                        tblsWithErrorArr=LPArray.addValueToArray1D(tblsWithErrorArr, curTbl.getTableName());                                    
+                                }
+                            }
+                        }                        
+                    }                    
+                    if (tblsWithErrorArr!=null && tblsWithErrorArr.length>0)
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.DB_ERROR, new Object[]{Arrays.toString(tblsWithErrorArr)});
+                    else
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
+                    break;
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;

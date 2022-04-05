@@ -29,6 +29,7 @@ import databases.TblsData.ViewsData;
 import databases.TblsDataAudit.TablesDataAudit;
 import databases.TblsProcedure;
 import databases.TblsProcedure.TablesProcedure;
+import databases.TblsProcedureAudit;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsReqs;
 import functionaljavaa.parameter.Parameter;
@@ -48,6 +49,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class ProcedureDefinitionToInstance {
     
+    public static final String[] ProcedureAuditSchema_TablesWithNoTestingClone=new String[]{TblsProcedureAudit.TablesProcedureAudit.PROC_HASH_CODES.getTableName()};
     public static final String[] ProcedureSchema_TablesWithNoTestingClone=new String[]{TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
         TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName(), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName()};
     
@@ -64,8 +66,8 @@ public class ProcedureDefinitionToInstance {
         private final String tagValue;
     }
     public static final String SCHEMA_AUTHORIZATION_ROLE = "labplanet";
-    public static final String FLDSTORETR_REQS_PROCINFOSRC=TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName()+"|"+TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_EN.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_ES.getName();
-    public static final String FLDSTORETR_PROCEDURE_INFO_SOURCE=TblsProcedure.ProcedureInfo.NAME.getName()+"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_EN.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_ES.getName();
+    public static final String FLDSTORETR_REQS_PROCINFOSRC=TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName()+"|"+TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_EN.getName()+"|"+TblsReqs.ProcedureInfo.LABEL_ES.getName()+"|"+TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName();
+    public static final String FLDSTORETR_PROCEDURE_INFO_SOURCE=TblsProcedure.ProcedureInfo.NAME.getName()+"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_EN.getName()+"|"+TblsProcedure.ProcedureInfo.LABEL_ES.getName()+"|"+TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName();
     public static final String FLDSTORETR_PROCEDURE_USR_ROLE_SRC="user_name|role_name";
     public static final String FLDSTORETR_PROCEDURE_USR_ROLE_SRT="user_name";
     public static final String FIELDS_TO_INSERT_APP_USER_PROCESS=TblsApp.UserProcess.USER_NAME.getName()+"|"+TblsApp.UserProcess.PROC_NAME.getName()+"|"+TblsApp.UserProcess.ACTIVE.getName();
@@ -203,7 +205,7 @@ public class ProcedureDefinitionToInstance {
         }
         for (Object[] curRow: procUserRolesRecordsSource){
             Object curUserName = curRow[LPArray.valuePosicInArray(FLDSTORETR_PROCEDURE_USR_ROLE_SRC.split("\\|"), TblsReqs.ProcedureUserRoles.USER_NAME.getName())];
-            Object curRoleName = curRow[LPArray.valuePosicInArray(FLDSTORETR_PROCEDURE_USR_ROLE_SRT.split("\\|"), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName())];
+            Object curRoleName = curRow[LPArray.valuePosicInArray(FLDSTORETR_PROCEDURE_USR_ROLE_SRC.split("\\|"), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName())];
             JSONArray jsArr = new JSONArray(); 
             JSONObject jsUserRoleObj = new JSONObject();
             jsUserRoleObj.put("User", curUserName); jsUserRoleObj.put("Role", curRoleName);

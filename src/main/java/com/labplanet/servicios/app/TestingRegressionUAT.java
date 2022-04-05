@@ -106,6 +106,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, errMsg, null, sessionLang);              
                 return;
             }
+            
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
 
             Token token = new Token(finalToken);
@@ -347,7 +348,7 @@ public class TestingRegressionUAT extends HttpServlet {
             Object[][] mismatchesArr=(Object[][]) mirrorCheckDiagn[0];
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatchesArr[0][0].toString())){
                 if (allMismatches==null || (allMismatches[0].length==mismatchesArr[0].length)){
-                    allMismatches=LPArray.joinTwo2DArrays(allMismatches, new String[][]{{"schema family",curSchToCheck[0].toString(), "counter"}});
+                    allMismatches=LPArray.joinTwo2DArrays(allMismatches, new String[][]{{"table info",curSchToCheck[0].toString(), "counter"}});
                     allMismatches=LPArray.joinTwo2DArrays(allMismatches, mismatchesArr);
                 }
             //}else{
