@@ -190,6 +190,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         SPECIALFUNCTION_RETURNEDERROR("LabPLANETPlatform_SpecialFunctionReturnedERROR", "", ""),
         SPECIALFUNCTION_CAUSEDEXCEPTION("LabPLANETPlatform_SpecialFunctionCausedException", "", ""),
         MIRROR_MISMATCHES("ProcedureDeployment_mirrorMismatches", "", ""),
+        NEWDATETIMENULL_OR_WRONGFORMAT("newDateTimeNullOrWrongFormat","",""),
         ; 
         private LpPlatformErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

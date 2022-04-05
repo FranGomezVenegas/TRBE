@@ -40,6 +40,7 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ResponseMessages;
+import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 /**
  *
  * @author User
@@ -87,6 +88,10 @@ public class ClassSample {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Boolean isForTesting = procReqSession.getIsForTesting();
         String procInstanceName=procReqSession.getProcedureInstance();
+        if (procInstanceName==null){
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "procInstanceNameIsNull", null);
+            return;
+        }
         ResponseMessages messages = procReqSession.getMessages();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         String schemaDataName="";
@@ -169,7 +174,7 @@ public class ClassSample {
                     sampleId = (Integer) argValues[0];
                     LocalDateTime newDate=(LocalDateTime) argValues[1];
                     if (newDate==null)
-                        diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "newDateTimeNullOrWrongFormat", new Object[]{LPNulls.replaceNull(newDate)});
+                        diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.NEWDATETIMENULL_OR_WRONGFORMAT, new Object[]{LPNulls.replaceNull(newDate)});
                     else
                         diagn = smp.changeSamplingDate(sampleId, newDate);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
@@ -185,7 +190,7 @@ public class ClassSample {
                     sampleId = (Integer) argValues[0];
                     newDate=(LocalDateTime) argValues[1];
                     if (newDate==null)
-                        diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "newDateTimeNullOrWrongFormat", new Object[]{LPNulls.replaceNull(newDate)});
+                        diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.NEWDATETIMENULL_OR_WRONGFORMAT, new Object[]{LPNulls.replaceNull(newDate)});
                     else
                         diagn = smp.changeSamplingDateEnd(sampleId, newDate);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
