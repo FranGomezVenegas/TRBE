@@ -418,24 +418,24 @@ GlobalAPIsParams.
                                     for (int xProc=0; xProc<programLocationCardInfo.length; xProc++){   
                                         for (int yProc=0; yProc<programLocationCardInfo[0].length; yProc++){              
                                             programLocationCardInfoJsonObj = new JSONObject();
-                                            programLocationCardInfoJsonObj.put(JSON_TAG_NAME_NAME, programLocationCardInfoFldNameArray[yProc]);
-                                            programLocationCardInfoJsonObj.put(JSON_TAG_NAME_LABEL_EN, programLocationCardInfoFldNameArray[yProc]);
-                                            programLocationCardInfoJsonObj.put(JSON_TAG_NAME_LABEL_ES, programLocationCardInfoFldNameArray[yProc]);
-                                            programLocationCardInfoJsonObj.put(JSON_TAG_NAME_VALUE, programLocationCardInfo[xProc][yProc]);
-                                            programLocationCardInfoJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
+                                            programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_NAME, programLocationCardInfoFldNameArray[yProc]);
+                                            programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_LABEL_EN, programLocationCardInfoFldNameArray[yProc]);
+                                            programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_LABEL_ES, programLocationCardInfoFldNameArray[yProc]);
+                                            programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_VALUE, programLocationCardInfo[xProc][yProc]);
+                                            programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
                                             String fieldName=programLocationCardInfoFldNameArray[yProc];
                                             Integer posicInArray=LPArray.valuePosicInArray(programLocationCardFieldsInteger, fieldName);
                                             if (posicInArray>-1){
-                                                programLocationCardInfoJsonObj.put(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_INTEGER);
+                                                programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_INTEGER);
                                             }else{ 
                                                 posicInArray=LPArray.valuePosicInArray(programLocationCardFieldsNoDbType, fieldName);
                                                 if (posicInArray==-1){
-                                                    programLocationCardInfoJsonObj.put(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_STRING);
+                                                    programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_STRING);
                                                 }else{
-                                                    programLocationCardInfoJsonObj.put(JSON_TAG_NAME_DB_TYPE, "");
+                                                    programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_DB_TYPE, "");
                                                 }
                                             }
-                                            programLocationCardInfoJsonObj.put(JSON_TAG_NAME_PSWD, JSON_TAG_NAME_PSWD_VALUE_FALSE);
+                                            programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_PSWD, JSON_TAG_NAME_PSWD_VALUE_FALSE);
                                             programLocationCardInfoJsonArr.add(programLocationCardInfoJsonObj);                                    
                                         }    
                                     }
