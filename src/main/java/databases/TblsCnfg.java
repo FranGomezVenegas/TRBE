@@ -33,8 +33,8 @@ public class TblsCnfg {
             }, "Analysis Method"),
         ANALYSIS_METHOD_PARAMS(null, "analysis_method_params", SCHEMA_NAME, true, AnalysisMethodParams.values(), null,
             new String[]{AnalysisMethodParams.PARAM_NAME.getName(), AnalysisMethodParams.ANALYSIS.getName(), AnalysisMethodParams.METHOD_NAME.getName(), AnalysisMethodParams.METHOD_VERSION.getName()}, 
-            new Object[]{new ForeignkeyFld(AnalysisMethodParams.METHOD_NAME.getName(), SCHEMA_NAME, TablesConfig.METHODS.getTableName(), Methods.CODE.getName()),
-                new ForeignkeyFld(AnalysisMethodParams.UOM.getName(), SCHEMA_NAME, TablesConfig.UOM.getTableName(), UnitsOfMeasurement.NAME.getName())}
+            new Object[]{new ForeignkeyFld(AnalysisMethodParams.METHOD_NAME.getName(), SCHEMA_NAME, TablesConfig.METHODS.getTableName(), Methods.CODE.getName())}
+//2022-04-04, multi-foreign key for multi tables not supported yet                //new ForeignkeyFld(AnalysisMethodParams.UOM.getName(), SCHEMA_NAME, TablesConfig.UOM.getTableName(), UnitsOfMeasurement.NAME.getName())}
             , "Analysis Method Params"),
         SAMPLE(null, "sample", SCHEMA_NAME, true, Sample.values(), null,
             new String[]{Sample.CODE.getName(), Sample.CODE_VERSION.getName()}, null, "Sample config"),
