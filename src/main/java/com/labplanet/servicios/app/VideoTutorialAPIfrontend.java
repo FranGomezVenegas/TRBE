@@ -1,16 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.labplanet.servicios.app;
-
 
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
-import databases.Rdbms;
 import databases.TblsApp;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -30,6 +23,7 @@ import org.json.simple.parser.JSONParser;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.queries.QueryUtilitiesEnums;
+import trazit.session.ProcedureRequestSession;
 
 
 /**
@@ -196,6 +190,13 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            return;
+        }
+        
         String language = LPFrontEnd.setLanguage(request); 
         
         try (PrintWriter out = response.getWriter()) {
@@ -215,7 +216,7 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+//            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
              
             switch (endPoint){
             case ALL_ACTIVE_VIDEO_TUTORIALS:
@@ -530,10 +531,10 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
             response.sendError((int) errMsg[0], (String) errMsg[1]);    
             // Rdbms.closeRdbms();        
         } finally {
+            
             // release database resources
             try {
-                Rdbms.closeRdbms();
-                // Rdbms.closeRdbms();   
+                procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       
