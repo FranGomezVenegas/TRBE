@@ -329,8 +329,9 @@ public class UserSop {
                 }
                 query.append(") union ");
             }else{
-                LPPlatform.saveMessageInDbErrorLog("", new Object[]{currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName}, 
-                    new Object[]{"UserSop", "UserSop", "getUserProfileFieldValues", 337}, "view not exist in this given schema", new Object[0], currProcInstanceName);
+                if (!"APP".equalsIgnoreCase(currProcInstanceName))
+                    LPPlatform.saveMessageInDbErrorLog("", new Object[]{currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName}, 
+                        new Object[]{"UserSop", "UserSop", "getUserProfileFieldValues", 333}, "view not exist in this given schema", new Object[0], currProcInstanceName);
             }
         }       
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
