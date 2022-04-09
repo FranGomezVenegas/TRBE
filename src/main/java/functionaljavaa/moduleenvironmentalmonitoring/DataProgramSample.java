@@ -206,6 +206,7 @@ public class DataProgramSample{
      *
      * @param sampleId
      * @param microorganismName
+     * @param items
      * @return
      */
     public static Object[] removeSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
@@ -216,13 +217,14 @@ public class DataProgramSample{
         Object[][] sampleMicroOrgRow=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
                 new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()},
                 new Object[]{sampleId, microorganismName},
-                new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()});
+                new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()},
+                new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()+" desc"});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgRow[0][0].toString())) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "microorganismNotFound", new  Object[]{microorganismName, sampleId});
         for (int i=0;i<items;i++){
             diagnostic=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
                     new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName(), TblsEnvMonitData.SampleMicroorganism.ID.getName()},
-                    new Object[]{sampleId, microorganismName, sampleMicroOrgRow[0][0]});
+                    new Object[]{sampleId, microorganismName, sampleMicroOrgRow[i][0]});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
                 SampleAudit smpAudit = new SampleAudit();
                 String[] fieldsForAudit=new String[]{"Removed microorganism "+microorganismName};
