@@ -46,7 +46,7 @@ public class AuthenticationAPIParams extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects ),
-        TOKEN_VALIDATE_USER_CREDENTIALS_LOCKEDSESSION("TOKEN_VALIDATE_USER_CREDENTIALS_LOCKEDSESSION", "tokenValidateUserCredentialsUnlockedSession_success", 
+        TOKEN_VALIDATE_USER_CREDENTIALS_UNLOCKSESSION("TOKEN_VALIDATE_USER_CREDENTIALS_UNLOCKSESSION", "tokenValidateUserCredentialsUnlockedSession_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects ),

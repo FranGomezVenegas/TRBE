@@ -232,7 +232,7 @@ public class AuthenticationAPI extends HttpServlet {
                         return;                             
                     }                    
                 case TOKEN_VALIDATE_USER_CREDENTIALS:     
-                case TOKEN_VALIDATE_USER_CREDENTIALS_LOCKEDSESSION:
+                case TOKEN_VALIDATE_USER_CREDENTIALS_UNLOCKSESSION:
                     myToken = argValues[0].toString();
                     String userToCheck = argValues[1].toString();                      
                     String passwordToCheck = argValues[2].toString();
