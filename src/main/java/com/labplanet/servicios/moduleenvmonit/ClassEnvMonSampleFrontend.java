@@ -399,23 +399,24 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.SAMPLE_ID.getName()} );
                     jArr=new JSONArray();
                     for (Object[] curRec: list){
-                      JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
-                      Integer fldSampleIdPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewSampleMicroorganismList.SAMPLE_ID.getName());                      
-                      if (fldSampleIdPosic>-1){
-                          JSONArray jMicArr=new JSONArray();
-                          Integer curSmpId=Integer.valueOf(curRec[fldSampleIdPosic].toString());
-                          Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),  
-                                  new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()}, 
-                                  new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()}, 
-                                  new Object[]{curSmpId}, new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()});
-                          for (Object[] curMic:grouper){
-                              //jMicArr.add(curMic);
-                              JSONObject jmicObj=new JSONObject();
-                              jmicObj.put("name", curMic[0]);
-                              jmicObj.put("items", curMic[1]);
-                              jMicArr.add(jmicObj);
-                          }
-                          jObj.put("microorganism_list_array", jMicArr);
+                        JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
+                        Integer fldSampleIdPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewSampleMicroorganismList.SAMPLE_ID.getName());                      
+                        if (fldSampleIdPosic>-1){
+                            JSONArray jMicArr=new JSONArray();
+                            Integer curSmpId=Integer.valueOf(curRec[fldSampleIdPosic].toString());
+                            Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),  
+                                new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()}, 
+                                new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()}, 
+                                new Object[]{curSmpId}, new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()});
+                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(grouper[0][0].toString()))
+                                for (Object[] curMic:grouper){
+                                    //jMicArr.add(curMic);
+                                    JSONObject jmicObj=new JSONObject();
+                                    jmicObj.put("name", curMic[0]);
+                                    jmicObj.put("items", curMic[1]);
+                                    jMicArr.add(jmicObj);
+                                }
+                            jObj.put("microorganism_list_array", jMicArr);
                       }                      
                       jArr.add(jObj);
                     }
