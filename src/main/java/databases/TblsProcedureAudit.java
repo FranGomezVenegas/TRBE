@@ -60,7 +60,7 @@ public class TblsProcedureAudit {
     public enum procHashCodesHistory implements EnumIntTableFields{
         ID("id", LPDatabase.integer(), null, null, null, null),
         DATE("date", LPDatabase.dateTime(), null, null, null, null),
-        PERSON("person", LPDatabase.string(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
         NEW_HASHCODE("new_hashcode", LPDatabase.string(), null, null, null, null),
         //PREVIOUS_HASHCODE("previous_hashcode", LPDatabase.string(), null, null, null, null),
@@ -96,7 +96,7 @@ public class TblsProcedureAudit {
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
         TABLE_ID("table_id", LPDatabase.string(), null, null, null, null),
         DATE("date", LPDatabase.dateTime(), null, null, null, null),
-        PERSON("person", LPDatabase.string(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
         FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null),
         INVESTIGATION_ID("investigation_id", LPDatabase.integer(), null, null, null, null),

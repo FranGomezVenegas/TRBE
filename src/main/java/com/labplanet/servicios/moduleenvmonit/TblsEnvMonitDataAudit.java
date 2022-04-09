@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import databases.TblsAppConfig;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -59,7 +60,7 @@ public class TblsEnvMonitDataAudit {
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null), 
         TABLE_ID("table_id", LPDatabase.string(), null, null, null, null), 
         DATE("date", LPDatabase.dateTime(), null, null, null, null), 
-        PERSON("person", LPDatabase.string(), null, null, null, null), 
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null), 
         FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null), 
         BATCH_NAME("batch", LPDatabase.string(), null, null, null, null), 

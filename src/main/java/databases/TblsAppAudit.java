@@ -102,7 +102,7 @@ public class TblsAppAudit {
     }
     public enum Session implements EnumIntTableFields{
         SESSION_ID("session_id", LPDatabase.integerNotNull(), null, null, null, null),
-        PERSON("person", LPDatabase.string(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         ROLE_NAME("role_name", LPDatabase.string(), null, null, null, null),
         DATE_STARTED("date_started", dateTime(), null, null, null, null),
         DATE_ENDED("date_ended", dateTime(), null, null, null, null),

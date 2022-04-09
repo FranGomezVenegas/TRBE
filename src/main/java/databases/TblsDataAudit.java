@@ -95,7 +95,7 @@ public class TblsDataAudit {
     
     public enum Session implements EnumIntTableFields{
         SESSION_ID("session_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_session_id_seq'::regclass)", null, null, null, null),
-        PERSON("person", LPDatabase.string(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         ROLE_NAME("role_name", LPDatabase.string(), null, null, null, null),
         DATE_STARTED("date_started", dateTime(), null, null, null, null),
         DATE_ENDED("date_ended", dateTime(), null, null, null, null),
@@ -124,7 +124,7 @@ public class TblsDataAudit {
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
         TABLE_ID("table_id", LPDatabase.integer(), null, null, null, null),
         DATE("date", LPDatabase.dateTime(), null, null, null, null),
-        PERSON("person", LPDatabase.string(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
         FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null),
         SAMPLE_ID("sample_id", LPDatabase.integer(), null, null, null, null),
@@ -170,7 +170,7 @@ public class TblsDataAudit {
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
         TABLE_ID("table_id", LPDatabase.string(), null, null, null, null),
         DATE("date", LPDatabase.dateTime(), null, null, null, null),
-        PERSON("person", LPDatabase.string(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         USER_NAME(FIELDS_NAMES_USER_NAME, LPDatabase.string(), null, null, null, null),
         METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string(), null, null, null, null),
         METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
