@@ -309,7 +309,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
         }else{
             String diagnStr = LAB_TRUE;
-            diagnStr=diagnStr+LPNulls.replaceNull(auditReasonType(procInstanceName, actionName));
+            diagnStr=diagnStr+LPNulls.replaceNull(auditReasonType(procInstanceName, actionName, procBusinessRules));
             return ApiMessageReturn.trapMessage(diagnStr, LpPlatformSuccess.VERIFYUSERREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});
         }    
     }    
@@ -337,7 +337,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         }else{
-            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformSuccess.ESIGNREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});               
+            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName, procBusinessRules), LpPlatformSuccess.ESIGNREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});               
         }    
     }    
     public static Object[] procActionRequiresJustificationPhrase(String procInstanceName, String actionName, BusinessRules procBusinessRules){
@@ -357,14 +357,25 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         }else if(!LPArray.valueInArray(procedureActions, actionName)){    
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         }else{
-            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName), LpPlatformSuccess.JUSTIFPHRASEREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});               
+            return ApiMessageReturn.trapMessage(LAB_TRUE+auditReasonType(procInstanceName, actionName, procBusinessRules), LpPlatformSuccess.JUSTIFPHRASEREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});               
         }    
     }    
-    
     private static String auditReasonType(String procInstanceName, String actionName){
-        String auditReasonType = LPNulls.replaceNull(Parameter.getBusinessRuleProcedureFile(procInstanceName, 
+        return auditReasonType(procInstanceName, actionName, null);
+    }    
+    
+    private static String auditReasonType(String procInstanceName, String actionName, BusinessRules procBusinessRules){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
+        BusinessRules businessRulesProcInstance = procReqInstance.getBusinessRulesProcInstance();
+        String auditReasonType=null;
+        if (businessRulesProcInstance!=null)
+            auditReasonType=businessRulesProcInstance.getProcedureBusinessRule(actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName());
+        else
+            auditReasonType=procBusinessRules.getProcedureBusinessRule(actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName());
+        
+/*        String auditReasonType = LPNulls.replaceNull(Parameter.getBusinessRuleProcedureFile(procInstanceName, 
             LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(), 
-            actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName())).toString();
+            actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName())).toString();*/
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
         if (auditReasonType.length()==0)return "TEXT";
         if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("DISABLE"))return "";

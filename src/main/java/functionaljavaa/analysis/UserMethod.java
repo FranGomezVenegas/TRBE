@@ -219,8 +219,9 @@ public class UserMethod {
                 }
                 query.append(") union ");
             }else
-                LPPlatform.saveMessageInDbErrorLog("", new Object[]{currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName}, 
-                        new Object[]{viewName, viewName, "getUserAnalysisMethodCerttifByProcess", 290}, "view not exist in this given schema", new Object[0], currProcInstanceName);
+                if (!"APP".equalsIgnoreCase(currProcInstanceName))
+                    LPPlatform.saveMessageInDbErrorLog("", new Object[]{currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName}, 
+                            new Object[]{viewName, viewName, "getUserAnalysisMethodCerttifByProcess", 290}, "view not exist in this given schema", new Object[0], currProcInstanceName);
         }       
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
         
