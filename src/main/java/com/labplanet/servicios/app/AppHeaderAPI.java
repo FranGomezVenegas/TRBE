@@ -25,9 +25,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
@@ -38,7 +40,7 @@ public class AppHeaderAPI extends HttpServlet {
      *
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
-    public static final String MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE="first_name|last_name|photo";
+    public static final String[] MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE=getAllFieldNames(TblsAppConfig.Person.values());
     public enum AppHeaderAPIfrontendEndpoints implements EnumIntEndpoints{
         GETAPPHEADER("GETAPPHEADER", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
@@ -115,7 +117,7 @@ public class AppHeaderAPI extends HttpServlet {
         String personFieldsName = LPNulls.replaceNull(argValues[0]).toString();
         String[] personFieldsNameArr = new String[0];
         if ( personFieldsName==null || personFieldsName.length()==0){
-            personFieldsNameArr = MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE.split("\\|");                            
+            personFieldsNameArr = MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE;
         }else{
             personFieldsNameArr = personFieldsName.split("\\|");
         }    
@@ -127,10 +129,8 @@ public class AppHeaderAPI extends HttpServlet {
             Object[] errMsg = LPFrontEnd.responseError(LPArray.array2dTo1d(personInfoArr), language, null);
             return personInfoJsonObj;
         }
-        for (int iFields=0; iFields<personFieldsNameArr.length; iFields++ ){
-            personInfoJsonObj.put(personFieldsNameArr[iFields], personInfoArr[0][iFields]);
-        }                                 
-        token=null;            
+        personInfoJsonObj=LPJson.convertArrayRowToJSONObject(personFieldsNameArr, personInfoArr[0]);
+        token=null;
         return personInfoJsonObj;
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

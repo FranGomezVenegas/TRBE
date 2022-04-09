@@ -62,6 +62,7 @@ public class TblsAppConfig {
         BIRTH_DATE("birth_date", LPDatabase.date(), null, null, null, null),
         PHOTO("photo", LPDatabase.string(), null, null, null, null),
         ALIAS("alias", LPDatabase.string(), null, null, null, null),
+        SHIFT("shift", LPDatabase.string(), null, null, null, null),
         ;
         private Person(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
