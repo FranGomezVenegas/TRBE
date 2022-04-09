@@ -222,9 +222,11 @@ public class ClassEnvMonSample {
                 case ADD_ADHOC_SAMPLE_MICROORGANISM:
                     sampleId=(Integer) argValues[0];
                     Integer numItems=1;
-                    String numItemsStr=LPNulls.replaceNull(argValues[2]).toString();
-                    if (numItemsStr.length()>0 && LPPlatform.LAB_TRUE.equalsIgnoreCase(LPMath.isNumeric(numItemsStr)[0].toString())) 
-                        numItems=Integer.valueOf(numItemsStr);
+                    if (argValues.length>=3){
+                        String numItemsStr=LPNulls.replaceNull(argValues[2]).toString();
+                        if (numItemsStr.length()>0 && LPPlatform.LAB_TRUE.equalsIgnoreCase(LPMath.isNumeric(numItemsStr)[0].toString())) 
+                            numItems=Integer.valueOf(numItemsStr);
+                    }
                     for (String orgName: (String[]) argValues[1].toString().split("\\|")){
                         actionDiagnoses = DataProgramSample.addSampleMicroorganism((Integer) argValues[0], orgName, numItems);
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), actionDiagnoses[actionDiagnoses.length-1]);
@@ -234,24 +236,26 @@ public class ClassEnvMonSample {
                             adhocMicroorganismAdd(orgName);
                         }
                     }
+                    dynamicDataObjects=new Object[]{argValues[1].toString().replace("\\|", ", "), sampleId, numItems};
                     if (actionDiagnoses!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{argValues[0], argValues[1], procInstanceName});                    
-                    dynamicDataObjects=new Object[]{argValues[1].toString().replace("\\|", ", "), sampleId};
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), dynamicDataObjects);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), argValues[0]);                                                
                     break;
                 case REMOVE_SAMPLE_MICROORGANISM: 
                     sampleId=(Integer) argValues[0];
                     numItems=1;
-                    numItemsStr=LPNulls.replaceNull(argValues[2]).toString();
-                    if (numItemsStr.length()>0 && LPPlatform.LAB_TRUE.equalsIgnoreCase(LPMath.isNumeric(numItemsStr)[0].toString())) 
-                        numItems=Integer.valueOf(numItemsStr);
+                    if (argValues.length>=3){
+                        String numItemsStr=LPNulls.replaceNull(argValues[2]).toString();
+                        if (numItemsStr.length()>0 && LPPlatform.LAB_TRUE.equalsIgnoreCase(LPMath.isNumeric(numItemsStr)[0].toString())) 
+                            numItems=Integer.valueOf(numItemsStr);
+                    }
                     for (String orgName: (String[]) argValues[1].toString().split("\\|")){
                         actionDiagnoses = DataProgramSample.removeSampleMicroorganism((Integer) argValues[0], orgName, numItems);
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), actionDiagnoses[actionDiagnoses.length-1]);
                     }
+                    dynamicDataObjects=new Object[]{argValues[1].toString().replace("\\|", ", "), sampleId, numItems};
                     if (actionDiagnoses!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{argValues[0], argValues[1], procInstanceName});                    
-                    dynamicDataObjects=new Object[]{argValues[1].toString().replace("\\|", ", "), sampleId};
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), dynamicDataObjects);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), argValues[0]);                                                
                     break;
                 case EM_BATCH_INCUB_ADD_SMP:
