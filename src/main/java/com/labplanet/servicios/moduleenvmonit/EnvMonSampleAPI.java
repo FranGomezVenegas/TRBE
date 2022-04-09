@@ -87,7 +87,8 @@ public class EnvMonSampleAPI extends HttpServlet {
         ),
         ADD_SAMPLE_MICROORGANISM("ADD_SAMPLE_MICROORGANISM", "MigroorganismAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 )},
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ),
+                new LPAPIArguments("numItems", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8)},                
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
         ),
@@ -242,6 +243,13 @@ public class EnvMonSampleAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }                
+            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActionsWithEndpoint(request, response, endPoint, false);
+            if (procReqInstance.getHasErrors()){
+    //            procReqInstance.killIt();
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+                return;
+            }
             ClassSample clssSmp=new ClassSample(request, endPointSmp);
             if (clssSmp.getEndpointExists()){
                 Object[] diagnostic=clssSmp.getDiagnostic();
@@ -268,7 +276,6 @@ public class EnvMonSampleAPI extends HttpServlet {
         language=procReqInstance.getLanguage();
         String procInstanceName = procReqInstance.getProcedureInstance();
         
-
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
         String sampleIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
