@@ -215,7 +215,6 @@ public class ProcedureRequestSession {
     }
     
     public void killIt(){
-        
 //        LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
        // if (1==1) return;
 //        if (!this.isForQuery) 
