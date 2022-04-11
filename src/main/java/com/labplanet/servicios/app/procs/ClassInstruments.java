@@ -190,6 +190,21 @@ public class ClassInstruments {
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
                     break;
+                case START_SERVICE:
+                    instr=new DataInstruments(instrName);
+                    actionDiagnoses=instr.startSevice();
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
+                    }
+                    break;
+                case COMPLETE_SERVICE:
+                    instr=new DataInstruments(instrName);
+                    decision=argValues[3].toString();
+                    actionDiagnoses=instr.completeService(decision);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                    break;
                 case REOPEN_EVENT:
                     instr=new DataInstruments(instrName);
                     Integer instrEventId=(Integer)argValues[1];

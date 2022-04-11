@@ -76,6 +76,9 @@ public class TblsAppProcConfig {
         PM_VARIABLES_SET("pm_variables_set", LPDatabase.string(), null, null, null, null),
         VERIF_SAME_DAY_REQUIRED("verif_same_day_required", LPDatabase.booleanFld(), null, null, null, null),
         VERIF_SAME_DAY_VARIABLES_SET("verif_same_day_variables_set", LPDatabase.string(), null, null, null, null),
+        SERVICE_REQUIRED("service_required", LPDatabase.booleanFld(), null, null, null, null),
+        SERVICE_VARIABLES_SET("service_variables_set", LPDatabase.string(), null, null, null, null),
+        
         ;
         private InstrumentsFamily(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

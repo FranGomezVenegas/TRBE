@@ -36,6 +36,7 @@ public class InstrumentsEnums {
         CREATION, TURN_ON_LINE, TURN_OFF_LINE, PREVIOUS_USAGE_PERF_CHECK, CALIBRATION, START_CALIBRATION, COMPLETE_CALIBRATION, 
         PREVENTIVE_MAINTENANCE, START_PREVENTIVE_MAINTENANCE, COMPLETE_PREVENTIVE_MAINTENANCE,  
         VERIFICATION, START_VERIFICATION, COMPLETE_VERIFICATION,
+        SERVICE, START_SERVICE, COMPLETE_SERVICE,
         NON_ROUTINE_EVENT, DECOMMISSION, UNDECOMMISSION, UPDATE_INSTRUMENT,
         VALUE_ENTERED, VALUE_REENTERED, REOPEN_EVENT
     }    
@@ -121,6 +122,21 @@ public class InstrumentsEnums {
                 .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
         ),
         COMPLETE_VERIFICATION("COMPLETE_VERIFICATION", "instrumentName", "", "instrumentVerificationCompleted_success",  
+            new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8 ),
+                new LPAPIArguments("decision", LPAPIArguments.ArgumentType.STRING.toString(), true, 9 ),},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
+        ),   
+        START_SERVICE("START_SERVICE", "instrumentName", "", "instrumentServiceStarted_success",  
+            new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8 ),},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
+        ),
+        COMPLETE_SERVICE("COMPLETE_SERVICE", "instrumentName", "", "instrumentServiceCompleted_success",  
             new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8 ),
@@ -227,10 +243,10 @@ public class InstrumentsEnums {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -280,7 +296,8 @@ public class InstrumentsEnums {
         private final char multiValueSeparator;        
         private final Boolean isOptional;
         private final ArrayList<String[]> preReqs;
-    }                           
+    }    
+        
     public enum InstrumentsErrorTrapping implements EnumIntMessages{ 
         NOT_FOUND("instrumentNotFound","The instrument <*1*> is not found in procedure <*2*>","El instrumento <*1*> no se ha encontrado para el proceso <*2*>"),
         FAMILY_NOT_FOUND("instrumentFamilyNotFound","The instrument family <*1*> is not found in procedure <*2*>","La familia de instrumento <*1*> no se ha encontrado para el proceso <*2*>"),
@@ -289,10 +306,12 @@ public class InstrumentsEnums {
         ALREADY_ONLINE("instrumentAlreadyOnline", "The instrument <*1*> is currently on line","El instrumento <*1*> está actualmente en línea"),
         NO_PENDING_CALIBRATION("instrumentHasNoPendingCalibration", "The instrument <*1*> has no pending calibration in progress in this moment","El instrumento <*1*> no tiene ninguna calibración en curso en este momento"),
         NO_PENDING_VERIFICATION("instrumentHasNoPendingVerification", "The instrument <*1*> has no pending verification in progress in this moment","El instrumento <*1*> no tiene ninguna verificación en curso en este momento"),
+        NO_PENDING_SERVICE("instrumentHasNoPendingService", "The instrument <*1*> has no pending service in progress in this moment","El instrumento <*1*> no tiene ningún servicio en curso en este momento"),        
         NO_PENDING_PREV_MAINT("instrumentHasNoPendingPrevMaint", "The instrument <*1*> has no pending preventive maintenance in progress in this moment","El instrumento <*1*> no tiene ningun mantenimiento preventivo en curso en este momento"),
         ALREADY_HAS_PENDING_CALIBRATION("instrumentAlreadyHasPendingCalibration", "The instrument <*1*> already has one pending calibration in progress in this moment","El instrumento <*1*> tiene actualmente una calibración en curso en este momento"),
         ALREADY_HAS_PENDING_VERIFICATION("instrumentAlreadyHasPendingVerification", "The instrument <*1*> already has one pending verification in progress in this moment","El instrumento <*1*> tiene actualmente una verificación en curso en este momento"),
         ALREADY_HAS_PENDING_PREV_MAINT("instrumentAlreadyHasPendingPrevMaint", "The instrument <*1*> already has one pending preventive maintenance in progress in this moment","El instrumento <*1*> tiene actualmente un mantenimiento preventivo en curso en este momento"),
+        ALREADY_HAS_PENDING_SERVICE("instrumentAlreadyHasPendingService", "The instrument <*1*> already has one pending service in progress in this moment","El instrumento <*1*> tiene actualmente un servicio en curso en este momento"),
         ALREADY_INPROGRESS("instrumentEventAlreadyInprogress", "The instrument event <*1*> is currently in progress","El evento de instrumento <*1*> está actualmente en progreso"),
         IS_LOCKED("instrumentIsLocked", "The instrument <*1*> is locked, the reason is <*2*>","El instrumento <*1*> está actualmente bloqueado, la razón es <*2*>"),
         TRYINGUPDATE_RESERVED_FIELD("instrumentTryingToUpdateReservedField", "Not allowed to update the reserved field <*1*>","No permitido modificar el campo reservado <*1*>"),
@@ -311,9 +330,9 @@ public class InstrumentsEnums {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -340,12 +359,25 @@ public class InstrumentsEnums {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    public enum InstrLockingReasons{
+        UNDER_CALIBRATION_EVENT("instrLockedByCalibrationInProgress"),
+        UNDER_MAINTENANCE_EVENT("instrLockedByMaintenanceInProgress"),
+        UNDER_SERVICE_EVENT("instrLockedByServiceInProgress"),
+        UNDER_DAILY_VERIF_EVENT("instrLockedByDailyVerificationInProgress"),
+        
+        ;
+        InstrLockingReasons(String propName){
+            this.propName=propName;
+        }
+        public String getPropertyName(){return this.propName;}
+        private final String propName;
     }
 }
