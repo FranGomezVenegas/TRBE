@@ -183,8 +183,8 @@ public class UnitsOfMeasurement {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(unitsCompatible[0].toString())){
             this.convertedFine=false;
             this.conversionErrorDetail=unitsCompatible;
+            return;
         }
-
         Object[] conversion = new Object[6];
         String tableName = TblsCnfg.TablesConfig.UOM.getTableName();
         String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName();
