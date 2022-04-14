@@ -679,6 +679,8 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     fieldVal[valuePosic] = 1;
                 }
             }
+            String[] getResultFieldsWithLimits=getResultFields;
+            Object[] fieldValWithLimits=fieldVal;
             if (sampleSpecCode.length()>0){
             Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(sampleSpecCode, sampleSpecCodeVersion, 
                     sampleSpecVariationName, 
@@ -686,20 +688,41 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())].toString(), 
                     (Integer) fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())], 
                     fieldVal[Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.PARAM_NAME.getName())].toString(), 
-                    new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName()});
+                    new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.MAX_DP.getName(), TblsCnfg.SpecLimits.LIST_ENTRY.getName()});
+                    Integer fldPosic=-1;
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())){
-                      getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.LIMIT_ID.getName());     
-                      fieldVal = LPArray.addValueToArray1D(fieldVal, specLimits[0][0]);                           
+                        fldPosic=LPArray.valuePosicInArray(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+                        if (fldPosic==-1){
+                            getResultFieldsWithLimits = LPArray.addValueToArray1D(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+                            fieldValWithLimits = LPArray.addValueToArray1D(fieldValWithLimits, specLimits[0][0]);
+                        }else
+                            fieldValWithLimits[fldPosic]=specLimits[0][0];
+                        if (specLimits[0][1]!=null && specLimits[0][1].toString().length()>0){
+                            fldPosic=LPArray.valuePosicInArray(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+                            if (fldPosic==-1){
+                                getResultFieldsWithLimits = LPArray.addValueToArray1D(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.MAX_DP.getName());
+                                fieldValWithLimits = LPArray.addValueToArray1D(fieldValWithLimits, specLimits[0][1]);
+                            }else
+                                fieldValWithLimits[fldPosic]=specLimits[0][1];
+                        }
+                        if (specLimits[0][2]!=null && specLimits[0][2].toString().length()>0){
+                            fldPosic=LPArray.valuePosicInArray(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+                            if (fldPosic==-1){
+                                getResultFieldsWithLimits = LPArray.addValueToArray1D(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.LIST_ENTRY.getName());
+                                fieldValWithLimits = LPArray.addValueToArray1D(fieldValWithLimits, specLimits[0][2]);
+                            }else
+                                fieldValWithLimits[fldPosic]=specLimits[0][2];
+                        }
                     }
             }
             for (Integer iNumReps = 1; iNumReps <= numReplicas; iNumReps++) {
                 fieldVal[valuePosic] = iNumReps;
-                Integer statusFieldPosic=LPArray.valuePosicInArray(getResultFields, TblsData.SampleAnalysisResult.STATUS.getName());
+                Integer statusFieldPosic=LPArray.valuePosicInArray(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.STATUS.getName());
                 if (statusFieldPosic==-1){
-                    getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.STATUS.getName());
-                    fieldVal = LPArray.addValueToArray1D(fieldVal, firstStatusSampleAnalysisResult);
+                    getResultFieldsWithLimits = LPArray.addValueToArray1D(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.STATUS.getName());
+                    fieldValWithLimits = LPArray.addValueToArray1D(fieldValWithLimits, firstStatusSampleAnalysisResult);
                 }else
-                    fieldVal[statusFieldPosic]=firstStatusSampleAnalysisResult;
+                    fieldValWithLimits[statusFieldPosic]=firstStatusSampleAnalysisResult;
                 
                 diagnoses = Rdbms.insertRecordInTable(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                         getResultFields, fieldVal);

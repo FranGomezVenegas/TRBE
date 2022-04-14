@@ -181,7 +181,7 @@ public class InspLotRMAPI extends HttpServlet {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
         if (procReqInstance.getHasErrors()){
             procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
         }
         
@@ -193,7 +193,7 @@ public class InspLotRMAPI extends HttpServlet {
             try{
                 endPointSmp = SampleAPIParams.SampleAPIEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
             }catch(Exception er){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage());              
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                   
             }                
             ClassSample clssSmp=new ClassSample(request, endPointSmp);
@@ -208,13 +208,13 @@ public class InspLotRMAPI extends HttpServlet {
             }                
         }
         if (endPoint==null){
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage());              
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;
         }
         Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response,
-                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, procReqInstance.getLanguage());
+                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;
         }                
         try (PrintWriter out = response.getWriter()) {
@@ -245,7 +245,8 @@ public class InspLotRMAPI extends HttpServlet {
                 procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
-        }      }
+        }      
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -259,7 +260,7 @@ public class InspLotRMAPI extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 
@@ -274,7 +275,7 @@ public class InspLotRMAPI extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 

@@ -233,7 +233,7 @@ public class DBActions extends HttpServlet {
             Rdbms.closeRdbms();
             tstAssertSummary=null; 
             String exceptionMessage = error.getMessage();     
-            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
+            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);
         } finally {
             // release database resources
             try {
@@ -255,7 +255,7 @@ public class DBActions extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 
@@ -270,7 +270,7 @@ public class DBActions extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 

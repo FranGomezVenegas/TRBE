@@ -288,6 +288,7 @@ public class DataSampleStructureEnums {
         RESULT_LOCKED("DataSampleAnalysisResult_SampleAnalysisResultLocked", "", ""),
         SAME_RESULT_VALUE("DataSampleAnalysisResult_SampleAnalysisResultSameValue", "", ""),
         CONVERSION_NOT_ALLOWED("DataSample_SampleAnalysisResult_ConversionNotAllowed", "", ""),
+        CURRENTRESULT_ISEMPTY("DataSample_SampleAnalysisResult_CurrentResultIsEmpty", "", ""),
         NOT_NUMERIC_VALUE("DataSampleAnalysisResult_ValueNotNumericForQuantitativeParam", "", ""),
         SPECRULE_NOTIMPLEMENTED("DataSample_SampleAnalysisResult_SpecRuleNotImplemented", "", ""),
         FORRESULTUNCANCEL_STATUS_NOT_EXPECTED("DataSample_SampleUnCancel_StatusNotExpected", "", ""),

@@ -9,27 +9,16 @@ import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
 import lbplanet.utilities.LPEnums.CellHelper;
 import lbplanet.utilities.LPEnums.Indexed;
-import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ReferenceFld;
-import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
  */
 public class TblsDataAudit {
-
-    public static final String getTableCreationScriptFromDataAuditTable(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "SAMPLE": return createTableScript(TablesDataAudit.SAMPLE, schemaNamePrefix);
-            case "SESSION": return createTableScript(TablesDataAudit.SESSION, schemaNamePrefix);
-            case "CERTIF_USER_ANALYSIS_METHOD": return createTableScript(TablesDataAudit.CERTIF_USER_ANALYSIS_METHOD, schemaNamePrefix);
-            default: return "TABLE "+tableName+" NOT IN TBLSDATAAUDIT "+LPPlatform.LAB_FALSE;
-        }        
-    }
 
     public static final String FIELDS_NAMES_USER_ID="user_id";
     public static final String FIELDS_NAMES_USER_NAME="user_name";

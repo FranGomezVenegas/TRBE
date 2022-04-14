@@ -39,7 +39,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
         if (procReqInstance.getHasErrors()){
             procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
         }
         String actionName=procReqInstance.getActionName();
@@ -52,7 +52,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                 procReqInstance.killIt();
                 RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                 rd.forward(request, response);                                   
-//                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
+//                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
@@ -69,7 +69,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
             procReqInstance.killIt();
             if (exceptionMessage==null){exceptionMessage="null exception";}
             response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
-            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);      
+            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);      
         } finally {
             // release database resources
             try {

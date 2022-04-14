@@ -12,6 +12,8 @@ import databases.TblsAppAudit.TablesAppAudit;
 import databases.TblsAppConfig.TablesAppConfig;
 import databases.TblsCnfg.TablesConfig;
 import databases.TblsData.TablesData;
+import databases.TblsDataAudit.TablesDataAudit;
+import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsReqs.TablesReqs;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
@@ -61,7 +63,7 @@ public class DbObjects {
         JSONObject schemasObj=new JSONObject();
         TablesApp[] tblsApp = TablesApp.values();
         for (TablesApp curTbl: tblsApp){
-            tblCreateScript = createTableScript(curTbl);
+            tblCreateScript = createTableScript(curTbl, null, false, true);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
@@ -75,7 +77,7 @@ public class DbObjects {
         jsonObj=new JSONObject();
         TablesAppAudit[] tblsAppAudit = TablesAppAudit.values();
         for (TablesAppAudit curTbl: tblsAppAudit){
-            tblCreateScript = createTableScript(curTbl);
+            tblCreateScript = createTableScript(curTbl, null, false, true);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
@@ -89,7 +91,7 @@ public class DbObjects {
         jsonObj=new JSONObject();
         TablesAppConfig[] tblsAppCnfg = TablesAppConfig.values();
         for (TablesAppConfig curTbl: tblsAppCnfg){
-            tblCreateScript = createTableScript(curTbl);
+            tblCreateScript = createTableScript(curTbl, null, false, true);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
@@ -103,7 +105,7 @@ public class DbObjects {
         jsonObj=new JSONObject();
         TablesReqs[] tblsReqs = TablesReqs.values();
         for (TablesReqs curTbl: tblsReqs){
-            tblCreateScript = createTableScript(curTbl);
+            tblCreateScript = createTableScript(curTbl, null, false, true);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
@@ -149,9 +151,10 @@ public class DbObjects {
             TblsTesting.TablesTesting.SCRIPT, TblsTesting.TablesTesting.SCRIPT_STEPS,
             TblsTesting.TablesTesting.SCRIPT_BUS_RULES, TblsTesting.TablesTesting.SCRIPTS_COVERAGE, TblsTesting.TablesTesting.SCRIPT_SAVE_POINT,
             TablesConfig.SOP_META_DATA, TablesConfig.ZZZ_DB_ERROR, TablesConfig.ZZZ_PROPERTIES_ERROR,
-            TablesData.USER_SOP};
+            TablesData.USER_SOP,
+            TablesProcedureAudit.PROC_HASH_CODES, TablesDataAudit.SESSION};
         for (EnumIntTables curTbl: tblsTesting){
-            tblCreateScript = createTableScript(curTbl, procInstanceName);
+            tblCreateScript = createTableScript(curTbl, procInstanceName, false, true);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);

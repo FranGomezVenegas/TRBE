@@ -258,7 +258,7 @@ Object[][] firstStageData=new Object[0][0];
             if (errorCodeArr.length>1)
                 msgVariables=new Object[]{errorCodeArr[1]};
             ResponseMessages messages = instanceForActions.getMessages();
-            messages.addMainForError(errorCodeArr[0], msgVariables);
+            messages.addMainForError(errorCodeArr[0], msgVariables, null);
             
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{errorCode});
         }

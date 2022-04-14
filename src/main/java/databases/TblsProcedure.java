@@ -169,7 +169,9 @@ public class TblsProcedure {
         LABEL_EN("label_en", LPDatabase.string(), null, null, null, null),
         LABEL_ES("label_es", LPDatabase.string(), null, null, null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
-        CREATE_PICT_ONGCHNGE("create_picture_on_change", LPDatabase.booleanFld(), null, null, null, null),
+        ENABLE_CHANGE_TRACKING("enable_change_tracking", LPDatabase.booleanFld(false), null, null, null, null),
+        INCLUDE_CONFIG_CHANGES("include_config_changes", LPDatabase.booleanFld(true), null, null, null, null),
+        CREATE_PICT_ONGCHNGE("create_picture_on_change", LPDatabase.booleanFld(false), null, null, null, null),
         ;
         private ProcedureInfo(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

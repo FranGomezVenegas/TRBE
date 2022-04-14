@@ -1481,8 +1481,8 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
                     fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
                     String msgCode="resultLockedByProgramCorrectiveActionInProgress";
                     fldValueArr=LPArray.addValueToArray1D(fldValueArr, msgCode);
-                    String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "en", null, true);
-                    String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "es", null, false);
+                    String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "en", null, true, null);
+                    String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "es", null, false, null);
                     JSONObject reasonInfo=new JSONObject();
                     reasonInfo.put("message_en", errorTextEn);
                     reasonInfo.put("message_es", errorTextEs);
@@ -1495,8 +1495,8 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
                     fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
                     msgCode="resultLockedByProgramCorrectiveActionInProgress";
                     fldValueArr=LPArray.addValueToArray1D(fldValueArr, msgCode);
-                    errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "en", null, true);
-                    errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false);
+                    errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "en", null, true, null);
+                    errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false, null);
                 reasonInfo=new JSONObject();
                 reasonInfo.put("message_en", errorTextEn);
                 reasonInfo.put("message_es", errorTextEs);

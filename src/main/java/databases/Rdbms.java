@@ -1751,7 +1751,8 @@ if (1==1){Rdbms.transactionId=1; return;}
     * @return
     */
     public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName){
-        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);      
+        schemaName=schemaName.replace("\"", "");
         HashMap<String[], Object[][]> hm = new HashMap<>();          
         String[] fieldsToRetrieve=new String[]{"table_schema", "table_name", "column_name", "data_type"};
         String[] keyFieldValueNew=new String[]{schemaName, tableName};

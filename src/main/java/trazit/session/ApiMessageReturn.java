@@ -164,9 +164,9 @@ public class ApiMessageReturn {
         if (language == null) {
             language = GlobalVariables.DEFAULTLANGUAGE;
         }
-        errorCodeText = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, propertiesFilePrefix, null, className + "_" + msgCode, language, callerInfo, isOptional);
+        errorCodeText = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, propertiesFilePrefix, null, className + "_" + msgCode, language, callerInfo, isOptional, className);
         if (errorCodeText.length() == 0) {
-            errorCodeText = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, propertiesFilePrefix, null, msgCode, language, callerInfo, isOptional);
+            errorCodeText = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, propertiesFilePrefix, null, msgCode, language, callerInfo, isOptional, className);
         }
         if (errorCodeText.length() == 0) {
             errorCodeText = msgCode;
@@ -186,7 +186,7 @@ public class ApiMessageReturn {
             errorDetail = errorCodeText;
             //errorDetail = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode, language, callerInfo, false);
             if (errorDetail.length() == 0) {
-                errorDetail = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, msgCode, language, callerInfo, true);
+                errorDetail = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, msgCode, language, callerInfo, true, className);
             }
             if (errorDetail == null || errorDetail.length() == 0) {
                 if (msgVariables.length > 0) {

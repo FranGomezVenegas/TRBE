@@ -83,16 +83,16 @@ public class ResponseMessages {
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
-            testingMessageCodeVisitedObj.AddObject(procName, "", endpoint.getSuccessMessageCode(), endpoint.getSuccessMessageCode());        
+            testingMessageCodeVisitedObj.AddObject(procName, "", endpoint.getSuccessMessageCode(), endpoint.getSuccessMessageCode(), endpoint.getClass().getSimpleName());        
         this.setIsSuccess((Boolean) true);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{endpoint.getClass().getSimpleName(), endpoint.getSuccessMessageCode(), msgCodeVariables}, 3);
     }    
-    public void addMainForError(String messageCode, Object[] msgCodeVariables){
+    public void addMainForError(String messageCode, Object[] msgCodeVariables, String className){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
-            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode, messageCode);        
+            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode, messageCode, className);        
         this.setIsSuccess((Boolean) true);
         this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3);
@@ -102,7 +102,7 @@ public class ResponseMessages {
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
-            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode.getErrorCode(), messageCode.getErrorCode());        
+            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode.getErrorCode(), messageCode.getErrorCode(), messageCode.getClass().getSimpleName());        
         this.setIsSuccess((Boolean) true);
         this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode.getErrorCode(), msgCodeVariables, new Object[]{}}, 3);

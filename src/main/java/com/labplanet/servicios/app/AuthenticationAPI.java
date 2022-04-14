@@ -80,14 +80,14 @@ public class AuthenticationAPI extends HttpServlet {
                 endPoint = AuthenticationAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 Rdbms.closeRdbms(); 
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
             Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 Rdbms.closeRdbms(); 
                 LPFrontEnd.servletReturnResponseError(request, response,
-                        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;
             }                            
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
@@ -96,7 +96,8 @@ public class AuthenticationAPI extends HttpServlet {
                     Object[] ipCheck=frontEndIpChecker(request.getRemoteAddr());
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ipCheck[0].toString())){
                         Rdbms.closeRdbms();
-                        LPFrontEnd.servletReturnResponseError(request, response, ipCheck[ipCheck.length-1].toString(), null, language);                        return;
+                        LPFrontEnd.servletReturnResponseError(request, response, ipCheck[ipCheck.length-1].toString(), null, language, AuthenticationErrorTrapping.class.getSimpleName());
+                        return;
                     }
                     String dbUserName = argValues[0].toString();
                     String dbUserPassword = argValues[1].toString();
@@ -106,7 +107,7 @@ public class AuthenticationAPI extends HttpServlet {
                     Object[] personNameObj = UserAndRolesViews.getPersonByUser(dbUserName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personNameObj[0].toString())){
                         Rdbms.closeRdbms();
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.PERSON_NOT_FOUND.getErrorCode(), null, language);
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.PERSON_NOT_FOUND.getErrorCode(), null, language, AuthenticationErrorTrapping.class.getSimpleName());
                         return;                                                          
                     }      
                     String personName=personNameObj[0].toString();
@@ -115,7 +116,7 @@ public class AuthenticationAPI extends HttpServlet {
                         validUserPassword = UserAndRolesViews.isValidUserPassword(dbUserName, dbUserPassword);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(validUserPassword[0].toString())){     
                             Rdbms.closeRdbms(); 
-                            LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.INVALID_USER_PWD.getErrorCode(), null, language);              
+                            LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.INVALID_USER_PWD.getErrorCode(), null, language, AuthenticationErrorTrapping.class.getSimpleName());              
                             return;                               
                         }
                     }                                                          
@@ -160,7 +161,7 @@ public class AuthenticationAPI extends HttpServlet {
                     Object[] fieldsValue = new Object[]{token.getPersonName(), userRole};
                     Object[] newAppSession = LPSession.newAppSession(fieldsName, fieldsValue, request.getRemoteAddr());                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newAppSession[0].toString())){   
-                        LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.SESSION_ID_NOTGENERATED.getErrorCode(), null, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.SESSION_ID_NOTGENERATED.getErrorCode(), null, language, AuthenticationErrorTrapping.class.getSimpleName());              
                         return;                                                         
                     }                    
                     Integer sessionId = Integer.parseInt((String) newAppSession[newAppSession.length-1]);
@@ -172,7 +173,7 @@ public class AuthenticationAPI extends HttpServlet {
                             new String[]{Users.ESIGN.getName(), TblsApp.Users.TABS_ON_LOGIN.getName()});
                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userInfo[0][0].toString())){  
-                        LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.ESGININFO_NOTAVAILABLE.getErrorCode(), null, language);       
+                        LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.ESGININFO_NOTAVAILABLE.getErrorCode(), null, language, AuthenticationErrorTrapping.class.getSimpleName());       
                         return;                                                                                
                     }                               
                     String myFinalToken = token.createToken(token.getUserName(), token.getUsrPw(), token.getPersonName(), 
@@ -215,7 +216,7 @@ public class AuthenticationAPI extends HttpServlet {
 
                     token = new Token(myToken);
                     if (token.geteSign().length()==0){               
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.TOKEN_ESIGN_ISNULL.getErrorCode(), new Object[]{esignPhraseToCheck}, language);
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.TOKEN_ESIGN_ISNULL.getErrorCode(), new Object[]{esignPhraseToCheck}, language, AuthenticationErrorTrapping.class.getSimpleName());
                         return;                             
                     }
                     if(esignPhraseToCheck.equals(token.geteSign())){   
@@ -258,7 +259,7 @@ public class AuthenticationAPI extends HttpServlet {
                     token = new Token(finalToken);
                     Object[] newPwDiagn=setUserNewPassword(token.getUserName(), newPassword);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newPwDiagn[0].toString()))
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USR_NEWPWD_NOT_SET.getErrorCode(), new Object[]{token.getUserName()}, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USR_NEWPWD_NOT_SET.getErrorCode(), new Object[]{token.getUserName()}, language, AuthenticationErrorTrapping.class.getSimpleName());              
                     String appStartedDate=null;
                     if (token.getAppSessionStartedDate()!=null) appStartedDate=token.getAppSessionStartedDate().toString();
                     Token newToken= new Token("");
@@ -293,7 +294,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     token = new Token(finalToken);
                     newPwDiagn=setUserNewPassword(token.getUserName(), newPassword);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newPwDiagn[0].toString()))
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USR_NEWPWD_NOT_SET.getErrorCode(), new Object[]{token.getUserName()}, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USR_NEWPWD_NOT_SET.getErrorCode(), new Object[]{token.getUserName()}, language, AuthenticationErrorTrapping.class.getSimpleName());              
                     appStartedDate=null;
                     if (token.getAppSessionStartedDate()!=null) appStartedDate=token.getAppSessionStartedDate().toString();
                     newToken= new Token("");
@@ -321,7 +322,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     token = new Token(finalToken);
                     Object[] newEsignDiagn=setUserNewEsign(token.getUserName(), newEsign);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newEsignDiagn[0].toString()))
-                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USR_NEWPWD_NOT_SET.getErrorCode(), new Object[]{token.getUserName()}, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationErrorTrapping.USR_NEWPWD_NOT_SET.getErrorCode(), new Object[]{token.getUserName()}, language, AuthenticationErrorTrapping.class.getSimpleName());              
                     appStartedDate=null;
                     if (token.getAppSessionStartedDate()!=null) appStartedDate=token.getAppSessionStartedDate().toString();
                     newToken= new Token("");
@@ -357,12 +358,12 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     }
                     return;
                 default:      
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                     break;
             }
         }catch(@SuppressWarnings("FieldNameHidesFieldInSuperclass") Exception e){            
             String exceptionMessage = e.getMessage();     
-            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
+            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
         } finally {
             Rdbms.closeRdbms();
             // release database resources
@@ -386,7 +387,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 
@@ -401,7 +402,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
     /**

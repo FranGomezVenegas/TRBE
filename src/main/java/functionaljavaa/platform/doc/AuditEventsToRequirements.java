@@ -162,14 +162,14 @@ private static void declareInDatabase(String objectName, String eventName){
         String[] updFldName=new String[]{};
         Object[] updFldValue=new Object[]{};
         String propValueEn = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-            objectName, null, eventName, "en", false);
+            objectName, null, eventName, "en", false, null);
         
         if (!propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][1].toString())){
             updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.EVENT_PRETTY_EN.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, propValueEn);
         }
         String propValueEs = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-            objectName, null, eventName, "es", false);        
+            objectName, null, eventName, "es", false, null);        
         if (!propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][2].toString())){
             updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.EVENT_PRETTY_ES.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, propValueEn);
@@ -189,11 +189,11 @@ private static void declareInDatabase(String objectName, String eventName){
             AuditEventsDeclaration.AUDIT_OBJECT.getName(), AuditEventsDeclaration.EVENT_NAME.getName()});
         fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{LPDate.getCurrentTimeStamp(), objectName, eventName});
         String propValueEn = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-            objectName, null, eventName, "en", false);
+            objectName, null, eventName, "en", false, null);
         fieldNames=LPArray.addValueToArray1D(fieldNames, AuditEventsDeclaration.EVENT_PRETTY_EN.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, propValueEn);
         String propValueEs = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-            objectName, null, eventName, "es", false);
+            objectName, null, eventName, "es", false, null);
         fieldNames=LPArray.addValueToArray1D(fieldNames, AuditEventsDeclaration.EVENT_PRETTY_ES.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, propValueEs);
         Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), AuditEventsDeclaration.TBL.getName(), fieldNames, fieldValues);    
@@ -211,10 +211,10 @@ public static Object[] getDocInfoForAuditEvent(String object, String auditEvent)
         String[] fldsValuesToRetrieve=new String[]{};
         for (Languages curLang: GlobalVariables.Languages.values()){            
             propName=auditEvent;
-            propValue = Parameter.getMessageCodeValue(PropertyFilesType.AUDITEVENTS.toString(), object, null, auditEvent, curLang.getName(), false);
+            propValue = Parameter.getMessageCodeValue(PropertyFilesType.AUDITEVENTS.toString(), object, null, auditEvent, curLang.getName(), false, null);
             if (propValue.length()==0){
                 propValue=propName;
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Parameter.parameterBundleExists(PropertyFilesType.AUDITEVENTS.toString(), object, null, propName, curLang.getName(), false))){
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Parameter.parameterBundleExists(PropertyFilesType.AUDITEVENTS.toString(), object, null, propName, curLang.getName(), false, null))){
                     parm.createPropertiesFile(PropertyFilesType.AUDITEVENTS.toString(), object+"_"+curLang.getName());  
                     parm.addTagInPropertiesFile(PropertyFilesType.AUDITEVENTS.toString(),  object+"_"+curLang.getName(), propName, auditEvent);
                 }

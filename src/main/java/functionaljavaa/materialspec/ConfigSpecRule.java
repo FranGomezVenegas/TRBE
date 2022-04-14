@@ -479,7 +479,8 @@ public class ConfigSpecRule {
           this.ruleIsQualitative=true;
           String[] qualitSpecTestingArray = ruleVariables.split("\\"+specArgumentsSeparator);
           this.qualitativeRule = qualitSpecTestingArray[0];
-          this.qualitativeRuleValues = qualitSpecTestingArray[1];
+          if (qualitSpecTestingArray.length>=2)
+            this.qualitativeRuleValues = qualitSpecTestingArray[1];
           if (qualitSpecTestingArray.length == 3) {
               this.qualitativeRuleSeparator  = qualitSpecTestingArray[2];
           }

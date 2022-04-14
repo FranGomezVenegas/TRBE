@@ -46,7 +46,7 @@ public class TestingUOMFamilyTable extends HttpServlet {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true, "");
         if (procReqInstance.getHasErrors()){
             procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
         }
 
@@ -132,7 +132,7 @@ public class TestingUOMFamilyTable extends HttpServlet {
         catch(IOException error){
             Rdbms.closeRdbms();
             String exceptionMessage = error.getMessage();     
-            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
+            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
         } finally {
             // release database resources
             try {
@@ -152,7 +152,7 @@ public class TestingUOMFamilyTable extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 
@@ -167,7 +167,7 @@ public class TestingUOMFamilyTable extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 

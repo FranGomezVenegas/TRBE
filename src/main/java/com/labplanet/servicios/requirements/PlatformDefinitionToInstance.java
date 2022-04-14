@@ -63,7 +63,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
         Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response,
-                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "");
+                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "", LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;
         }                
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, arguments);                
@@ -142,7 +142,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 
@@ -157,7 +157,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 

@@ -59,17 +59,17 @@ public class Parameter {
 /*    public static String getMessageCodeValue(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
         return getMessageCodeValue(parameterFolder, procName, schemaSuffix, parameterName, language, true);       
     }*/
-    public static String getMessageCodeValue(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Object[] callerInfo, Boolean reportMissingProp) {
+    public static String getMessageCodeValue(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Object[] callerInfo, Boolean reportMissingProp, String className) {
         if (reportMissingProp==null) reportMissingProp=true;
-        return getMessageCodeValue(parameterFolder, propFilePrefix, schemaSuffix, parameterName, language, reportMissingProp, null, callerInfo);       
+        return getMessageCodeValue(parameterFolder, propFilePrefix, schemaSuffix, parameterName, language, reportMissingProp, null, callerInfo, className);       
     }
-    public static String parameterBundleExists(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {
-        return getMessageCodeValue(parameterFolder, propFilePrefix, schemaSuffix, parameterName, language, reportMissingProp, true, null);        
+    public static String parameterBundleExists(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp, String className) {
+        return getMessageCodeValue(parameterFolder, propFilePrefix, schemaSuffix, parameterName, language, reportMissingProp, true, null, className);
     }
-    public static String getMessageCodeValue(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp) {    
-        return getMessageCodeValue(parameterFolder, propFilePrefix, schemaSuffix, parameterName, language, reportMissingProp, null, null);
+    public static String getMessageCodeValue(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp, String className) {    
+        return getMessageCodeValue(parameterFolder, propFilePrefix, schemaSuffix, parameterName, language, reportMissingProp, null, null, className);
     }
-    private static String getMessageCodeValue(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp, Boolean returnFalseIfMissing, Object[] callerInfo) {
+    private static String getMessageCodeValue(String parameterFolder, String propFilePrefix, String schemaSuffix, String parameterName, String language, Boolean reportMissingProp, Boolean returnFalseIfMissing, Object[] callerInfo, String className) {
         ResourceBundle prop = null;
         if (parameterFolder==null){parameterFolder="config";}
         String filePath = "parameter."+parameterFolder+"."+propFilePrefix;
@@ -89,13 +89,13 @@ public class Parameter {
                         parameterName, reportMissingProp);
                 TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
                 if (testingMessageCodeVisitedObj!=null)
-                    testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, "Not found!");
+                    testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, "Not found!", className);
                 return "";
             } else {
                 String parameterValue = prop.getString(parameterName);
                 TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
                 if (testingMessageCodeVisitedObj!=null)
-                    testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, parameterValue);
+                    testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, parameterValue, className);
                 return parameterValue;
             }
         } catch (Exception e) {            
@@ -109,13 +109,13 @@ public class Parameter {
                     parameterName, reportMissingProp);
             TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
             if (testingMessageCodeVisitedObj!=null)
-                testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, "ERROR: Not Found!");            
+                testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, "ERROR: Not Found!", className);            
             return "";
         }
     }
   
-    private Boolean parameterInFile(String parameterFolder, String schemaName, String areaName, String parameterName, String language){
-        return !"".equals(getMessageCodeValue(parameterFolder, schemaName, areaName, parameterName, language, null));
+    private Boolean parameterInFile(String parameterFolder, String schemaName, String areaName, String parameterName, String language, String className){
+        return !"".equals(getMessageCodeValue(parameterFolder, schemaName, areaName, parameterName, language, null, className));
     }
 
     public static String getBusinessRuleAppFile(String parameterName, Boolean reportMissingProp) {

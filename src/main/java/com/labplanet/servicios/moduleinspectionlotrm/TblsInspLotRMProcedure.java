@@ -24,7 +24,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class TblsInspLotRMProcedure {
-    public static final String getTableCreationScriptFromDataProcedureTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
+/*    public static final String getTableCreationScriptFromDataProcedureTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "PROGRAM_CORRECTIVE_ACTIONS": return createTableScript(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, schemaNamePrefix);
             case "INVESTIGATION": return createTableScript(TblsProcedure.TablesProcedure.INVESTIGATION, schemaNamePrefix);
@@ -33,7 +33,7 @@ public class TblsInspLotRMProcedure {
             case "SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION": return createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, schemaNamePrefix);
             default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
         }        
-    }    
+    }    */
     public enum zSampleStageTimingCapture{
 
         /**

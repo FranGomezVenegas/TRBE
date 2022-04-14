@@ -31,6 +31,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.LAB_FALSE;
 import static lbplanet.utilities.LPPlatform.LAB_TRUE;
+import lbplanet.utilities.LPPlatform.LpPlatformBusinessRules;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import org.json.simple.JSONArray;
@@ -63,7 +64,7 @@ public class TestingRegressionUAT extends HttpServlet {
         Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
         if (scriptId==null){
             procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, language);                              
+            LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, language, null);
             return;
         }
 
@@ -75,7 +76,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, true);        
             if (procReqInstance.getHasErrors()){
                 procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage());                   
+                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
                 return;
             }
                 TestingServletsConfig[] endPoints = TestingServletsConfig.values();
@@ -96,14 +97,14 @@ public class TestingRegressionUAT extends HttpServlet {
             procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);
             if (procReqInstance==null){
                 LPFrontEnd.servletReturnResponseError(request, response, 
-                    "Error", null, procReqInstance.getLanguage());              
+                    "Error", null, procReqInstance.getLanguage(), null);              
                 return;
             }
             String sessionLang=procReqInstance.getLanguage();
             String errMsg=procReqInstance.getErrorMessage();
             if (procReqInstance.getHasErrors()){
                 procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, errMsg, null, sessionLang);              
+                LPFrontEnd.servletReturnResponseError(request, response, errMsg, null, sessionLang, null);
                 return;
             }
             
@@ -112,7 +113,7 @@ public class TestingRegressionUAT extends HttpServlet {
             Token token = new Token(finalToken);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
                 procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, sessionLang);                              
+                LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, sessionLang, null);
                 return;
             }                
             String repositoryName=LPPlatform.buildSchemaName(GlobalVariables.Schemas.APP_TESTING.getName(), "");
@@ -237,17 +238,17 @@ public class TestingRegressionUAT extends HttpServlet {
                         theProcActionEnabled = isTheProcActionEnabled(token, procInstanceName, (String) LPNulls.replaceNull(curStep[1]), bi);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())){
                             actionsList=LPArray.addValueToArray1D(actionsList, "Step "+curStep[0].toString()+", Action:"+curStep[1].toString());
-                            Logger.getLogger("In the script "+scriptId+" and step "+LPNulls.replaceNull(curStep[0]).toString()+"the action"+LPNulls.replaceNull(curStep[0]).toString()+" is not enabled"); 
+                            Logger.getLogger("In the script "+scriptId+" and step "+LPNulls.replaceNull(curStep[0]).toString()+"the action"+LPNulls.replaceNull(curStep[1]).toString()+" is not enabled"); 
     //                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getName(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language);              
     //                        return;
                         }else{
                             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
-                            //if (testingBusinessRulesVisitedObj!=null)
-                            //testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "ND", (String) LPNulls.replaceNull(curStep[1]), "ND");                                    
+                            if (testingBusinessRulesVisitedObj!=null)
+                            testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "ND", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+LPNulls.replaceNull(curStep[1]).toString(), "ND");
                         }                            
                     }
                     if (actionsList!=null){
-                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getErrorCode(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language);              
+                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getErrorCode(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language, null);
                         return;
                     }
                 }

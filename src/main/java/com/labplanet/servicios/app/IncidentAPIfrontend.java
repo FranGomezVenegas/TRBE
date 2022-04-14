@@ -62,7 +62,7 @@ public class IncidentAPIfrontend extends HttpServlet {
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
+                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;          
         }             
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
@@ -71,14 +71,14 @@ public class IncidentAPIfrontend extends HttpServlet {
         Token token = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
                 LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language);              
+                        LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                             
         }
         IncidentAPIfrontendEndpoints endPoint = null;
         try{
             endPoint = IncidentAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
         }
         ProcedureRequestSession.getInstanceForActions(request, response, false);
@@ -121,11 +121,11 @@ public class IncidentAPIfrontend extends HttpServlet {
                         if (actionPosic>-1){
                             String action=LPNulls.replaceNull(currIncident[actionPosic]).toString();
                             String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-                                DataIncidentAuditEvents.class.getSimpleName(), null, action, "en", false);
+                                DataIncidentAuditEvents.class.getSimpleName(), null, action, "en", false, null);
                             if (propValue.length()==0) propValue=action;
                             jObj.put(TblsDataAudit.Sample.ACTION_PRETTY_EN.getName(), propValue);
                             propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-                                DataIncidentAuditEvents.class.getSimpleName(), null, action, "es", false);
+                                DataIncidentAuditEvents.class.getSimpleName(), null, action, "es", false, null);
                             if (propValue.length()==0) propValue=action;
                             jObj.put(TblsDataAudit.Sample.ACTION_PRETTY_ES.getName(), propValue);
                         }

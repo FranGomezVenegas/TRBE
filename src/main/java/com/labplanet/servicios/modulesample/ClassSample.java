@@ -301,6 +301,15 @@ public class ClassSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), resultId);
                     this.messageDynamicData=new Object[]{resultId};
                     break;
+                case RESULT_CHANGE_UOM:
+                    resultId = 0;
+                    resultId = (Integer) argValues[0];
+                    String newUOM = null;
+                    newUOM = argValues[1].toString();
+                    diagn = smpAnaRes.sarChangeUom(resultId, newUOM, smp);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
+                    this.messageDynamicData=new Object[]{sampleId, newUOM};
+                    break;
                 case ENTERRESULT_BY_ANALYSIS_NAME:
                     sampleId = (Integer) argValues[0];
                     String analysisName = argValues[1].toString();

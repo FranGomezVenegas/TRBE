@@ -195,7 +195,7 @@ public enum AuthenticationErrorTrapping  implements EnumIntMessages{
         try{
         processRequest(request, response);
         }catch(IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 
@@ -210,7 +210,7 @@ public enum AuthenticationErrorTrapping  implements EnumIntMessages{
         try{
         processRequest(request, response);
         }catch(IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 

@@ -152,7 +152,7 @@ public class TstDataSample extends HttpServlet {
                 try{
                     endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
                 }catch(Exception e){
-//                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language);              
+//                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                     //return;                   
                             dataSample[0] = "LABPLANET_FALSE";
                             dataSample[1] = "function "+actionName+" not recognized"; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = "function "+actionName+" not recognized"; 
@@ -489,7 +489,7 @@ public class TstDataSample extends HttpServlet {
             Rdbms.closeRdbms();
             tstAssertSummary=null; 
             String exceptionMessage = ex.getMessage();     
-            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
+            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
         } finally {
             // release database resources
             try {
@@ -510,7 +510,7 @@ public class TstDataSample extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 
@@ -525,7 +525,7 @@ public class TstDataSample extends HttpServlet {
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 

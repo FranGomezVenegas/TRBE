@@ -6,6 +6,7 @@
 package functionaljavaa.testingscripts;
 
 //import databases.Rdbms;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -31,12 +32,13 @@ public class TestingMessageCodeVisited {
         jsonContent=new JSONArray();
     }
     public JSONArray getJsonContent(){return jsonContent;}
-    public void AddObject(String procName, String suffix, String messageCode, String messageValue){
+    public void AddObject(String procName, String suffix, String messageCode, String messageValue, String className){
         JSONObject jObj=new JSONObject();
         jObj.put("procName", procName);
         jObj.put("suffix", suffix);
         jObj.put("messageCode", messageCode);
         jObj.put("messageValue", messageValue);
+        jObj.put("className", LPNulls.replaceNull(className));
         this.jsonContent.add(jObj);
     }
     

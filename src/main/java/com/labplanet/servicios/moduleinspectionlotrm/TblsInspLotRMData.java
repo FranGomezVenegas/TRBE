@@ -23,7 +23,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class TblsInspLotRMData {
-    public static final String getTableCreationScriptFromDataTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
+/*    public static final String getTableCreationScriptFromDataTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "TRAINING": return createTableScript(TblsData.TablesData.TRAINING, schemaNamePrefix);
             case "CERTIF_USER_ANALYSIS_METHOD": return createTableScript(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, schemaNamePrefix);
@@ -36,7 +36,7 @@ public class TblsInspLotRMData {
             case "SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW": return ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN INSPLOT_RM_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
         }        
-    }    
+    }    */
     /**
      *
      */

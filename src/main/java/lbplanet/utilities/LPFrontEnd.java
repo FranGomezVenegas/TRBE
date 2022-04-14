@@ -84,7 +84,7 @@ public class LPFrontEnd {
             isConnected = Rdbms.getRdbms().startRdbms(dbName);      
         if (!isConnected){      
             LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.ApiErrorTraping.PROPERTY_DATABASE_NOT_CONNECTED.getErrorCode(), null, null);                                                                
+                    LPPlatform.ApiErrorTraping.PROPERTY_DATABASE_NOT_CONNECTED.getErrorCode(), null, null, LPPlatform.ApiErrorTraping.class.getSimpleName());                                                                
         }  
         return isConnected;
     }
@@ -264,13 +264,13 @@ public class LPFrontEnd {
      * @param errorPropertyValue
      * @return
      */
-    private static JSONObject responseJSONError(String errorPropertyName, Object[] errorPropertyValue){
+    private static JSONObject responseJSONError(String errorPropertyName, Object[] errorPropertyValue, String className){
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.MESSAGE.getLabelName(), errorPropertyName);
         //String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName+"_detail", null);
-        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, null, true);
+        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, null, true, className);
         if (errorTextEn==null || errorTextEn.length()==0)
-            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "en", true);
+            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "en", true, null);
         if (errorPropertyValue!=null){
             for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){                
                 errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(errorPropertyValue[iVarValue-1]).toString());
@@ -278,9 +278,9 @@ public class LPFrontEnd {
         }
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
 //        String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName+"_detail", "es");
-        String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, "es", false);
+        String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, "es", false, className);
         if (errorTextEs==null || errorTextEs.length()==0)
-            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "es", false);
+            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "es", false , null);
         if (errorPropertyValue!=null){
             for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){
                 errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(errorPropertyValue[iVarValue-1]).toString());
@@ -349,8 +349,8 @@ public class LPFrontEnd {
      * @param errorCodeVars
      * @param language
      */
-    public static final void servletReturnResponseError(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] errorCodeVars, String language){  
-        JSONObject errJSONMsg = LPFrontEnd.responseJSONError(errorCode,errorCodeVars);
+    public static final void servletReturnResponseError(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] errorCodeVars, String language, String className){  
+        JSONObject errJSONMsg = LPFrontEnd.responseJSONError(errorCode,errorCodeVars, className);
         request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());
         servetInvokeResponseErrorServlet(request, response);
     }
@@ -554,8 +554,8 @@ public class LPFrontEnd {
             errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
             errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();                        
         }else{
-            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "en", null, true);
-            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "es", null, false);
+            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "en", null, true, endpoint.getClass().getSimpleName());
+            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "es", null, false, endpoint.getClass().getSimpleName());
             if (endpoint!=null){
                 if (msgDynamicValues!=null){
                     for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){

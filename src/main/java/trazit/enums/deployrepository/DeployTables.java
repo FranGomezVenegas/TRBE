@@ -6,7 +6,9 @@
 package trazit.enums.deployrepository;
 
 import databases.DbObjects;
+import databases.Rdbms;
 import functionaljavaa.businessrules.BusinessRules;
+import java.util.HashMap;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPNulls;
@@ -25,25 +27,55 @@ public class DeployTables {
 
 public enum CreateFldTypes{ADD, STOP, DISCARD}    
     
-public static String createTableScript(EnumIntTables tableObj){
-    return createTableScript(tableObj, null);
+public static String createTableScript(EnumIntTables tableObj, Boolean run, Boolean refreshTableIfExists){
+    return createTableScript(tableObj, null, run, refreshTableIfExists);
 }
     
-public static String createTableScript(EnumIntTables tableObj, String procInstanceName){
-    String seqScript="";
+public static String createTableScript(EnumIntTables tableObj, String procInstanceName, Boolean run, Boolean refreshTableIfExists){
+    String schemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), tableObj.getRepositoryName());        
+    Object[] dbTableExists = Rdbms.dbTableExists(schemaName, tableObj.getTableName());
+    StringBuilder seqScript=new StringBuilder(0);
+    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
+        if (!run && !refreshTableIfExists)
+            return "table "+tableObj.getTableName()+" already exists";        
+        if (refreshTableIfExists){
+            HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(schemaName, tableObj.getTableName());
+            String[] fldName= dbTableGetFieldDefinition.keySet().iterator().next();   
+            Integer valuePosicInArray = LPArray.valuePosicInArray(fldName, "column_name");
+            if (valuePosicInArray>-1){
+                Object[][] fldValues = dbTableGetFieldDefinition.get(fldName);
+                Object[] tbldFldsArrObj = LPArray.getColumnFromArray2D(fldValues, valuePosicInArray);
+                String[] tbldFldsArr = LPArray.convertObjectArrayToStringArray(tbldFldsArrObj);                     
+                for (EnumIntTableFields curFld: tableObj.getTableFields()){
+                    if (!LPArray.valueInArray(tbldFldsArrObj, curFld.getName())){
+                        if (seqScript.length()>0)seqScript=seqScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(curFld.getFieldType());
+                        seqScript=seqScript.append(" add column "+curFld.getName()+" "+currFieldDefBuilder);
+                    }
+                }
+                seqScript=new StringBuilder(0).append(alterTableScript(tableObj, procInstanceName, true)).append(seqScript);
+            }
+        }        
+    }else{
+        if (run){
+            seqScript=seqScript.append(sequenceScript(tableObj, procInstanceName));
+            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(schemaName, tableObj.getTableName(), seqScript.toString(), new Object[]{});
+        }else
+            seqScript=new StringBuilder(0);
+        seqScript=seqScript.append(createTableBeginScript(tableObj, procInstanceName));
+        seqScript=seqScript.append(primaryKeyScript(tableObj));
+        seqScript=seqScript.append(foreignKeyScript(tableObj, procInstanceName));
+        seqScript=seqScript.append(createTableEndScript());
 
-    seqScript=seqScript+sequenceScript(tableObj, procInstanceName);
-    seqScript=seqScript+createTableBeginScript(tableObj, procInstanceName);
-    seqScript=seqScript+primaryKeyScript(tableObj);
-    seqScript=seqScript+foreignKeyScript(tableObj, procInstanceName);
-    seqScript=seqScript+createTableEndScript();
-        
-    seqScript=seqScript+alterTableScript(tableObj, procInstanceName);
-    seqScript=seqScript+tableCommentScript(tableObj, procInstanceName);
-    seqScript=seqScript+fieldCommentScript(tableObj, procInstanceName);
-    
-    
-    return seqScript;
+        seqScript=seqScript.append(alterTableScript(tableObj, procInstanceName, false));
+        seqScript=seqScript.append(tableCommentScript(tableObj, procInstanceName));
+        seqScript=seqScript.append(fieldCommentScript(tableObj, procInstanceName));
+        Object[] prepUpQuery;
+        if (run)
+            prepUpQuery = Rdbms.prepUpQueryWithDiagn(schemaName, tableObj.getTableName(), seqScript.toString(), new Object[]{});
+
+    }    
+     return seqScript.toString();
 }
 
 private static String sequenceScript(EnumIntTables tableObj, String procInstanceName){
@@ -102,11 +134,15 @@ private static String primaryKeyScript(EnumIntTables tableObj){
     }    
     return seqScript;
 }
-private static String alterTableScript(EnumIntTables tableObj, String procInstanceName){
+private static String alterTableScript(EnumIntTables tableObj, String procInstanceName, Boolean getAlterTableOnly){
     String script=""; 
     String schemaName=tableObj.getRepositoryName();
-    schemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), schemaName);    
-    script=LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";";
+    schemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), schemaName);   
+    if (!getAlterTableOnly)
+        script=script+LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace();
+    script=script+"  ALTER TABLE  #SCHEMA.#TBL";
+    if (!getAlterTableOnly)
+        script=script+LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";";
     script=script.replace("#SCHEMA", schemaName).replace("#TBL", tableObj.getTableName())
         .replace("#OWNER", DbObjects.POSTGRES_DB_OWNER).replace("#TABLESPACE", DbObjects.POSTGRES_DB_TABLESPACE);        
     return script;
@@ -137,7 +173,6 @@ private static String fieldCommentScript(EnumIntTables tableObj, String procInst
     }
     return script;
 }
-
 private static String createTableBeginScript(EnumIntTables tableObj, String procInstanceName){
     BusinessRules bi=new BusinessRules(procInstanceName, null);
     String script="";    
@@ -149,7 +184,7 @@ private static String createTableBeginScript(EnumIntTables tableObj, String proc
         StringBuilder currFieldDefBuilder = new StringBuilder(curFld.getFieldType());
         String addFldToScript = addFldToScript(curFld, bi);
         if (addFldToScript.equalsIgnoreCase(CreateFldTypes.ADD.name())){
-            if (fieldsScript.length()>0)fieldsScript.append(", ");
+            if (fieldsScript.length()>0)fieldsScript.append(", ");            
             if (tableObj.getSeqName()!=null && tableObj.getSeqName().equalsIgnoreCase(curFld.getName())){
                 //fieldsScript.append(curFld.getName()).append(" ").append(currFieldDefBuilder);
                 String fldSeq="";

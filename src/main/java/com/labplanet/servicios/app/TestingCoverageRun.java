@@ -34,25 +34,25 @@ public class TestingCoverageRun extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException {        
         ProcedureRequestSession procReqInstance = null;
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
         StringBuilder fileContentBuilder = new StringBuilder(0);        
         String language = LPFrontEnd.setLanguage(request); 
 
+        procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);
         try (PrintWriter out = response.getWriter()) {               
-            procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);
             if (procReqInstance==null){
                 LPFrontEnd.servletReturnResponseError(request, response, 
-                    "Error", null, procReqInstance.getLanguage());              
+                    "Error", null, procReqInstance.getLanguage(), null);              
                 return;
             }
             String sessionLang=procReqInstance.getLanguage();
             String errMsg=procReqInstance.getErrorMessage();
             if (procReqInstance.getHasErrors()){
                 procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, errMsg, null, sessionLang);              
+                LPFrontEnd.servletReturnResponseError(request, response, errMsg, null, sessionLang,null);
                 return;
             }
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
@@ -60,25 +60,25 @@ public class TestingCoverageRun extends HttpServlet {
             Token token = new Token(finalToken);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
                 procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, sessionLang);                              
+                LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, sessionLang, null);
                 return;
             }                
             String dbName=request.getParameter("dbName");
             if (dbName==null){
                 procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, "Argument dbName not found in the call", null, sessionLang);                              
+                LPFrontEnd.servletReturnResponseError(request, response, "Argument dbName not found in the call", null, sessionLang, null);
                 return;
             }            
             String procInstanceName=request.getParameter("procInstanceName");
             if (procInstanceName==null){
                 procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, "Argument procInstanceName not found in the call", null, sessionLang);                              
+                LPFrontEnd.servletReturnResponseError(request, response, "Argument procInstanceName not found in the call", null, sessionLang, null);
                 return;
             }            
             String coverageId=request.getParameter("coverageId");
             if (coverageId==null){
                 procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, "Argument coverageId not found in the call", null, sessionLang);                              
+                LPFrontEnd.servletReturnResponseError(request, response, "Argument coverageId not found in the call", null, sessionLang, null);
                 return;
             }            
             //out.println("Running Testing Coverage for id "+coverageId);
@@ -86,6 +86,9 @@ public class TestingCoverageRun extends HttpServlet {
             tstCov=new TestingCoverage(procInstanceName, Integer.valueOf(coverageId));  
             //out.println(tstCov.getJsonSummary());
             LPFrontEnd.servletReturnSuccess(request, response, tstCov.getJsonSummary());
+        }
+        finally{
+            procReqInstance.killIt();
         }
     }
 

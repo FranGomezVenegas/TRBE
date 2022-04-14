@@ -413,6 +413,8 @@ public class TblsCnfg {
         SPEC_TEXT_RED_AREA_ES("spec_text_red_area_es",  LPDatabase.string(), null, null, null, null),
         SPEC_TEXT_YELLOW_AREA_ES("spec_text_yellow_area_es",  LPDatabase.string(), null, null, null, null),
         SPEC_TEXT_GREEN_AREA_ES("spec_text_green_area_es",  LPDatabase.string(), null, null, null, null),
+        MAX_DP("max_dp", LPDatabase.integer(), null, null, null, null),
+        LIST_ENTRY("list_entry",  LPDatabase.string(), null, null, null, null),
         ;
         private SpecLimits(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

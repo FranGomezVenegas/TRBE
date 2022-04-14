@@ -60,7 +60,7 @@ public final class EnvMonitSchemaDefinition {
         JSONObject jsonObj = new JSONObject();        
         String tblCreateScript="";
         
-        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION);
+        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, null, false, true);
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsProcedure.ProgramCorrectiveAction", tblCreateScript);
         

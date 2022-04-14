@@ -25,7 +25,7 @@ public class LPAPIEndPointdocumentation {
         this.documentChapterName=chapterName;
     }
     public String getBriefDescription(String language){
-        return Parameter.getMessageCodeValue(Parameter.PropertyFilesType.ENDPOINTDOCUMENTATION.getAppConfigParamName(), configFileName, null, configFileTag, language, null, true);
+        return Parameter.getMessageCodeValue(Parameter.PropertyFilesType.ENDPOINTDOCUMENTATION.getAppConfigParamName(), configFileName, null, configFileTag, language, null, true, null);
     }
     public String getDocumentName(){return this.documentName;}    
     public Integer getDocChapterId(){return this.documentChapterId;}

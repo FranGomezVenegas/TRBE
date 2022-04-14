@@ -136,7 +136,7 @@ public class AppIncident {
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isActive[0].toString())){
             isActive[0]=LPPlatform.LAB_FALSE;
             ResponseMessages messages = instanceForActions.getMessages();
-            messages.addMainForError((String) isActive[isActive.length-2], new Object[]{incidentId});
+            messages.addMainForError((String) isActive[isActive.length-2], new Object[]{incidentId}, IncidentAPIErrorMessages.class.getSimpleName());
             return isActive;
         }
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();

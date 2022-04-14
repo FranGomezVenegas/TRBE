@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
+import databases.DbEncryption;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -14,6 +15,7 @@ import databases.TblsAppProcDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData.TablesData;
 import databases.TblsProcedure;
+import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsTrazitDocTrazit;
 import databases.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
@@ -38,6 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
@@ -92,9 +95,31 @@ public class TestingServer extends HttpServlet {
             //return 
 //         Objects.hash(nombre,apellidos);
             //}
-            int hashCode=LPDate.getCurrentTimeStamp().hashCode();
+            //int hashCode=LPDate.getCurrentTimeStamp().hashCode();
             //int hashCode = this.getClass().hashCode();
-        out.println(hashCode);
+            //out.println(hashCode);
+            String valueToDecrypt="noencrypted";
+            out.println("Value: " + valueToDecrypt);
+            Object[] decryptVal = DbEncryption.decryptValue(valueToDecrypt);
+            out.println("Decrypted back: "+decryptVal[decryptVal.length-1].toString());
+if (1==1)return;
+        out.println("Time to encrypt data ....");
+        Object[] valsToEncrytp=new Object[]{"hola", new BigDecimal("123.2"), LPDate.getCurrentTimeStamp()};
+        for (Object valueToEncrypt: valsToEncrytp){
+            out.println("Value: " + valueToEncrypt);
+            Object[] encryptValue = DbEncryption.encryptValue(valueToEncrypt);
+            out.println("Encrypted: "+encryptValue[encryptValue.length-1].toString());
+            Object[] decryptValue = DbEncryption.decryptValue(encryptValue[encryptValue.length-1].toString());
+            out.println("Decrypted back: "+decryptValue[decryptValue.length-1].toString());
+            out.println("");
+        }
+            Rdbms.stablishDBConection("demoplatform");         
+            String tblCreateScript = createTableScript(TablesProcedureAudit.PROC_HASH_CODES, 
+                    "em-air-spr1", false, true);
+            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(TablesProcedureAudit.PROC_HASH_CODES.getRepositoryName(), 
+                    TablesProcedureAudit.PROC_HASH_CODES.getTableName(), 
+                    tblCreateScript, new Object[]{});
+            Rdbms.closeRdbms();
 if (1==1)return;        
         Parameter parm=new Parameter();
         String filePrefix="goleef1";
@@ -115,6 +140,7 @@ if (1==1)return;
             }
             out.println(filePrefix+" file created and found!");
         }
+        
         if (1==1)return;
         
         
@@ -130,12 +156,12 @@ if (1==1)return;
         try{
             Rdbms.stablishDBConection("labplanet"); 
 String schemaName="em-demo-a";
-out.println(" "+TablesData.SAMPLE.getTableName()+" >> "+createTableScript(TablesData.SAMPLE, schemaName));
+out.println(" "+TablesData.SAMPLE.getTableName()+" >> "+createTableScript(TablesData.SAMPLE, schemaName, false, true));
 out.println("");
 schemaName="proc-deploy";
-out.println(schemaName+" "+TablesData.SAMPLE.getTableName()+" >> "+createTableScript(TablesData.SAMPLE, schemaName));
+out.println(schemaName+" "+TablesData.SAMPLE.getTableName()+" >> "+createTableScript(TablesData.SAMPLE, schemaName, false, true));
 out.println("");
-out.println(schemaName+" "+TablesData.PRODUCT.getTableName()+" >> "+createTableScript(TablesData.PRODUCT, schemaName));
+out.println(schemaName+" "+TablesData.PRODUCT.getTableName()+" >> "+createTableScript(TablesData.PRODUCT, schemaName, false, true));
 out.println("");             
 /*            Rdbms.stablishDBConection("labplanet"); 
             schemaName="proc-deploy";
@@ -261,7 +287,7 @@ lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new 
 
                 
     LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
-String tblCreateScript2=createTableScript(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS);
+String tblCreateScript2=createTableScript(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, false, true);
 Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 if (1==1) return;
@@ -308,7 +334,7 @@ for (int curPlusDays: plusDays){
     }
 }
 Rdbms.stablishDBConection("labplanet");
-tblCreateScript2=createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, "em-demo-a");
+tblCreateScript2=createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, "em-demo-a", false, true);
 Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 
@@ -825,7 +851,7 @@ String holidaysCalendar="España Comunidad X 2019";
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 
@@ -840,7 +866,7 @@ String holidaysCalendar="España Comunidad X 2019";
         try{
         processRequest(request, response);
         }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
 

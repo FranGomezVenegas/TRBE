@@ -48,11 +48,11 @@ public class xTablesDeployment extends HttpServlet {
             out.println("<body>");
             out.println("<h1>Servlet TablesDeployment at " + request.getContextPath() + "</h1>");
             
-            String tblCreateScript=createTableScript(TblsCnfg.TablesConfig.SOP_META_DATA, schemaNamePrefix);
+            String tblCreateScript=createTableScript(TblsCnfg.TablesConfig.SOP_META_DATA, schemaNamePrefix, false, true);
             //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
             out.println("<p>Table "+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName()+" created.</p>");
             
-            tblCreateScript=createTableScript(TblsData.TablesData.USER_SOP, schemaNamePrefix);
+            tblCreateScript=createTableScript(TblsData.TablesData.USER_SOP, schemaNamePrefix, false, true);
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
             out.println("<p>Table "+TblsData.TablesData.USER_SOP.getTableName()+" created.</p>");
 
@@ -108,7 +108,7 @@ public class xTablesDeployment extends HttpServlet {
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
             out.println("<p>Table config."+TblsGenomaConfig.VariablesSet.TBL.getName()+" created.</p>");
 
-            tblCreateScript=createTableScript(TblsDataAudit.TablesDataAudit.SESSION, schemaNamePrefix);
+            tblCreateScript=createTableScript(TblsDataAudit.TablesDataAudit.SESSION, schemaNamePrefix, false, true);
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
             out.println("<p>Table data-audit."+TblsDataAudit.TablesDataAudit.SESSION.getTableName()+" created.</p>");
             

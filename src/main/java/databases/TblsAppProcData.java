@@ -6,14 +6,12 @@
 package databases;
 
 import lbplanet.utilities.LPDatabase;
-import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ReferenceFld;
-import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -21,13 +19,6 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class TblsAppProcData {
-    public static final String getTableCreationScriptFromDataTable(String tableName, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "INSTRUMENT_EVENT": return createTableScript(TablesAppProcData.INSTRUMENT_EVENT);
-            default: return "TABLE "+tableName+" NOT IN TBLDATA "+LPPlatform.LAB_FALSE;
-        }        
-    }
-
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_PROC_DATA.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = false;
     public enum TablesAppProcData implements EnumIntTables{

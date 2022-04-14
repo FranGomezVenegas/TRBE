@@ -22,14 +22,14 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class TblsInspLotRMDataAudit {
-    public static final String getTableCreationScriptFromDataAuditTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
+/*    public static final String getTableCreationScriptFromDataAuditTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
             case "CERTIF_USER_ANALYSIS_METHOD": return createTableScript(TblsDataAudit.TablesDataAudit.CERTIF_USER_ANALYSIS_METHOD, schemaNamePrefix);
             case "LOT": return Lot.createTableScript(schemaNamePrefix, fields);
             default: return "TABLE "+tableName+" NOT IN INSPLOT_RM_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
         }        
     }    
-
+*/
     /**
      *
      */

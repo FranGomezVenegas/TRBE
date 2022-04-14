@@ -6,17 +6,21 @@
 package functionaljavaa.testingscripts;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsTesting;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.businessrules.RuleInfo;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ClassInfoList;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-//import javax.json.JsonArray;
 import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPArray.convertStringedPipedNumbersInArray;
 import lbplanet.utilities.LPDate;
@@ -25,6 +29,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntMessages;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 
@@ -41,6 +46,8 @@ public class TestingCoverage {
 
     private Integer totalMessages;
     private JSONArray msgCodeVisited;
+    private JSONArray msgCodeVisitedObj;
+    
     private BigDecimal msgCodeCovPerc;
     private String[] coverageMsgCodeExcludeList;
     private JSONObject msgCodeCoverageDetail;
@@ -225,27 +232,35 @@ public class TestingCoverage {
         this.busRuleCoverageDetail.put("visited", accVisited);
         this.busRuleCoverageDetail.put("missing", accMissing);
     }            
-    public void calculateCoverageMessageCodes(JsonArray currScriptMessages){       
-        //this.busRuleCoverageDetail=new JSONObject();
-        JSONArray visitedMsgJArr=new JSONArray();
-        JSONArray missingMsgJArr=new JSONArray();
-        for (int i=0;i<currScriptMessages.size();i++){
-            String curMsgCode=currScriptMessages.get(i).getAsJsonObject().get("messageCode").getAsString();
-            if (!this.msgCodeVisited.contains(curMsgCode))
-                this.msgCodeVisited.add(curMsgCode);
+    public void calculateCoverageMessageCodes(JsonArray currScriptMessages){
+        try{
+            //this.busRuleCoverageDetail=new JSONObject();
+            JSONArray visitedMsgJArr=new JSONArray();
+            JSONArray missingMsgJArr=new JSONArray();
+            this.msgCodeVisitedObj=new JSONArray();
+            for (int i=0;i<currScriptMessages.size();i++){
+                JsonElement msgCodeObj=currScriptMessages.get(i);
+                String curMsgCode=currScriptMessages.get(i).getAsJsonObject().get("messageCode").getAsString();
+                if (this.msgCodeVisitedObj==null || !this.msgCodeVisitedObj.contains(msgCodeObj))
+                    this.msgCodeVisitedObj.add(msgCodeObj);
+                if (!this.msgCodeVisited.contains(curMsgCode))
+                    this.msgCodeVisited.add(curMsgCode);
+            }
+    /*        JSONArray accVisited = (JSONArray) this.busRuleCoverageDetail.get("visited");
+            if (accVisited==null)
+                accVisited=visitedMsgJArr;
+            else
+                accVisited.addAll(visitedMsgJArr);
+            JSONArray accMissing = (JSONArray) this.busRuleCoverageDetail.get("missing");
+            if (accMissing==null)
+                accMissing=missingMsgJArr;
+            else
+                accMissing.addAll(visitedMsgJArr);
+            this.busRuleCoverageDetail.put("visited", accVisited);
+            this.busRuleCoverageDetail.put("missing", accMissing);*/
+        }catch(Exception e){
+            String errMsg = e.getMessage();
         }
-/*        JSONArray accVisited = (JSONArray) this.busRuleCoverageDetail.get("visited");
-        if (accVisited==null)
-            accVisited=visitedMsgJArr;
-        else
-            accVisited.addAll(visitedMsgJArr);
-        JSONArray accMissing = (JSONArray) this.busRuleCoverageDetail.get("missing");
-        if (accMissing==null)
-            accMissing=missingMsgJArr;
-        else
-            accMissing.addAll(visitedMsgJArr);
-        this.busRuleCoverageDetail.put("visited", accVisited);
-        this.busRuleCoverageDetail.put("missing", accMissing);*/
     }            
     public void saveCoverage(){    
         Object[] updateCoverageRow = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), 
@@ -277,7 +292,7 @@ public class TestingCoverage {
         busRulesSummaryJObj.put("percentage_explanation", busRulesPercExplStr);        
         busRulesSummaryJObj.put("procedure_total", this.procBusRules.getTotalBusinessRules());
         busRulesSummaryJObj.put("visited_total", this.busRuleVisitedTotal);
-
+        
         JSONObject unCoveredBusRules=new JSONObject();
         JSONArray excludedBusRules=new JSONArray();
         for (String curExcl: this.coverageBusRulesExcludeList)
@@ -286,6 +301,13 @@ public class TestingCoverage {
 
         JSONArray notCoveredBusRules=new JSONArray();
 
+        String[] accVisitedArr=new String[]{};
+        JSONArray accVisited = (JSONArray) this.busRuleCoverageDetail.get("visited");        
+        for (int iVisited=0;iVisited<accVisited.size();iVisited++){
+            JSONObject curVisited = (JSONObject) accVisited.get(iVisited);
+            accVisitedArr=LPArray.addValueToArray1D(accVisitedArr, curVisited.get("area")+"_"+curVisited.get("rule_name"));
+        }
+        
         JSONArray procBusRulesJArr=new JSONArray();
         JSONObject procBusRulesJObj=new JSONObject();
         ArrayList<RuleInfo> configBusinessRules = this.procBusRules.getConfigBusinessRules();
@@ -296,8 +318,9 @@ public class TestingCoverage {
             procBusRulesAreaJArr.add(ruleJObj);
             String curRuleStr="config_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
             boolean inExclList = LPArray.valueInArray(this.coverageMsgCodeExcludeList, curRuleStr);
-            if (!inExclList && !notCoveredBusRules.contains(curRuleStr))
-            notCoveredBusRules.add(curRuleStr);
+            boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
+            if (!valueInArray && !inExclList && !notCoveredBusRules.contains(curRuleStr))
+                notCoveredBusRules.add(curRuleStr);
         }
         procBusRulesJObj.put("config", procBusRulesAreaJArr);
         
@@ -309,10 +332,13 @@ public class TestingCoverage {
             procBusRulesAreaJArr.add(ruleJObj);
             String curRuleStr="data_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
             boolean inExclList = LPArray.valueInArray(this.coverageMsgCodeExcludeList, curRuleStr);
-            if (!inExclList && !notCoveredBusRules.contains(curRuleStr))
-            notCoveredBusRules.add(curRuleStr);
+            boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
+            if (!valueInArray && !inExclList && !notCoveredBusRules.contains(curRuleStr))
+                notCoveredBusRules.add(curRuleStr);
         }
         procBusRulesJObj.put("data", procBusRulesAreaJArr); 
+
+
         
         ArrayList<RuleInfo> procedureBusinessRules = this.procBusRules.getProcedureBusinessRules();
         procBusRulesAreaJArr=new JSONArray();
@@ -322,8 +348,9 @@ public class TestingCoverage {
             procBusRulesAreaJArr.add(ruleJObj);
             String curRuleStr="procedure_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
             boolean inExclList = LPArray.valueInArray(this.coverageMsgCodeExcludeList, curRuleStr);
-            if (!inExclList && !notCoveredBusRules.contains(curRuleStr))
-            notCoveredBusRules.add(curRuleStr);
+            boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
+            if (!valueInArray && !inExclList && !notCoveredBusRules.contains(curRuleStr))
+                notCoveredBusRules.add(curRuleStr);
         }
         procBusRulesJObj.put("procedure", procBusRulesAreaJArr);
         procBusRulesJArr.add(procBusRulesJObj);
@@ -380,6 +407,49 @@ public class TestingCoverage {
     void generateSummaryForMessageCodes(){
         final int DECIMAL_PLACES = 2;
         String percExplPatternStr="The <*1*> is <*2*> div <*3*> ";
+        String[] msgClasses=new String[]{};
+        JSONArray msgClassAllMessagesJArr=new JSONArray();
+        try{
+            for (int iMsgs=0; iMsgs<this.msgCodeVisitedObj.size();iMsgs++){
+                JsonObject curVisited = (JsonObject) this.msgCodeVisitedObj.get(iMsgs);
+                if (!LPArray.valueInArray(msgClasses, curVisited.get("className")))
+                    msgClasses=LPArray.addValueToArray1D(msgClasses, curVisited.get("className").toString());
+            }
+            msgClasses=LPArray.getUniquesArray(msgClasses);
+            try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
+            .scan()) {    
+                ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntMessages");
+                ClassInfoList allEnums = scanResult.getAllEnums();
+                String clssObjName="";
+                for (int iClss=0; iClss<msgClasses.length;iClss++){
+                    JSONObject jObj=new JSONObject();
+                    String curClassName=msgClasses[iClss].replace("\"", "");
+                    jObj.put("className", curClassName);
+                    for (int i=0;i<classesImplementing.size();i++){
+                        ClassInfo getMine = classesImplementing.get(i); 
+                        clssObjName=getMine.getSimpleName();
+                        if (clssObjName.equalsIgnoreCase(curClassName)){
+                            List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
+                            JSONArray enumsIncomplete = new JSONArray();
+                            for (int j=0;j<enumConstantObjects.size();j++) {
+                                EnumIntMessages curBusRul=(EnumIntMessages)enumConstantObjects.get(j);
+                                String evName=curBusRul.getErrorCode();
+                                if (this.msgCodeVisited.contains(evName))
+                                    evName = evName + " visited";
+                                else
+                                    evName = evName;
+                                enumsIncomplete.add(evName);
+                            }
+                            jObj.put("messages", enumsIncomplete);
+                        }                            
+                    }
+                    msgClassAllMessagesJArr.add(jObj);
+                }
+            }
+        }catch(Exception e){
+            String errMsg=e.getMessage();
+            return;
+        }
         
 /*        JSONArray procActionsJArr = new JSONArray();
         for (String curV: this.procActionsArr){
@@ -399,6 +469,7 @@ public class TestingCoverage {
         msgCodesSummaryJObj.put("percentage_explanation", msgCodesPercExplStr);        
 //        msgCodesSummaryJObj.put("procedure_total", this.procActionsArr.length);
         msgCodesSummaryJObj.put("visited_total", this.msgCodeVisited.size());
+        msgCodesSummaryJObj.put("message_collections_visited", msgClassAllMessagesJArr);
         this.msgCodeCoverageDetail.put("summary", msgCodesSummaryJObj);
 //        this.endpointsCoverageDetail.put("procedure_endpoints", procActionsJArr);
         
@@ -458,7 +529,8 @@ public class TestingCoverage {
         mainObj.put("Business_Rules_Info", busRulesObj);
 
         JSONObject msgCodeObj=new JSONObject();
-        msgCodeObj.put("msg_codes_coverage_percentage", this.msgCodeCovPerc);
+//        msgCodeObj.put("msg_codes_coverage_percentage", this.msgCodeCovPerc);
+        msgCodeObj.put("msg_codes_coverage_percentage", "This block cannot provide one coverage percentage, it will provide how many visited messages are: "+this.msgCodeCovPerc);
         msgCodeObj.put("msg_codes_coverage_detail", this.msgCodeCoverageDetail);
         msgCodeObj.put("msg_codes_visited", this.msgCodeVisited);
         mainObj.put("Message_Codes_Info", msgCodeObj);
