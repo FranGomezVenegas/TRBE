@@ -36,6 +36,7 @@ import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.ResponseMessages;
 /**
  *
  * @author Administrator
@@ -204,8 +205,10 @@ public class DataSampleAnalysisResult {
         return sampleAnalysisResultEntry(resultId, resultValue, dataSample, null, null);
     }
     public Object[] sampleAnalysisResultEntry(Integer resultId, Object resultValue, DataSample dataSample, String alternativeAuditEntry, String alternativeAuditClass) {           
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Token token=instanceForActions.getToken();
+        String procInstanceName=instanceForActions.getProcedureInstance();
+        ResponseMessages messages = instanceForActions.getMessages();
         
         String[] sampleFieldName=new String[0];
         Object[] sampleFieldValue=new Object[0];
@@ -243,23 +246,29 @@ public class DataSampleAnalysisResult {
         String currRawValue = (String) resultData[0][7];
         String resultUomName = (String) resultData[0][8];
         Integer limitId =-999;
-        if (resultData[0][9]!=null && resultData[0][9].toString().length()>0)
-            limitId = (Integer) resultData[0][9];
+        if (resultData[0][10]!=null && resultData[0][10].toString().length()>0)
+            limitId = (Integer) resultData[0][10];
         
         Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())){
             Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
             if (!Boolean.valueOf(userCertified[0].toString())) return (Object[]) new Object[]{userCertified[1]};
         }        
-        if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)) 
+        if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)){
+            messages.addMainForError(DataSampleAnalysisResultErrorTrapping.RESULT_LOCKED, new Object[]{currResultStatus, resultId.toString(), schemaConfigName});
             return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.RESULT_LOCKED, new Object[]{currResultStatus, resultId.toString(), schemaConfigName})};
-        if ((currRawValue != null) && (currRawValue.equalsIgnoreCase(resultValue.toString()))) 
+        }            
+        if ((currRawValue != null) && (currRawValue.equalsIgnoreCase(resultValue.toString()))){ 
+            messages.addMainForError(DataSampleAnalysisResultErrorTrapping.SAME_RESULT_VALUE, new Object[]{resultId.toString(), schemaDataName, currRawValue});
             return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.SAME_RESULT_VALUE, new Object[]{resultId.toString(), schemaDataName, currRawValue})};
+        }
         Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
-        if (LPPlatform.LAB_FALSE.equals(sampleData[0][0].toString())) 
+        if (LPPlatform.LAB_FALSE.equals(sampleData[0][0].toString())){ 
+            messages.addMainForError(DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{sampleId.toString(), schemaDataName});
             return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{sampleId.toString(), schemaDataName})};
+        }
         String sampleConfigCode = (String) sampleData[0][1];
         Integer sampleConfigCodeVersion = (Integer) sampleData[0][2];
         sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
@@ -480,10 +489,12 @@ public class DataSampleAnalysisResult {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) return LPArray.array2dTo1d(resultInfo);
         String paramName = resultInfo[0][1].toString();
         String curruom = resultInfo[0][2].toString();
-        String currValue = resultInfo[0][3].toString();
+        String currValue = resultInfo[0][3].toString();        
         Integer testId = Integer.valueOf(resultInfo[0][4].toString());
         Integer sampleId = Integer.valueOf(resultInfo[0][5].toString());
         String specUomConversionMode = resultInfo[0][6].toString();
+        if (LPNulls.replaceNull(currValue).toString().length()==0)
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CURRENTRESULT_ISEMPTY, new Object[]{paramName, sampleId});
         if (specUomConversionMode == null || specUomConversionMode.equalsIgnoreCase("DISABLED") || ((!specUomConversionMode.contains(newuom)) && !specUomConversionMode.equalsIgnoreCase("ALL"))) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERSION_NOT_ALLOWED, new Object[]{specUomConversionMode, newuom, curruom, resultId.toString(), schemaDataName});
         UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(currValue), curruom);
