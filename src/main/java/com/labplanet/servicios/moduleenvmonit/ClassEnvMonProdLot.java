@@ -58,7 +58,7 @@ public class ClassEnvMonProdLot {
                     if (fieldValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString()))
                         actionDiagnoses=fieldValueArr;
                     else
-                        actionDiagnoses=DataProgramProductionLot.newProgramProductionLot(lotName, fieldNameArr, fieldValueArr, Rdbms.getTransactionId());
+                        actionDiagnoses=DataProgramProductionLot.newProgramProductionLot(lotName, fieldNameArr, fieldValueArr);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
 //                        diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, procInstanceName});
                         messageDynamicData=new Object[]{lotName};
@@ -74,13 +74,13 @@ public class ClassEnvMonProdLot {
                     lotName=argValues[0].toString();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), lotName);
                     messageDynamicData=new Object[]{lotName};
-                    actionDiagnoses=DataProgramProductionLot.activateProgramProductionLot(lotName, Rdbms.getTransactionId());
+                    actionDiagnoses=DataProgramProductionLot.activateProgramProductionLot(lotName);
                     break;
                 case EM_DEACTIVATE_PRODUCTION_LOT:
                     lotName=argValues[0].toString();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), lotName);
                     messageDynamicData=new Object[]{lotName};
-                    actionDiagnoses=DataProgramProductionLot.deactivateProgramProductionLot(lotName, Rdbms.getTransactionId());
+                    actionDiagnoses=DataProgramProductionLot.deactivateProgramProductionLot(lotName);
                     break;
                 default:      
                     Rdbms.closeRdbms(); 

@@ -70,13 +70,13 @@ public class EnvMonProdLotAPI extends HttpServlet {
             return hm;
         }
         
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;       
-        private  LPAPIArguments[] arguments;
+        private final  LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;        
     }    
   
