@@ -193,7 +193,8 @@ public class UnitsOfMeasurement {
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
 
-        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.IS_BASE.getName(),
+        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName(), 
+            familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.IS_BASE.getName(),
             TblsCnfg.UnitsOfMeasurement.FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.OFFSET_VALUE.getName()};
         Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{this.getOrigQuantityUom()}, fieldsToGet );
@@ -233,11 +234,18 @@ public class UnitsOfMeasurement {
         BigDecimal currentUnitOffset = new BigDecimal(currentUnitInfo[0][4].toString());
         BigDecimal newUnitOffset = new BigDecimal(newUnitInfo[0][4].toString());
 
+        try{
         newUnitFactor=newUnitFactor.divide(currentUnitFactor);
         valueConverted=valueConverted.multiply(newUnitFactor);
         newUnitOffset=newUnitOffset.add(currentUnitOffset.negate());
         valueConverted=valueConverted.add(newUnitOffset);
-
+        }catch(Exception e){
+            this.convertedFine=false;
+            this.convertedQuantity=valueConverted;
+            this.convertedQuantityUom=newUnit;
+            this.conversionErrorDetail=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, e.getMessage(), null);
+            this.conversionDetail=null;            
+        }
         conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, MESSAGE_TRAPPING_CONVERTED_SUCCESS,
                         new Object[]{this.getOrigQuantityUom(), newUnitInfo, this.getOrigQuantity(), valueConverted, procInstanceName,
                              MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(this.getOrigQuantityUom())+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
