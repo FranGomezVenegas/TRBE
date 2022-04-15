@@ -7,26 +7,44 @@ package functionaljavaa.user;
 
 import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
-import databases.SqlStatement;
 import databases.TblsApp;
 import databases.TblsApp.Users;
 import databases.TblsAppConfig;
 import databases.Token;
 import functionaljavaa.parameter.Parameter;
 import java.util.ResourceBundle;
+import lbplanet.utilities.LPNulls;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
  * @author Administrator
  */
 public class UserAndRolesViews {
-    
-    public static final String BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT="credentials_userIsCaseSensitive";
-    
     private UserAndRolesViews(){    throw new IllegalStateException("Utility class");}             
-         
+
+    public enum UserAndRolesErrorTrapping implements EnumIntMessages{ 
+        BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT("credentials_userIsCaseSensitive", "", ""),
+        USER_NOT_EXISTS("userNotExists", "", ""),
+        ;
+        private UserAndRolesErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
     /**
      *
      * @param person
@@ -34,7 +52,7 @@ public class UserAndRolesViews {
      */
     public static final String getUserByPerson(String person){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-        String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
+        String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
         if (!Boolean.valueOf(userIsCaseSensitive)) person=person.toLowerCase();        
         Object[][] userByPerson = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{Users.PERSON_NAME.getName()}, new String[]{person}, new String[]{TblsApp.Users.USER_NAME.getName()}, new String[]{TblsApp.Users.USER_NAME.getName()});
@@ -49,12 +67,12 @@ public class UserAndRolesViews {
      */
     public static final Object[] getPersonByUser(String userName){ 
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-        String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
+        String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
         if (!Boolean.valueOf(userIsCaseSensitive)) userName=userName.toLowerCase();
         Object[][] personByUser = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{TblsApp.Users.USER_NAME.getName()}, new String[]{userName}, new String[]{Users.PERSON_NAME.getName()}, new String[]{Users.PERSON_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0][0].toString()))
-            ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "userNotExists", new Object[]{userName});
+            ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserAndRolesErrorTrapping.USER_NOT_EXISTS.getErrorCode(), new Object[]{userName});
         return new Object[]{personByUser[0][0].toString()};
     }
     
@@ -68,7 +86,7 @@ public class UserAndRolesViews {
      */
     public static final Object[] isValidUserPassword(String user, String pass) {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-        String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
+        String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
         if (!Boolean.valueOf(userIsCaseSensitive)) user=user.toLowerCase();
         return Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{Users.USER_NAME.getName(), Users.PASSWORD.getName()}, new Object[]{user, pass});
@@ -82,7 +100,7 @@ public class UserAndRolesViews {
     }
     public static final Object[] setUserProperty(String user, String fieldName, String newValue) {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-        String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
+        String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
         if (!Boolean.valueOf(userIsCaseSensitive)) user=user.toLowerCase();
         return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{fieldName}, new Object[]{newValue}, 
@@ -114,5 +132,26 @@ public class UserAndRolesViews {
         return new Object[]{LPPlatform.LAB_TRUE, "14"};
         //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet", null);
     }
+    
+    public static InternalMessage updateUserShift(String newShift, String userName){
+        String personId="";
+        if (LPNulls.replaceNull(userName).length()==0){
+            ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+            personId=instanceForActions.getToken().getPersonName();
+        }else{
+            Object[] personByUser = getPersonByUser(userName);            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0].toString()))
+                return new InternalMessage(LPPlatform.LAB_FALSE, personByUser[personByUser.length-1].toString(), new Object[]{}, null);
+            personId=personByUser[0].toString();
+        }
+        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsAppConfig.TablesAppConfig.PERSON.getRepositoryName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), 
+                new String[]{TblsAppConfig.Person.SHIFT.getName()},
+                new Object[]{newShift},
+                new String[]{TblsAppConfig.Person.PERSON_ID.getName()},
+                new Object[]{personId});
+        
+        return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, new Object[]{});
+    }   
+    
     
 }

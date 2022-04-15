@@ -40,7 +40,6 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import static functionaljavaa.user.UserAndRolesViews.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT;
 import static lbplanet.utilities.LPSession.frontEndIpChecker;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -101,7 +100,7 @@ public class AuthenticationAPI extends HttpServlet {
                     }
                     String dbUserName = argValues[0].toString();
                     String dbUserPassword = argValues[1].toString();
-                    String userIsCaseSensitive = prop.getString(BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT);
+                    String userIsCaseSensitive = prop.getString(UserAndRolesViews.UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
                     if (!Boolean.valueOf(userIsCaseSensitive)) dbUserName=dbUserName.toLowerCase();
                     
                     Object[] personNameObj = UserAndRolesViews.getPersonByUser(dbUserName);
