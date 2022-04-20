@@ -16,7 +16,7 @@ import databases.TblsAppProcData.ViewsAppProcData;
 import databases.TblsAppProcDataAudit;
 import databases.TblsAppProcDataAudit.TablesAppProcDataAudit;
 import databases.TblsDataAudit;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIqueriesEndpoints;
 import java.io.IOException;
 import java.util.logging.Level;

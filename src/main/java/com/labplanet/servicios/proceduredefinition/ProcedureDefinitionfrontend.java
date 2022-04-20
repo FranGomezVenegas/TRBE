@@ -12,7 +12,7 @@ import com.labplanet.servicios.app.TestingRegressionUAT;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsReqs;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.requirement.ProcedureDefinitionQueries.*;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;

@@ -6,7 +6,7 @@
 package com.labplanet.servicios.app;
 
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import static functionaljavaa.certification.CertifyQueries.CertificationsHistory;
 import static functionaljavaa.certification.CertifyQueries.CertificationsInProgress;
 import static functionaljavaa.certification.CertifyQueries.objectsUponCertificationProcedure;

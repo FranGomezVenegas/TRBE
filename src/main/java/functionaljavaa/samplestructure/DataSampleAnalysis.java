@@ -14,7 +14,7 @@ import databases.DataDataIntegrity;
 import databases.TblsCnfg;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.analysis.UserMethod;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.materialspec.ConfigSpecRule;

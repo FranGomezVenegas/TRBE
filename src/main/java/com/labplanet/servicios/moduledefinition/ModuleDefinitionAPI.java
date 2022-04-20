@@ -6,7 +6,7 @@
 package com.labplanet.servicios.moduledefinition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;

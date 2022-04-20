@@ -9,7 +9,7 @@ import com.labplanet.servicios.app.SavedQueriesAPI.SavedQueriesAPIfrontendEndpoi
 import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
-import databases.DbEncryption;
+import databases.features.DbEncryption;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -17,7 +17,7 @@ import databases.TblsData.TablesData;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsTrazitDocTrazit;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.intervals.IntervalsUtilities;
 import functionaljavaa.inventory.batch.DataBatchIncubator;

@@ -19,7 +19,7 @@ import databases.TblsApp;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
-import databases.Token;
+import databases.features.Token;
 import static functionaljavaa.certification.AnalysisMethodCertifQueries.analysisMethodCertifiedUsersList;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.samplestructure.DataSample;

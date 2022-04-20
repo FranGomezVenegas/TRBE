@@ -7,7 +7,7 @@ package functionaljavaa.holidayscalendar;
 
 import databases.Rdbms;
 import databases.TblsApp;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;
 import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarErrorTrapping;
 import java.sql.Date;

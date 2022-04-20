@@ -14,7 +14,7 @@ import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.analysis.UserMethod;
 import static functionaljavaa.certification.FrontendCertifObjsUtilities.certifObjCertifModeOwnUserAction;
 import functionaljavaa.platform.doc.EndPointsToRequirements;

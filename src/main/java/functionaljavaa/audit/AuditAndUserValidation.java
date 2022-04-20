@@ -6,7 +6,7 @@
 package functionaljavaa.audit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
 import java.util.ArrayList;
 import java.util.Arrays;

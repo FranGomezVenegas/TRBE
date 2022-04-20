@@ -6,7 +6,7 @@
 package com.labplanet.servicios.app;
 
 import com.oreilly.servlet.MultipartRequest;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingOutFormat.FileHeaderTags;
 import functionaljavaa.testingscripts.LPTestingParams;

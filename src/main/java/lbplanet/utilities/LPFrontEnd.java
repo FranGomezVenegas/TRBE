@@ -4,7 +4,7 @@ import com.github.opendevl.JFlat;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
 import trazit.session.ResponseMessages;
 import java.io.File;

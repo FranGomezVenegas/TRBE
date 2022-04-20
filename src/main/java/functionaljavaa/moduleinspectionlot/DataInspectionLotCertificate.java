@@ -8,7 +8,7 @@ package functionaljavaa.moduleinspectionlot;
 import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEndpoints;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.Rdbms;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.audit.LotAudit;
 import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotCertificateStatuses;
 import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotCertificateTrackActions;

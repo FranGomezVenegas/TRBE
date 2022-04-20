@@ -10,7 +10,7 @@ import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.TblsDataAudit;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;

@@ -10,7 +10,7 @@ import databases.SqlStatement;
 import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
 import databases.TblsAppProcData.TablesAppProcData;
-import databases.Token;
+import databases.features.Token;
 import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
 import static functionaljavaa.instruments.DataInstrumentsEvents.addVariableSetToObject;
 import static functionaljavaa.instruments.DataInstrumentsEvents.eventHasNotEnteredVariables;

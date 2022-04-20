@@ -8,7 +8,7 @@ package functionaljavaa.incident;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsAppAudit;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.audit.AppIncidentAudit;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
 import trazit.session.ResponseMessages;

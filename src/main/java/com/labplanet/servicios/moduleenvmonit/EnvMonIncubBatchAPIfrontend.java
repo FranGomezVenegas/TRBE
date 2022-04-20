@@ -8,7 +8,7 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.inventory.batch.DataBatchIncubator.*;
 import functionaljavaa.inventory.batch.DataBatchIncubatorStructured;

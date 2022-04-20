@@ -8,7 +8,7 @@ package functionaljavaa.samplestructure;
 
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisErrorTrapping;
 import java.util.ArrayList;
 import java.util.Arrays;

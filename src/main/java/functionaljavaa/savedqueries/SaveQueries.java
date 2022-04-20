@@ -7,7 +7,7 @@ package functionaljavaa.savedqueries;
 
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;

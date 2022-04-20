@@ -7,7 +7,7 @@ package functionaljavaa.moduleenvironmentalmonitoring;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
-import databases.Token;
+import databases.features.Token;
 import lbplanet.utilities.LPArray;
 import java.util.Arrays;
 import lbplanet.utilities.LPDate;

@@ -12,7 +12,7 @@ package functionaljavaa.investigation;
 import com.labplanet.servicios.app.InvestigationAPI;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIEndpoints;
 import databases.TblsProcedure;
-import databases.Token;
+import databases.features.Token;
 import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;

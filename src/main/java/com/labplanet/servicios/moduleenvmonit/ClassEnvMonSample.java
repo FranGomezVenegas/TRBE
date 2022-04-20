@@ -9,7 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
 import static functionaljavaa.moduleenvironmentalmonitoring.ConfigMicroorganisms.adhocMicroorganismAdd;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;

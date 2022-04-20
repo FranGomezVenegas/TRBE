@@ -9,7 +9,7 @@ import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERV
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsApp;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIqueriesEndpoints;
 import java.io.IOException;
 import java.util.logging.Level;

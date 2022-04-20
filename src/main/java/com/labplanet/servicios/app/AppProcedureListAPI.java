@@ -18,7 +18,7 @@ import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsProcedure;
 import databases.TblsReqs;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.user.UserProfile;
 import java.io.IOException;

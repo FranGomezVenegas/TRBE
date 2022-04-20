@@ -10,11 +10,10 @@ import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsApp.Users;
 import databases.TblsAppConfig;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
 import java.util.ResourceBundle;
 import lbplanet.utilities.LPNulls;
-import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -148,9 +147,8 @@ public class UserAndRolesViews {
                 new String[]{TblsAppConfig.Person.SHIFT.getName()},
                 new Object[]{newShift},
                 new String[]{TblsAppConfig.Person.PERSON_ID.getName()},
-                new Object[]{personId});
-        
-        return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, new Object[]{});
+                new Object[]{personId});        
+        return new InternalMessage(updateRecordFieldsByFilter[0].toString(), updateRecordFieldsByFilter[updateRecordFieldsByFilter.length-1].toString(), new Object[]{}, null);
     }   
     
     

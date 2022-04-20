@@ -8,7 +8,7 @@ package functionaljavaa.investigation;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.TblsProcedure;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.audit.ProcedureInvestigationAudit;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;

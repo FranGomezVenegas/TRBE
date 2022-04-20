@@ -12,7 +12,7 @@ import databases.DataDataIntegrity;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.inventory.InventoryGlobalVariables.DataInvRetErrorTrapping;

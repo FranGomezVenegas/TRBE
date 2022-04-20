@@ -11,7 +11,7 @@ import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
 import databases.TblsCnfg;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.audit.LotAudit;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
 import static functionaljavaa.inventory.DataInventoryRetain.createRetain;

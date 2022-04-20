@@ -22,6 +22,10 @@ public class TblsAppConfig {
         
         PERSON(null, "person", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppConfig.Person.values(), null,
             new String[]{TblsAppConfig.Person.PERSON_ID.getName()}, null, ""),
+        TBL_FLD_ENCRYPT(null, "table_field_encrypt", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppConfig.TblFldsEncrypt.values(), null,
+            new String[]{TblsAppConfig.TblFldsEncrypt.SCHEMA_NAME.getName(), TblsAppConfig.TblFldsEncrypt.TABLE_NAME.getName(), TblsAppConfig.TblFldsEncrypt.FIELD_NAME.getName()}, null, ""),
+        TBL_FLD_DATE_FORMAT(null, "table_field_date_format", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppConfig.TblFldsDateFormat.values(), null,
+            new String[]{TblsAppConfig.TblFldsDateFormat.SCHEMA_NAME.getName(), TblsAppConfig.TblFldsDateFormat.TABLE_NAME.getName(), TblsAppConfig.TblFldsDateFormat.FIELD_NAME.getName()}, null, ""),
         ;
         private TablesAppConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -80,5 +84,51 @@ public class TblsAppConfig {
         private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
-        
+
+    public enum TblFldsEncrypt implements EnumIntTableFields{
+        SCHEMA_NAME("schema_name", LPDatabase.stringNotNull(), null, null, null, null),
+        TABLE_NAME("table_name", LPDatabase.stringNotNull(), null, null, null, null),
+        FIELD_NAME("field_name", LPDatabase.string(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
+        ;
+        private TblFldsEncrypt(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }        
+    
+    public enum TblFldsDateFormat implements EnumIntTableFields{
+        SCHEMA_NAME("schema_name", LPDatabase.stringNotNull(), null, null, null, null),
+        TABLE_NAME("table_name", LPDatabase.stringNotNull(), null, null, null, null),
+        FIELD_NAME("field_name", LPDatabase.string(), null, null, null, null),
+        MASK("mask", LPDatabase.string(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
+        ;
+        private TblFldsDateFormat(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }        
 }

@@ -11,7 +11,7 @@ import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsDataAudit;
-import databases.Token;
+import databases.features.Token;
 import static functionaljavaa.audit.AuditUtilities.getUserSessionProceduresList;
 import static functionaljavaa.audit.AuditUtilities.userSessionExistAtProcLevel;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;

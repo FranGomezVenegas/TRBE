@@ -6,7 +6,6 @@
 package functionaljavaa.platformadmin;
 
 import databases.TblsApp;
-import databases.TblsAppProcData;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
@@ -73,6 +72,11 @@ public class PlatformAdminEnums {
             new LPAPIArguments(TblsApp.IPWhiteList.ID.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
+        UPDATE_USER_SHIFT("UPDATE_USER_SHIFT", "userShiftUpdated_success",new LPAPIArguments[]{
+            new LPAPIArguments("newShift", LPAPIArguments.ArgumentType.STRING.toString(), true, 9 ),
+            new LPAPIArguments("userName", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),}, 
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TblsApp.TablesApp.USERS.getTableName()).build()).build()),
         ;
         private PlatformAdminAPIActionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;

@@ -9,6 +9,7 @@ import databases.TblsApp;
 import functionaljavaa.platformadmin.AdminActions;
 import functionaljavaa.platformadmin.PlatformAdminEnums.PlatformAdminAPIActionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import functionaljavaa.user.UserAndRolesViews;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
@@ -99,6 +100,13 @@ public class ClassPlatformAdmin {
                     actionDiagnoses=AdminActions.removeBlackIp(Integer.valueOf(id));
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))    
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), id);
+                    break;
+                case UPDATE_USER_SHIFT:
+                    String newShift =LPNulls.replaceNull(argValues[0]).toString();
+                    String userName =LPNulls.replaceNull(argValues[1]).toString();
+                    actionDiagnoses=UserAndRolesViews.updateUserShift(newShift, userName);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()) && userName.length()>0)    
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), userName);
                     break;
                 default:
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);   

@@ -14,7 +14,7 @@ import databases.DataDataIntegrity;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;

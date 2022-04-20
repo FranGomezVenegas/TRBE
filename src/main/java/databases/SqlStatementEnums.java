@@ -6,16 +6,20 @@
 package databases;
 
 import functionaljavaa.parameter.Parameter;
+import java.util.ArrayList;
 import java.util.Date;
 import lbplanet.utilities.LPArray;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViewFields;
+import trazit.enums.EnumIntViews;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 
@@ -84,8 +88,7 @@ public class SqlStatementEnums {
     /**
      *
      * @param operation
-     * @param schemaName
-     * @param tableName
+     * @param tblObj
      * @param whereFieldNames
      * @param whereFieldValues
      * @param fieldsToRetrieve
@@ -95,17 +98,14 @@ public class SqlStatementEnums {
      * @param fieldsToGroup
      * @return
      */
-    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup) {        
-       return buildSqlStatement(operation, schemaName, tableName, whereFieldNames, whereFieldValues, fieldsToRetrieve, setFieldNames, setFieldValues, fieldsToOrder, fieldsToGroup, false);      
+/*    public HashMap<String, Object[]> buildSqlStatement(String operation, EnumIntTables tblObj, EnumIntTableFields[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup) {        
+       return buildSqlStatement(operation, tblObj, whereFieldNames, whereFieldValues, fieldsToRetrieve, setFieldNames, setFieldValues, fieldsToOrder, fieldsToGroup, false);      
     }
-
+*/
     /**
      *
      * @param operation
-     * @param schemaName
-     * @param tableName
-     * @param whereFieldNames
-     * @param whereFieldValues
+     * @param tblObj
      * @param fieldsToRetrieve
      * @param setFieldNames
      * @param setFieldValues
@@ -114,16 +114,16 @@ public class SqlStatementEnums {
      * @param forceDistinct
      * @return
      */
-    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
+    public HashMap<String, Object[]> buildSqlStatement(String operation, EnumIntTables tblObj, SqlWhere whereObj, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
         String queryWhere = "";
-        schemaName = setSchemaName(schemaName);
-        tableName = setSchemaName(tableName);
+        String schemaName = setSchemaName(tblObj.getRepositoryName());
+        String tableName = setSchemaName(tblObj.getTableName());
         
         Object[] whereFieldValuesNew = new Object[0];
-        if (whereFieldNames != null) {
-            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues);            
+        if (!whereObj.getAllWhereEntries().isEmpty()) {
+            Object[] whereClauseContent = buildWhereClause(whereObj);
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
@@ -159,13 +159,58 @@ public class SqlStatementEnums {
         hm.put(query, whereFieldValuesNew);
         return hm;
     }
-
-    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, EnumIntViewFields[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
+    public HashMap<String, Object[]> buildSqlStatement(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
         String queryWhere = "";
-        schemaName = setSchemaName(schemaName);
-        tableName = setSchemaName(tableName);
+        String schemaName = setSchemaName(tblObj.getRepositoryName());
+        String tableName = setSchemaName(tblObj.getTableName());
+        
+        Object[] whereFieldValuesNew = new Object[0];
+        if (whereFieldNames != null) {
+            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues);            
+            queryWhere=(String) whereClauseContent[0];
+            whereFieldValuesNew=(Object[]) whereClauseContent[1];
+        }
+        String fieldsToRetrieveStr = buildFieldsToRetrieve(tblObj, fieldsToRetrieve);
+        String fieldsToOrderStr = buildOrderBy(fieldsToOrder);
+        String fieldsToGroupStr = buildGroupBy(fieldsToGroup);
+        
+        String insertFieldNamesStr = buildInsertFieldNames(setFieldNames);
+        String insertFieldValuesStr = buildInsertFieldNamesValues(setFieldNames);
+        
+        String query = "";
+        switch (operation.toUpperCase()) {
+            case "SELECT":
+                query = "select ";
+                if (forceDistinct){query=query+ " distinct ";}
+                query=query+ " " + fieldsToRetrieveStr + " from " + schemaName + "." + tableName + "   where " + queryWhere + " " + fieldsToGroupStr + " " + fieldsToOrderStr;
+                break;
+            case "INSERT":
+                query = "insert into " + schemaName + "." + tableName + " (" + insertFieldNamesStr + ") values ( " + insertFieldValuesStr + ") ";
+                break;
+            case "UPDATE":
+                String updateSetSectionStr=buildUpdateSetFields(setFieldNames);
+                query = "update " + schemaName + "." + tableName + " set " + updateSetSectionStr + " where " + queryWhere;
+                whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
+                break;
+            case "DELETE":                
+                query = "delete from " + schemaName + "." + tableName + " where " + queryWhere;
+                whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
+                break;
+            default:
+                break;
+        }
+        hm.put(query, whereFieldValuesNew);
+        return hm;
+    }
+
+    public HashMap<String, Object[]> buildViewSqlStatement(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntViewFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
+        HashMap<String, Object[]> hm = new HashMap();        
+        
+        String queryWhere = "";
+        String schemaName = setSchemaName(tblObj.getRepositoryName());
+        String tableName = setSchemaName(tblObj.getTableName());
         
         Object[] whereFieldValuesNew = new Object[0];
         if (whereFieldNames != null) {
@@ -290,6 +335,73 @@ public class SqlStatementEnums {
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
     }
 
+    public static Object[] buildWhereClause(SqlWhere whereObj){
+        StringBuilder queryWhere = new StringBuilder(0);
+        Object[] whereFieldValuesNew = new Object[0];
+        ArrayList<SqlWhereEntry> allWhereEntries = whereObj.getAllWhereEntries();
+        for (SqlWhereEntry curEntry: allWhereEntries){
+        //for (int iwhereFieldNames=0; iwhereFieldNames<whereFieldNames.length; iwhereFieldNames++){
+            String fn = curEntry.getFldName().getName();
+            String symbol = curEntry.getSymbol().getSqlClause();
+            String separator = curEntry.getSeparator();
+            Object[] fldV=curEntry.getFldValue();
+            if (fn==null || fn.length()==0) break;
+            if (queryWhere.length() > 0) {
+                if (!symbol.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))
+//                    queryWhere.append(" or ");
+//                else
+                    queryWhere.append(" and ");
+            }
+            if (symbol.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
+                queryWhere.append(fn);
+            } else if (symbol.toUpperCase().contains(" "+WHERECLAUSE_TYPES.LIKE.getSqlClause())) {
+                queryWhere.append(fn).append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV);
+            } else if (symbol.toUpperCase().contains(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
+                if (separator==null) separator="\\|";
+                String textSpecs = fldV[0].toString();
+                String[] textSpecArray = textSpecs.split("\\" + separator);
+//                Integer posicINClause = fn.toUpperCase().indexOf(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
+//                queryWhere.append(fn.substring(0, posicINClause + WHERECLAUSE_TYPES.NOT_IN.getSqlClause().length()+1)).append(" (");                
+                for (String f : textSpecArray) {
+                    queryWhere.append("?,");
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
+                }
+                queryWhere.deleteCharAt(queryWhere.length() - 1);
+                queryWhere.append(")");                
+            } else if (symbol.toUpperCase().contains(" "+WHERECLAUSE_TYPES.IN.getSqlClause())) {
+                if (separator==null) separator="\\|";
+                String textSpecs = fldV[0].toString();
+                String[] textSpecArray = textSpecs.split("\\" + separator);
+//                Integer posicINClause = fn.toUpperCase().indexOf(" "+WHERECLAUSE_TYPES.IN.getSqlClause());
+//                queryWhere.append(fn.substring(0, posicINClause+ (" "+WHERECLAUSE_TYPES.IN.getSqlClause()).length())).append(" (");
+                for (String f : textSpecArray) {
+                    queryWhere.append("?,");
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
+                }
+                queryWhere.deleteCharAt(queryWhere.length() - 1);
+                queryWhere.append(")");
+            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause())) {
+                queryWhere.append(fn).append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV);
+            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
+                queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[1]);
+            } else if ( (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN.getSqlClause())) ||
+                (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN_STRICT.getSqlClause())) ||
+                (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause())) || 
+                (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN_STRICT.getSqlClause()))) {
+                queryWhere.append(fn).append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
+            } else {
+                queryWhere.append(fn).append("=? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
+            }
+        }
+        return new Object[]{queryWhere.toString(), whereFieldValuesNew};
+    }
+    
     static Object whereFldValuesGetCurrArrValue(String textSpecs, String f){
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*")) return Float.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*", ""));
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*")) return Integer.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*", ""));
@@ -298,21 +410,21 @@ public class SqlStatementEnums {
         
         return f;
     }
-    private String  buildUpdateSetFields(String[] setFieldNames) {
+    private String  buildUpdateSetFields(EnumIntTableFields[] setFieldNames) {
         StringBuilder updateSetSectionStr = new StringBuilder(0);
-        for (String setFieldName : setFieldNames) {
-            updateSetSectionStr.append(setFieldName).append("=?, ");
+        for (EnumIntTableFields curFld : setFieldNames) {
+            updateSetSectionStr.append(curFld.getName()).append("=?, ");
         }
         updateSetSectionStr.deleteCharAt(updateSetSectionStr.length() - 1);
         updateSetSectionStr.deleteCharAt(updateSetSectionStr.length() - 1);
         return updateSetSectionStr.toString();
     }
 
-    private String buildInsertFieldNames(String[] setFieldNames) {
+    private String buildInsertFieldNames(EnumIntTableFields[] setFieldNames) {
         StringBuilder setFieldNamesStr = new StringBuilder(0);
         if (setFieldNames != null) {
-            for (String setFieldName: setFieldNames) {
-                setFieldNamesStr.append(setFieldName).append(", ");
+            for (EnumIntTableFields curFld: setFieldNames) {
+                setFieldNamesStr.append(curFld.getName()).append(", ");
             }
             setFieldNamesStr.deleteCharAt(setFieldNamesStr.length() - 1);
             setFieldNamesStr.deleteCharAt(setFieldNamesStr.length() - 1);
@@ -320,10 +432,10 @@ public class SqlStatementEnums {
         return setFieldNamesStr.toString();
     }
 
-    private String buildInsertFieldNamesValues(String[] setFieldNames) {
+    private String buildInsertFieldNamesValues(EnumIntTableFields[] setFieldNames) {
         StringBuilder setFieldNamesArgStr = new StringBuilder(0);
         if (setFieldNames != null) {
-            for (String setFieldName: setFieldNames) {
+            for (EnumIntTableFields setFieldName: setFieldNames) {
                 setFieldNamesArgStr.append("?, ");
             }
             setFieldNamesArgStr.deleteCharAt(setFieldNamesArgStr.length() - 1);
@@ -338,10 +450,26 @@ public class SqlStatementEnums {
         return schemaName;
     }
 
-    private String buildFieldsToRetrieve(String[] fieldsToRetrieve) {
+    private String buildFieldsToRetrieve(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve) {
         StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
         if (fieldsToRetrieve != null) {
-            for (String fn : fieldsToRetrieve) {
+            for (EnumIntTableFields curFld : fieldsToRetrieve) {
+                Boolean alreadyAdded=false;
+                if (curFld.getFieldType().equals(LPDatabase.date())){
+                    fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
+                    alreadyAdded=true;
+                }
+                if (curFld.getFieldType().equals(LPDatabase.dateTime())){
+                    fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
+                    alreadyAdded=true;
+                }
+                if (curFld.getFieldType().equals(LPDatabase.dateTimeWithDefaultNow())){
+                    fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
+                    alreadyAdded=true;
+                }
+                if (!alreadyAdded)
+                    fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
+                /*                String fn = curFld.getName();
                 if (fn.contains("|")){
                     String[] fnArr=fn.split("\\|");
                     fn=fnArr[0];
@@ -360,7 +488,7 @@ public class SqlStatementEnums {
                     fn = fn.substring(0, posicINClause - 1);
                     fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
                 }
-                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");*/
             }
             fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
             fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
@@ -424,15 +552,15 @@ public class SqlStatementEnums {
         }        
         return separator;
     }
-    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, 
-            
-            EnumIntTableFields[] whereFields, Object[] whereFieldValues, 
-            EnumIntTableFields[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
+    
+    public HashMap<String, Object[]> buildViewSqlStatement(EnumIntViews viewObj,             
+        String[] whereFields, Object[] whereFieldValues, 
+        EnumIntViewFields[] fieldsToRetrieve, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
         String queryWhere = "";
-        schemaName = setSchemaName(schemaName);
-        tableName = setSchemaName(tableName);
+        String schemaName = setSchemaName(viewObj.getRepositoryName());
+        String tableName = setSchemaName(viewObj.getViewName());
         
         Object[] whereFieldValuesNew = new Object[0];
         if (whereFields != null) {
@@ -440,35 +568,14 @@ public class SqlStatementEnums {
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
-        String fieldsToRetrieveStr = buildTableFieldsToRetrieve(fieldsToRetrieve);
+        String fieldsToRetrieveStr = buildViewFieldsToRetrieve(fieldsToRetrieve);
         String fieldsToOrderStr = buildOrderBy(fieldsToOrder);
         String fieldsToGroupStr = buildGroupBy(fieldsToGroup);
         
-        String insertFieldNamesStr = buildInsertFieldNames(setFieldNames);
-        String insertFieldValuesStr = buildInsertFieldNamesValues(setFieldNames);
-        
         String query = "";
-        switch (operation.toUpperCase()) {
-            case "SELECT":
-                query = "select ";
-                if (forceDistinct){query=query+ " distinct ";}
-                query=query+ " " + fieldsToRetrieveStr + " from " + schemaName + "." + tableName + "   where " + queryWhere + " " + fieldsToGroupStr + " " + fieldsToOrderStr;
-                break;
-            case "INSERT":
-                query = "insert into " + schemaName + "." + tableName + " (" + insertFieldNamesStr + ") values ( " + insertFieldValuesStr + ") ";
-                break;
-            case "UPDATE":
-                String updateSetSectionStr=buildUpdateSetFields(setFieldNames);
-                query = "update " + schemaName + "." + tableName + " set " + updateSetSectionStr + " where " + queryWhere;
-                whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
-                break;
-            case "DELETE":                
-                query = "delete from " + schemaName + "." + tableName + " where " + queryWhere;
-                whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
-                break;
-            default:
-                break;
-        }
+        query = "select ";
+        if (forceDistinct){query=query+ " distinct ";}
+        query=query+ " " + fieldsToRetrieveStr + " from " + schemaName + "." + tableName + "   where " + queryWhere + " " + fieldsToGroupStr + " " + fieldsToOrderStr;
         hm.put(query, whereFieldValuesNew);
         return hm;
     }

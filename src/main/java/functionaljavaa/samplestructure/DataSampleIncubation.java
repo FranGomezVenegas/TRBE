@@ -10,7 +10,7 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.parameter.Parameter;

@@ -5,7 +5,7 @@
  */
 package functionaljavaa.testingscripts;
 
-import databases.Token;
+import databases.features.Token;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 

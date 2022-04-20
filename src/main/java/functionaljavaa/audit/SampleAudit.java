@@ -9,7 +9,7 @@ import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsData;
 import databases.TblsDataAudit;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import lbplanet.utilities.LPArray;

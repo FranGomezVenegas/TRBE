@@ -11,7 +11,7 @@ import databases.Rdbms;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.modulegenoma.GenomaDataAudit.DataGenomaProjectAuditEvents;
 import functionaljavaa.modulegenoma.GenomaDataAudit.DataGenomaStudyAuditEvents;
 import lbplanet.utilities.LPDate;

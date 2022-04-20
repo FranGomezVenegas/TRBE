@@ -9,9 +9,10 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsProcedure;
-import databases.Token;
+import databases.features.Token;
 import static functionaljavaa.platformadmin.AppBusinessRules.AllAppBusinessRules;
 import functionaljavaa.platformadmin.PlatformAdminEnums.PlatformAdminAPIqueriesEndpoints;
 import java.io.IOException;
@@ -77,7 +78,13 @@ public class PlatformAdminQueries extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
-            ProcedureRequestSession.getInstanceForActions(request, response, false);
+            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false, true);
+            if (procReqInstance.getHasErrors()){
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
+                return;
+            }
+                
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
@@ -109,12 +116,12 @@ public class PlatformAdminQueries extends HttpServlet {
             }
             if (tblsIP!=null){
                 for (EnumIntTables curTbl: tblsIP){
+                    SqlWhere w=new SqlWhere();
+                    w.addConstraint(curTbl.getTableFields()[0], SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{""}, null);
                     String[] fieldsToRetrieve=getAllFieldNames(curTbl.getTableFields());
                     Object[][] ipBlackLists=QueryUtilitiesEnums.getTableData(curTbl,
                             EnumIntTableFields.getTableFieldsFromString(curTbl, "ALL"),
-                            new String[]{curTbl.getPrimaryKey()[0]+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, 
-                            new Object[]{""}, 
-                            new String[]{curTbl.getPrimaryKey()[0]+" desc"}, alternativeProcedureInstanceName);
+                            w, new String[]{curTbl.getPrimaryKey()[0]+" desc"}, alternativeProcedureInstanceName);
                     JSONArray jArr = new JSONArray();
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(ipBlackLists[0][0].toString())){
                         for (Object[] currInstr: ipBlackLists){

@@ -9,8 +9,9 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import static databases.features.DbEncryption.getEncryptFields;
 import databases.Rdbms;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.testingscripts.TestingAuditIds;
@@ -60,6 +61,8 @@ public class ProcedureRequestSession {
     private SessionAuditActions sessionAuditActions;
     private EnumIntEndpoints actionEndpoint;    
     private Boolean newProcedureHashCodeGenerated;
+    private Object[] appEncryptFields;
+    private Object[] procedureEncryptFields;
     
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, EnumIntEndpoints actionEndpoint, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
         try{
@@ -120,12 +123,17 @@ public class ProcedureRequestSession {
         if (dbName==null || dbName.length()==0)        
             Rdbms.stablishDBConection();
         else
-            Rdbms.stablishDBConection(dbName);
+            Rdbms.stablishDBConection(dbName);       
         if (!LPFrontEnd.servletStablishDBConection(request, response)){
             this.hasErrors=true;
             this.errorMessage="db connection not stablished";
             return;
         }    
+
+        this.appEncryptFields=getEncryptFields(dbName, true, null);
+        if (!isPlatform)
+            this.procedureEncryptFields=getEncryptFields(dbName, false, procInstanceName);
+        
 /*        Rdbms.rollbackWithSavePoint();
         if (!con.getAutoCommit()){
             con.rollback();
@@ -468,6 +476,20 @@ return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_F
      */
     public Boolean getIsForDocumentation() {
         return isForDocumentation;
+    }
+
+    /**
+     * @return the appEncryptFields
+     */
+    public Object[] getAppEncryptFields() {
+        return appEncryptFields;
+    }
+
+    /**
+     * @return the procedureEncryptFields
+     */
+    public Object[] getProcedureEncryptFields() {
+        return procedureEncryptFields;
     }
 
 }

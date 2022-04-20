@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.instruments.incubator.ConfigIncubator;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.responserelatedobjects.RelatedObjects;

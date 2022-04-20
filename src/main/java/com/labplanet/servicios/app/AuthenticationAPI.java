@@ -17,7 +17,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPSession;
 import databases.Rdbms;
 import databases.TblsApp;
-import databases.Token;
+import databases.features.Token;
 import databases.TblsApp.Users;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;

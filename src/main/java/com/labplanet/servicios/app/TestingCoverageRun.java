@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
-import databases.Token;
+import databases.features.Token;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;

@@ -7,7 +7,7 @@ package com.labplanet.servicios.app;
 
 import databases.Rdbms;
 import databases.TblsTesting;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.rowAddFields;

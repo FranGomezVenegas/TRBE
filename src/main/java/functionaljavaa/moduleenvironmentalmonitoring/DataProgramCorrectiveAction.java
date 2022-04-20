@@ -9,7 +9,7 @@ import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsData;
 import databases.TblsProcedure;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.parameter.Parameter;
 import java.util.ArrayList;

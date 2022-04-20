@@ -10,7 +10,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPHttp;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.batch.BatchArray;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.platform.doc.EndPointsToRequirements;

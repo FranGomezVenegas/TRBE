@@ -9,7 +9,7 @@ import com.labplanet.servicios.modulegenoma.TblsGenomaData;
 import static functionaljavaa.modulegenoma.GenomaUtilities.*;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
-import databases.Token;
+import databases.features.Token;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;

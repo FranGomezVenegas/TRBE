@@ -11,7 +11,7 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
 import databases.TblsData;
-import databases.Token;
+import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
 import trazit.session.ResponseMessages;

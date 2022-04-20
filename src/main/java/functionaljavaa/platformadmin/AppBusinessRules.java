@@ -8,7 +8,7 @@ package functionaljavaa.platformadmin;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.SqlStatement;
 import databases.TblsProcedure;
-import databases.Token;
+import databases.features.Token;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
