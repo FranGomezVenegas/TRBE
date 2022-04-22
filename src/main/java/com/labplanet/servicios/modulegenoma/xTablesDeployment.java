@@ -47,7 +47,7 @@ public class xTablesDeployment extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet TablesDeployment at " + request.getContextPath() + "</h1>");
-            
+/*            
             String tblCreateScript=createTableScript(TblsCnfg.TablesConfig.SOP_META_DATA, schemaNamePrefix, false, true);
             //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
             out.println("<p>Table "+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName()+" created.</p>");
@@ -62,51 +62,51 @@ public class xTablesDeployment extends HttpServlet {
 
             tblCreateScript=TblsGenomaData.Project.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.Project.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.PROJECT.getTableName()+" created.</p>");
             
             tblCreateScript=TblsGenomaData.ProjectUsers.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.ProjectUsers.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()+" created.</p>");
 
             tblCreateScript=TblsGenomaData.Study.createTableScript(schemaNamePrefix, new String[]{""});
            // Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.Study.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.STUDY.getTableName()+" created.</p>");
 
             tblCreateScript=TblsGenomaData.StudyUsers.createTableScript(schemaNamePrefix, new String[]{""});
            // Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.StudyUsers.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName()+" created.</p>");
 
             tblCreateScript=TblsGenomaData.StudyIndividual.createTableScript(schemaNamePrefix, new String[]{""});
            // Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.StudyIndividual.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName()+" created.</p>");
 
             tblCreateScript=TblsGenomaData.StudyIndividualSample.createTableScript(schemaNamePrefix, new String[]{""});
            // Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.StudyIndividualSample.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName()+" created.</p>");
             
             tblCreateScript=TblsGenomaData.StudySamplesSet.createTableScript(schemaNamePrefix, new String[]{""});
            // Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.StudySamplesSet.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName()+" created.</p>");
 
             tblCreateScript=TblsGenomaData.StudyFamily.createTableScript(schemaNamePrefix, new String[]{""});
            // Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.StudyFamily.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName()+" created.</p>");
 
             tblCreateScript=TblsGenomaData.StudyVariableValues.createTableScript(schemaNamePrefix, new String[]{""});
            // Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.StudyVariableValues.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName()+" created.</p>");
 
             tblCreateScript=TblsGenomaData.studyObjectsFiles.createTableScript(schemaNamePrefix, new String[]{""});
            // Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaData.studyObjectsFiles.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaData.TablesGenomaData.STUDY_OBJECTS_FILES.getTableName()+" created.</p>");
             
             tblCreateScript=TblsGenomaConfig.Variables.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table config."+TblsGenomaConfig.Variables.TBL.getName()+" created.</p>");
+            out.println("<p>Table config."+TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName()+" created.</p>");
 
             tblCreateScript=TblsGenomaConfig.VariablesSet.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table config."+TblsGenomaConfig.VariablesSet.TBL.getName()+" created.</p>");
+            out.println("<p>Table config."+TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName()+" created.</p>");
 
             tblCreateScript=createTableScript(TblsDataAudit.TablesDataAudit.SESSION, schemaNamePrefix, false, true);
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
@@ -114,12 +114,12 @@ public class xTablesDeployment extends HttpServlet {
             
             tblCreateScript=TblsGenomaDataAudit.Project.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaDataAudit.Project.TBL.getName()+" created.</p>");
+            out.println("<p>Table "+TblsGenomaDataAudit.TablesGenomaDataAudit.PROJECT.getTableName()+" created.</p>");
 
             tblCreateScript=TblsGenomaDataAudit.Study.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-            out.println("<p>Table "+TblsGenomaDataAudit.Study.TBL.getName()+" created.</p>");
-
+            out.println("<p>Table "+TblsGenomaDataAudit.TablesGenomaDataAudit.STUDY.getTableName()+" created.</p>");
+*/
             
             out.println("</body>");
             out.println("</html>");

@@ -67,37 +67,37 @@ public class GenomaDataAudit {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        String[] fieldNames = new String[]{TblsGenomaDataAudit.Project.FLD_DATE.getName()};
+        String[] fieldNames = new String[]{TblsGenomaDataAudit.Project.DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         
         Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_PROCEDURE.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_PROCEDURE_VERSION.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.PROCEDURE_VERSION.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][1]);        
         }        
         
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_ACTION_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_TABLE_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_TABLE_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
         if (project!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_PROJECT.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.PROJECT.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, project);
         }    
         if (study!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_STUDY.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.STUDY.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, study);
         }    
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_FIELDS_UPDATED.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FIELDS_UPDATED.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_USER_ROLE.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.USER_ROLE.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getUserRole());
 
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_PERSON.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
 //            Object[] appSession = LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
@@ -107,14 +107,14 @@ public class GenomaDataAudit {
 //                return appSession;
 //            }else{
 
-                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_APP_SESSION_ID.getName());
+                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.APP_SESSION_ID.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(token.getAppSessionId()));            
 //            }
         }
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_TRANSACTION_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.TRANSACTION_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());            
         if (parentAuditId!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.FLD_PARENT_AUDIT_ID.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
         
@@ -129,7 +129,7 @@ public class GenomaDataAudit {
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
 //        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
 
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsGenomaDataAudit.Project.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsGenomaDataAudit.TablesGenomaDataAudit.PROJECT.getTableName(), 
                 fieldNames, fieldValues);
     }
 
@@ -148,37 +148,37 @@ public class GenomaDataAudit {
                            String study, String project, Object[] auditlog, Integer parentAuditId) {
          String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-       String[] fieldNames = new String[]{TblsGenomaDataAudit.Study.FLD_DATE.getName()};
+       String[] fieldNames = new String[]{TblsGenomaDataAudit.Study.DATE.getName()};
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         
         Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_PROCEDURE.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_PROCEDURE_VERSION.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.PROCEDURE_VERSION.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][1]);        
         }        
         
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_ACTION_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_TABLE_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_TABLE_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
         if (project!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_PROJECT.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.PROJECT.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, project);
         }    
         if (study!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_STUDY.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.STUDY.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, study);
         }    
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_FIELDS_UPDATED.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FIELDS_UPDATED.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_USER_ROLE.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.USER_ROLE.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getUserRole());
 
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_PERSON.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
             Object[] appSession = LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
@@ -188,14 +188,14 @@ public class GenomaDataAudit {
                 return appSession;
             }else{
 
-                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_APP_SESSION_ID.getName());
+                fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.APP_SESSION_ID.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(token.getAppSessionId()));            
             }
         }
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_TRANSACTION_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.TRANSACTION_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Rdbms.getTransactionId());            
         if (parentAuditId!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.FLD_PARENT_AUDIT_ID.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
         
@@ -210,7 +210,7 @@ public class GenomaDataAudit {
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
 //        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
 
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsGenomaDataAudit.Study.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsGenomaDataAudit.TablesGenomaDataAudit.STUDY.getTableName(), 
                 fieldNames, fieldValues);
     }
     

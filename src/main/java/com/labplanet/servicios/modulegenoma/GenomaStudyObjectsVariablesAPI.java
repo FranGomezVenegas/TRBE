@@ -163,7 +163,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                     String ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
                     diagnostic =DataStudyObjectsVariableValues.addVariableSetToObject(studyName, variableSetName, ownerTable, ownerId);
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{variableSetName, ownerTable, ownerId});
-                    relatedObject.addSimpleNode(procInstanceName,  TblsGenomaConfig.VariablesSet.TBL.getName(), variableSetName);
+                    relatedObject.addSimpleNode(procInstanceName,  TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), variableSetName);
                     relatedObject.addSimpleNode(procInstanceName, ownerTable, ownerId);
                     break;                      
                 case STUDY_OBJECT_SET_VARIABLE_VALUE:     
@@ -175,7 +175,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                     String newValue=request.getParameter(GenomaProjectAPIParamsList.NEW_VALUE.getParamName());
                     diagnostic =DataStudyObjectsVariableValues.objectVariableSetValue(studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{newValue, variableName});
-                    relatedObject.addSimpleNode(procInstanceName, TblsGenomaData.StudyVariableValues.TBL.getName(), variableName);
+                    relatedObject.addSimpleNode(procInstanceName, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), variableName);
                     relatedObject.addSimpleNode(procInstanceName, ownerTable, ownerId);
                     break;  
                 default:      

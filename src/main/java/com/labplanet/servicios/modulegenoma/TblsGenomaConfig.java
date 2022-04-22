@@ -15,28 +15,142 @@ import static databases.TblsCnfg.TABLETAG;
 import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
+import trazit.enums.FldBusinessRules;
+import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
  */
 public class TblsGenomaConfig {
-    public enum Variables{
-        TBL("variables",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+    
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
+    public enum TablesGenomaConfig implements EnumIntTables{        
+        VARIABLES(null, "variables", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Variables.values(), null, new String[]{Variables.NAME.getName()}, null, "Variables table"),
+        VARIABLES_SET(null, "variables_set", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, VariablesSet.values(), null, new String[]{VariablesSet.NAME.getName()}, null, "Variables Set table"),
+        ;
+        private TablesGenomaConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+                String seqName, String[] primaryK, Object[] foreignK, String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.tableName=dbTblName;
+            this.tableFields=tblFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.sequence=seqName;
+            this.primarykey=primaryK;
+            this.foreignkey=foreignK;
+            this.tableComment=comment;
+        }
+        @Override        public String getTableName() {return this.tableName;}
+        @Override        public String getTableComment() {return this.tableComment;}
+        @Override        public EnumIntTableFields[] getTableFields() {return this.tableFields;}
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public String getSeqName() {return this.sequence;}
+        @Override        public String[] getPrimaryKey() {return this.primarykey;}
+        @Override        public Object[] getForeignKey() {return this.foreignkey;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String tableName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final String sequence;
+        private final EnumIntTableFields[] tableFields;
+        private final String[] primarykey;
+        private final Object[] foreignkey;
+        private final String tableComment;
+    }
+
+    
+    public enum Variables implements EnumIntTableFields{
+        NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null), 
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null), 
+        ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null), 
+        TYPE("type", LPDatabase.string(), null, null, null, null), 
+        REQUIRED("required", LPDatabase.string(), null, null, null, null), 
+        ALLOWED_VALUES("allowed_values", LPDatabase.string(), null, null, null, null), 
+        CREATED_ON("created_on", dateTime(), null, null, null, null), 
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null), 
+        STARTED_ON("started_on", dateTime(), null, null, null, null), 
+        ENDED_ON("ended_on", dateTime(), null, null, null, null), 
+        ;
+        private Variables(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+
+    public enum VariablesSet implements EnumIntTableFields{
+        NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null), 
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null), 
+        ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null), 
+        VARIABLES_LIST("variables_list", LPDatabase.string(), null, null, null, null), 
+        CREATED_ON("created_on", dateTime(), null, null, null, null), 
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null), 
+        STARTED_ON("started_on", dateTime(), null, null, null, null), 
+        ENDED_ON("ended_on", dateTime(), null, null, null, null), 
+        ;
+        private VariablesSet(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    
+    public enum xVariables{
+        TBL("variables",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;"),
-        FLD_NAME("name",  LPDatabase.stringNotNull(100)),
-        FLD_DESCRIPTION("description", LPDatabase.string()),
-        FLD_ACTIVE("active", LPDatabase.booleanFld()),
-        FLD_TYPE("type", LPDatabase.string()),
-        FLD_REQUIRED("required", LPDatabase.string()),
-        FLD_ALLOWED_VALUES("allowed_values", LPDatabase.string()),
-        FLD_CREATED_ON("created_on", dateTime()),
-        FLD_CREATED_BY("created_by", LPDatabase.string()),
-        FLD_STARTED_ON("started_on", dateTime()),
-        FLD_ENDED_ON("ended_on", dateTime()),        
+        NAME("name",  LPDatabase.stringNotNull(100)),
+        DESCRIPTION("description", LPDatabase.string()),
+        ACTIVE("active", LPDatabase.booleanFld()),
+        TYPE("type", LPDatabase.string()),
+        REQUIRED("required", LPDatabase.string()),
+        ALLOWED_VALUES("allowed_values", LPDatabase.string()),
+        CREATED_ON("created_on", dateTime()),
+        CREATED_BY("created_by", LPDatabase.string()),
+        STARTED_ON("started_on", dateTime()),
+        ENDED_ON("ended_on", dateTime()),        
         ;
         
-        private Variables(String dbObjName, String dbObjType){
+        private xVariables(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
@@ -63,14 +177,14 @@ public class TblsGenomaConfig {
         }
         private static String createTableScriptPostgres(String procInstanceName, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Variables.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = xVariables.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (Variables obj: Variables.values()){
+            for (xVariables obj: xVariables.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
@@ -99,20 +213,20 @@ public class TblsGenomaConfig {
         private final String dbObjTypePostgres;                     
     }
 
-    public enum VariablesSet{
-        TBL("variables_set",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+    public enum xVariablesSet{
+        TBL("variables_set",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;"),
-        FLD_NAME("name",  LPDatabase.stringNotNull(100)),
-        FLD_DESCRIPTION("description", LPDatabase.string()),
-        FLD_ACTIVE("active", LPDatabase.booleanFld()),
-        FLD_VARIABLES_LIST("variables_list", LPDatabase.string()),
-        FLD_CREATED_ON("created_on", dateTime()),
-        FLD_CREATED_BY("created_by", LPDatabase.string()),
-        FLD_STARTED_ON("started_on", dateTime()),
-        FLD_ENDED_ON("ended_on", dateTime()),        
+        NAME("name",  LPDatabase.stringNotNull(100)),
+        DESCRIPTION("description", LPDatabase.string()),
+        ACTIVE("active", LPDatabase.booleanFld()),
+        VARIABLES_LIST("variables_list", LPDatabase.string()),
+        CREATED_ON("created_on", dateTime()),
+        CREATED_BY("created_by", LPDatabase.string()),
+        STARTED_ON("started_on", dateTime()),
+        ENDED_ON("ended_on", dateTime()),        
         ;
         
-        private VariablesSet(String dbObjName, String dbObjType){
+        private xVariablesSet(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
         }
@@ -139,14 +253,14 @@ public class TblsGenomaConfig {
         }
         private static String createTableScriptPostgres(String procInstanceName, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = VariablesSet.TBL.getDbFieldDefinitionPostgres();
+            String[] tblObj = xVariablesSet.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
             StringBuilder fieldsScript=new StringBuilder(0);
-            for (VariablesSet obj: VariablesSet.values()){
+            for (xVariablesSet obj: xVariablesSet.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){

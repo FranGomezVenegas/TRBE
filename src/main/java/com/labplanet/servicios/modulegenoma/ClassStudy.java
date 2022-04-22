@@ -58,12 +58,13 @@ public class ClassStudy {
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");    
                     
                     if (fieldValue!=null && fieldValue.length()>0) 
-                        fieldValues=TblsGenomaData.Study.convertStringWithDataTypeToObjectArray(fieldNames, fieldValue.split("\\|"));
+                        //fieldValues=TblsGenomaData.Study.convertStringWithDataTypeToObjectArray(fieldNames, fieldValue.split("\\|"));
+                        fieldValues=LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                     if ("STUDY_NEW".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses= prjStudy.createStudy(studyName, projectName, fieldNames, fieldValues,  false);
                     if ("STUDY_UPDATE".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses= prjStudy.studyUpdate(studyName, fieldNames, fieldValues);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);                
                     if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{studyName, procInstanceName});                    
                     this.messageDynamicData=new Object[]{projectName, studyName, procInstanceName};
@@ -76,7 +77,7 @@ public class ClassStudy {
                     else if ("STUDY_DEACTIVATE".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses =prjStudy.studyDeActivate(studyName);                    
                     this.messageDynamicData=new Object[]{studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
                     break;
                 case STUDY_ADD_USER:
                 case STUDY_REMOVE_USER:
@@ -88,7 +89,7 @@ public class ClassStudy {
                     String userRole=argValues[2].toString();
                     actionDiagnoses =prjStudy.studyUserManagement(endPoint.getName(), studyName, userName, userRole);
                     this.messageDynamicData=new Object[]{userName, studyName, userRole, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);                                    
                     break;
                 case STUDY_CREATE_INDIVIDUAL:
                     studyName = argValues[0].toString();
@@ -104,7 +105,7 @@ public class ClassStudy {
                     else{
                         actionDiagnoses =prjStudyIndividual.createStudyIndividual(studyName, indvidualName, fieldNames, fieldValues, false);
                         this.messageDynamicData=new Object[]{indvidualName, studyName, procInstanceName};
-                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);                                    
                     }
                     break;
                 case STUDY_INDIVIDUAL_ACTIVATE:
@@ -112,23 +113,23 @@ public class ClassStudy {
                     String indvidualId=argValues[1].toString();
                     actionDiagnoses =prjStudyIndividual.studyIndividualActivate(studyName, Integer.valueOf(indvidualId));
                     this.messageDynamicData=new Object[]{indvidualId, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), indvidualId);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), indvidualId);                                    
                     break;
                 case STUDY_INDIVIDUAL_DEACTIVATE:
                     studyName = argValues[0].toString();
                     indvidualId=argValues[1].toString();
                     actionDiagnoses =prjStudyIndividual.studyIndividualDeActivate(studyName, Integer.valueOf(indvidualId));
                     this.messageDynamicData=new Object[]{indvidualId, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), indvidualId);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), indvidualId);                                    
                     break;
                 case STUDY_CREATE_INDIVIDUAL_SAMPLE:
                     studyName = argValues[0].toString();
                     indvidualId=argValues[1].toString();
                     actionDiagnoses =prjStudyIndividualSmp.createStudyIndividualSample(studyName, Integer.valueOf(indvidualId), new String[0], new Object[0], false);
                     this.messageDynamicData=new Object[]{indvidualId, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);                                    
                     break;
                 case STUDY_INDIVIDUAL_SAMPLE_ACTIVATE:
                     studyName = argValues[0].toString();
@@ -136,9 +137,9 @@ public class ClassStudy {
                     String sampleIdStr=argValues[2].toString();
                     actionDiagnoses =prjStudyIndividualSmp.studyIndividualSampleActivate(studyName, Integer.valueOf(indvidualId), Integer.valueOf(sampleIdStr));
                     this.messageDynamicData=new Object[]{sampleIdStr, indvidualId, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), indvidualId);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleIdStr);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), indvidualId);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), sampleIdStr);
                     break;
                 case STUDY_INDIVIDUAL_SAMPLE_DEACTIVATE:
                     studyName = argValues[0].toString();
@@ -146,9 +147,9 @@ public class ClassStudy {
                     sampleIdStr=argValues[2].toString();
                     actionDiagnoses =prjStudyIndividualSmp.studyIndividualSampleDeActivate(studyName, Integer.valueOf(indvidualId), Integer.valueOf(sampleIdStr));
                     this.messageDynamicData=new Object[]{sampleIdStr, indvidualId, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), indvidualId);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleIdStr);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), indvidualId);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), sampleIdStr);
                     break;
                 case STUDY_CREATE_FAMILY:
                     studyName = argValues[0].toString();
@@ -168,24 +169,24 @@ public class ClassStudy {
                     }
                     actionDiagnoses =prjStudyFamily.createStudyFamily(studyName, familyName, individualsList, fieldNames, fieldValues, false);
                     this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName);                                    
                     break;
                 case STUDY_FAMILY_ACTIVATE:
                     studyName = argValues[0].toString();
                     familyName=argValues[1].toString();
                     actionDiagnoses =prjStudyFamily.studyFamilyActivate(studyName, familyName);
                     this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName);                                    
                     break;
                 case STUDY_FAMILY_DEACTIVATE:
                     studyName = argValues[0].toString();
                     familyName=argValues[1].toString();
                     actionDiagnoses =prjStudyFamily.studyFamilyDeActivate(studyName, familyName);
                     this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName);                                    
                     break;
                 case STUDY_FAMILY_ADD_INDIVIDUAL:
                     studyName = argValues[0].toString();
@@ -193,8 +194,8 @@ public class ClassStudy {
                     String individualIdStr = argValues[2].toString();
                     actionDiagnoses =prjStudyFamily.studyFamilyAddIndividual(studyName, familyName, individualIdStr);
                     this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName);                                    
                     break;
                 case STUDY_FAMILY_REMOVE_INDIVIDUAL:
                     studyName = argValues[0].toString();
@@ -202,8 +203,8 @@ public class ClassStudy {
                     individualIdStr = argValues[2].toString();
                     actionDiagnoses =prjStudyFamily.studyFamilyRemoveIndividual(studyName, familyName, individualIdStr);
                     this.messageDynamicData=new Object[]{familyName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudyFamily.TBL.getName(), familyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName);                                    
                     break;
                 case STUDY_CREATE_SAMPLES_SET:
                     studyName = argValues[0].toString();
@@ -223,24 +224,24 @@ public class ClassStudy {
                     }
                     actionDiagnoses =prjStudySampleSet.createStudySamplesSet(studyName, samplesSetName, samples, fieldNames, fieldValues, false);
                     this.messageDynamicData=new Object[]{samplesSetName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                                    
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), samplesSetName);                                    
                     break;
                 case STUDY_SAMPLES_SET_ACTIVATE:
                     studyName = argValues[0].toString();
                     samplesSetName=argValues[1].toString();
                     actionDiagnoses =prjStudySampleSet.studySamplesSetActivate(studyName, samplesSetName);
                     this.messageDynamicData=new Object[]{samplesSetName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), samplesSetName);                                    
                     break;
                 case STUDY_SAMPLES_SET_DEACTIVATE:
                     studyName = argValues[0].toString();
                     samplesSetName=argValues[1].toString();
                     actionDiagnoses =prjStudySampleSet.studySamplesSetDeActivate(studyName, samplesSetName);
                     this.messageDynamicData=new Object[]{samplesSetName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), samplesSetName);                                    
                     break;
                 case STUDY_SAMPLES_SET_ADD_SAMPLE:
                     studyName = argValues[0].toString();
@@ -248,8 +249,8 @@ public class ClassStudy {
                     sampleIdStr = argValues[2].toString();
                     actionDiagnoses =prjStudySampleSet.studySamplesSetAddSample(studyName, samplesSetName, sampleIdStr);
                     this.messageDynamicData=new Object[]{sampleIdStr, samplesSetName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), samplesSetName);                                    
                     break;
                 case STUDY_SAMPLES_SET_REMOVE_SAMPLE:
                     studyName = argValues[0].toString();
@@ -257,8 +258,8 @@ public class ClassStudy {
                     sampleIdStr = argValues[2].toString();
                     actionDiagnoses =prjStudySampleSet.studySamplesSetRemoveSample(studyName, samplesSetName, sampleIdStr);
                     this.messageDynamicData=new Object[]{sampleIdStr, samplesSetName, studyName, procInstanceName};
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), samplesSetName);                                    
                     break;
                 default:
                     break;                    

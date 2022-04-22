@@ -54,7 +54,7 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
 
             schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
 
-            mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.StudyIndividualSample.TBL.getName(), actionName);
+            mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), actionName);
 
 
         if (devMode){
@@ -159,40 +159,40 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
                 }
             }
     */
-            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName())==-1){
-               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName());
+            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName())==-1){
+               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName());
                fieldsValue=LPArray.addValueToArray1D(fieldsValue, indivId);
             }else
-               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName())] = indivId;
-            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_STUDY.getName())==-1){
-               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_STUDY.getName());
+               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName())] = indivId;
+            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.STUDY.getName())==-1){
+               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.STUDY.getName());
                fieldsValue=LPArray.addValueToArray1D(fieldsValue, studyName);
             }else
-               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_STUDY.getName())] = studyName;
-            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_CREATED_ON.getName())==-1){
-               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_CREATED_ON.getName());
+               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.STUDY.getName())] = studyName;
+            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_ON.getName())==-1){
+               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_ON.getName());
                fieldsValue=LPArray.addValueToArray1D(fieldsValue, LPDate.getCurrentTimeStamp());
             }else
-               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_CREATED_ON.getName())] = LPDate.getCurrentTimeStamp();
-            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_CREATED_BY.getName())==-1){
-               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_CREATED_BY.getName());
+               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_ON.getName())] = LPDate.getCurrentTimeStamp();
+            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_BY.getName())==-1){
+               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_BY.getName());
                fieldsValue=LPArray.addValueToArray1D(fieldsValue, token.getPersonName());
             }else
-               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_CREATED_BY.getName())] = token.getPersonName();
-            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_ACTIVE.getName())==-1){
-               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_ACTIVE.getName());
-               fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName()));
+               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_BY.getName())] = token.getPersonName();
+            if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.ACTIVE.getName())==-1){
+               fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.ACTIVE.getName());
+               fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName()));
             }else
-               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.FLD_ACTIVE.getName())] = GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName());        
+               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.ACTIVE.getName())] = GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName());        
     /*        fieldsName = LPArray.addValueToArray1D(fieldsName, GlobalVariables.Schemas.CONFIG.getName());    
             fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplate);
             fieldsName = LPArray.addValueToArray1D(fieldsName, "config_version");    
             fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
     */
 
-            diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.StudyIndividualSample.TBL.getName(), fieldsName, fieldsValue);
+            diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), fieldsName, fieldsValue);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-                GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.NEW_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), diagnosesProj[diagnosesProj.length-1].toString(), 
+                GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.NEW_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), diagnosesProj[diagnosesProj.length-1].toString(), 
                     studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             return diagnosesProj;  
         }    
@@ -213,13 +213,13 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
     public Object[] studyIndividualSampleActivate( String studyName, Integer indivId, Integer sampleId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String[] fieldsName=new String[]{TblsGenomaData.StudyIndividualSample.FLD_ACTIVE.getName()};
+        String[] fieldsName=new String[]{TblsGenomaData.StudyIndividualSample.ACTIVE.getName()};
         Object[] fieldsValue=new Object[]{true};
 
-        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyIndividualSample.TBL.getName(), 
-                fieldsName, fieldsValue, new String[]{TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), 
+                fieldsName, fieldsValue, new String[]{TblsGenomaData.StudyIndividualSample.SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), 
+            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), sampleId.toString(), 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;      
     }    
@@ -230,15 +230,15 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
         Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
-        String[] fieldsName=new String[]{TblsGenomaData.StudyIndividualSample.FLD_ACTIVE.getName()};
+        String[] fieldsName=new String[]{TblsGenomaData.StudyIndividualSample.ACTIVE.getName()};
         Object[] fieldsValue=new Object[]{false};
 
-        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyIndividualSample.TBL.getName(), 
+        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), 
                 fieldsName, fieldsValue, 
-                new String[]{TblsGenomaData.StudyIndividualSample.FLD_STUDY.getName(), TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName(), TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName()}, 
+                new String[]{TblsGenomaData.StudyIndividualSample.STUDY.getName(), TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName(), TblsGenomaData.StudyIndividualSample.SAMPLE_ID.getName()}, 
                 new Object[]{studyName, indivId, sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), 
+            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), sampleId.toString(), 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;      
     }   
@@ -249,15 +249,15 @@ public Object[] createStudyIndividualSample( String studyName, Integer indivId, 
         Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
-        Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName(), fieldsName);
+        Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), fieldsName);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
-        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.StudyIndividualSample.TBL.getName(), 
+        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), 
                 fieldsName, fieldsValue, 
-                new String[]{TblsGenomaData.StudyIndividualSample.FLD_STUDY.getName(), TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName(), TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName()}, 
+                new String[]{TblsGenomaData.StudyIndividualSample.STUDY.getName(), TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName(), TblsGenomaData.StudyIndividualSample.SAMPLE_ID.getName()}, 
                 new Object[]{studyName, indivId, sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.UPDATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), 
+            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.UPDATE_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), sampleId.toString(), 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;      
     } 
