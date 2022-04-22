@@ -18,6 +18,7 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -29,19 +30,19 @@ public class DataInspectionLotDecision {
     public Object[] lotTakeDecision(String lotName, String decision, String[] fieldName, Object[] fieldValue) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
-        String[] dataLotFlds=new String[]{TblsInspLotRMData.Lot.FLD_LOT_CONFIG_NAME.getName(), TblsInspLotRMData.Lot.FLD_LOT_CONFIG_VERSION.getName()};
-        String[] configLotDecisionFlds=TblsInspLotRMConfig.LotDecisionRules.getAllFieldNames();
+        String[] dataLotFlds=new String[]{TblsInspLotRMData.Lot.LOT_CONFIG_NAME.getName(), TblsInspLotRMData.Lot.LOT_CONFIG_VERSION.getName()};
+        String[] configLotDecisionFlds=EnumIntTableFields.getAllFieldNames(TblsInspLotRMConfig.TablesInspLotRMConfig.LOT_DECISION_RULES.getTableFields());
         
-        Object[][] lotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Lot.TBL.getName(), 
-                new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()}, new Object[]{lotName}, 
+        Object[][] lotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), 
+                new String[]{TblsInspLotRMData.Lot.NAME.getName()}, new Object[]{lotName}, 
                 dataLotFlds);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) return lotInfo;
         
-        String templateName=lotInfo[0][LPArray.valuePosicInArray(dataLotFlds, TblsInspLotRMData.Lot.FLD_LOT_CONFIG_NAME.getName())].toString();
-        Integer templateVersion=Integer.valueOf(lotInfo[0][LPArray.valuePosicInArray(dataLotFlds, TblsInspLotRMData.Lot.FLD_LOT_CONFIG_VERSION.getName())].toString());
+        String templateName=lotInfo[0][LPArray.valuePosicInArray(dataLotFlds, TblsInspLotRMData.Lot.LOT_CONFIG_NAME.getName())].toString();
+        Integer templateVersion=Integer.valueOf(lotInfo[0][LPArray.valuePosicInArray(dataLotFlds, TblsInspLotRMData.Lot.LOT_CONFIG_VERSION.getName())].toString());
         
-        Object[][] configLotDecisionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.LotDecisionRules.TBL.getName(), 
-                new String[]{TblsInspLotRMConfig.LotDecisionRules.FLD_CODE.getName(), TblsInspLotRMConfig.LotDecisionRules.FLD_CODE_VERSION.getName()}, new Object[]{templateName, templateVersion}, 
+        Object[][] configLotDecisionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.TablesInspLotRMConfig.LOT_DECISION_RULES.getTableName(), 
+                new String[]{TblsInspLotRMConfig.LotDecisionRules.CODE.getName(), TblsInspLotRMConfig.LotDecisionRules.CODE_VERSION.getName()}, new Object[]{templateName, templateVersion}, 
                 configLotDecisionFlds);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(configLotDecisionInfo[0][0].toString())) return configLotDecisionInfo;
 
@@ -57,7 +58,7 @@ public class DataInspectionLotDecision {
     } 
     
     public Object[] decisionTypePasses(String lotName, String decision, String[] dataLotFlds, Object[] lotInfo, String[] configLotDecFlds, Object[] configLotDecInfo){
-        String decisionsList=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.FLD_DECISIONS_LIST.getName())].toString();
+        String decisionsList=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.DECISIONS_LIST.getName())].toString();
         if (decisionsList==null || decisionsList.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "NoDecisionsListDefined", null);
         if (LPArray.valueInArray(decisionsList.split("\\|"), decision)) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
@@ -68,27 +69,27 @@ public class DataInspectionLotDecision {
     public Object[] sampleAndTestCheck(String lotName, String templateName, Integer templateVersion, String decision, String[] dataLotFlds, Object[] lotInfo, String[] configLotDecFlds, Object[] configLotDecInfo){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String testRevisionRequired=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.FLD_SAMPLE_ANALYSIS_REVISION_REQUIRED.getName())].toString();
-        String sampleRevisionRequired=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.FLD_SAMPLE_REVISION_REQUIRED.getName())].toString();
+        String testRevisionRequired=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.SAMPLE_ANALYSIS_REVISION_REQUIRED.getName())].toString();
+        String sampleRevisionRequired=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.SAMPLE_REVISION_REQUIRED.getName())].toString();
         if ((testRevisionRequired==null || !Boolean.valueOf(testRevisionRequired)) && (sampleRevisionRequired==null || !Boolean.valueOf(sampleRevisionRequired)) ) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "NoDecisionsListDefined", null);
         else{
-            String[] sampleAndSampleAnalysisFlds=new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_STATUS.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_STATUS.getName()};
+            String[] sampleAndSampleAnalysisFlds=new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_STATUS.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TEST_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TEST_STATUS.getName()};
             String sampleStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
             
-            Object[][] sampleAndSampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
-                    new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOT_NAME.getName()}, new Object[]{lotName}, 
+            Object[][] sampleAndSampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), 
+                    new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.LOT_NAME.getName()}, new Object[]{lotName}, 
                     sampleAndSampleAnalysisFlds);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAndSampleAnalysisInfo[0][0].toString())) return sampleAndSampleAnalysisInfo;
             if (Boolean.valueOf(testRevisionRequired)){            
-                Object[] sampleAnalysisStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_TEST_STATUS.getName()));
+                Object[] sampleAnalysisStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TEST_STATUS.getName()));
                 for (Object curSmpAnaStatus: sampleAnalysisStatuses){
                     if (curSmpAnaStatus==null || curSmpAnaStatus.toString().length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lotHasOneSampleAnalysisWithNoStatus", null);
                     if (!sampleStatusReviewed.equalsIgnoreCase(curSmpAnaStatus.toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lotHasNotReviewedSampleAnalysis", new Object[]{lotName, procInstanceName});
                 }
             }
             if (Boolean.valueOf(sampleRevisionRequired)){            
-                Object[] sampleStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_STATUS.getName()));
+                Object[] sampleStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_STATUS.getName()));
                 for (Object curSmpStatus: sampleStatuses){
                     if (curSmpStatus==null || curSmpStatus.toString().length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lotHasOneSampleWithNoStatus", null);
                     if (!sampleStatusReviewed.equalsIgnoreCase(curSmpStatus.toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lotHasNotReviewedSamples", null);
@@ -107,20 +108,20 @@ public class DataInspectionLotDecision {
         Object[] diagnoses=new Object[]{};
 
         if (decision!=null && decision.length()>0){
-            lotFieldName = LPArray.addValueToArray1D(lotFieldName, new String[]{TblsInspLotRMData.LotDecision.FLD_DECISION.getName(), TblsInspLotRMData.LotDecision.FLD_DECISION_TAKEN_BY.getName(), TblsInspLotRMData.LotDecision.FLD_DECISION_TAKEN_ON.getName()});    
+            lotFieldName = LPArray.addValueToArray1D(lotFieldName, new String[]{TblsInspLotRMData.LotDecision.DECISION.getName(), TblsInspLotRMData.LotDecision.DECISION_TAKEN_BY.getName(), TblsInspLotRMData.LotDecision.DECISION_TAKEN_ON.getName()});    
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, new Object[]{decision, token.getPersonName(), LPDate.getCurrentTimeStamp()});                                         
         }
 
-        Object[] lotExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.LotDecision.TBL.getName(), 
-                new String[]{TblsInspLotRMData.LotDecision.FLD_LOT_NAME.getName()}, new Object[]{lotName});
+        Object[] lotExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION.getTableName(), 
+                new String[]{TblsInspLotRMData.LotDecision.LOT_NAME.getName()}, new Object[]{lotName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(lotExists[0].toString())){      
-            diagnoses=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.LotDecision.TBL.getName(), 
+            diagnoses=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION.getTableName(), 
                 lotFieldName, lotFieldValue, 
-                new String[]{TblsInspLotRMData.LotDecision.FLD_LOT_NAME.getName()}, new Object[]{lotName});
+                new String[]{TblsInspLotRMData.LotDecision.LOT_NAME.getName()}, new Object[]{lotName});
         }else{
-            lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.LotDecision.FLD_LOT_NAME.getName());    
+            lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.LotDecision.LOT_NAME.getName());    
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, lotName);                         
-            diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.LotDecision.TBL.getName(), 
+            diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION.getTableName(), 
                 lotFieldName, lotFieldValue);
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
@@ -134,7 +135,7 @@ public class DataInspectionLotDecision {
         if (decision!=null && decision.length()>0){
             LotAudit lotAudit = new LotAudit();            
             lotAudit.lotAuditAdd(InspLotRMAPIEndpoints.LOT_TAKE_DECISION.getAuditActionName(), 
-                    TblsInspLotRMData.Lot.TBL.getName(), lotName, lotName, fieldsOnLogLot, null);
+                    TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotName, lotName, fieldsOnLogLot, null);
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "LotDecisionTaken", new Object[]{lotName, decision, procInstanceName});
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);

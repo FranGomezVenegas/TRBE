@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -39,18 +40,18 @@ public class ClassInspLotRMQueries {
             switch (endPoint){
                     case GET_LOT_INFO:
                         lotName=LPNulls.replaceNull(argValues[0]).toString();
-                        String[] fieldsToRetrieve=new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()};
+                        String[] fieldsToRetrieve=new String[]{TblsInspLotRMData.Lot.NAME.getName()};
                         if (argValues.length>1 && argValues[1]!=null && argValues[1].toString().length()>0){
-                            if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=TblsInspLotRMData.Lot.getAllFieldNames();
+                            if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.LOT.getTableFields());
                             else fieldsToRetrieve=argValues[1].toString().split("\\|");
                         }
-                        Object[][] lotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Lot.TBL.getName(), 
-                                new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()}, new Object[]{lotName}, 
-                                fieldsToRetrieve, new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()});
+                        Object[][] lotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), 
+                                new String[]{TblsInspLotRMData.Lot.NAME.getName()}, new Object[]{lotName}, 
+                                fieldsToRetrieve, new String[]{TblsInspLotRMData.Lot.NAME.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) actionDiagnoses=lotInfo[0];
                         else{
                             for (Object[] curLot: lotInfo){
-                                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Lot.TBL.getName(), curLot[0], fieldsToRetrieve, curLot); 
+                                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), curLot[0], fieldsToRetrieve, curLot); 
                             }
                             actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName});
                         }
@@ -60,22 +61,22 @@ public class ClassInspLotRMQueries {
                         lotName=LPNulls.replaceNull(argValues[0]).toString();
                         String fieldsToRetrieveStr=LPNulls.replaceNull(argValues[1]).toString();
                         if (LPNulls.replaceNull(fieldsToRetrieveStr).length()==0)
-                            fieldsToRetrieve=TblsInspLotRMData.Sample.getAllFieldNames();
+                            fieldsToRetrieve=EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableFields());
                         else
                             fieldsToRetrieve=fieldsToRetrieveStr.split("\\|");
 
                         if (argValues.length>1 && argValues[1]!=null && argValues[1].toString().length()>0){
-                            if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=TblsInspLotRMData.Sample.getAllFieldNames();
+                            if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableFields());
                             else fieldsToRetrieve=argValues[1].toString().split("\\|");
                         }
-                        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Sample.TBL.getName(), 
-                                new String[]{TblsInspLotRMData.Sample.FLD_LOT_NAME.getName()}, new Object[]{lotName}, 
-                                fieldsToRetrieve, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()});
+                        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableName(), 
+                                new String[]{TblsInspLotRMData.Sample.LOT_NAME.getName()}, new Object[]{lotName}, 
+                                fieldsToRetrieve, new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) actionDiagnoses=sampleInfo[0];
                         else{
-                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Lot.TBL.getName(), lotName, null, null); 
+                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotName, null, null); 
                             for (Object[] curSample: sampleInfo){
-                                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.Sample.TBL.getName(), curSample[0], fieldsToRetrieve, curSample); 
+                                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableName(), curSample[0], fieldsToRetrieve, curSample); 
                             }
                             actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName});
                         }

@@ -68,9 +68,9 @@ public class SamplingPlanEntry {
         this.errorsjArr=new JSONArray();
         this.hasErrors=false;
         List<SamplingPlanEntryItem> myList = new ArrayList<>();
-        Object[][] materialSampPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.MaterialSamplingPlan.TBL.getName(), 
-            new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.FLD_MATERIAL.getName()}, new Object[]{materialName}, 
-            new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.FLD_ENTRY_NAME.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FLD_ANALYSIS_VARIATION.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FLD_ALGORITHM.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FLD_FIX_SAMPLES_NUM.getName()});
+        Object[][] materialSampPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL_SAMPLING_PLAN.getTableName(), 
+            new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.MATERIAL.getName()}, new Object[]{materialName}, 
+            new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.ENTRY_NAME.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.ANALYSIS_VARIATION.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.ALGORITHM.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FIX_SAMPLES_NUM.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialSampPlanInfo[0][0].toString())){
             this.hasErrors=true;
             this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(), materialSampPlanInfo[0][materialSampPlanInfo[0].length-1].toString());

@@ -33,6 +33,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilities;
@@ -130,21 +131,21 @@ public class InspLotRMAPIfrontend extends HttpServlet {
             String fieldsToRetrieveStr=LPNulls.replaceNull(argValues[1].toString());
             Boolean includesSamplesInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
             Boolean includesMaterialInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());
-            if (includesMaterialInfo && fieldsToRetrieveStr.length()>0 && !fieldsToRetrieveStr.contains(TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName()))
-                fieldsToRetrieveStr=fieldsToRetrieveStr + "|"+TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName();
-            String[] fieldsToRetrieve=getFieldsListToRetrieve(fieldsToRetrieveStr, TblsInspLotRMData.Lot.getAllFieldNames());
-            Object[][] lotInfo=QueryUtilities.getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.Lot.TBL.getName(), 
-                fieldsToRetrieveStr, TblsInspLotRMData.Lot.getAllFieldNames(), 
-                new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()}, new Object[]{lotName}, new String[]{TblsInspLotRMData.Lot.FLD_NAME.getName()});        
+            if (includesMaterialInfo && fieldsToRetrieveStr.length()>0 && !fieldsToRetrieveStr.contains(TblsInspLotRMData.Lot.MATERIAL_NAME.getName()))
+                fieldsToRetrieveStr=fieldsToRetrieveStr + "|"+TblsInspLotRMData.Lot.MATERIAL_NAME.getName();
+            String[] fieldsToRetrieve=getFieldsListToRetrieve(fieldsToRetrieveStr, EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.LOT.getTableFields()));
+            Object[][] lotInfo=QueryUtilities.getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), 
+                fieldsToRetrieveStr, EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.LOT.getTableFields()), 
+                new String[]{TblsInspLotRMData.Lot.NAME.getName()}, new Object[]{lotName}, new String[]{TblsInspLotRMData.Lot.NAME.getName()});        
             JSONArray jArr = new JSONArray();
             for (Object[] currLot: lotInfo){
                 JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currLot);
-                if (LPArray.valueInArray(fieldsToRetrieve, TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName())){
-                    String currMaterial=currLot[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInspLotRMData.Lot.FLD_MATERIAL_NAME.getName())].toString();
+                if (LPArray.valueInArray(fieldsToRetrieve, TblsInspLotRMData.Lot.MATERIAL_NAME.getName())){
+                    String currMaterial=currLot[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInspLotRMData.Lot.MATERIAL_NAME.getName())].toString();
                     if (includesSamplesInfo && currMaterial!=null && currMaterial.length()>0)
-                        jObj.put(TblsData.TablesData.SAMPLE.getTableName(), dataSampleStructure(lotName, null, null, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()}, true, true));
+                        jObj.put(TblsData.TablesData.SAMPLE.getTableName(), dataSampleStructure(lotName, null, null, new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()}, true, true));
                     if (includesMaterialInfo && currMaterial!=null && currMaterial.length()>0)
-                        jObj.put(TblsInspLotRMConfig.Material.TBL.getName(), configMaterialStructure(currMaterial, null, new String[]{TblsInspLotRMConfig.Material.FLD_NAME.getName()}, true, true, true));
+                        jObj.put(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(), configMaterialStructure(currMaterial, null, new String[]{TblsInspLotRMConfig.Material.NAME.getName()}, true, true, true));
                 }
                 jArr.add(jObj);                
             }
@@ -157,7 +158,7 @@ public class InspLotRMAPIfrontend extends HttpServlet {
             Boolean includesSampleAnalysisInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
             Boolean includesSampleAnalysisResultInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());            
             jArr = new JSONArray();
-            jArr.add(dataSampleStructure(lotName, null, fieldsToRetrieveStr, new String[]{TblsInspLotRMData.Sample.FLD_SAMPLE_ID.getName()}, includesSampleAnalysisInfo, includesSampleAnalysisResultInfo));
+            jArr.add(dataSampleStructure(lotName, null, fieldsToRetrieveStr, new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()}, includesSampleAnalysisInfo, includesSampleAnalysisResultInfo));
             Rdbms.closeRdbms();  
             LPFrontEnd.servletReturnSuccess(request, response, jArr);
             break;        

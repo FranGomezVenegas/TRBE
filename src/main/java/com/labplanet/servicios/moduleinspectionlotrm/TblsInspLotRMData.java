@@ -5,992 +5,463 @@
  */
 package com.labplanet.servicios.moduleinspectionlotrm;
 
-import databases.DbObjects;
-import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPDatabase;
-import lbplanet.utilities.LPPlatform;
-import static databases.TblsCnfg.SCHEMATAG;
-import static databases.TblsCnfg.TABLETAG;
-import static databases.TblsCnfg.OWNERTAG;
-import static databases.TblsCnfg.TABLESPACETAG;
-import static databases.TblsCnfg.FIELDSTAG;
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
+import databases.TblsCnfg;
 import databases.TblsData;
-import databases.TblsData.SampleAnalysis;
-import static trazit.enums.deployrepository.DeployTables.createTableScript;
+import static databases.TblsData.FIELDS_NAMES_ALIQUOT_ID;
+import static databases.TblsData.FIELDS_NAMES_ANALYSIS;
+import static databases.TblsData.FIELDS_NAMES_REPLICA;
+import static databases.TblsData.FIELDS_NAMES_SPEC_EVAL;
+import static databases.TblsData.FIELDS_NAMES_STATUS;
+import static databases.TblsData.FIELDS_NAMES_STATUS_PREVIOUS;
+import static databases.TblsData.FIELDS_NAMES_SUBALIQUOT_ID;
+import databases.TblsProcedure;
+import lbplanet.utilities.LPDatabase;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntViewFields;
+import trazit.enums.EnumIntViews;
+import trazit.enums.FldBusinessRules;
+import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
  */
 public class TblsInspLotRMData {
-/*    public static final String getTableCreationScriptFromDataTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "TRAINING": return createTableScript(TblsData.TablesData.TRAINING, schemaNamePrefix);
-            case "CERTIF_USER_ANALYSIS_METHOD": return createTableScript(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, schemaNamePrefix);
-            case "INVENTORY_RETAIN": return InventoryRetain.createTableScript(schemaNamePrefix, fields);
-            case "LOT": return Lot.createTableScript(schemaNamePrefix, fields);
-            case "LOT_DECISION": return LotDecision.createTableScript(schemaNamePrefix, fields);
-            case "LOT_CERTIFICATE": return LotCertificate.createTableScript(schemaNamePrefix, fields);
-            case "LOT_CERTIFICATE_TRACK": return LotCertificateTrack.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW": return ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, fields);
-            default: return "TABLE "+tableName+" NOT IN INSPLOT_RM_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
-        }        
-    }    */
-    /**
-     *
-     */
-    public enum Lot{
-        TBL("lot",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
 
-        /**
-         *
-         */
-        FLD_NAME("name",  LPDatabase.stringNotNull(100))
-        ,
-
-        /**
-         *
-         */
-        FLD_LOT_CONFIG_NAME("lot_config_name", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_LOT_CONFIG_VERSION("lot_config_version", LPDatabase.integerNotNull())        ,
-        FLD_MATERIAL_NAME("material_name", LPDatabase.string()),        
-        FLD_SPEC_CODE("spec_code", LPDatabase.string()),        
-        FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer()),
-        FLD_SAMPLING_PLAN("sampling_plan", LPDatabase.string()),        
-//        FLD_CONFIG_CODE("config_code", LPDatabase.string()),        
-//        FLD_CONFIG_CODE_VERSION("config_code_version", LPDatabase.integer()),        
-        FLD_DESCRIPTION_EN("description_en", LPDatabase.string()),        
-        FLD_DESCRIPTION_ES("description_es", LPDatabase.string()),        
-        FLD_QUANTITY("quantity", LPDatabase.integer()),        
-        FLD_QUANTITY_UOM("quantity_uom", LPDatabase.string()),        
-        FLD_NUM_CONTAINERS("num_containers", LPDatabase.integer()),        
-        FLD_VENDOR("vendor", LPDatabase.string()),        
-        FLD_VENDOR_TRUST_LEVEL("vendor_trust_level", LPDatabase.string()),        
-        FLD_ANALYSIS_STATUS("analysis_status", LPDatabase.string()),        
-        FLD_CREATED_ON("created_on", LPDatabase.dateTime()),
-        FLD_CREATED_BY("created_by", LPDatabase.string()),
-                
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
-        FLD_CUSTODIAN("custodian", LPDatabase.string()),
-        // ...
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
+    public enum TablesInspLotRMData implements EnumIntTables{        
+        LOT(null, "lot", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Lot.values(), null, new String[]{Lot.NAME.getName()}, null, "Lot table"),
+        LOT_DECISION(null, "lot_decision", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotDecision.values(), null, new String[]{LotDecision.LOT_NAME.getName()}, null, "LotDecision table"),
+        LOT_CERTIFICATE(null, "lot_certificate", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificate.values(), LotCertificate.CERTIFICATE_ID.getName(), new String[]{LotCertificate.CERTIFICATE_ID.getName()}, null, "LotCertificate table"),
+        LOT_CERTIFICATE_TRACK(null, "lot_certificate_track", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificateTrack.values(), LotCertificateTrack.ID.getName(), new String[]{LotCertificateTrack.ID.getName()}, null, "LotCertificateTrack table"),
+        SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Sample.values(), Sample.SAMPLE_ID.getName(), new String[]{Sample.SAMPLE_ID.getName()}, null, "Sample table"),
+        INVENTORY_RETAIN(null, "inventory_retain", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, InventoryRetain.values(), InventoryRetain.ID.getName(), new String[]{InventoryRetain.ID.getName()}, null, "InventoryRetain table"),
         ;
-        
-        private Lot(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private TablesInspLotRMData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+                String seqName, String[] primaryK, Object[] foreignK, String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.tableName=dbTblName;
+            this.tableFields=tblFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.sequence=seqName;
+            this.primarykey=primaryK;
+            this.foreignkey=foreignK;
+            this.tableComment=comment;
         }
-
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Lot.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (Lot obj: Lot.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }     
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (Lot obj: Lot.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }
-        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }
-
-    /**
-     *
-     */
-    public enum LotDecision{
-
-        /**
-         *
-         */
-        TBL("lot_decision",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_LOT_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-        FLD_LOT_NAME(FIELDS_NAMES_LOT_NAME, LPDatabase.stringNotNull(100))
-        ,
-
-        /**
-         *
-         */
-        FLD_DECISION("decision",  LPDatabase.string(200)),
-        FLD_DECISION_TAKEN_BY("decision_taken_by",  LPDatabase.string()),
-        FLD_DECISION_TAKEN_ON("decision_taken_on",  LPDatabase.dateTime()),
-        // ...
-        ;        
-        private LotDecision(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = LotDecision.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (LotDecision obj: LotDecision.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }   
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (LotDecision obj: LotDecision.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }   
-        
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }
-
-    public enum LotCertificate{
-
-        /**
-         *
-         */
-        FLD_CERTIFICATE_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_#FLD_CERTIFICATE_ID_seq'::regclass)")
-        ,        
-        TBL("lot_certificate", LPDatabase.createSequence(FLD_CERTIFICATE_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_CERTIFICATE_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_CERTIFICATE_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-        FLD_LOT_NAME("lot_name", LPDatabase.string())        ,
-        FLD_CERTIFICATE_VERSION("certificate_version", LPDatabase.integer())        ,
-        FLD_STATUS("status",LPDatabase.stringNotNull())        ,
-        FLD_STATUS_PREVIOUS("status_previous",LPDatabase.string())        ,
-        FLD_CREATED_ON("created_on", LPDatabase.date())        ,
-        FLD_CREATED_BY("created_by", LPDatabase.string())        ,       
-        FLD_CERTIFICATE_FORMAT("certificate_format", LPDatabase.string())        ,
-        ;
-        private LotCertificate(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix procedure prefix
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = LotCertificate.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (LotCertificate obj: LotCertificate.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }        
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (Sample obj: Sample.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }            
-
-    public enum LotCertificateTrack{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
-        ,        
-        TBL("lot_certificate_track", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-        FLD_LOT_NAME("lot_name", LPDatabase.string())        ,
-        FLD_CONFIG_NAME("config_name", LPDatabase.integer()),        
-        FLD_EVENT("event",LPDatabase.stringNotNull())        ,
-        FLD_CREATED_ON("created_on", LPDatabase.date())        ,
-        FLD_CREATED_BY("created_by", LPDatabase.string())        ,       
-        ;
-        private LotCertificateTrack(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix procedure prefix
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = LotCertificateTrack.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (LotCertificateTrack obj: LotCertificateTrack.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }        
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (Sample obj: Sample.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }            
-    
-    private static final String FIELDS_NAMES_LOT_NAME = "lot_name";
-    /**
-     *
-     */
-    public enum Sample{
-        /**
-         *
-         */
-        FLD_SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)")
-        ,        
-        TBL("sample", LPDatabase.createSequence(FLD_SAMPLE_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SAMPLE_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-
-        /**
-         *
-         */
-        FLD_CONFIG_CODE("sample_config_code", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-
-        /**
-         *
-         */
-        FLD_STATUS("status",LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS_PREVIOUS("status_previous",LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_LOGGED_ON("logged_on", LPDatabase.date())
-        ,
-
-        /**
-         *
-         */
-        FLD_LOGGED_BY("logged_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_RECEIVED_ON("received_on", LPDatabase.date())
-        ,
-
-        /**
-         *
-         */
-        FLD_RECEIVED_BY("received_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ALIQUOTED("aliquoted", LPDatabase.booleanFld(false))
-        ,
-
-        /**
-         *
-         */
-        FLD_ALIQUOT_STATUS("aliq_status",LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real())
-        ,
-
-        /**
-         *
-         */
-        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom",LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_CODE("spec_code",LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_VARIATION_NAME("spec_variation_name",LPDatabase.stringNotNull())
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_EVAL("spec_eval",  LPDatabase.string(2))
-        ,
-
-        /**
-         *
-         */
-        FLD_CUSTODIAN("custodian",  LPDatabase.string(2))
-        ,
-
-        /**
-         *
-         */
-        FLD_CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.string(2))
-        ,
-
-        FLD_COC_REQUESTED_ON("coc_requested_on", LPDatabase.date())
-        ,
-        FLD_COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.date())
-        ,
-        FLD_LOT_NAME(FIELDS_NAMES_LOT_NAME,  LPDatabase.stringNotNull())
-        ,
-        FLD_CURRENT_STAGE("current_stage",LPDatabase.string())
-        ,
-        FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.string()),
-        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),        
-        
-        ;
-        private Sample(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
-        }
-
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix procedure prefix
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Sample.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (Sample obj: Sample.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }        
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (Sample obj: Sample.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }            
-    public enum ViewSampleAnalysisResultWithSpecLimits{
-
-        /**
-         *
-         */
-        TBL("sample_analysis_result_with_spec_limits",  LPDatabase.createView() +
-                " SELECT #FLDS from #SCHEMA.sample_analysis_result sar " +
+        @Override        public String getTableName() {return this.tableName;}
+        @Override        public String getTableComment() {return this.tableComment;}
+        @Override        public EnumIntTableFields[] getTableFields() {return this.tableFields;}
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public String getSeqName() {return this.sequence;}
+        @Override        public String[] getPrimaryKey() {return this.primarykey;}
+        @Override        public Object[] getForeignKey() {return this.foreignkey;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String tableName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final String sequence;
+        private final EnumIntTableFields[] tableFields;
+        private final String[] primarykey;
+        private final Object[] foreignkey;
+        private final String tableComment;
+    }   
+    public enum ViewsData implements EnumIntViews{
+        SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW(" SELECT #FLDS from #SCHEMA.sample_analysis_result sar " +
                 "   INNER JOIN #SCHEMA.sample_analysis sa on sa.test_id = sar.test_id "+
                 "   INNER JOIN #SCHEMA.sample s on s.sample_id = sar.sample_id "+
-                "   INNER JOIN #SCHEMA.lot l on l.name = s.lot_name "+
                 "    left outer join #SCHEMA_CONFIG.spec_limits spcLim on sar.limit_id=spcLim.limit_id " +
-                "    left outer join #SCHEMA_PROCEDURE.program_corrective_action pca on pca.result_id=rsl.result_id " +
-                "    left outer join #SCHEMA_PROCEDURE.invest_objects io on io.object_id=rsl.result_id and io.object_type='sample_analysis_result' ;" +
-                        
-                "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;")
-        ,
-
-        /**
-         *
-         */
-        FLD_RESULT_ID("result_id", "sar.result_id")
-        ,
-
-        /**
-         *
-         */
-        FLD_TEST_ID(SampleAnalysis.TEST_ID.getName(), "sar.test_id")
-        ,
-        FLD_SAMPLE_ID(Sample.FLD_SAMPLE_ID.getName(), "sar.sample_id")        ,
-        FLD_LOT_NAME("lot_name", "l.lot_name")        ,
-        FLD_STATUS(TblsData.FIELDS_NAMES_STATUS, "sar.status")
-        ,
-
-        /**
-         *
-         */
-        FLD_STATUS_PREVIOUS(TblsData.FIELDS_NAMES_STATUS_PREVIOUS, "sar.status_previous")
-        ,
-
-        /**
-         *
-         */
-        FLD_ANALYSIS(TblsData.FIELDS_NAMES_ANALYSIS, "sar.analysis")
-        ,
-
-        /**
-         *
-         */
-        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, "sar.method_name")
-        ,
-
-        /**
-         *
-         */
-        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, "sar.method_version")
-        ,
-
-        /**
-         *
-         */
-        FLD_REPLICA(TblsData.FIELDS_NAMES_REPLICA, "sar.replica")
-        ,
-
-        /**
-         *
-         */
-        FLD_PARAM_NAME("param_name", "sar.param_name")
-        ,
-
-        /**
-         *
-         */
-        FLD_PARAM_TYPE("param_type", "sar.param_type")
-        ,
-
-        /**
-         *
-         */
-        FLD_MANDATORY("mandatory", "sar.mandatory")
-        ,
-
-        /**
-         *
-         */
-        FLD_REQUIRES_LIMIT("requires_limit", "sar.requires_limit")
-        ,
-
-        /**
-         *
-         */
-        FLD_RAW_VALUE("raw_value", "sar.raw_value"),
-        FLD_RAW_VALUE_NUM("raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end AS raw_value_num"),         
-
-        /**
-         *
-         */
-        FLD_PRETTY_VALUE("pretty_value", "sar.pretty_value")
-        ,
-
-        /**
-         *
-         */
-        FLD_ENTERED_ON("entered_on", "sar.entered_on")
-        ,
-
-        /**
-         *
-         */
-        FLD_ENTERED_BY("entered_by", "sar.entered_by")
-        ,
-
-        /**
-         *
-         */
-        FLD_REENTERED("reentered", "sar.reentered")
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_EVAL(TblsData.FIELDS_NAMES_SPEC_EVAL, "sar.spec_eval")
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_EVAL_DETAIL("spec_eval_detail", "sar.spec_eval_detail")
-        ,        
-
-        /**
-         *
-         */
-        FLD_UOM("uom", "sar.uom")        
-        ,        
-
-        /**
-         *
-         */
-        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", "sar.uom_conversion_mode")        
-        ,
-
-        /**
-         *
-         */
-        FLD_ALIQUOT_ID(TblsData.FIELDS_NAMES_ALIQUOT_ID, "sar.aliquot_id")
-        ,
-
-        /**
-         *
-         */
-        FLD_SUBALIQUOT_ID(TblsData.FIELDS_NAMES_SUBALIQUOT_ID, "sar.subaliquot_id")
-        ,        
-
-        /**
-         *
-         */
-        FLD_SAMPLE_CONFIG_CODE("sample_config_code", "s.config_code"),
-        FLD_SAMPLE_STATUS("sample_status", "s.status"),
-        FLD_CURRENT_STAGE("current_stage", "s.current_stage"),
-        FLD_TESTING_GROUP("testing_group", "sa.testing_group"),
-        FLD_TEST_STATUS("test_status", "sa.status"),
-        FLD_LOGGED_ON("logged_on", "s.logged_on"),
-        FLD_LIMIT_ID("limit_id", "spcLim.limit_id"),
-        /**
-         *
-         */
-        FLD_SPEC_CODE("spec_code", "spcLim.code")
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_CONFIG_VERSION("spec_config_version", "spcLim.config_version")
-        ,
-
-        /**
-         *
-         */
-        FLD_SPEC_VARIATION_NAME("spec_variation_name", "spcLim.variation_name")
-        ,            
-
-        /**
-         *
-         */
-        FLD_ANALYSIS_SPEC_LIMITS("analysis_spec_limits", "spcLim.analysis")            
-        ,
-
-        /**
-         *
-         */
-        FLD_METHOD_NAME_SPEC_LIMITS("method_name_spec_limits", "spcLim.method_name")
-        ,
-
-        /**
-         *
-         */
-        FLD_METHOD_VERSION_SPEC_LIMITS("method_version_spec_limits", "spcLim.method_version")
-        ,
-
-        /**
-         *
-         */
-        FLD_PARAMETER("parameter", "spcLim.parameter")
-        ,
-
-        /**
-         *
-         */
-        FLD_RULE_TYPE("rule_type", "spcLim.rule_type")
-        ,
-
-        /**
-         *
-         */
-        FLD_RULE_VARIABLES("rule_variables", "spcLim.rule_variables")
-        ,
-
-        /**
-         *
-         */
-        FLD_UOM_SPEC_LIMITS("uom_spec_limits", "spcLim.uom")
-        ,        
-
-        /**
-         *
-         */
-        FLD_UOM_CONVERSION_MODE_SPEC_LIMITS("uom_conversion_mode_spec_limits", "spcLim.uom_conversion_mode") ,
-        FLD_MIN_VAL_ALLOWED("min_val_allowed", "spcLim.min_val_allowed"),
-        FLD_MAX_VAL_ALLOWED("max_val_allowed", "spcLim.max_val_allowed"),
-        FLD_MIN_VAL_ALLOWED_IS_STRICT("min_allowed_strict", "spcLim.min_allowed_strict"),
-        FLD_MAX_VAL_ALLOWED_IS_STRICT("max_allowed_strict", "spcLim.max_allowed_strict"),        
-        FLD_MIN_VAL_FOR_UNDETERMINED("min_undetermined", "spcLim.min_undetermined"),
-        FLD_MAX_VAL_FOR_UNDETERMINED("max_undetermined", "spcLim.max_undetermined"),
-        FLD_MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", "spcLim.min_undet_strict"),
-        FLD_MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", "spcLim.max_undet_strict"),
-        FLD_HAS_PREINVEST("has_pre_invest", "CASE WHEN pca.id IS NULL THEN 'NO' ELSE 'YES' END"),
-        FLD_PREINVEST_ID("pre_invest_id", "pca.id"),
-        FLD_HAS_INVEST("has_invest", "CASE WHEN io.id IS NULL THEN 'NO' ELSE 'YES' END"),
-        FLD_INVEST_ID("invest_id", "io.invest_id"),
-        FLD_INVEST_OBJECT_ID("invest_object_id", "io.id"),
+                "    left outer join #SCHEMA_PROCEDURE.program_corrective_action pca on pca.result_id=sar.result_id " +
+                "    left outer join #SCHEMA_PROCEDURE.invest_objects io on io.object_id=sar.result_id and io.object_type='sample_analysis_result' ;" +                        
+                "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
+            null, "sample_analysis_result_with_spec_limits", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleAnalysisResultWithSpecLimits.values(), "ViewSampleAnalysisResultWithSpecLimits"),        
         ;
-        private ViewSampleAnalysisResultWithSpecLimits(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private ViewsData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
+                String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.viewName=dbVwName;
+            this.viewFields=vwFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.viewComment=comment;
+            this.viewScript=viewScript;
         }
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public String getViewCreatecript() {return this.viewScript;}
+        @Override        public String getViewName() {return this.viewName;}
+        @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
+        @Override        public String getViewComment() {return this.viewComment;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String viewName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final EnumIntViewFields[] viewFields;
+        private final String viewComment;
+        private final String viewScript;
+    }
 
-        /**
-         *
-         * @return table or field name
-         */
-        public String getName(){
-            return this.dbObjName;
+public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
+        LOT_NAME(Sample.LOT_NAME.getName(), "s.lot_name", Sample.LOT_NAME, null, null, null),
+        RESULT_ID(TblsData.SampleAnalysisResult.RESULT_ID.getName(), "sar.result_id", TblsData.SampleAnalysisResult.RESULT_ID, null, null, null),
+        TEST_ID(TblsData.SampleAnalysis.TEST_ID.getName(), "sar.test_id", TblsData.SampleAnalysisResult.TEST_ID, null, null, null),
+        SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), "sar.sample_id", TblsData.SampleAnalysisResult.SAMPLE_ID, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, "sar.status", TblsData.SampleAnalysisResult.STATUS, null, null, null),
+        STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, "sar.status_previous", TblsData.SampleAnalysisResult.STATUS_PREVIOUS, null, null, null),
+        ANALYSIS(FIELDS_NAMES_ANALYSIS, "sar.analysis", TblsData.SampleAnalysisResult.ANALYSIS, null, null, null),
+        METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, "sar.method_name", TblsData.SampleAnalysisResult.METHOD_NAME, null, null, null),
+        METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, "sar.method_version", TblsData.SampleAnalysisResult.METHOD_VERSION, null, null, null),
+        REPLICA(FIELDS_NAMES_REPLICA, "sar.replica", TblsData.SampleAnalysisResult.REPLICA, null, null, null),
+        PARAM_NAME("param_name", "sar.param_name", TblsData.SampleAnalysisResult.PARAM_NAME, null, null, null),
+        PARAM_TYPE("param_type", "sar.param_type", TblsData.SampleAnalysisResult.PARAM_TYPE, null, null, null),
+        MANDATORY("mandatory", "sar.mandatory", TblsData.SampleAnalysisResult.MANDATORY, null, null, null),
+        REQUIRES_LIMIT("requires_limit", "sar.requires_limit", TblsData.SampleAnalysisResult.REQUIRES_LIMIT, null, null, null),
+        RAW_VALUE("raw_value", "sar.raw_value", TblsData.SampleAnalysisResult.RAW_VALUE, null, null, null),
+        RAW_VALUE_NUM("raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end", TblsData.SampleAnalysisResult.REPLICA, null, null, null),
+        PRETTY_VALUE("pretty_value", "sar.pretty_value", TblsData.SampleAnalysisResult.PRETTY_VALUE, null, null, null),
+        ENTERED_ON("entered_on", "sar.entered_on", TblsData.SampleAnalysisResult.ENTERED_ON, null, null, null),
+        ENTERED_BY("entered_by", "sar.entered_by", TblsData.SampleAnalysisResult.ENTERED_BY, null, null, null),
+        REENTERED("reentered", "sar.reentered", TblsData.SampleAnalysisResult.REENTERED, null, null, null),
+        SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, "sar.spec_eval", TblsData.SampleAnalysisResult.SPEC_EVAL, null, null, null),
+        SPEC_EVAL_DETAIL("spec_eval_detail", "sar.spec_eval_detail", TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL, null, null, null),
+        UOM("uom", "sar.uom", TblsData.SampleAnalysisResult.UOM, null, null, null),
+        UOM_CONVERSION_MODE("uom_conversion_mode", "sar.uom_conversion_mode", TblsData.SampleAnalysisResult.UOM_CONVERSION_MODE, null, null, null),
+        ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, "sar.aliquot_id", TblsData.SampleAnalysisResult.ALIQUOT_ID, null, null, null),
+        SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, "sar.subaliquot_id", TblsData.SampleAnalysisResult.SUBALIQUOT_ID, null, null, null),
+        MAX_DP("max_dp", "sar.max_dp", TblsData.SampleAnalysisResult.MAX_DP, null, null, null),
+        MIN_ALLOWED("min_allowed", "sar.min_allowed", TblsData.SampleAnalysisResult.MIN_ALLOWED, null, null, null),
+        MAX_ALLOWED("max_allowed", "sar.max_allowed", TblsData.SampleAnalysisResult.MAX_ALLOWED, null, null, null),
+        LIST_ENTRY("list_entry", "sar.list_entry", TblsData.SampleAnalysisResult.LIST_ENTRY, null, null, null),
+        SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE, null, null, null),
+        SAMPLE_STATUS("sample_status", "s.status", TblsData.Sample.STATUS, null, null, null),
+        CURRENT_STAGE("current_stage", "s.current_stage", TblsData.Sample.CURRENT_STAGE, null, null, null),
+        PROGRAM_NAME("program_name", "s.program_name", TblsEnvMonitData.Sample.PROGRAM_NAME, null, null, null),
+        SAMPLING_DATE("sampling_date", "s.sampling_date", TblsData.Sample.SAMPLING_DATE, null, null, null),
+        SHIFT("shift", "s.shift", TblsEnvMonitData.Sample.SHIFT, null, null, null),
+        AREA("area", "s.area", TblsEnvMonitData.Sample.AREA, null, null, null),
+        LOCATION_NAME("location_name", "s.location_name", TblsEnvMonitData.Sample.LOCATION_NAME, null, null, null),
+        PRODUCTION_LOT("production_lot", "s.production_lot", TblsEnvMonitData.Sample.PRODUCTION_LOT, null, null, null),
+        PROGRAM_DAY_ID("program_day_id", "s.program_day_id", TblsEnvMonitData.Sample.PROG_DAY_ID, null, null, null),
+        PROGRAM_DAY_DATE("program_day_date", "s.program_day_date", TblsEnvMonitData.Sample.PROG_DAY_DATE, null, null, null),
+        SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status", TblsData.SampleAnalysis.STATUS, null, null, null),
+        SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.SampleAnalysis.READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.SampleAnalysis.READY_FOR_REVISION, null, null, null),
+        TESTING_GROUP("testing_group", "sa.testing_group", TblsData.SampleAnalysis.TESTING_GROUP, null, null, null),
+        LOGGED_ON("logged_on", "s.logged_on", TblsData.Sample.LOGGED_ON, null, null, null),
+        SAMPLER("sampler", "s.sampler", TblsData.Sample.SAMPLER, null, null, null),
+        SAMPLER_AREA("sampler_area", "s.sampler_area", TblsEnvMonitData.Sample.SAMPLER_AREA, null, null, null),
+        READY_FOR_REVISION(TblsData.Sample.READY_FOR_REVISION.getName(), "s."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.Sample.READY_FOR_REVISION, null, null, null),
+        LIMIT_ID("limit_id", "spcLim.limit_id", TblsCnfg.SpecLimits.LIMIT_ID, null, null, null),
+        SPEC_CODE("spec_code", "spcLim.code", TblsCnfg.SpecLimits.CODE, null, null, null),
+        SPEC_CONFIG_VERSION("spec_config_version", "spcLim.config_version", TblsCnfg.SpecLimits.CONFIG_VERSION, null, null, null),
+        SPEC_VARIATION_NAME("spec_variation_name", "spcLim.variation_name", TblsCnfg.SpecLimits.VARIATION_NAME, null, null, null),
+        ANALYSIS_SPEC_LIMITS("analysis_spec_limits", "spcLim.analysis", TblsCnfg.SpecLimits.ANALYSIS, null, null, null),
+        METHOD_NAME_SPEC_LIMITS("method_name_spec_limits", "spcLim.method_name", TblsCnfg.SpecLimits.METHOD_NAME, null, null, null),
+        METHOD_VERSION_SPEC_LIMITS("method_version_spec_limits", "spcLim.method_version", TblsCnfg.SpecLimits.METHOD_VERSION, null, null, null),
+        PARAMETER("parameter", "spcLim.parameter", TblsCnfg.SpecLimits.PARAMETER, null, null, null),
+        RULE_TYPE("rule_type", "spcLim.rule_type", TblsCnfg.SpecLimits.RULE_TYPE, null, null, null),
+        RULE_VARIABLES("rule_variables", "spcLim.rule_variables", TblsCnfg.SpecLimits.RULE_VARIABLES, null, null, null),
+        UOM_SPEC_LIMITS("uom_spec_limits", "spcLim.uom", TblsCnfg.SpecLimits.UOM, null, null, null),
+        UOM_CONVERSION_MODE_SPEC_LIMITS("uom_conversion_mode_spec_limits", "spcLim.uom_conversion_mode", TblsCnfg.SpecLimits.UOM_CONVERSION_MODE, null, null, null),
+        MIN_VAL_ALLOWED("min_val_allowed", "spcLim.min_val_allowed", TblsCnfg.SpecLimits.MIN_VAL_ALLOWED, null, null, null),
+        MAX_VAL_ALLOWED("max_val_allowed", "spcLim.max_val_allowed", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED, null, null, null),
+        MIN_VAL_ALLOWED_IS_STRICT("min_allowed_strict", "spcLim.min_allowed_strict", TblsCnfg.SpecLimits.MIN_VAL_ALLOWED_IS_STRICT, null, null, null),
+        MAX_VAL_ALLOWED_IS_STRICT("max_allowed_strict", "spcLim.max_allowed_strict", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        MIN_VAL_FOR_UNDETERMINED("min_undetermined", "spcLim.min_undetermined", TblsCnfg.SpecLimits.MIN_VAL_FOR_UNDETERMINED, null, null, null),
+        MAX_VAL_FOR_UNDETERMINED("max_undetermined", "spcLim.max_undetermined", TblsCnfg.SpecLimits.MAX_VAL_FOR_UNDETERMINED, null, null, null),
+        MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", "spcLim.min_undet_strict", TblsCnfg.SpecLimits.MIN_VAL_UNDETERMINED_IS_STRICT, null, null, null),
+        MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", "spcLim.max_undet_strict", TblsCnfg.SpecLimits.MAX_VAL_UNDETERMINED_IS_STRICT, null, null, null),
+        HAS_PREINVEST("has_pre_invest", "CASE WHEN pca.id IS NULL THEN 'NO' ELSE 'YES' END", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        PREINVEST_ID("pre_invest_id", "pca.id", TblsProcedure.ProgramCorrectiveAction.ID, null, null, null),
+        HAS_INVEST("has_invest", "CASE WHEN io.id IS NULL THEN 'NO' ELSE 'YES' END", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        INVEST_ID("invest_id", "io.invest_id", TblsProcedure.InvestObjects.INVEST_ID, null, null, null),
+        INVEST_OBJECT_ID("invest_object_id", "io.id", TblsProcedure.InvestObjects.OBJECT_ID, null, null, null),
+        SAMPLE_REVIEWER("sample_reviewer", "s.reviewer", TblsData.Sample.REVIEWER, null, null, null),
+        TEST_REVIEWER("test_reviewer", "sa.reviewer", TblsData.SampleAnalysis.REVIEWER, null, null, null),        
+        TEST_STATUS("test_status", "sa.status", TblsData.SampleAnalysis.STATUS, null, null, null),
+        ;
+        private ViewSampleAnalysisResultWithSpecLimits(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+//            try{
+//            this.fldName="";
+            this.fldName=name;
+            this.fldAliasInView=vwAliasName;
+            this.fldMask=fldMask;
+            this.fldComment=comment;
+            this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
+/*            }catch(Exception e){
+                String s= e.getMessage();
+                //String s2=name;
+                this.fldName="";
+            }*/
         }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
-
-        /**
-         *
-         * @param schemaNamePrefix - Procedure Instance where it applies
-         * @param fields
-         * @return string with view creation script
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = ViewSampleAnalysisResultWithSpecLimits.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#SCHEMA_CONFIG", LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.CONFIG.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (ViewSampleAnalysisResultWithSpecLimits obj: ViewSampleAnalysisResultWithSpecLimits.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        fieldsScript.append(currField[1]).append(" AS ").append(currField[0]);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }      
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (ViewSampleAnalysisResultWithSpecLimits obj: ViewSampleAnalysisResultWithSpecLimits.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
-        }             
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        private final String fldName;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;        
+        @Override public String getName() {return fldName;}
+        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFieldMask() {return this.fldMask;}
+        @Override public String getFieldComment() {return this.fldComment;}
+        @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
 
-    public enum InventoryRetain{
-        FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
-        ,        
-        TBL("inventory_retain", LPDatabase.createSequence(FLD_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
-        ,
-        FLD_LOT_NAME("lot_name", LPDatabase.string())        ,
-        FLD_MATERIAL_NAME("material_name", LPDatabase.string()),        
-        FLD_SUPPLIER_NAME("supplier_name", LPDatabase.string()),        
-        FLD_SUPPLIER_BATCH("supplier_batch", LPDatabase.string()),        
-        FLD_MANUFACTURER_NAME("manufacturer_name", LPDatabase.string()),        
-        FLD_MANUFACTURER_BATCH("manufacturer_batch", LPDatabase.string()),        
-        FLD_MANUFACTURER_SITE("manufacturer_site", LPDatabase.string()),        
-        FLD_CREATED_ON("created_on", LPDatabase.date())        ,
-        FLD_CREATED_BY("created_by", LPDatabase.string())        ,       
-        FLD_EXPIRY_DATE("expiry_date", LPDatabase.date())        ,
-        FLD_REQUALIF_DATE("requalif_date", LPDatabase.date())        ,
-        FLD_STORAGE_ID("storage_id", LPDatabase.integer())        ,
-        FLD_STORAGE_NAME("storage_name", LPDatabase.string())        ,
-        FLD_QUANTITY_ITEMS("quantity_items", LPDatabase.integer())        ,
-        FLD_AMOUNT("amount", LPDatabase.real())        ,
-        FLD_AMOUNT_UOM("amount_uom", LPDatabase.string())        ,       
-        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string()),
-        FLD_CONTAINER_TYPE("container_type", LPDatabase.string())        ,       
-        FLD_RECEPTION_REQUIRED("reception_required", LPDatabase.booleanFld())        ,       
-        FLD_RECEPTION_ON("reception_on", LPDatabase.date())        ,
-        FLD_RECEPTION_BY("reception_by", LPDatabase.string())        ,       
-        FLD_LOCKED("locked", LPDatabase.booleanFld())        ,
-        FLD_LOCKED_ON("locked_on", LPDatabase.date())        ,
-        FLD_LOCKED_BY("locked_by", LPDatabase.string())        ,       
+
+    public enum Lot implements EnumIntTableFields{
+        NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null),
+        LOT_CONFIG_NAME("lot_config_name", LPDatabase.string(), null, null, null, null),
+        LOT_CONFIG_VERSION("lot_config_version", LPDatabase.integerNotNull(), null, null, null, null),
+        MATERIAL_NAME("material_name", LPDatabase.string(), null, null, null, null),
+        SPEC_CODE("spec_code", LPDatabase.string(), null, null, null, null),
+        SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer(), null, null, null, null),
+        SAMPLING_PLAN("sampling_plan", LPDatabase.string(), null, null, null, null),
+//        CONFIG_CODE("config_code", LPDatabase.string()),        
+//        CONFIG_CODE_VERSION("config_code_version", LPDatabase.integer()),        
+        DESCRIPTION_EN("description_en", LPDatabase.string(), null, null, null, null),
+        DESCRIPTION_ES("description_es", LPDatabase.string(), null, null, null, null),
+        QUANTITY("quantity", LPDatabase.integer(), null, null, null, null),
+        QUANTITY_UOM("quantity_uom", LPDatabase.string(), null, null, null, null),
+        NUM_CONTAINERS("num_containers", LPDatabase.integer(), null, null, null, null),
+        VENDOR("vendor", LPDatabase.string(), null, null, null, null),
+        VENDOR_TRUST_LEVEL("vendor_trust_level", LPDatabase.string(), null, null, null, null),
+        ANALYSIS_STATUS("analysis_status", LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+                
+        ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
+        CUSTODIAN("custodian", LPDatabase.string(), null, null, null, null),
+        // ...
+        
         ;
-        private InventoryRetain(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private Lot(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
 
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){return this.dbObjName;}
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    public enum LotDecision implements EnumIntTableFields{
+        LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
+        DECISION("decision",  LPDatabase.string(200), null, null, null, null),
+        DECISION_TAKEN_BY("decision_taken_by",  LPDatabase.string(), null, null, null, null),
+        DECISION_TAKEN_ON("decision_taken_on",  LPDatabase.dateTime(), null, null, null, null),
+        // ...
+        ;
+        private LotDecision(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
 
-        /**
-         *
-         * @param schemaNamePrefix procedure prefix
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    public enum LotCertificate implements EnumIntTableFields{
+        CERTIFICATE_ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
+        CERTIFICATE_VERSION("certificate_version", LPDatabase.integer(), null, null, null, null),
+        STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
+        STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.date(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CERTIFICATE_FORMAT("certificate_format", LPDatabase.string(), null, null, null, null),
+        ;
+        private LotCertificate(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = InventoryRetain.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (InventoryRetain obj: InventoryRetain.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }        
-        public static String[] getAllFieldNames(){
-            String[] tableFields=new String[0];
-            for (InventoryRetain obj: InventoryRetain.values()){
-                String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
-                }
-            }           
-            return tableFields;
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    public enum LotCertificateTrack implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
+        CONFIG_NAME("config_name", LPDatabase.integer(), null, null, null, null),       
+        EVENT("event",LPDatabase.stringNotNull(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.date(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        ;
+        private LotCertificateTrack(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
         }
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
-    }            
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+
+    public enum Sample implements EnumIntTableFields{
+        SAMPLE_ID("sample_id", LPDatabase.integerNotNull(), null, null, null, null),
+        LOT_NAME("lot_name",  LPDatabase.stringNotNull(), null, null, null, null),
+        CONFIG_CODE("sample_config_code", LPDatabase.string(), null, null, null, null),
+        CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer(), null, null, null, null),
+        STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
+        STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
+        LOGGED_ON("logged_on", LPDatabase.date(), null, null, null, null),
+        LOGGED_BY("logged_by", LPDatabase.string(), null, null, null, null),
+        RECEIVED_ON("received_on", LPDatabase.date(), null, null, null, null),
+        RECEIVED_BY("received_by", LPDatabase.string(), null, null, null, null),
+        VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(), null, null, null, null),
+        VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.string(), null, null, null, null),
+        ALIQUOTED("aliquoted", LPDatabase.booleanFld(false), null, null, null, null),
+        ALIQUOT_STATUS("aliq_status",LPDatabase.string(), null, null, null, null),
+        VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real(), null, null, null, null),
+        VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom",LPDatabase.string(), null, null, null, null),
+        SPEC_CODE("spec_code",LPDatabase.stringNotNull(), null, null, null, null),
+        SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer(), null, null, null, null),
+        SPEC_VARIATION_NAME("spec_variation_name",LPDatabase.stringNotNull(), null, null, null, null),
+        SPEC_EVAL("spec_eval",  LPDatabase.string(2), null, null, null, null),
+        CUSTODIAN("custodian",  LPDatabase.string(2), null, null, null, null),
+        CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.string(2), null, null, null, null),
+        COC_REQUESTED_ON("coc_requested_on", LPDatabase.date(), null, null, null, null),
+        COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.date(), null, null, null, null),
+        CURRENT_STAGE("current_stage",LPDatabase.string(), null, null, null, null),
+        PREVIOUS_STAGE("previous_stage",LPDatabase.string(), null, null, null, null),
+        READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
+        ;
+        private Sample(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+
+    public enum InventoryRetain implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        LOT_NAME("lot_name",  LPDatabase.stringNotNull(), null, null, null, null),
+        MATERIAL_NAME("material_name", LPDatabase.string(), null, null, null, null),
+        SUPPLIER_NAME("supplier_name", LPDatabase.string(), null, null, null, null),
+        SUPPLIER_BATCH("supplier_batch", LPDatabase.string(), null, null, null, null),
+        MANUFACTURER_NAME("manufacturer_name", LPDatabase.string(), null, null, null, null),
+        MANUFACTURER_BATCH("manufacturer_batch", LPDatabase.string(), null, null, null, null),
+        MANUFACTURER_SITE("manufacturer_site", LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.date(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        EXPIRY_DATE("expiry_date", LPDatabase.date(), null, null, null, null),
+        REQUALIF_DATE("requalif_date", LPDatabase.date(), null, null, null, null),
+        STORAGE_ID("storage_id", LPDatabase.integer(), null, null, null, null),
+        STORAGE_NAME("storage_name", LPDatabase.string(), null, null, null, null),
+        QUANTITY_ITEMS("quantity_items", LPDatabase.integer(), null, null, null, null),
+        AMOUNT("amount", LPDatabase.real(), null, null, null, null),
+        AMOUNT_UOM("amount_uom", LPDatabase.string(), null, null, null, null),
+        UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string(), null, null, null, null),
+        CONTAINER_TYPE("container_type", LPDatabase.string(), null, null, null, null),
+        RECEPTION_REQUIRED("reception_required", LPDatabase.booleanFld(), null, null, null, null),
+        RECEPTION_ON("reception_on", LPDatabase.date(), null, null, null, null),
+        RECEPTION_BY("reception_by", LPDatabase.string(), null, null, null, null),
+        LOCKED("locked", LPDatabase.booleanFld(), null, null, null, null),
+        LOCKED_ON("locked_on", LPDatabase.date(), null, null, null, null),
+        LOCKED_BY("locked_by", LPDatabase.string(), null, null, null, null),
+        ;
+        private InventoryRetain(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
 
 }

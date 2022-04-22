@@ -29,12 +29,12 @@ public final class DataInventoryRetain {
     
     public static Object[] createRetain(String lotName, String materialName, InventoryPlanEntryItem invEntryItem){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String[] fieldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName(), TblsInspLotRMData.InventoryRetain.FLD_MATERIAL_NAME.getName(),
-            TblsInspLotRMData.InventoryRetain.FLD_AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.FLD_AMOUNT_UOM.getName(), TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_REQUIRED.getName(),
-            TblsInspLotRMData.InventoryRetain.FLD_CREATED_BY.getName(), TblsInspLotRMData.InventoryRetain.FLD_CREATED_ON.getName()};
+        String[] fieldName=new String[]{TblsInspLotRMData.InventoryRetain.LOT_NAME.getName(), TblsInspLotRMData.InventoryRetain.MATERIAL_NAME.getName(),
+            TblsInspLotRMData.InventoryRetain.AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.AMOUNT_UOM.getName(), TblsInspLotRMData.InventoryRetain.RECEPTION_REQUIRED.getName(),
+            TblsInspLotRMData.InventoryRetain.CREATED_BY.getName(), TblsInspLotRMData.InventoryRetain.CREATED_ON.getName()};
         Object[] fieldValue=new Object[]{lotName, materialName, invEntryItem.getQuantity(), invEntryItem.getQuantityUom(),
             invEntryItem.getReceptionRequired(), procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
-        Object[] newInvRec=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.InventoryRetain.TBL.getName(), 
+        Object[] newInvRec=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), 
             fieldName, fieldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newInvRec[0].toString())) return newInvRec;
         return newInvRec;
@@ -44,21 +44,21 @@ public final class DataInventoryRetain {
     
     public static Object[] retainReception(String lotName, Integer id){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String[] extraFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
-        Object[] isRetAvailable=isRetainAvailable(lotName, id, extraFldName, new Object[]{""}, new String[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName()});
+        String[] extraFldName=new String[]{TblsInspLotRMData.InventoryRetain.RECEPTION_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
+        Object[] isRetAvailable=isRetainAvailable(lotName, id, extraFldName, new Object[]{""}, new String[]{TblsInspLotRMData.InventoryRetain.RECEPTION_BY.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRetAvailable[0].toString())) return isRetAvailable;
-        Integer recepFieldPosic=LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName());
-        if (recepFieldPosic==-1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.RECEPTION_FIELD_NOT_RETRIEVED, new Object[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName()});
+        Integer recepFieldPosic=LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.RECEPTION_BY.getName());
+        if (recepFieldPosic==-1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.RECEPTION_FIELD_NOT_RETRIEVED, new Object[]{TblsInspLotRMData.InventoryRetain.RECEPTION_BY.getName()});
         recepFieldPosic=recepFieldPosic+(isRetAvailable.length/2);
         if (isRetAvailable[recepFieldPosic]!=null && isRetAvailable[recepFieldPosic].toString().length()>0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.ITEM_ALREADY_RECEIVED, null);
-        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName()};
+        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.RECEPTION_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsInspLotRMData.InventoryRetain.LOT_NAME.getName()};
         Object[] fldValue=new Object[]{"", lotName};
         if (id!=null){
-            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.FLD_ID.getName());
+            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.ID.getName());
             fldValue=LPArray.addValueToArray1D(fldValue, id);
         }        
-        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_BY.getName(), TblsInspLotRMData.InventoryRetain.FLD_RECEPTION_ON.getName()};
+        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.RECEPTION_BY.getName(), TblsInspLotRMData.InventoryRetain.RECEPTION_ON.getName()};
         Object[] updFldValue=new Object[]{procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIEndpoints.LOT_RETAIN_RECEPTION.getAuditActionName());
     }    
@@ -66,13 +66,13 @@ public final class DataInventoryRetain {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Object[] isRetAvailable=isRetainAvailable(lotName, id, null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRetAvailable[0].toString())) return isRetAvailable;
-        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName()};
+        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.LOT_NAME.getName()};
         Object[] fldValue=new Object[]{lotName};
         if (id!=null){
-            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.FLD_ID.getName());
+            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.ID.getName());
             fldValue=LPArray.addValueToArray1D(fldValue, id);
         }        
-        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_STORAGE_NAME.getName()};
+        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.STORAGE_NAME.getName()};
         Object[] updFldValue=new Object[]{newLocation};
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIEndpoints.LOT_RETAIN_MOVEMENT.getAuditActionName());
     }    
@@ -80,13 +80,13 @@ public final class DataInventoryRetain {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Object[] isRetAvailable=isRetainAvailable(lotName, id, null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRetAvailable[0].toString())) return isRetAvailable;
-        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName()};
+        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.LOT_NAME.getName()};
         Object[] fldValue=new Object[]{lotName};
         if (id!=null){
-            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.FLD_ID.getName());
+            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.ID.getName());
             fldValue=LPArray.addValueToArray1D(fldValue, id);
         }        
-        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_STORAGE_ID.getName()};
+        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.STORAGE_ID.getName()};
         Object[] updFldValue=new Object[]{newLocationId};
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIEndpoints.LOT_RETAIN_MOVEMENT.getAuditActionName());
     }    
@@ -94,15 +94,15 @@ public final class DataInventoryRetain {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Object[] isRetAvailable=isRetainAvailable(lotName, id, null, null, null);
         if (! (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRetAvailable[0].toString())) && isRetAvailable[isRetAvailable.length-2].toString().equalsIgnoreCase("retainRowIsLocked"))  return isRetAvailable;
-        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName()};
+        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.LOT_NAME.getName()};
         Object[] fldValue=new Object[]{lotName};
         if (id!=null){
-            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.FLD_ID.getName());
+            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.ID.getName());
             fldValue=LPArray.addValueToArray1D(fldValue, id);
         }        
-        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOCKED.getName(), TblsInspLotRMData.InventoryRetain.FLD_LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.FLD_LOCKED_ON.getName()};
+        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.LOCKED.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_ON.getName()};
         Object[] updFldValue=new Object[]{false, procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
-//        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOCKED.getName(), TblsInspLotRMData.InventoryRetain.FLD_LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.FLD_LOCKED_ON.getName()};
+//        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.LOCKED.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_ON.getName()};
 //        Object[] updFldValue=new Object[]{false, "NULL>>>STRING", "NULL>>>DATE"};
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIEndpoints.LOT_RETAIN_UNLOCK.getAuditActionName());
     }
@@ -110,31 +110,31 @@ public final class DataInventoryRetain {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Object[] isRetAvailable=isRetainAvailable(lotName, id, null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRetAvailable[0].toString())) return isRetAvailable;
-        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName()};
+        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.LOT_NAME.getName()};
         Object[] fldValue=new Object[]{lotName};
         if (id!=null){
-            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.FLD_ID.getName());
+            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.ID.getName());
             fldValue=LPArray.addValueToArray1D(fldValue, id);
         }        
-        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOCKED.getName(), TblsInspLotRMData.InventoryRetain.FLD_LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.FLD_LOCKED_ON.getName()};
+        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.LOCKED.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_ON.getName()};
         Object[] updFldValue=new Object[]{true, procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIEndpoints.LOT_RETAIN_LOCK.getAuditActionName());
     }    
     public static Object[] retainExtract(String lotName, Integer id, BigDecimal q, String qUom){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String[] extraFieldToGet=new String[]{TblsInspLotRMData.InventoryRetain.FLD_AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.FLD_AMOUNT_UOM.getName(), TblsInspLotRMData.InventoryRetain.FLD_UOM_CONVERSION_MODE.getName() };
+        String[] extraFieldToGet=new String[]{TblsInspLotRMData.InventoryRetain.AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.AMOUNT_UOM.getName(), TblsInspLotRMData.InventoryRetain.UOM_CONVERSION_MODE.getName() };
         Object[] isRetAvailable=isRetainAvailable(lotName, id, null, null, extraFieldToGet);        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRetAvailable[0].toString())) return isRetAvailable;
-        BigDecimal newAmount=BigDecimal.valueOf(Double.valueOf(isRetAvailable[(isRetAvailable.length/2)+LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.FLD_AMOUNT.getName())].toString()));
-        String newAmountUom=isRetAvailable[(isRetAvailable.length/2)+LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.FLD_AMOUNT_UOM.getName())].toString();
-        String conversionMode=isRetAvailable[(isRetAvailable.length/2)+LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.FLD_UOM_CONVERSION_MODE.getName())].toString();
-        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName()};
+        BigDecimal newAmount=BigDecimal.valueOf(Double.valueOf(isRetAvailable[(isRetAvailable.length/2)+LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.AMOUNT.getName())].toString()));
+        String newAmountUom=isRetAvailable[(isRetAvailable.length/2)+LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.AMOUNT_UOM.getName())].toString();
+        String conversionMode=isRetAvailable[(isRetAvailable.length/2)+LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.UOM_CONVERSION_MODE.getName())].toString();
+        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.LOT_NAME.getName()};
         Object[] fldValue=new Object[]{lotName};
         if (id!=null){
-            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.FLD_ID.getName());
+            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.ID.getName());
             fldValue=LPArray.addValueToArray1D(fldValue, id);
         }else  
-            id=Integer.valueOf(isRetAvailable[(isRetAvailable.length/2)+LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.FLD_ID.getName())].toString());
+            id=Integer.valueOf(isRetAvailable[(isRetAvailable.length/2)+LPArray.valuePosicInArray(isRetAvailable, TblsInspLotRMData.InventoryRetain.ID.getName())].toString());
         UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(q.toString()), qUom);
         BigDecimal resultConverted = q;
         if ((newAmountUom.length()>0) && (!newAmountUom.equalsIgnoreCase(qUom)) ) {
@@ -150,20 +150,20 @@ public final class DataInventoryRetain {
         Integer isNegative=newAmount.compareTo(BigDecimal.ZERO);
         if (newAmount.compareTo(BigDecimal.ZERO)==-1)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.NOT_ENOUGH_QUANTITY, new Object[]{newAmount, newAmountUom, resultConverted, procReqSession.getProcedureInstance()});
-        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.FLD_AMOUNT_UOM.getName()};
+        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.AMOUNT_UOM.getName()};
         Object[] updFldValue=new Object[]{newAmount, newAmountUom};
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIEndpoints.LOT_RETAIN_EXTRACT.getAuditActionName());
     }    
     private static Object[] updateRetainRecordWithAuditInsert(String lotName, String[] updFldName, Object[] updFldValue, String[] whereFldName, Object[] whereFldValue, String auditActionName){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.InventoryRetain.TBL.getName(),
+        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(),
                 updFldName, updFldValue, whereFldName, whereFldValue);    
-        Integer recIdPosic = LPArray.valuePosicInArray(whereFldName, TblsInspLotRMData.InventoryRetain.FLD_ID.getName());
+        Integer recIdPosic = LPArray.valuePosicInArray(whereFldName, TblsInspLotRMData.InventoryRetain.ID.getName());
         String recId=lotName;
         if (recIdPosic>-1) recId=whereFldValue[recIdPosic].toString();
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString())){
             LotAudit lotAudit = new LotAudit();            
-            lotAudit.lotAuditAdd(auditActionName, TblsInspLotRMData.InventoryRetain.TBL.getName(), recId, lotName, 
+            lotAudit.lotAuditAdd(auditActionName, TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), recId, lotName, 
                     LPArray.joinTwo1DArraysInOneOf1DString(updFldName, updFldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             lotAudit=null;
         }
@@ -171,19 +171,19 @@ public final class DataInventoryRetain {
     }
     private static Object[] isRetainAvailable(String lotName, Integer id, String[] extraFldName, Object[] extraFldValue, String[] extraFldNameToGet){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.FLD_LOT_NAME.getName()};
+        String[] fldName=new String[]{TblsInspLotRMData.InventoryRetain.LOT_NAME.getName()};
         Object[] fldValue=new Object[]{lotName};
-        String[] fldNameToGet=LPArray.addValueToArray1D(fldName, new String[]{TblsInspLotRMData.InventoryRetain.FLD_ID.getName(), TblsInspLotRMData.InventoryRetain.FLD_LOCKED.getName()});
+        String[] fldNameToGet=LPArray.addValueToArray1D(fldName, new String[]{TblsInspLotRMData.InventoryRetain.ID.getName(), TblsInspLotRMData.InventoryRetain.LOCKED.getName()});
         if (extraFldNameToGet!=null)fldNameToGet=LPArray.addValueToArray1D(fldNameToGet, extraFldNameToGet);
         if (id!=null){
-            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.FLD_ID.getName());
+            fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.ID.getName());
             fldValue=LPArray.addValueToArray1D(fldValue, id);
         }
-        Object[][] retainRowsInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.InventoryRetain.TBL.getName(), 
+        Object[][] retainRowsInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), 
                 fldName, fldValue, fldNameToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(retainRowsInfo[0][0].toString())) return LPArray.array2dTo1d(retainRowsInfo);
         if (retainRowsInfo.length>1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.MULTI_ITEMS_NOT_ALLOWED, null);
-        String retRowLocked=retainRowsInfo[0][LPArray.valuePosicInArray(fldNameToGet, TblsInspLotRMData.InventoryRetain.FLD_LOCKED.getName())].toString();
+        String retRowLocked=retainRowsInfo[0][LPArray.valuePosicInArray(fldNameToGet, TblsInspLotRMData.InventoryRetain.LOCKED.getName())].toString();
         if (retRowLocked==null || (retRowLocked.length()>0 && Boolean.valueOf(retRowLocked)))            
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.ITEM_IS_LOCKED, null);
         else

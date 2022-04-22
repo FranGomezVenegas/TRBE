@@ -5,216 +5,97 @@
  */
 package com.labplanet.servicios.moduleinspectionlotrm;
 
-import databases.DbObjects;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
-import lbplanet.utilities.LPPlatform;
-import static databases.TblsCnfg.SCHEMATAG;
-import static databases.TblsCnfg.TABLETAG;
-import static databases.TblsCnfg.OWNERTAG;
-import static databases.TblsCnfg.TABLESPACETAG;
-import static databases.TblsCnfg.FIELDSTAG;
-import databases.TblsDataAudit;
-import static trazit.enums.deployrepository.DeployTables.createTableScript;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
+import trazit.enums.FldBusinessRules;
+import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
-/**
- *
- * @author User
- */
+
+
 public class TblsInspLotRMDataAudit {
-/*    public static final String getTableCreationScriptFromDataAuditTableInspLotRM(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "CERTIF_USER_ANALYSIS_METHOD": return createTableScript(TblsDataAudit.TablesDataAudit.CERTIF_USER_ANALYSIS_METHOD, schemaNamePrefix);
-            case "LOT": return Lot.createTableScript(schemaNamePrefix, fields);
-            default: return "TABLE "+tableName+" NOT IN INSPLOT_RM_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
-        }        
-    }    
-*/
-    /**
-     *
-     */
-    public enum Lot{
 
-        /**
-         *
-         */
-        FLD_AUDIT_ID("audit_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
-        ,        TBL("lot", LPDatabase.createSequence(FLD_AUDIT_ID.getName())
-                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_#FLD_AUDIT_ID_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
-        ,
-
-        /**
-         *
-         */
-
-
-        /**
-         *
-         */
-        FLD_TABLE_NAME("table_name", " character varying COLLATE pg_catalog.\"default\"")
-        ,
-
-        /**
-         *
-         */
-        FLD_TRANSACTION_ID("transaction_id", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_TABLE_ID("table_id", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_DATE("date", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_PERSON("person", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_ACTION_NAME("action_name", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_LOT_NAME("lot_name", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_USER_ROLE("user_role", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_PROCEDURE("procedure", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.integer())
-        ,
-
-        /**
-         *
-         */
-        FLD_APP_SESSION_ID("app_session_id", LPDatabase.integer())
-        ,
-        PROCEDURE_HASH_CODE("procedure_hash_code", LPDatabase.stringNotNull()), //, null, null, null, null),
-
-        /**
-         *
-         */
-        FLD_PICTURE_BEFORE("picture_before", "json")
-        ,
-
-        /**
-         *
-         */
-        FLD_PICTURE_AFTER("picture_after", "json")
-        ,
-
-        /**
-         *
-         */
-        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(false))
-        ,
-
-        /**
-         *
-         */
-        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string())
-        ,
-
-        /**
-         *
-         */
-        FLD_REVIEWED_ON("reviewed_on", LPDatabase.dateTime())
-        ,
-
-        /**
-         *
-         */
-        FLD_REVISION_NOTE("revision_note", LPDatabase.string())
-        ,        
-
-        /**
-         *
-         */
-        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer()),
-        FLD_REASON("reason", LPDatabase.string()),
-        
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA_AUDIT.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
+    public enum TablesInspLotRMDataAudit implements EnumIntTables{        
+        LOT(null, "lot", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Lot.values(), Lot.AUDIT_ID.getName(), new String[]{Lot.AUDIT_ID.getName()}, null, "Lot audit table"),
         ;
-        private Lot(String dbObjName, String dbObjType){
-            this.dbObjName=dbObjName;
-            this.dbObjTypePostgres=dbObjType;
+        private TablesInspLotRMDataAudit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+                String seqName, String[] primaryK, Object[] foreignK, String comment){
+            this.getTblBusinessRules=fldBusRules;
+            this.tableName=dbTblName;
+            this.tableFields=tblFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.sequence=seqName;
+            this.primarykey=primaryK;
+            this.foreignkey=foreignK;
+            this.tableComment=comment;
         }
+        @Override        public String getTableName() {return this.tableName;}
+        @Override        public String getTableComment() {return this.tableComment;}
+        @Override        public EnumIntTableFields[] getTableFields() {return this.tableFields;}
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public String getSeqName() {return this.sequence;}
+        @Override        public String[] getPrimaryKey() {return this.primarykey;}
+        @Override        public Object[] getForeignKey() {return this.foreignkey;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String tableName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final String sequence;
+        private final EnumIntTableFields[] tableFields;
+        private final String[] primarykey;
+        private final Object[] foreignkey;
+        private final String tableComment;
+    }   
+    public enum Lot implements EnumIntTableFields{
+        AUDIT_ID("audit_id", LPDatabase.integerNotNull(), null, null, null, null),
+        TABLE_NAME("table_name", LPDatabase.string(), null, null, null, null), 
+        TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null), 
+        TABLE_ID("table_id", LPDatabase.string(), null, null, null, null), 
+        DATE("date", LPDatabase.dateTime(), null, null, null, null), 
+        PERSON("person", LPDatabase.string(), null, null, null, null), 
+        ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null), 
+        FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null), 
+        LOT_NAME("lot_name", LPDatabase.string(), null, null, null, null), 
+        USER_ROLE("user_role", LPDatabase.string(), null, null, null, null), 
+        PROCEDURE("procedure", LPDatabase.string(), null, null, null, null), 
+        PROCEDURE_VERSION("procedure_version", LPDatabase.integer(), null, null, null, null), 
+        PROCEDURE_HASH_CODE("procedure_hash_code", LPDatabase.stringNotNull(), null, null, null, null),
+        APP_SESSION_ID("app_session_id", LPDatabase.integer(), null, null, null, null), 
+        PICTURE_BEFORE("picture_before", LPDatabase.json(), null, null, null, null), 
+        PICTURE_AFTER("picture_after", LPDatabase.json(), null, null, null, null), 
+        PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer(), null, null, null, null),
+        REVIEWED("reviewed", LPDatabase.booleanFld(false), null, null, null, null),
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null),
+        REVISION_NOTE("revision_note", LPDatabase.string(), null, null, null, null),
+        REASON("reason", LPDatabase.string(), null, null, null, null),
+        ;
+        private Lot(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
 
-        /**
-         *
-         * @return entry name
-         */
-        public String getName(){
-            return this.dbObjName;
-        }
-        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
-
-        /**
-         *
-         * @param schemaNamePrefix procedure prefix
-         * @param fields fields , ALL when this is null
-         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
-         */
-        public static String createTableScript(String schemaNamePrefix, String[] fields){
-            return createTableScriptPostgres(schemaNamePrefix, fields);
-        }
-        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder(0);
-            String[] tblObj = Lot.TBL.getDbFieldDefinitionPostgres();
-            tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA_AUDIT.getName()));
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder(0);
-            for (Lot obj: Lot.values()){
-                String[] currField = obj.getDbFieldDefinitionPostgres();
-                String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
-                        if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, GlobalVariables.Schemas.DATA_AUDIT.getName()));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
-                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
-                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
-                }
-            }
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
-            return tblCreateScript.toString();
-        }  
-        private final String dbObjName;             
-        private final String dbObjTypePostgres;                     
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
-    
 }

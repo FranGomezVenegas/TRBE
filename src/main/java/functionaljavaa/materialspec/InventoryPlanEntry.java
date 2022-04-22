@@ -63,10 +63,10 @@ public class InventoryPlanEntry {
         this.errorsjArr=new JSONArray();
         this.hasErrors=false;
         List<InventoryPlanEntryItem> myList = new ArrayList<>();
-        Object[][] materialInvPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.MaterialInventoryPlan.TBL.getName(), 
-            new String[]{TblsInspLotRMConfig.MaterialInventoryPlan.FLD_MATERIAL.getName()}, new Object[]{materialName}, 
-            new String[]{TblsInspLotRMConfig.MaterialInventoryPlan.FLD_ENTRY_NAME.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.FLD_ENTRY_TYPE.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.FLD_QUANTITY.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.FLD_QUANTITY_UOM.getName(),
-                TblsInspLotRMConfig.MaterialInventoryPlan.FLD_REQUIRES_RECEPTION.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.FLD_TRANSIT_LOCATION.getName()});
+        Object[][] materialInvPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL_INVENTORY_PLAN.getTableName(), 
+            new String[]{TblsInspLotRMConfig.MaterialInventoryPlan.MATERIAL.getName()}, new Object[]{materialName}, 
+            new String[]{TblsInspLotRMConfig.MaterialInventoryPlan.ENTRY_NAME.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.ENTRY_TYPE.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.QUANTITY.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.QUANTITY_UOM.getName(),
+                TblsInspLotRMConfig.MaterialInventoryPlan.REQUIRES_RECEPTION.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.TRANSIT_LOCATION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInvPlanInfo[0][0].toString())){
             this.hasErrors=true;
             this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(), materialInvPlanInfo[0][materialInvPlanInfo[0].length-1].toString());
