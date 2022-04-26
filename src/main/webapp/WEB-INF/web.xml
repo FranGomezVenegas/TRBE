@@ -5,10 +5,6 @@
         <param-value>/classes/JavaScript</param-value>
     </context-param>
     <servlet>
-        <servlet-name>DBActions</servlet-name>
-        <servlet-class>com.labplanet.servicios.testing.platform.DBActions</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>TestingConfigSamplingPlanStructure</servlet-name>
         <servlet-class>com.labplanet.servicios.testing.config.TestingConfigSamplingPlanStructure</servlet-class>
     </servlet>
@@ -44,10 +40,6 @@
     <servlet>
         <servlet-name>TstDataSample</servlet-name>
         <servlet-class>com.labplanet.servicios.testing.data.TstDataSample</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>TstDataBatchArr</servlet-name>
-        <servlet-class>com.labplanet.servicios.testing.data.TstDataBatchArr</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TstDataBatchArrSequence</servlet-name>
@@ -335,10 +327,6 @@
         <url-pattern>/DownloadFileServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>DBActions</servlet-name>
-        <url-pattern>/testing/platform/DBActions</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>TestingConfigSop</servlet-name>
         <url-pattern>/testing/config/Sop</url-pattern>
     </servlet-mapping>
@@ -448,10 +436,6 @@
     <servlet-mapping>
         <servlet-name>AnalysisMethodCertifUserAPIfrontend</servlet-name>
         <url-pattern>/frontend/AnalysisMethodCertifUserAPIfrontend</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TstDataBatchArr</servlet-name>
-        <url-pattern>/testing/db/TstDataBatchArr</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TstDataBatchArrSequence</servlet-name>
