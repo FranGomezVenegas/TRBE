@@ -284,11 +284,6 @@ public class TstDataSample extends HttpServlet {
                                         new Object[]{"resultId, userName, fieldNames, rawValueResult", resultId.toString()+", "+userName+", "+rawValueResult}));  
                                     Object[] actionDiagnoses = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
                                     dataSample=(Object[]) actionDiagnoses[0]; 
-                                    if (actionDiagnoses.length>1){
-                                        Object[] auditDiagn=(Object[]) actionDiagnoses[1];
-                                        String pAuditId=(String)auditDiagn[auditDiagn.length-1];
-                                        smp.setParentAuditId(Integer.valueOf(pAuditId));
-                                    }
                                     break;  
                                 case REVIEWRESULT:
                                     Integer objectId = 0;

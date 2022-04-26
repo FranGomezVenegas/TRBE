@@ -596,7 +596,8 @@ GlobalAPIsParams.
                         }
                     }
                     Rdbms.closeRdbms();  
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);                                                                    
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);        
+                    return;
                 default:      
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     rd.forward(request,response);   

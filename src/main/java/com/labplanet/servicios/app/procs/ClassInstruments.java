@@ -252,7 +252,8 @@ public class ClassInstruments {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), auditId);
                     this.messageDynamicData=new Object[]{auditId, instrumentName};
                     break;
-}
+                    }
+                    break;
                 default:
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);   
                     return;

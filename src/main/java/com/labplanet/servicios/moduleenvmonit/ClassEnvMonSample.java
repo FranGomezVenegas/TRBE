@@ -172,8 +172,6 @@ public class ClassEnvMonSample {
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                         if (diagn.length>1){
                             Object[] auditDiagn=(Object[]) diagn[1];
-                            String pAuditId=(String)auditDiagn[auditDiagn.length-1];
-                            smp.setParentAuditId(Integer.valueOf(pAuditId));
                         }
                         Object[][] resultInfo=new Object[0][0];
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});                    

@@ -301,6 +301,7 @@ public class SqlStatement {
                         switch(fnArr[1].toUpperCase()){
                         case "DATETIME":
                             fn="to_char("+fnArr[0]+",'DD.MM/YY HH:MI')";
+                            break;
                         case "DATE":
                         default:
                         }

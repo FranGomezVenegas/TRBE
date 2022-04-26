@@ -134,6 +134,7 @@ public class IncidentAPIfrontend extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                return;
             case CLOSED_INCIDENTS_LAST_N_DAYS:
                 String numDays = LPNulls.replaceNull(argValues[0]).toString();
                 if (numDays.length()==0) numDays=String.valueOf(7);
@@ -152,8 +153,10 @@ public class IncidentAPIfrontend extends HttpServlet {
                     }
                 }
                 Rdbms.closeRdbms();  
-                LPFrontEnd.servletReturnSuccess(request, response, jArr);              
+                LPFrontEnd.servletReturnSuccess(request, response, jArr); 
+                return;
             default: 
+                return;
         }
     }
 

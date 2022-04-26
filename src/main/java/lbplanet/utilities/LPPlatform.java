@@ -72,7 +72,7 @@ public class LPPlatform {
     
     
 
-    public enum ApiErrorTraping  implements EnumIntMessages{
+   public enum ApiErrorTraping  implements EnumIntMessages{
         EXCEPTION_RAISED("exceptionRaised", "", ""),
         PROPERTY_DATABASE_NOT_CONNECTED("databaseConnectivityError", "", ""),
         MANDATORY_PARAMS_MISSING("MissingMandatoryParametersInRequest", "", ""),

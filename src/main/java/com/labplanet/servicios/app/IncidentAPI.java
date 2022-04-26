@@ -7,6 +7,7 @@ package com.labplanet.servicios.app;
 
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import databases.RdbmsObject;
 import databases.TblsApp;
 import functionaljavaa.incident.AppIncident;
 import functionaljavaa.incident.AppIncidentEnums.IncidentAPIEndpoints;
@@ -36,6 +37,7 @@ import trazit.session.ProcedureRequestSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
@@ -161,10 +163,14 @@ public class IncidentAPI extends HttpServlet {
                     if (procReqInstance.getToken()==null)
                         procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
                     
-                    actionDiagnoses = AppIncident.newIncident(argValues[0].toString(), argValues[1].toString(), jsonObject);
-                    String incIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
-                    if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
+                    RdbmsObject diagnostic = AppIncident.newIncident(argValues[0].toString(), argValues[1].toString(), jsonObject);
+                    if (diagnostic.getRunSuccess()){
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
+                        incId=Integer.valueOf(diagnostic.getNewRowId().toString());
+                    }else
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
                     break;
+
                 case CONFIRM_INCIDENT:
                     incId=(Integer) argValues[0];
                     AppIncident inc=new AppIncident(incId);

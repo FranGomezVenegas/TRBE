@@ -292,11 +292,6 @@ public class ClassSample {
                         }                
                     Object[] actionDiagnoses = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
                     diagn=(Object[]) actionDiagnoses[0];  
-                    if (actionDiagnoses.length>1){
-                        Object[] auditDiagn=(Object[]) actionDiagnoses[1];
-                        String pAuditId=(String)auditDiagn[auditDiagn.length-1];
-                        smp.setParentAuditId(Integer.valueOf(pAuditId));
-                    }
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), resultId);
                     this.messageDynamicData=new Object[]{resultId};

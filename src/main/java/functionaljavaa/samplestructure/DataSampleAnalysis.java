@@ -73,14 +73,14 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 SampleAudit smpAudit = new SampleAudit();
                 Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REVIEWED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId, sampleId, testId, null, updateFldNames, updateFldValues);
-                sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId, SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REVIEWED.toString(), (Integer) sampleAuditAdd[sampleAuditAdd.length-1]);
+                sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId);
             }
             return diagnoses;
         } else {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.RESULT_NOT_REVIEWABLE, new Object[]{LPNulls.replaceNull(testId), schemaDataName, currStatus});
         }
     }
-    public static Object[] sampleAnalysisEvaluateStatusAutomatismForReview(Integer sampleId, Integer testId, String parentAuditAction, Integer parentAuditId){
+    public static Object[] sampleAnalysisEvaluateStatusAutomatismForReview(Integer sampleId, Integer testId){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] whereFieldName=new String[]{};
@@ -104,20 +104,18 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionTestinGroupRequired[0].toString()))
                 return DataSampleRevisionTestingGroup.setReadyForRevision(sampleId, testInfo[0][0].toString());
             else
-                return DataSample.setReadyForRevision(sampleId, parentAuditAction,parentAuditId);
+                return DataSample.setReadyForRevision(sampleId);
         }
-        return DataSample.setReadyForRevision(sampleId, parentAuditAction,parentAuditId);        
+        return DataSample.setReadyForRevision(sampleId);
     }
     
     /**
      *
      * @param sampleId
      * @param testId
-     * @param parentAuditAction
-     * @param parentAuditId
      * @return
      */
-    public static Object[] setReadyForRevision(Integer sampleId, Integer testId, String parentAuditAction, Integer parentAuditId){
+    public static Object[] setReadyForRevision(Integer sampleId, Integer testId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), TblsData.SampleAnalysis.READY_FOR_REVISION.getName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())){
@@ -189,16 +187,13 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
      *
      * @param sampleId
      * @param testId
-     * @param parentAuditId
-     * @param parentAuditAction
      * @return
      */
-    public static Object[] sampleAnalysisEvaluateStatus(Integer sampleId, Integer testId, String parentAuditAction, Integer parentAuditId) {
+    public static Object[] sampleAnalysisEvaluateStatus(Integer sampleId, Integer testId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         EnumIntAuditEvents auditActionName = SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_EVALUATE_STATUS;
-//AuditEvent To Object, commented	if (parentAuditAction != null) auditActionName = parentAuditAction +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ auditActionName;
         String sampleAnalysisStatusIncomplete = SampleAnalysisStatuses.INCOMPLETE.getStatusCode("");
         String sampleAnalysisStatusComplete = SampleAnalysisStatuses.COMPLETE.getStatusCode("");
         String smpAnaNewStatus = "";
@@ -210,7 +205,6 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         } else {
             smpAnaNewStatus = sampleAnalysisStatusComplete;
         }
-        
         Object[][] sampleAnalysisInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), new String[]{TblsData.SampleAnalysis.TEST_ID.getName()},
                 new Object[]{testId}, new String[]{TblsData.SampleAnalysis.STATUS.getName()});
         if (sampleAnalysisInfo[0][0].toString().equalsIgnoreCase(smpAnaNewStatus))
@@ -220,36 +214,33 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 new Object[]{smpAnaNewStatus}, new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
             if (sampleAnalysisStatusComplete.equalsIgnoreCase(smpAnaNewStatus))                
-                sampleAnalysisEvaluateStatusAutomatismForComplete(sampleId, testId, parentAuditAction, parentAuditId);
+                sampleAnalysisEvaluateStatusAutomatismForComplete(sampleId, testId); 
             String[] fieldsForAudit = new String[0];
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                 testId, sampleId, testId, null, new String[]{TblsData.SampleAnalysis.STATUS.getName()}, new Object[]{smpAnaNewStatus});
             if (sampleAnalysisStatusComplete.equalsIgnoreCase(smpAnaNewStatus)){
-                sampleAnalysisEvaluateStatusAutomatismForAutoApprove(sampleId, testId, parentAuditAction, parentAuditId);
+                sampleAnalysisEvaluateStatusAutomatismForAutoApprove(sampleId, testId); 
                 return diagnoses;
             }
         }        
-        DataSample.sampleEvaluateStatus(sampleId, parentAuditAction, parentAuditId);
+        DataSample.sampleEvaluateStatus(sampleId); 
         return diagnoses;
     }
-    public static Object[] sampleAnalysisEvaluateStatusAutomatismForComplete(Integer sampleId, Integer testId,String parentAuditAction,Integer parentAuditId){
+    public static Object[] sampleAnalysisEvaluateStatusAutomatismForComplete(Integer sampleId, Integer testId){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] isRevisionSampleAnalysisMarkAsReadyForRevisionWhenAllResultsEntered = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getAreaName(), DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getTagName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisMarkAsReadyForRevisionWhenAllResultsEntered[0].toString()))
-            return setReadyForRevision(sampleId, testId, parentAuditAction, parentAuditId);
+            return setReadyForRevision(sampleId, testId);
         Object[] isRevisionSampleAnalysisMarkAsReviewedWhenAllResultsEntered = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getAreaName(), DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getTagName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisMarkAsReviewedWhenAllResultsEntered[0].toString()))
             return sampleAnalysisReview(sampleId, testId);
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "markAsReadyForRevisionWhenAllResultsEnteredNotActive", null);
     }
     
-    public static void sampleAnalysisEvaluateStatusAutomatismForAutoApprove(Integer sampleId, Integer testId,String parentAuditAction,Integer parentAuditId){
+    public static void sampleAnalysisEvaluateStatusAutomatismForAutoApprove(Integer sampleId, Integer testId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String auditActionName = SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_AUTOAPPROVE.toString();
-        if (parentAuditAction != null) {
-            auditActionName = parentAuditAction +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ auditActionName;
-        }
         Object[] isSampleAnalysisGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_GENERICAUTOAPPROVEENABLED.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleAnalysisGenericAutoApproveEnabled[0].toString()))
             return;
