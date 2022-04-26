@@ -211,7 +211,7 @@ public class DataSampleRevisionTestingGroup{
         if (pendingTestingGroupByRevisionValue.length==1 && pendingTestingGroupByRevisionValue[0][0].toString().equalsIgnoreCase("TRUE")){
             DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
             DataSample smp=new DataSample(smpAna);
-            DataSample.setReadyForRevision(sampleId, parentAction, parentAuditId);
+            DataSample.setReadyForRevision(sampleId);
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_PENDING_TESTINGGROUPREVISION, new Object[]{sampleId, procInstanceName});

@@ -7,10 +7,12 @@ package functionaljavaa.datatransfer;
 
 import databases.Rdbms;
 import databases.Rdbms.RdbmsSuccess;
+import databases.RdbmsObject;
 import databases.SqlStatement;
 import java.util.HashMap;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTables;
 import trazit.session.ApiMessageReturn;
 
 /**
@@ -19,15 +21,15 @@ import trazit.session.ApiMessageReturn;
  */
 public class FromInstanceToInstance {
     
-    public static Object[] tableContent(String schemaName, String tableName, String sourceDB, String destinationDB){
+    public static Object[] tableContent(EnumIntTables tblObj, String sourceDB, String destinationDB){
         Rdbms.closeRdbms();
         Rdbms.stablishDBConection(sourceDB);
-        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(schemaName, tableName);
+        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(tblObj.getRepositoryName(), tblObj.getTableName());
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
         String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));
         
-        Object[][] recordsInSourceDB = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
+        Object[][] recordsInSourceDB = Rdbms.getRecordFieldsByFilter(tblObj.getRepositoryName(), tblObj.getTableName(),
                 new String[]{tableFldsInfoColumns[0]+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, 
                 new Object[]{"<<<>>>"}, tableFldsInfoColumns);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordsInSourceDB[0][0].toString())) 
@@ -36,8 +38,8 @@ public class FromInstanceToInstance {
         Rdbms.stablishDBConection(destinationDB);
         int numRecsTransferred=0;
         for (Object[] curRow: recordsInSourceDB){            
-            Object[] insertRecordInTable = Rdbms.insertRecordInTable(schemaName, tableName, tableFldsInfoColumns, curRow);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString())) 
+            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(tblObj, tableFldsInfoColumns, curRow);
+            if (!insertRecordInTable.getRunSuccess()) 
                 break;
             numRecsTransferred++;
         }

@@ -50,8 +50,8 @@ public class DbObjects {
     public static JSONObject createPlatformSchemasAndBaseTables(String platformName){        
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());        
-        String[][] tablesToTransferData=new String[][]{
-            {GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.UOM.getTableName(), dbTrazitModules}
+        EnumIntTables[] tablesToTransferData=new EnumIntTables[]{
+            TblsCnfg.TablesConfig.UOM
         };
         String[] schemaNames = new String[]{GlobalVariables.Schemas.APP_AUDIT.getName(),
             GlobalVariables.Schemas.CONFIG.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), 
@@ -121,9 +121,9 @@ public class DbObjects {
         else
             schemasObj.put("summary_run_with_errors", errorsOnlyObj);
         
-        for (String[] curTable: tablesToTransferData){
-            Object[] tableContent = FromInstanceToInstance.tableContent(curTable[0], curTable[1], curTable[2], platformName);
-            schemasObj.put("Transfer Data for "+curTable[0]+"."+curTable[1]+" from "+curTable[2], tableContent[tableContent.length-2]);
+        for (EnumIntTables curTable: tablesToTransferData){
+            Object[] tableContent = FromInstanceToInstance.tableContent(curTable, dbTrazitModules, platformName);
+            schemasObj.put("Transfer Data for "+curTable.getRepositoryName()+"."+curTable.getTableName()+" from "+dbTrazitModules, tableContent[tableContent.length-2]);
         }
         return schemasObj;
      }         

@@ -11,6 +11,7 @@ package functionaljavaa.investigation;
  */
 import com.labplanet.servicios.app.InvestigationAPI;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIEndpoints;
+import databases.RdbmsObject;
 import databases.TblsProcedure;
 import databases.features.Token;
 import trazit.session.ResponseMessages;
@@ -81,7 +82,8 @@ public class ClassInvestigation {
                 actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), fieldValues, argValues[2].toString());
                 String investigationIdStr="";
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                    investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
+                    RdbmsObject rdbmsDiagn=(RdbmsObject)actionDiagnoses[actionDiagnoses.length-1];
+                    investigationIdStr=rdbmsDiagn.getNewRowId().toString();
                     if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
                     messages.addMainForSuccess(endPoint, new Object[]{investigationId, argValues[2].toString()});
                     dynamicDataObjects=new Object[]{investigationId, argValues[2].toString()};
