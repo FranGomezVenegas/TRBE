@@ -45,9 +45,9 @@ public interface EnumIntViewFields {
         return custFlds;
     }
     //No funciona para vistas, falta revisarlo.
-    public static Integer xgetFldPosicInArray(EnumIntViews[] tblFlds, String fldName){
-        for (int i=0;i<tblFlds.length;i++){
-            //if (tblFlds[i].getViewFields()..equalsIgnoreCase(fldName)) return i;
+    public static Integer getFldPosicInArray(EnumIntViewFields[] vwFlds, String fldName){
+        for (int i=0;i<vwFlds.length;i++){
+            if (vwFlds[i].getName().equalsIgnoreCase(fldName)) return i;
         }
         return -1;
     }

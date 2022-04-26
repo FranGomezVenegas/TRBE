@@ -7,6 +7,7 @@ package databases;
 
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntViewFields;
 
 /**
  *
@@ -14,12 +15,13 @@ import trazit.enums.EnumIntTableFields;
  */
 public class SqlWhereEntry {
 
-    EnumIntTableFields fldName;
+    EnumIntTableFields tblFldName;
+    EnumIntViewFields vwFldName;
     WHERECLAUSE_TYPES symbol;
     Object[] fldValue;
     String separator;
     public SqlWhereEntry(EnumIntTableFields fldN, WHERECLAUSE_TYPES symb, Object[] fldVal, String separtr){
-        this.fldName=fldN;
+        this.tblFldName=fldN;
         if (symb==null)
             this.symbol = WHERECLAUSE_TYPES.EQUAL;
         else
@@ -27,7 +29,17 @@ public class SqlWhereEntry {
         this.fldValue=fldVal;
         this.separator=separtr;
     }
-    public EnumIntTableFields getFldName()   {return this.fldName;}
+    public SqlWhereEntry(EnumIntViewFields fldN, WHERECLAUSE_TYPES symb, Object[] fldVal, String separtr){
+        this.vwFldName=fldN;
+        if (symb==null)
+            this.symbol = WHERECLAUSE_TYPES.EQUAL;
+        else
+            this.symbol=symb;
+        this.fldValue=fldVal;
+        this.separator=separtr;
+    }
+    public EnumIntTableFields getTblFldName()   {return this.tblFldName;}
+    public EnumIntViewFields getVwFldName()   {return this.vwFldName;}
     public WHERECLAUSE_TYPES  getSymbol(){return this.symbol;}
     public Object[]  getFldValue(){return this.fldValue;}
     public String  getSeparator(){return this.separator;}    

@@ -15,6 +15,7 @@ import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIfrontendEnd
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
+import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsCnfg;
 import databases.TblsData;
@@ -191,7 +192,6 @@ public class SampleAPIfrontend extends HttpServlet {
                 else whereFieldsValue="true*Boolean|"+whereFieldsValue;
                 whereFieldsValueArr=LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|"));
                 
-                
                 String sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE); 
                 if (sampleAnalysisFieldToRetrieve!=null && sampleAnalysisFieldToRetrieve.length()>0) sampleAnalysisFieldToRetrieveArr=sampleAnalysisFieldToRetrieve.split("\\|");
                 else sampleAnalysisFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());                
@@ -200,7 +200,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 
                 Object[][] smplsAnaData = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
                     EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisFieldToRetrieveArr),
-                    whereFieldsNameArr, whereFieldsValueArr, sampleAnalysisSortFieldArr);
+                    new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, whereFieldsNameArr, whereFieldsValueArr), sampleAnalysisSortFieldArr);
                 JSONArray smplAnaJsArr= new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(smplsAnaData[0][0].toString()))
                     LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr); 
@@ -250,7 +250,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 }
                 Object[][] mySamples = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
                     EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, fieldToRetrieveArr),
-                    whereFieldsNameArr, whereFieldsValueArr, sortFieldsNameArr);
+                    new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, whereFieldsNameArr, whereFieldsValueArr), sortFieldsNameArr);
                 JSONArray myJSArr = new JSONArray();
                 if (mySamples==null){ 
                     LPFrontEnd.servletReturnSuccess(request, response, myJSArr);
@@ -419,7 +419,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     Integer posicLimitIdFld=resultFieldToRetrieveArr.length;
                     Object[][] analysisResultList = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
                         EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, resultFieldToRetrieveArr),
-                        sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr, sortFieldsNameArr);
+                        new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr), sortFieldsNameArr);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
                         Rdbms.closeRdbms();                                          
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());

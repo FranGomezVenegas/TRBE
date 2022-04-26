@@ -8,6 +8,7 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsProcedure;
 import functionaljavaa.parameter.Parameter;
@@ -479,7 +480,7 @@ public class EnvMonAPIStats extends HttpServlet {
 
                 sampleInfo = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
                     EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL"),
-                    filterFieldName, filterFieldValue,
+                    new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, filterFieldName, filterFieldValue),
                     new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName()+" desc"} ); 
                 jObj=new JSONObject();
                 JSONArray sampleJsonArr = new JSONArray();

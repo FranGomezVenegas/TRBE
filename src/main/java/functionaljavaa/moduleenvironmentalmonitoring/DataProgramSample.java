@@ -10,6 +10,8 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
+import databases.RdbmsObject;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
@@ -181,6 +183,7 @@ public class DataProgramSample{
      *
      * @param sampleId
      * @param microorganismName
+     * @param items
      * @return
      */
     public static Object[] addSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
@@ -222,10 +225,12 @@ public class DataProgramSample{
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgRow[0][0].toString())) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "microorganismNotFound", new  Object[]{microorganismName, sampleId});
         for (int i=0;i<items;i++){
-            diagnostic=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
-                    new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName(), TblsEnvMonitData.SampleMicroorganism.ID.getName()},
-                    new Object[]{sampleId, microorganismName, sampleMicroOrgRow[i][0]});
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
+            SqlWhere where =new SqlWhere();
+            where.addConstraint(TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID, null, new Object[]{sampleId}, null);
+            where.addConstraint(TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME, null, new Object[]{microorganismName}, null);
+            where.addConstraint(TblsEnvMonitData.SampleMicroorganism.ID, null, new Object[]{sampleMicroOrgRow[i][0]}, null);
+            RdbmsObject removeRecordInTable = Rdbms.removeRecordInTable(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, where, null);            
+            if (removeRecordInTable.getRunSuccess()){
                 SampleAudit smpAudit = new SampleAudit();
                 String[] fieldsForAudit=new String[]{"Removed microorganism "+microorganismName};
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.MICROORGANISM_REMOVED, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
@@ -263,7 +268,7 @@ public class DataProgramSample{
         }
         Object[][] programCalendarDatePending=QueryUtilitiesEnums.getViewData(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, 
             EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, fieldsToRetrieve),
-            whereFieldNames, whereFieldValues, 
+            new SqlWhere(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, whereFieldNames, whereFieldValues), 
             new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});

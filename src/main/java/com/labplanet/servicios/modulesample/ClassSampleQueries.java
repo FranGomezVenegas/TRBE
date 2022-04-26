@@ -9,6 +9,7 @@ import com.labplanet.servicios.moduleenvmonit.*;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIfrontendEndpoints;
 import databases.Rdbms;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsProcedure;
 import functionaljavaa.materialspec.ConfigSpecRule;
@@ -86,7 +87,7 @@ public class ClassSampleQueries {
                     
                     Object[][] analysisResultList = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
                         EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, resultFieldToRetrieveArr),
-                        sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr,
+                        new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr),
                         //new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()},new Object[]{sampleId}, 
                         sortFieldsNameArr);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
@@ -196,7 +197,7 @@ public class ClassSampleQueries {
             String[] tblAllFlds=EnumIntViewFields.getAllFieldNames(TblsEnvMonitData.ViewSampleMicroorganismList.values());
             Object[][] sampleStageInfo=QueryUtilitiesEnums.getViewData(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, 
                 EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, tblAllFlds),
-                new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                new SqlWhere(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.SAMPLE_ID.getName()}, new Object[]{sampleId}), 
                 new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.TEST_ID.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.RESULT_ID.getName()});                    
             jObj= new JSONObject();
             jObj2= new JSONObject();

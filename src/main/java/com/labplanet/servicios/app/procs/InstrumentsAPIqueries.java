@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.*;
 import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
 import databases.TblsAppProcData.TablesAppProcData;
@@ -173,44 +174,46 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
             case INSTRUMENT_EVENTS_INPROGRESS:
-                    String[] whereFldName=new String[]{TblsAppProcData.ViewNotDecommInstrumentAndEventData.COMPLETED_BY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
-                    Object[] whereFldValue=new Object[]{};
-                    String fieldName=LPNulls.replaceNull(argValues[0]).toString();
-                    String fieldValue=LPNulls.replaceNull(argValues[1]).toString();
-                    if (fieldValue.length()>0){                    
-                        Object[] convertStringWithDataTypeToObjectArray = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                String[] whereFldName=new String[]{TblsAppProcData.ViewNotDecommInstrumentAndEventData.COMPLETED_BY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
+                Object[] whereFldValue=new Object[]{};
+                String fieldName=LPNulls.replaceNull(argValues[0]).toString();
+                String fieldValue=LPNulls.replaceNull(argValues[1]).toString();
+                if (fieldValue.length()>0){                    
+                    Object[] convertStringWithDataTypeToObjectArray = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                }
+                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsAppProcData.ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW.getViewFields());
+                AppInstrumentsAuditEvents = QueryUtilitiesEnums.getViewData(ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW, 
+                    EnumIntViewFields.getViewFieldsFromString(ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW, "ALL"),    
+                    new SqlWhere(ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW, whereFldName, whereFldValue),
+                    new String[]{TblsAppProcData.ViewNotDecommInstrumentAndEventData.INSTRUMENT.getName(), TblsAppProcData.ViewNotDecommInstrumentAndEventData.CREATED_ON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
+                    for (Object[] currInstrEv: AppInstrumentsAuditEvents){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
+                        jArr.add(jObj);
                     }
-                    fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsAppProcData.ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW.getViewFields());
-                    AppInstrumentsAuditEvents = QueryUtilitiesEnums.getViewData(ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW, 
-                        EnumIntViewFields.getViewFieldsFromString(ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW, "ALL"),    
-                        whereFldName, whereFldValue,
-                        new String[]{TblsAppProcData.ViewNotDecommInstrumentAndEventData.INSTRUMENT.getName(), TblsAppProcData.ViewNotDecommInstrumentAndEventData.CREATED_ON.getName()+" desc"});
-                    jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
-                        for (Object[] currInstrEv: AppInstrumentsAuditEvents){
-                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
-                            jArr.add(jObj);
-                        }
-                    }
-                    Rdbms.closeRdbms();  
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                break;
             case INSTRUMENT_EVENT_VARIABLES:
-                    Integer instrEventId=(Integer)argValues[0];
-                    fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableFields());
-                    AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, 
-                        EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, "ALL"),
-                        new String[]{TblsAppProcData.InstrEventVariableValues.EVENT_ID.getName()},
-                        new Object[]{instrEventId},
-                        new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName(), TblsAppProcData.InstrEventVariableValues.CREATED_ON.getName()+" desc"});
-                    jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
-                        for (Object[] currInstrEv: AppInstrumentsAuditEvents){
-                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
-                            jArr.add(jObj);
-                        }
+                Integer instrEventId=(Integer)argValues[0];
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableFields());
+                AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, 
+                    EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, "ALL"),
+                    new String[]{TblsAppProcData.InstrEventVariableValues.EVENT_ID.getName()},
+                    new Object[]{instrEventId},
+                    new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName(), TblsAppProcData.InstrEventVariableValues.CREATED_ON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
+                    for (Object[] currInstrEv: AppInstrumentsAuditEvents){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
+                        jArr.add(jObj);
                     }
-                    Rdbms.closeRdbms();  
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                break;
             case DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS:
                 String numDays = LPNulls.replaceNull(argValues[0]).toString();
                 if (numDays.length()==0) numDays=String.valueOf(7);

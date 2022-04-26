@@ -7,7 +7,7 @@ package functionaljavaa.platformadmin;
 
 import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
-import databases.SqlStatement;
+import databases.RdbmsObject;
 import databases.SqlWhere;
 import databases.TblsApp;
 import databases.features.Token;
@@ -17,6 +17,7 @@ import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getFldPosicInArray;
 import trazit.enums.EnumIntTables;
+import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.ResponseMessages;
@@ -84,6 +85,12 @@ public class AdminActions {
     public static InternalMessage deActivateWhiteIp(Integer id){   
         return ipActions(TblsApp.TablesApp.IP_WHITE_LIST, "UPDATE", id, new String[]{TblsApp.IPWhiteList.ACTIVE.getName()}, new Object[]{false}, null, null);
     }
+    public static InternalMessage updateBlackIp(Integer id, String[] fldName, Object[] fldValue){   
+        return ipActions(TblsApp.TablesApp.IP_BLACK_LIST, "UPDATE", id, fldName, fldValue, null, null);
+    }
+    public static InternalMessage updateWhiteIp(Integer id, String[] fldName, Object[] fldValue){   
+        return ipActions(TblsApp.TablesApp.IP_WHITE_LIST, "UPDATE", id, fldName, fldValue, null, null);
+    }
     public static InternalMessage removeBlackIp(Integer id){   
         return ipActions(TblsApp.TablesApp.IP_BLACK_LIST, "DELETE", id, new String[]{TblsApp.IPWhiteList.ID.getName()}, new Object[]{id}, null, null);
     }
@@ -114,15 +121,14 @@ public class AdminActions {
             case "INSERT":
                 fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsApp.IPWhiteList.ACTIVE.getName()});
                 fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{true});
-                EnumIntTableFields[] fldNamesObj=new EnumIntTableFields[fldNames.length];
-                for (int iFld=0;iFld<fldNames.length;iFld++){
-                    Integer fldPosicInArray = getFldPosicInArray(tblObj.getTableFields(), fldNames[iFld]);
-                    fldNamesObj[iFld]=tblObj.getTableFields()[fldPosicInArray];
-                }
-                dbActionDiagn = Rdbms.insertRecordInTable(tblObj, fldNamesObj, fldValues); 
+                RdbmsObject removeDiagn = Rdbms.insertRecord(tblObj, fldNames, fldValues, null); 
+                if (removeDiagn.getRunSuccess())
+                    dbActionDiagn= ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE,"", null);
+                else
+                    dbActionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                 break;
             case "UPDATE":
-                fldNamesObj=new EnumIntTableFields[fldNames.length];
+                EnumIntTableFields[] fldNamesObj = new EnumIntTableFields[fldNames.length];
                 for (int iFld=0;iFld<fldNames.length;iFld++){
                     Integer fldPosicInArray = getFldPosicInArray(tblObj.getTableFields(), fldNames[iFld]);
                     fldNamesObj[iFld]=tblObj.getTableFields()[fldPosicInArray];
@@ -132,8 +138,9 @@ public class AdminActions {
                 whereFldNamesObj[0]=tblObj.getTableFields()[fldPosicInArray];
                 SqlWhere sqlW=new SqlWhere();
                 sqlW.addConstraint(TblsApp.IPWhiteList.ID, null, new Object[]{id}, null);
-                dbActionDiagn = Rdbms.updateRecordFieldsByFilter(tblObj, fldNamesObj, fldValues, sqlW);
+                dbActionDiagn = Rdbms.updateRecordFieldsByFilter(tblObj, fldNamesObj, fldValues, sqlW, null);
                 break;
+
             case "DELETE":
                 fldNamesObj=new EnumIntTableFields[fldNames.length];
                 for (int iFld=0;iFld<fldNames.length;iFld++){
@@ -142,7 +149,11 @@ public class AdminActions {
                 }
                 sqlW=new SqlWhere();
                 sqlW.addConstraint(TblsApp.IPWhiteList.ID, null, new Object[]{id}, null);
-                dbActionDiagn = Rdbms.removeRecordInTable(tblObj, sqlW);
+                removeDiagn=Rdbms.removeRecordInTable(tblObj, sqlW, null);
+                if (removeDiagn.getRunSuccess())
+                    dbActionDiagn= ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE,"", null);
+                else
+                    dbActionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                 break;
         }
         Object ipId = null;
