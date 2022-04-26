@@ -7,7 +7,6 @@ package trazit.queries;
 
 import databases.features.DbEncryptionObject;
 import databases.Rdbms;
-import static databases.Rdbms.addSuffixIfItIsForTesting;
 import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import java.sql.ResultSet;
@@ -19,12 +18,12 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.session.ApiMessageReturn;
-import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -66,7 +65,13 @@ public class QueryUtilitiesEnums {
         Object[][] tblInfo=getRecordFieldsByFilter(tblObj, fldsToRetrieve, whereFldName, whereFldValue, orderBy, false, alternativeProcInstanceName);
         return tblInfo;
     }    
-*/    
+*/        
+
+    public static Object[][] getViewData(EnumIntViews tblObj, EnumIntViewFields[] fldsToRetrieve, SqlWhere where, String[] orderBy){        
+        Object[][] tblInfo=getViewRecordFieldsByFilter(tblObj, fldsToRetrieve, where, orderBy, false, null);
+        return tblInfo;
+    }    
+/*
     public static Object[][] getViewData(EnumIntViews tblObj, EnumIntViewFields[] fldsToRetrieve, String[] whereFldName, Object[] whereFldValue, String[] orderBy){        
         Object[][] tblInfo=getViewRecordFieldsByFilter(tblObj, fldsToRetrieve, whereFldName, whereFldValue, orderBy, false, null);
         return tblInfo;
@@ -75,28 +80,15 @@ public class QueryUtilitiesEnums {
         Object[][] tblInfo=getViewRecordFieldsByFilter(tblObj, fldsToRetrieve, whereFldName, whereFldValue, orderBy, false, alternativeProcInstanceName);
         return tblInfo;
     }    
-
+*/
     private static Object[][] getRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy, Boolean inforceDistinct, String alternativeProcInstanceName){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForQueries(null, null, false);
-        
-        String schemaName=tblObj.getRepositoryName();        
-        if (tblObj.getIsProcedureInstance() && alternativeProcInstanceName==null)
-            schemaName=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), schemaName);
-        if (tblObj.getIsProcedureInstance() && alternativeProcInstanceName!=null)
-            schemaName=LPPlatform.buildSchemaName(alternativeProcInstanceName, schemaName);
-        String tableName=tblObj.getTableName();
-        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
-        if (whereFieldNames.length==0){
-           Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
-           return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
-        }
         String query=null;
         //if (orderBy==null) orderBy=new String[]{};
         try{            
         SqlStatementEnums sql = new SqlStatementEnums(); 
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(Rdbms.SQLSELECT, tblObj,
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable(Rdbms.SQLSELECT, tblObj,
                 whereFieldNames, whereFieldValues,
-                fieldsToRetrieve,  null, null, orderBy, null, inforceDistinct);            
+                fieldsToRetrieve,  null, null, orderBy, null, inforceDistinct, alternativeProcInstanceName);            
         query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);
    
@@ -125,7 +117,7 @@ public class QueryUtilitiesEnums {
                 diagnoses2=DbEncryptionObject.decryptTableFieldArray(tblObj, fieldsToRetrieve, diagnoses2);
                 return diagnoses2;
             }else{
-                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), "schemaName"});
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                
             }
         }catch (SQLException er) {
@@ -136,25 +128,12 @@ public class QueryUtilitiesEnums {
     }
 
     private static Object[][] getRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, SqlWhere where, String[] orderBy, Boolean inforceDistinct, String alternativeProcInstanceName){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForQueries(null, null, false);
-        
-        String schemaName=tblObj.getRepositoryName();        
-        if (tblObj.getIsProcedureInstance() && alternativeProcInstanceName==null)
-            schemaName=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), schemaName);
-        if (tblObj.getIsProcedureInstance() && alternativeProcInstanceName!=null)
-            schemaName=LPPlatform.buildSchemaName(alternativeProcInstanceName, schemaName);
-        String tableName=tblObj.getTableName();
-        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
-        if (where.getAllWhereEntries().isEmpty()){
-           Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
-           return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
-        }
         String query=null;
         //if (orderBy==null) orderBy=new String[]{};
         try{            
         SqlStatementEnums sql = new SqlStatementEnums(); 
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(Rdbms.SQLSELECT, tblObj, where,
-                fieldsToRetrieve,  null, null, orderBy, null, inforceDistinct);            
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable(Rdbms.SQLSELECT, tblObj, where,
+                fieldsToRetrieve,  null, null, orderBy, null, inforceDistinct, alternativeProcInstanceName);            
         query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);
    
@@ -183,7 +162,7 @@ public class QueryUtilitiesEnums {
                 diagnoses2=DbEncryptionObject.decryptTableFieldArray(tblObj, fieldsToRetrieve, diagnoses2);
                 return diagnoses2;
             }else{
-                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(where.getAllWhereEntriesFldValues()), schemaName});                         
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(where.getAllWhereEntriesFldValues()), "schemaName"});
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                
             }
         }catch (SQLException er) {
@@ -193,30 +172,16 @@ public class QueryUtilitiesEnums {
         }                    
     }
 
-    private static Object[][] getViewRecordFieldsByFilter(EnumIntViews viewObj, EnumIntViewFields[] fieldsToRetrieve, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy, Boolean inforceDistinct, String alternativeProcInstanceName){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForQueries(null, null, false);
-        String schemaName=viewObj.getRepositoryName();        
-        if (viewObj.getIsProcedureInstance() && alternativeProcInstanceName==null)
-            schemaName=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), schemaName);
-        if (viewObj.getIsProcedureInstance() && alternativeProcInstanceName!=null)
-            schemaName=LPPlatform.buildSchemaName(alternativeProcInstanceName, schemaName);
-        String tableName=viewObj.getViewName();
-        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
-        if (whereFieldNames.length==0){
-           Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
-           return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
-        }
+    private static Object[][] getViewRecordFieldsByFilter(EnumIntViews viewObj, EnumIntViewFields[] fieldsToRetrieve, SqlWhere where, String[] orderBy, Boolean inforceDistinct, String alternativeProcInstanceName){
         SqlStatementEnums sql = new SqlStatementEnums(); 
-        HashMap<String, Object[]> hmQuery = sql.buildViewSqlStatement(viewObj,
-                whereFieldNames, whereFieldValues,
-                fieldsToRetrieve,  orderBy, null, inforceDistinct);            
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementView(viewObj, where, fieldsToRetrieve,  orderBy, null, inforceDistinct, alternativeProcInstanceName);            
         String query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);
    
         try{            
             ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
-                Object[] errorLog=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{Rdbms.RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + Rdbms.RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES+ Arrays.toString(whereFieldValues)});
+                Object[] errorLog=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{Rdbms.RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + Rdbms.RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES+ Arrays.toString(where.getAllWhereEntriesFldValues())});
                 return LPArray.array1dTo2d(errorLog, errorLog.length);
             }               
             res.last();
@@ -238,7 +203,7 @@ public class QueryUtilitiesEnums {
                 //diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
                 return diagnoses2;
             }else{
-                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(where.getAllWhereEntriesFldValues()), "schemaName"});
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                
             }
         }catch (SQLException er) {
@@ -247,6 +212,7 @@ public class QueryUtilitiesEnums {
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);             
         }                    
     }
+ 
 /*
     public static Object[][] xgetViewRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, EnumIntViewFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct){
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
@@ -255,7 +221,7 @@ public class QueryUtilitiesEnums {
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
         }
         SqlStatementEnums sql = new SqlStatementEnums(); 
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(Rdbms.SQLSELECT, schemaName, tableName,
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable(Rdbms.SQLSELECT, schemaName, tableName,
                 whereFieldNames, whereFieldValues,
                 fieldsToRetrieve,  null, null, orderBy, null, inforceDistinct);            
         String query= hmQuery.keySet().iterator().next();   
