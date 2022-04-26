@@ -6,11 +6,9 @@
 package functionaljavaa.audit;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
-import databases.Rdbms;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -48,7 +46,6 @@ public final class IncubBatchAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsEnvMonitDataAudit.TablesEnvMonitDataAudit.INCUB_BATCH.getTableName(), 
-                fieldNames, fieldValues);
+        return AuditUtilities.applyTheInsert(gAuditFlds, TblsEnvMonitDataAudit.TablesEnvMonitDataAudit.INCUB_BATCH, fieldNames, fieldValues);
     }    
 }

@@ -7,13 +7,18 @@ package functionaljavaa.audit;
 
 import databases.Rdbms;
 import static databases.Rdbms.dbSchemaTablesList;
+import databases.RdbmsObject;
 import databases.TblsApp;
 import databases.TblsDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
+import trazit.session.ProcedureRequestSession;
+import trazit.session.SessionAuditActions;
 /**
  *
  * @author User
@@ -21,6 +26,17 @@ import trazit.globalvariables.GlobalVariables;
 public final class AuditUtilities {
     private AuditUtilities() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
+    public static Object[] applyTheInsert(GenericAuditFields gAuditFlds, EnumIntTables tblObj, String[] fldN, Object[] fldV){
+        RdbmsObject insertDiagn = Rdbms.insertRecordInTable(tblObj, fldN, fldV);
+	if (insertDiagn.getRunSuccess()){
+            SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
+            auditActions.addAuditAction(Integer.valueOf(insertDiagn.getNewRowId().toString()), 
+                gAuditFlds.getActionName(), gAuditFlds.getActionPrettyNameEn(), gAuditFlds.getActionPrettyNameEs());
+            Object[] trapMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
+            return LPArray.addValueToArray1D(trapMessage,insertDiagn);
+        }else
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                        
+    }
     public static String[] getUserSessionProceduresList(String[] tblFlds, Object[] fldVls){
         char procsSeparator = (char)34;
         if (LPArray.valueInArray(tblFlds, TblsApp.AppSession.PROCEDURES.getName())){

@@ -28,7 +28,6 @@ import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
-import trazit.session.SessionAuditActions;
 /**
  * 
  * @author Fran Gomez
@@ -116,6 +115,8 @@ public class SampleAudit {
  *      @param sampleId
  *      @param testId Integer - testId
  *      @param resultId Integer - resultId
+     * @param fldNames
+     * @param fldValues
  * @return  
  */    
     public Object[] sampleAuditAdd(EnumIntAuditEvents action, String tableName, Integer tableId, 
@@ -202,10 +203,7 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getMainParentAuditAction().getAuditId());
         }    */
-        Object[] insertRecordInfo = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), 
-                fieldNames, fieldValues);
-        SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();                
-        auditActions.addAuditAction(Integer.valueOf(insertRecordInfo[insertRecordInfo.length-1].toString()), gAuditFlds.getActionName(), gAuditFlds.getActionPrettyNameEn(), gAuditFlds.getActionPrettyNameEs());
+        Object[] insertRecordInfo = AuditUtilities.applyTheInsert(gAuditFlds, TblsDataAudit.TablesDataAudit.SAMPLE, fieldNames, fieldValues);
         return insertRecordInfo;
     }
     /**
@@ -219,15 +217,21 @@ public class SampleAudit {
      * @param testId
      * @param resultId
      * @param auditlog
+     * @return 
      */
-    public Object[] sampleAliquotingAuditAdd(String action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
+    public Object[] sampleAliquotingAuditAdd(EnumIntAuditEvents action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         
-        String[] fieldNames = new String[]{TblsDataAudit.Sample.DATE.getName(), TblsDataAudit.Sample.ACTION_NAME.getName(), TblsDataAudit.Sample.TABLE_NAME.getName(),
+        String[] fldNames = new String[]{TblsDataAudit.Sample.DATE.getName(), TblsDataAudit.Sample.ACTION_NAME.getName(), TblsDataAudit.Sample.TABLE_NAME.getName(),
           TblsDataAudit.Sample.TABLE_ID.getName(), TblsDataAudit.Sample.FIELDS_UPDATED.getName(), TblsDataAudit.Sample.USER_ROLE.getName(),
           TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.TRANSACTION_ID.getName()};
-        Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp(), action, tableName, tableId, Arrays.toString(auditlog), token.getUserRole(), token.getPersonName(), Rdbms.getTransactionId()};
+
+        Object[] fldValues = new Object[]{LPDate.getCurrentTimeStamp(), action, tableName, tableId, Arrays.toString(auditlog), token.getUserRole(), token.getPersonName(), Rdbms.getTransactionId()};
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action, fldNames, fldValues);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
+        String[] fieldNames=gAuditFlds.getFieldNames();
+        Object[] fieldValues=gAuditFlds.getFieldValues();
 
         Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
@@ -264,9 +268,8 @@ public class SampleAudit {
         if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
-        }    
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(),
-            fieldNames, fieldValues);
+        }  
+        return AuditUtilities.applyTheInsert(gAuditFlds, TblsDataAudit.TablesDataAudit.SAMPLE, fieldNames, fieldValues);        
     }
     /**
      *

@@ -6,6 +6,7 @@
 package functionaljavaa.incident;
 
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.TblsApp;
 import databases.TblsAppAudit;
 import databases.features.Token;
@@ -69,7 +70,7 @@ public class AppIncident {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dbInfo[0][0].toString())) this.fieldValuesCorrect=true;
     }
     
-    public static Object[] newIncident(String incTitle, String incDetail, JsonObject sessionInfo){ 
+    public static RdbmsObject newIncident(String incTitle, String incDetail, JsonObject sessionInfo){ 
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String[] updFieldName=new String[]{TblsApp.Incident.DATE_CREATION.getName(), TblsApp.Incident.PERSON_CREATION.getName(), TblsApp.Incident.TITLE.getName(), TblsApp.Incident.DETAIL.getName(),
                 TblsApp.Incident.USER_NAME.getName(), TblsApp.Incident.USER_ROLE.getName(), TblsApp.Incident.PERSON_NAME.getName(),
@@ -77,14 +78,13 @@ public class AppIncident {
         Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), incTitle, incDetail,
                 token.getUserName(), token.getUserRole(), token.getPersonName(), 
                 IncidentStatuses.LOGGED.toString(), sessionInfo};
-        Object[] diagnostic=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
-            updFieldName, updFieldValue);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){
-            String incIdStr=diagnostic[diagnostic.length-1].toString();
+        RdbmsObject diagnostic = Rdbms.insertRecordInTable(TblsApp.TablesApp.INCIDENT, updFieldName, updFieldValue);
+        if (diagnostic.getRunSuccess()){
+            String incIdStr=diagnostic.getNewRowId().toString();
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.NEW_INCIDENT_CREATED.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), Integer.valueOf(incIdStr),   
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
         }
-        return diagnostic;        
+        return diagnostic;
     }
     
     public Object[] confirmIncident(Integer incidentId, String note){ 

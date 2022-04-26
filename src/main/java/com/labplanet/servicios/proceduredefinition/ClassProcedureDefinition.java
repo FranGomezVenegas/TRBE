@@ -2,6 +2,7 @@ package com.labplanet.servicios.proceduredefinition;
 
 import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
+import databases.RdbmsObject;
 import databases.TblsReqs;
 import databases.TblsReqs.TablesReqs;
 import functionaljavaa.parameter.Parameter;
@@ -29,7 +30,6 @@ import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
-import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 /**
@@ -85,12 +85,17 @@ public class ClassProcedureDefinition {
                         actionDiagnoses=personByUserObj;
                         break;
                     }
-                    actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
-                            new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(),
-                                TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()}, 
-                            new Object[]{procedureName, procedureVersion, procInstanceName, userName});
+                    RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USERS, 
+                    new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, userName});
+                    if (insertDiagn.getRunSuccess())
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
+                    else
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
                     JSONObject createDBProcedureUsers = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;
+
                 case ADD_ROLE_TO_USER:
                     procedureName=argValues[0].toString();
                     procedureVersion = (Integer) argValues[1];   
@@ -107,12 +112,17 @@ public class ClassProcedureDefinition {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The role <*1*> does not exist in procedure <*2*> and version <*3*>", new Object[]{roleName, procedureName, procedureVersion});
                         break;
                     }
-                    actionDiagnoses=Rdbms.insertRecordInTable(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
-                            new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
-                                TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()}, 
-                            new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
+                    insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USER_ROLES, 
+                    new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
+                    if (insertDiagn.getRunSuccess())
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
+                    else
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
                     JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;
+
                 case GET_UOM:
                     procedureName=argValues[0].toString();
                     procedureVersion = (Integer) argValues[1];   
@@ -189,9 +199,9 @@ public class ClassProcedureDefinition {
                             else{
                                 curTblInfo=LPArray.setColumnValueToArray2D(curTblInfo, valuePosicInArray, newProcInstanceName);
                                 for (Object[] curTblRec: curTblInfo){
-                                    Object[] insertRecordInTable = Rdbms.insertRecordInTable(curTbl.getRepositoryName(), curTbl.getTableName(), 
+                                    RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(curTbl, 
                                             curTblAllFields, curTblRec);
-                                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString()))
+                                    if (!insertRecordInTable.getRunSuccess())
                                         tblsWithErrorArr=LPArray.addValueToArray1D(tblsWithErrorArr, curTbl.getTableName());                                    
                                 }
                             }

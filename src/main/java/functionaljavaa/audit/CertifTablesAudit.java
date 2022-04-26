@@ -1,11 +1,10 @@
 package functionaljavaa.audit;
 
-import databases.Rdbms;
 import databases.TblsDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTables;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 /** 
  *
  * @author User
@@ -13,7 +12,7 @@ import trazit.globalvariables.GlobalVariables;
 public final class CertifTablesAudit {
     private CertifTablesAudit() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
-    public static Object[] CertifTablesAudit(String dbTableName, Integer certifId, String action, String userId, String userName, String objectFldName, String objectName, String objectVersionFldName, Integer ObjectVersion, 
+    public static Object[] CertifTablesAudit(EnumIntTables tblObj, Integer certifId, String action, String userId, String userName, String objectFldName, String objectName, String objectVersionFldName, Integer ObjectVersion, 
                         Object[] auditlog, Integer trainingId, Integer parentAuditId, String note) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
@@ -45,7 +44,6 @@ public final class CertifTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.CertifUserAnalysisMethod.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), dbTableName, 
-                fieldNames, fieldValues);
+        return AuditUtilities.applyTheInsert(gAuditFlds, tblObj, fieldNames, fieldValues);
     }    
 }

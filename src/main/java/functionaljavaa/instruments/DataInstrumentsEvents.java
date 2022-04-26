@@ -6,6 +6,7 @@
 package functionaljavaa.instruments;
 
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
@@ -101,14 +102,13 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 fieldsValue=LPArray.addValueToArray1D(fieldsValue, fieldVarProperties);
 /*                Object[][] extraFields=objectFieldExtraFields(insEventId, variableSetName, ownerTable, ownerId);
                 if (extraFields!=null && extraFields.length>0){
-                    for (Object[] curFld: extraFields){
-                        fieldsName=LPArray.addValueToArray1D(fieldsName, curFld[0].toString());
-                        fieldsValue=LPArray.addValueToArray1D(fieldsValue, curFld[1]);
-                    }
+                for (Object[] curFld: extraFields){
+                fieldsName=LPArray.addValueToArray1D(fieldsName, curFld[0].toString());
+                fieldsValue=LPArray.addValueToArray1D(fieldsValue, curFld[1]);
+                }
                 }*/
-                diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
-                    fieldsName, fieldsValue);            
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
+                RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, fieldsName, fieldsValue);            
+                    if (insertRecordInTable.getRunSuccess())
                     instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_CALIBRATION, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                         fieldsName, fieldsValue);
             }

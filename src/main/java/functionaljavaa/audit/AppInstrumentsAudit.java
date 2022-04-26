@@ -5,14 +5,10 @@
  */
 package functionaljavaa.audit;
 
-import databases.Rdbms;
 import databases.TblsAppProcDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntAuditEvents;
-import trazit.globalvariables.GlobalVariables;
-import trazit.session.ProcedureRequestSession;
-import trazit.session.SessionAuditActions;
 
 /**
  *
@@ -28,7 +24,6 @@ public final class AppInstrumentsAudit {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
-        
 
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, instrName);
@@ -36,12 +31,8 @@ public final class AppInstrumentsAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
-       
-        Object[] insertRecordInfo = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName(), TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), 
-                fieldNames, fieldValues);
-        SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
-        auditActions.addAuditAction(Integer.valueOf(insertRecordInfo[insertRecordInfo.length-1].toString()), gAuditFlds.getActionName(), gAuditFlds.getActionPrettyNameEn(), gAuditFlds.getActionPrettyNameEs());
+        Object[] insertRecordInfo=AuditUtilities.applyTheInsert(gAuditFlds, TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, fieldNames, fieldValues);
         return insertRecordInfo;
     }    
     
-}
+ }

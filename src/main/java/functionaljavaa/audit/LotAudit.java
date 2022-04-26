@@ -6,13 +6,11 @@
 package functionaljavaa.audit;
 
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMDataAudit;
-import databases.Rdbms;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 /**
  * 
  * @author Fran Gomez
@@ -85,8 +83,6 @@ public class LotAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()),  TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.LOT.getTableName(), 
-                fieldNames, fieldValues);
-        
+        return AuditUtilities.applyTheInsert(gAuditFlds, TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.LOT, fieldNames, fieldValues);       
     }
 }

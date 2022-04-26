@@ -6,6 +6,7 @@
 package functionaljavaa.instruments;
 
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
@@ -131,10 +132,9 @@ public class DataInstruments {
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.ON_LINE.getName(),
             TblsAppProcData.Instruments.CREATED_ON.getName(), TblsAppProcData.Instruments.CREATED_BY.getName()});
         fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{name, false, LPDate.getCurrentTimeStamp(), token.getPersonName()});
-        Object[] instCreationDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), 
-                fldNames, fldValues);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
+        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENTS, fldNames, fldValues);
+        if (!instCreationDiagn.getRunSuccess())
+            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.CREATION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT, new Object[]{name});
@@ -305,11 +305,10 @@ public class DataInstruments {
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
         Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.CALIBRATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        Object[] instCreationDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                fldNames, fldValues);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
-        String insEventIdCreated=instCreationDiagn[instCreationDiagn.length-1].toString();
+        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENT_EVENT, fldNames, fldValues);
+        if (!instCreationDiagn.getRunSuccess())
+            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
+        String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_CALIBRATION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
         
@@ -319,7 +318,7 @@ public class DataInstruments {
             variableSetName=LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString();
         if (variableSetName!=null){
             String ownerId= token.getPersonName();
-            Integer instrEventId=Integer.valueOf(instCreationDiagn[instCreationDiagn.length-1].toString());        
+            Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
             addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
         }
         if (this.onLine){
@@ -405,11 +404,10 @@ public class DataInstruments {
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
         Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        Object[] instCreationDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                fldNames, fldValues);
-        String insEventIdCreated=instCreationDiagn[instCreationDiagn.length-1].toString();
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
+        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENT_EVENT, fldNames, fldValues);
+        String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
+        if (!instCreationDiagn.getRunSuccess())
+            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_PREVENTIVE_MAINTENANCE, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
 
@@ -419,7 +417,7 @@ public class DataInstruments {
             variableSetName=LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString();
         if (variableSetName!=null){
             String ownerId= token.getPersonName();
-            Integer instrEventId=Integer.valueOf(instCreationDiagn[instCreationDiagn.length-1].toString());        
+            Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
             addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
         }
         
@@ -503,11 +501,11 @@ public class DataInstruments {
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
         Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.VERIFICATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        Object[] instCreationDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
+        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENT_EVENT, 
                 fldNames, fldValues);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
-        String insEventIdCreated=instCreationDiagn[instCreationDiagn.length-1].toString();
+        if (!instCreationDiagn.getRunSuccess())
+            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
+        String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_VERIFICATION, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
         String variableSetName=null;
@@ -516,7 +514,7 @@ public class DataInstruments {
             variableSetName=LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString();
         if (variableSetName!=null){
             String ownerId= token.getPersonName();
-            Integer instrEventId=Integer.valueOf(instCreationDiagn[instCreationDiagn.length-1].toString());        
+            Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
             addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
         }
         
@@ -595,11 +593,10 @@ public class DataInstruments {
         String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
         Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.SERVICE.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        Object[] instCreationDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                fldNames, fldValues);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
-        String insEventIdCreated=instCreationDiagn[instCreationDiagn.length-1].toString();
+        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENT_EVENT, fldNames, fldValues);
+        if (!instCreationDiagn.getRunSuccess())
+            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
+        String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_SERVICE, name, TablesAppProcData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
         String variableSetName=null;
@@ -608,7 +605,7 @@ public class DataInstruments {
             variableSetName=LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString();
         if (variableSetName!=null){
             String ownerId= token.getPersonName();
-            Integer instrEventId=Integer.valueOf(instCreationDiagn[instCreationDiagn.length-1].toString());        
+            Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
             addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
         }
         

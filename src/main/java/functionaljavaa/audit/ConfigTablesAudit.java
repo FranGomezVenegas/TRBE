@@ -1,12 +1,11 @@
 package functionaljavaa.audit;
 
-import databases.Rdbms;
 import databases.TblsCnfgAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntAuditEvents;
+import trazit.enums.EnumIntTables;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -27,6 +26,7 @@ public class ConfigTablesAudit {
      * belonging to the sample structure when not linked to any other statement.
      *
      * @param action String - Action being performed
+     * @param tblObj
      * @param tableName String - table where the action was performed into the
      * Sample structure
      * @param tableId Integer - Id for the object where the action was
@@ -38,7 +38,7 @@ public class ConfigTablesAudit {
      * @param parentAuditId
      * @return
      */
-    public static Object[] analysisAuditAdd(String action, String tableName, String tableId,
+    public static Object[] analysisAuditAdd(String action, EnumIntTables tblObj, String tableId,
             String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
@@ -51,7 +51,7 @@ public class ConfigTablesAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.TABLE_NAME.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
+        fieldValues = LPArray.addValueToArray1D(fieldValues, tblObj.getTableName());
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
         if (specCode != null) {
@@ -66,8 +66,7 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), TblsCnfgAudit.TablesCfgAudit.ANALYSIS.getTableName(),
-                fieldNames, fieldValues);
+        return AuditUtilities.applyTheInsert(gAuditFlds, tblObj, fieldNames, fieldValues);       
     }
 
     /**
@@ -75,8 +74,7 @@ public class ConfigTablesAudit {
      * belonging to the sample structure when not linked to any other statement.
      *
      * @param action String - Action being performed
-     * @param tableName String - table where the action was performed into the
-     * Sample structure
+     * @param tblObj
      * @param tableId Integer - Id for the object where the action was
      * performed.
      * @param auditlog Object[] - All data that should be stored in the audit as
@@ -86,7 +84,7 @@ public class ConfigTablesAudit {
      * @param parentAuditId
      * @return
      */
-    public static Object[] specAuditAdd(String action, String tableName, String tableId,
+    public static Object[] specAuditAdd(String action, EnumIntTables tblObj, String tableId,
             String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
@@ -99,7 +97,7 @@ public class ConfigTablesAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.TABLE_NAME.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
+        fieldValues = LPArray.addValueToArray1D(fieldValues, tblObj.getTableName());
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
         if (specCode != null) {
@@ -114,9 +112,7 @@ public class ConfigTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }
-        AuditAndUserValidation auditAndUsrValid = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditAndUsrValid();
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), TblsCnfgAudit.TablesCfgAudit.SPEC.getTableName(),
-                fieldNames, fieldValues);
+        return AuditUtilities.applyTheInsert(gAuditFlds, tblObj, fieldNames, fieldValues);        
     }
 
 }

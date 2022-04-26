@@ -412,19 +412,15 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_USER_TO_CHECK = "userToCheck";
     public static final String REQUEST_PARAM_TABS_STRING = "tabsString";
 
-    /**
-     *
-     */
     public static final String REQUEST_PARAM_USER_INFO = "userInfoId";
 
-    /**
-     *
-     */
     public static final String REQUEST_PARAM_OBJ_GROUP_NAME = "objGroupName";
     public static final String REQUEST_PARAM_TABLE_CATEGORY = "tableCategory";
     public static final String REQUEST_PARAM_TABLE_NAME = "tableName";
 
     public static final String REQUEST_PARAM_FIELD_TO_RETRIEVE = "fieldToRetrieve"; 
+    public static final String REQUEST_PARAM_UPDATE_FIELDS_NAME = "updateFieldsName"; 
+    public static final String REQUEST_PARAM_UPDATE_FIELDS_VALUE = "updateFieldsValue";
     public static final String REQUEST_PARAM_WHERE_FIELDS_NAME = "whereFieldsName"; 
     public static final String REQUEST_PARAM_WHERE_FIELDS_VALUE = "whereFieldsValue";
     public static final String REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME = "sampleAnalysisWhereFieldsName"; 

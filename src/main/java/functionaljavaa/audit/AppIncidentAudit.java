@@ -6,10 +6,11 @@
 package functionaljavaa.audit;
 
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.TblsAppAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
 
 public final class AppIncidentAudit {
     private AppIncidentAudit() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
@@ -38,9 +39,7 @@ public final class AppIncidentAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_AUDIT.getName(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), 
-                fieldNames, fieldValues);
-        return insertRecordInTable;
+        return AuditUtilities.applyTheInsert(gAuditFlds, TblsAppAudit.TablesAppAudit.INCIDENT, fieldNames, fieldValues);
     }    
     
 }

@@ -44,15 +44,16 @@ public class dbProcHashcode {
         Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceForActions.getProcedureInstance(), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
                 new String[]{TblsProcedure.ProcedureInfo.NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                 new String[]{TblsProcedure.ProcedureInfo.CREATE_PICT_ONGCHNGE.getName()});
+
+/*  Fails
         if (procInfo[0][0]==null || Boolean.valueOf(procInfo[0][0].toString())){
             fieldNames=LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.procHashCodesHistory.PICTURE.getName());
             fieldValues=LPArray.addValueToArray1D(fieldValues, procDefPicture(String.valueOf(hashCode)));
         }
-        
+  */      
         
         instanceForActions.setNewProcedureHashCode(String.valueOf(hashCode));
-        RdbmsObject insertRecord = Rdbms.insertRecord(LPPlatform.buildSchemaName(instanceForActions.getProcedureInstance(), TblsProcedureAudit.TablesProcedureAudit.PROC_HASH_CODES.getRepositoryName()), TblsProcedureAudit.TablesProcedureAudit.PROC_HASH_CODES.getTableName(), 
-                fieldNames, fieldValues);
+        RdbmsObject insertRecord = Rdbms.insertRecord(TblsProcedureAudit.TablesProcedureAudit.PROC_HASH_CODES, fieldNames, fieldValues, null);
         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceForActions.getProcedureInstance(), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
                 new String[]{TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()},
                 new Object[]{String.valueOf(hashCode)},

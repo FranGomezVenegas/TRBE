@@ -5,13 +5,10 @@
  */
 package functionaljavaa.audit;
 
-import databases.Rdbms;
 import databases.TblsProcedureAudit;
-import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -48,8 +45,7 @@ public final class ProcedureInvestigationAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_AUDIT.getName()), TblsProcedureAudit.TablesProcedureAudit.INVESTIGATION.getTableName(), 
-                fieldNames, fieldValues);
+        return AuditUtilities.applyTheInsert(gAuditFlds, TblsProcedureAudit.TablesProcedureAudit.INVESTIGATION, fieldNames, fieldValues);
     }    
     
 }
