@@ -9,6 +9,7 @@ import static databases.DbObjects.createSchemas;
 import static databases.DbObjects.removeSchemas;
 import databases.Rdbms;
 import databases.RdbmsObject;
+import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsAppConfig;
 import databases.TblsProcedure;
@@ -37,10 +38,10 @@ public class PlatformNewInstance {
         Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(TblsProcedure.TablesProcedure.PERSON_PROFILE.getRepositoryName(), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), tblCreateScript, new Object[]{});
         String actionLog="";
         
-        RdbmsObject insertRecordInTable=Rdbms.insertRecord(LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
+        RdbmsObject insertRecordInTable=Rdbms.insertRecord(TblsProcedure.TablesProcedure.PERSON_PROFILE, 
             new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName(), 
                 TblsProcedure.PersonProfile.ACTIVE.getName(), TblsProcedure.PersonProfile.USER_TITLE.getName()}, 
-            new Object[]{personId, "testing", true, "Testing user access / Testeo acceso usuario"});
+            new Object[]{personId, "testing", true, "Testing user access / Testeo acceso usuario"}, fakeProcName);
         if (insertRecordInTable.getRunSuccess())
             actionLog="success";
         else{
@@ -49,10 +50,10 @@ public class PlatformNewInstance {
         }
         jsonObj.put("insert_person_profile_record", actionLog);
 
-        insertRecordInTable = Rdbms.insertRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
+        insertRecordInTable = Rdbms.insertRecord(TblsApp.TablesApp.USERS, 
                 new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
                     TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
-                new Object[]{fakeProcUserName, "trazit.info@gmail.com", "firmademo", fakeProcUserName+fakeProcUserName, personId});
+                new Object[]{fakeProcUserName, "trazit.info@gmail.com", "firmademo", fakeProcUserName+fakeProcUserName, personId}, null);
         if (insertRecordInTable.getRunSuccess())
             actionLog="success";
         else{
@@ -61,9 +62,9 @@ public class PlatformNewInstance {
         }
         jsonObj.put("insert_user_record", actionLog);
 
-        insertRecordInTable=Rdbms.insertRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
+        insertRecordInTable=Rdbms.insertRecord(TblsApp.TablesApp.USER_PROCESS, 
             new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName(), TblsApp.UserProcess.ACTIVE.getName()}, 
-            new Object[]{fakeProcUserName, fakeProcName, true});
+            new Object[]{fakeProcUserName, fakeProcName, true}, null);
         if (insertRecordInTable.getRunSuccess())
             actionLog="success";
         else{
@@ -72,10 +73,10 @@ public class PlatformNewInstance {
         }
         jsonObj.put("insert_user_process_record", actionLog);
 
-        insertRecordInTable=Rdbms.insertRecord(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), 
+        insertRecordInTable=Rdbms.insertRecord(TblsAppConfig.TablesAppConfig.PERSON, 
             new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName(), 
                 TblsAppConfig.Person.LAST_NAME.getName(), TblsAppConfig.Person.PHOTO.getName()}, 
-            new Object[]{personId, "I'm a user demo", "for demos "+platfName, "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"});
+            new Object[]{personId, "I'm a user demo", "for demos "+platfName, "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"}, null);
         if (insertRecordInTable.getRunSuccess())
             actionLog="success";
         else{
@@ -95,10 +96,13 @@ public class PlatformNewInstance {
         String tblCreateScript="";
         JSONObject jsonObj=new JSONObject();
         String actionLog="";
-        
-        RdbmsObject removeRecord = Rdbms.removeRecord(LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
-                new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName()},
-                new Object[]{personId, "testing"});        
+/*    SqlWhere where =new SqlWhere();
+    where.addConstraint(TblsEnvMonitData.IncubBatch.NAME, null, new Object[]{bName}, null);
+    Object[] familyAndIndividualUnLinked=Rdbms.removeRecordInTable(TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH, where, null); 
+*/        
+        RdbmsObject removeRecord = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PERSON_PROFILE, 
+            new SqlWhere(TblsProcedure.TablesProcedure.PERSON_PROFILE, new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName()},
+            new Object[]{personId, "testing"}), fakeProcName);        
         if (removeRecord.getRunSuccess())
             actionLog="success";
         else{
@@ -107,9 +111,8 @@ public class PlatformNewInstance {
         }
         jsonObj.put("remove_person_profile_record", actionLog);        
         
-        removeRecord = Rdbms.removeRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
-                new String[]{TblsApp.Users.USER_NAME.getName()},
-                new Object[]{fakeProcUserName});
+        removeRecord = Rdbms.removeRecordInTable(TblsApp.TablesApp.USERS, 
+            new SqlWhere(TblsApp.TablesApp.USERS, new String[]{TblsApp.Users.USER_NAME.getName()}, new Object[]{fakeProcUserName}), null);
         if (removeRecord.getRunSuccess())
             actionLog="success";
         else{
@@ -118,9 +121,9 @@ public class PlatformNewInstance {
         }
         jsonObj.put("remove_user_record", actionLog);        
         
-        removeRecord=Rdbms.removeRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
-            new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName()}, 
-            new Object[]{fakeProcUserName, fakeProcName});
+        removeRecord=Rdbms.removeRecordInTable(TblsApp.TablesApp.USER_PROCESS, 
+            new SqlWhere(TblsApp.TablesApp.USER_PROCESS, new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName()}, 
+            new Object[]{fakeProcUserName, fakeProcName}), null);
         if (removeRecord.getRunSuccess())
             actionLog="success";
         else{
@@ -129,9 +132,9 @@ public class PlatformNewInstance {
         }
         jsonObj.put("remove_user_process_record", actionLog);        
 
-        removeRecord=Rdbms.removeRecord(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), 
-            new String[]{TblsAppConfig.Person.PERSON_ID.getName()}, 
-            new Object[]{personId});
+        removeRecord=Rdbms.removeRecordInTable(TblsAppConfig.TablesAppConfig.PERSON, 
+            new SqlWhere(TblsAppConfig.TablesAppConfig.PERSON, new String[]{TblsAppConfig.Person.PERSON_ID.getName()}, 
+            new Object[]{personId}), null);
         if (removeRecord.getRunSuccess())
             actionLog="success";
         else{

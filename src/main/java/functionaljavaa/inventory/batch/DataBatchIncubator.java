@@ -9,7 +9,9 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
+import databases.SqlWhere;
 import functionaljavaa.audit.IncubBatchAudit;
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorBusinessRules;
 import functionaljavaa.moduleenvironmentalmonitoring.ProcedureDeviationIncubator;
@@ -201,8 +203,13 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
         else
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.BATCHTYPE_NOT_RECOGNIZED, new Object[]{batchType});   
         if (isBatchEmpty){
-            return Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH.getTableName(),
-                new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()}, new Object[]{bName});
+            SqlWhere where =new SqlWhere();
+            where.addConstraint(TblsEnvMonitData.IncubBatch.NAME, null, new Object[]{bName}, null);
+            RdbmsObject removeDiagn = Rdbms.removeRecordInTable(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, where, null); 
+            if (removeDiagn.getRunSuccess())
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE,"", null);
+            else
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
         }else{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUBATORBATCH_NOTEMPTY_TOBEREMOVED, new Object[]{bName, procInstanceName});        
         }
