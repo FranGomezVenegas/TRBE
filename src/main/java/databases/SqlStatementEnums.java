@@ -376,6 +376,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
             }
             switch (curEntry.getSymbol()){
                 case IS_NOT_NULL:
+                case IS_NULL:
                 case NULL:
                     queryWhere.append(fn).append(" ").append(symbol.toLowerCase());
                     break;
