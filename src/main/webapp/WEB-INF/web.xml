@@ -237,6 +237,10 @@
         <servlet-class>com.labplanet.servicios.app.procs.TestingPlatformInstruments</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>TestingGenoma</servlet-name>
+        <servlet-class>com.labplanet.servicios.modulegenoma.TestingGenoma</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>TestingInspLotRM</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.TestingInspLotRM</servlet-class>
     </servlet>
@@ -573,6 +577,11 @@
         <servlet-name>TestingSamples</servlet-name>
         <url-pattern>/testing/moduleSamples/TestingSamples</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingGenoma</servlet-name>
+        <url-pattern>/testing/moduleGenoma/TestingGenoma</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>EnvMonAPIStats</servlet-name>
         <url-pattern>/moduleenvmon/EnvMonAPIstats</url-pattern>
