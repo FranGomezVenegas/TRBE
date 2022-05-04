@@ -6,6 +6,7 @@
 package functionaljavaa.savedqueries;
 
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.TblsData;
 import databases.features.Token;
 import lbplanet.utilities.LPArray;
@@ -14,7 +15,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 /**
  *
@@ -54,12 +54,12 @@ public class SaveQueries {
             updFieldValue=LPArray.addValueToArray1D(updFieldValue, fldValues);
         }
         
-        Object[] diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAVED_QUERIES.getTableName(), 
-            updFieldName, updFieldValue);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
+        RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsData.TablesData.SAVED_QUERIES, updFieldName, updFieldValue);
+        if (!insertDiagn.getRunSuccess()) return insertDiagn.getApiMessage();
+        
         //Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(procInstanceName, token, DataInvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsData.TablesData.SAVED_QUERIES.getTableName(), Integer.valueOf(investIdStr), investIdStr,  
         //        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
-        return diagnostic;               
+        return LPArray.addValueToArray1D(insertDiagn.getApiMessage(),insertDiagn.getNewRowId());
     }
 
 }

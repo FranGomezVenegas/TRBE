@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsTesting;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.businessrules.RuleInfo;
@@ -30,6 +31,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 
@@ -263,16 +265,17 @@ public class TestingCoverage {
         }
     }            
     public void saveCoverage(){    
-        Object[] updateCoverageRow = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), 
-            new String[]{TblsTesting.ScriptsCoverage.DATE_EXECUTION.getName(), TblsTesting.ScriptsCoverage.ENDPOINTS_COVERAGE.getName(), 
-                TblsTesting.ScriptsCoverage.ENDPOINTS_COVERAGE_DETAIL.getName(), 
-                TblsTesting.ScriptsCoverage.BUS_RULES_COVERAGE.getName(), TblsTesting.ScriptsCoverage.BUS_RULES_COVERAGE_DETAIL.getName(), 
-            }, 
-            new Object[]{LPDate.getCurrentTimeStamp(), this.endpointsCovPerc, 
-                LPNulls.replaceNull(this.endpointsCoverageDetail).toString(), 
-                this.busRuleCovPerc, LPNulls.replaceNull(this.busRuleCoverageDetail).toString(), 
-            }, 
-            new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()}, new Object[]{this.coverageId});        
+        String[] updFldNames=new String[]{TblsTesting.ScriptsCoverage.DATE_EXECUTION.getName(), TblsTesting.ScriptsCoverage.ENDPOINTS_COVERAGE.getName(), 
+            TblsTesting.ScriptsCoverage.ENDPOINTS_COVERAGE_DETAIL.getName(), 
+            TblsTesting.ScriptsCoverage.BUS_RULES_COVERAGE.getName(), TblsTesting.ScriptsCoverage.BUS_RULES_COVERAGE_DETAIL.getName(),};
+        Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp(), this.endpointsCovPerc, 
+            LPNulls.replaceNull(this.endpointsCoverageDetail).toString(), 
+            this.busRuleCovPerc, LPNulls.replaceNull(this.busRuleCoverageDetail).toString()}; 
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsTesting.ScriptsCoverage.COVERAGE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{this.coverageId}, "");
+        Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPTS_COVERAGE, 
+            EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPTS_COVERAGE, updFldNames), updFldValues, sqlWhere, null);
+        
     }
     
     void generateSummaryForBusinessRules(){

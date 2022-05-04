@@ -167,7 +167,7 @@ public class ClassInstruments {
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
                     }
                     break;
-                case COMPLETE_PREV_MAINT:
+                case COMPLETE_PREVENTIVE_MAINTENANCE:
                     instr=new DataInstruments(instrName);
                     decision=argValues[3].toString();
                     actionDiagnoses=instr.completePrevMaint(decision);

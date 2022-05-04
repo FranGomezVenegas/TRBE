@@ -256,13 +256,14 @@ public final class BatchArray extends Batch{
               singleDArray.addAll(Arrays.asList(array));
         }       
         schemaName = LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
-        
-        return Rdbms.insertRecordInTable(schemaName, tableName, 
+        return new Object[0];
+// 2022-01-05 Comentado porque esta clase no se usa a día de hoy.
+        /*        return Rdbms.insertRecordInTable(schemaName, tableName, 
                                                 new String[]{"name", "template", "template_version", "array_num_rows",
                                                      "array_num_cols", "array_total_positions", "array_total_objects",
                                                     "array_lines_name", "array_columns_name"},
                                                 new Object [] {this.getBatchName(), this.getBatchTemplate(), this.getBatchTemplateVersion(), this.getNumRows(), this.getNumCols(), this.numTotalPositions, this.getNumTotalObjects(),
-                                                    this.linesName, this.columnsName});
+                                                    this.linesName, this.columnsName});*/
     }   
 
     /**

@@ -47,6 +47,10 @@ public class ProcReqSessionAutomatisms {
                 Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1], 
                     updFldName, updFldValue, new String[]{curEntityInfo[2].toString()+" "+WHERECLAUSE_TYPES.IN.getSqlClause()},
                     new Object[]{whereFldValue});               
+/*                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+                Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+                    EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldName), updFldValue, sqlWhere, null);                */
             }
         }
         return;

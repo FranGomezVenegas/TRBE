@@ -7,6 +7,8 @@ package functionaljavaa.investigation;
 
 import databases.Rdbms;
 import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsProcedure;
 import databases.features.Token;
@@ -21,6 +23,7 @@ import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -126,11 +129,11 @@ public final class Investigation {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
 
         String[] updFieldName=new String[]{TblsProcedure.Investigation.CLOSED.getName(), TblsProcedure.Investigation.CLOSED_ON.getName(), TblsProcedure.Investigation.CLOSED_BY.getName()};
-        Object[] updFieldValue=new Object[]{true, LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), 
-            updFieldName, updFieldValue,
-            new String[]{TblsProcedure.Investigation.ID.getName()}, new Object[]{investId});
+        Object[] updFieldValue=new Object[]{true, LPDate.getCurrentTimeStamp(), token.getPersonName()};        
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsProcedure.Investigation.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{investId}, "");
+	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.INVESTIGATION,
+		EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, updFieldName), updFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
         ProcedureInvestigationAudit.investigationAuditAdd(
                 DataInvestigationAuditEvents.CLOSED_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), 
@@ -181,8 +184,9 @@ public final class Investigation {
             updFieldName=LPArray.addValueToArray1D(updFieldName, baseFieldName);
             updFieldValue=LPArray.addValueToArray1D(updFieldValue, baseFieldValue);
             
-            diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), 
-                updFieldName, updFieldValue);
+            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.INVEST_OBJECTS, 
+                    updFieldName, updFieldValue);
+            diagnostic=insertRecordInTable.getApiMessage();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){                
                 diagnostic=DataProgramCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
@@ -260,9 +264,7 @@ public final class Investigation {
         return new Object[]{checkFieldName, checkFieldValue};
     }
     public static Object[] capaDecision(Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue, Boolean closeInvestigation){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-
         Object[] capaFieldValues=LPArray.convertStringWithDataTypeToObjectArray(capaFieldValue);
         if (capaFieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(capaFieldValues[0].toString()))
             return capaFieldValues;
@@ -274,9 +276,10 @@ public final class Investigation {
         Object[] updFieldValue=new Object[]{capaRequired, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         if (capaFieldName!=null) updFieldName=LPArray.addValueToArray1D(updFieldName, capaFieldName);        
         if (capaFieldValue!=null) updFieldValue=LPArray.addValueToArray1D(updFieldValue, capaFieldValues);
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), 
-            updFieldName, updFieldValue,
-            new String[]{TblsProcedure.Investigation.ID.getName()}, new Object[]{investId});
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsProcedure.Investigation.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{investId}, "");
+	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.INVESTIGATION,
+		EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, updFieldName), updFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
         Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(
                 DataInvestigationAuditEvents.CAPA_DECISION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),

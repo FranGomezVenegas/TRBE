@@ -6,9 +6,13 @@
 package functionaljavaa.sop;
 
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsCnfg;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 /**
@@ -76,7 +80,8 @@ public class Sop {
 
         Object[][] dbGetSopObjByName = this.dbGetSopObjByName(procInstanceName, this.sopName, fieldNames);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbGetSopObjByName[0][0].toString())){        
-            return Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), fieldNames, fieldValues);
+             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SOP_META_DATA, fieldNames, fieldValues);
+             return insertRecordInTable.getApiMessage();
         }else{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Sop_SopAlreadyExists", new Object[]{this.sopName, procInstanceName});
         }
@@ -148,17 +153,17 @@ public class Sop {
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName); 
         String errorCode = "";        
-        Object[] diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
-                            new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName(), TblsCnfg.SopMetaData.SOP_VERSION.getName(), TblsCnfg.SopMetaData.SOP_REVISION.getName()},
-                            new Object[]{sopName, 1, 1});
-        if (LPPlatform.LAB_FALSE.equals(diagnoses[0].toString() )){
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SOP_META_DATA, 
+                new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName(), TblsCnfg.SopMetaData.SOP_VERSION.getName(), TblsCnfg.SopMetaData.SOP_REVISION.getName()},
+                new Object[]{sopName, 1, 1});
+        if (!insertRecordInTable.getRunSuccess()){
             errorCode = "Sop_SopMetaData_recordNotCreated";
             String[] fieldForInserting = LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName(), TblsCnfg.SopMetaData.SOP_VERSION.getName(), TblsCnfg.SopMetaData.SOP_REVISION.getName()}, 
                     new Object[]{sopName, 1, 1}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{fieldForInserting, schemaConfigName} );
-            return diagnoses;            
+            return insertRecordInTable.getApiMessage();
         }else{           
-            return diagnoses;                        
+            return insertRecordInTable.getApiMessage();
         }
     }   
         
@@ -171,8 +176,10 @@ public class Sop {
      */
     public Object[] updateSop(String procInstanceName, String fieldName, String fieldValue){        
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
-                                        new String[]{fieldName}, new Object[]{fieldValue}, new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName()}, new Object[]{sopName});
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsCnfg.SopMetaData.SOP_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sopName}, "");
+	Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsCnfg.TablesConfig.SOP_META_DATA,
+            EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.SOP_META_DATA, new String[]{fieldName}), new Object[]{fieldValue}, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){
             String errorCode = ERROR_TRAPING_SOP_META_DATA_NOT_FOUND;
             ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{fieldName, fieldValue, sopName, schemaConfigName} );

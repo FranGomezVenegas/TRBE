@@ -7,6 +7,8 @@ package functionaljavaa.platform.doc;
 
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlWhere;
+import databases.TblsTrazitDocTrazit;
 import databases.TblsTrazitDocTrazit.AuditEventsDeclaration;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.parameter.Parameter.PropertyFilesType;
@@ -32,6 +34,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.Languages;
 
@@ -153,7 +156,7 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
 //     declareInDatabase(apiName, endpointName, fieldNames, fieldValues, null);
 //}
 private static void declareInDatabase(String objectName, String eventName){
-    Object[][] reqEvAuditInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), AuditEventsDeclaration.TBL.getName(), 
+    Object[][] reqEvAuditInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION.getTableName(), 
             new String[]{AuditEventsDeclaration.AUDIT_OBJECT.getName(), AuditEventsDeclaration.EVENT_NAME.getName()},
             new Object[]{objectName, eventName}, 
             new String[]{AuditEventsDeclaration.ID.getName(), AuditEventsDeclaration.EVENT_PRETTY_EN.getName(), AuditEventsDeclaration.EVENT_PRETTY_ES.getName()});
@@ -177,9 +180,10 @@ private static void declareInDatabase(String objectName, String eventName){
         if (updFldName.length>0){
             updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.LAST_UPDATE.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, LPDate.getCurrentTimeStamp());            
-            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), AuditEventsDeclaration.TBL.getName(),
-                updFldName, updFldValue,
-                new String[]{AuditEventsDeclaration.ID.getName()}, new Object[]{reqEvAuditInfo[0][0]});
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsTrazitDocTrazit.AuditEventsDeclaration.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEvAuditInfo[0][0]}, "");
+            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION,
+                    EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION, updFldName), updFldValue, sqlWhere, null);            
             return;
         }
     }else{
@@ -196,7 +200,7 @@ private static void declareInDatabase(String objectName, String eventName){
             objectName, null, eventName, "es", false, null);
         fieldNames=LPArray.addValueToArray1D(fieldNames, AuditEventsDeclaration.EVENT_PRETTY_ES.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, propValueEs);
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), AuditEventsDeclaration.TBL.getName(), fieldNames, fieldValues);    
+        Rdbms.insertRecordInTable(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION, fieldNames, fieldValues);    
         return;
     }
 }
@@ -232,10 +236,10 @@ public static Object[] getDocInfoForAuditEvent(String object, String auditEvent)
     }
 }
 private void getAuditEventsFromDatabase(){
-    Object[][] reqAuditEventsInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), AuditEventsDeclaration.TBL.getName(), 
+    this.fldNames=EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION.getTableFields());
+    Object[][] reqAuditEventsInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION.getTableName(), 
             new String[]{AuditEventsDeclaration.AUDIT_OBJECT.getName()+SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()},
-            new Object[]{"zzz"}, AuditEventsDeclaration.getAllFieldNames());
-    this.fldNames=AuditEventsDeclaration.getAllFieldNames();
+            new Object[]{"zzz"}, this.fldNames);
     this.auditEventsFromDatabase=reqAuditEventsInfo;
     Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, AuditEventsDeclaration.AUDIT_OBJECT.getName());
     Integer endpointNamePosic=LPArray.valuePosicInArray(this.fldNames, AuditEventsDeclaration.EVENT_NAME.getName());

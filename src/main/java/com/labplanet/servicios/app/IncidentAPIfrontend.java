@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.IncidentAPI.IncidentAPIfrontendEndpoints;
 import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsAppAudit;
 import databases.TblsDataAudit;
@@ -114,10 +115,11 @@ public class IncidentAPIfrontend extends HttpServlet {
                     new String[]{TblsAppAudit.Incident.INCIDENT_ID.getName()}, new Object[]{incId}, 
                     new String[]{TblsAppAudit.Incident.DATE.getName()+" desc"});
                 jArr = new JSONArray();
+                Integer fieldsUpdatedPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.FIELDS_UPDATED.getName());
+                Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.ACTION_NAME.getName());
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
                     for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                        Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.ACTION_NAME.getName());
                         if (actionPosic>-1){
                             String action=LPNulls.replaceNull(currIncident[actionPosic]).toString();
                             String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
@@ -128,6 +130,16 @@ public class IncidentAPIfrontend extends HttpServlet {
                                 DataIncidentAuditEvents.class.getSimpleName(), null, action, "es", false, null);
                             if (propValue.length()==0) propValue=action;
                             jObj.put(TblsDataAudit.Sample.ACTION_PRETTY_ES.getName(), propValue);
+                            if (DataIncidentAuditEvents.NEW_INCIDENT_CREATED.name().equalsIgnoreCase(action)){
+                                SqlWhere where=new SqlWhere();
+                                where.addConstraint(TblsApp.Incident.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{incId}, null);
+                                Object[][] incidentsInfo=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.INCIDENT, 
+                                        EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, 
+                                            new String[]{TblsApp.Incident.TITLE.getName(), TblsApp.Incident.DETAIL.getName()}),
+                                        where,                                        
+                                        new String[]{TblsApp.Incident.ID.getName()+" desc"});
+                                jObj.put("note", incidentsInfo[0][0].toString() +": "+incidentsInfo[0][1].toString());
+                            }
                         }
                         jArr.add(jObj);
                     }

@@ -7,12 +7,15 @@ package lbplanet.utilities;
 
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationErrorTrapping;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsApp.TablesApp;
 import databases.TblsAppAudit;
 import databases.TblsDataAudit;
 import java.time.LocalDateTime;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
@@ -62,19 +65,14 @@ public class LPSession {
      * @param remoteAddr
      * @return
      */
-    public static Object[] newAppSession( String[] fieldsName, Object[] fieldsValue, String remoteAddr){        
+    public static RdbmsObject newAppSession( String[] fieldsName, Object[] fieldsValue, String remoteAddr){        
         LocalDateTime localDateTime=LPDate.getCurrentTimeStamp();
-        
-        String tableName = TblsApp.TablesApp.APP_SESSION.getTableName();
-        
         fieldsName = LPArray.addValueToArray1D(fieldsName, TblsApp.AppSession.DATE_STARTED.getName());
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, localDateTime);
-
         fieldsName = LPArray.addValueToArray1D(fieldsName, TblsApp.AppSession.IP_ADDRESS.getName());
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, remoteAddr);
-                
-                
-        return Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), tableName, fieldsName, fieldsValue);            
+        return Rdbms.insertRecordInTable(TblsApp.TablesApp.APP_SESSION, fieldsName, fieldsValue);            
+        //return insertRecordInTable.getApiMessage();
     }
     
     /**
@@ -122,7 +120,8 @@ public class LPSession {
                 fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsDataAudit.Session.SESSION_ID.getName());
                 appSession = LPArray.addValueToArray1D(appSession, appSessionId);
             }
-            return Rdbms.insertRecordInTable(schemaAuditName, tableName, fieldsNamesToInsert, appSession);
+            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsDataAudit.TablesDataAudit.SESSION, fieldsNamesToInsert, appSession);
+            return insertRecordInTable.getApiMessage();
         }
         
         return LPArray.array2dTo1d(recordFieldsBySessionId);
@@ -156,10 +155,12 @@ public class LPSession {
                 addProcess=true;
             }            
         }
-        if (addProcess)
-            return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(), 
-                      new String[]{TblsApp.AppSession.PROCEDURES.getName()}, new Object[]{procListValue}, 
-                      new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId});
+        if (addProcess){
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsApp.AppSession.PROCEDURES, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{procListValue}, "");
+            return Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.APP_SESSION,
+                EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, new String[]{TblsApp.AppSession.SESSION_ID.getName()}), new Object[]{appSessionId}, sqlWhere, null);            
+        }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>",new Object[]{processName, appSessionId} );
     }
 
@@ -174,7 +175,8 @@ public class LPSession {
                 fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsAppAudit.Session.SESSION_ID.getName());
                 appSession = LPArray.addValueToArray1D(appSession, appSessionId);
             }
-            return Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP_AUDIT.getName(), tableName, fieldsNamesToInsert, appSession);
+            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsAppAudit.TablesAppAudit.SESSION, fieldsNamesToInsert, appSession);
+            return insertRecordInTable.getApiMessage();
         }
         return LPArray.array2dTo1d(recordFieldsBySessionId);
     }

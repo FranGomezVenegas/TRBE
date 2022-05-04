@@ -8,14 +8,15 @@ package databases.features;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit;
 import java.time.LocalDateTime;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -54,10 +55,11 @@ public class dbProcHashcode {
         
         instanceForActions.setNewProcedureHashCode(String.valueOf(hashCode));
         RdbmsObject insertRecord = Rdbms.insertRecord(TblsProcedureAudit.TablesProcedureAudit.PROC_HASH_CODES, fieldNames, fieldValues, null);
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceForActions.getProcedureInstance(), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
-                new String[]{TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()},
-                new Object[]{String.valueOf(hashCode)},
-                new String[]{TblsProcedure.ProcedureInfo.NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{});
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsProcedure.ProcedureInfo.NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, "");        
+        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROCEDURE_INFO,
+            EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROCEDURE_INFO, new String[]{TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()}),
+            new Object[]{String.valueOf(hashCode)}, sqlWhere, null);
         return;
     }
     

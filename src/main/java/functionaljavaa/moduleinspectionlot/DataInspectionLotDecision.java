@@ -9,6 +9,9 @@ import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEn
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMConfig;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.features.Token;
 import functionaljavaa.audit.LotAudit;
 import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotErrorTrapping;
@@ -115,16 +118,16 @@ public class DataInspectionLotDecision {
         Object[] lotExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION.getTableName(), 
                 new String[]{TblsInspLotRMData.LotDecision.LOT_NAME.getName()}, new Object[]{lotName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(lotExists[0].toString())){      
-            diagnoses=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION.getTableName(), 
-                lotFieldName, lotFieldValue, 
-                new String[]{TblsInspLotRMData.LotDecision.LOT_NAME.getName()}, new Object[]{lotName});
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsInspLotRMData.LotDecision.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
+            diagnoses=Rdbms.updateRecordFieldsByFilter(TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION,
+                EnumIntTableFields.getTableFieldsFromString(TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION, lotFieldName), lotFieldValue, sqlWhere, null);
         }else{
             lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.LotDecision.LOT_NAME.getName());    
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, lotName);                         
-            diagnoses = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION.getTableName(), 
-                lotFieldName, lotFieldValue);
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-                errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
+            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION, lotFieldName, lotFieldValue);
+            if (!insertRecordInTable.getRunSuccess()){
+                errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, insertRecordInTable.getNewRowId());
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
             }                                
         }

@@ -8,12 +8,15 @@ package functionaljavaa.instruments.incubator;
 import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import java.util.ArrayList;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -140,9 +143,12 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         if (Boolean.valueOf(instrInfo[0][1].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.ALREADY_ACTIVE, new Object[]{instName, procInstanceName}); 
-        Object[] incubUpdate=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(),
-            new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}, new Object[]{true}, 
-            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName});
+        String[] updFieldName=new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()};
+        Object[] updFieldValue=new Object[]{true};             
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsEnvMonitConfig.InstrIncubator.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{instName}, "");
+	Object[] incubUpdate=Rdbms.updateRecordFieldsByFilter(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,
+		EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, updFieldName), updFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubUpdate[0].toString())) return incubUpdate;
         Object[] incubNoteBookDiag=DataIncubatorNoteBook.activation(instName, personName); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubNoteBookDiag[0].toString())) return incubNoteBookDiag;
@@ -164,9 +170,12 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName}); 
-        Object[] incubUpdate=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(),
-            new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}, new Object[]{false}, 
-            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName});
+        String[] updFieldName=new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()};
+        Object[] updFieldValue=new Object[]{false};             
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsEnvMonitConfig.InstrIncubator.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{instName}, "");
+	Object[] incubUpdate=Rdbms.updateRecordFieldsByFilter(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,
+		EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, updFieldName), updFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubUpdate[0].toString())) return incubUpdate;
         Object[] incubNoteBookDiag=DataIncubatorNoteBook.deactivation(instName, personName); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubNoteBookDiag[0].toString())) return incubNoteBookDiag;

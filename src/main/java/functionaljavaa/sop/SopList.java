@@ -6,9 +6,15 @@
 package functionaljavaa.sop;
 
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
+import databases.TblsCnfg;
+import databases.TblsCnfg.TablesConfig;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 /**
@@ -17,8 +23,6 @@ import trazit.session.ApiMessageReturn;
  */
 public class SopList {
     String classVersion = "0.1";
-
-    String tableName = "sop_list";    
 
     Integer sopListId = null;
     String sopListName = "";
@@ -133,8 +137,9 @@ public class SopList {
         fieldNames = LPArray.addValueToArray1D(fieldNames, "added_by");
         fieldValues = LPArray.addValueToArray1D(fieldValues, userInfoId);
         
-        //requires added_on        
-        return Rdbms.insertRecordInTable(schemaConfigName, tableName, fieldNames, fieldValues);
+        //requires added_on
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TablesConfig.SOP_LIST, fieldNames, fieldValues);
+        return insertRecordInTable.getApiMessage();
     }
     
     /**
@@ -144,13 +149,13 @@ public class SopList {
      * @return
      */
     public Object[] dbUpdateSopListSopAssigned( String procInstanceName, String[] sopAssigned){            
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, tableName, 
-                                        new String[]{"sop_assigned"}, new Object[]{this.sopListId}, 
-                                        new String[]{"sop_list_id"}, new Object[]{sopAssigned});
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsCnfg.SopList.SOP_LIST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sopAssigned}, "");
+	Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TablesConfig.SOP_LIST,
+		EnumIntTableFields.getTableFieldsFromString(TablesConfig.SOP_LIST, new String[]{"sop_assigned"}), new Object[]{this.sopListId}, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())) return diagnoses;
         String errorCode = "SopList_SopAssignedToSopList";
-        ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{sopAssigned, this.sopListId, schemaConfigName} );
+        ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{sopAssigned, this.sopListId} );
         return diagnoses;        
     }   
     

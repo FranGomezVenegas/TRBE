@@ -90,89 +90,89 @@ public class InstrumentsAPIqueries extends HttpServlet {
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
             switch (endPoint){
-                case ACTIVE_INSTRUMENTS_LIST:
-                    String[] fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableFields());
-                    Object[][] instrumentAudit=QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENTS,
-                            EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, "ALL"),
-                            new String[]{TblsAppProcData.Instruments.DECOMMISSIONED.getName()+"<>"}, 
-                            new Object[]{true}, 
-                            new String[]{TblsAppProcData.Instruments.NAME.getName()+" desc"});
-                    JSONArray jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentAudit[0][0].toString())){
-                        for (Object[] currInstr: instrumentAudit){
-                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
-                            jArr.add(jObj);
-                        }
+            case ACTIVE_INSTRUMENTS_LIST:
+                String[] fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableFields());
+                Object[][] instrumentAudit=QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENTS,
+                        EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, "ALL"),
+                        new String[]{TblsAppProcData.Instruments.DECOMMISSIONED.getName()+"<>"}, 
+                        new Object[]{true}, 
+                        new String[]{TblsAppProcData.Instruments.NAME.getName()+" desc"});
+                JSONArray jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentAudit[0][0].toString())){
+                    for (Object[] currInstr: instrumentAudit){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                        jArr.add(jObj);
                     }
-                    Rdbms.closeRdbms();  
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                    return;  
-                case INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT:
-                    String instrName=LPNulls.replaceNull(argValues[0]).toString();
-                    fieldsToRetrieve=getAllFieldNames(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableFields());
-                    if (!LPArray.valueInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()))
-                        fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName());
-                    instrumentAudit=QueryUtilitiesEnums.getTableData(TablesAppProcDataAudit.INSTRUMENTS,
-                        EnumIntTableFields.getTableFieldsFromString(TablesAppProcDataAudit.INSTRUMENTS, "ALL"),
-                        new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName(), TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                        new Object[]{instrName, ""}, 
-                        new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName(), TblsAppProcDataAudit.Instruments.DATE.getName()+" asc"});
-                    jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentAudit[0][0].toString())){
-                        for (Object[] currInstrAudit: instrumentAudit){
-                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrAudit);
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                return;  
+            case INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT:
+                String instrName=LPNulls.replaceNull(argValues[0]).toString();
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableFields());
+                if (!LPArray.valueInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()))
+                    fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName());
+                instrumentAudit=QueryUtilitiesEnums.getTableData(TablesAppProcDataAudit.INSTRUMENTS,
+                    EnumIntTableFields.getTableFieldsFromString(TablesAppProcDataAudit.INSTRUMENTS, "ALL"),
+                    new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName(), TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
+                    new Object[]{instrName, ""}, 
+                    new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName(), TblsAppProcDataAudit.Instruments.DATE.getName()+" asc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentAudit[0][0].toString())){
+                    for (Object[] currInstrAudit: instrumentAudit){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrAudit);
 
-                            Object[] convertToJsonObjectStringedObject = LPJson.convertToJsonObjectStringedObject(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
-                            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObject[0].toString()))
-                                jObj.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObject[1]);            
+                        Object[] convertToJsonObjectStringedObject = LPJson.convertToJsonObjectStringedObject(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObject[0].toString()))
+                            jObj.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObject[1]);            
 
-                            Integer curAuditId=Integer.valueOf(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName())].toString());
-                            Object[][] sampleAuditInfoLvl2=QueryUtilitiesEnums.getTableData(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS,
-                                EnumIntTableFields.getTableFieldsFromString(TablesAppProcDataAudit.INSTRUMENTS, "ALL"),
-                                new String[]{TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()}, new Object[]{curAuditId}, 
-                                new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
-                            JSONArray jArrLvl2 = new JSONArray();
-                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfoLvl2[0][0].toString())){
-                                Object[] childJObj=new Object[]{null, null, "No child", "", "", "", null, "", "", null, null};
-                                for (int iChild=childJObj.length;iChild<fieldsToRetrieve.length;iChild++)
-                                    childJObj=LPArray.addValueToArray1D(childJObj, "");                            
-                                JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, childJObj); 
+                        Integer curAuditId=Integer.valueOf(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName())].toString());
+                        Object[][] sampleAuditInfoLvl2=QueryUtilitiesEnums.getTableData(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS,
+                            EnumIntTableFields.getTableFieldsFromString(TablesAppProcDataAudit.INSTRUMENTS, "ALL"),
+                            new String[]{TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()}, new Object[]{curAuditId}, 
+                            new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
+                        JSONArray jArrLvl2 = new JSONArray();
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfoLvl2[0][0].toString())){
+                            Object[] childJObj=new Object[]{null, null, "No child", "", "", "", null, "", "", null, null};
+                            for (int iChild=childJObj.length;iChild<fieldsToRetrieve.length;iChild++)
+                                childJObj=LPArray.addValueToArray1D(childJObj, "");                            
+                            JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, childJObj); 
+                            jArrLvl2.add(jObjLvl2);
+                        }else{
+                            for (Object[] curRowLvl2: sampleAuditInfoLvl2){
+                                JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRowLvl2,
+                                    new String[]{TblsDataAudit.Sample.FIELDS_UPDATED.getName()});  
+                                Object[] convertToJsonObjectStringedObjectLvl2 = LPJson.convertToJsonObjectStringedObject(curRowLvl2[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
+                                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString()))
+                                    jObjLvl2.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);            
                                 jArrLvl2.add(jObjLvl2);
-                            }else{
-                                for (Object[] curRowLvl2: sampleAuditInfoLvl2){
-                                    JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRowLvl2,
-                                        new String[]{TblsDataAudit.Sample.FIELDS_UPDATED.getName()});  
-                                    Object[] convertToJsonObjectStringedObjectLvl2 = LPJson.convertToJsonObjectStringedObject(curRowLvl2[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
-                                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString()))
-                                        jObjLvl2.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);            
-                                    jArrLvl2.add(jObjLvl2);
-                                }
                             }
-                            jObj.put("sublevel", jArrLvl2);
-                            jArr.add(jObj);
                         }
+                        jObj.put("sublevel", jArrLvl2);
+                        jArr.add(jObj);
                     }
-                    Rdbms.closeRdbms();  
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                    return;
-                case INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT:
-                    instrName=LPNulls.replaceNull(argValues[0]).toString();
-                    fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENT_EVENT.getTableFields());
-                    Object[][] AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENT_EVENT, 
-                        EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENT_EVENT, "ALL"),
-                        new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName()},
-                        new Object[]{instrName},
-                        new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.CREATED_ON.getName()+" desc"});
-                    jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
-                        for (Object[] currInstrEv: AppInstrumentsAuditEvents){
-                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
-                            jArr.add(jObj);
-                        }
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                return;
+            case INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT:
+                instrName=LPNulls.replaceNull(argValues[0]).toString();
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENT_EVENT.getTableFields());
+                Object[][] AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENT_EVENT, 
+                    EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENT_EVENT, "ALL"),
+                    new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName()},
+                    new Object[]{instrName},
+                    new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.CREATED_ON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
+                    for (Object[] currInstrEv: AppInstrumentsAuditEvents){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
+                        jArr.add(jObj);
                     }
-                    Rdbms.closeRdbms();  
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                    return;
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                return;
             case INSTRUMENT_EVENTS_INPROGRESS:
                 String[] whereFldName=new String[]{TblsAppProcData.ViewNotDecommInstrumentAndEventData.COMPLETED_BY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
                 Object[] whereFldValue=new Object[]{};
@@ -195,7 +195,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                break;
+                return;
             case INSTRUMENT_EVENT_VARIABLES:
                 Integer instrEventId=(Integer)argValues[0];
                 fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableFields());
@@ -213,7 +213,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                break;
+                return;
             case DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS:
                 String numDays = LPNulls.replaceNull(argValues[0]).toString();
                 if (numDays.length()==0) numDays=String.valueOf(7);
@@ -233,7 +233,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);              
-                break;
+                return;
             case GET_INSTRUMENT_FAMILY_LIST:
                 fieldsToRetrieve=getAllFieldNames(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY.getTableFields());
                 Object[][] instrumentFamily=QueryUtilitiesEnums.getTableData(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY, 

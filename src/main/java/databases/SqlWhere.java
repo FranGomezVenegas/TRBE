@@ -135,5 +135,9 @@ public class SqlWhere {
         }
         return fldValues;
     }
+
+    public void addConstraint(TblsTrazitDocTrazit.BusinessRulesDeclaration businessRulesDeclaration, SqlStatement.WHERECLAUSE_TYPES whereclause_types, Object[] object, String string) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }

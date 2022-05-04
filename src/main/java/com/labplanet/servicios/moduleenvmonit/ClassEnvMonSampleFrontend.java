@@ -510,15 +510,15 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         if ("ALL".equalsIgnoreCase(sampleToRetrieve)) sampleToRetrieveArr=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
                         else sampleToRetrieveArr=sampleToRetrieve.split("\\|");
                     sampleToRetrieveArr=LPArray.addValueToArray1D(sampleToRetrieveArr, TblsEnvMonitData.Sample.SAMPLE_ID.getName());
+                    sampleToRetrieveArr=LPArray.getUniquesArray(sampleToRetrieveArr);
                     sampleToDisplay = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY);
                     sampleToDisplayArr=new String[0];
                     if ((sampleToDisplay!=null) && (sampleToDisplay.length()>0))
                         if ("ALL".equalsIgnoreCase(sampleToDisplay)) sampleToDisplayArr=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
                         else sampleToDisplayArr=sampleToDisplay.split("\\|");
-
-                    sampleTblAllFields=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
+                    
                     sampleInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, 
-                            EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, "ALL"),
+                            EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, sampleToRetrieveArr),
                             new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, null);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
                         this.isSuccess=false;
@@ -527,7 +527,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         return;}  
                     jObjMainObject=new JSONObject();                    
                     jObjSampleInfo=new JSONObject();
-                    jObjSampleInfo=LPJson.convertArrayRowToJSONObject(sampleTblAllFields, sampleInfo[0]);
+                    jObjSampleInfo=LPJson.convertArrayRowToJSONObject(sampleToRetrieveArr, sampleInfo[0]);
                     String[] testingGroupFldsArr=getAllFieldNames(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableFields());
                     Object[][] testingGroupInfo=QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP, 
                         EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP, testingGroupFldsArr),

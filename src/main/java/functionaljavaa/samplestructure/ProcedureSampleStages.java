@@ -79,8 +79,7 @@ public class ProcedureSampleStages {
                insFldNames=LPArray.addValueToArray1D(insFldNames, TblsProcedure.SampleStageTimingIntervalDeviation.DATERANGE_INTERVAL_SECONDS.getName());
                insFldValues=LPArray.addValueToArray1D(insFldValues, datesDiffSeconds);
             }
-            Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION.getTableName(), 
-                    insFldNames, insFldValues);            
+            Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, insFldNames, insFldValues);            
             return;            
         }
         return;

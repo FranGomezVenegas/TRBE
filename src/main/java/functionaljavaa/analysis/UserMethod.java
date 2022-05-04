@@ -164,7 +164,10 @@ public class UserMethod {
                 new String[]{FIELDNAME_DATA_USER_METHOD_USER_METHOD_ID, UserMethod.FIELDNAME_DATA_USER_METHOD_USER_ID, FIELDNAME_DATA_USER_METHOD_ANALYSIS, 
                     FIELDNAME_DATA_USER_METHOD_METHOD_NAME, FIELDNAME_DATA_USER_METHOD_METHOD_VERSION});
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString()))) {
-            diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, UserMethod.TABLENAME_DATA_USER_METHOD, updFields, updFieldsValue, whereFields, whereFieldsValue);
+// 2022-05-01 esta tabla no está en el sistema.
+//            SqlWhere sqlWhere = new SqlWhere(UserMethod.TABLENAME_DATA_USER_METHOD, whereFields, whereFieldsValue);
+//            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(UserMethod.TABLENAME_DATA_USER_METHOD,
+//                    EnumIntTableFields.getTableFieldsFromString(UserMethod.TABLENAME_DATA_USER_METHOD, updFields), updFieldsValue, sqlWhere, null);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 updFields = LPArray.addValueToArray1D(updFields, whereFields);
                 updFieldsValue = LPArray.addValueToArray1D(updFieldsValue, whereFieldsValue);

@@ -8,7 +8,9 @@ package functionaljavaa.samplestructure;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.ProcedureSampleStage;
 import databases.Rdbms;
-import databases.SqlStatement.WHERECLAUSE_TYPES;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsProcedure;
 import databases.features.Token;
@@ -38,6 +40,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -202,8 +205,10 @@ Object[][] firstStageData=new Object[0][0];
             String[] sampleFieldName=new String[]{TblsData.Sample.CURRENT_STAGE.getName(), TblsData.Sample.PREVIOUS_STAGE.getName()};
             Object[] sampleFieldValue=new Object[]{moveDiagn[moveDiagn.length-1], sampleCurrStage};
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
-                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                    sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
+                Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldName), sampleFieldValue, sqlWhere, null);
                 dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLESTAGE_MOVETONEXT, TblsData.TablesData.SAMPLE.getTableName(), 
@@ -312,15 +317,17 @@ Object[][] firstStageData=new Object[0][0];
         if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, procInstanceName});
         if (SampleStageTimingCapturePhases.START.toString().equalsIgnoreCase(phase)){
-            return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
-                    new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()}, 
+            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 
+                    new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()},
                     new Object[]{sampleId, currStage, LPDate.getCurrentTimeStamp()});            
+            return insertRecordInTable.getApiMessage();
         }else if (SampleStageTimingCapturePhases.END.toString().equalsIgnoreCase(phase)){            
             procedureSampleStagesTimingEvaluateDeviation(sampleId, currStage);
-            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
-                    new String[]{TblsProcedure.SampleStageTimingCapture.ENDED_ON.getName()}, new Object[]{LPDate.getCurrentTimeStamp()},
-                    new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName(), TblsProcedure.SampleStageTimingCapture.ENDED_ON.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
-                    new Object[]{sampleId, currStage });            
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsProcedure.SampleStageTimingCapture.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
+            sqlWhere.addConstraint(TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currStage}, "");
+            Object[] updateRecordFieldsByFilter=Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE,
+                EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, new String[]{TblsProcedure.SampleStageTimingCapture.ENDED_ON.getName()}), new Object[]{LPDate.getCurrentTimeStamp()}, sqlWhere, null);
             return updateRecordFieldsByFilter;
         }else{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The phase <*1*> is not one of the recognized by the system, <*2*>", 

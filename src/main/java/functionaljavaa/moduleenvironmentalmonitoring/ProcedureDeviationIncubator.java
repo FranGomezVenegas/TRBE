@@ -7,11 +7,10 @@ package functionaljavaa.moduleenvironmentalmonitoring;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.features.Token;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
-import lbplanet.utilities.LPPlatform;
-import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -54,8 +53,8 @@ public class ProcedureDeviationIncubator {
           myFldName=LPArray.addValueToArray1D(myFldName, TblsEnvMonitProcedure.ProcedureDeviationIncubator.CREATED_ON.getName());
           myFldValue=LPArray.addValueToArray1D(myFldValue, LPDate.getCurrentTimeStamp());      
         }else{myFldValue[posicInArray]=LPDate.getCurrentTimeStamp();}
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.TablesEnvMonitProcedure.DEVIATION_INCUBATOR.getTableName(), 
-                myFldName, myFldValue);
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitProcedure.TablesEnvMonitProcedure.DEVIATION_INCUBATOR, myFldName, myFldValue);            
+        return insertRecordInTable.getApiMessage();
       }
     
 }

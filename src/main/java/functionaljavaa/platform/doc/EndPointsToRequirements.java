@@ -6,6 +6,8 @@
 package functionaljavaa.platform.doc;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlWhere;
+import databases.TblsTrazitDocTrazit;
 import databases.TblsTrazitDocTrazit.EndpointsDeclaration;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.parameter.Parameter.PropertyFilesType;
@@ -31,6 +33,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.Languages;
 /**
@@ -168,10 +171,11 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
 //}
 
 private void getEndPointsFromDatabase(){
-    Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(), 
+    this.fldNames=EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableFields());
+    
+    Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableName(), 
             new String[]{EndpointsDeclaration.API_NAME.getName()+SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()},
-            new Object[]{"zzz"}, EndpointsDeclaration.getAllFieldNames());
-    this.fldNames=EndpointsDeclaration.getAllFieldNames();
+            new Object[]{"zzz"}, fldNames);
     this.endpointsFromDatabase=reqEndpointInfo;
     Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, EndpointsDeclaration.API_NAME.getName());
     Integer endpointNamePosic=LPArray.valuePosicInArray(this.fldNames, EndpointsDeclaration.ENDPOINT_NAME.getName());
@@ -196,10 +200,12 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0].toString())){
         String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, EndpointsDeclaration.ARGUMENTS_ARRAY.getName())].toString();
         if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[1].toString())){
-            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(),
-                    new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName()},
-                    new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()},
-                    new String[]{EndpointsDeclaration.ID.getName()}, new Object[]{reqEndpointInfo[0]});
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsTrazitDocTrazit.EndpointsDeclaration.ID,
+                    SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0]}, "");
+            Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
+                EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
+                new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName()}), new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()}, sqlWhere, null);
             return;
         }else{
             //String[] flds=(String[]) docInfoForEndPoint[0];
@@ -215,9 +221,12 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
                 fldValues=LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());                
             fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.NUM_ENDPOINTS_IN_API.getName());
                 fldValues=LPArray.addValueToArray1D(fldValues, numEndpointsInApi);                
-            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(),
-                    fldNames, fldValues,
-                    new String[]{EndpointsDeclaration.ID.getName()}, new Object[]{reqEndpointInfo[0]});            
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsTrazitDocTrazit.EndpointsDeclaration.ID,
+                    SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0]}, "");
+            Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
+                EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
+                fldNames), fldValues, sqlWhere, null);
             return;
         }
     }else{
@@ -229,7 +238,7 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
         if (outputObjectTypes==null) fieldValues=LPArray.addValueToArray1D(fieldValues, "TBD");
         else
             fieldValues=LPArray.addValueToArray1D(fieldValues, outputObjectTypes.toString());
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), EndpointsDeclaration.TBL.getName(), fieldNames, fieldValues);    
+        Rdbms.insertRecordInTable(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, fieldNames, fieldValues);    
         this.endpointsFromDatabase=LPArray.joinTwo2DArrays(endpointsFromDatabase, LPArray.array1dTo2d(fieldValues,1));
         return;
     }

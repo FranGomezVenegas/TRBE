@@ -6,6 +6,9 @@
 package functionaljavaa.samplestructure;
 
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
@@ -21,6 +24,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -75,9 +79,9 @@ public class DataSampleRevisionTestingGroup{
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -101,9 +105,10 @@ public class DataSampleRevisionTestingGroup{
             new String[]{TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName()}, 
             new Object[]{sampleId, specAnalysisTestingGroup});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsSampleRevisionTestingGroupRecord[0].toString())) return existsSampleRevisionTestingGroupRecord;
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(),
-            new String[]{TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName(), TblsData.SampleRevisionTestingGroup.READY_FOR_REVISION.getName(), TblsData.SampleRevisionTestingGroup.REVIEWED.getName()},
-            new Object[]{sampleId, specAnalysisTestingGroup, false, false});
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP,
+                new String[]{TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName(), TblsData.SampleRevisionTestingGroup.READY_FOR_REVISION.getName(), TblsData.SampleRevisionTestingGroup.REVIEWED.getName()},
+                new Object[]{sampleId, specAnalysisTestingGroup, false, false});
+        return insertRecordInTable.getApiMessage();
     }
     public static Object[] isSampleRevisionByTestingGroupReviewed(Integer sampleId){
         return isSampleRevisionByTestingGroupReviewed(sampleId, null);
@@ -189,19 +194,21 @@ public class DataSampleRevisionTestingGroup{
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(reviewTstGgpRules[0].toString())) return reviewTstGgpRules;
         String[] updFldNames=new String[]{TblsData.SampleRevisionTestingGroup.READY_FOR_REVISION.getName(), TblsData.SampleRevisionTestingGroup.REVIEWED.getName(), TblsData.SampleRevisionTestingGroup.REVISION_BY.getName(), TblsData.SampleRevisionTestingGroup.REVISION_ON.getName()};
         Object[] updFldValues=new Object[]{false, true, reviewer, LPDate.getCurrentTimeStamp()};
-        Object[] updateReviewSampleTestingGroup = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(),
-            updFldNames,updFldValues, new String[]{TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName()},
-            new Object[]{sampleId, testingGroup});
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsData.SampleRevisionTestingGroup.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
+	sqlWhere.addConstraint(TblsData.SampleRevisionTestingGroup.TESTING_GROUP, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{testingGroup}, "");
+	Object[] updateReviewSampleTestingGroup=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP,
+		EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP, updFldNames), updFldValues, sqlWhere, null);        
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateReviewSampleTestingGroup[0].toString())){
             SampleAudit smpAudit = new SampleAudit();
             Object[] sampleAudit = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED, TblsData.TablesData.SAMPLE.getTableName(), 
                 sampleId, sampleId, null, null, updFldNames, updFldValues);
-            markSampleAsReadyForRevision(sampleId, SampleAudit.DataSampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), Integer.valueOf(LPNulls.replaceNull(sampleAudit[sampleAudit.length-1]).toString()));
+            markSampleAsReadyForRevision(sampleId);
         }
         return updateReviewSampleTestingGroup;        
     }
     
-    public static Object[] markSampleAsReadyForRevision(Integer sampleId, String parentAction, Integer parentAuditId){
+    public static Object[] markSampleAsReadyForRevision(Integer sampleId){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         Object[][] pendingTestingGroupByRevisionValue= Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(),
@@ -232,9 +239,11 @@ public class DataSampleRevisionTestingGroup{
                 new String[] {TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(),TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName()}, new Object[]{sampleId, testingGroup}, sampleFieldName);
         if ("TRUE".equalsIgnoreCase(sampleRevisionTestingGroupInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_ALREADY_READYFORREVISION, new Object[]{sampleId, procInstanceName});
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(), 
-                sampleFieldName, sampleFieldValue, 
-                new String[] {TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(),TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName()}, new Object[]{sampleId, testingGroup});
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsData.SampleRevisionTestingGroup.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
+	sqlWhere.addConstraint(TblsData.SampleRevisionTestingGroup.TESTING_GROUP, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{testingGroup}, "");
+	Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP,
+		EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP, sampleFieldName), sampleFieldValue, sqlWhere, null);        
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
             SampleAudit smpAudit = new SampleAudit(); 
             Object[] isSampleTestingGroupGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_GENERICAUTOAPPROVEENABLED.getTagName());

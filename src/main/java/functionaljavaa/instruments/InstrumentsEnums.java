@@ -106,7 +106,7 @@ public class InstrumentsEnums {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
         ),
-        COMPLETE_PREV_MAINT("COMPLETE_PREV_MAINT", "instrumentName", "", "instrumentPrevMaintCompleted_success",  
+        COMPLETE_PREVENTIVE_MAINTENANCE("COMPLETE_PREVENTIVE_MAINTENANCE", "instrumentName", "", "instrumentPrevMaintCompleted_success",  
             new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8 ),

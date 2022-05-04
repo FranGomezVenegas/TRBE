@@ -7,12 +7,16 @@ package functionaljavaa.moduleenvironmentalmonitoring;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.features.Token;
 import lbplanet.utilities.LPArray;
 import java.util.Arrays;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -46,7 +50,7 @@ public class DataProgramProductionLot{
             new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName(), TblsEnvMonitData.ProductionLot.ACTIVE.getName()}, 
             new Object[]{lotName, true});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(batchExists[0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_CLOSED, new Object[]{lotName, procInstanceName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "productLotIsOpen", new Object[]{lotName, procInstanceName});
         batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
             new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{lotName});   
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchExists[0].toString()))
@@ -93,7 +97,8 @@ public class DataProgramProductionLot{
           fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.CREATED_ON.getName());
           fieldValue=LPArray.addValueToArray1D(fieldValue, LPDate.getCurrentTimeStamp());
         }else{fieldValue[posicInArr]=LPDate.getCurrentTimeStamp();}
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), fieldName, fieldValue);
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, fieldName, fieldValue);
+        return insertRecordInTable.getApiMessage();
     }
 
     /**
@@ -130,8 +135,9 @@ public class DataProgramProductionLot{
         Object[] proLotOpen = isProLotOpen(lotName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(proLotOpen[0].toString()))
             return proLotOpen;
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
-              fieldName, fieldValue, new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{lotName});                 
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsEnvMonitData.ProductionLot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
+	return Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT,
+		EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, fieldName), fieldValue, sqlWhere, null);        
     }
 }

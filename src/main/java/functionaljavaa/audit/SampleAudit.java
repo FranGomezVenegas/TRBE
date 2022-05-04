@@ -6,7 +6,9 @@
 package functionaljavaa.audit;
 
 import databases.Rdbms;
+import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsDataAudit;
 import databases.features.Token;
@@ -291,10 +293,13 @@ public class SampleAudit {
         if (Boolean.valueOf(auditInfo[0][1].toString())){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});              
         }
-        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), 
-            new String[]{TblsDataAudit.Sample.REVIEWED.getName(), TblsDataAudit.Sample.REVIEWED_BY.getName(), TblsDataAudit.Sample.REVIEWED_ON.getName()}, 
-            new Object[]{true, personName, LPDate.getCurrentTimeStamp()}, 
-            new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()}, new Object[]{auditId});
+        String[] updFieldName=new String[]{TblsDataAudit.Sample.REVIEWED.getName(), TblsDataAudit.Sample.REVIEWED_BY.getName(), TblsDataAudit.Sample.REVIEWED_ON.getName()};
+        Object[] updFieldValue=new Object[]{true, personName, LPDate.getCurrentTimeStamp()};
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsDataAudit.Sample.AUDIT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{auditId}, "");
+	return Rdbms.updateRecordFieldsByFilter(TblsDataAudit.TablesDataAudit.SAMPLE,
+		EnumIntTableFields.getTableFieldsFromString(TblsDataAudit.TablesDataAudit.SAMPLE, updFieldName), updFieldValue, sqlWhere, null);
+        
     }    
     /**
      *

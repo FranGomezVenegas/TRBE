@@ -10,6 +10,8 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.features.Token;
@@ -33,6 +35,7 @@ import java.util.Arrays;
 import lbplanet.utilities.LPDate;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -108,9 +111,10 @@ public class DataSampleAnalysisResult {
                     if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
                         String[] updFldName=new String[]{TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.STATUS_PREVIOUS.getName()};
                         Object[] updFldValue=new Object[]{sampleAnalysisResultStatusCanceled, currStatus};
-                        diagnoses = (String[]) Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                                updFldName, updFldValue,
-                                new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
+                        SqlWhere sqlWhere = new SqlWhere();
+                        sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                        diagnoses = (String[]) Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, updFldName), updFldValue, sqlWhere, null);        
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0])) {
                             String[] fieldsForAudit = new String[0];
                             fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.STATUS + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + sampleAnalysisResultStatusCanceled);
@@ -143,9 +147,10 @@ public class DataSampleAnalysisResult {
                 if ((!(sampleAnalysisStatusCanceled.equalsIgnoreCase(currStatus))) && (!(sampleAnalysisStatusReviewed.equalsIgnoreCase(currStatus))) && (currTest != null)) {
                     String[] updFldName=new String[]{TblsData.SampleAnalysis.STATUS.getName(), TblsData.Sample.STATUS_PREVIOUS.getName()};
                     Object[] updFldValue=new Object[]{sampleAnalysisStatusCanceled, currStatus};
-                    diagnoses = (String[]) Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
-                            updFldName, updFldValue, 
-                            new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{currTest});
+                    SqlWhere sqlWhere = new SqlWhere();
+                    sqlWhere.addConstraint(TblsData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currTest}, "");
+                    diagnoses = (String[])Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
+                            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, updFldName), updFldValue, sqlWhere, null);        
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0])) {
                         SampleAudit smpAudit = new SampleAudit();
                         smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.BACK_FROM_CANCEL, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
@@ -164,9 +169,10 @@ public class DataSampleAnalysisResult {
             if ((!(sampleStatusCanceled.equalsIgnoreCase(currStatus))) && (!(sampleStatusReviewed.equalsIgnoreCase(currStatus))) && (currSample != null)) {
                 String[] updFldName=new String[]{TblsData.Sample.STATUS.getName(), TblsData.Sample.STATUS_PREVIOUS.getName()};
                 Object[] updFldValue=new Object[]{sampleStatusCanceled, currStatus};
-                diagnoses = (String[]) Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
-                        updFldName, updFldValue, 
-                        new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{currSample});
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currSample}, "");
+                diagnoses = (String[])Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, updFldName), updFldValue, sqlWhere, null);        
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0])) {
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.BACK_FROM_CANCEL, TblsData.TablesData.SAMPLE.getTableName(), 
@@ -319,8 +325,10 @@ public class DataSampleAnalysisResult {
             fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.ENTERED_BY.getName()
                 , TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.PRETTY_VALUE.getName()});
             fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEvalNoSpec, token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus, prettyValue[1]});
-            Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                    fieldsName, fieldsValue, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+            Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);        
             Object[] sampleAuditAdd=new Object[0];
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 SampleAudit smpAudit = new SampleAudit();
@@ -342,8 +350,10 @@ public class DataSampleAnalysisResult {
             fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.ENTERED_BY.getName()
                 , TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.PRETTY_VALUE.getName()});
             fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEvalNoSpecParamLimit, token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus, prettyValue[1]});
-            Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), fieldsName, fieldsValue, 
-                    new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+            Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);        
             Object[] sampleAuditAdd=new Object[0];
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 SampleAudit smpAudit = new SampleAudit();
@@ -398,8 +408,10 @@ public class DataSampleAnalysisResult {
                     fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
                     fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
                 }                
-                Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                        fieldsName, fieldsValue, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);        
                 Object[] sampleAuditAdd=new Object[0];
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     SampleAudit smpAudit = new SampleAudit();
@@ -451,8 +463,10 @@ public class DataSampleAnalysisResult {
                     fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
                     fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
                 }                                
-                Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                        fieldsName, fieldsValue, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);        
                 Object[] sampleAuditAdd=new Object[0];
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     SampleAudit smpAudit = new SampleAudit();
@@ -500,8 +514,10 @@ public class DataSampleAnalysisResult {
         BigDecimal resultConverted = uom.getConvertedQuantity();
         String[] updFieldNames = new String[]{TblsData.SampleAnalysisResult.RAW_VALUE.getName(), TblsData.SampleAnalysisResult.UOM.getName()};
         Object[] updFieldValues = new Object[]{resultConverted.toString(), newuom};
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                updFieldNames, updFieldValues, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, updFieldNames), updFieldValues, sqlWhere, null);        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString())) return updateRecordFieldsByFilter;
         SampleAudit smpAudit = new SampleAudit();
         EnumIntAuditEvents auditActionName = SampleAudit.DataSampleAnalysisResultAuditEvents.UOM_CHANGED; ////AuditEvent To Object, commented	.toString() + " FOR " + paramName;
@@ -560,9 +576,10 @@ public class DataSampleAnalysisResult {
                         resultId = (Integer) resultInfo[iResToCancel][2];
                         String[] updFldNames=new String[]{TblsData.SampleAnalysisResult.STATUS_PREVIOUS.getName(),TblsData.SampleAnalysisResult.STATUS.getName()};
                         Object[] updFldValues=new Object[]{sampleAnalysisResultStatusCanceled, statusPrevious};
-                        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                                updFldNames, updFldValues, 
-                                new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
+                        SqlWhere sqlWhere = new SqlWhere();
+                        sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                        diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, updFldNames), updFldValues, sqlWhere, null);        
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                             SampleAudit smpAudit = new SampleAudit();
                             smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNCANCELED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), +
@@ -593,9 +610,10 @@ public class DataSampleAnalysisResult {
                 if ((sampleAnalysisStatusCanceled.equalsIgnoreCase(currStatus)) && (currTest != null)) {
                     String[] updFldNames=new String[]{TblsData.SampleAnalysis.STATUS.getName(), TblsData.SampleAnalysis.STATUS_PREVIOUS.getName()};
                     Object[] updFldValues=new Object[]{currPrevStatus, sampleAnalysisResultStatusCanceled};
-                    diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
-                            updFldNames, updFldValues,
-                            new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{currTest});
+                    SqlWhere sqlWhere = new SqlWhere();
+                    sqlWhere.addConstraint(TblsData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currTest}, "");
+                    diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, updFldNames), updFldValues, sqlWhere, null);                                            
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                         SampleAudit smpAudit = new SampleAudit();
                         smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_UNCANCELED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
@@ -617,9 +635,10 @@ public class DataSampleAnalysisResult {
             if ((SampleStatuses.CANCELED.getStatusCode("").equalsIgnoreCase(currStatus)) && (currSample != null)) {
                 String[] updFldNames=new String[]{TblsData.Sample.STATUS.getName(), TblsData.Sample.STATUS_PREVIOUS.getName()};
                 Object[] updFldValues=new Object[]{currPrevStatus, sampleAnalysisResultStatusCanceled};
-                diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
-                        updFldNames, updFldValues, 
-                        new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{currSample});
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currSample}, "");
+                diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, updFldNames), updFldValues, sqlWhere, null);                        
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_UNCANCELED, TblsData.TablesData.SAMPLE.getTableName(), 
@@ -679,9 +698,10 @@ public class DataSampleAnalysisResult {
                     } else {
                         String[] updFldNames=new String[]{TblsData.SampleAnalysisResult.STATUS_PREVIOUS.getName(), TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.REVIEWED.getName(), TblsData.SampleAnalysisResult.REVIEWED_ON.getName(), TblsData.SampleAnalysisResult.REVIEWED_BY.getName()};
                         Object[] updFldValues=new Object[]{sampleAnalysisResultStatusReviewed, statusPrevious, false, "NULL>>>DATE", "NULL>>>STRING"};
-                        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                            updFldNames, updFldValues, 
-                            new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
+                        SqlWhere sqlWhere = new SqlWhere();
+                        sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                        diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, updFldNames), updFldValues, sqlWhere, null);        
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                             SampleAudit smpAudit = new SampleAudit();
                             smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNCANCELED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
@@ -712,9 +732,10 @@ public class DataSampleAnalysisResult {
                 if ((sampleAnalysisStatusReviewed.equalsIgnoreCase(currStatus)) && (currTest != null)) {
                     String[] updFldNames=new String[]{TblsData.SampleAnalysis.STATUS.getName(), TblsData.SampleAnalysis.STATUS_PREVIOUS.getName(), TblsData.SampleAnalysis.REVIEWED.getName(), TblsData.SampleAnalysis.REVIEWED_ON.getName(), TblsData.SampleAnalysis.REVIEWED_BY.getName()};
                     Object[] updFldValues=new Object[]{currPrevStatus, sampleAnalysisResultStatusReviewed, false, "NULL>>>DATE", "NULL>>>STRING"};
-                    diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
-                        updFldNames, updFldValues,
-                        new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{currTest});
+                    SqlWhere sqlWhere = new SqlWhere();
+                    sqlWhere.addConstraint(TblsData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currTest}, "");
+                    diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
+                            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, updFldNames), updFldValues, sqlWhere, null);        
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                         SampleAudit smpAudit = new SampleAudit();
                         smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_UNREVIEWED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
@@ -736,9 +757,10 @@ public class DataSampleAnalysisResult {
             if ((sampleStatusReviewed.equalsIgnoreCase(currStatus)) && (currSample != null)) {
                 String[] updFldNames=new String[]{TblsData.Sample.STATUS.getName(), TblsData.Sample.STATUS_PREVIOUS.getName(), TblsData.Sample.REVIEWED.getName(), TblsData.Sample.REVIEWED_ON.getName(), TblsData.Sample.REVIEWED_BY.getName()};
                 Object[] updFldValues=new Object[]{currPrevStatus, sampleAnalysisResultStatusReviewed, false, "NULL>>>DATE", "NULL>>>STRING"};
-                diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
-                    updFldNames, updFldValues,
-                    new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{currSample});
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currSample}, "");
+                diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, updFldNames), updFldValues, sqlWhere, null);        
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {                    
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_UNREVIEWED, TblsData.TablesData.SAMPLE.getTableName(), 
@@ -793,9 +815,10 @@ public class DataSampleAnalysisResult {
                         if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
                             String[] updFldNames=new String[]{TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.STATUS_PREVIOUS.getName()};
                             Object[] updFldValues=new Object[]{sampleAnalysisResultStatusCanceled, currStatus};
-                            diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                                    updFldNames, updFldValues,
-                                    new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId});
+                            SqlWhere sqlWhere = new SqlWhere();
+                            sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                            diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, updFldNames), updFldValues, sqlWhere, null);        
                             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                                 SampleAudit smpAudit = new SampleAudit();
                                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_CANCELED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
@@ -823,9 +846,11 @@ public class DataSampleAnalysisResult {
             if ((!(sampleAnalysisStatusCanceled.equalsIgnoreCase(currStatus))) && (!(sampleAnalysisStatusReviewed.equalsIgnoreCase(currStatus))) && (currTest != null)) {
                     String[] updFldNames=new String[]{TblsData.SampleAnalysis.STATUS.getName(), TblsData.SampleAnalysis.STATUS_PREVIOUS.getName()}; 
                     Object[] updFldValues=new Object[]{sampleAnalysisStatusCanceled, currStatus};
-                    diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
-                        updFldNames, updFldValues,
-                        new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{currTest});
+                    SqlWhere sqlWhere = new SqlWhere();
+                    sqlWhere.addConstraint(TblsData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currTest}, "");
+                    diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, updFldNames), updFldValues, sqlWhere, null);        
+                    
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_CANCELED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
@@ -845,9 +870,10 @@ public class DataSampleAnalysisResult {
             if ((!(sampleStatusCanceled.equalsIgnoreCase(currStatus))) && (!(sampleStatusReviewed.equalsIgnoreCase(currStatus))) && (currSample != null)) {
                 String[] updFldNames=new String[]{TblsData.Sample.STATUS.getName(), TblsData.Sample.STATUS_PREVIOUS.getName()};
                 Object[] updFldValues=new Object[]{sampleStatusCanceled, currStatus};
-                diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
-                        updFldNames, updFldValues,
-                        new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{currSample});
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currSample}, "");
+                diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, updFldNames), updFldValues, sqlWhere, null);        
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_CANCELED, TblsData.TablesData.SAMPLE.getTableName(), 
@@ -993,9 +1019,11 @@ public class DataSampleAnalysisResult {
                     updFieldName=LPArray.addValueToArray1D(updFieldName, TblsData.Sample.READY_FOR_REVISION.getName());
                     updFieldValue=LPArray.addValueToArray1D(updFieldValue, false);
                 }
-                Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                        updFieldName, updFieldValue,
-                        new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.STATUS.getName()+" not in-"}, new Object[]{sampleId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});                    
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
+                sqlWhere.addConstraint(TblsData.Sample.STATUS, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed}, "-");
+                Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, updFieldName), updFieldValue, sqlWhere, null);        
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {    
                     samplesFinallyReviewed=new Object[]{sampleId};
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldExists[0].toString())){
@@ -1044,9 +1072,11 @@ public class DataSampleAnalysisResult {
                         updFieldName=LPArray.addValueToArray1D(updFieldName, TblsData.Sample.READY_FOR_REVISION.getName());
                         updFieldValue=LPArray.addValueToArray1D(updFieldValue, false);
                     }
-                    Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
-                            updFieldName, updFieldValue,
-                            new String[]{TblsData.SampleAnalysis.TEST_ID.getName(), TblsData.SampleAnalysis.STATUS.getName()+" not in-"}, new Object[]{testId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
+                    SqlWhere sqlWhere = new SqlWhere();
+                    sqlWhere.addConstraint(TblsData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{testId}, "");
+                    sqlWhere.addConstraint(TblsData.SampleAnalysis.STATUS, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed}, "-");
+                    Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, updFieldName), updFieldValue, sqlWhere, null);        
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                         sampleAnalysisFinallyReviewed=new Object[]{sampleId};
                         SampleAudit smpAudit = new SampleAudit();
@@ -1088,9 +1118,11 @@ public class DataSampleAnalysisResult {
                         updFldValue=LPArray.addValueToArray1D(updFldValue, token.getPersonName());
                     else
                         updFldValue=LPArray.addValueToArray1D(updFldValue, reviewer);
-                    Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                        updFldName, updFldValue,
-                        new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName(), TblsData.SampleAnalysisResult.STATUS.getName()+" not in-"}, new Object[]{resultId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
+                    SqlWhere sqlWhere = new SqlWhere();
+                    sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                    sqlWhere.addConstraint(TblsData.SampleAnalysisResult.STATUS, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed}, "-");
+                    Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, updFldName), updFldValue, sqlWhere, null);        
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                         sampleAnalysisResultFinallyReviewed=LPArray.addValueToArray1D(sampleAnalysisResultFinallyReviewed, resultId);
                         SampleAudit smpAudit = new SampleAudit();

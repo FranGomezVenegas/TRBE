@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.TblsCnfg;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
 import functionaljavaa.materialspec.ConfigSpecRule;
@@ -101,8 +102,7 @@ public class ClassMasterData {
                         String[] fldNames=new String[]{TblsCnfg.Methods.CODE.getName(), TblsCnfg.Methods.CONFIG_VERSION.getName()
                                 , TblsCnfg.Methods.CREATED_ON.getName(), TblsCnfg.Methods.CREATED_BY.getName()};
                         Object[] fldValues=new Object[]{methodName, 1, LPDate.getCurrentTimeStamp(), userCreator};
-                        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), 
-                            TblsCnfg.TablesConfig.METHODS.getTableName(), fldNames, fldValues);
+                        RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsCnfg.TablesConfig.METHODS, fldNames, fldValues, instanceName);
                         
                         fldNames=new String[]{TblsCnfg.Analysis.ACTIVE.getName(), TblsCnfg.Analysis.CREATED_ON.getName(), TblsCnfg.Analysis.CREATED_BY.getName()};
                         fldValues=new Object[]{true, LPDate.getCurrentTimeStamp(), userCreator};
@@ -239,56 +239,64 @@ public class ClassMasterData {
                 case MD_INCUBATORS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
-                            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName(),
-                            TblsEnvMonitConfig.InstrIncubator.CREATED_ON.getName(), TblsEnvMonitConfig.InstrIncubator.CREATED_BY.getName()},
-                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()).getAsBoolean(), LPDate.getCurrentTimeStamp(), userCreator});
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                    RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                    new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName(),
+                        TblsEnvMonitConfig.InstrIncubator.CREATED_ON.getName(), TblsEnvMonitConfig.InstrIncubator.CREATED_BY.getName()},
+                    new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()).getAsBoolean(), LPDate.getCurrentTimeStamp(), userCreator},
+                    instanceName);
+                        this.diagnostic=insertRecord.getApiMessage();
+                        if (!insertRecord.getRunSuccess()) return;
                     }                    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incubators", null);
                     break;   
                 case MD_INCUB_BATCHES:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH.getTableName(), 
+                        RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH, 
                             new String[]{TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_VERSION.getName(), TblsEnvMonitConfig.IncubBatch.NAME.getName(), TblsEnvMonitConfig.IncubBatch.TYPE.getName(), TblsEnvMonitConfig.IncubBatch.ACTIVE.getName(),
-                            TblsEnvMonitConfig.IncubBatch.CREATED_ON.getName(), TblsEnvMonitConfig.IncubBatch.CREATED_BY.getName()},
-                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_CONFIG_ID.getName()).getAsInt(), 1, jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.TYPE.getName()).getAsString(), true, LPDate.getCurrentTimeStamp(), userCreator});
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                                TblsEnvMonitConfig.IncubBatch.CREATED_ON.getName(), TblsEnvMonitConfig.IncubBatch.CREATED_BY.getName()},
+                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_CONFIG_ID.getName()).getAsInt(), 1, jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.TYPE.getName()).getAsString(), true, LPDate.getCurrentTimeStamp(), userCreator},
+                            instanceName);
+                        this.diagnostic=insertRecord.getApiMessage();
+                        if (!insertRecord.getRunSuccess()) return;
                     }    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incub batch", null);
                     break;   
                 case MD_MICROORGANISMS: 
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableName(), 
+                        RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM, 
                             new String[]{TblsEnvMonitConfig.MicroOrganism.NAME.getName()},
-                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.MicroOrganism.NAME.getName()).getAsString()});
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.MicroOrganism.NAME.getName()).getAsString()}, instanceName);
+                        this.diagnostic=insertRecord.getApiMessage();
+                        if (!insertRecord.getRunSuccess()) return;
                     }    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new microorganisms", null);
                     break;
                 case MD_SAMPLES:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SAMPLE.getTableName(), 
-                            new String[]{TblsCnfg.Sample.CODE.getName(), TblsCnfg.Sample.CODE_VERSION.getName(),
-                            TblsCnfg.Sample.CREATED_ON.getName(), TblsCnfg.Sample.CREATED_BY.getName()},
-                            new Object[]{jO.getAsJsonObject().get(TblsCnfg.Sample.CODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.Sample.CODE_VERSION.getName()).getAsInt(), LPDate.getCurrentTimeStamp(), userCreator});
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) break;
+                        RdbmsObject insertRecord = Rdbms.insertRecord(TblsCnfg.TablesConfig.SAMPLE, 
+                            new String[]{TblsCnfg.Sample.CODE.getName(), TblsCnfg.Sample.CODE_VERSION.getName(),TblsCnfg.Sample.CREATED_ON.getName(), TblsCnfg.Sample.CREATED_BY.getName()},
+                            new Object[]{jO.getAsJsonObject().get(TblsCnfg.Sample.CODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.Sample.CODE_VERSION.getName()).getAsInt(), LPDate.getCurrentTimeStamp(), userCreator},
+                            instanceName);
+                        this.diagnostic=insertRecord.getApiMessage();
+                        if (!insertRecord.getRunSuccess()) break;
                     }    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new samples", null);
                     break;   
                 case MD_SAMPLE_RULES:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), 
+                        RdbmsObject insertRecord = Rdbms.insertRecord(TblsCnfg.TablesConfig.SAMPLE_RULES, 
                             new String[]{TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName(),
                             TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName(), TblsCnfg.SampleRules.TEST_ANALYST_REQUIRED.getName(),
                             TblsCnfg.SampleRules.CREATED_ON.getName(), TblsCnfg.SampleRules.CREATED_BY.getName()},
                             new Object[]{jO.getAsJsonObject().get(TblsCnfg.SampleRules.CODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SampleRules.CODE_VERSION.getName()).getAsInt(), 
                                 jO.getAsJsonObject().get(TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SampleRules.TEST_ANALYST_REQUIRED.getName()).getAsBoolean(),
-                                LPDate.getCurrentTimeStamp(), userCreator});
+                                LPDate.getCurrentTimeStamp(), userCreator},
+                            instanceName);
+                        this.diagnostic=insertRecord.getApiMessage();
                     }                    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new sample rules", null);
                     break;   
@@ -322,9 +330,10 @@ public class ClassMasterData {
                             fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.Program.SPEC_CONFIG_VERSION.getName());
                             fldValue=LPArray.addValueToArray1D(fldValue, 1);                            
                         }
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableName(), 
-                            fldName, fldValue);
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                        RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM, 
+                            fldName, fldValue, instanceName);
+                        this.diagnostic=insertRecord.getApiMessage();
+                        if (!insertRecord.getRunSuccess()) return;                        
                     }
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program", null);
                     break;
@@ -353,9 +362,10 @@ public class ClassMasterData {
                             fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.ProgramLocation.SPEC_CODE_VERSION.getName());
                             fldValue=LPArray.addValueToArray1D(fldValue, 1);                            
                         }
-                        this.diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(), 
-                            fldName, fldValue);
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                        RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION, 
+                            fldName, fldValue, instanceName);
+                        this.diagnostic=insertRecord.getApiMessage();
+                        if (!insertRecord.getRunSuccess()) return;
                     }
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program locations", null);
                     break;

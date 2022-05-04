@@ -5,7 +5,9 @@
  */
 package functionaljavaa.materialspec;
 
+import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPMath.nthroot;
 import lbplanet.utilities.LPPlatform;
@@ -140,8 +142,8 @@ public class ConfigSamplingPlanForSpec {
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }  
     if (!devMode){
-        diagnoses = Rdbms.insertRecordInTable(GlobalVariables.Schemas.DATA.getName(), tableName, fieldsName, fieldsValue);    
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, fieldsName, fieldsValue);    
+        if (!insertRecordInTable.getRunSuccess()){return insertRecordInTable.getApiMessage();}
     }    
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();

@@ -10,6 +10,8 @@ import com.google.gson.JsonObject;
 import static com.labplanet.servicios.app.TestingAPIActions.scriptExecutionEvidenceSave;
 import databases.Rdbms;
 import static databases.Rdbms.dbGetIndexLastNumberInUse;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsTesting;
 import functionaljavaa.businessrules.BusinessRules;
 import lbplanet.utilities.LPHashMap;
@@ -40,6 +42,7 @@ import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
@@ -180,9 +183,11 @@ public class LPTestingOutFormat {
                         functionRelatedObjects.toJSONString()});
                 }
             }
-            Rdbms.updateRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
-                    updFldNames, updFldValues,
-                    new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.STEP_ID.getName()}, new Object[]{scriptId, stepId});
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsTesting.ScriptSteps.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+            sqlWhere.addConstraint(TblsTesting.ScriptSteps.STEP_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{stepId}, "");
+            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT_STEPS,
+                EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT_STEPS, updFldNames), updFldValues, sqlWhere, null);
         }
         return fileContentBuilder;
     }
@@ -263,9 +268,10 @@ public class LPTestingOutFormat {
                     updFldNames=LPArray.addValueToArray1D(updFldNames, (String[]) fieldsForSessionObjects[0]);
                 if (fieldsForSessionObjects!=null && fieldsForSessionObjects.length>1)
                     updFldValues=LPArray.addValueToArray1D(updFldValues, (Object[]) fieldsForSessionObjects[1]);
-                Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(),
-                        updFldNames, updFldValues,
-                        new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()}, new Object[]{scriptId});
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+                Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+                    EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldNames), updFldValues, sqlWhere, null);
                 procReqInstance.killIt();
             }
         }
@@ -1014,14 +1020,24 @@ public class LPTestingOutFormat {
             TblsTesting.Script.EVAL_CODE_UNMATCH.getName(), TblsTesting.Script.EVAL_CODE_UNDEFINED.getName(), 
             TblsTesting.Script.DATE_EXECUTION.getName(), TblsTesting.Script.DB_ERRORS_IDS_VALUES.getName(), TblsTesting.Script.MSG_ERRORS_IDS_VALUES.getName()};
         Object[] scriptFieldValue=new Object[]{"NULL>>>STRING","NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER","NULL>>>DATETIME", "NULL>>>STRING", "NULL>>>STRING"};
-
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+        Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+            EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, scriptFieldName), scriptFieldValue, sqlWhere, null);
+        sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsTesting.ScriptSteps.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+        String[] updFldNames = new String[]{TblsTesting.ScriptSteps.FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName(), TblsTesting.ScriptSteps.EVAL_CODE.getName(), TblsTesting.ScriptSteps.DATE_EXECUTION.getName()};
+        Object[] updFldValues = new Object[]{"NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING","NULL>>>DATETIME"};
+        Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT_STEPS,
+            EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT_STEPS, updFldNames), updFldValues, sqlWhere, null);
+/*
         Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
             scriptFieldName, scriptFieldValue,
             new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId});
         Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
             new String[]{TblsTesting.ScriptSteps.FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName(), TblsTesting.ScriptSteps.EVAL_CODE.getName(), TblsTesting.ScriptSteps.DATE_EXECUTION.getName()},
             new Object[]{"NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING","NULL>>>DATETIME"},
-            new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()}, new Object[]{scriptId});
+            new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()}, new Object[]{scriptId});*/
     }
     public static void getIdsBefore(String procInstanceName, Integer scriptId, Object[] scriptTblInfo){
         if (scriptTblInfo[2]!=null && scriptTblInfo[2].toString().length()>0)
@@ -1039,10 +1055,12 @@ public class LPTestingOutFormat {
         auditIndexInfo.add(getScriptCurrentFldValue(procInstanceName, scriptId, TblsTesting.Script.DB_ERRORS_IDS_VALUES.getName()));
         auditIndexInfo.add(getScriptDbErrorIncrements(procInstanceName, scriptId, moment));
         if (auditIndexInfo!=null){
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
-                new String[]{TblsTesting.Script.DB_ERRORS_IDS_VALUES.getName()},
-                new Object[]{auditIndexInfo.toJSONString()},
-                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId});
+            String[] updFldNames = new String[]{TblsTesting.Script.DB_ERRORS_IDS_VALUES.getName()};
+            Object[] updFldValues = new Object[]{auditIndexInfo.toJSONString()};
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+                EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldNames), updFldValues, sqlWhere, null);
         }
     }
 
@@ -1051,20 +1069,24 @@ public class LPTestingOutFormat {
         auditIndexInfo.add(getScriptCurrentFldValue(procInstanceName, scriptId, TblsTesting.Script.MSG_ERRORS_IDS_VALUES.getName()));
         auditIndexInfo.add(getScriptPropertiesErrorIncrements(procInstanceName, scriptId, moment));
         if (auditIndexInfo!=null){
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
-                new String[]{TblsTesting.Script.MSG_ERRORS_IDS_VALUES.getName()},
-                new Object[]{auditIndexInfo.toJSONString()},
-                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId});
+            String[] updFldNames = new String[]{TblsTesting.Script.MSG_ERRORS_IDS_VALUES.getName()};
+            Object[] updFldValues = new Object[]{auditIndexInfo.toJSONString()};
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+                EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldNames), updFldValues, sqlWhere, null);
         }
     }
     
     public static void setAuditIndexValues(String procInstanceName, Integer scriptId, String scriptAuditIds, String moment){
         JSONArray auditIndexInfo=getScriptAuditIncrements(procInstanceName, scriptId, scriptAuditIds, moment);
         if (auditIndexInfo!=null){
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
-                new String[]{TblsTesting.Script.AUDIT_IDS_VALUES.getName()},
-                new Object[]{auditIndexInfo.toJSONString()},
-                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId});
+            String[] updFldNames = new String[]{TblsTesting.Script.AUDIT_IDS_VALUES.getName()};
+            Object[] updFldValues = new Object[]{auditIndexInfo.toJSONString()};
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+                EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldNames), updFldValues, sqlWhere, null);
         }
     }
     private static JSONArray getScriptAuditIncrements(String procInstanceName, Integer scriptId, String scriptAuditIds, String moment){

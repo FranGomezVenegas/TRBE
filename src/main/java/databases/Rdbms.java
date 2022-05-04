@@ -62,6 +62,10 @@ public class Rdbms {
     static void prepUpQueryWithKey(String configSchemaScript, Object[] object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public static void insertRecordInTable(GlobalVariables.Schemas schemas, String tableName, String[] fieldsName, Object[] fieldsValue) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     String errorCode = "";
     private static Connection conn = null;
@@ -976,7 +980,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});
         }        
     }
-    public static Object[] insertRecordInTable(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
+    public static Object[] insertRecordInTableZZZ(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
         if (fieldNames.length==0){
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         

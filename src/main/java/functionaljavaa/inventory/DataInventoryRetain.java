@@ -8,7 +8,9 @@ package functionaljavaa.inventory;
 import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEndpoints;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
+import databases.SqlWhere;
 import functionaljavaa.audit.LotAudit;
 import functionaljavaa.materialspec.InventoryPlanEntryItem;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
@@ -34,10 +37,8 @@ public final class DataInventoryRetain {
             TblsInspLotRMData.InventoryRetain.CREATED_BY.getName(), TblsInspLotRMData.InventoryRetain.CREATED_ON.getName()};
         Object[] fieldValue=new Object[]{lotName, materialName, invEntryItem.getQuantity(), invEntryItem.getQuantityUom(),
             invEntryItem.getReceptionRequired(), procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
-        Object[] newInvRec=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), 
-            fieldName, fieldValue);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newInvRec[0].toString())) return newInvRec;
-        return newInvRec;
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN, fieldName, fieldValue);        
+        return insertRecordInTable.getApiMessage();
     }
     
 
@@ -155,9 +156,9 @@ public final class DataInventoryRetain {
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIEndpoints.LOT_RETAIN_EXTRACT.getAuditActionName());
     }    
     private static Object[] updateRetainRecordWithAuditInsert(String lotName, String[] updFldName, Object[] updFldValue, String[] whereFldName, Object[] whereFldValue, String auditActionName){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(),
-                updFldName, updFldValue, whereFldName, whereFldValue);    
+        SqlWhere sqlWhere = new SqlWhere(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN, whereFldName, whereFldValue);
+	Object[] updateRecordFieldsByFilter=Rdbms.updateRecordFieldsByFilter(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN,
+		EnumIntTableFields.getTableFieldsFromString(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN, updFldName), updFldValue, sqlWhere, null);
         Integer recIdPosic = LPArray.valuePosicInArray(whereFldName, TblsInspLotRMData.InventoryRetain.ID.getName());
         String recId=lotName;
         if (recIdPosic>-1) recId=whereFldValue[recIdPosic].toString();

@@ -5,10 +5,12 @@
  */
 package functionaljavaa.moduleenvironmentalmonitoring;
 
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -203,11 +205,11 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, "config_version");    
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, projectTemplateVersion); 
 
-        diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, tableName, sampleFieldName, sampleFieldValue);
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM, sampleFieldName, sampleFieldValue);
 
         //smpAudit.sampleAuditAdd(rdbm, procInstanceName, auditActionName, "sample", Integer.parseInt(diagnosesProj[6]), Integer.parseInt(diagnosesProj[6]), null, null, fieldsOnLogSample, userName, userRole);
 
-        return diagnosesProj;  
+        return insertRecordInTable.getApiMessage();  
     }    
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();

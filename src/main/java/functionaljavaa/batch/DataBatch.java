@@ -6,7 +6,6 @@
 package functionaljavaa.batch;
 
 import lbplanet.utilities.LPPlatform;
-import databases.Rdbms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -32,13 +31,15 @@ public class DataBatch {
         for (String[] array :batchArray.batchPosic) {         
               singleDArray.addAll(Arrays.asList(array));
         }       
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(schemaName, tableName, 
+        return LPPlatform.LAB_FALSE+"notImplementedYet";
+        
+/*        Object[] insertRecordInTable = Rdbms.insertRecordInTable(schemaName, tableName, 
                                                 new String[]{"name, template, template_version, array_num_rows,"
                                                     + "array_num_cols, array_total_positions, array_total_objects"},
                                                 new Object [] {batchArray.getBatchName(), batchArray.getBatchTemplate(), batchArray.getBatchTemplateVersion(), batchArray.getNumRows(),
                                                     + batchArray.getNumCols(), batchArray.getNumTotalObjects(), batchArray.getNumTotalObjects()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString())){return insertRecordInTable[0].toString();}
-        return LPPlatform.LAB_TRUE+"Added to the database";
+        return LPPlatform.LAB_TRUE+"Added to the database";*/
         
     }
 
@@ -54,12 +55,14 @@ public class DataBatch {
         List<String> singleDArray = new ArrayList<>();
         for (String[] array :batchArray.batchPosic) {         
               singleDArray.addAll(Arrays.asList(array));
-        }       
-        return Rdbms.insertRecordInTable(schemaName, tableName, 
+        } 
+        return new Object[]{LPPlatform.LAB_FALSE, "notImplementedYet", null};
+/*        return Rdbms.insertRecordInTable(schemaName, tableName, 
                                                 new String[]{"name, template, template_version, array_num_rows,"
                                                     + "array_num_cols, array_total_positions, array_total_objects"},
                                                 new Object [] {batchArray.getBatchName(), batchArray.getBatchTemplate(), batchArray.getBatchTemplateVersion(), batchArray.getNumRows(),
                                                     + batchArray.getNumCols(), batchArray.getNumTotalObjects(), batchArray.getNumTotalObjects()});    
+        */
     }
     
     /**
@@ -72,12 +75,12 @@ public class DataBatch {
      */
     public Integer zdbUpdateBatchArray( String schemaName, String batchName, String fieldName, String fieldValue) {
         
-        Integer pk = 0;
+        Integer pk = -999;
        
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(schemaName, tableName, 
-                new String[]{fieldName}, new Object[]{fieldValue}, 
-                new String[]{"name"}, new Object[]{batchName});
-        pk = Integer.parseInt(updateRecordFieldsByFilter[6].toString());
+//        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(schemaName, tableName, 
+//                new String[]{fieldName}, new Object[]{fieldValue}, 
+//                new String[]{"name"}, new Object[]{batchName});
+//        pk = Integer.parseInt(updateRecordFieldsByFilter[6].toString());
         return pk; 
     }    
 }

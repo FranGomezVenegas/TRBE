@@ -7,6 +7,7 @@ package functionaljavaa.incident;
 
 import databases.Rdbms;
 import databases.RdbmsObject;
+import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsAppAudit;
 import databases.features.Token;
@@ -21,7 +22,6 @@ import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
-import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
@@ -98,9 +98,10 @@ public class AppIncident {
 
         updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.DATE_LAST_UPDATE.getName(), TblsApp.Incident.PERSON_LAST_UPDATE.getName()});
         updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()});
-        
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
-            updFieldName, updFieldValue, new String[]{TblsApp.Incident.ID.getName()}, new Object[]{incidentId});
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsApp.Incident.ID, null, new Object[]{incidentId}, "");
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.INCIDENT,
+            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, updFieldName), updFieldValue, sqlWhere, null);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.CONFIRMED_INCIDENT.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), incidentId, 
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
@@ -119,9 +120,10 @@ public class AppIncident {
 
         updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.DATE_LAST_UPDATE.getName(), TblsApp.Incident.PERSON_LAST_UPDATE.getName()});
         updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()});
-        
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
-            updFieldName, updFieldValue, new String[]{TblsApp.Incident.ID.getName()}, new Object[]{incidentId});
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsApp.Incident.ID, null, new Object[]{incidentId}, "");
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.INCIDENT,
+            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, updFieldName), updFieldValue, sqlWhere, null);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.CLOSED_INCIDENT.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), incidentId, 
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
@@ -147,9 +149,10 @@ public class AppIncident {
 
         updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.DATE_LAST_UPDATE.getName(), TblsApp.Incident.PERSON_LAST_UPDATE.getName(), TblsApp.Incident.DATE_RESOLUTION.getName(), TblsApp.Incident.PERSON_RESOLUTION.getName()});
         updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), "null>>>DATETIME", "null>>>STRING"});
-        
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
-            updFieldName, updFieldValue, new String[]{TblsApp.Incident.ID.getName()}, new Object[]{incidentId});
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsApp.Incident.ID, null, new Object[]{incidentId}, "");
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.INCIDENT,
+            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, updFieldName), updFieldValue, sqlWhere, null);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
             updFieldValue[updFieldValue.length-2]="null";updFieldValue[updFieldValue.length-1]="null";
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.REOPENED_INCIDENT.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), incidentId, 
@@ -174,9 +177,10 @@ public class AppIncident {
             updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.STATUS.getName(), TblsApp.Incident.STATUS_PREVIOUS.getName()});
             updFieldValue=LPArray.addValueToArray1D(updFieldValue, new String[]{newStatus, currentStatus});
         }
-
-        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
-            updFieldName, updFieldValue, new String[]{TblsApp.Incident.ID.getName()}, new Object[]{incidentId});
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsApp.Incident.ID, null, new Object[]{incidentId}, "");
+        Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.INCIDENT,
+            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, updFieldName), updFieldValue, sqlWhere, null);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){                  
             String auditStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();
             if (newStatus!=null) auditStatus=newStatus;
@@ -192,15 +196,4 @@ public class AppIncident {
             return  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_CURRENTLY_NOT_ACTIVE, new Object[]{incidentId});
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncidentAPIErrorMessages.INCIDENT_ALREADY_ACTIVE, new Object[]{incidentId});
     }
-    
-/*    private static Object[] getValueByFldName(String fldName){
-        Object[][] dbInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), 
-                new String[]{TblsApp.Incident.ID.getName()}, new Object[]{incidentId}, 
-                TblsApp.Incident.getAllFieldNames(), new String[]{TblsApp.Incident.ID.getName()});
-        return dbInfo[0];    
-    }
-*/
-    
-    
-
 }

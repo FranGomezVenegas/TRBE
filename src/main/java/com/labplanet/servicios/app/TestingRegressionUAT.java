@@ -201,6 +201,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 RequestDispatcher rd = request.getRequestDispatcher(endPoints.getServletUrl());
                 rd.forward(request,response);   
                 return;                       */
+            case DB_SCHEMADATA_GENOMA:
             case DB_SCHEMADATA_ENVMONIT_SAMPLES:
             case DB_SCHEMADATA_INSPECTION_LOT_RM:
                 Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 

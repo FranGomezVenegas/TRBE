@@ -8,6 +8,8 @@ package functionaljavaa.materialspec;
 import lbplanet.utilities.LPNulls;
 import databases.Rdbms;
 import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.TblsCnfg;
@@ -24,6 +26,7 @@ import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -406,7 +409,14 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
             Object[] whereFieldValues = new Object[0];
             whereFieldValues = LPArray.addValueToArray1D(whereFieldValues, specCode);
             whereFieldValues = LPArray.addValueToArray1D(whereFieldValues, specCodeVersion);            
-            diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC.getTableName(), specFieldName, specFieldValue, whereFieldNames, whereFieldValues);
+            //diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC.getTableName(), specFieldName, specFieldValue, whereFieldNames, whereFieldValues);
+
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsCnfg.Spec.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{specCode}, "");
+            sqlWhere.addConstraint(TblsCnfg.Spec.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{specCodeVersion}, "");
+            diagnoses = Rdbms.updateRecordFieldsByFilter(TblsCnfg.TablesConfig.SPEC,
+                EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.SPEC, specFieldName),
+                specFieldValue, sqlWhere, null);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 ConfigTablesAudit.specAuditAdd(ConfigSpecAuditEvents.SPEC_UPDATE.toString(), TblsCnfg.TablesConfig.SPEC, specCode, 
                     specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);              

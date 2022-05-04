@@ -29,6 +29,7 @@ import trazit.globalvariables.GlobalVariables;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 
 /**
  *
@@ -145,13 +146,13 @@ public class ErrorMessageCodesToRequirements {
         }
     }    
     private void getMessageCodesFromDatabase(){
-        Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.MessageCodeDeclaration.TBL.getName(), 
+        this.fldNames=EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.MESSAGE_CODES_DECLARATION.getTableFields());        
+        Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.MESSAGE_CODES_DECLARATION.getTableName(), 
                 new String[]{TblsTrazitDocTrazit.MessageCodeDeclaration.API_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
-                new Object[]{}, TblsTrazitDocTrazit.MessageCodeDeclaration.getAllFieldNames());
+                new Object[]{}, this.fldNames);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
             return;
         }
-        this.fldNames=TblsTrazitDocTrazit.MessageCodeDeclaration.getAllFieldNames();
         this.messageCodeFromDatabase=reqEndpointInfo;
         Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.MessageCodeDeclaration.API_NAME.getName());
         Integer propertyNamePosic=LPArray.valuePosicInArray(this.fldNames, TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName());
@@ -176,7 +177,7 @@ public class ErrorMessageCodesToRequirements {
                 fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
 //                fieldNames=LPArray.addValueToArray1D(fieldNames, (String[]) docInfoForMessage[0]);
 //                fieldValues=LPArray.addValueToArray1D(fieldValues, (String[]) docInfoForMessage[1]);
-                Object[] dbLog = Rdbms.insertRecordInTable(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.MessageCodeDeclaration.TBL.getName(), fieldNames, fieldValues);    
+                Rdbms.insertRecordInTable(TblsTrazitDocTrazit.TablesTrazitDocTrazit.MESSAGE_CODES_DECLARATION, fieldNames, fieldValues);                    
             }else{
     /*            Integer fldIdPosic=LPArray.valuePosicInArray(fieldNames, tagName);
                 Object[] dbLog = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.MessageCodeDeclaration.TBL.getName(),

@@ -21,8 +21,7 @@ public class ClassSampleController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
 
-    public ClassSampleController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
-        
+    public ClassSampleController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {        
         Object[] argsForLogFiles=new Object[0];
         SampleAPIParams.SampleAPIEndpoints endPoint = null;
         try{

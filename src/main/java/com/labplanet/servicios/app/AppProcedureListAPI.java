@@ -39,7 +39,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class AppProcedureListAPI extends HttpServlet {
 
-    private enum elementType{TREE_LIST, ICON_BUTTON, ICONS_GROUP}
+    public enum elementType{TREE_LIST, ICON_BUTTON, ICONS_GROUP}
     private enum iconPosition{UP, DOWN}
     
     /**
@@ -369,7 +369,15 @@ public class AppProcedureListAPI extends HttpServlet {
             procedure.put(LABEL_SOP_CERTIFICATION, LBL_VAL_SOP_CERTIF_DISABLE);                 
         else{
             notCompletedUserSOP = userSop.getNotCompletedUserSOP(internalUserID, curProc, new String[]{LABEL_SOP_NAME});
-            if (notCompletedUserSOP==null) return new JSONObject();
+            if (notCompletedUserSOP==null){
+                procEventJson.put(LABEL_SOPS_PASSED, true);
+                JSONObject procEventSopDetail = new JSONObject();
+                procEventSopDetail.put(LABEL_SOP_TOTAL, null);
+                procEventSopDetail.put(LABEL_SOP_TOTAL_COMPLETED, null);
+                procEventSopDetail.put(LABEL_SOP_TOTAL_NOT_COMPLETED, null);
+                procEventSopDetail.put(LABEL_ARRAY_SOP_LIST, null);                
+                return procEventSopDetail;
+            }
             notCompletedUserSOP1D = LPArray.array2dTo1d(notCompletedUserSOP);
         }        
         JSONObject procEventSopDetail = new JSONObject();

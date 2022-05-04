@@ -9,6 +9,8 @@ import lbplanet.utilities.LPNulls;
 import databases.Rdbms;
 import databases.Rdbms.RdbmsSuccess;
 import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.TblsCnfg;
@@ -24,6 +26,7 @@ import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -258,11 +261,11 @@ if (1==1){return "ERROR";}
             }
         }      
         try{
-            String[] whereFieldNames = new String[]{TblsCnfg.Analysis.CODE.getName(), TblsCnfg.Analysis.CONFIG_VERSION.getName()};
-            Object[] whereFieldValues = new Object[0];
-            whereFieldValues = LPArray.addValueToArray1D(whereFieldValues, code);
-            whereFieldValues = LPArray.addValueToArray1D(whereFieldValues, configVersion);            
-            diagnoses = Rdbms.updateRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS.getTableName(), specFieldName, specFieldValue, whereFieldNames, whereFieldValues);
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{code}, "");
+            sqlWhere.addConstraint(TblsCnfg.Analysis.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{configVersion}, "");
+            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsCnfg.TablesConfig.ANALYSIS,
+                    EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.ANALYSIS, specFieldName), specFieldValue, sqlWhere, null);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_UPDATE.toString(), TblsCnfg.TablesConfig.ANALYSIS, code, 
                     code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);              

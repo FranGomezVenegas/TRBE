@@ -16,6 +16,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPSession;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.TblsApp;
 import databases.features.Token;
 import databases.TblsApp.Users;
@@ -158,12 +159,12 @@ public class AuthenticationAPI extends HttpServlet {
                     
                     String[] fieldsName = new String[]{TblsApp.AppSession.PERSON.getName(), TblsApp.AppSession.ROLE_NAME.getName()};
                     Object[] fieldsValue = new Object[]{token.getPersonName(), userRole};
-                    Object[] newAppSession = LPSession.newAppSession(fieldsName, fieldsValue, request.getRemoteAddr());                    
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newAppSession[0].toString())){   
+                    RdbmsObject newAppSession = LPSession.newAppSession(fieldsName, fieldsValue, request.getRemoteAddr());                    
+                    if (!newAppSession.getRunSuccess()){   
                         LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.SESSION_ID_NOTGENERATED.getErrorCode(), null, language, AuthenticationErrorTrapping.class.getSimpleName());              
                         return;                                                         
                     }                    
-                    Integer sessionId = Integer.parseInt((String) newAppSession[newAppSession.length-1]);
+                    Integer sessionId = Integer.parseInt(newAppSession.getNewRowId().toString());
                     String sessionIdStr = sessionId.toString();
 
                     Date nowLocalDate =LPDate.getTimeStampLocalDate();

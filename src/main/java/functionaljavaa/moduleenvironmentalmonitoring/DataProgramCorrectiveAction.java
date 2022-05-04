@@ -6,7 +6,10 @@
 package functionaljavaa.moduleenvironmentalmonitoring;
 
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsProcedure;
 import databases.features.Token;
@@ -22,6 +25,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -190,8 +194,8 @@ public class DataProgramCorrectiveAction {
           myFldName=LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.CREATED_ON.getName());
           myFldValue=LPArray.addValueToArray1D(myFldValue, LPDate.getCurrentTimeStamp());      
         }else{myFldValue[posicInArray]=LPDate.getCurrentTimeStamp();}
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
-                myFldName, myFldValue);
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, myFldName, myFldValue);
+        return insertRecordInTable.getApiMessage();
       }
   
     /**
@@ -221,9 +225,10 @@ public class DataProgramCorrectiveAction {
             updFldName=LPArray.addValueToArray1D(updFldName, TblsProcedure.ProgramCorrectiveAction.INVEST_ID.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, investId);
         }
-        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
-                updFldName, updFldValue, 
-                new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, new Object[]{correctiveActionId});
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsProcedure.ProgramCorrectiveAction.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{correctiveActionId}, "");
+	return Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION,
+		EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, updFldName), updFldValue, sqlWhere, null);        
     }  
     public static Boolean isProgramCorrectiveActionEnable(String procInstanceName){
         return "ENABLE".equalsIgnoreCase(Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
@@ -258,11 +263,11 @@ public class DataProgramCorrectiveAction {
                 diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "<*1*> is closed, cannot be added to the investigation", new Object[]{investId});
             Object[] diagn=markAsCompleted(Integer.valueOf(curObj[0].toString()), investId);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))diagnostic=diagn;
-            diagn = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
-                    new String[]{TblsProcedure.ProgramCorrectiveAction.INVEST_ID.getName()},
-                    new Object[]{investId},
-                    new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, new Object[]{Integer.valueOf(curObj[0].toString())});        
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))diagnostic=diagn;
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsProcedure.ProgramCorrectiveAction.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(curObj[0].toString())}, "");
+            diagn = Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION,
+                EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, new String[]{TblsProcedure.ProgramCorrectiveAction.INVEST_ID.getName()}), new Object[]{investId}, sqlWhere, null);
+           if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))diagnostic=diagn;
         }
         if (diagnostic==null) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "allMarkedAsAdded <*1*>", new Object[]{Arrays.toString(programCorrectiveActionsToMarkAsCompleted)});
         else return diagnostic;

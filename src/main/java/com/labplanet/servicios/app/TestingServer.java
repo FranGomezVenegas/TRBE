@@ -5,12 +5,14 @@
  */
 package com.labplanet.servicios.app;
 
+import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_NEW_EVENT_FLD_NAME;
 import databases.features.DbEncryption;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
+import databases.SqlStatement;
 import databases.TblsAppProcDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData.TablesData;
@@ -102,6 +104,23 @@ public class TestingServer extends HttpServlet {
             out.println("Value: " + valueToDecrypt);
             Object[] decryptVal = DbEncryption.decryptValue(valueToDecrypt);
             out.println("Decrypted back: "+decryptVal[decryptVal.length-1].toString());
+            
+            
+        JSONObject procedure=new JSONObject();
+        JSONArray procEventsIconsDown = new JSONArray(); 
+        JSONObject procEventJson = new JSONObject();
+        String[] procEventFldNameArray = PROC_NEW_EVENT_FLD_NAME.split("\\|");
+            Rdbms.stablishDBConection("labplanet"); 
+        Object[][] procEvent = Rdbms.getRecordFieldsByFilter("proc-deploy-procedure", TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
+            new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.TYPE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()}, 
+            new String[]{"ER-FQ", "coordinator",AppProcedureListAPI.elementType.TREE_LIST.toString().toLowerCase().replace("_","-")+"|"+AppProcedureListAPI.elementType.ICONS_GROUP.toString().toLowerCase().replace("_","-")}, 
+            procEventFldNameArray, new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.PARENT_NAME.getName(), TblsProcedure.ProcedureEvents.POSITION.getName(), TblsProcedure.ProcedureEvents.BRANCH_LEVEL.getName()});
+        JSONObject procEventSopDetail = new JSONObject();
+        for (Object[] procEvent1: procEvent){
+            procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameArray, procEvent1, null);
+            procEventSopDetail = AppProcedureListAPI.procEventSops("9", "proc-deploy", procedure, procEventJson, 
+                procEventFldNameArray, procEvent1);
+        }
 if (1==1)return;
         out.println("Time to encrypt data ....");
         Object[] valsToEncrytp=new Object[]{"hola", new BigDecimal("123.2"), LPDate.getCurrentTimeStamp()};

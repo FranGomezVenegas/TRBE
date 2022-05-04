@@ -8,6 +8,7 @@ package functionaljavaa.instruments;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
 import databases.TblsAppProcData.TablesAppProcData;
@@ -17,7 +18,7 @@ import functionaljavaa.instruments.InstrumentsEnums.InstrEventsErrorTrapping;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsBusinessRules;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsErrorTrapping;
-import functionaljavaa.moduleenvironmentalmonitoring.DataStudyObjectsVariableValues;
+import functionaljavaa.modulegenoma.DataStudyObjectsVariableValues;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import java.util.Arrays;
@@ -168,8 +169,10 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         String[] updFieldsName=new String[]{TblsAppProcData.InstrEventVariableValues.VALUE.getName()};
         Object[] updFieldsValue=new Object[]{newValue};
-        diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
-            updFieldsName, updFieldsValue, new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName()}, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())});            
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsAppProcData.InstrEventVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
+	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES,
+		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
             instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_ENTERED, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                 updFieldsName, updFieldsValue);
@@ -231,8 +234,10 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         String[] updFieldsName=new String[]{TblsAppProcData.InstrEventVariableValues.VALUE.getName()};
         Object[] updFieldsValue=new Object[]{newValue};
-        diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), 
-            updFieldsName, updFieldsValue, new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName()}, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())});            
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsAppProcData.InstrEventVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
+	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES,
+		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
             instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_REENTERED, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                 updFieldsName, updFieldsValue);
@@ -286,10 +291,12 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             messages.addMainForError(InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
         }
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(appProcInstance, TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), 
-            new String[]{TblsAppProcDataAudit.Instruments.REVIEWED.getName(), TblsAppProcDataAudit.Instruments.REVIEWED_BY.getName(), TblsAppProcDataAudit.Instruments.REVIEWED_ON.getName()},
-            new Object[]{true, personName, LPDate.getCurrentTimeStamp()}, 
-            new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId});
+        String[] updFieldsName = new String[]{TblsAppProcDataAudit.Instruments.REVIEWED.getName(), TblsAppProcDataAudit.Instruments.REVIEWED_BY.getName(), TblsAppProcDataAudit.Instruments.REVIEWED_ON.getName()};
+        Object[] updFieldsValue = new Object[]{true, personName, LPDate.getCurrentTimeStamp()};
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsAppProcDataAudit.Instruments.AUDIT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{auditId}, "");
+	Object[] updateRecordFieldsByFilter=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENTS,
+		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, updFieldsName), updFieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString()))
             return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InstrumentsAPIactionsEndpoints.INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED, new Object[]{auditId});
         else

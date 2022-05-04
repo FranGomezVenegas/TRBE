@@ -43,6 +43,8 @@ public class TblsCnfg {
             new Object[]{new ForeignkeyFld(SampleRules.CODE.getName(), SCHEMA_NAME, TablesConfig.SAMPLE.getTableName(), Sample.CODE.getName()),
                 new ForeignkeyFld(SampleRules.CODE_VERSION.getName(), SCHEMA_NAME, TablesConfig.SAMPLE.getTableName(), Sample.CODE_VERSION.getName())}
             , "Sample Rules config"),
+        SOP_LIST(null, "sop_list", SCHEMA_NAME, true, SopList.values(), SopMetaData.SOP_ID.getName(),
+            new String[]{SopMetaData.SOP_ID.getName()}, null, "SopList"),
         SOP_META_DATA(null, "sop_meta_data", SCHEMA_NAME, true, SopMetaData.values(), SopMetaData.SOP_ID.getName(),
             new String[]{SopMetaData.SOP_ID.getName()}, null, "SopMetaData"),
         SPEC(null, "spec", SCHEMA_NAME, true, Spec.values(), null,
@@ -312,9 +314,27 @@ public class TblsCnfg {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
 
-    /**
-     *
-     */
+    public enum SopList implements EnumIntTableFields{
+        SOP_LIST_ID("sop_list_id", LPDatabase.integerNotNull(), null, null, null, null),
+        SOP_ASSIGNED("sop_assigned", LPDatabase.stringNotNull(), null, null, null, null),
+        // ...
+        ;
+        private SopList(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }                
     public enum SopMetaData implements EnumIntTableFields{
         SOP_ID("sop_id", LPDatabase.integerNotNull(), null, null, null, null),
         SOP_NAME("sop_name", LPDatabase.stringNotNull(), null, null, null, null),
@@ -352,9 +372,6 @@ public class TblsCnfg {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }                
 
-    /**
-     *
-     */
     public enum Spec implements EnumIntTableFields{
         CODE("code", LPDatabase.stringNotNull(), null, null, null, null),
         CONFIG_VERSION("config_version", LPDatabase.integer(), null, null, null, null),

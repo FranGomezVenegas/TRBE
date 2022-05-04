@@ -8,6 +8,7 @@ package com.labplanet.servicios.modulesample;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsDataAudit;
 import databases.features.Token;
@@ -46,36 +47,11 @@ import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
  * @author User
  */
 public class ClassSample {
-    /**
-     * @return the messageDynamicData
-     */
-    public Object[] getMessageDynamicData() {
-        return this.messageDynamicData;
-    }
-
-    /**
-     * @return the rObj
-     */
-    public RelatedObjects getRelatedObj() {
-        return this.relatedObj;
-    }
-
-    /**
-     * @return the endpointExists
-     */
-    public Boolean getEndpointExists() {
-        return this.endpointExists;
-    }
-
-    /**
-     * @return the diagnostic
-     */
-    public Object[] getDiagnostic() {
-        return this.diagnostic;
-    }
-    public Boolean getFunctionFound() {
-        return functionFound;
-    }    
+    public Object[] getMessageDynamicData() {        return this.messageDynamicData;    }
+    public RelatedObjects getRelatedObj() {        return this.relatedObj;    }
+    public Boolean getEndpointExists() {        return this.endpointExists;    }
+    public Object[] getDiagnostic() {        return this.diagnostic;    }
+    public Boolean getFunctionFound() {        return functionFound;    }    
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
@@ -445,7 +421,7 @@ public class ClassSample {
                     ChangeOfCustody coc = new ChangeOfCustody();
                     Integer appSessionId=null;
                     if (token.getAppSessionId()!=null){appSessionId=Integer.valueOf(token.getAppSessionId());}
-                    diagn = coc.cocStartChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.SAMPLE_ID.getName(), objectId, custodianCandidate);
+                    diagn = coc.cocStartChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, objectId, custodianCandidate);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
@@ -453,7 +429,7 @@ public class ClassSample {
                     sampleId = (Integer) argValues[0];
                     String confirmChangeComment = argValues[1].toString();
                     coc =  new ChangeOfCustody();
-                    diagn = coc.cocConfirmedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.SAMPLE_ID.getName(), sampleId, confirmChangeComment);
+                    diagn = coc.cocConfirmedChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, sampleId, confirmChangeComment);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
@@ -461,7 +437,7 @@ public class ClassSample {
                     sampleId = (Integer) argValues[0];
                     String cancelChangeComment = argValues[1].toString();
                     coc =  new ChangeOfCustody();
-                    diagn = coc.cocAbortedChange(TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.SAMPLE_ID.getName(), sampleId, cancelChangeComment);
+                    diagn = coc.cocAbortedChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, sampleId, cancelChangeComment);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
@@ -538,10 +514,10 @@ public class ClassSample {
                     if (diagn!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
                         smpStage.dataSampleStagesTimingCapture(sampleId, sampleStage, DataSampleStages.SampleStageTimingCapturePhases.END.name());                                                         
                         smpStage.dataSampleStagesTimingCapture(sampleId, diagn[diagn.length-1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
-                        diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
-                                sampleFieldName, 
-                                sampleFieldValue,
-                                new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
+                        SqlWhere sqlWhere = new SqlWhere();
+                        sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, null, new Object[]{sampleId}, "");
+                        diagn=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+                            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldName), sampleFieldValue, sqlWhere, null);
                         SampleAudit smpAudit = new SampleAudit();
                         smpAudit.sampleAuditAdd(endPoint.getAuditEventObj(), TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))

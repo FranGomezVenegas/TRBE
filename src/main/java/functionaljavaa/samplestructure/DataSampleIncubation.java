@@ -9,6 +9,8 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIEnd
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsData;
 import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
@@ -30,6 +32,7 @@ import org.json.simple.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -143,9 +146,10 @@ public class DataSampleIncubation {
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
-        
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
-                sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
+        Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldName), sampleFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
             diagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonSampleAPIEndpoints.SINGLE_SAMPLE_INCUB_END.getSuccessMessageCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
@@ -183,7 +187,10 @@ public class DataSampleIncubation {
         }
         String[] sampleFieldName = (String[]) sampleIncubatorModeCheckerInfo[1];
         Object[] sampleFieldValue = (Object[]) sampleIncubatorModeCheckerInfo[2];
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleFieldName, sampleFieldValue, new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId});
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
+        Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldName), sampleFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
             diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonSampleAPIEndpoints.SINGLE_SAMPLE_INCUB_START.getSuccessMessageCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});           
@@ -362,7 +369,7 @@ public class DataSampleIncubation {
         if (finalDiagn) return new Object[]{LPPlatform.LAB_TRUE};  
 
         if (deviationAndStop>0){
-            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS.getTableName(), 
+            Rdbms.insertRecordInTable(TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS, 
                     new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_BY.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.REASON.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.STAGE_CURRENT.getName()}, 
@@ -374,7 +381,7 @@ public class DataSampleIncubation {
         if (stoppables>0) return stoppablesDiagn;
         
         if (deviations>0){
-            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS.getTableName(), 
+            Rdbms.insertRecordInTable(TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS, 
                     new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_BY.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.REASON.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.STAGE_CURRENT.getName()}, 

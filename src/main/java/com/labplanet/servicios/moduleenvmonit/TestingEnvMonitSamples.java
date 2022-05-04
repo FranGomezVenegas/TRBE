@@ -94,9 +94,9 @@ public class TestingEnvMonitSamples extends HttpServlet {
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
 //out.println(iLines+" "+actionName);      
-//if (iLines==35){
-//    out.println("stop here");
-//}
+if (iLines==25){
+    out.println("stop here");
+}
                 LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 LPTestingParams.handleAlternativeToken(tstOut, iLines);
                 

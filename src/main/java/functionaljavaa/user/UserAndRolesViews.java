@@ -7,14 +7,19 @@ package functionaljavaa.user;
 
 import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsApp.Users;
 import databases.TblsAppConfig;
+import databases.TblsAppConfig.TablesAppConfig;
 import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
 import java.util.ResourceBundle;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
@@ -101,15 +106,18 @@ public class UserAndRolesViews {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
         if (!Boolean.valueOf(userIsCaseSensitive)) user=user.toLowerCase();
-        return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
-                new String[]{fieldName}, new Object[]{newValue}, 
-                new String[]{Users.USER_NAME.getName()}, new Object[]{user});
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(Users.USER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{user}, "");
+	return Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.USERS,
+            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.USERS, new String[]{fieldName}), new Object[]{newValue}, sqlWhere, null);
+        
     }
     
     public static final Object[] setUserDefaultTabsOnLogin(Token token, String tabs){
-        return Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
-                new String[]{TblsApp.Users.TABS_ON_LOGIN.getName()}, new Object[]{tabs}, 
-                new String[]{TblsApp.Users.USER_NAME.getName()}, new Object[]{token.getUserName()});
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(Users.TABS_ON_LOGIN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{tabs}, "");
+	return Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.USERS,
+            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.USERS, new String[]{TblsApp.Users.USER_NAME.getName()}), new Object[]{token.getUserName()}, sqlWhere, null);
     }
     
     public static final Object[] createAppUser(String uName, String[] fldNames, Object[] fldValues){
@@ -117,14 +125,13 @@ public class UserAndRolesViews {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "UserAlreadyExists", new Object[]{uName});        
         Object[] personIdDiagn = getNextAppPersonId();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personIdDiagn[0].toString())) return personIdDiagn;
-        String personId=personIdDiagn[1].toString();
-        Object[] personCreatedDiagn; 
-        personCreatedDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), 
+        String personId=personIdDiagn[1].toString();        
+        RdbmsObject personCreatedDiagn = Rdbms.insertRecordInTable(TblsAppConfig.TablesAppConfig.PERSON, 
                 new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName()}, new Object[]{personId, uName});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personCreatedDiagn[0].toString())) return personCreatedDiagn;
-        Object[] userCreatedDiagn = Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
+        if (!personCreatedDiagn.getRunSuccess()) return personCreatedDiagn.getApiMessage();
+        RdbmsObject userCreatedDiagn = Rdbms.insertRecordInTable(TblsApp.TablesApp.USERS, 
                 new String[]{Users.USER_NAME.getName(), Users.PASSWORD.getName(), Users.PERSON_NAME.getName()}, new Object[]{uName, "trazit123", personId});        
-        return userCreatedDiagn;
+        return userCreatedDiagn.getApiMessage();
         //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet", null);        
     }
     private static Object[] getNextAppPersonId(){
@@ -143,11 +150,10 @@ public class UserAndRolesViews {
                 return new InternalMessage(LPPlatform.LAB_FALSE, personByUser[personByUser.length-1].toString(), new Object[]{}, null);
             personId=personByUser[0].toString();
         }
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsAppConfig.TablesAppConfig.PERSON.getRepositoryName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), 
-                new String[]{TblsAppConfig.Person.SHIFT.getName()},
-                new Object[]{newShift},
-                new String[]{TblsAppConfig.Person.PERSON_ID.getName()},
-                new Object[]{personId});        
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsAppConfig.Person.PERSON_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{personId}, "");
+	Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TablesAppConfig.PERSON,
+            EnumIntTableFields.getTableFieldsFromString(TablesAppConfig.PERSON, new String[]{TblsAppConfig.Person.SHIFT.getName()}), new Object[]{newShift}, sqlWhere, null);        
         return new InternalMessage(updateRecordFieldsByFilter[0].toString(), updateRecordFieldsByFilter[updateRecordFieldsByFilter.length-1].toString(), new Object[]{}, null);
     }   
     

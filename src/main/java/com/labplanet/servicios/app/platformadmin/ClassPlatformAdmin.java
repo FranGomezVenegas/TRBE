@@ -35,7 +35,8 @@ public class ClassPlatformAdmin {
     private Boolean functionFound=false;
 
     public ClassPlatformAdmin(HttpServletRequest request, PlatformAdminAPIActionsEndpoints endPoint){
-        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName = instanceForActions.getProcedureInstance();
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
@@ -136,7 +137,16 @@ public class ClassPlatformAdmin {
                     actionDiagnoses=UserAndRolesViews.updateUserShift(newShift, userName);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()) && userName.length()>0)    
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), userName);
+/*                    JSONObject jsonObj = new JSONObject();
+                    rObj=RelatedObjects.getInstanceForActions();
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), instanceForActions.getToken().getUserName());
+                    jsonObj = new JSONObject();
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[0], rObj.getRelatedObject());                
+                    jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, instanceForActions.getToken());
+                    rObj.killInstance();
+                    LPFrontEnd.servletReturnSuccess(request, null, jsonObj);*/
                     break;
+
                 default:
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);   
                     return;

@@ -7,6 +7,9 @@ package functionaljavaa.sop;
 
 import com.labplanet.servicios.app.SopUserAPI.SopUserAPIEndpoints;
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsData;
 import functionaljavaa.businessrules.BusinessRules;
@@ -25,6 +28,7 @@ import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 
@@ -439,9 +443,8 @@ public class UserSop {
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsData.UserSop.USER_NAME.getName()); 
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, UserAndRolesViews.getUserByPerson(personName));}
         
-        Object[] diagnosis = Rdbms.insertRecordInTable(schemaName, TblsData.TablesData.USER_SOP.getTableName(), insertFieldNames, insertFieldValues);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
-            return diagnosis;
+        RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsData.TablesData.USER_SOP, insertFieldNames, insertFieldValues);
+        if (!insertDiagn.getRunSuccess()) return insertDiagn.getApiMessage();
         else
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SopUserAPIEndpoints.ADD_SOP_TO_USER.getSuccessMessageCode(), new Object[]{sopIdFieldValue, personName, schemaName});
     }    
@@ -485,10 +488,11 @@ public class UserSop {
             updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
             updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
         }
-        
-        Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.TablesData.USER_SOP.getTableName(), 
-            updFldNames, updFldValues,     
-            new String[]{TblsData.UserSop.SOP_NAME.getName(), TblsData.UserSop.USER_NAME.getName()}, new Object[]{sopName, userName} );
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsData.UserSop.SOP_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sopName}, "");
+	sqlWhere.addConstraint(TblsData.UserSop.USER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, "");
+	Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.USER_SOP,
+            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.USER_SOP, updFldNames), updFldValues, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userSopDiagnostic[0].toString())){
             userSopDiagnostic[userSopDiagnostic.length-1]="Sop assigned";
         }

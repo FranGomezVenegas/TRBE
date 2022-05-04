@@ -10,6 +10,7 @@ import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMConfig;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.TblsCnfg;
 import databases.features.Token;
 import functionaljavaa.audit.LotAudit;
@@ -236,13 +237,13 @@ public class DataInspectionLot {
             lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.NAME.getName());    
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, lotName);                         
             
-            diagnoses = Rdbms.insertRecordInTable(schemaDataName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotFieldName, lotFieldValue);
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, lotFieldName, lotFieldValue);
+            if (!insertRecordInTable.getRunSuccess()){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
             }                                
             Object[] fieldsOnLogLot = LPArray.joinTwo1DArraysInOneOf1DString(lotFieldName, lotFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, diagnoses[diagnoses.length-1]);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, insertRecordInTable.getNewRowId());
 
             if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){return diagnoses;}
             

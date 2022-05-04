@@ -21,6 +21,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import databases.Rdbms;
 import databases.TblsCnfg;
+import databases.TblsReqs;
 import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
@@ -544,9 +545,6 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
  * @param elementsDev StackTraceElement[] - Provides info from the context such as the ClassName + MethodName + LineNumber
  */
     public static void addJavaClassDoc(String[] fields, Object[] values, StackTraceElement[] elementsDev) {
-                
-        String schemaName = GlobalVariables.Schemas.REQUIREMENTS.getName();
-        String tableName = "java_class_doc";
         String[] fldName = new String[0];
         Object[] fldValue = new Object[0];
         String currField = "";        
@@ -575,9 +573,9 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         getFilterFldName = LPArray.addValueToArray1D(getFilterFldName, currField);      getFilterFldValue = LPArray.addValueToArray1D(getFilterFldValue, fldValue[specialFieldIndex]);     
         
         String[] getFields = new String[] {"id",ApiMessageReturn.JAVADOC_LINE_FLDNAME,"last_update_on","created_on"};        
-        Object[][] diagnoses = Rdbms.getRecordFieldsByFilter(schemaName, tableName, getFilterFldName, getFilterFldValue, getFields);
+        Object[][] diagnoses = Rdbms.getRecordFieldsByFilter(TblsReqs.TablesReqs.JAVA_CLASS_DOC.getRepositoryName(), TblsReqs.TablesReqs.JAVA_CLASS_DOC.getTableName(), getFilterFldName, getFilterFldValue, getFields);
         if (LAB_FALSE.equalsIgnoreCase(diagnoses[0][0].toString())){        
-            Rdbms.insertRecordInTable(schemaName, tableName, fldName, fldValue);
+            Rdbms.insertRecordInTable(TblsReqs.TablesReqs.JAVA_CLASS_DOC, fldName, fldValue);
         }else{
             String[] fieldsUpdate = new String[0];
             Object[] fieldsUpdateValue = new Object[0];
@@ -585,10 +583,15 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             if (elementsDev[1].getLineNumber()!=(Integer) fldValue[Arrays.asList(fldName).indexOf(currField)]){
                 fieldsUpdate = LPArray.addValueToArray1D(fieldsUpdate, currField);        fieldsUpdateValue = LPArray.addValueToArray1D(fieldsUpdateValue, elementsDev[1].getLineNumber());                 
             }
-            if (fieldsUpdate.length>0){Rdbms.updateRecordFieldsByFilter(schemaName, tableName, fieldsUpdate, fieldsUpdateValue, getFilterFldName, getFilterFldValue);
-            }
+/*            if (fieldsUpdate.length>0){
+                SqlWhere sqlWhere = new SqlWhere(tableName, getFilterFldName, getFilterFldValue);
+                sqlWhere.addConstraint(TblsEnvMonitConfig.InstrIncubator.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{instName}, "");
+                updateRecordFieldsByFilter=Rdbms.updateRecordFieldsByFilter(tableName,
+                    EnumIntTableFields.getTableFieldsFromString(tableName, fieldsUpdate), fieldsUpdateValue, sqlWhere, null);
+            } */            
         }    
     }
+    
 /**
  * The schema names are instances per procedure + nature of the data (config/data/requirements...)
  * This method has as a purpose on helping on build the concatenation
@@ -744,12 +747,11 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
 
 /**
  * When logging/creating objects that conceptually requires one template to define its nature then one call to this method is required
- * to get all those parameters and log/create the new instance accordingly.
- * Each procedure has a specific parameter field called in the way of "procedureName-config" containing a peer entries in the way of:
- *      tableName__configTableName = Specify the table name where the template is stored.
- *      tableName_configTableKeyFields = Specify the mandatory fields that should be present in the peer fieldNames/fieldValues
- *                                       to link the new object with its template in the proper and expected way. 
- * @param schemaName - Schema where the template belongs to
+ * to get all those parameters and log/create the new instance accordingly.Each procedure has a specific parameter field called in the way of "procedureName-config" containing a peer entries in the way of:
+      tableName__configTableName = Specify the table name where the template is stored.
+ * tableName_configTableKeyFields = Specify the mandatory fields that should be present in the peer fieldNames/fieldValues
+                                       to link the new object with its template in the proper and expected way.
+     * @param procInstanceName 
  * @param fieldNames - Fields for the filter to find and get the proper template.
  * @param fieldValues - Values for the fields described above.
  * @param tableName. Table where the template is stored in.
@@ -916,8 +918,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.ACTION_NAME.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, actionName);
         }        
-        Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName(), 
-            fldNames, fldValues);
+        Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.ZZZ_DB_ERROR, fldNames, fldValues);
   }    
   
     /**
@@ -954,8 +955,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             fldNames=LPArray.addValueToArray1D(fldNames, TblsCnfg.zzzPropertiesMissing.ACTION_NAME.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, actionName);
         }
-        Object[] insertRecordInTable = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName(), 
-                fldNames, fldValues);
+        Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR, fldNames, fldValues);
     }      
     public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){
         String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues", true); 
