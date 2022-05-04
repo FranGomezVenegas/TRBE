@@ -47,11 +47,15 @@ public class ClassProject {
                     String fieldValue=argValues[2].toString();
                     String[] fieldNames=new String[0];
                     Object[] fieldValues=new Object[0];
-                    if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
-                    if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
-                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
-                        actionDiagnoses=fieldValues;
-                    else
+                    if (fieldName.length()>0 && fieldValue.length()>0){
+                        if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
+                        if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
+                        if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                            actionDiagnoses=fieldValues;
+                            break;
+                        }
+                    }
+
                     if ("PROJECT_NEW".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses= prj.createProject(projectName, fieldNames, fieldValues,  false);
                     if ("PROJECT_UPDATE".equalsIgnoreCase(endPoint.getName()))
