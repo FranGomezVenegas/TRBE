@@ -20,7 +20,7 @@ public final class GenomaConfigVariables {
     
 public static Object[] variableSetAddVariable(String variableSetName, String variableName) {
     
-    Object[] updateFamilyIndividuals=addObjectToUnstructuredField(GlobalVariables.Schemas.CONFIG.getName(), TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), 
+    Object[] updateFamilyIndividuals=addObjectToUnstructuredField(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET, 
             new String[]{TblsGenomaConfig.VariablesSet.NAME.getName()}, new Object[]{variableSetName}, 
             TblsGenomaConfig.VariablesSet.VARIABLES_LIST.getName(), variableName, variableName);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
@@ -36,7 +36,7 @@ public static Object[] variableSetAddVariable(String variableSetName, String var
 public static Object[] variableSetRemoveVariable(String variableSetName, String variableName) {
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     
-    Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(GlobalVariables.Schemas.CONFIG.getName(), TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), 
+    Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET, 
             new String[]{TblsGenomaConfig.VariablesSet.NAME.getName()}, new Object[]{variableSetName}, 
             TblsGenomaConfig.VariablesSet.VARIABLES_LIST.getName(), TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), variableName, variableName);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {

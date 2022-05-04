@@ -9,12 +9,16 @@ import com.labplanet.servicios.modulegenoma.TblsGenomaData;
 import static functionaljavaa.modulegenoma.GenomaUtilities.*;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.features.Token;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -190,12 +194,12 @@ public Object[] createStudySamplesSet( String studyName, String sampleSetName, S
         fieldsName = LPArray.addValueToArray1D(fieldsName, "config_version");    
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
-        
-        diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), fieldsName, fieldsValue);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, fieldsName, fieldsValue);
+        diagnosesProj = insertRecordInTable.getApiMessage();
+        if (insertRecordInTable.getRunSuccess())
             for (String currSample: samples)
                 studySamplesSetAddSample(studyName, sampleSetName, currSample);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
+        if (insertRecordInTable.getRunSuccess())
             GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.NEW_STUDY_SAMPLES_SET.toString(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return diagnosesProj;  
@@ -215,13 +219,12 @@ public Object[] createStudySamplesSet( String studyName, String sampleSetName, S
 }    
 
 public Object[] studySamplesSetActivate( String studyName, String sampleSetName){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     String[] fieldsName=new String[]{TblsGenomaData.StudySamplesSet.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.StudySamplesSet.NAME.getName()}, new Object[]{sampleSetName});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.StudySamplesSet.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleSetName}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.ACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -229,17 +232,16 @@ public Object[] studySamplesSetActivate( String studyName, String sampleSetName)
 }    
 
 public Object[] studySamplesSetDeActivate(String studyName, String sampleSetName){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
     
     String[] fieldsName=new String[]{TblsGenomaData.StudySamplesSet.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{false};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), 
-            fieldsName, fieldsValue, 
-            new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName(), TblsGenomaData.StudySamplesSet.NAME.getName()}, new Object[]{studyName, sampleSetName});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.StudySamplesSet.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.StudySamplesSet.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleSetName}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -247,17 +249,17 @@ public Object[] studySamplesSetDeActivate(String studyName, String sampleSetName
 }   
 
 public Object[] studySamplesSetUpdate( String studyName, String sampleSetName, String[] fieldsName, Object[] fieldsValue){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
     Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), fieldsName);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString()))
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), 
-            fieldsName, fieldsValue, 
-            new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName(), TblsGenomaData.StudySamplesSet.NAME.getName()}, new Object[]{studyName, sampleSetName});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.StudySamplesSet.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.StudySamplesSet.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleSetName}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.UPDATE_STUDY_SAMPLES_SET.toString(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -268,7 +270,7 @@ public Object[] studySamplesSetAddSample(String studyName, String sampleSetName,
     Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;
     
-    Object[] updateSamplesSetSamples=addObjectToUnstructuredField(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), 
+    Object[] updateSamplesSetSamples=addObjectToUnstructuredField(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, 
             new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName(), TblsGenomaData.StudySamplesSet.NAME.getName()}, new Object[]{studyName, sampleSetName}, 
             TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName(), sampleId, sampleId);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
@@ -285,7 +287,7 @@ public Object[] studySamplesSetRemoveSample(String studyName, String sampleSetNa
     Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;
 
-    Object[] updateSamplesSetSamples=removeObjectToUnstructuredField(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), 
+    Object[] updateSamplesSetSamples=removeObjectToUnstructuredField(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, 
             new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName(), TblsGenomaData.StudySamplesSet.NAME.getName()}, new Object[]{studyName, sampleSetName}, 
             TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), sampleId, sampleId);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {

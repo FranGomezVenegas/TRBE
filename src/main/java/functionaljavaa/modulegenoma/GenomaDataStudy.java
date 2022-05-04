@@ -8,6 +8,9 @@ package functionaljavaa.modulegenoma;
 import com.labplanet.servicios.modulegenoma.TblsGenomaData;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
@@ -16,6 +19,7 @@ import functionaljavaa.modulegenoma.GenomaDataAudit.DataGenomaProjectAuditEvents
 import functionaljavaa.modulegenoma.GenomaDataAudit.DataGenomaStudyAuditEvents;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -192,14 +196,14 @@ public Object[] createStudy(String studyName, String projectName, String[] field
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
         
-        diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.TablesGenomaData.STUDY.getTableName(), fieldsName, fieldsValue);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())){
+        RdbmsObject insDiagnosesProj = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY, fieldsName, fieldsValue);
+        if (insDiagnosesProj.getRunSuccess()){
             GenomaDataAudit.studyAuditAdd(DataGenomaStudyAuditEvents.NEW_STUDY.toString(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName, 
                 studyName, projectName, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.STUDY_ADDED.toString(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName, 
                 projectName, studyName, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         }
-        return diagnosesProj;  
+        return insDiagnosesProj.getApiMessage();  
     }    
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
@@ -216,13 +220,12 @@ public Object[] createStudy(String studyName, String projectName, String[] field
 }    
 
 public Object[] studyActivate(String studyName){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     String[] fieldsName=new String[]{TblsGenomaData.Study.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.Study.NAME.getName()}, new Object[]{studyName});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.Study.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.studyAuditAdd(DataGenomaStudyAuditEvents.ACTIVATE_STUDY.toString(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -230,16 +233,14 @@ public Object[] studyActivate(String studyName){
 }    
 
 public Object[] studyDeActivate(String studyName){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     Object[] projOpenToChanges=isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
-    
     String[] fieldsName=new String[]{TblsGenomaData.Study.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{false};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.Study.NAME.getName()}, new Object[]{studyName});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.Study.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.studyAuditAdd(DataGenomaStudyAuditEvents.DEACTIVATE_STUDY.toString(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -247,16 +248,15 @@ public Object[] studyDeActivate(String studyName){
 }   
 
 public Object[] studyUpdate(String studyName, String[] fieldsName, Object[] fieldsValue){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     Object[] projOpenToChanges=isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
-
     Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), fieldsName);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString()))
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.Study.NAME.getName()}, new Object[]{studyName});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.Study.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.studyAuditAdd(DataGenomaStudyAuditEvents.ACTIVATE_STUDY.toString(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -277,9 +277,9 @@ public Object[] studyUserManagement(String actionName, String studyName, String 
         case "STUDY_ADD_USER":
             fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyUsers.ACTIVE.getName());
             fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName()));            
-            diagnosesProj = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName(), 
-                fieldsName, fieldsValue);
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
+            RdbmsObject insDiagnosesProj = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_USERS, fieldsName, fieldsValue);
+            diagnosesProj=insDiagnosesProj.getApiMessage();
+            if (insDiagnosesProj.getRunSuccess())
                 GenomaDataAudit.studyAuditAdd(actionName, TblsGenomaData.TablesGenomaData.STUDY.getTableName(), studyName, 
                     studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);    
             break;
@@ -296,16 +296,16 @@ public Object[] studyUserManagement(String actionName, String studyName, String 
 } 
 
 public Object[] studyUserActivate(String studyName, String userName, String userRole){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     Object[] projOpenToChanges=isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
-
     String[] fieldsName=new String[]{TblsGenomaData.StudyUsers.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.StudyUsers.STUDY.getName(), TblsGenomaData.StudyUsers.PERSON.getName(), TblsGenomaData.StudyUsers.ROLES.getName()}, new Object[]{studyName, userName, userRole});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.StudyUsers.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.StudyUsers.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.StudyUsers.ROLES, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userRole}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_USERS,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_USERS, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.studyAuditAdd(DataGenomaStudyAuditEvents.STUDY_USER_ACTIVATE.toString(), TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName(), studyName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -313,15 +313,17 @@ public Object[] studyUserActivate(String studyName, String userName, String user
 }    
 
 public Object[] studyUserDeActivate(String studyName, String userName, String userRole){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Object[] projOpenToChanges=isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
 
     String[] fieldsName=new String[]{TblsGenomaData.StudyUsers.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{false};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.StudyUsers.STUDY.getName(), TblsGenomaData.StudyUsers.PERSON.getName(), TblsGenomaData.StudyUsers.ROLES.getName()}, new Object[]{studyName, userName, userRole});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.StudyUsers.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.StudyUsers.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.StudyUsers.ROLES, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userRole}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_USERS,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_USERS, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.studyAuditAdd(DataGenomaStudyAuditEvents.STUDY_USER_DEACTIVATE.toString(), TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName(), studyName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);

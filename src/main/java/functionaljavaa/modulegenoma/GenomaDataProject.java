@@ -8,6 +8,9 @@ package functionaljavaa.modulegenoma;
 import com.labplanet.servicios.modulegenoma.TblsGenomaData;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
@@ -16,6 +19,7 @@ import functionaljavaa.modulegenoma.GenomaDataAudit.DataGenomaProjectAuditEvents
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -34,9 +38,9 @@ public class GenomaDataProject {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -202,12 +206,11 @@ public Object[] createProject(String projectName, String[] fieldsName, Object[] 
         fieldsName = LPArray.addValueToArray1D(fieldsName, "config_version");    
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
-        
-        diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, tableName, fieldsName, fieldsValue);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName, fieldsValue);
+        if (!insertRecordInTable.getRunSuccess()) return insertRecordInTable.getApiMessage();
             GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.NEW_PROJECT.toString(), tableName, projectName, 
                 projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
-        return diagnosesProj;  
+        return insertRecordInTable.getApiMessage();
     }    
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
@@ -230,9 +233,10 @@ public Object[] projectActivate(String projectName){
 
     String[] fieldsName=new String[]{TblsGenomaData.Project.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.Project.NAME.getName()}, new Object[]{projectName});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.ACTIVATE_PROJECT.toString(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -247,9 +251,10 @@ public Object[] projectDeActivate(String projectName){
     
     String[] fieldsName=new String[]{TblsGenomaData.Project.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{false};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.Project.NAME.getName()}, new Object[]{projectName});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.DEACTIVATE_PROJECT.toString(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -264,8 +269,10 @@ public Object[] projectUpdate(String projectName, String[] fieldsName, Object[] 
     Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), fieldsName);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString()))
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.Project.NAME.getName()}, new Object[]{projectName});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.ACTIVATE_PROJECT.toString(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -285,9 +292,9 @@ public Object[] projectUserManagement(String actionName, String projectName, Str
         case "PROJECT_ADD_USER":
             fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.ProjectUsers.ACTIVE.getName());
             fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()));            
-            diagnosesProj = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(), 
-                fieldsName, fieldsValue);
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
+            RdbmsObject insertRecordInTable=Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName, fieldsValue);
+            diagnosesProj=insertRecordInTable.getApiMessage();
+            if (!insertRecordInTable.getRunSuccess()) return insertRecordInTable.getApiMessage();
                 GenomaDataAudit.projectAuditAdd(actionName, TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName, 
                     projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);    
             break;
@@ -308,9 +315,12 @@ public Object[] projectUserActivate(String projectName, String userName, String 
 
     String[] fieldsName=new String[]{TblsGenomaData.ProjectUsers.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.ProjectUsers.PROJECT.getName(), TblsGenomaData.ProjectUsers.PERSON.getName(), TblsGenomaData.ProjectUsers.ROLES.getName()}, new Object[]{projectName, userName, userRole});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.ROLES, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userRole}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.PROJECT_USER_ACTIVATE.toString(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -321,12 +331,14 @@ public Object[] projectUserDeActivate(String projectName, String userName, Strin
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Object[] projOpenToChanges=isProjectOpenToChanges(projectName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
-
     String[] fieldsName=new String[]{TblsGenomaData.ProjectUsers.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{false};
-    
-    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(), 
-            fieldsName, fieldsValue, new String[]{TblsGenomaData.ProjectUsers.PROJECT.getName(), TblsGenomaData.ProjectUsers.PERSON.getName(), TblsGenomaData.ProjectUsers.ROLES.getName()}, new Object[]{projectName, userName, userRole});
+    SqlWhere sqlWhere = new SqlWhere();
+    sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, "");
+    sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.ROLES, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userRole}, "");
+    Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
+        EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
         GenomaDataAudit.projectAuditAdd(DataGenomaProjectAuditEvents.PROJECT_USER_DEACTIVATE.toString(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(), projectName, 
             projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);

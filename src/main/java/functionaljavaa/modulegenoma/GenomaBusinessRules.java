@@ -53,6 +53,7 @@ public final class GenomaBusinessRules {
         private final ArrayList<String[]> preReqs;
     }    
     public static Boolean activateOnCreation(String schemaSuffix, String tableName){
+if (1==1) return true;        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaSuffix);
         

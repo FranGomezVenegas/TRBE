@@ -7,9 +7,8 @@ package functionaljavaa.modulegenoma;
 
 import com.labplanet.servicios.modulegenoma.TblsGenomaDataAudit;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.TblsApp;
-//import databases.TblsData;
-//import databases.TblsDataAudit;
 import databases.features.Token;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
@@ -19,7 +18,6 @@ import functionaljavaa.requirement.Requirement;
 import lbplanet.utilities.LPDate;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 /**
  * 
  * @author Fran Gomez
@@ -31,11 +29,11 @@ public class GenomaDataAudit {
      *
      */
     public enum DataGenomaProjectAuditEvents implements EnumIntAuditEvents{
-        NEW_PROJECT, ACTIVATE_PROJECT, DEACTIVATE_PROJECT, PROJECT_ADD_USER, PROJECT_REMOVE_USER, PROJECT_CHANGE_USER_ROLE, PROJECT_USER_ACTIVATE, PROJECT_USER_DEACTIVATE, STUDY_ADDED
+        NEW_PROJECT, UPDATED_PROJECT, ACTIVATE_PROJECT, DEACTIVATE_PROJECT, PROJECT_ADD_USER, PROJECT_REMOVE_USER, PROJECT_CHANGE_USER_ROLE, PROJECT_USER_ACTIVATE, PROJECT_USER_DEACTIVATE, STUDY_ADDED
     }
 
-    public enum DataGenomaStudyAuditEvents {
-        NEW_STUDY, ACTIVATE_STUDY, DEACTIVATE_STUDY, STUDY_ADD_USER, STUDY_REMOVE_USER, STUDY_CHANGE_USER_ROLE, STUDY_USER_ACTIVATE, STUDY_USER_DEACTIVATE,
+    public enum DataGenomaStudyAuditEvents implements EnumIntAuditEvents{
+        NEW_STUDY, UPDATE_STUDY, ACTIVATE_STUDY, DEACTIVATE_STUDY, STUDY_ADD_USER, STUDY_REMOVE_USER, STUDY_CHANGE_USER_ROLE, STUDY_USER_ACTIVATE, STUDY_USER_DEACTIVATE,
         NEW_STUDY_INDIVIDUAL, ACTIVATE_STUDY_INDIVIDUAL, DEACTIVATE_STUDY_INDIVIDUAL, UPDATE_STUDY_INDIVIDUAL,
         NEW_STUDY_FAMILY, ACTIVATE_STUDY_FAMILY, DEACTIVATE_STUDY_FAMILY, UPDATE_STUDY_FAMILY, STUDY_FAMILY_ADDED_INDIVIDUAL, STUDY_FAMILY_REMOVED_INDIVIDUAL,
         ADD_VARIABLE_SET_TO_STUDY_OBJECT, STUDY_OBJECT_SET_VARIABLE_VALUE,
@@ -122,15 +120,14 @@ public class GenomaDataAudit {
         jsonString = sampleJsonString(procInstanceName+"-data", sampleId);
         if ((jsonString!=null)){
         //if (!jsonString.isEmpty()){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, "picture_after");
-            fieldValues = LPArray.addValueToArray1D(fieldValues, jsonString);            
+        fieldNames = LPArray.addValueToArray1D(fieldNames, "picture_after");
+        fieldValues = LPArray.addValueToArray1D(fieldValues, jsonString);            
         }
-*/        
+         */        
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
-//        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
-
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsGenomaDataAudit.TablesGenomaDataAudit.PROJECT.getTableName(), 
-                fieldNames, fieldValues);
+//        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaDataAudit.TablesGenomaDataAudit.PROJECT, fieldNames, fieldValues);
+        return insertRecordInTable.getApiMessage();
     }
 
 /**
@@ -203,15 +200,14 @@ public class GenomaDataAudit {
         jsonString = sampleJsonString(procInstanceName+"-data", sampleId);
         if ((jsonString!=null)){
         //if (!jsonString.isEmpty()){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, "picture_after");
-            fieldValues = LPArray.addValueToArray1D(fieldValues, jsonString);            
+        fieldNames = LPArray.addValueToArray1D(fieldNames, "picture_after");
+        fieldValues = LPArray.addValueToArray1D(fieldValues, jsonString);            
         }
-*/        
+         */        
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
-//        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
-
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsGenomaDataAudit.TablesGenomaDataAudit.STUDY.getTableName(), 
-                fieldNames, fieldValues);
+//        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaDataAudit.TablesGenomaDataAudit.STUDY, fieldNames, fieldValues);
+        return insertRecordInTable.getApiMessage();
     }
     
 }
