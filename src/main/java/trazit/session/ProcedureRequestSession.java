@@ -64,9 +64,13 @@ public class ProcedureRequestSession {
     private Object[] appEncryptFields;
     private Object[] procedureEncryptFields;
     
+    private DbLogSummary dbLogSummary;
+    
+    
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, EnumIntEndpoints actionEndpoint, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
         try{
         if (request==null) return;
+        this.dbLogSummary=new DbLogSummary();
         this.newProcedureHashCodeGenerated=false;
         this.isQuery=isQuery;
         this.isPlatform=isPlatform;
@@ -218,7 +222,6 @@ public class ProcedureRequestSession {
                 this.errorMessage=mainMessage[0][0].toString();
                 //messages.addMainForError("db error", new Object[]{ex.getMessage()});
             }
-            
         }
     }
     
@@ -226,7 +229,15 @@ public class ProcedureRequestSession {
 //        LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
        // if (1==1) return;
 //        if (!this.isForQuery) 
+            Rdbms.closeTransaction(); 
             this.theSession=null;
+/*        if (this.getDbLogSummary()!=null){
+            Boolean hasAlters=this.getDbLogSummary().hasDbAlterActions();
+            if (hasAlters){
+                Integer numIns=this.getDbLogSummary().getNumInserts();
+            }
+        }*/
+
         if (this.getIsForQuery()!=null && !this.getIsForQuery()){
             this.token=null;
             this.previousToken=null;
@@ -490,6 +501,13 @@ return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_F
      */
     public Object[] getProcedureEncryptFields() {
         return procedureEncryptFields;
+    }
+
+    /**
+     * @return the dbLogSummary
+     */
+    public DbLogSummary getDbLogSummary() {
+        return dbLogSummary;
     }
 
 }

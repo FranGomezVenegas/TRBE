@@ -6,7 +6,6 @@
 package databases.features;
 
 import databases.TblsAppConfig;
-import databases.features.DbEncryption;
 import static databases.features.DbEncryption.encryptValue;
 import java.security.InvalidKeyException;
 import java.security.Key;

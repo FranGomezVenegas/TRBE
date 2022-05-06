@@ -15,6 +15,8 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.session.ApiMessageReturn;
+import trazit.session.DbLogSummary;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -114,6 +116,7 @@ public class SqlStatement {
     public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
+        DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         String queryWhere = "";
         schemaName = setSchemaName(schemaName);
         tableName = setSchemaName(tableName);
@@ -140,15 +143,18 @@ public class SqlStatement {
                 break;
             case "INSERT":
                 query = "insert into " + schemaName + "." + tableName + " (" + insertFieldNamesStr + ") values ( " + insertFieldValuesStr + ") ";
+                dbLogSummary.addInsert();
                 break;
             case "UPDATE":
                 String updateSetSectionStr=buildUpdateSetFields(setFieldNames);
                 query = "update " + schemaName + "." + tableName + " set " + updateSetSectionStr + " where " + queryWhere;
                 whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
+                dbLogSummary.addUpdate();
                 break;
             case "DELETE":                
                 query = "delete from " + schemaName + "." + tableName + " where " + queryWhere;
                 whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
+                dbLogSummary.addRemove();
                 break;
             default:
                 break;

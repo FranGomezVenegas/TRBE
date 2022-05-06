@@ -23,6 +23,7 @@ import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.DbLogSummary;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -122,6 +123,8 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
             EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
+        DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
+
         String queryWhere = "";
         Object[] schemaDiag=getTableSchema(tblObj, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaDiag[0].toString())) return null;
@@ -151,15 +154,18 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 break;
             case "INSERT":
                 query = "insert into " + schemaName + "." + tableName + " (" + insertFieldNamesStr + ") values ( " + insertFieldValuesStr + ") ";
+                dbLogSummary.addInsert();
                 break;
             case "UPDATE":
                 String updateSetSectionStr=buildUpdateSetFields(setFieldNames);
                 query = "update " + schemaName + "." + tableName + " set " + updateSetSectionStr + " where " + queryWhere;
                 whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
+                dbLogSummary.addUpdate();
                 break;
             case "DELETE":                
                 query = "delete from " + schemaName + "." + tableName + " where " + queryWhere;
                 whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
+                dbLogSummary.addRemove();
                 break;
             default:
                 break;
