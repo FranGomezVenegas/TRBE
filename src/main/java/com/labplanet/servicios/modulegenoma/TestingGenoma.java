@@ -7,8 +7,6 @@ package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
-import com.labplanet.servicios.modulesample.ClassSampleController;
-import com.labplanet.servicios.modulesample.ClassSampleQueriesController;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -35,7 +33,6 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
-import trazit.session.ApiMessageReturn;
 import trazit.session.ClassControllerActionsEndpointForTesting;
 
 /**
@@ -67,7 +64,7 @@ public class TestingGenoma extends HttpServlet {
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String table1Header = TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTablesHeaders();
+        String table1Header = TestingServletsConfig.DB_SCHEMADATA_GENOMA.getTablesHeaders();
         Integer table1NumArgs=13;
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
 
@@ -127,7 +124,7 @@ public class TestingGenoma extends HttpServlet {
                     functionEvaluation=(Object[]) clssStudyController.getFunctionDiagn();
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssStudyController.getRowArgsRows());                
-                    }else{                    
+/*                    }else{                    
                         ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                         if (clssSampleController.getFunctionFound()){
                             functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
@@ -146,7 +143,7 @@ public class TestingGenoma extends HttpServlet {
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                 fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
                             }
-                        }
+                        }*/
                     }
                 }
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}

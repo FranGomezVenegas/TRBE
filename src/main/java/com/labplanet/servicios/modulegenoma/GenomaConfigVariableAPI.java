@@ -97,36 +97,12 @@ public class GenomaConfigVariableAPI extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        
         String[] errObject = new String[]{"Servlet Genoma VariableAPI at " + request.getServletPath()};   
-
-//        Connection con = Rdbms.createTransactionWithSavePoint();        
- /*       if (con==null){
-             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
-             return;
-        }
-*/        
-/*        try {
-            con.rollback();
-            con.setAutoCommit(true);    
-        } catch (SQLException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }
-*/                    
-/*        try {
-            con.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-
         String schemaConfigName = LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());    
         Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
-
-            
             Object[] dataSample = null;
                     GenomaVariableAPIEndPoints endPoint = null;
-            //        Object[] actionDiagnoses = null;
                     try{
                         endPoint = GenomaVariableAPIEndPoints.valueOf(actionName.toUpperCase());
                     }catch(Exception e){
@@ -157,32 +133,18 @@ public class GenomaConfigVariableAPI extends HttpServlet {
                     return;                    
             }    
             if (dataSample!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
             }else{                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(dataSample);
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }            
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
             response.setStatus(401);
-            // Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
-            // release database resources
             try {
-                // Rdbms.closeRdbms();   
                 procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

@@ -199,9 +199,11 @@ public Object[] createStudySamplesSet( String studyName, String sampleSetName, S
         if (insertRecordInTable.getRunSuccess())
             for (String currSample: samples)
                 studySamplesSetAddSample(studyName, sampleSetName, currSample);
-        if (insertRecordInTable.getRunSuccess())
+        if (insertRecordInTable.getRunSuccess()){
             GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.NEW_STUDY_SAMPLES_SET.toString(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+            diagnosesProj=LPArray.addValueToArray1D(diagnosesProj, insertRecordInTable.getNewRowId());
+        }
         return diagnosesProj;  
     }    
     if (devMode){
