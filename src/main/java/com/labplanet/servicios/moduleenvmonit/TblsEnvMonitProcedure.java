@@ -26,26 +26,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsEnvMonitProcedure {
     
-    public enum EnvMonitTablesDeployment implements EnumIntModuleTablesDeployment{
-        CONFIG(TblsEnvMonitConfig.TablesEnvMonitConfig.values(), TablesConfig.values()),
-        CONFIG_AUDIT(TblsEnvMonitConfigAudit.TablesEnvMonitConfigAudit.values(), TablesCfgAudit.values()),
-        DATA(TblsEnvMonitData.TablesEnvMonitData.values(), TablesData.values()),
-        DATA_AUDIT(TblsEnvMonitDataAudit.TablesEnvMonitDataAudit.values(), TablesDataAudit.values()),
-        PROCEDURE(TblsEnvMonitProcedure.TablesEnvMonitProcedure.values(), TablesProcedure.values()),
-        PROCEDURE_CONFIG(TablesProcedureConfig.values(), null),
-        PROCEDURE_AUDIT(TablesProcedureAudit.values(), null),
-        ;
-        private EnvMonitTablesDeployment(EnumIntTables[] tableFieldsObj, EnumIntTables[] alternativeTblFldsObj){
-            this.tableFieldsObj=tableFieldsObj;
-            this.alternativeTableFieldsObj=alternativeTblFldsObj;
-        }
-        @Override        public EnumIntTables[] getMainTablesObj() {return this.tableFieldsObj;}
-        @Override        public EnumIntTables[] getAlternativeTablesObj() {return this.alternativeTableFieldsObj;}  
-        private final EnumIntTables[] tableFieldsObj;
-        private final EnumIntTables[] alternativeTableFieldsObj;
-    }
-    
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.PROCEDURE.getName();
     public enum TablesEnvMonitProcedure implements EnumIntTables{        
         DEVIATION_INCUBATOR(null, "deviation_incubator", SCHEMA_NAME, true, ProcedureDeviationIncubator.values(), 
             ProcedureDeviationIncubator.ID.getName(), new String[]{ProcedureDeviationIncubator.ID.getName()}, null, "ProcedureDeviationIncubator table"),
