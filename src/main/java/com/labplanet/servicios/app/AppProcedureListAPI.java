@@ -41,90 +41,28 @@ public class AppProcedureListAPI extends HttpServlet {
 
     public enum elementType{TREE_LIST, ICON_BUTTON, ICONS_GROUP}
     private enum iconPosition{UP, DOWN}
-    
-    /**
-     *
-     */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
-    
-    /**
-     *
-     */
     public static final String LABEL_ARRAY_PROCEDURES="procedures";
-
-    /**
-     *
-     */
     public static final String LABEL_ARRAY_PROC_EVENTS ="definition";
     public static final String LABEL_ARRAY_PROC_EVENTS_ICONS_UP ="icons_up";
     public static final String LABEL_ARRAY_PROC_EVENTS_ICONS_DOWN ="icons_down";
     public static final String LABEL_ARRAY_PROC_EVENTS_ERROR ="definition_returned_error";
-
-    /**
-     *
-     */
     public static final String LABEL_ARRAY_SOPS="sops";
     public static final String LABEL_ARRAY_SOP_LIST="sop_list";
-
-    /**
-     *
-     */
     public static final String LABEL_SOPS_PASSED="sops_passed";
-
-    /**
-     *
-     */
     public static final String LABEL_SOP_TOTAL="sop_total";
-
-    /**
-     *
-     */
     public static final String LABEL_SOP_NAME="sop_name";
-
-    /**
-     *
-     */
     public static final String LABEL_SOP_CERTIFICATION="SopCertification";
-
-    /**
-     *
-     */
     public static final String LBL_VAL_SOP_CERTIF_DISABLE="Disabled";
-
-    /**
-     *
-     */
     public static final String LABEL_SOP_TOTAL_COMPLETED="sop_total_completed";
-
-    /**
-     *
-     */
     public static final String LABEL_SOP_TOTAL_NOT_COMPLETED="sop_total_not_completed";
-
-    /**
-     *
-     */
     public static final String LABEL_ARRAY_SOP_LIST_INFO="sop_list_info";
-
-    /**
-     *
-     */
     public static final String LABEL_SOP_TOTAL_NO_SOPS="There are no SOPS for this form";
-    
-    /**
-     *
-     */
     public static final String LABEL_PROC_SCHEMA="procInstanceName";
-    
-    /**
-     *
-     */
     public static final String FIELD_NAME_SOP="sop";
-    
     public static final String PROC_FLD_NAME=TblsProcedure.ProcedureInfo.NAME.getName()
             +"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|label_en|label_es"+"|"+TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()
             +"|"+TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName();
-
     public static final String PROC_EVENT_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|branch_level|type|mode|esign_required|sop|order_number|parent_name|position|icon_name";
     public static final String PROC_NEW_EVENT_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|branch_level|type|mode|esign_required|sop|order_number|parent_name|position|icon_name|icon_name_when_not_certified";
     public static final String PROC_EVENT_ICONS_UP_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|icon_name|type|mode|esign_required|sop|position";
@@ -189,8 +127,6 @@ public class AppProcedureListAPI extends HttpServlet {
                         , PROC_FLD_NAME.split("\\|"));
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){
                     procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
-                    
-                    //procedure.put("name", procInfo[0][LPArray.valuePosicInArray(PROC_FLD_NAME.split("\\|"), TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName())]);
                     
                     String propValue = "NO";
                     
