@@ -38,6 +38,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 /**
  *
  * @author User
@@ -78,10 +79,10 @@ public class IncidentAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -117,52 +118,47 @@ public class IncidentAPI extends HttpServlet {
 
             IncidentAPIEndpoints endPoint = null;
             Object[] actionDiagnoses = null;
+            InternalMessage actionDiagnObj=null;
             try{
                 endPoint = IncidentAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
-        JsonObject jsonObject=null;
-        String[] argList=new String[]{};
-        LPAPIArguments[] arguments = endPoint.getArguments();
-        for (LPAPIArguments curArg: arguments){
-            argList=LPArray.addValueToArray1D(argList, curArg.getName());
-        }
-        argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
-        if (endPoint.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
-            JSONArray paramJArr=new JSONArray();
-            Enumeration params = request.getParameterNames();
-            String theBody="";
-            while(params.hasMoreElements()){
-                String paramName = (String)params.nextElement();
-                System.out.println(paramName + " = " + request.getParameter(paramName));
-                JSONObject jObj=new JSONObject();
-                jObj.put(paramName, request.getParameter(paramName));
-                paramJArr.add(jObj);
-                String parameterVal = request.getParameter(paramName);
-                if ((!LPArray.valueInArray(argList, paramName))) // || paramName.length()>0 && parameterVal.length()==0) || (paramName.equalsIgnoreCase(parameterVal)))
-                    theBody=paramName+parameterVal;
-            }            
-            Object[] objToJsonObj = convertToJsonObjectStringedObject(theBody);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
-                JSONObject jObj=new JSONObject();
-/*                ResponseMessages messages = procReqInstance.getMessages();
-                messages.addMain("problemsGettingReduxState", new Object[]{theBody, objToJsonObj[1]});
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, null, null);
-                //LPFrontEnd.servletReturnResponseError(request, response, ".Object: <*1*>", new Object[]{theBody}, language);                         
-               return;*/
-            }else        
-                jsonObject=(JsonObject) objToJsonObj[1];
-        }
-            
+            JsonObject jsonObject=null;
+            String[] argList=new String[]{};
+            LPAPIArguments[] arguments = endPoint.getArguments();
+            for (LPAPIArguments curArg: arguments){
+                argList=LPArray.addValueToArray1D(argList, curArg.getName());
+            }
+            argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
+            if (endPoint.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
+                JSONArray paramJArr=new JSONArray();
+                Enumeration params = request.getParameterNames();
+                String theBody="";
+                while(params.hasMoreElements()){
+                    String paramName = (String)params.nextElement();
+                    System.out.println(paramName + " = " + request.getParameter(paramName));
+                    JSONObject jObj=new JSONObject();
+                    jObj.put(paramName, request.getParameter(paramName));
+                    paramJArr.add(jObj);
+                    String parameterVal = request.getParameter(paramName);
+                    if ((!LPArray.valueInArray(argList, paramName))) // || paramName.length()>0 && parameterVal.length()==0) || (paramName.equalsIgnoreCase(parameterVal)))
+                        theBody=paramName+parameterVal;
+                }            
+                Object[] objToJsonObj = convertToJsonObjectStringedObject(theBody);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
+                    JSONObject jObj=new JSONObject();
+                }else        
+                    jsonObject=(JsonObject) objToJsonObj[1];
+            }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
             Integer incId=null;
             switch (endPoint){
                 case NEW_INCIDENT:
                     if (procReqInstance.getToken()==null)
                         procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
-                    
+
                     RdbmsObject diagnostic = AppIncident.newIncident(argValues[0].toString(), argValues[1].toString(), jsonObject);
                     if (diagnostic.getRunSuccess()){
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
@@ -174,34 +170,38 @@ public class IncidentAPI extends HttpServlet {
                 case CONFIRM_INCIDENT:
                     incId=(Integer) argValues[0];
                     AppIncident inc=new AppIncident(incId);
-                    actionDiagnoses = inc.confirmIncident(incId, argValues[1].toString());
+                    actionDiagnObj = inc.confirmIncident(incId, argValues[1].toString());
+                    actionDiagnoses=ApiMessageReturn.trapMessage(actionDiagnObj.getDiagnostic(), actionDiagnObj.getMessageCodeObj(), actionDiagnObj.getMessageCodeVariables());
                     break;
                 case ADD_NOTE_INCIDENT:
                     incId=(Integer) argValues[0];
                     inc=new AppIncident(incId);
                     String newNote=argValues[2].toString();
-                    actionDiagnoses = inc.addNoteIncident(incId, argValues[1].toString(), newNote);
+                    actionDiagnObj = inc.addNoteIncident(incId, argValues[1].toString(), newNote);
+                    actionDiagnoses=ApiMessageReturn.trapMessage(actionDiagnObj.getDiagnostic(), actionDiagnObj.getMessageCodeObj(), actionDiagnObj.getMessageCodeVariables());
                     break;                    
                 case CLOSE_INCIDENT:
                     incId=(Integer) argValues[0];
                     inc=new AppIncident(incId);
-                    actionDiagnoses = inc.closeIncident(incId, argValues[1].toString());
+                    actionDiagnObj = inc.closeIncident(incId, argValues[1].toString());
+                    actionDiagnoses=ApiMessageReturn.trapMessage(actionDiagnObj.getDiagnostic(), actionDiagnObj.getMessageCodeObj(), actionDiagnObj.getMessageCodeVariables());
                     break;                    
                 case REOPEN_INCIDENT:
                     incId=(Integer) argValues[0];
                     inc=new AppIncident(incId);
-                    actionDiagnoses = inc.reopenIncident(incId, argValues[1].toString());
+                    actionDiagnObj = inc.reopenIncident(incId, argValues[1].toString());
+                    actionDiagnoses=ApiMessageReturn.trapMessage(actionDiagnObj.getDiagnostic(), actionDiagnObj.getMessageCodeObj(), actionDiagnObj.getMessageCodeVariables());
                     break;                    
             }    
-            if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
-            }else{
-                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), incId);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{incId}, rObj.getRelatedObject());
-                rObj.killInstance();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }           
+        if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, actionDiagnObj.getMessageCodeObj(), actionDiagnObj.getMessageCodeVariables());   
+        }else{
+            RelatedObjects rObj=RelatedObjects.getInstanceForActions();
+            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), incId);                
+            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{incId}, rObj.getRelatedObject());
+            rObj.killInstance();
+            LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+        }           
         }catch(Exception e){   
             // Rdbms.closeRdbms();                   
             procReqInstance.killIt();
