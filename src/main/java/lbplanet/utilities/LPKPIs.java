@@ -11,7 +11,6 @@ import databases.SqlStatement;
 import databases.TblsData;
 import java.util.Date;
 import javax.sql.rowset.CachedRowSet;
-import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
@@ -59,7 +58,7 @@ public final class LPKPIs {
             JSONObject jObj = new JSONObject();
             JSONArray dataJSONArr = new JSONArray();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())){
-                jObj= noRecordsInTableMessage();
+                jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
             }else{
                 for (Object[] curRec: dataInfo){
                     jObj= LPJson.convertArrayRowToJSONObject(curFldsToRetrieveArr, curRec);
@@ -133,7 +132,7 @@ public final class LPKPIs {
         JSONObject jObj = new JSONObject();
         JSONArray dataJSONArr = new JSONArray();
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())){
-        jObj= noRecordsInTableMessage();
+        jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
     }else{
         for (Object[] curRec: dataInfo){
             jObj= LPJson.convertArrayRowToJSONObject(fldToRetrieve, curRec);
