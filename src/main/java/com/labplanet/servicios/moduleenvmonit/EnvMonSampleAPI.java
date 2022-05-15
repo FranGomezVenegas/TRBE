@@ -181,41 +181,13 @@ public class EnvMonSampleAPI extends HttpServlet {
         private final JsonArray outputObjectTypes;
     }
 
-    /**
-     *
-     */
     public static final String PARAMETER_PROGRAM_SAMPLE_TEMPLATE="sampleTemplate";
-
-    /**
-     *
-     */
-    public static final String PARAMETER_PROGRAM_SAMPLE_TEMPLATE_VERSION="sampleTemplateVersion";       
-
-    /**
-     *
-     */
+    public static final String PARAMETER_PROGRAM_SMP_TMP_VERSION="sampleTemplateVersion";       
     public static final String PARAMETER_NUM_SAMPLES_TO_LOG="numSamplesToLog";
-
-    /**
-     *
-     */
     public static final String PARAMETER_PROGRAM_FIELD_NAME="fieldName";
-
-    /**
-     *
-     */
     public static final String PARAMETER_PROGRAM_FIELD_VALUE="fieldValue";    
-
-    /**
-     *
-     */
-    public static final String PARAMETER_PROGRAM_SAMPLE_PROGRAM_FIELD="programName"; 
-    
-    /**
-     *
-     */
+    public static final String PARAMTR_PROGRM_SMP_PROGRM_FLD="programName"; 
     public static final String TABLE_SAMPLE_PROGRAM_FIELD="program"; 
-
   /**
    * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
    *
@@ -245,7 +217,6 @@ public class EnvMonSampleAPI extends HttpServlet {
             }                
             ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActionsWithEndpoint(request, response, endPoint, false);
             if (procReqInstance.getHasErrors()){
-    //            procReqInstance.killIt();
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
                 return;
@@ -254,10 +225,6 @@ public class EnvMonSampleAPI extends HttpServlet {
             if (clssSmp.getEndpointExists()){
                 Object[] diagnostic=clssSmp.getDiagnostic();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-    /*                Rdbms.rollbackWithSavePoint();
-                    if (!con.getAutoCommit()){
-                        con.rollback();
-                        con.setAutoCommit(true);}                */
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
                 }else{
                     JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointSmp, clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
@@ -267,7 +234,6 @@ public class EnvMonSampleAPI extends HttpServlet {
         }        
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActionsWithEndpoint(request, response, endPoint, false);
         if (procReqInstance.getHasErrors()){
-//            procReqInstance.killIt();
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
@@ -288,36 +254,11 @@ public class EnvMonSampleAPI extends HttpServlet {
         Integer resultId=0;
         if (resultIdStr!=null && resultIdStr.length()>0) sampleId=Integer.valueOf(resultIdStr);
 
-//        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
-        
         Object[] sampleAuditRevision=sampleAuditRevisionPassByAction(procInstanceName, actionName, sampleId, testId, resultId);     
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())){  
-//            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, sampleAuditRevision);
-            //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language);              
             return;                             
         }  
-//        Connection con = Rdbms.createTransactionWithSavePoint();        
- /*       if (con==null){
-             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
-             return;
-        }
-*/        
-/*        try {
-            con.rollback();
-            con.setAutoCommit(true);    
-        } catch (SQLException ex) {
-            Logger.getLogger(EnvMonAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-*/                    
-/*        try {
-            con.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-
-//        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
-//        Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
 
             Object[] areMandatoryParamsInResponse=new Object[]{};
@@ -332,10 +273,6 @@ public class EnvMonSampleAPI extends HttpServlet {
             if (clss.getEndpointExists()){
                 Object[] diagnostic=clss.getDiagnostic();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-    /*                Rdbms.rollbackWithSavePoint();
-                    if (!con.getAutoCommit()){
-                        con.rollback();
-                        con.setAutoCommit(true);}                */     
                     String errorCode =diagnostic[4].toString();
                     Object[] msgVariables=clss.getMessageDynamicData();
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, errorCode, msgVariables);               
@@ -359,10 +296,6 @@ public class EnvMonSampleAPI extends HttpServlet {
                 if (clssSmp.getEndpointExists()){
                     Object[] diagnostic=clssSmp.getDiagnostic();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-        //                Rdbms.rollbackWithSavePoint();
-        //                if (!con.getAutoCommit()){
-        //                    con.rollback();
-        //                    con.setAutoCommit(true);}                
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
                     }else{
                         JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
@@ -371,13 +304,6 @@ public class EnvMonSampleAPI extends HttpServlet {
                 }
             }
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
@@ -385,7 +311,6 @@ public class EnvMonSampleAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
-//                con.close();
                 procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
