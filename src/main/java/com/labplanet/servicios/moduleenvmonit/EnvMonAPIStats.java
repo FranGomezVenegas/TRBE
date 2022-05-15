@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
-import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import static lbplanet.utilities.LPKPIs.getKPIs;
@@ -292,7 +291,7 @@ public class EnvMonAPIStats extends HttpServlet {
                             new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{prodLotName},
                             new String[]{TblsEnvMonitData.ProductionLot.CREATED_ON.getName()+" desc"} ); 
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
-                             jObj= noRecordsInTableMessage();                    
+                             jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);                    
                         }else{
                            for (Object[] curRec: prodLotInfo){
                              jObj= LPJson.convertArrayRowToJSONObject(prodLotFieldToRetrieveArr, curRec);
@@ -485,7 +484,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 jObj=new JSONObject();
                 JSONArray sampleJsonArr = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
-                    jObj= noRecordsInTableMessage();                    
+                    jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);                    
                 }else{                       
                     for (Object[] curRec: sampleInfo){
                         jObj= LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRec);
@@ -563,7 +562,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 jObj=new JSONObject();
                 JSONArray investigationJsonArr = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString())){
-                    jObj= noRecordsInTableMessage();                    
+                    jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);                    
                 }else{                       
                     for (Object[] curRec: investigationInfo){
                         jObj= LPJson.convertArrayRowToJSONObject(investigationFieldToRetrieveArr, curRec);
@@ -585,7 +584,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "count");
                     jObj=new JSONObject();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(groupedInfo[0][0].toString())){
-                        jObj= noRecordsInTableMessage();                    
+                        jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);                    
                     }else{                       
                         for (Object[] curRec: groupedInfo){
                             jObj= LPJson.convertArrayRowToJSONObject(smpGroupFldsArr, curRec);
@@ -608,7 +607,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     invGroupFldsArr=LPArray.addValueToArray1D(invGroupFldsArr, "count");
                     jObj=new JSONObject();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(groupedInfo[0][0].toString())){
-                        jObj= noRecordsInTableMessage();                    
+                        jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);                    
                     }else{                       
                         for (Object[] curRec: groupedInfo){
                             jObj= LPJson.convertArrayRowToJSONObject(invGroupFldsArr, curRec);
