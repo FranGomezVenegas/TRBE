@@ -16,6 +16,7 @@ public class TrazitUtiilitiesEnums {
         FIELDS_DUPLICATED("fieldsDuplicated", "There are duplicated fields", "Hay campos por duplicado"),
         ERRORTRAPPING_EXCEPTION("LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION", "", ""),
         ARRAYS_DIFFERENT_SIZE("DataSample_FieldArraysDifferentSize", "", ""),
+        MISSING_FIELDS_IN_TABLE("MissingFieldsInTable", "", ""),
         OBJECTOFARRAY_WRONGFORMAT("objectOfArray_wrongFormat", "", ""),
         GETCOLUMNFROM2D_COLNOTFOUND("LabPLANETArray_getColumnFromArray2D_ColNotFound", "", ""),
         NOT_IMPLEMENTED_YET("notImplementedYet", "", ""),

@@ -5,6 +5,7 @@
  */
 package functionaljavaa.modulegenoma;
 
+import com.labplanet.servicios.modulegenoma.GenomaStudyObjectsVariablesAPI;
 import com.labplanet.servicios.modulegenoma.TblsGenomaData;
 import databases.Rdbms;
 import databases.RdbmsObject;
@@ -42,7 +43,7 @@ public class DataStudyObjectsVariableValues {
         }    
         return LPArray.array1dTo2d(fields, 2);
     }
-    public static Object[] addVariableSetToObject(String studyName, String variableSetName, String ownerTable, String ownerId){
+    public static Object[] addVariableSetToObject(GenomaStudyObjectsVariablesAPI.GenomaStudyObjectsVariablesAPIEndPoints endPoint, String studyName, String variableSetName, String ownerTable, String ownerId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isStudyOpenToChanges(studyName);
@@ -76,13 +77,13 @@ public class DataStudyObjectsVariableValues {
                 }
                 insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, fieldsName, fieldsValue);            
                 if (!insertRecordInTable.getRunSuccess()) return insertRecordInTable.getApiMessage();
-                    GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.ADD_VARIABLE_SET_TO_STUDY_OBJECT.toString(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), Arrays.toString(currVar), 
+                    GenomaDataAudit.studyAuditAdd(endPoint, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), Arrays.toString(currVar), 
                         studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);                
             }
         }        
         return insertRecordInTable.getApiMessage();
     }
-    public static Object[] objectVariableSetValue(String studyName, String ownerTable, String ownerId, String variableSetName, String variableName, String newValue){
+    public static Object[] objectVariableSetValue(GenomaStudyObjectsVariablesAPI.GenomaStudyObjectsVariablesAPIEndPoints endpoint, String studyName, String ownerTable, String ownerId, String variableSetName, String variableName, String newValue){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isStudyOpenToChanges(studyName);
@@ -120,7 +121,7 @@ public class DataStudyObjectsVariableValues {
         diagn=Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES,
             EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
-            GenomaDataAudit.studyAuditAdd(GenomaDataAudit.DataGenomaStudyAuditEvents.STUDY_OBJECT_SET_VARIABLE_VALUE.toString(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), newValue, 
+            GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), newValue, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldsName, updFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);                
         
         return diagn;

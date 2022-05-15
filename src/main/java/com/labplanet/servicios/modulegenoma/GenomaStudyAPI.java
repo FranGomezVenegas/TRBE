@@ -218,26 +218,6 @@ public class GenomaStudyAPI extends HttpServlet {
         String language=procReqInstance.getLanguage();
         
         String[] errObject = new String[]{"Servlet Genoma ProjectAPI at " + request.getServletPath()};   
-
-//        Connection con = Rdbms.createTransactionWithSavePoint();        
- /*       if (con==null){
-             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
-             return;
-        }
-*/        
-/*        try {
-            con.rollback();
-            con.setAutoCommit(true);    
-        } catch (SQLException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }
-*/                    
-/*        try {
-            con.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-
         GenomaStudyAPIEndPoints endPoint = null;
         try{
             endPoint = GenomaStudyAPIEndPoints.valueOf(actionName.toUpperCase());

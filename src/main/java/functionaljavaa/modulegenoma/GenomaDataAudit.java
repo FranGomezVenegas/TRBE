@@ -5,6 +5,7 @@
  */
 package functionaljavaa.modulegenoma;
 
+import com.labplanet.servicios.modulegenoma.GenomaProjectAPI;
 import com.labplanet.servicios.modulegenoma.TblsGenomaDataAudit;
 import databases.Rdbms;
 import databases.RdbmsObject;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import functionaljavaa.requirement.Requirement;
 import lbplanet.utilities.LPDate;
 import trazit.enums.EnumIntAuditEvents;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 /**
  * 
@@ -60,7 +62,7 @@ public class GenomaDataAudit {
      * @param parentAuditId 
      * @return  
  */    
-    public static Object[] projectAuditAdd(String action, String tableName, String tableId, 
+    public static Object[] projectAuditAdd(GenomaProjectAPI.GenomaProjectAPIEndPoints action, String tableName, String tableId, 
                         String project, String study, Object[] auditlog, Integer parentAuditId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
@@ -77,7 +79,7 @@ public class GenomaDataAudit {
         }        
         
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.ACTION_NAME.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, action);
+        fieldValues = LPArray.addValueToArray1D(fieldValues, action.getName());
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.TABLE_ID.getName());
@@ -141,7 +143,7 @@ public class GenomaDataAudit {
      * @param parentAuditId 
      * @return  
  */    
-    public static Object[] studyAuditAdd(String action, String tableName, String tableId, 
+    public static Object[] studyAuditAdd(EnumIntEndpoints action, String tableName, String tableId, 
                            String study, String project, Object[] auditlog, Integer parentAuditId) {
          String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
@@ -157,7 +159,7 @@ public class GenomaDataAudit {
         }        
         
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.ACTION_NAME.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, action);
+        fieldValues = LPArray.addValueToArray1D(fieldValues, action.getName());
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.TABLE_ID.getName());

@@ -73,7 +73,7 @@ public class GenomaProjectAPI extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaProjectAuditEvents.PROJECT_REMOVE_USER),
-        PROJECT_CHANGE_USER_ROLE("PROJECT_CHANGE_USER_ROLE", "userAddedToProject_success", 
+        PROJECT_CHANGE_USER_ROLE("PROJECT_CHANGE_USER_ROLE", "projectUserRoleChanged_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaProjectAuditEvents.PROJECT_CHANGE_USER_ROLE),
@@ -85,11 +85,11 @@ public class GenomaProjectAPI extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaProjectAuditEvents.PROJECT_USER_DEACTIVATE),
-        STUDY_NEW("STUDY_NEW", "newStudyCreated_success", 
+/*        STUDY_NEW("STUDY_NEW", "newStudyCreated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
-                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9)}, null, DataGenomaProjectAuditEvents.STUDY_ADDED),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9)}, null, DataGenomaProjectAuditEvents.STUDY_ADDED),*/
         ;
         private GenomaProjectAPIEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
             this.name=name;
@@ -163,41 +163,15 @@ public class GenomaProjectAPI extends HttpServlet {
         String schemaConfigName = LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());    
         Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
-
-
             ClassProject clss=new ClassProject(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
             }   
-            
-            
-/*            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-//                Rdbms.rollbackWithSavePoint();
-//                if (!con.getAutoCommit()){
-//                    con.rollback();
-//                    con.setAutoCommit(true);}                
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
-            }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(dataSample);
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }            
-*/            
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
             response.setStatus(401);
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
@@ -209,7 +183,6 @@ public class GenomaProjectAPI extends HttpServlet {
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                
-  
     }
     
 

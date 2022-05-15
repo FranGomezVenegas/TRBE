@@ -26,7 +26,6 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
@@ -135,8 +134,7 @@ public class GenomaConfigVariableAPI extends HttpServlet {
             if (dataSample!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
             }else{                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(dataSample);
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, dataSample[4].toString(), null);   
             }            
         }catch(Exception e){   
             response.setStatus(401);

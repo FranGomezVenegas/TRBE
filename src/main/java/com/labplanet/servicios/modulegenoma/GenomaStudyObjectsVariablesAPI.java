@@ -141,33 +141,12 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
         String procInstanceName=procReqInstance.getProcedureInstance();
 
         String[] errObject = new String[]{"Servlet Genoma StudyObjectsVariablesAPI at " + request.getServletPath()};   
-
-//        Connection con = Rdbms.createTransactionWithSavePoint();        
- /*       if (con==null){
-             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
-             return;
-        }
-*/        
-/*        try {
-            con.rollback();
-            con.setAutoCommit(true);    
-        } catch (SQLException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }
-*/                    
-/*        try {
-            con.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
         Rdbms.setTransactionId(schemaConfigName);
         //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
             Object[] diagnostic = null;
             GenomaStudyObjectsVariablesAPIEndPoints endPoint = null;
-    //        Object[] actionDiagnoses = null;
             try{
                 endPoint = GenomaStudyObjectsVariablesAPIEndPoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
@@ -188,7 +167,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                     String studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
                     String ownerTable=request.getParameter(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
                     String ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
-                    diagnostic =DataStudyObjectsVariableValues.addVariableSetToObject(studyName, variableSetName, ownerTable, ownerId);
+                    diagnostic =DataStudyObjectsVariableValues.addVariableSetToObject(endPoint, studyName, variableSetName, ownerTable, ownerId);
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{variableSetName, ownerTable, ownerId});
                     relatedObject.addSimpleNode(procInstanceName,  TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), variableSetName);
                     relatedObject.addSimpleNode(procInstanceName, ownerTable, ownerId);
@@ -200,7 +179,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                     ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
                     String variableName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName());
                     String newValue=request.getParameter(GenomaProjectAPIParamsList.NEW_VALUE.getParamName());
-                    diagnostic =DataStudyObjectsVariableValues.objectVariableSetValue(studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
+                    diagnostic =DataStudyObjectsVariableValues.objectVariableSetValue(endPoint, studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{newValue, variableName});
                     relatedObject.addSimpleNode(procInstanceName, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), variableName);
                     relatedObject.addSimpleNode(procInstanceName, ownerTable, ownerId);
@@ -223,13 +202,6 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
             }   
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);

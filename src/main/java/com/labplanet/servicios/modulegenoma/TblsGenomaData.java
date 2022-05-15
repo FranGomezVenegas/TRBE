@@ -23,7 +23,7 @@ public class TblsGenomaData {
     public enum TablesGenomaData implements EnumIntTables{        
         PROJECT(null, "project", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Project.values(), null, new String[]{Project.NAME.getName()}, null, "Project table"),
         PROJECT_USERS(null, "project_users", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProjectUsers.values(), ProjectUsers.ID.getName(), new String[]{ProjectUsers.ID.getName()}, null, "ProjectUsers table"),
-        STUDY(null, "study", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsGenomaDataAudit.Study.values(), null, new String[]{TblsGenomaData.Study.NAME.getName()}, null, "Study table"),
+        STUDY(null, "study", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsGenomaData.Study.values(), null, new String[]{TblsGenomaData.Study.NAME.getName()}, null, "Study table"),
         STUDY_USERS(null, "study_users", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyUsers.values(), StudyUsers.ID.getName(), new String[]{StudyUsers.ID.getName()}, null, "StudyUsers table"),
         STUDY_INDIVIDUAL(null, "study_individual", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyIndividual.values(), StudyIndividual.INDIVIDUAL_ID.getName(), new String[]{StudyIndividual.INDIVIDUAL_ID.getName()}, null, "StudyIndividual table"),
         STUDY_FAMILY_INDIVIDUAL(null, "study_family_individual", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyFamilyIndividual.values(), StudyFamilyIndividual.ID.getName(), new String[]{StudyFamilyIndividual.ID.getName()}, null, "StudyFamilyIndividual table"),
