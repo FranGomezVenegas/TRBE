@@ -36,12 +36,12 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPDate.dateStringFormatToLocalDateTime;
+import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -721,26 +721,13 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         sampleWhereFieldsNameArr=LPArray.addValueToArray1D(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.PRODUCTION_LOT.getName());
                         sampleWhereFieldsValueArr=LPArray.addValueToArray1D(sampleWhereFieldsValueArr, lotName);
                     }
-/*                    Object[][] prodLotInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
-                            new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{lotName}
-                            , prodLotFieldToRetrieveArr, new String[]{TblsEnvMonitData.ProductionLot.CREATED_ON.getName()+" desc"} ); 
-                    JSONObject jObj=new JSONObject();
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
-                         jObj= noRecordsInTableMessage();                    
-                    }else{
-                       for (Object[] curRec: prodLotInfo){
-                         jObj= LPJson.convertArrayRowToJSONObject(prodLotFieldToRetrieveArr, curRec);
-                       }
-                    }
-                    jObjMainObject.put(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), jObj);*/
-                    
                     sampleInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
                         EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, sampleFieldToRetrieveArr),
                         sampleWhereFieldsNameArr, sampleWhereFieldsValueArr, new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()+" desc"} ); 
                     JSONObject jObj=new JSONObject();
                     JSONArray sampleJsonArr = new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
-                         jObj= noRecordsInTableMessage();                    
+                         jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);                    
                     }else{     
                         sampleJsonArr.add(jObj);
                         for (Object[] curRec: sampleInfo){
@@ -772,7 +759,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "grouper");
                             jObj=new JSONObject();
                             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
-                                jObj= noRecordsInTableMessage();                    
+                                jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);                    
                             }else{                       
                                 for (Object[] curRec: groupedInfo){
                                     jObj= LPJson.convertArrayRowToJSONObject(smpGroupFldsArr, curRec);
@@ -1218,9 +1205,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
         rObj.killInstance();
-    }catch(Exception e){
-        String errMsg=e.getMessage();
-        String s="";
+    }catch(NumberFormatException e){
     }
     }
     public static JSONArray samplesByStageData(String sampleLastLevel, String[] sampleFieldToRetrieveArr, String whereFieldsName, String whereFieldsValue, String sortFieldsName,
