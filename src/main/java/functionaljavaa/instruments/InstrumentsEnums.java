@@ -299,6 +299,7 @@ public class InstrumentsEnums {
     }    
         
     public enum InstrumentsErrorTrapping implements EnumIntMessages{ 
+        ALREADY_EXISTS("instrumentAlreadyExists", "", ""),
         NOT_FOUND("instrumentNotFound","The instrument <*1*> is not found in procedure <*2*>","El instrumento <*1*> no se ha encontrado para el proceso <*2*>"),
         FAMILY_NOT_FOUND("instrumentFamilyNotFound","The instrument family <*1*> is not found in procedure <*2*>","La familia de instrumento <*1*> no se ha encontrado para el proceso <*2*>"),
         NOT_ONLINE("instrumentNotOnline","The instrument <*1*> is not currently on line","El instrumento <*1*> no está actualmente en línea"),

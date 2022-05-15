@@ -52,9 +52,7 @@ public class DataInstruments {
     private Object[] familyFieldValues;
     
     public enum Decisions{ACCEPTED, ACCEPTED_WITH_RESTRICTIONS, REJECTED}
-    
-    
-    
+
     private InternalMessage decisionValueIsCorrect(String decision){
         try{
             Decisions.valueOf(decision);
@@ -134,6 +132,11 @@ public class DataInstruments {
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.ON_LINE.getName(),
             TblsAppProcData.Instruments.CREATED_ON.getName(), TblsAppProcData.Instruments.CREATED_BY.getName()});
         fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{name, false, LPDate.getCurrentTimeStamp(), token.getPersonName()});
+        Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableName(), 
+                new String[]{TblsAppProcData.Instruments.NAME.getName()}, new Object[]{name});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_EXISTS, new Object[]{name}, null);
+        
         RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENTS, fldNames, fldValues);
         if (!instCreationDiagn.getRunSuccess())
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
