@@ -3,7 +3,6 @@ package lbplanet.utilities;
 import com.github.opendevl.JFlat;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
-import databases.Rdbms.RdbmsErrorTrapping;
 import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
 import trazit.session.ResponseMessages;
@@ -56,7 +55,7 @@ public class LPFrontEnd {
     }
     
     /**
-     *
+     * Mucho uso
      * @param request
      * @param response
      * @return
@@ -90,7 +89,7 @@ public class LPFrontEnd {
     }
 
     /**
-     *
+     * En uso, no tocar
      * @param request
      * @param response
      * @param dbUserName
@@ -102,15 +101,11 @@ public class LPFrontEnd {
             if (userToVerify==null) userToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK)).toString();
         String passwordToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
             if (passwordToVerify==null) passwordToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK)).toString();
-        if ( (!userToVerify.equalsIgnoreCase(dbUserName)) || (!passwordToVerify.equalsIgnoreCase(dbUserPassword)) ){
-            //servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_USER_VERIFICATION.getName(), null, null);           
-            return false;                                
-        }            
-        return true;
+        return !((!userToVerify.equalsIgnoreCase(dbUserName)) || (!passwordToVerify.equalsIgnoreCase(dbUserPassword)));
     }
 
     /**
-     *
+     * En uso, no tocar
      * @param request
      * @param response
      * @param eSign
@@ -119,147 +114,11 @@ public class LPFrontEnd {
     public static final Boolean servletEsignToVerify(HttpServletRequest request, HttpServletResponse response, String eSign){    
         String eSignToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);      
             if (eSignToVerify==null) eSignToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK)).toString();
-        if (!eSignToVerify.equalsIgnoreCase(eSign)) {  
-            //servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.INVALID_ESIGN.getName(), null, null);           
-            return false;                                
-        }            
-        return true;
-    }
-    /**
-     *
-     * @param errorStructure
-     * @return
-     */
-    public static Object[] responseError(Object[] errorStructure){
-        Object[] responseObj = new Object[0];
-        responseObj = LPArray.addValueToArray1D(responseObj, HttpServletResponse.SC_UNAUTHORIZED);
-        responseObj = LPArray.addValueToArray1D(responseObj, errorStructure[errorStructure.length-1].toString());        
-        return responseObj;
+        return eSignToVerify.equalsIgnoreCase(eSign);
     }
 
     /**
-     *
-     * @param lpFalseStructure
-     * @return
-     */
-/*    private static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
-        JSONObject errJsObj = new JSONObject();
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
-        Object[][] mainMessage = messages.getMainMessage();
-        Object [] errorMsgEn=null;
-        Object [] errorMsgEs=null;
-        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
-            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "en");
-            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "es");
-            String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
-            String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
-            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
-            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
-        }else{
-            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpFalseStructure[lpFalseStructure.length-1]);
-            errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpFalseStructure[lpFalseStructure.length-1]);
-        }
-        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpFalseStructure[0]);
-        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
-        return errJsObj;
-    }
-    public static JSONObject responseJSONDiagnosticLPFalse(String errorCode, Object[] msgVariables){
-        JSONObject errJsObj = new JSONObject();
-        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_FALSE);
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
-        Object[][] mainMessage = messages.getMainMessage();
-        Object [] errorMsgEn=null;
-        Object [] errorMsgEs=null;
-        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
-            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "en");
-            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, mainMessage[0][0].toString(), (Object[]) mainMessage[0][1], "es");
-        }else{
-            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
-            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
-        }
-        String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
-        String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
-        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
-        return errJsObj;
-    }
-*/    
-
-    /**
-     *
-     * @param lpTrueStructure
-     * @return     
-     */
-    //Esta debe ser privada pero toca convertir GenomaConfigVariableAPI en el formato de usar una Class como ClassStudy 
-/*    public static JSONObject responseJSONDiagnosticLPTrue(Object[] lpTrueStructure){
-        JSONObject errJsObj = new JSONObject();
-        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpTrueStructure[0]);
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpTrueStructure[lpTrueStructure.length-1]);
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpTrueStructure[lpTrueStructure.length-1]);
-        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
-        return errJsObj;
-    }    
-*/
-    /**
-     *
-     * @param apiName
-     * @param msgCode
-     * @param msgDynamicValues
-     * @param relatedObjects
-     * @return
-     */
-/*
-    public static JSONObject responseJSONDiagnosticLPTrue(String apiName, String msgCode, Object[] msgDynamicValues, JSONArray relatedObjects){
-
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
-        Object[][] mainMessage = messages.getMainMessage();
-        Object [] errorMsgEn=null;
-        Object [] errorMsgEs=null;
-        String errorTextEn = "";
-        String errorTextEs = "";
-        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){            
-            Object[] msgArg3=new Object[]{};
-            if (mainMessage[0].length>2)
-                msgArg3=(Object[]) mainMessage[0][2];
-            errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
-            errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
-            errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
-            errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();                        
-        }else{
-            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en", null, true);
-            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es", null, false);
-            if (msgCode!=null){
-                if (msgDynamicValues!=null){
-                    for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){
-                        errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
-                        errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(msgDynamicValues[iVarValue-1]).toString());
-                    }
-                }        
-                if (errorTextEn.length()==0){
-                    errorTextEn=msgCode+ " (*** This MessageCode, "+msgCode+", has no entry defined in messages property file) ";
-                    if (msgDynamicValues!=null)
-                        errorTextEn=errorTextEn+Arrays.toString(msgDynamicValues);
-                }
-                if (errorTextEs.length()==0){
-                    errorTextEs=msgCode+ " (*** Este CódigoDeMensaje, "+msgCode+", no está definido en los archivos de mensajes) ";
-                    if (msgDynamicValues!=null)
-                        errorTextEs=errorTextEs+Arrays.toString(msgDynamicValues);
-                }
-            }      
-        }        
-        JSONObject errJsObj = new JSONObject();
-        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_TRUE);
-        errJsObj.put(ResponseTags.CATEGORY.getLabelName(), apiName.toUpperCase().replace("API", ""));
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
-        errJsObj.put(ResponseTags.RELATED_OBJECTS.getLabelName(), relatedObjects);        
-        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
-        return errJsObj;
-    }    
-*/    
-    /**
-     *
+     * En uso
      * @param errorPropertyName
      * @param errorPropertyValue
      * @return
@@ -292,7 +151,7 @@ public class LPFrontEnd {
         return errJsObj;
     }
     /**
-     *
+     * En mucho uso
      * @param errorStructure
      * @param language
      * @param procInstanceName
@@ -342,22 +201,21 @@ public class LPFrontEnd {
     }
 
     /**
-     *
+     * En mucho uso
      * @param request
      * @param response
      * @param errorCode
      * @param errorCodeVars
      * @param language
+     * @param className
      */
     public static final void servletReturnResponseError(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] errorCodeVars, String language, String className){  
         JSONObject errJSONMsg = LPFrontEnd.responseJSONError(errorCode,errorCodeVars, className);
         request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());
         servetInvokeResponseErrorServlet(request, response);
     }
-
-
     /**
-     *
+     * En mucho uso
      * @param request
      * @param response
      * @param myStr
@@ -367,9 +225,8 @@ public class LPFrontEnd {
         else{request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), myStr);}
         servetInvokeResponseSuccessServlet(request, response);
     }       
-
     /**
-     *
+     * En mucho uso
      * @param request
      * @param response
      * @param jsonObj
@@ -438,7 +295,7 @@ public class LPFrontEnd {
     }   
     
     /**
-     *
+     * En mucho uso
      * @param request
      * @param response
      * @param jsonArr
@@ -450,7 +307,7 @@ public class LPFrontEnd {
     }  
     
     /**
-     *
+     * En mucho uso
      * @param request
      * @param response
      * @param lPFalseObject
@@ -460,6 +317,13 @@ public class LPFrontEnd {
         request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());        
         servetInvokeResponseErrorServlet(request, response);
     }    
+    /**
+     * En mucho uso
+     * @param request
+     * @param response
+     * @param errorCode
+     * @param msgVariables
+     */
     public static final void servletReturnResponseErrorLPFalseDiagnosticBilingue(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] msgVariables){       
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Object[][] mainMessage = procReqSession.getMessages().getMainMessage();
@@ -467,11 +331,11 @@ public class LPFrontEnd {
             errorCode=(String) mainMessage[0][0];
             msgVariables=(Object[]) mainMessage[0][1];
         }
-        JSONObject errJSONMsg = LPFrontEnd.xresponseJSONDiagnosticLPFalse(errorCode, msgVariables);
+        JSONObject errJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(errorCode, msgVariables);
         request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());          
         servetInvokeResponseErrorServlet(request, response);
     }
-    private static JSONObject xresponseJSONDiagnosticLPFalse(String errorCode, Object[] msgVariables){
+    public static JSONObject responseJSONDiagnosticLPFalse(String errorCode, Object[] msgVariables){
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_FALSE);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
@@ -493,21 +357,6 @@ public class LPFrontEnd {
         return errJsObj;
     }
     
-    /**
-     *
-     * @param request
-     * @param response
-     * @param lPTrueObject
-     */
-    public static final void servletReturnResponseErrorLPTrueDiagnostic(HttpServletRequest request, HttpServletResponse response, Object[] lPTrueObject){
-        JSONObject successJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(lPTrueObject);
-        request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), successJSONMsg.toString());        
-        servetInvokeResponseErrorServlet(request, response);
-    }  
-    public static final JSONObject noRecordsInTableMessage(){
-        return LPFrontEnd.responseJSONDiagnosticLPFalse(RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-    }
-
     private static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
         JSONObject errJsObj = new JSONObject();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
@@ -529,14 +378,6 @@ public class LPFrontEnd {
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
         return errJsObj;
     }
-    public static JSONObject responseJSONDiagnosticLPTrue(Object[] lpTrueStructure){
-        JSONObject errJsObj = new JSONObject();
-        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpTrueStructure[0]);
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpTrueStructure[lpTrueStructure.length-1]);
-        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpTrueStructure[lpTrueStructure.length-1]);
-        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
-        return errJsObj;
-    } 
     public static JSONObject responseJSONDiagnosticPositiveEndpoint(EnumIntEndpoints endpoint, Object[] msgDynamicValues, JSONArray relatedObjects){
 
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();

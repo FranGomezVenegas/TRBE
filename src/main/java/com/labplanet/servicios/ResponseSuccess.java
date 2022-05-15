@@ -14,7 +14,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPFrontEnd;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.DbLogSummary;
+import trazit.session.ProcedureRequestSession;
 
 
 /**
@@ -22,7 +26,6 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class ResponseSuccess extends HttpServlet {
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
@@ -33,7 +36,18 @@ public class ResponseSuccess extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
         try (PrintWriter out = response.getWriter()) {
-            String responseMsg=(String) request.getAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName());
+            DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
+            String responseMsg="";
+            
+            if (dbLogSummary!=null && dbLogSummary.hadAnyFailure()){
+                //response.getWriter().write("Transaction failed! "+dbLogSummary.getFailureStatement());
+                Object[] addValueToArray1D = LPArray.addValueToArray1D(new Object[]{dbLogSummary.getFailureStatement()}, dbLogSummary.getFailureStatementData());
+                String toJSONString = LPFrontEnd.responseJSONDiagnosticLPFalse("fullTransactionNotPossibleByErrors", addValueToArray1D).toJSONString();
+                response.getWriter().write(toJSONString);
+                request=null;
+                response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
+            }else
+                responseMsg=(String) request.getAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName());
             response.getWriter().write(responseMsg);
             Response.ok().build();    
         } catch (IOException ex) {

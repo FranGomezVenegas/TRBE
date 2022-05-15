@@ -8,6 +8,7 @@ package databases;
 import static databases.Rdbms.addSuffixIfItIsForTesting;
 import functionaljavaa.parameter.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import lbplanet.utilities.LPArray;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntTableFields;
+import static trazit.enums.EnumIntTableFields.getFldPosicInArray;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
@@ -154,18 +156,21 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 break;
             case "INSERT":
                 query = "insert into " + schemaName + "." + tableName + " (" + insertFieldNamesStr + ") values ( " + insertFieldValuesStr + ") ";
-                dbLogSummary.addInsert();
+                if (dbLogSummary!=null)
+                    dbLogSummary.addInsert();
                 break;
             case "UPDATE":
                 String updateSetSectionStr=buildUpdateSetFields(setFieldNames);
                 query = "update " + schemaName + "." + tableName + " set " + updateSetSectionStr + " where " + queryWhere;
                 whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
-                dbLogSummary.addUpdate();
+                if (dbLogSummary!=null)
+                    dbLogSummary.addUpdate();
                 break;
             case "DELETE":                
                 query = "delete from " + schemaName + "." + tableName + " where " + queryWhere;
                 whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
-                dbLogSummary.addRemove();
+                if (dbLogSummary!=null)
+                    dbLogSummary.addRemove();
                 break;
             default:
                 break;
@@ -808,4 +813,19 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         //return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, new Object[]{});
     }
 
+    public Object[] areMissingTableFieldsInTheStatement(EnumIntTables tblObj, String[] fieldNames){
+        EnumIntTableFields[] fldNamesObj=new EnumIntTableFields[fieldNames.length];        
+        String[] missingFlds=new String[]{};
+        for (int iFld=0;iFld<fieldNames.length;iFld++){
+            Integer fldPosicInArray = getFldPosicInArray(tblObj.getTableFields(), fieldNames[iFld]);
+            if (fldPosicInArray==-1)
+                missingFlds=LPArray.addValueToArray1D(missingFlds, fieldNames[iFld]);
+            else
+                fldNamesObj[iFld]=tblObj.getTableFields()[fldPosicInArray];
+        }
+        if (missingFlds.length>0)
+           return new Object[]{LPPlatform.LAB_FALSE, new RdbmsObject(false, "", TrazitUtilitiesErrorTrapping.MISSING_FIELDS_IN_TABLE, new Object[]{tblObj.getRepositoryName()+"."+tblObj.getTableName(), Arrays.toString(missingFlds)})}; 
+        return new Object[]{LPPlatform.LAB_TRUE, fldNamesObj};
+    }       
+    
 }

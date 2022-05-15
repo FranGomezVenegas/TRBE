@@ -46,7 +46,6 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
-import static trazit.enums.EnumIntTableFields.getFldPosicInArray;
 import trazit.enums.EnumIntTables;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -59,16 +58,14 @@ import trazit.session.DbLogSummary;
  * @author Administrator
  */
 public class Rdbms {    
-
-    static void prepUpQueryWithKey(String configSchemaScript, Object[] object) {
+/*    static void prepUpQueryWithKey(String configSchemaScript, Object[] object) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public static void insertRecordInTable(GlobalVariables.Schemas schemas, String tableName, String[] fieldsName, Object[] fieldsValue) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    private static Boolean transactionMode=true;
+    }*/
+    private static Boolean transactionMode=false;
     String errorCode = "";
     private static Connection conn = null;
     private static Boolean isStarted = false;
@@ -79,15 +76,8 @@ public class Rdbms {
     
     private static Rdbms rdbms;
     public static final String SQLSELECT = "SELECT";
-    /**
-     *
-     */
     public static final Boolean DB_CONNECTIVITY_POOLING_MODE=false;
     public static final String TBL_NO_KEY="TABLE WITH NO KEY";
-
-    /**
-     *
-     */
     public static final String TBL_KEY_NOT_FIRST_TABLEFLD="PRIMARY KEY NOT FIRST FIELD IN TABLE";
     
     public enum RdbmsSuccess  implements EnumIntMessages{
@@ -1110,7 +1100,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             dbProcHashcode.procHashCodeHandler(schemaNameFrom, tableNameTo);
         }else{
             diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});                
-            dbLogSummary.setFailure();
+            dbLogSummary.setFailure(query, whereFieldValuesFrom);
         }
         diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
         return diagnosis;
@@ -1214,7 +1204,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             dbProcHashcode.procHashCodeHandler(schemaName, tableName);            
             return new Object[]{prep.executeUpdate(), "Success"};                
         }catch (SQLException ex){
-            dbLogSummary.setFailure();
+            dbLogSummary.setFailure(script, valoresinterrogaciones);
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
             String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
             String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
@@ -1238,7 +1228,7 @@ if (1==1){Rdbms.transactionId=1; return;}
                 buildPreparedStatement(valoresinterrogaciones, prep);}
             return prep.executeUpdate();                
         }catch (SQLException ex){
-            dbLogSummary.setFailure();
+            dbLogSummary.setFailure(consultaconinterrogaciones, valoresinterrogaciones);
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
             String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
             String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
@@ -1272,7 +1262,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         } catch (NumberFormatException nfe) {
             return new String[]{LPPlatform.LAB_TRUE, newId};                           
         }catch (SQLException er){     
-            dbLogSummary.setFailure();
+            dbLogSummary.setFailure(consultaconinterrogaciones, valoresinterrogaciones);
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
             String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
             String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
@@ -1308,7 +1298,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         } catch (NumberFormatException nfe) {
             return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsSuccess.RDBMS_RECORD_CREATED, null, newId);
         }catch (SQLException er){    
-            dbLogSummary.setFailure();
+            dbLogSummary.setFailure(consultaconinterrogaciones, valoresinterrogaciones);
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
             String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
             String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 
@@ -2114,16 +2104,13 @@ private static final int CLIENT_CODE_STACK_INDEX;
            return new RdbmsObject(false, "", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});
         if (fieldNames.length!=fieldValues.length)
            return new RdbmsObject(false, "", TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, new Object[]{Arrays.toString(fieldNames), Arrays.toString(fieldValues)});
-        EnumIntTableFields[] fldNamesObj=new EnumIntTableFields[fieldNames.length];
-        for (int iFld=0;iFld<fieldNames.length;iFld++){
-            Integer fldPosicInArray = getFldPosicInArray(tblObj.getTableFields(), fieldNames[iFld]);
-            fldNamesObj[iFld]=tblObj.getTableFields()[fldPosicInArray];
-        }
+        
         SqlStatementEnums sql = new SqlStatementEnums(); 
-/*        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("INSERT", tblObj,
-                new SqlWhere(), null, getAllFieldNames(fldNamesObj), fieldValues,
-                null, null, alternativeProcInstanceName);    
-*/        
+        sql.areMissingTableFieldsInTheStatement(tblObj, fieldNames);
+        Object[] areMissingDiagn = sql.areMissingTableFieldsInTheStatement(tblObj, fieldNames);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMissingDiagn[0].toString()))
+            return (RdbmsObject) areMissingDiagn[1];
+        EnumIntTableFields[] fldNamesObj=(EnumIntTableFields[])areMissingDiagn[1];
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("INSERT", tblObj,
                 new SqlWhere(), null, fldNamesObj, fieldValues, null, 
                 null, null, alternativeProcInstanceName);              
@@ -2146,7 +2133,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
     }
     public static Object[] updateRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] updateFieldNames, Object[] updateFieldValues, SqlWhere whereObj, String alternativeProcInstanceName) {
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
-
+        
         String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
         updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues);        
         if (whereObj.getAllWhereEntries().isEmpty()){
@@ -2160,17 +2147,16 @@ private static final int CLIENT_CODE_STACK_INDEX;
         String query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);                     
         Integer numr = Rdbms.prepUpQuery(query, keyFieldValueNew);
-        if (numr>0){     
+        if (numr>0){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_UPDATED, new Object[]{tblObj.getTableName(), Arrays.toString(whereObj.getAllWhereEntriesFldValues()), schemaName});   
         }else if(numr==-999){
-            dbLogSummary.setFailure();
+            dbLogSummary.setFailure(query, keyFieldValueNew);
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tblObj.getTableName()+". Query: "+query+", By the values "+ Arrays.toString(keyFieldValueNew), query});   
-        }else{   
-            dbLogSummary.setFailure();
+        }else{
+            dbLogSummary.setFailure(query, keyFieldValueNew);
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tblObj.getTableName(), Arrays.toString(whereObj.getAllWhereEntriesFldValues()), schemaName});                         
         }
-    }    
-    
+    }
     public static RdbmsObject removeRecordInTable(EnumIntTables tblObj, SqlWhere whereObj, String alternativeProcInstanceName){
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
@@ -2185,10 +2171,10 @@ private static final int CLIENT_CODE_STACK_INDEX;
             dbProcHashcode.procHashCodeHandler(schemaName, tblObj.getTableName());            
             return new RdbmsObject(true, query+" "+Arrays.toString(whereFieldValues), RdbmsSuccess.RDBMS_RECORD_REMOVED, null, -999);
         }else if(deleteRecordDiagnosis==-999){
-            dbLogSummary.setFailure();
+            dbLogSummary.setFailure(query, whereFieldValues);
             return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.DB_ERROR, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tblObj.getTableName()+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query}); 
         }else{   
-            dbLogSummary.setFailure();
+            dbLogSummary.setFailure(query, whereFieldValues);
             return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tblObj.getTableName(), Arrays.toString(whereFieldValues), schemaName});
         }        
         
@@ -2201,5 +2187,33 @@ private static final int CLIENT_CODE_STACK_INDEX;
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tblObj.getTableName(), Arrays.toString(whereObj.getAllWhereEntriesFldValues()), schemaName});
         }        */
     }
+    public static RdbmsObject updateTableRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] updateFieldNames, Object[] updateFieldValues, SqlWhere whereObj, String alternativeProcInstanceName) {
+        DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
+
+        String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
+        updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues);        
+        if (whereObj.getAllWhereEntries().isEmpty()){
+           return new RdbmsObject(false, "no sql yet", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, 
+                   new Object[]{tblObj.getTableName(), schemaName});
+        }
+        SqlStatementEnums sql = new SqlStatementEnums();       
+        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues); 
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
+                whereObj, null, updateFieldNames, updateFieldValues,
+                null, null, null, alternativeProcInstanceName);         
+        String query= hmQuery.keySet().iterator().next();   
+        Object[] keyFieldValueNew = hmQuery.get(query);                     
+        Integer numr = Rdbms.prepUpQuery(query, keyFieldValueNew);
+        if (numr>0){     
+            return new RdbmsObject(true, query, RdbmsSuccess.RDBMS_RECORD_UPDATED, new Object[]{tblObj.getTableName(), Arrays.toString(whereObj.getAllWhereEntriesFldValues()), schemaName});   
+        }else if(numr==-999){
+            dbLogSummary.setFailure(query, keyFieldValueNew);
+            return new RdbmsObject(false, query, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tblObj.getTableName()+". Query: "+query+", By the values "+ Arrays.toString(keyFieldValueNew), query});   
+        }else{   
+            dbLogSummary.setFailure(query, keyFieldValueNew);
+            return new RdbmsObject(false, query, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tblObj.getTableName(), Arrays.toString(whereObj.getAllWhereEntriesFldValues()), schemaName});                         
+        }
+    }    
+    
    
 }
