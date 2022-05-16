@@ -17,6 +17,7 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -140,9 +141,9 @@ public class ClassEnvMon {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{batchName, procInstanceName});
                     this.messageDynamicData=new Object[]{batchName, incubationName};
                     break;
-                case EM_LOGSAMPLE_SCHEDULER:
-                    LocalDateTime dateStart=(LocalDateTime) argValues[0];
-                    LocalDateTime dateEnd=(LocalDateTime) argValues[1];
+                case EM_LOGSAMPLE_SCHEDULER:                    
+                    LocalDateTime dateStart=LPDate.stringFormatToLocalDateTime(argValues[0].toString());
+                    LocalDateTime dateEnd=LPDate.stringFormatToLocalDateTime(argValues[1].toString());
                     programName = argValues[2].toString();
                     actionDiagnoses=prgSmp.logProgramSampleScheduled(programName, dateStart, dateEnd);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))

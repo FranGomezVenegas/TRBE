@@ -11,6 +11,7 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
 import databases.RdbmsObject;
+import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsData;
 import databases.features.Token;
@@ -174,7 +175,7 @@ public class DataProgramSample{
                 fieldValue = LPArray.addValueToArray1D(fieldValue, programSampleId);           
             }else
                 fieldValue[sampleIdRelatedPosic] = programSampleId;            
-            newProjSample = ds.logSample(samplerSmpTemplate, programTemplateVersion, fieldName, fieldValue);
+            newProjSample = ds.logSample(samplerSmpTemplate, programTemplateVersion, fieldName, fieldValue, 1, TblsEnvMonitData.TablesEnvMonitData.SAMPLE);
         }
         return newProjSample;        
     }
@@ -255,30 +256,48 @@ public class DataProgramSample{
             TblsEnvMonitConfig.ViewProgramScheduledLocations.AREA.getName(), 
             TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_VARIATION_NAME.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.SPEC_ANALYSIS_VARIATION.getName() 
         };      
-        String[] whereFieldNames=new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName()+" BETWEEN"};
-        Object[] whereFieldValues=new Object[0];
-        if (dateStart==null && dateEnd==null)
-            whereFieldValues=new Object[]{LPDate.getCurrentTimeStamp(), LPDate.getCurrentTimeStamp().plusDays(1)};
-        if (dateStart!=null &&dateEnd==null)
-            whereFieldValues=new Object[]{LPDate.dateStringFormatToLocalDateTime(dateStart.toString()), LPDate.dateStringFormatToLocalDateTime(dateStart.toString()).plusDays(1)};
-        if (dateStart!=null &&dateEnd!=null)
-            whereFieldValues=new Object[]{LPDate.dateStringFormatToLocalDateTime(dateStart.toString()), LPDate.dateStringFormatToLocalDateTime(dateEnd.toString())};
+        String[] whereFieldNames=new String[]{};
+        Object[] whereFieldValues=new Object[]{};
         if (programName!=null){
             whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME.getName());
             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);
         }
+        whereFieldNames=new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName()+" BETWEEN"};
+        whereFieldValues=new Object[0];
+        if (dateStart==null && dateEnd==null){
+            whereFieldValues=new Object[]{LPDate.getCurrentTimeStamp(), LPDate.getCurrentTimeStamp().plusDays(1)};
+            dateStart=LPDate.getCurrentTimeStamp();
+            dateEnd=LPDate.getCurrentTimeStamp().plusDays(1);
+        }
+        if (dateStart!=null &&dateEnd==null){
+            whereFieldValues=new Object[]{LPDate.dateStringFormatToLocalDateTime(dateStart.toString()), LPDate.dateStringFormatToLocalDateTime(dateStart.toString()).plusDays(1)};
+            dateEnd=LPDate.getCurrentTimeStamp().plusDays(1);
+        }
+        if (dateStart!=null &&dateEnd!=null){
+            whereFieldValues=new Object[]{LPDate.dateStringFormatToLocalDateTime(dateStart.toString()), LPDate.dateStringFormatToLocalDateTime(dateEnd.toString())};
+        }
+        SqlWhere sWhere=new SqlWhere();
+        if (LPNulls.replaceNull(programName).length()>0)
+            sWhere.addConstraint(TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{programName}, null);
+        sWhere.addConstraint(TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{dateStart, dateEnd}, null);
+        EnumIntViewFields[] viewFieldsFromString = EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, fieldsToRetrieve);
         Object[][] programCalendarDatePending=QueryUtilitiesEnums.getViewData(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, 
-            EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, fieldsToRetrieve),
-            new SqlWhere(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, whereFieldNames, whereFieldValues), 
+            viewFieldsFromString,
+            sWhere, //new SqlWhere(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, whereFieldNames, whereFieldValues), 
             new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
         StringBuilder newSamplesLogged=new StringBuilder();
         Integer newSamplesCounter=0;
+        String missingFld="";
         for (Object[] curRecord: programCalendarDatePending){
             Object[] fieldValue = new Object[0];
             for (String curFld: fieldName){
-                fieldValue=LPArray.addValueToArray1D(fieldValue, curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, curFld)]);
+                Integer fldPosic=EnumIntViewFields.getFldPosicInArray(viewFieldsFromString, curFld);
+                if (fldPosic==-1)
+                    missingFld=curFld;
+                else
+                    fieldValue=LPArray.addValueToArray1D(fieldValue, curRecord[fldPosic]);
             }
             Object[] diagn=logProgramSample(
                     curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE.getName())].toString(), 
