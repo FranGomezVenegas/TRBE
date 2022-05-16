@@ -178,6 +178,10 @@ public class LPDate {
     public static LocalDateTime stringFormatToLocalDateTime(String dateStr){ 
         try{                            
         Integer Tposic=dateStr.indexOf(":");
+        if (Tposic==-1){
+            dateStr=dateStr+"T00:00:00";
+            Tposic=dateStr.indexOf(":");
+        }
         Tposic=Tposic-3;
         char TposicValue=dateStr.charAt(Tposic);
         

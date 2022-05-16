@@ -226,8 +226,7 @@ public class Rdbms {
             setConnection(getConnection);
             setTimeout(conTimeOut);
             if(getConnection()!=null){
-                if (this.transactionMode)
-                    createTransactionNoTransaction();                
+                createTransactionNoTransaction();                
                 setIsStarted(Boolean.TRUE);                                                      
                 return Boolean.TRUE;
             }else{
@@ -262,8 +261,7 @@ public class Rdbms {
         setTimeout(conTimeOut);
         if(getConnection()!=null){
             setIsStarted(Boolean.TRUE);
-            if (this.transactionMode)
-                createTransactionNoTransaction();
+            createTransactionNoTransaction();
             return Boolean.TRUE;
         }else{
             setIsStarted(Boolean.FALSE);
@@ -1526,7 +1524,10 @@ if (1==1){Rdbms.transactionId=1; return;}
      */
     public Connection createTransactionNoTransaction(){
         try {
-            conn.setAutoCommit(false);
+            if (this.transactionMode)
+                conn.setAutoCommit(false);
+            else
+                conn.setAutoCommit(true);
         } catch (SQLException ex) {
             Logger.getLogger(Rdbms.class.getName()).log(Level.SEVERE, null, ex);
             return null;

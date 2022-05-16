@@ -408,59 +408,16 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                     queryWhere.deleteCharAt(queryWhere.length() - 1);
                     queryWhere.append(")");
                     break;
+                case BETWEEN:
+                    queryWhere.append(fn).append(" between ? and ? ");
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[1]);
+                    break;
                 default:
                     queryWhere.append(fn).append("=? ");
                     whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
                     break;
             }
-/*            
-            if (symbol.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
-                queryWhere.append(fn).append(" ").append(symbol.toLowerCase());
-            } else if (symbol.toUpperCase().contains(" "+WHERECLAUSE_TYPES.LIKE.getSqlClause())) {
-                queryWhere.append(fn).append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV);
-            } else if (symbol.toUpperCase().contains(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
-                if (separator==null) separator="\\|";
-                String textSpecs = fldV[0].toString();
-                String[] textSpecArray = textSpecs.split("\\" + separator);
-//                Integer posicINClause = fn.toUpperCase().indexOf(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
-//                queryWhere.append(fn.substring(0, posicINClause + WHERECLAUSE_TYPES.NOT_IN.getSqlClause().length()+1)).append(" (");                
-                for (String f : textSpecArray) {
-                    queryWhere.append("?,");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
-                }
-                queryWhere.deleteCharAt(queryWhere.length() - 1);
-                queryWhere.append(")");                
-            } else if (symbol.toUpperCase().contains(" "+WHERECLAUSE_TYPES.IN.getSqlClause())) {
-                if (separator==null) separator="\\|";
-                String textSpecs = fldV[0].toString();
-                String[] textSpecArray = textSpecs.split("\\" + separator);
-//                Integer posicINClause = fn.toUpperCase().indexOf(" "+WHERECLAUSE_TYPES.IN.getSqlClause());
-//                queryWhere.append(fn.substring(0, posicINClause+ (" "+WHERECLAUSE_TYPES.IN.getSqlClause()).length())).append(" (");
-                for (String f : textSpecArray) {
-                    queryWhere.append("?,");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
-                }
-                queryWhere.deleteCharAt(queryWhere.length() - 1);
-                queryWhere.append(")");
-            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause())) {
-                queryWhere.append(fn).append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV);
-            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
-                queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[1]);
-            } else if ( (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN.getSqlClause())) ||
-                (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN_STRICT.getSqlClause())) ||
-                (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause())) || 
-                (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN_STRICT.getSqlClause()))) {
-                queryWhere.append(fn).append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
-            } else {
-                queryWhere.append(fn).append("=? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
-            }
-            */
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
     }
@@ -776,7 +733,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                     fn=curFld.getFieldMask(); 
                 else{                    
                     if ("DATE".equalsIgnoreCase(curFld.getTableField().getFieldType()))
-                        fn="to_char("+fn+",'YYYY-MON-DD')";                
+                        fn="to_date(to_char("+fn+",'yyyy-mon-dd'), 'YYYY MON DD')";                
                     else if ("DATETIME".equalsIgnoreCase(curFld.getTableField().getFieldType()))
                         fn="to_char("+fn+",'DD.MON.YYYY HH:MI')";                
                     else if (curFld.getTableField().getFieldType().toString().toLowerCase().contains("timestamp"))
