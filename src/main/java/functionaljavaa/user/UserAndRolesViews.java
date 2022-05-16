@@ -115,9 +115,9 @@ public class UserAndRolesViews {
     
     public static final Object[] setUserDefaultTabsOnLogin(Token token, String tabs){
 	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(Users.TABS_ON_LOGIN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{tabs}, "");
+	sqlWhere.addConstraint(Users.USER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{token.getUserName()}, "");
 	return Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.USERS,
-            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.USERS, new String[]{TblsApp.Users.USER_NAME.getName()}), new Object[]{token.getUserName()}, sqlWhere, null);
+            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.USERS, new String[]{TblsApp.Users.TABS_ON_LOGIN.getName()}), new Object[]{tabs}, sqlWhere, null);
     }
     
     public static final Object[] createAppUser(String uName, String[] fldNames, Object[] fldValues){
