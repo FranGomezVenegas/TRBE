@@ -133,16 +133,9 @@ public class ProcedureRequestSession {
             this.errorMessage="db connection not stablished";
             return;
         }    
-
         this.appEncryptFields=getEncryptFields(dbName, true, null);
         if (!isPlatform)
             this.procedureEncryptFields=getEncryptFields(dbName, false, procInstanceName);
-        
-/*        Rdbms.rollbackWithSavePoint();
-        if (!con.getAutoCommit()){
-            con.rollback();
-            con.setAutoCommit(true);}                
-*/        
         if (!isPlatform)
             this.busRulesProcInstance= new BusinessRules(procInstanceName, null);        
         
