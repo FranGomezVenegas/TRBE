@@ -5,7 +5,6 @@ import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ReferenceFld;
-import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -13,7 +12,7 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsTrazitDocTrazit {
     public static final String FIELDS_NAMES_SCHEMA_PREFIX="schema_prefix";
     public static final String FIELDS_NAMES_DESCRIPTION="description";
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.REQUIREMENTS.getName();
+    private static final java.lang.String SCHEMA_NAME = "trazit";
     public enum TablesTrazitDocTrazit implements EnumIntTables{
         ENDPOINTS_DECLARATION(null, "endpoints_declaration", SCHEMA_NAME, true, EndpointsDeclaration.values(), EndpointsDeclaration.ID.getName(),
             new String[]{EndpointsDeclaration.ID.getName()}, null, "EndpointsDeclaration"),
