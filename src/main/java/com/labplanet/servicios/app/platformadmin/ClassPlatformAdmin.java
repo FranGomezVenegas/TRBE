@@ -12,7 +12,6 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.user.UserAndRolesViews;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
@@ -80,18 +79,15 @@ public class ClassPlatformAdmin {
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_WHITE_LIST.getTableName(), id);
                     break;
                 case UPDATE_WHITE_IP:
-                    id=LPNulls.replaceNull(argValues[0]).toString();
-                    String fieldsNameStr = argValues[1].toString();
-                    String fieldsValueStr = argValues[2].toString();
-                    String[] fieldsNameArr=null;
-                    Object[] fieldsValueArr=null;
-                    if ( (fieldsNameStr!=null ) && (fieldsNameStr.length()>0) ) 
-                        fieldsNameArr=LPArray.addValueToArray1D(fieldsNameArr, fieldsNameStr.split("\\|"));
-                    if ( (fieldsValueStr!=null) && (fieldsValueStr.length()>0) )
-                        fieldsValueArr=LPArray.addValueToArray1D(fieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(fieldsValueStr.split("\\|")));                    
-                    actionDiagnoses=AdminActions.updateWhiteIp(Integer.valueOf(id), fieldsNameArr, fieldsValueArr);
+                    Integer idInt=Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
+                    ipVal1=LPNulls.replaceNull(argValues[1]).toString();
+                    ipVal2=LPNulls.replaceNull(argValues[2]).toString();
+                    ipVal3=LPNulls.replaceNull(argValues[3]).toString();
+                    ipVal4=LPNulls.replaceNull(argValues[4]).toString();
+                    description=LPNulls.replaceNull(argValues[5]).toString();
+                    actionDiagnoses=AdminActions.updateWhiteIp(idInt, ipVal1, ipVal2, ipVal3, ipVal4, description);                               if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))    
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))    
-                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), id);
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), idInt);
                     break;
                 case REMOVE_WHITE_IP:
                     id=LPNulls.replaceNull(argValues[0]).toString();
@@ -118,18 +114,14 @@ public class ClassPlatformAdmin {
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), id);
                     break;
                 case UPDATE_BLACK_IP:
-                    id=LPNulls.replaceNull(argValues[0]).toString();
-                    fieldsNameStr = argValues[1].toString();
-                    fieldsValueStr = argValues[2].toString();
-                    fieldsNameArr=null;
-                    fieldsValueArr=null;
-                    if ( (fieldsNameStr!=null ) && (fieldsNameStr.length()>0) ) 
-                        fieldsNameArr=LPArray.addValueToArray1D(fieldsNameArr, fieldsNameStr.split("\\|"));
-                    if ( (fieldsValueStr!=null) && (fieldsValueStr.length()>0) )
-                        fieldsValueArr=LPArray.addValueToArray1D(fieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(fieldsValueStr.split("\\|")));                    
-                    actionDiagnoses=AdminActions.updateBlackIp(Integer.valueOf(id), fieldsNameArr, fieldsValueArr);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))    
-                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), id);
+                    idInt=Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
+                    ipVal1=LPNulls.replaceNull(argValues[1]).toString();
+                    ipVal2=LPNulls.replaceNull(argValues[2]).toString();
+                    ipVal3=LPNulls.replaceNull(argValues[3]).toString();
+                    ipVal4=LPNulls.replaceNull(argValues[4]).toString();
+                    description=LPNulls.replaceNull(argValues[5]).toString();
+                    actionDiagnoses=AdminActions.updateBlackIp(idInt, ipVal1, ipVal2, ipVal3, ipVal4, description);                               if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))    
+                    rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), idInt);
                     break;
                 case UPDATE_USER_SHIFT:
                     String newShift =LPNulls.replaceNull(argValues[0]).toString();
