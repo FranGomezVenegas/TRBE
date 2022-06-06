@@ -65,7 +65,7 @@ public class Rdbms {
     public static void insertRecordInTable(GlobalVariables.Schemas schemas, String tableName, String[] fieldsName, Object[] fieldsValue) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }*/
-    private static Boolean transactionMode=false;
+    public static Boolean transactionMode=false;
     String errorCode = "";
     private static Connection conn = null;
     private static Boolean isStarted = false;
@@ -953,6 +953,67 @@ if (1==1){Rdbms.transactionId=1; return;}
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);             
         }                    
     }
+
+
+    public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, SqlWhere sWhere, String[] orderBy){
+        schemaName=addSuffixIfItIsForTesting(schemaName, tableName); 
+        if (sWhere.getAllWhereEntries().isEmpty()){
+           Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
+           return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
+        }
+        SqlStatementEnums sql = new SqlStatementEnums();         
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementCounter(schemaName, tableName,
+                sWhere, //whereFieldNames, whereFieldValues                
+                fieldsToGroup, orderBy);            
+        String query= hmQuery.keySet().iterator().next();   
+        Object[] keyFieldValueNew = hmQuery.get(query);
+        Integer fieldsToGroupContItem=fieldsToGroup.length;
+        String[] fieldsToGroupAltered=new String[0];
+        fieldsToGroupAltered=LPArray.addValueToArray1D(fieldsToGroupAltered, fieldsToGroup);
+        Object[] fieldsToGroupValues= new Object[fieldsToGroupContItem];
+        fieldsToGroupAltered=LPArray.addValueToArray1D(fieldsToGroupAltered, "COUNTER");
+        try{            
+            ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
+            if (res==null){
+                Object[] errorLog=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES+ Arrays.toString(keyFieldValueNew)});
+                return LPArray.array1dTo2d(errorLog, 1);
+            }               
+            res.last();
+            if (res.getRow()>0){
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;
+                Object[][] entireArr = new Object[totalLines][fieldsToGroupAltered.length+1];
+                while(icurrLine<=totalLines-1) {
+                    for (Integer icurrCol=0;icurrCol<fieldsToGroupAltered.length;icurrCol++){
+                        Object currValue = res.getObject(icurrCol+1);
+                        entireArr[icurrLine][icurrCol] =  LPNulls.replaceNull(currValue);
+                        if (icurrCol<fieldsToGroupContItem) fieldsToGroupValues[icurrCol]=LPNulls.replaceNull(currValue);
+                    }
+                    if (fieldsToGroupContItem==1){
+                        entireArr[icurrLine][fieldsToGroupAltered.length]=entireArr[icurrLine][0];
+                    }else{                        
+                        entireArr[icurrLine][fieldsToGroupAltered.length]=
+                                LPArray.convertArrayToString(
+                                LPArray.joinTwo1DArraysInOneOf1DString(fieldsToGroup, fieldsToGroupValues, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR),  ", ", "");
+                    }
+                    res.next();
+                    icurrLine++;
+                }
+                fieldsToGroupAltered=LPArray.addValueToArray1D(fieldsToGroupAltered, "GROUPER");
+                entireArr = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldsToGroupAltered, entireArr);
+                return entireArr;
+            }else{
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(keyFieldValueNew), schemaName});                         
+                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);             
+        }                    
+    }
+
     /**
      *
      * @param schemaName
@@ -2141,7 +2202,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});                         
         }
         SqlStatementEnums sql = new SqlStatementEnums();       
-        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues); 
+        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues);         
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
                 whereObj, null, updateFieldNames, updateFieldValues,
                 null, null, null, alternativeProcInstanceName);         
