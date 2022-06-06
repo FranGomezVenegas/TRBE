@@ -78,7 +78,7 @@ public class ClassInvestigation {
                 if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
                     actionDiagnoses=fieldValues;
                     break;
-                }                
+                }
                 actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), fieldValues, argValues[2].toString());
                 String investigationIdStr="";
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
@@ -87,7 +87,7 @@ public class ClassInvestigation {
                     if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
                     messages.addMainForSuccess(endPoint, new Object[]{investigationId, argValues[2].toString()});
                     dynamicDataObjects=new Object[]{investigationId, argValues[2].toString()};
-                }                
+                }
                 break;
             case ADD_INVEST_OBJECTS:
                 actionDiagnoses = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), argValues[1].toString(), null);
