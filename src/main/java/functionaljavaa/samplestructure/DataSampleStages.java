@@ -144,8 +144,12 @@ Object[][] firstStageData=new Object[0][0];
     public Object[] moveToNextStage(Integer sampleId, String currStage, String nextStageFromPull){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(sampleId);
+        
+                
+            
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) return sampleAuditRevision;
         Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Next");
+                
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic; 
         if (!javaScriptDiagnostic[0].toString().contains(LPPlatform.LAB_TRUE)) return javaScriptDiagnostic;
         
@@ -198,7 +202,11 @@ Object[][] firstStageData=new Object[0][0];
         String sampleCurrStage=sampleInfo[0][0].toString();
         String sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName());
         if (LPArray.valuePosicInArray(sampleStagesActionAutoMoveToNext.split("\\|"), actionName)==-1)
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureSuccess.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT, new Object[]{actionName, procInstanceName});        
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureSuccess.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT, new Object[]{actionName, procInstanceName});
+        
+        if ("END".equalsIgnoreCase(sampleCurrStage))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SAMPLE LAST STAGE",new Object[]{actionName, procInstanceName});
+        
         Object[] moveDiagn=moveToNextStage(sampleId, sampleCurrStage,null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
             dataSampleStagesTimingCapture(sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 
