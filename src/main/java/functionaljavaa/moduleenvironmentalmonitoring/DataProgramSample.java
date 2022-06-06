@@ -216,7 +216,7 @@ public class DataProgramSample{
      */
     public static Object[] removeSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
         if (items==null)items=1;
-        Object[] diagnostic=null;
+        RdbmsObject removeRecordInTable=null;
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] sampleMicroOrgRow=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
@@ -231,14 +231,14 @@ public class DataProgramSample{
             where.addConstraint(TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID, null, new Object[]{sampleId}, null);
             where.addConstraint(TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME, null, new Object[]{microorganismName}, null);
             where.addConstraint(TblsEnvMonitData.SampleMicroorganism.ID, null, new Object[]{sampleMicroOrgRow[i][0]}, null);
-            RdbmsObject removeRecordInTable = Rdbms.removeRecordInTable(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, where, null);            
+            removeRecordInTable = Rdbms.removeRecordInTable(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, where, null);            
             if (removeRecordInTable.getRunSuccess()){
                 SampleAudit smpAudit = new SampleAudit();
                 String[] fieldsForAudit=new String[]{"Removed microorganism "+microorganismName};
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.MICROORGANISM_REMOVED, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
             }
         }
-      return diagnostic;
+      return removeRecordInTable.getApiMessage();
     }
     public  Object[] logProgramSampleScheduled(String programName, LocalDateTime dateStart, LocalDateTime dateEnd) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
