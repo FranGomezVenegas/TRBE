@@ -38,11 +38,14 @@ public class ResponseSuccess extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
             String responseMsg="";
-            
+            String toJSONString ="";
             if (dbLogSummary!=null && dbLogSummary.hadAnyFailure()){
                 //response.getWriter().write("Transaction failed! "+dbLogSummary.getFailureStatement());
                 Object[] addValueToArray1D = LPArray.addValueToArray1D(new Object[]{dbLogSummary.getFailureStatement()}, dbLogSummary.getFailureStatementData());
-                String toJSONString = LPFrontEnd.responseJSONDiagnosticLPFalse("fullTransactionNotPossibleByErrors", addValueToArray1D).toJSONString();
+                if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsTransactional()){
+                    toJSONString = LPFrontEnd.responseJSONDiagnosticLPFalse("fullTransactionNotPossibleByErrors", addValueToArray1D).toJSONString();
+                }else
+                    toJSONString=LPFrontEnd.responseJSONDiagnosticLPFalse("error on updating database, not transactional", addValueToArray1D).toJSONString();
                 response.getWriter().write(toJSONString);
                 request=null;
                 response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     

@@ -21,7 +21,6 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class ResponseError extends HttpServlet {
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
@@ -30,8 +29,7 @@ public class ResponseError extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response){
         request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);        
-        
+        response=LPHttp.responsePreparation(response);                
         try (PrintWriter out = response.getWriter()) {
             String errorDetail=(String) request.getAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName());
             response.getWriter().write(errorDetail);
