@@ -84,10 +84,10 @@ public class AuditAndUserValidation {
 
     private static AuditAndUserValidation auditUserVal;
 
-     public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, HttpServletResponse response, String language, BusinessRules busRulesProcInstance) { 
+     public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, HttpServletResponse response, String language, BusinessRules busRulesProcInstance, Boolean isPlatform) { 
         if (auditUserVal == null) {
             if (request==null) return null;
-            auditUserVal = new AuditAndUserValidation(request, response, language, busRulesProcInstance);
+            auditUserVal = new AuditAndUserValidation(request, response, language, busRulesProcInstance, isPlatform);
             return auditUserVal;
         } else {
          return auditUserVal;
@@ -113,18 +113,26 @@ public class AuditAndUserValidation {
     private String auditReasonPhrase="";
     private Object[] checkUserValidationPassesDiag;
     
-    private AuditAndUserValidation(HttpServletRequest request, HttpServletResponse response, String language, BusinessRules busRulesProcInstance){
+    private AuditAndUserValidation(HttpServletRequest request, HttpServletResponse response, String language, BusinessRules busRulesProcInstance, Boolean isPlatform){
         
         String[] mandatoryParams = new String[]{};
-        
-        LPAPIArguments[] argsDef=new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)};
-
+        LPAPIArguments[] argsDef=null;
+        if (isPlatform)
+            argsDef=new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)};
+        else{
+            argsDef=new LPAPIArguments[]{
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)};
+                
+        }
         Object[] requestArgValues=buildAPIArgsumentsArgsValues(request, argsDef);
-        String procInstanceName=requestArgValues[0].toString();
-        String actionName=requestArgValues[1].toString();
-        String finalToken=requestArgValues[2].toString();
+        String actionName=requestArgValues[0].toString();
+        String finalToken=requestArgValues[1].toString();
+        String procInstanceName=null;
+        if (!isPlatform)
+            procInstanceName=requestArgValues[2].toString();
         //String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);            
         //String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         //String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
