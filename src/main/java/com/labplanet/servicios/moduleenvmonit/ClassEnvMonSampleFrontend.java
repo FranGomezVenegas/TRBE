@@ -11,6 +11,7 @@ import static com.labplanet.servicios.moduleenvmonit.EnvMonIncubBatchAPIfrontend
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewSampleMicroorganismList;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.SqlWhere;
@@ -29,8 +30,8 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStages;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.sql.Timestamp;
-import java.util.Arrays;
 import java.util.HashMap;
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
@@ -82,49 +83,59 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                 //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, null),
         GET_MICROORGANISM_LIST("GET_MICROORGANISM_LIST", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects, null),
         GET_SAMPLE_MICROORGANISM_VIEW("GET_SAMPLE_MICROORGANISM_VIEW", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8),
-            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects, null),
         GET_SAMPLE_STAGES_SUMMARY_REPORT("GET_SAMPLE_STAGES_SUMMARY_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects, 
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: SAMPLE STAGES SUMMARY REPORT v1.0").build()).build()
+        ),
         GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT("GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects, 
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: SAMPLE BY TESTING GROUP SUMMARY REPORT v1.0").build()).build()
+        ),
         GET_BATCH_REPORT("GET_BATCH_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
-            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects, 
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: BATCH REPORT v1.0").build()).build()            
+        ),
         GET_PRODLOT_REPORT("GET_PRODLOT_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
-            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects, 
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: PRODUCTION LOT REPORT v1.0").build()).build()            
+        ),
         GET_INCUBATOR_REPORT("GET_INCUBATOR_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
-            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects, 
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: INCUBATOR REPORT v1.0").build()).build()            
+        ),
         STATS_SAMPLES_PER_STAGE("STATS_SAMPLES_PER_STAGE", "", new LPAPIArguments[]{
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_STAGES_TO_INCLUDE, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_STAGES_TO_EXCLUDE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects, null),
         STATS_PROGRAM_LAST_RESULTS("STATS_PROGRAM_LAST_RESULTS", "", new LPAPIArguments[]{
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_TOTAL_OBJECTS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            }, EndPointsToRequirements.endpointWithNoOutputObjects, null),
         KPIS("KPIS", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -133,13 +144,13 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),        
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, null),        
         GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES("GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES", "", new LPAPIArguments[]{
-                new LPAPIArguments("includeSplittedByIncubNumber", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 6),
+                new LPAPIArguments("includeSplittedByIncubNumber", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 6),
                 new LPAPIArguments("includeAllWithAnyPendingIncubation", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 9),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10),
 new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 11),
                 new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
                 new LPAPIArguments("incub1_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
@@ -168,7 +179,7 @@ new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, L
                 new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 36),
                 new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 37),
                 new LPAPIArguments("incub2_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 38),
-new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 39),
+new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 39),
                 new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 40),
                 new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 41),
                 new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 42),
@@ -182,7 +193,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                 new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 50),
                 new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 51),
                 new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 52), 
-                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 53),}, EndPointsToRequirements.endpointWithNoOutputObjects),
+                new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 53),}, EndPointsToRequirements.endpointWithNoOutputObjects, null),
         SAMPLES_BY_STAGE("SAMPLES_BY_STAGE", "",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -197,7 +208,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),}, null),        
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),}, null, null),        
         SAMPLES_INPROGRESS_LIST("SAMPLES_INPROGRESS_LIST", "",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -212,14 +223,15 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),}, null),        
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),}, null, null),
 
 ;
-        private EnvMonSampleAPIFrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonSampleAPIFrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, JsonArray reportInfo){
             this.name=name;
             this.successMessageCode=successMessageCode;
-            this.arguments=argums; 
-            this.outputObjectTypes=outputObjectTypes;            
+            this.arguments=argums;
+            this.outputObjectTypes=outputObjectTypes;
+            this.reportInfo=reportInfo;
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -232,25 +244,41 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
             return hm;
         }        
         @Override        public String getName(){return this.name;}
-        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        public JsonArray getReportInfo() {return reportInfo;}  
         private final String name;
         private final String successMessageCode; 
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
+        private final JsonArray reportInfo;
 
         @Override        public String getSuccessMessageCode(){            return this.successMessageCode;        }           
     }
     
     public ClassEnvMonSampleFrontend(HttpServletRequest request, EnvMonSampleAPIFrontendEndpoints endPoint){
+        String reportInfoTagNAme="report_info";
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, null, procReqInstance.getErrorMessage(), 
+                new Object[]{procReqInstance.getErrorMessage(), this.getClass().getSimpleName()}, procReqInstance.getLanguage(), null);                   
+            return;
+        }
     try{
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         String batchName = "";
         Object[] actionDiagnoses = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, null, argValues[1].toString(), 
+                new Object[]{argValues[2].toString()}, procReqInstance.getLanguage(), null);                   
+            return;                        
+        }
+        
         this.functionFound=true;
             switch (endPoint){
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
@@ -449,8 +477,8 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         sampleTblAllFields);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
                         this.isSuccess=false;
-                        this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", 
-                            new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName});                        
+                        this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, 
+                            new Object[]{sampleId, TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName()});
                         //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName}));              
                         return;}  
                     JSONObject jObjSampleInfo=new JSONObject();
@@ -473,6 +501,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
 
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, jObjSampleInfo);
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY, jArrPieceOfInfo);
+                    jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
                     
                     JSONArray jArrMainObj=new JSONArray();
                     jObjPieceOfInfo=new JSONObject();
@@ -487,7 +516,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             new String[]{TblsProcedure.SampleStageTimingCapture.ID.getName()});                    
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleStageInfo[0][0].toString())){
                             this.isSuccess=false;
-                            this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName});              
+                            this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName()});
                             return;}  
                         for (Object[] curRec: sampleStageInfo){
                             JSONObject jObj= LPJson.convertArrayRowToJSONObject(sampleStageTimingCaptureAllFlds, curRec);
@@ -522,8 +551,9 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, null);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
                         this.isSuccess=false;
-                        this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", 
-                            new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName});                        
+                        this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, 
+                            new Object[]{sampleId,
+                                TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName()});
                         return;}  
                     jObjMainObject=new JSONObject();                    
                     jObjSampleInfo=new JSONObject();
@@ -573,6 +603,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     this.isSuccess=true;
                     jObjMainObject.put("sample_id", sampleId.toString());
                     jObjMainObject.put("sample", jObjSampleInfo);
+                    jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
                     this.responseSuccessJObj=jObjMainObject;                    
                     return;
                 case GET_BATCH_REPORT:
@@ -594,7 +625,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()}, new Object[]{batchName}, null);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())){
                         this.isSuccess=false;
-                        this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(batchInfo[0]), procInstanceName});
+                        this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{batchName, TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName()});
                         //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(batchInfo[0]), procInstanceName}));              
                         return;}  
                     JSONObject jObjBatchInfo=new JSONObject();
@@ -649,6 +680,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         }
                     }
                     jObjMainObject.put(GlobalAPIsParams.BATCH_REPORT_JSON_TAG_NAME_TEMP_READINGS, jArrLastTempReadings);                    
+                    jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
                     this.isSuccess=true;
                     this.responseSuccessJObj=jObjMainObject;
                     break;                                        
@@ -673,7 +705,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{lotName}, null);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
                         this.isSuccess=false;
-                        this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(prodLotInfo[0]), procInstanceName});
+                        this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName()});
                         return;}  
                     JSONObject jObjProdLotInfo=new JSONObject();
                     jObjMainObject=new JSONObject();
@@ -768,7 +800,8 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             } 
                             jObjMainObject.put(groupInfo[1], sampleGrouperJsonArr);
                         }
-                    }              
+                    } 
+                    jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
                     this.isSuccess=true;
                     this.responseSuccessJObj=jObjMainObject;                    
                     break;                                        
@@ -795,7 +828,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{lotName}, null);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubInfo[0][0].toString())){
                         this.isSuccess=false;
-                        this.responseError= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(incubInfo[0]), procInstanceName});
+                        this.responseError= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()});
                         return;}  
                     jObjProdLotInfo=new JSONObject();
                     jObjMainObject=new JSONObject();
@@ -847,6 +880,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         jArrLastTempReadings.add(jObj);
                     }
                     jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_LAST_N_TEMP_READINGS, jArrLastTempReadings);
+                    jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
                     this.isSuccess=true;
                     this.responseSuccessJObj=jObjMainObject;                          
                     break;                                        
