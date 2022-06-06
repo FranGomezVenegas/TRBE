@@ -6,9 +6,10 @@
 package com.labplanet.servicios.modulegenoma;
 
 import functionaljavaa.modulegenoma.GenomaConfigVariablesQueries;
-import functionaljavaa.platform.doc.EndPointsToRequirements;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
@@ -16,14 +17,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
-
 /**
  *
  * @author User
@@ -32,45 +34,37 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
     
             
     public enum  GenomaVariableAPIFrontEndEndPoints implements EnumIntEndpoints{
-            GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName", new LPAPIArguments[]{}),
-            GET_ACTIVE_CONFIG_VARIABLE_SET("GET_ACTIVE_CONFIG_VARIABLE_SET", "", new LPAPIArguments[]{}),
-//          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
-//          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
-//          VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName"), VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName"),
-//          PROJECT_CHANGE_USER_ROLE("PROJECT_CHANGE_USER_ROLE", "projectName|userName|userRole"), PROJECT_USER_ACTIVATE("PROJECT_USER_ACTIVATE", "projectName|userName|userRole"),
-//          PROJECT_USER_DEACTIVATE("PROJECT_USER_DEACTIVATE", "projectName|userName|userRole"),
+            GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName", new LPAPIArguments[]{}, null, null),
+            GET_ACTIVE_CONFIG_VARIABLE_SET("GET_ACTIVE_CONFIG_VARIABLE_SET", "", new LPAPIArguments[]{}, null, null)
           ;
-        private GenomaVariableAPIFrontEndEndPoints(String name, String mandatoryFields, LPAPIArguments[] argums){
-            this.endPointName=name;
-            this.endPointMandatoryFields=mandatoryFields;
-            this.arguments=argums;
+        private GenomaVariableAPIFrontEndEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums; 
+            this.outputObjectTypes=outputObjectTypes;            
+            this.actionEventObj=actionEventObj;
+        } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
         }
-            @Override
-        public String getName(){
-            return this.endPointName;
-        }
-        public String getMandatoryFields(){
-            return this.endPointMandatoryFields;
-        }
-      String endPointName="";
-      String endPointMandatoryFields="";
-      private final LPAPIArguments[] arguments;
-
-
-        @Override
-        public String getSuccessMessageCode() {
-            return "Not supported yet."; //To change body of generated methods, choose Tools | Templates.
-        }
-
-        @Override
-        public JsonArray getOutputObjectTypes() {
-            return EndPointsToRequirements.endpointWithNoOutputObjects;
-        }
-
-        @Override
-        public LPAPIArguments[] getArguments() {
-            return this.arguments; //To change body of generated methods, choose Tools | Templates.
-        }
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        public EnumIntAuditEvents getAuditEventObj() {return actionEventObj;}
+        
+        private final String name;
+        private final String successMessageCode;    
+        private final  LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;   
+        private final EnumIntAuditEvents actionEventObj;
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -102,7 +96,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         case GET_ACTIVE_CONFIG_VARIABLE_SET:
             break;
         case GET_VARIABLE_SET_VARIABLES_ID: 
-            Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaConfigVariableAPIFrontend.GenomaVariableAPIFrontEndEndPoints.GET_VARIABLE_SET_VARIABLES_ID.getMandatoryFields().split("\\|"));
+            Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response, 
                         LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());

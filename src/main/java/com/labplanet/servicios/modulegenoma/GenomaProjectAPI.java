@@ -55,8 +55,8 @@ public class GenomaProjectAPI extends HttpServlet {
     public enum GenomaProjectAPIEndPoints implements EnumIntEndpoints{
         PROJECT_NEW("PROJECT_NEW", "newProjectCreated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8)}, null, DataGenomaProjectAuditEvents.NEW_PROJECT),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8)}, null, DataGenomaProjectAuditEvents.NEW_PROJECT),
         PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectActivated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, null, DataGenomaProjectAuditEvents.ACTIVATE_PROJECT),
         PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectDeactivated_success", 
