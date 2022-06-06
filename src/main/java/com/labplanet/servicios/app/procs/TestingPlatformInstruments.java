@@ -98,8 +98,8 @@ public class TestingPlatformInstruments extends HttpServlet {
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
-/*out.println(iLines+" "+actionName);      
-if (iLines==7){
+out.println(iLines+" "+actionName);      
+/*if (iLines==7){
     out.println("stop here");
 }*/
                 if (tstOut.getAuditReasonPosic()!=-1)
