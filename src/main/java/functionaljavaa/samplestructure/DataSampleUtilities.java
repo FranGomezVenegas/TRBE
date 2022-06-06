@@ -39,11 +39,11 @@ public class DataSampleUtilities {
         if (language==null){language="en";}
        switch (language){
            case "en":
-               stList = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.STATUSES_LABEL_EN.getAreaName(), DataSampleBusinessRules.STATUSES_LABEL_EN.getTagName()); 
+               stList = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.STATUSES_LABEL_EN.getAreaName(), DataSampleBusinessRules.STATUSES_LABEL_EN.getTagName(), true); 
                if (stList.length()==0) stList=DataSample.SAMPLE_STATUSES_LABEL_EN_WHEN_NO_PROPERTY;
                break;
            case "es":
-               stList = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.STATUSES_LABEL_ES.getAreaName(), DataSampleBusinessRules.STATUSES_LABEL_ES.getTagName()); 
+               stList = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.STATUSES_LABEL_ES.getAreaName(), DataSampleBusinessRules.STATUSES_LABEL_ES.getTagName(), true); 
                if (stList.length()==0) stList=DataSample.SAMPLE_STATUSES_LABEL_ES_WHEN_NO_PROPERTY;
                break;
            default:
