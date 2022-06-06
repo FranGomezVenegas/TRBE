@@ -33,6 +33,13 @@ import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredOb
  * @author User
  */
 public class ProcedureRequestSession {
+
+    /**
+     * @return the isTransactional
+     */
+    public Boolean getIsTransactional() {
+        return isTransactional;
+    }
     
     private static ProcedureRequestSession theSession;
     private String procedureInstance;
@@ -63,13 +70,14 @@ public class ProcedureRequestSession {
     private Boolean newProcedureHashCodeGenerated;
     private Object[] appEncryptFields;
     private Object[] procedureEncryptFields;
-    
+    private Boolean isTransactional;
     private DbLogSummary dbLogSummary;
     
     
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, EnumIntEndpoints actionEndpoint, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
         try{
         if (request==null) return;
+        this.isTransactional=Rdbms.transactionMode;
         this.dbLogSummary=new DbLogSummary();
         this.newProcedureHashCodeGenerated=false;
         this.isQuery=isQuery;
@@ -83,6 +91,7 @@ public class ProcedureRequestSession {
         if (paramIsTesting!=null && Boolean.valueOf(paramIsTesting))
             this.isForTesting=true;
         this.sessionAuditActions=new SessionAuditActions();
+        
         String finalToken = "";
         Token tokn = null;
         String dbName = "";
@@ -182,7 +191,7 @@ public class ProcedureRequestSession {
             }                        
         }
         if (!isForTesting && !isForUAT && !isQuery && !isForDocumentation){            
-            this.auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, language, this.busRulesProcInstance);
+            this.auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, language, this.busRulesProcInstance, this.isPlatform);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
                 this.hasErrors=true;
                 this.errorMessage=this.auditAndUsrValid.getCheckUserValidationPassesDiag()[this.auditAndUsrValid.getCheckUserValidationPassesDiag().length-1].toString();
