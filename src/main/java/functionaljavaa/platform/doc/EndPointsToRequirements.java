@@ -18,8 +18,6 @@ import io.github.classgraph.ScanResult;
 import lbplanet.utilities.LPFrontEnd;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +62,7 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         JSONArray endpointsNotFound = new JSONArray();
         String audEvObjStr="";
         String evName="";
-
+        int i=0;
         Integer classesImplementingInt=-999;
         Integer totalEndpointsVisitedInt=0;
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
@@ -72,59 +70,61 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                 ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntEndpoints");
                 ClassInfoList allEnums = scanResult.getAllEnums();
                 classesImplementingInt=classesImplementing.size();
-                for (int i=0;i<classesImplementing.size();i++){
-if (i==45){
-    evName=evName;
-}                    
+                for (i=0;i<classesImplementing.size();i++){
                     ClassInfo getMine = classesImplementing.get(i); 
                     audEvObjStr=getMine.getSimpleName();
-                    List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
-                    JSONArray enumsIncomplete = new JSONArray();
-                    totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
-                    for (int j=0;j<enumConstantObjects.size();j++) {
-                        EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);                        
-                        evName=curEndpoint.getName().toString();
-                        
-                        String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(),  EndpointsDeclaration.ENDPOINT_NAME.getName()});//,  EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
-                        Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName()}); //, curEndpoint.getSuccessMessageCode()});
-                        fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
-                        fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curEndpoint.getArguments())});                
-                        
-                        if (LPArray.valueInArray(endpointsApiAndEndpointNamesKey, curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString())){
-                            endpointsFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString());
-                        }else{
-                            endpointsNotFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString());
-                        }
-                        if (!summaryOnlyMode){
-                            AddCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
-                            try{
-                                declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName().toString(), 
-                                        fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size());
-                            }catch(Exception e){
-                                JSONObject jObj=new JSONObject();
-                                jObj.put("enum",getMine.getSimpleName().toString());
-                                jObj.put("endpoint_code",curEndpoint.toString());
-                                jObj.put("error",e.getMessage());
-                                enumsIncomplete.add(jObj);
-                            }
-                        }
-                        
-                    }                    
-                    if (enumsIncomplete.size()>0){
-                        LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
-                        return;
+                    if ("GenomaVariableAPIEndPoints".equalsIgnoreCase(audEvObjStr) ||
+                        "GenomaVariableAPIFrontEndEndPoints".equalsIgnoreCase(audEvObjStr) ||
+                        i==34 || i==35 || i==36 || i==37|| i==38|| i==39|| i==40|| i==41
+                        || i==43    ){
+                        String iStr="1";
                     }else{
-                        JSONObject jObj=new JSONObject();
-                        jObj.put("enum",getMine.getSimpleName().toString());
-                        jObj.put("messages",enumConstantObjects.size());
-                        enumsCompleteSuccess.add(jObj);
+                        List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
+                        JSONArray enumsIncomplete = new JSONArray();
+                        totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
+                        for (int j=0;j<enumConstantObjects.size();j++) {
+                            EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);                        
+                            evName=curEndpoint.getName().toString();
+                            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(),  EndpointsDeclaration.ENDPOINT_NAME.getName()});//,  EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
+                            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName()}); //, curEndpoint.getSuccessMessageCode()});
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curEndpoint.getArguments())});                
+
+                            if (LPArray.valueInArray(endpointsApiAndEndpointNamesKey, curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString())){
+                                endpointsFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString());
+                            }else{
+                                endpointsNotFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString());
+                            }
+                            if (!summaryOnlyMode){
+                                AddCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
+                                try{
+                                    declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName().toString(), 
+                                            fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size());
+                                }catch(Exception e){
+                                    JSONObject jObj=new JSONObject();
+                                    jObj.put("enum",getMine.getSimpleName().toString());
+                                    jObj.put("endpoint_code",curEndpoint.toString());
+                                    jObj.put("error",e.getMessage());
+                                    enumsIncomplete.add(jObj);
+                                }
+                            }
+                        }                    
+                        if (enumsIncomplete.size()>0){
+                            LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
+                            return;
+                        }else{
+                            JSONObject jObj=new JSONObject();
+                            jObj.put("enum",getMine.getSimpleName().toString());
+                            jObj.put("messages",enumConstantObjects.size());
+                            enumsCompleteSuccess.add(jObj);
+                        }
                     }
                 }
             }catch(Exception e){
                 ScanResult.closeAll();
                 JSONArray errorJArr = new JSONArray();
-                errorJArr.add(audEvObjStr+"_"+evName+":"+e.getMessage());
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());
+                errorJArr.add("index:"+i+audEvObjStr+"_"+evName+":"+e.getMessage());
+//                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());
                 LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                 return;
             }
@@ -203,9 +203,9 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTrazitDocTrazit.EndpointsDeclaration.ID,
                     SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0]}, "");
-            Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
-                EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
-                new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName()}), new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()}, sqlWhere, null);
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
+                    EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
+                            new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName()}), new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()}, sqlWhere, null);
             return;
         }else{
             //String[] flds=(String[]) docInfoForEndPoint[0];
