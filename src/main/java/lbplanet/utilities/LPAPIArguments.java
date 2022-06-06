@@ -5,6 +5,7 @@
  */
 package lbplanet.utilities;
 
+import functionaljavaa.analysis.ConfigAnalysisStructure.ConfigAnalysisErrorTrapping;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
@@ -51,51 +52,58 @@ public class LPAPIArguments {
         Object[] returnArgsDef=new Object[0];
         for (LPAPIArguments currArg: argsDef){
             String requestArgValue=(String) request.getAttribute(currArg.getName());
-                if (requestArgValue==null) requestArgValue=LPNulls.replaceNull(request.getParameter(currArg.getName())).toString();
-            try{
-                ArgumentType argType=ArgumentType.valueOf(currArg.getType().toUpperCase());                
-                switch (argType){
-                    case STRING:
+            if (requestArgValue==null) requestArgValue=LPNulls.replaceNull(request.getParameter(currArg.getName())).toString();
+            if (LPNulls.replaceNull(requestArgValue).length()==0){
+                if (currArg.getMandatory())
+                    return new Object[]{LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, currArg.getName()};
+                else
+                    returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, "");
+            }else{
+                try{
+                    ArgumentType argType=ArgumentType.valueOf(currArg.getType().toUpperCase());                
+                    switch (argType){
+                        case STRING:
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                            break;
+                        case INTEGER:
+                            Integer valueConverted=null;
+                            if (requestArgValue.length()>0) valueConverted = Integer.parseInt(requestArgValue);
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConverted);
+                            break;
+                        case BIGDECIMAL:
+                            BigDecimal valueConvertedBigDec=null;
+                            if (requestArgValue.length()>0) valueConvertedBigDec = new BigDecimal(requestArgValue);
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBigDec);
+                            break;
+                        case DATE:     
+                            Date valueConvertedDate=null;
+                            if (requestArgValue.length()>0) valueConvertedDate=Date.valueOf(requestArgValue);
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedDate);
+                            break;
+                        case DATETIME:     
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, LPDate.stringFormatToLocalDateTime(requestArgValue));    
+                            break;
+                        case BOOLEAN:     
+                            Boolean valueConvertedBoolean=null;
+                            if (requestArgValue.length()>0 && ("TRUE".equalsIgnoreCase(requestArgValue)||"FALSE".equalsIgnoreCase(requestArgValue) )) valueConvertedBoolean=Boolean.valueOf(requestArgValue);
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBoolean);
+                            break;
+                        case STRINGARR:
+                            //String[] valueConvertedStrArr = requestArgValue.split("\\|");
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                            break;                        
+                        case STRINGOFOBJECTS:
+                            //Object[] valueConvertedTopObjectArr = LPArray.convertStringWithDataTypeToObjectArray(requestArgValue.split("\\|"));   
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                            break;                                                
+                        default:
+                            returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                            break;                
+                    }   
+                }catch(NumberFormatException e){
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
-                        break;
-                    case INTEGER:
-                        Integer valueConverted=null;
-                        if (requestArgValue.length()>0) valueConverted = Integer.parseInt(requestArgValue);
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConverted);
-                        break;
-                    case BIGDECIMAL:
-                        BigDecimal valueConvertedBigDec=null;
-                        if (requestArgValue.length()>0) valueConvertedBigDec = new BigDecimal(requestArgValue);
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBigDec);
-                        break;
-                    case DATE:     
-                        Date valueConvertedDate=null;
-                        if (requestArgValue.length()>0) valueConvertedDate=Date.valueOf(requestArgValue);
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedDate);
-                        break;
-                    case DATETIME:     
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, LPDate.stringFormatToLocalDateTime(requestArgValue));    
-                        break;
-                    case BOOLEAN:     
-                        Boolean valueConvertedBoolean=null;
-                        if (requestArgValue.length()>0 && ("TRUE".equalsIgnoreCase(requestArgValue)||"FALSE".equalsIgnoreCase(requestArgValue) )) valueConvertedBoolean=Boolean.valueOf(requestArgValue);
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBoolean);
-                        break;
-                    case STRINGARR:
-                        //String[] valueConvertedStrArr = requestArgValue.split("\\|");
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
-                        break;                        
-                    case STRINGOFOBJECTS:
-                        //Object[] valueConvertedTopObjectArr = LPArray.convertStringWithDataTypeToObjectArray(requestArgValue.split("\\|"));   
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
-                        break;                                                
-                    default:
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
-                        break;                
-                }   
-            }catch(NumberFormatException e){
-                    returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
-                    break;                                
+                        break;                                
+                }
             }
         }
         return returnArgsDef;
