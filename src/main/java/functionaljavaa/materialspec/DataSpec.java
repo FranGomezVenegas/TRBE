@@ -41,9 +41,9 @@ public class DataSpec {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -245,6 +245,8 @@ public class DataSpec {
      * @param maxSpec
      * @param minStrict
      * @param maxStrict
+     * @param minValAllowed
+     * @param maxValAllowed
      * @return
      */
     public Object[] resultCheck(BigDecimal result, BigDecimal minSpec, BigDecimal maxSpec, Boolean minStrict, Boolean maxStrict, BigDecimal minValAllowed, BigDecimal maxValAllowed){
@@ -330,6 +332,8 @@ public class DataSpec {
      * @param maxControl
      * @param minControlStrict
      * @param maxControlStrict
+     * @param minValAllowed
+     * @param maxValAllowed
      * @return
      */
     public Object[] resultCheck(BigDecimal result, BigDecimal minSpec, BigDecimal maxSpec, Boolean minStrict, Boolean maxStrict, BigDecimal minControl, BigDecimal maxControl, Boolean minControlStrict, Boolean maxControlStrict, BigDecimal minValAllowed, BigDecimal maxValAllowed){
