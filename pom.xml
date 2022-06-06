@@ -43,7 +43,7 @@
        <version>1.1</version>
       <type>jar</type>
     </dependency>
-<dependency>
+<!--<dependency>
     <groupId>org.hibernate</groupId>
     <artifactId>hibernate-core</artifactId>
     <version>5.2.12.Final</version>
@@ -60,13 +60,19 @@
             <groupId>dom4j</groupId>
             <artifactId>dom4j</artifactId>
         </exclusion>
-    </exclusions>
+    </exclusions>    
 </dependency>
-        <dependency>
+-->
+<dependency>
+    <groupId>com.mchange</groupId>
+    <artifactId>mchange-commons-java</artifactId>
+    <version>0.2.20</version>
+</dependency>
+<!--        <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
             <version>1.0.0.Final</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>com.mchange</groupId>
             <artifactId>c3p0</artifactId>
@@ -75,8 +81,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.4.11</version>
-            <type>jar</type>
+            <version>4.4.15</version>
         </dependency>
         <dependency>
             <groupId>servlets.com</groupId>
@@ -87,7 +92,7 @@
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
-            <version>7.0</version>
+            <version>8.0.1</version>
             <scope>provided</scope>
         </dependency>
 <!-- https://mvnrepository.com/artifact/javax.ws.rs/jsr311-api -->
@@ -106,22 +111,22 @@
 <dependency>
     <groupId>com.sun.xml.bind</groupId>
     <artifactId>jaxb-impl</artifactId>
-    <version>2.3.2</version>
+    <version>4.0.0-M4</version>
 </dependency>
 <dependency>
     <groupId>com.fasterxml.jackson.jaxrs</groupId>
     <artifactId>jackson-jaxrs-json-provider</artifactId>
-    <version>2.10.3</version>
+    <version>2.13.3</version>
 </dependency>
 <dependency>
     <groupId>com.fasterxml.jackson.module</groupId>
     <artifactId>jackson-module-jaxb-annotations</artifactId>
-    <version>2.10.3</version>
+    <version>2.13.3</version>
 </dependency>
 <dependency>
     <groupId>org.codehaus.jettison</groupId>
     <artifactId>jettison</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
 </dependency>
 <!-- ersey-json dependencies End -->
 
@@ -133,30 +138,30 @@
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-core</artifactId>
-    <version>2.10.0.pr3</version>
+    <version>2.13.3</version>
 </dependency>
         
         <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-annotations</artifactId>
-    <version>2.10.0.pr3</version>
+    <version>2.13.3</version>
 </dependency>
 <dependency>
     <groupId>commons-codec</groupId>
     <artifactId>commons-codec</artifactId>
-    <version>1.12</version>
+    <version>1.15</version>
 </dependency>
 
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>
-    <version>2.10.0.pr3</version>
+    <version>2.13.3</version>
 </dependency>
 
 <dependency>
     <groupId>com.auth0</groupId>
     <artifactId>java-jwt</artifactId>
-    <version>3.10.0</version>
+    <version>3.19.2</version>
 </dependency>
       
 
@@ -173,12 +178,12 @@
     <dependency>
         <groupId>com.google.zxing</groupId>
         <artifactId>core</artifactId>
-        <version>3.4.0</version>
+        <version>3.5.0</version>
     </dependency>        
 <dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi</artifactId>
-    <version>4.1.0</version>
+    <version>4.1.2</version>
 </dependency>
 
 
@@ -186,7 +191,7 @@
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
-            <version>2.23.2</version>
+            <version>3.1.0-M2</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
@@ -206,6 +211,7 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.0</version>
+            <type>jar</type>
         </dependency>          
     <dependency>
             <groupId>org.apache.cxf</groupId>
@@ -215,7 +221,7 @@
     <dependency>
         <groupId>com.microsoft.sqlserver</groupId>
         <artifactId>mssql-jdbc</artifactId>
-        <version>7.2.2.jre11</version>
+        <version>11.1.1.jre18-preview</version>
     </dependency>
     
 <dependency>
@@ -240,11 +246,11 @@
 <dependency>
     <groupId>com.opencsv</groupId>
     <artifactId>opencsv</artifactId>
-    <version>5.2</version>
+    <version>5.6</version>
 </dependency>
 
-<!-- https://mvnrepository.com/artifact/io.github.classgraph/classgraph -->
-<dependency>
+
+ <dependency>
     <groupId>io.github.classgraph</groupId>
     <artifactId>classgraph</artifactId>
     <version>4.8.138</version>
@@ -252,7 +258,7 @@
 </dependency>
 
 <!-- https://mvnrepository.com/artifact/org.molgenis/molgenis-data-excel
-<dependency>
+ <dependency>
     <groupId>org.molgenis</groupId>
     <artifactId>molgenis-data-excel</artifactId>
     <version>8.4.5</version>
