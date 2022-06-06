@@ -279,7 +279,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         return hm;
     }
     
-    public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, String[] whereFields, Object[] whereFieldValues, String[] fieldsToGroup, String[] fieldsToOrder) {        
+    public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, SqlWhere sWhere, String[] fieldsToGroup, String[] fieldsToOrder) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
         String queryWhere = "";
@@ -287,8 +287,8 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         tableName = setSchemaName(tableName);
         
         Object[] whereFieldValuesNew = new Object[0];
-        if (whereFields != null) {
-            Object[] whereClauseContent = buildWhereClause(whereFields, whereFieldValues);            
+        if (!sWhere.getAllWhereEntries().isEmpty()) {
+            Object[] whereClauseContent = buildWhereClause(sWhere);
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
