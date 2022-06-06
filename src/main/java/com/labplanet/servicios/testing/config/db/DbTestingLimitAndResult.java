@@ -68,14 +68,14 @@ public class DbTestingLimitAndResult extends HttpServlet {
             this.arguments=argums; 
             this.outputObjectTypes=outputObjectTypes;            
         } 
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
         
         private final String name;
         private final String successMessageCode;       
-        private  LPAPIArguments[] arguments;
+        private final  LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
 
     }    
@@ -126,9 +126,9 @@ Integer currentLine=0;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 currentLine=iLines;  
-//out.println(iLines);
-//if (currentLine==23) 
-//    out.println("parate aqui");
+out.println(iLines);
+if (currentLine==23) 
+    out.println("parate aqui");
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
 
