@@ -108,7 +108,7 @@ public class ClassEnvMonSample {
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
                         actionDiagnoses=fieldValues;
                     else{
-                        if (argValues[6]==null){
+                        if (LPNulls.replaceNull(argValues[6]).toString().length()==0){
                             actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV, 
                                 fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
                         }else{
@@ -173,12 +173,14 @@ public class ClassEnvMonSample {
                         if (diagn.length>1){
                             Object[] auditDiagn=(Object[]) diagn[1];
                         }
+                        messages.addMainForSuccess(endPoint, new Object[]{resultId, procInstanceName});
                         Object[][] resultInfo=new Object[0][0];
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});                    
                         resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                                 new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()});
                         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) sampleId=Integer.valueOf(resultInfo[0][0].toString());
                         dynamicDataObjects=new Object[]{resultInfo[0][0].toString()};
+                        messages.addMainForSuccess(endPoint, new Object[]{resultInfo[0][0], procInstanceName});
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), resultInfo[0][0]);
                     }
                     break;
