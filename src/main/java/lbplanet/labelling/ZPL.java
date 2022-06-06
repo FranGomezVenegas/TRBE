@@ -6,7 +6,6 @@
 package lbplanet.labelling;
 
 import fr.w3blog.zpl.constant.ZebraFont;
-
 import fr.w3blog.zpl.model.ZebraLabel;
 import fr.w3blog.zpl.model.ZebraPrintException;
 import fr.w3blog.zpl.model.ZebraUtils;
