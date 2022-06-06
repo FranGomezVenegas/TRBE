@@ -324,6 +324,7 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         INCUB_BATCH_CONFIG_ID("incub_batch_config_id", LPDatabase.integerNotNull(), null, null, null, null),
         INCUB_BATCH_CONFIG_VERSION("incub_batch_config_version", LPDatabase.integerNotNull(), null, null, null, null),
         TYPE("type", LPDatabase.string(), null, null, null, null),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
         INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string(), null, null, null, null),
         INCUBATION_START(FIELDS_NAMES_INCUBATION_START, LPDatabase.dateTime(), null, null, null, null),
         INCUBATION_END(FIELDS_NAMES_INCUBATION_END, LPDatabase.dateTime(), null, null, null, null),        
