@@ -85,11 +85,51 @@ public class AdminActions {
     public static InternalMessage deActivateWhiteIp(Integer id){   
         return ipActions(TblsApp.TablesApp.IP_WHITE_LIST, "UPDATE", id, new String[]{TblsApp.IPWhiteList.ACTIVE.getName()}, new Object[]{false}, null, null);
     }
-    public static InternalMessage updateBlackIp(Integer id, String[] fldName, Object[] fldValue){   
-        return ipActions(TblsApp.TablesApp.IP_BLACK_LIST, "UPDATE", id, fldName, fldValue, null, null);
+    public static InternalMessage updateBlackIp(Integer id, String val1, String val2, String val3, String val4, String description){   
+        String[] fldNames=new String[]{TblsApp.IPWhiteList.IP_VALUE1.getName()};
+        Object[] fldValues=new Object[]{val1};
+        if (val2!=null && val2.length()>0){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.IP_VALUE2.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, val2);
+        }
+        if (val3!=null && val3.length()>0){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.IP_VALUE3.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, val3);
+        }
+        if (val4!=null && val4.length()>0){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.IP_VALUE4.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, val4);
+        }   
+        String[] extraFldNames=null;
+        Object[] extraFldValues=null;
+        if (description!=null && description.length()>0){
+            extraFldNames=LPArray.addValueToArray1D(extraFldNames, TblsApp.IPWhiteList.DESCRIPTION.getName());
+            extraFldValues=LPArray.addValueToArray1D(extraFldValues, description);
+        }        
+        return ipActions(TblsApp.TablesApp.IP_BLACK_LIST, "UPDATE", id, fldNames, fldValues, null, null);
     }
-    public static InternalMessage updateWhiteIp(Integer id, String[] fldName, Object[] fldValue){   
-        return ipActions(TblsApp.TablesApp.IP_WHITE_LIST, "UPDATE", id, fldName, fldValue, null, null);
+    public static InternalMessage updateWhiteIp(Integer id, String val1, String val2, String val3, String val4, String description){   
+        String[] fldNames=new String[]{TblsApp.IPWhiteList.IP_VALUE1.getName()};
+        Object[] fldValues=new Object[]{val1};
+        if (val2!=null && val2.length()>0){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.IP_VALUE2.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, val2);
+        }
+        if (val3!=null && val3.length()>0){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.IP_VALUE3.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, val3);
+        }
+        if (val4!=null && val4.length()>0){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.IP_VALUE4.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, val4);
+        }   
+        String[] extraFldNames=null;
+        Object[] extraFldValues=null;
+        if (description!=null && description.length()>0){
+            extraFldNames=LPArray.addValueToArray1D(extraFldNames, TblsApp.IPWhiteList.DESCRIPTION.getName());
+            extraFldValues=LPArray.addValueToArray1D(extraFldValues, description);
+        }        
+        return ipActions(TblsApp.TablesApp.IP_WHITE_LIST, "UPDATE", id, fldNames, fldValues, null, null);
     }
     public static InternalMessage removeBlackIp(Integer id){   
         return ipActions(TblsApp.TablesApp.IP_BLACK_LIST, "DELETE", id, new String[]{TblsApp.IPWhiteList.ID.getName()}, new Object[]{id}, null, null);

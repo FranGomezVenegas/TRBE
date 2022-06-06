@@ -5,7 +5,6 @@
  */
 package functionaljavaa.platformadmin;
 
-import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.TblsApp;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -42,10 +41,12 @@ public class PlatformAdminEnums {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
         UPDATE_WHITE_IP("UPDATE_WHITE_IP", "whiteIpUpdated_success",new LPAPIArguments[]{
-            new LPAPIArguments(TblsApp.IPWhiteList.ID.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6 ),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_UPDATE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_UPDATE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8),
-            }, 
+            new LPAPIArguments(TblsApp.IPBlackList.ID.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10 ),
+            new LPAPIArguments(TblsApp.IPWhiteList.DESCRIPTION.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 11 ),}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
         REMOVE_WHITE_IP("REMOVE_WHITE_IP", "whiteIpRemoved_success",new LPAPIArguments[]{
@@ -69,10 +70,12 @@ public class PlatformAdminEnums {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
         UPDATE_BLACK_IP("UPDATE_BLACK_IP", "blackIpUpdated_success",new LPAPIArguments[]{
-            new LPAPIArguments(TblsApp.IPWhiteList.ID.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 6 ),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_UPDATE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_UPDATE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8),
-            }, 
+            new LPAPIArguments(TblsApp.IPBlackList.ID.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10 ),
+            new LPAPIArguments(TblsApp.IPWhiteList.DESCRIPTION.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 11 ),}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
         REMOVE_BLACK_IP("REMOVE_BLACK_IP", "blackIpRemoved_success",new LPAPIArguments[]{
