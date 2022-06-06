@@ -11,6 +11,7 @@ import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import java.util.ArrayList;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -170,8 +171,8 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName}); 
-        String[] updFieldName=new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()};
-        Object[] updFieldValue=new Object[]{false};             
+        String[] updFieldName=new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName(), TblsEnvMonitConfig.InstrIncubator.LAST_DEACTIVATION_ON.getName()};
+        Object[] updFieldValue=new Object[]{false, LPDate.getCurrentTimeStamp()};             
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsEnvMonitConfig.InstrIncubator.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{instName}, "");
 	Object[] incubUpdate=Rdbms.updateRecordFieldsByFilter(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,

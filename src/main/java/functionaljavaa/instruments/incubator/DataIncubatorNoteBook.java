@@ -281,7 +281,7 @@ public class DataIncubatorNoteBook {
         }
         if (pointsAdded==0){
             Object[] errDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataIncubatorNoteBookErrorTrapping.NO_READINGS_SINCE_LATEST_ACTIVATION, new Object[0]);
-            return LPArray.array1dTo2d(errDiagn, errDiagn.length-1);            
+            return new Object[][]{errDiagn};            
         } 
         return LPArray.array1dTo2d(pointsFromLatestActivation, instrNotebook[0].length);
     }

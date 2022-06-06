@@ -6,7 +6,11 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
+import databases.Rdbms;
+import databases.SqlStatement;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -20,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
@@ -38,11 +43,14 @@ import trazit.queries.QueryUtilitiesEnums;
 public class EnvMonIncubationAPIfrontend extends HttpServlet {
 
     public enum EnvMonIncubationAPIfrontendEndpoints implements EnumIntEndpoints{
-        INCUBATOR_TEMP_READINGS("INCUBATOR_TEMP_READINGS", "", 
+        GET_INCUBATOR_TEMP_READINGS("GET_INCUBATOR_TEMP_READINGS", "", 
                 new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),}, null),
-        INCUBATORS_LIST("INCUBATORS_LIST", "", 
+        GET_INCUBATORS_LIST("GET_INCUBATORS_LIST", "", 
+                new LPAPIArguments[]{new LPAPIArguments("incubStage", LPAPIArguments.ArgumentType.STRING.toString(), false, 6)}, null),
+        GET_INCUBATORS_LIST_BY_STAGE("GET_INCUBATORS_LIST_BY_STAGE", "", 
                 new LPAPIArguments[]{new LPAPIArguments("incubStage", LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, null),
+        GET_INCUBATORS_DEACTIVATED_LAST_N_DAYS("GET_INCUBATORS_DEACTIVATED_LAST_N_DAYS","",new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
         private EnvMonIncubationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -109,8 +117,12 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                   
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
         switch (endPoint){
-            case INCUBATORS_LIST: 
-                String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.STAGE.getName()};
+            case GET_INCUBATORS_LIST_BY_STAGE: 
+                //String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.STAGE.getName()};
+
+            case GET_INCUBATORS_LIST: 
+                String[] fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableFields());                    
+//                String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.STAGE.getName()};
                 String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};     
@@ -135,7 +147,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                 }
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 break;
-            case INCUBATOR_TEMP_READINGS:
+            case GET_INCUBATOR_TEMP_READINGS:
                 String instrName=argValues[0].toString();
                 String numPoints=LPNulls.replaceNull(argValues[1]).toString();
                 Integer numPointsInt=null;
@@ -149,6 +161,26 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                     jArr.add(LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading));                
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 break;
+            case GET_INCUBATORS_DEACTIVATED_LAST_N_DAYS:
+                    String numDays = LPNulls.replaceNull(argValues[0]).toString();
+                    if (numDays.length()==0) numDays=String.valueOf(7);
+                    int numDaysInt=0-Integer.valueOf(numDays);
+                    fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableFields());
+                    Object[][] prodLotsDeactivatedLastDays=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                        EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, "ALL"),
+                        new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName(), TblsEnvMonitConfig.InstrIncubator.LAST_DEACTIVATION_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
+                        new Object[]{false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                        new String[]{TblsEnvMonitConfig.InstrIncubator.LAST_DEACTIVATION_ON.getName()+" desc"});
+                    jArr = new JSONArray();
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString())){
+                        for (Object[] currIncident: prodLotsDeactivatedLastDays){
+                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                            jArr.add(jObj);
+                        }
+                    }
+                    Rdbms.closeRdbms();  
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);        
+                    return;
             default:      
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());                                                                  
