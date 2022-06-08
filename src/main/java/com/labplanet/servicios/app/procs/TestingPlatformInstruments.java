@@ -56,6 +56,8 @@ public class TestingPlatformInstruments extends HttpServlet {
         Object[] functionEvaluation=new Object[0];
         JSONArray functionRelatedObjects=new JSONArray();        
 
+        Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
+
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
@@ -98,10 +100,15 @@ public class TestingPlatformInstruments extends HttpServlet {
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
-out.println(iLines+" "+actionName);      
+                instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());
+//out.println(iLines+" "+actionName);      
+/*if ("ENTER_EVENT_RESULT".equalsIgnoreCase(actionName.toString())){
+    out.println("stop here");
+}*/
 /*if (iLines==7){
     out.println("stop here");
 }*/
+
                 if (tstOut.getAuditReasonPosic()!=-1)
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
 

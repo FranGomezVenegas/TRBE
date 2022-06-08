@@ -28,6 +28,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -45,12 +46,14 @@ public class TestingSamples extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+
         String table1Header = TestingServletsConfig.DB_SCHEMADATA_SAMPLES.getTablesHeaders();
         Integer table1NumArgs=13;
         
         Object[] functionEvaluation=new Object[0];
         JSONArray functionRelatedObjects=new JSONArray();
+        Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
 
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
@@ -84,6 +87,7 @@ public class TestingSamples extends HttpServlet {
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
+                instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());
 
                 ClassSampleController clssController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                 if (clssController.getFunctionFound()){

@@ -32,6 +32,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.session.ApiMessageReturn;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -51,9 +52,11 @@ public class TestingInspLotRM extends HttpServlet {
         String table1Header = TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTablesHeaders();
         Integer table1NumArgs=13;
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
 
         Object[] functionEvaluation=new Object[0];
         JSONArray functionRelatedObjects=new JSONArray();        
+        Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
 
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
@@ -91,6 +94,7 @@ public class TestingInspLotRM extends HttpServlet {
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
                 if (tstOut.getAuditReasonPosic()!=-1)
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
+                instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     

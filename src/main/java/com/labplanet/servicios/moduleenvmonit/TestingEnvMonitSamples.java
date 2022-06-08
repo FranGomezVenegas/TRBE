@@ -58,6 +58,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
         Object[] functionEvaluation=new Object[0];
         JSONArray functionRelatedObjects=new JSONArray();        
+        Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
 
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
@@ -105,6 +106,7 @@ if (iLines==25){
     out.println("stop here");
 }*/
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
+                instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());                
                 if (tstOut.getAuditReasonPosic()!=-1)
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
 
