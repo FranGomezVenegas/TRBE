@@ -44,9 +44,26 @@ public class ClassInstruments {
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            //this.diagnostic=argValues;
+            this.diagnostic=ApiMessageReturn.trapMessage(argValues[0].toString(), argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.relatedObj=rObj;
+            rObj.killInstance();
+            return;
+        }
+        DataInstruments instr=null;
         String instrName=argValues[0].toString();
-        DataInstruments instr=new DataInstruments(instrName);
+        if (!"NEW_INSTRUMENT".equalsIgnoreCase(endPoint.getName())){
+            instr=new DataInstruments(instrName);
+            if (instr.getHasError()){
+                this.actionDiagnosesObj=instr.getErrorDetail();
+                this.diagnostic=ApiMessageReturn.trapMessage(instr.getErrorDetail().getDiagnostic(),instr.getErrorDetail().getMessageCodeObj(), instr.getErrorDetail().getMessageCodeVariables());
+                this.relatedObj=rObj;
+                rObj.killInstance();
+                return;
+            }
+        }
         this.functionFound=true;
             switch (endPoint){
                 case NEW_INSTRUMENT:

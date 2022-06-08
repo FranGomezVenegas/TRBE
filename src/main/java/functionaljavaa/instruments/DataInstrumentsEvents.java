@@ -173,7 +173,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
 	sqlWhere.addConstraint(TblsAppProcData.InstrEventVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
 	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES,
 		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
             instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_ENTERED, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                 updFieldsName, updFieldsValue);
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);        
@@ -238,7 +238,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
 	sqlWhere.addConstraint(TblsAppProcData.InstrEventVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
 	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES,
 		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
             instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_REENTERED, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                 updFieldsName, updFieldsValue);
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);        

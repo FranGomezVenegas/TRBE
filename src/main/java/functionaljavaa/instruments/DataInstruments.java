@@ -50,6 +50,8 @@ public class DataInstruments {
     private String family;
     private String[] familyFieldNames;
     private Object[] familyFieldValues;
+    private Boolean hasError;
+    private InternalMessage errorDetail;
     
     public enum Decisions{ACCEPTED, ACCEPTED_WITH_RESTRICTIONS, REJECTED}
 
@@ -85,7 +87,10 @@ public class DataInstruments {
                 new String[]{TblsAppProcData.Instruments.NAME.getName()}, new Object[]{instrName}, getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())){
             this.name=null;
+            this.hasError=true;
+            this.errorDetail=new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{instrName, TablesAppProcData.INSTRUMENTS.getTableName(), GlobalVariables.Schemas.APP_PROC_DATA.getName()}, instrName);
         }else{
+            this.hasError=false;
             this.fieldNames=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableFields());
             this.fieldValues=instrInfo[0];
             this.name=instrName;
@@ -729,5 +734,8 @@ public class DataInstruments {
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT, new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT, new Object[]{name}, name);
     }
+
+    public Boolean getHasError() {        return hasError;    }
+    public InternalMessage getErrorDetail() {        return errorDetail;    }
 
 }
