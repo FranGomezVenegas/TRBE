@@ -437,6 +437,10 @@ return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_F
         }
         return;
     }
+    public void setActionNameForTesting(Integer scriptId, Integer stepId, String actionName){
+        String tstAction="Script:"+scriptId.toString()+" Step:"+stepId.toString()+" ActionName:"+actionName;
+        this.actionName=tstAction;
+    }
     public void setAlternativeToken(Token newToken){
         this.previousToken=new Token(this.tokenStr);
         this.token=newToken;
