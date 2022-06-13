@@ -210,6 +210,7 @@ public class LPFrontEnd {
      * @param className
      */
     public static final void servletReturnResponseError(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] errorCodeVars, String language, String className){  
+        
         JSONObject errJSONMsg = LPFrontEnd.responseJSONError(errorCode,errorCodeVars, className);
         request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());
         servetInvokeResponseErrorServlet(request, response);
