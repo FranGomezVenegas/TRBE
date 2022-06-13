@@ -269,7 +269,7 @@ public class SopUserAPIfrontend extends HttpServlet {
         Token token = new Token(finalToken);
         
         SopUserAPIfrontendEndpoints endPoint = SopUserAPIfrontendEndpoints.ALL_MY_SOPS;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
 
         UserProfile usProf = new UserProfile();
@@ -280,7 +280,11 @@ public class SopUserAPIfrontend extends HttpServlet {
             return new JSONArray();
         }
         String[] fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
-        String sopFieldsToRetrieve = argValues[0].toString();
+        
+        String sopFieldsToRetrieve = null;
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString()))
+            sopFieldsToRetrieve = argValues[0].toString();
+            
         if (sopFieldsToRetrieve!=null && sopFieldsToRetrieve.length()>0) {                
             String[] sopFieldsToRetrieveArr = sopFieldsToRetrieve.split("\\|");
             for (String fv: sopFieldsToRetrieveArr){
@@ -324,7 +328,7 @@ public class SopUserAPIfrontend extends HttpServlet {
         mySopsListArr.add(mySopsList);        
         return mySopsListArr;
     }catch(Exception e){
-        JSONArray proceduresList = new JSONArray();
+        JSONArray proceduresList = new JSONArray();        
         return proceduresList;            
     }
     }
@@ -418,7 +422,7 @@ public class SopUserAPIfrontend extends HttpServlet {
         }
         String[] fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
         String sopFieldsToRetrieve = argValues[0].toString(); 
-        if (sopFieldsToRetrieve!=null && sopFieldsToRetrieve.length()>0) {                
+        if (sopFieldsToRetrieve!=null && sopFieldsToRetrieve.length()>0 && !sopFieldsToRetrieve.toUpperCase().contains("LABPLANET_FALSE")) {                
             String[] sopFieldsToRetrieveArr = sopFieldsToRetrieve.split("\\|");
             for (String fv: sopFieldsToRetrieveArr){
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);

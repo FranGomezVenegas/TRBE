@@ -342,11 +342,11 @@ public class UserSop {
         
         
         Object[] filterFieldValueAllSchemas = new Object[filterFieldValue.length*correctProcess];
-        Integer iFldValue=0;
-        for(String sPref: procInstanceName){
+        //Integer iFldValue=0;
+        //for(String sPref: procInstanceName){
+        for (int iFldValue=0;iFldValue<correctProcess;iFldValue++){
             for(Object fVal: filterFieldValue){
                 filterFieldValueAllSchemas[iFldValue]=fVal;    
-                iFldValue++;
             }
         }               
         try{
