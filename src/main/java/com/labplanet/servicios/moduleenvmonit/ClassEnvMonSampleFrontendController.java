@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
@@ -26,7 +27,7 @@ public class ClassEnvMonSampleFrontendController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;    
     
-    public ClassEnvMonSampleFrontendController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
+    public ClassEnvMonSampleFrontendController(HttpServletRequest request, HttpServletResponse response, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
         ClassEnvMonSampleFrontend.EnvMonSampleAPIFrontendEndpoints endPoint = null;
@@ -40,7 +41,7 @@ public class ClassEnvMonSampleFrontendController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, endPoint);
+            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, response, endPoint);
             if (clss.getIsSuccess())
                 this.functionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);
             else
