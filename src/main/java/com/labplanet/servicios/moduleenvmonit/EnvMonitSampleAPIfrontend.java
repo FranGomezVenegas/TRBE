@@ -56,7 +56,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                 return;                   
             }
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
-            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, endPoint);
+            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, response, endPoint);
             if (clss.getIsSuccess()){
                 if (clss.getResponseContentJArr()!=null)
                     LPFrontEnd.servletReturnSuccess(request, response, (JSONArray) clss.getResponseContentJArr());
