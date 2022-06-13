@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViewFields;
@@ -35,11 +34,15 @@ public class QueryUtilitiesEnums {
         return tblInfo;
     }    
     public static Object[][] getTableData(EnumIntTables tblObj, EnumIntTableFields[] fldsToRetrieve, String[] whereFldName, Object[] whereFldValue, String[] orderBy){        
-        Object[][] tblInfo=getRecordFieldsByFilter(tblObj, fldsToRetrieve, whereFldName, whereFldValue, orderBy, false, null);
+        Object[][] tblInfo=getRecordFieldsByFilter(tblObj, fldsToRetrieve, whereFldName, whereFldValue, orderBy, false, null, null);
         return tblInfo;
     }    
     public static Object[][] getTableData(EnumIntTables tblObj, EnumIntTableFields[] fldsToRetrieve, String[] whereFldName, Object[] whereFldValue, String[] orderBy, String alternativeProcInstanceName){        
-        Object[][] tblInfo=getRecordFieldsByFilter(tblObj, fldsToRetrieve, whereFldName, whereFldValue, orderBy, false, alternativeProcInstanceName);
+        Object[][] tblInfo=getRecordFieldsByFilter(tblObj, fldsToRetrieve, whereFldName, whereFldValue, orderBy, false, alternativeProcInstanceName, null);
+        return tblInfo;
+    }    
+    public static Object[][] getTableData(EnumIntTables tblObj, EnumIntTableFields[] fldsToRetrieve, String[] whereFldName, Object[] whereFldValue, String[] orderBy, String alternativeProcInstanceName, Boolean avoidMask){        
+        Object[][] tblInfo=getRecordFieldsByFilter(tblObj, fldsToRetrieve, whereFldName, whereFldValue, orderBy, false, alternativeProcInstanceName, avoidMask);
         return tblInfo;
     }    
     public static Object[][] getTableData(EnumIntTables tblObj, EnumIntTableFields[] fldsToRetrieve, SqlWhere where, String[] orderBy, String alternativeProcInstanceName){        
@@ -81,7 +84,7 @@ public class QueryUtilitiesEnums {
         return tblInfo;
     }    
 */
-    private static Object[][] getRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy, Boolean inforceDistinct, String alternativeProcInstanceName){
+    private static Object[][] getRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy, Boolean inforceDistinct, String alternativeProcInstanceName, Boolean avoidMask){
         String query=null;
         //if (orderBy==null) orderBy=new String[]{};
         try{            
