@@ -56,166 +56,39 @@ import trazit.queries.QueryUtilitiesEnums;
  */
 public class EnvMonAPIfrontend extends HttpServlet {
   
-    /**
-     *
-     */
-    /**
-     *
-     */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
-
-    /**
-     *
-     */
     public static final String MANDATORY_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST="programName";
-    
-    /**
-     *
-     */
     public static final String DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_TO_GET="name|program_config_id|program_config_version|description_en|description_es"
                                 + "|sample_config_code|sample_config_code_version|map_image";     
-
-    /**
-     *
-     */
     public static final String DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_SORT_FLDS="name";
-
-    /**
-     *
-     */
     public static final String DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_LOCATION_TO_GET="program_name|location_name|description_en|description_es|map_icon|map_icon_h|map_icon_w|map_icon_top|map_icon_left|area|spec_code|spec_variation_name|spec_analysis_variation|person_ana_definition|requires_person_ana";
-
-    /**
-     *
-     */
     public static final String DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_LOCATION_SORT_FLDS="order_number|location_name";
-    
-    /**
-     *
-     */
     public static final String DEFAULT_PARAMS_PROGRAMS_LIST_CARD_FIELDS="program_name|location_name|area|spec_code|spec_code_version|spec_variation_name|spec_analysis_variation";
-
-    /**
-     *
-     */
     public static final String DEFAULT_PARAMS_PROGRAMS_LIST_CARD_SORT_FLDS="order_number|location_name";
-
-    /**
-     *
-     */
     public static final String[] programLocationCardFieldsInteger=new String[]{"spec_code_version"};
-
-    /**
-     *
-     */
     public static final String[] programLocationCardFieldsNoDbType=new String[]{"description_en"};
-    
-    /**
-     *
-     */
     public static final String DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_GET="id|status|status_previous|created_on|created_by|program_name|location_name|area|sample_id|test_id|result_id|limit_id|spec_eval|spec_eval_detail|analysis|method_name|method_version|param_name|spec_rule_with_detail";
-
-    /**
-     *
-     */
     public static final String DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_SORT="program_name|created_on desc";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_NAME="name";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_LABEL_EN="label_en";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_LABEL_ES="label_es";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_PSWD="password";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_PSWD_VALUE_FALSE="false";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_TYPE="type";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_TYPE_VALUE_TREE_LIST="tree-list";
-      
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_TYPE_VALUE_TEXT="text";      
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_DB_TYPE="dbType";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_DB_TYPE_VALUE_INTEGER="Integer";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_DB_TYPE_VALUE_STRING="String";
-    
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_VALUE="value";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_NAME_TOTAL="total";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_GROUP_NAME_CARD_PROGRAMS_LIST="programsList";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_GROUP_NAME_CARD_INFO="card_info";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY="samples_summary";
-
     public static final String JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE="samples_summary_by_stage";
     public static final String JSON_TAG_GROUP_NAME_CONFIG_CALENDAR="config_scheduled_calendar";
-    
-    /**
-     *
-     */
     public static final String JSON_TAG_GROUP_NAME_SAMPLE_POINTS="sample_points";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_PROGRAM_DATA_TEMPLATE_DEFINITION="program_data_template_definition";
-
-    /**
-     *
-     */
     public static final String JSON_TAG_SPEC_DEFINITION="spec_definition";
 /*
         
@@ -242,8 +115,8 @@ GlobalAPIsParams.
                 }, EndPointsToRequirements.endpointWithNoOutputObjects),
         PROGRAMS_CORRECTIVE_ACTION_LIST("PROGRAMS_CORRECTIVE_ACTION_LIST", "", 
             new LPAPIArguments[]{new LPAPIArguments("programName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments("programCorrectiveActionFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
-                new LPAPIArguments("programCorrectiveActionFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects),
+                new LPAPIArguments("programCorrectiveActionFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments("programCorrectiveActionFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_ALL_PRODUCTION_LOTS("GET_ALL_PRODUCTION_LOTS", "", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_SORT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)
@@ -312,6 +185,12 @@ GlobalAPIsParams.
                 return;                   
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+                //this.diagnostic=argValues;
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
+//                LPFrontEnd.servletReturnResponseError(request, response, argValues[1].toString(), new Object[]{argValues[2].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
+                return;
+            }            
             switch (endPoint){
                 case PROGRAMS_LIST: 
                     String[] programFldNameArray = getFieldsListToRetrieve(argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableFields()));
