@@ -179,6 +179,9 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         return hm;
     }
     public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {        
+        return buildSqlStatementTable(operation, tblObj, whereFieldNames, whereFieldValues, fieldsToRetrieve, setFieldNames, setFieldValues, fieldsToOrder, fieldsToGroup, forceDistinct, alternativeProcInstanceName, null);
+    }
+    public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName, Boolean avoidMask) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
         String queryWhere = "";
@@ -197,7 +200,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
-        String fieldsToRetrieveStr = buildFieldsToRetrieve(tblObj, fieldsToRetrieve);
+        String fieldsToRetrieveStr = buildFieldsToRetrieve(tblObj, fieldsToRetrieve, avoidMask);
         String fieldsToOrderStr = buildOrderBy(fieldsToOrder);
         String fieldsToGroupStr = buildGroupBy(fieldsToGroup);
         
@@ -470,22 +473,35 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         return schemaName;
     }
 
-    private String buildFieldsToRetrieve(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve) {
+    private String buildFieldsToRetrieve(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Boolean avoidMask) {
         StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
         if (fieldsToRetrieve != null) {
+            
             for (EnumIntTableFields curFld : fieldsToRetrieve) {
+                
                 Boolean alreadyAdded=false;
-                if (curFld.getFieldType().equals(LPDatabase.date())){
+                if (curFld.getFieldType()==null){
                     fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
                     alreadyAdded=true;
-                }
-                if (curFld.getFieldType().equals(LPDatabase.dateTime())){
-                    fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
-                    alreadyAdded=true;
-                }
-                if (curFld.getFieldType().equals(LPDatabase.dateTimeWithDefaultNow())){
-                    fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
-                    alreadyAdded=true;
+                }else{
+                    if (curFld.getFieldType().equals(LPDatabase.date())){
+                        fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
+                        alreadyAdded=true;
+                    }
+                    if (curFld.getFieldType().equals(LPDatabase.dateTime())){
+                        if (avoidMask!=null && avoidMask)
+                            fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
+                        else
+                            fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
+                            alreadyAdded=true;
+                    }
+                    if (curFld.getFieldType().equals(LPDatabase.dateTimeWithDefaultNow())){
+                        if (avoidMask!=null && avoidMask)
+                            fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
+                        else
+                            fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
+                        alreadyAdded=true;
+                    }
                 }
                 if (!alreadyAdded)
                     fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
