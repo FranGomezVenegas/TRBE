@@ -7,7 +7,6 @@ package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIParamsList;
-import databases.Rdbms;
 import functionaljavaa.modulegenoma.GenomaDataAudit.DataGenomaStudyAuditEvents;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -28,7 +27,6 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 import trazit.enums.EnumIntEndpoints;
 /**
  *
@@ -232,41 +230,15 @@ public class GenomaStudyAPI extends HttpServlet {
             return;
         }                
         try (PrintWriter out = response.getWriter()) {
-            String schemaConfigName = LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());    
-            Rdbms.setTransactionId(schemaConfigName);
             ClassStudy clss=new ClassStudy(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
             }   
-            
-            
-/*            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-//                Rdbms.rollbackWithSavePoint();
-//                if (!con.getAutoCommit()){
-//                    con.rollback();
-//                    con.setAutoCommit(true);}                
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
-            }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(dataSample);
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }            
-*/            
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
             response.setStatus(401);
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
