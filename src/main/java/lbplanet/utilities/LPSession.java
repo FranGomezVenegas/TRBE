@@ -99,7 +99,6 @@ public class LPSession {
      * When the user authenticates then one appSession is created but no ProcessSessions yet due to no action performed yet.<br>
      * This function will replicate to the ProcessSession the session once one action is audited in order to let that any action
      * on this procedure was performed as part of this given appSession.
-     * @param processName
      * @param appSessionId
      * @param fieldsNamesToInsert
      * @return
@@ -157,9 +156,9 @@ public class LPSession {
         }
         if (addProcess){
             SqlWhere sqlWhere = new SqlWhere();
-            sqlWhere.addConstraint(TblsApp.AppSession.PROCEDURES, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{procListValue}, "");
+            sqlWhere.addConstraint(TblsApp.AppSession.SESSION_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{appSessionId}, "");
             return Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.APP_SESSION,
-                EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, new String[]{TblsApp.AppSession.SESSION_ID.getName()}), new Object[]{appSessionId}, sqlWhere, null);            
+                EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, new String[]{TblsApp.AppSession.PROCEDURES.getName()}), new Object[]{procListValue}, sqlWhere, null);            
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>",new Object[]{processName, appSessionId} );
     }
