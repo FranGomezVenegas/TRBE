@@ -198,9 +198,9 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -227,6 +227,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
      * @param procInstanceName
      * @param token
      * @param actionName
+     * @param procBusinessRules
      * @return
      */
     public static Object[] procActionEnabled(String procInstanceName, Token token, String actionName, BusinessRules procBusinessRules){
@@ -261,6 +262,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
      * @param procInstanceName
      * @param userRole
      * @param actionName
+     * @param procBusinessRules
      * @return
      */
     public static Object[] procUserRoleActionEnabled(String procInstanceName, String userRole, String actionName, BusinessRules procBusinessRules){
@@ -289,6 +291,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
      *
      * @param procInstanceName
      * @param actionName
+     * @param procBusinessRules
      * @return
      */ 
     public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules){        
@@ -319,6 +322,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
      *
      * @param procInstanceName
      * @param actionName
+     * @param procBusinessRules
      * @return
      */
     public static Object[] procActionRequiresEsignConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules){
@@ -386,6 +390,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
     /**
      *
      * @param schemaName
+     * @param areaName
      * @param tableName
      * @param fieldName
      * @return
@@ -434,8 +439,8 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
                 newFieldValueBuilder.append(fieldValue).append("|").append(encStr[1]);
             }
         }else{
-            SqlStatement sql = new SqlStatement();
-            String separator = sql.inNotInSeparator(fieldName);
+            //SqlStatement sql = new SqlStatement();
+            String separator = SqlStatement.inNotInSeparator(fieldName);
             String[] valuesArr = fieldValue.split(separator);
             String valuesEncripted = "";
             for (String fn: valuesArr){
@@ -927,9 +932,10 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
      * @param fileName
      * @param callerInfo
      * @param paramName
+     * @param isOptional
      */
     public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, Object[] callerInfo, String paramName, Boolean isOptional) {          
-        if (Boolean.valueOf(isOptional)) return;
+        if (isOptional) return;
         if (!Rdbms.getRdbms().getIsStarted()){
             //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, paramName);
             return;
@@ -964,6 +970,19 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         if (ruleValue.length()==0) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND, null);
         for (String curVal: enableRuleValues){
+            if (curVal.equalsIgnoreCase(ruleValue))
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});        
+        }
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});
+    }
+    
+    public static Object[] isProcedureBusinessRuleDisable(String procName, String fileSchemaRepository, String ruleName){
+        String disableValuesStr=getBusinessRuleAppFile("businessRulesDisableValues", true); 
+        String[] disableRuleValues=disableValuesStr.split("\\|");
+        String ruleValue=Parameter.getBusinessRuleProcedureFile(procName, fileSchemaRepository, ruleName);
+        if (ruleValue.length()==0) 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND, null);
+        for (String curVal: disableRuleValues){
             if (curVal.equalsIgnoreCase(ruleValue))
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});        
         }
