@@ -72,9 +72,9 @@ public class TestingPlatformInstruments extends HttpServlet {
         testingContent=LPArray.addColumnToArray2D(testingContent, new JSONArray());
         
         String stopPhrase=null;
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         
         try (PrintWriter out = response.getWriter()) {
-            ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
             String procInstanceName=instanceForActions.getProcedureInstance();
 /*            String brName="sampleReviewer_canBeAnyTestingGroupReviewer";
             String ruleValue=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", brName);
@@ -200,14 +200,14 @@ public class TestingPlatformInstruments extends HttpServlet {
             out.println(fileContentBuilder.toString());            
             //LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
             tstAssertSummary=null; 
-        }
-        catch(IOException error){
+        }catch(IOException error){
+            instanceForActions.killIt();
             tstAssertSummary=null; 
             String exceptionMessage = error.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
-        } finally {    
-            // release database resources
+        }finally {    
             try {
+                instanceForActions.killIt();
                 ProcedureRequestSession.getInstanceForActions(request, response, Boolean.TRUE).killIt();
                 // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
