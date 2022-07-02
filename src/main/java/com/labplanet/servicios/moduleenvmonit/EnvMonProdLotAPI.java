@@ -109,7 +109,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
 
         String sampleIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
         Integer sampleId=0;
-        if (sampleIdStr!=null && sampleIdStr.length()>0) sampleId=Integer.valueOf(sampleIdStr);
+        if (sampleIdStr!=null && sampleIdStr.length()>0 && !sampleIdStr.equalsIgnoreCase("null")) sampleId=Integer.valueOf(sampleIdStr);
         String testIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_ID);
         Integer testId=0;
         if (testIdStr!=null && testIdStr.length()>0) testId=Integer.valueOf(testIdStr);
