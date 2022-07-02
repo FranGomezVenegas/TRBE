@@ -53,6 +53,7 @@ public class InstrumentsAPIactions extends HttpServlet {
         try{
             endPoint = InstrumentsAPIactionsEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
         }
@@ -67,7 +68,6 @@ public class InstrumentsAPIactions extends HttpServlet {
         String instrName=argValues[0].toString();
         DataInstruments instr=new DataInstruments(instrName);
         try (PrintWriter out = response.getWriter()) {
-
             ClassInstruments clss = new ClassInstruments(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){ 
@@ -80,16 +80,15 @@ public class InstrumentsAPIactions extends HttpServlet {
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
-        }catch(Exception e){   
+        }catch(Exception e){  
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
             // Rdbms.closeRdbms();                   
-            procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             instr=null;
-            procReqInstance.killIt();
             // release database resources
             try {           
                 procReqInstance.killIt();
