@@ -78,8 +78,8 @@ public class TestingGenoma extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
-        String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTesterFileName();                         
-        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.name(), testerFileName);
+        String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_GENOMA.getTesterFileName();                         
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_GENOMA.name(), testerFileName);
         HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        
