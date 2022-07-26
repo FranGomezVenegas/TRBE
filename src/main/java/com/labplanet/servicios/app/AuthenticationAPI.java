@@ -239,7 +239,13 @@ public class AuthenticationAPI extends HttpServlet {
                     String passwordToCheck = argValues[2].toString();
                     
                     token = new Token(myToken);
-                    if ( (userToCheck.equals(token.getUserName())) && (passwordToCheck.equals(token.getUsrPw())) ){
+                    String tokenUserName=token.getUserName();
+                    userIsCaseSensitive = prop.getString(UserAndRolesViews.UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
+                    if (!Boolean.valueOf(userIsCaseSensitive)){
+                        userToCheck=userToCheck.toLowerCase();
+                        tokenUserName=token.getUserName().toLowerCase();
+                    }
+                    if ( (userToCheck.equals(tokenUserName)) && (passwordToCheck.equals(token.getUsrPw())) ){
                         JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, null, null);                        
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                     }else{                        
