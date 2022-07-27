@@ -10,7 +10,6 @@ import static functionaljavaa.modulegenoma.GenomaUtilities.addObjectToUnstructur
 import static functionaljavaa.modulegenoma.GenomaUtilities.removeObjectToUnstructuredField;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
