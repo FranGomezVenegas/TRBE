@@ -1,17 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.labplanet.servicios.app;
 
 import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
-import databases.Rdbms;
-import databases.SqlStatement;
 import databases.TblsApp;
 import databases.features.Token;
 import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIqueriesEndpoints;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -19,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
@@ -45,27 +41,14 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    @SuppressWarnings("deprecation")
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
         String language = LPFrontEnd.setLanguage(request); 
-
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response, 
-                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
-            return;          
-        }             
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-        
-        Token token = new Token(finalToken);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
-                return;                             
-        }
         CalendarAPIqueriesEndpoints endPoint = null;
         try{
             endPoint = CalendarAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
@@ -73,27 +56,62 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
         }
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, endPoint, false, true);
+
+        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, 
+                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+            return;          
+        }             
+        
+        Token token = new Token(finalToken);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, 
+                    LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+            return;                             
+        }
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
         try{
             switch (endPoint){
                 case GET_ALL_HOLIDAY_DATES_LIST_ALL_CALENDARS:              
-                    String[] fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableFields());
-                    Object[][] incidentsClosedLastDays=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE,
-                            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE, "ALL"),                            
-                            new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, 
-                            new Object[]{}, 
-                            new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.ID.getName()});
-                    JSONArray jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
-                        for (Object[] currIncident: incidentsClosedLastDays){
-                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                    String[] fieldsToRetrieveCalendar=getAllFieldNames(TblsApp.TablesApp.HOLIDAYS_CALENDAR);
+                    String[] fieldsToRetrieveCalendarDate=getAllFieldNames(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE);
+                    Object[][] calendarInfo=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.HOLIDAYS_CALENDAR,
+                            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.HOLIDAYS_CALENDAR, "ALL"),                            
+                            new String[]{TblsApp.HolidaysCalendar.ACTIVE.getName()}, 
+                            new Object[]{true}, 
+                            new String[]{TblsApp.HolidaysCalendar.CODE.getName()});
+                    JSONArray jCalendarsArr = new JSONArray();
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(calendarInfo[0][0].toString())){
+                        for (Object[] currCalendar: calendarInfo){
+                            Object curCalendarCode=currCalendar[LPArray.valuePosicInArray(fieldsToRetrieveCalendar, TblsApp.HolidaysCalendar.CODE.getName())];
+                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveCalendar, currCalendar);
+                            Object[][] calendarDateInfo=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE,
+                                    EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE, "ALL"),                            
+                                    new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName()}, 
+                                    new Object[]{curCalendarCode}, 
+                                    new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.ID.getName()});
+                            JSONArray jDatesArr = new JSONArray();
+                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(calendarDateInfo[0][0].toString())){
+                                for (Object[] currCalendarDate: calendarDateInfo){
+                                    JSONObject jCalDateObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveCalendarDate, currCalendarDate);
+                                    Object currCalendarDateDateObj=currCalendarDate[LPArray.valuePosicInArray(fieldsToRetrieveCalendarDate, TblsApp.HolidaysCalendarDate.DATE.getName())];                                    
+                                    LocalDateTime stringFormatToDate = LPDate.stringFormatToLocalDateTime(currCalendarDateDateObj.toString());
+                                    jCalDateObj.put("date_year", stringFormatToDate.getYear());
+                                    jCalDateObj.put("date_month", stringFormatToDate.getMonthValue());
+                                    jCalDateObj.put("date_dayOfMonth", stringFormatToDate.getDayOfMonth());
+                                    jDatesArr.add(jCalDateObj);
+                                }
+                            }
+                            jObj.put(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(), jDatesArr);
+                            jCalendarsArr.add(jObj);
                         }
                     }
-                    Rdbms.closeRdbms();  
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    LPFrontEnd.servletReturnSuccess(request, response, jCalendarsArr);
                     return;  
                 default: 
             }

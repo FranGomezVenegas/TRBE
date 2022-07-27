@@ -88,10 +88,20 @@ public class HolidayCalendarAPIactions extends HttpServlet {
             Integer incId=null;
             switch (endPoint){
                 case NEW_CALENDAR:
+                    String fieldName=argValues[1].toString();
+                    String fieldValue=argValues[2].toString();
+                    String[] fieldNames=null;
+                    Object[] fieldValues=null;
+                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, fieldValues[fieldValues.length-1].toString(), null, null);                                
+                        break;
+                    }                    
                     if (procReqInstance.getToken()==null)
                         procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
                     
-                    actionDiagnoses = HolidaysCalendar.createNewCalendar(argValues[0].toString(), null, null);
+                    actionDiagnoses = HolidaysCalendar.createNewCalendar(argValues[0].toString(), fieldNames, fieldValues);
                     //String incIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
                     //if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
                     break;
