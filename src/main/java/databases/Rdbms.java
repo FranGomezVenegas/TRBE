@@ -955,7 +955,7 @@ if (1==1){Rdbms.transactionId=1; return;}
     }
 
 
-    public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, SqlWhere sWhere, String[] orderBy){
+    public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, SqlWhere sWhere, String[] orderBy, Boolean caseSensitive){
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName); 
         if (sWhere.getAllWhereEntries().isEmpty()){
            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
@@ -964,7 +964,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         SqlStatementEnums sql = new SqlStatementEnums();         
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementCounter(schemaName, tableName,
                 sWhere, //whereFieldNames, whereFieldValues                
-                fieldsToGroup, orderBy);            
+                fieldsToGroup, orderBy, caseSensitive);            
         String query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);
         Integer fieldsToGroupContItem=fieldsToGroup.length;
@@ -1688,6 +1688,8 @@ if (1==1){Rdbms.transactionId=1; return;}
     }
     
     public static Object[] dbGetIndexLastNumberInUse(String procName, String schemaName, String tableName, String indexName){
+        if (tableName==null)
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, null);                            
         String schema=schemaName;
         String buildSchemaName = LPPlatform.buildSchemaName(procName, schemaName);
         String query="SELECT last_value FROM "+buildSchemaName+".";
