@@ -170,7 +170,7 @@ public class ProcedureDefinitionQueries {
                 new String[]{TblsProcedure.ViewProcUserAndRoles.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause(), TblsProcedure.ViewProcUserAndRoles.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new String[]{null, null},
                 new String[]{TblsProcedure.ViewProcUserAndRoles.USER_NAME.getName()+"|"+TblsProcedure.ViewProcUserAndRoles.ROLE_NAME.getName(), TblsProcedure.ViewProcUserAndRoles.ROLE_NAME.getName()},
-                new String[]{"false", "true"}
+                new String[]{"false", "true"}, false
                 );
         mainObj.put(bsnRuleQry.getMethodSectionName().toLowerCase(), programkpIsObj);
         return mainObj;
