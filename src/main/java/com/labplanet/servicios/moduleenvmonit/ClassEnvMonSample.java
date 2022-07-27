@@ -184,6 +184,63 @@ public class ClassEnvMonSample {
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), resultInfo[0][0]);
                     }
                     break;
+                case ENTER_PLATE_READING_SECONDENTRY:
+                case REENTER_PLATE_READING_SECONDENTRY:
+                    altAuditEntry=null;
+                    altAuditClass=null;
+                    if ("ENTER_PLATE_READING_SECONDENTRY".equalsIgnoreCase(endPoint.getName()) || "REENTER_PLATE_READING_SECONDENTRY".equalsIgnoreCase(endPoint.getName())){
+                        altAuditClass="DateEnvMonitSampleEvents";
+                        if ("ENTER_PLATE_READING".equalsIgnoreCase(endPoint.getName()))
+                            altAuditEntry="PLATE_READING_ENTERED_SECONDENTRY";
+                        else
+                            altAuditEntry="PLATE_READING_REENTERED_SECONDENTRY";
+                    }
+                    resultId = (Integer) argValues[0];
+                    rawValueResult = argValues[1].toString();
+                    resultData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY.getTableName(), 
+                            new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, 
+                            new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.TEST_ID.getName(), TblsData.SampleAnalysisResult.ANALYSIS.getName(), 
+                                TblsData.SampleAnalysisResult.METHOD_NAME.getName(), TblsData.SampleAnalysisResult.METHOD_VERSION.getName(), TblsData.SampleAnalysisResult.PARAM_NAME.getName(), 
+                                TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.RAW_VALUE.getName(), TblsData.SampleAnalysisResult.UOM.getName(), 
+                                TblsData.SampleAnalysisResult.UOM_CONVERSION_MODE.getName()});                    
+                    if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString()))
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND, new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                    else{      
+                        String currRawValue = (String) resultData[0][7];
+                        if (currRawValue!=null && currRawValue.length()>0 && EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
+                            procReqSession.killIt();                            
+                            if ("ENTERRESULT".equalsIgnoreCase(endPoint.getName()))
+                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTERRESULT.getName());
+                            if ("ENTER_PLATE_READING_SECONDENTRY".equalsIgnoreCase(endPoint.getName())){
+                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTER_PLATE_READING.getName());
+                                altAuditEntry="PLATE_READING_REENTERED_SECONDENTRY";
+                            }
+                            procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
+                            if (procReqSession.getHasErrors()){
+                                procReqSession.killIt();
+                                actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, procReqSession.getErrorMessage(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
+                                break;
+                            }
+                        }
+                    }
+                    diagn = smpAnaRes.sampleAnalysisResultEntrySecondEntry(resultId, rawValueResult, smp, altAuditEntry, altAuditClass);
+                    actionDiagnoses=(Object[]) diagn[0];
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY.getTableName(), resultId);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                        if (diagn.length>1){
+                            Object[] auditDiagn=(Object[]) diagn[1];
+                        }
+                        messages.addMainForSuccess(endPoint, new Object[]{resultId, procInstanceName});
+                        Object[][] resultInfo=new Object[0][0];
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});                    
+                        resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY.getTableName(), 
+                                new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()});
+                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) sampleId=Integer.valueOf(resultInfo[0][0].toString());
+                        dynamicDataObjects=new Object[]{resultInfo[0][0].toString()};
+                        messages.addMainForSuccess(endPoint, new Object[]{resultInfo[0][0], procInstanceName});
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), resultInfo[0][0]);
+                    }
+                    break;
 /*                case PLATE_READING_NUMBER:
                     sampleId = (Integer) argValues[0];
                     rawValueResult = argValues[1].toString();
