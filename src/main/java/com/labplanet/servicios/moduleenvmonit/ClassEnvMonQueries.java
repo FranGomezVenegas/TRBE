@@ -62,6 +62,7 @@ public class ClassEnvMonQueries {
                         this.messageDynamicData=new Object[]{sampleId};    
                         break;
                     case GET_SAMPLE_RESULTS:
+                    case GET_SAMPLE_RESULTS_SECONDENTRY:
                         sampleId=(Integer) argValues[0];
                         Integer testId=null;
                         if (argValues.length>1 && argValues[1]!=null && argValues[1].toString().length()>0) testId=(Integer) argValues[1];
@@ -77,11 +78,21 @@ public class ClassEnvMonQueries {
                             whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.SampleAnalysisResult.RESULT_ID.getName());
                             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, resultId);
                         }
-                        Object[][] resultInfo=QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, 
-                            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}),
-                            whereFieldNames, whereFieldValues, 
-                            new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()});
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) actionDiagnoses=resultInfo[0];
+                        Object[][] resultInfo=null;
+                        if ("GET_SAMPLE_RESULTS_SECONDENTRY".equalsIgnoreCase(endPoint.getName())){                            
+                            resultInfo=QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY, 
+                                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY, new String[]{TblsData.SampleAnalysisResultSecondEntry.RESULT_ID.getName()}),
+                                whereFieldNames, whereFieldValues, 
+                                new String[]{TblsData.SampleAnalysisResultSecondEntry.RESULT_ID.getName()});
+                        }else{
+                            resultInfo=QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, 
+                                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}),
+                                whereFieldNames, whereFieldValues, 
+                                new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()});
+                        }
+                        
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) 
+                            actionDiagnoses=resultInfo[0];
                         else{
                             for (Object[] curResult: resultInfo){
                                 rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), curResult[0]); 
