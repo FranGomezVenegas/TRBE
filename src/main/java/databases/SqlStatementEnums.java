@@ -136,7 +136,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
 
         Object[] whereFieldValuesNew = new Object[0];
         if (!whereObj.getAllWhereEntries().isEmpty()) {
-            Object[] whereClauseContent = buildWhereClause(whereObj);
+            Object[] whereClauseContent = buildWhereClause(whereObj, false);
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
@@ -196,7 +196,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         }        
         Object[] whereFieldValuesNew = new Object[0];
         if (whereFieldNames != null) {
-            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues);            
+            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues, true);            
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
@@ -245,7 +245,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         
         Object[] whereFieldValuesNew = new Object[0];
         if (whereFieldNames != null) {
-            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues);            
+            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues, true);            
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
@@ -282,7 +282,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         return hm;
     }
     
-    public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, SqlWhere sWhere, String[] fieldsToGroup, String[] fieldsToOrder) {        
+    public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, SqlWhere sWhere, String[] fieldsToGroup, String[] fieldsToOrder, Boolean caseSensitive) {        
         HashMap<String, Object[]> hm = new HashMap();        
         
         String queryWhere = "";
@@ -291,7 +291,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         
         Object[] whereFieldValuesNew = new Object[0];
         if (!sWhere.getAllWhereEntries().isEmpty()) {
-            Object[] whereClauseContent = buildWhereClause(sWhere);
+            Object[] whereClauseContent = buildWhereClause(sWhere, caseSensitive);
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
@@ -304,7 +304,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         return hm;
     }
     
-    public static Object[] buildWhereClause(String[] whereFieldNames, Object[] whereFieldValues){
+    public static Object[] buildWhereClause(String[] whereFieldNames, Object[] whereFieldValues, Boolean caseSenstive){
         StringBuilder queryWhere = new StringBuilder(0);
         Object[] whereFieldValuesNew = new Object[0];
         for (int iwhereFieldNames=0; iwhereFieldNames<whereFieldNames.length; iwhereFieldNames++){
@@ -346,8 +346,8 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 queryWhere.deleteCharAt(queryWhere.length() - 1);
                 queryWhere.append(")");
             } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause())) {
-                queryWhere.append(fn).append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
+                queryWhere.append(caseSenstive ? fn : "lower("+fn+")").append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSenstive ? whereFieldValues[iwhereFieldNames] : whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
                 queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
@@ -359,14 +359,14 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 queryWhere.append(fn).append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else {
-                queryWhere.append(fn).append("=? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
+                queryWhere.append(caseSenstive ? fn : "lower("+fn+")").append("=? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSenstive ? whereFieldValues[iwhereFieldNames] : whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             }
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
     }
 
-    public static Object[] buildWhereClause(SqlWhere whereObj){
+    public static Object[] buildWhereClause(SqlWhere whereObj, Boolean caseSensitive){
         StringBuilder queryWhere = new StringBuilder(0);
         Object[] whereFieldValuesNew = new Object[0];
         ArrayList<SqlWhereEntry> allWhereEntries = whereObj.getAllWhereEntries();
@@ -411,14 +411,26 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                     queryWhere.deleteCharAt(queryWhere.length() - 1);
                     queryWhere.append(")");
                     break;
+                case LIKE:
+                    queryWhere.append(caseSensitive ? fn : "lower("+fn+")").append(" like ? ");
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive ? fldV[0].toString().replace("*", "%"): fldV[0].toString().replace("*", "%").toLowerCase());                    
+                    break;
                 case BETWEEN:
                     queryWhere.append(fn).append(" between ? and ? ");
                     whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
                     whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[1]);
                     break;
-                default:
-                    queryWhere.append(fn).append("=? ");
+                case LESS_THAN:
+                    queryWhere.append(fn).append(" < ? ");
                     whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
+                    break;
+                case GREATER_THAN:
+                    queryWhere.append(fn).append(" > ? ");
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
+                    break;
+                default:
+                    queryWhere.append(caseSensitive ? fn : "lower("+fn+")").append("=? ");
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive ? fldV[0]: fldV[0].toString().toLowerCase());
                     break;
             }
         }
@@ -588,10 +600,16 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         }        
         return separator;
     }
+
+    public HashMap<String, Object[]> buildSqlStatementView(EnumIntViews viewObj, SqlWhere whereObj, 
+            EnumIntViewFields[] fieldsToRetrieve, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {        
+        return buildSqlStatementView(viewObj, whereObj, 
+            fieldsToRetrieve, fieldsToOrder, fieldsToGroup, forceDistinct, alternativeProcInstanceName, true);
+    }
     
     
     public HashMap<String, Object[]> buildSqlStatementView(EnumIntViews viewObj, SqlWhere whereObj, 
-            EnumIntViewFields[] fieldsToRetrieve, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {        
+            EnumIntViewFields[] fieldsToRetrieve, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName, Boolean caseSenstive) {        
     
     //private HashMap<String, Object[]> buildSqlStatementViewOld(EnumIntViews viewObj, String[] whereFields, Object[] whereFieldValues, 
     //        EnumIntViewFields[] fieldsToRetrieve, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {        
@@ -612,11 +630,15 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         
         Object[] whereFieldValuesNew = new Object[0];
         if (!whereObj.getAllWhereEntries().isEmpty()) {
-            Object[] whereClauseContent = buildWhereClause(whereObj);
+            Object[] whereClauseContent = buildWhereClause(whereObj, caseSenstive);
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
         String fieldsToRetrieveStr = buildViewFieldsToRetrieve(fieldsToRetrieve);
+        if (fieldsToRetrieveStr.contains(LPPlatform.LAB_FALSE)){
+            hm.put(fieldsToRetrieveStr, whereFieldValuesNew);
+            return hm;
+        }
         String fieldsToOrderStr = buildOrderBy(fieldsToOrder);
         String fieldsToGroupStr = buildGroupBy(fieldsToGroup);
         
@@ -706,17 +728,19 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                         }
                         if (curFld.getFieldMask()!=null)
                             fn=curFld.getFieldMask(); 
-                        else{                    
-                            if ("DATE".equalsIgnoreCase(curFld.getFieldType()))
-                                fn="to_char("+fn+",'YYYY-MM-DD')";                
-                            else if ("DATETIME".equalsIgnoreCase(curFld.getFieldType()))
-                                fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
-                            else if (curFld.getFieldType().toString().toLowerCase().contains("timestamp"))
-                                fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
-                            else if (fn.toUpperCase().contains(" IN")) {
-                                Integer posicINClause = fn.toUpperCase().indexOf("IN");
-                                fn = fn.substring(0, posicINClause - 1);
-                                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+                        else{               
+                            if (curFld.getFieldType()!=null){
+                                if ("DATE".equalsIgnoreCase(curFld.getFieldType()))
+                                    fn="to_char("+fn+",'YYYY-MM-DD')";                
+                                else if ("DATETIME".equalsIgnoreCase(curFld.getFieldType()))
+                                    fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
+                                else if (curFld.getFieldType().toString().toLowerCase().contains("timestamp"))
+                                    fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
+                                else if (fn.toUpperCase().contains(" IN")) {
+                                    Integer posicINClause = fn.toUpperCase().indexOf("IN");
+                                    fn = fn.substring(0, posicINClause - 1);
+                                    fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+                                }
                             }
                         }
                         fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
@@ -734,38 +758,44 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
     }
     
     private String buildViewFieldsToRetrieve(EnumIntViewFields[] fieldsToRetrieve) {
-        StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
-        if (fieldsToRetrieve != null) {
-            String fn="";
-            for (EnumIntViewFields curFld : fieldsToRetrieve) {
-                fn=curFld.getName();
-                if (curFld.getTableField().getReferenceTable()!=null){ 
-                    if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getTableField().getReferenceTable().getRepository())
-                       && "person".equalsIgnoreCase(curFld.getTableField().getReferenceTable().getTableName())
-                       && "person_id".equalsIgnoreCase(curFld.getTableField().getReferenceTable().getFieldName()))
-                    fn="(select alias from config.person where person_id="+curFld.getName()+")";
-                }
-                if (curFld.getFieldMask()!=null)
-                    fn=curFld.getFieldMask(); 
-                else{                    
-                    if ("DATE".equalsIgnoreCase(curFld.getTableField().getFieldType()))
-                        fn="to_date(to_char("+fn+",'yyyy-mon-dd'), 'YYYY MON DD')";                
-                    else if ("DATETIME".equalsIgnoreCase(curFld.getTableField().getFieldType()))
-                        fn="to_char("+fn+",'DD.MON.YYYY HH:MI')";                
-                    else if (curFld.getTableField().getFieldType().toString().toLowerCase().contains("timestamp"))
-                        fn="to_char("+fn+",'DD.MON.YY HH:MI')";                
-                    else if (fn.toUpperCase().contains(" IN")) {
-                        Integer posicINClause = fn.toUpperCase().indexOf("IN");
-                        fn = fn.substring(0, posicINClause - 1);
-                        fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+        String fn="";
+        try{
+            StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
+            if (fieldsToRetrieve != null) {
+                for (EnumIntViewFields curFld : fieldsToRetrieve) {
+                    fn=curFld.getName();
+                    if (curFld.getTableField()!=null && curFld.getTableField().getReferenceTable()!=null){ 
+                        if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getTableField().getReferenceTable().getRepository())
+                           && "person".equalsIgnoreCase(curFld.getTableField().getReferenceTable().getTableName())
+                           && "person_id".equalsIgnoreCase(curFld.getTableField().getReferenceTable().getFieldName()))
+                        fn="(select alias from config.person where person_id="+curFld.getName()+")";
                     }
+                    if (curFld.getFieldMask()!=null)
+                        fn=curFld.getFieldMask(); 
+                    else{        
+                        if (curFld.getTableField()!=null){
+                            if ("DATE".equalsIgnoreCase(curFld.getTableField().getFieldType()))
+                                fn="to_date(to_char("+fn+",'yyyy-mon-dd'), 'YYYY MON DD')";                
+                            else if ("DATETIME".equalsIgnoreCase(curFld.getTableField().getFieldType()))
+                                fn="to_char("+fn+",'DD.MON.YYYY HH:MI')";                
+                            else if (curFld.getTableField().getFieldType().toString().toLowerCase().contains("timestamp"))
+                                fn="to_char("+fn+",'DD.MON.YY HH:MI')";                
+                            else if (fn.toUpperCase().contains(" IN")) {
+                                Integer posicINClause = fn.toUpperCase().indexOf("IN");
+                                fn = fn.substring(0, posicINClause - 1);
+                                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+                            }
+                        }
+                    }
+                    fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
                 }
-                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+                fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
+                fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
             }
-            fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
-            fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
+            return fieldsToRetrieveStr.toString();
+        }catch(Exception e){
+            return LPPlatform.LAB_FALSE+e.getMessage() + fn;
         }
-        return fieldsToRetrieveStr.toString();
     }
     private Object[] getTableSchema(EnumIntTables tblObj, String alternativeProcInstanceName){
         return getSchema(tblObj.getTableName(), tblObj.getRepositoryName(), tblObj.getIsProcedureInstance(), alternativeProcInstanceName);
