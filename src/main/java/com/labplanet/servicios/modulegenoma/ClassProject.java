@@ -12,10 +12,12 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -37,6 +39,7 @@ public class ClassProject {
         String projectName = "";
         
         Object[] actionDiagnoses = null;
+        InternalMessage actionDiagnosesObj = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
             switch (endPoint){
@@ -44,20 +47,22 @@ public class ClassProject {
                 case PROJECT_UPDATE:
                     projectName = argValues[0].toString();
                     String fieldName=argValues[1].toString();
-                    String fieldValue=argValues[2].toString();
+                    String fieldValue=LPNulls.replaceNull(argValues[2]).toString();
                     String[] fieldNames=new String[0];
                     Object[] fieldValues=new Object[0];
-                    if (fieldName.length()>0 && fieldValue.length()>0){
-                        if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
-                        if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
+                    if (fieldName!=null && fieldName.length()>0 && fieldValue.length()>0){
+                        fieldNames = fieldName.split("\\|");                                            
+                        if (fieldValue!=null && fieldValue.length()>0) 
+                            fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                         if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
                             actionDiagnoses=fieldValues;
                             break;
                         }
                     }
-
-                    if ("PROJECT_NEW".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses= prj.createProject(endPoint, projectName, fieldNames, fieldValues,  false);
+                    if ("PROJECT_NEW".equalsIgnoreCase(endPoint.getName())){
+                        actionDiagnosesObj= prj.createProject(endPoint, projectName, fieldNames, fieldValues,  false);
+                        actionDiagnoses=ApiMessageReturn.trapMessage(actionDiagnosesObj.getDiagnostic(), actionDiagnosesObj.getMessageCodeObj(), actionDiagnosesObj.getMessageCodeVariables());
+                    }
                     if ("PROJECT_UPDATE".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses= prj.projectUpdate(endPoint, projectName, fieldNames, fieldValues);
                     rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName);                
