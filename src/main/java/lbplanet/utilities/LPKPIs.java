@@ -24,7 +24,7 @@ public final class LPKPIs {
     private LPKPIs() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
     public static JSONObject getKPIs(String[] objGroupName, String[] tblCategory, String[] tblName, String[] whereFieldsNameArr, String[] whereFieldsValueArr, 
-        String[] fldToRetrieve, String[] dataGrouped){
+        String[] fldToRetrieve, String[] dataGrouped, Boolean caseSensitive){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         
         JSONObject jObjMainObject=new JSONObject();
@@ -53,7 +53,7 @@ public final class LPKPIs {
                 curFldsToRetrieveArr=LPArray.addValueToArray1D(curFldsToRetrieveArr, "count");
             }else{
                 dataInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
-                    curWhereFieldsNameArr, curWhereFieldsValueArr, curFldsToRetrieveArr);
+                    curWhereFieldsNameArr, curWhereFieldsValueArr, curFldsToRetrieveArr, caseSensitive);
             }
             JSONObject jObj = new JSONObject();
             JSONArray dataJSONArr = new JSONArray();
@@ -70,7 +70,7 @@ public final class LPKPIs {
         return jObjMainObject;
     }
     public static JSONObject getRecoveryRate(String[] fldToRetrieve, String whereFieldsName, String whereFieldsValue,
-        Boolean showAbsence, Boolean showPresence, Boolean showIN, Boolean showOUT, Integer numDecPlaces){
+        Boolean showAbsence, Boolean showPresence, Boolean showIN, Boolean showOUT, Integer numDecPlaces, Boolean caseSensitive){
         String subQryAlias="vw";
         if (numDecPlaces==null) numDecPlaces=2;
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
@@ -120,7 +120,7 @@ public final class LPKPIs {
             String[] whereFieldsNameArr=(String[]) diagn[1];
             Object[] whereFieldsValueArr=(Object[]) diagn[2];
             
-            Object[] buildWhereClause = SqlStatement.buildWhereClause(whereFieldsNameArr, whereFieldsValueArr);            
+            Object[] buildWhereClause = SqlStatement.buildWhereClause(whereFieldsNameArr, whereFieldsValueArr, caseSensitive);            
             subQry=subQry+" and "+buildWhereClause[0];
             wherefldsValues=(Object[]) buildWhereClause[1];
         }
