@@ -69,6 +69,8 @@ public class TblsGenomaData {
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        DEACTIVATED_ON( LPDatabase.FIELDS_NAMES_DEACTIVATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        DEACTIVATED_BY( LPDatabase.FIELDS_NAMES_DEACTIVATED_BY, LPDatabase.string(), null, null, null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
         STARTED_ON("started_on", LPDatabase.dateTime(), null, null, null, null),
         ENDED_ON("ended_on", LPDatabase.dateTime(), null, null, null, null),
@@ -104,6 +106,9 @@ public class TblsGenomaData {
         ROLES("roles", LPDatabase.stringNotNull(), null, null, null, null),
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        DEACTIVATED_ON( LPDatabase.FIELDS_NAMES_DEACTIVATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        DEACTIVATED_BY( LPDatabase.FIELDS_NAMES_DEACTIVATED_BY, LPDatabase.string(), null, null, null, null),
         ;
         private ProjectUsers(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -135,6 +140,8 @@ public class TblsGenomaData {
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        DEACTIVATED_ON( LPDatabase.FIELDS_NAMES_DEACTIVATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        DEACTIVATED_BY( LPDatabase.FIELDS_NAMES_DEACTIVATED_BY, LPDatabase.string(), null, null, null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
         STARTED_ON("started_on", LPDatabase.dateTime(), null, null, null, null),
         ENDED_ON("ended_on", LPDatabase.dateTime(), null, null, null, null),
@@ -169,6 +176,9 @@ public class TblsGenomaData {
         ROLES("roles", LPDatabase.stringNotNull(), null, null, null, null),
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        DEACTIVATED_ON( LPDatabase.FIELDS_NAMES_DEACTIVATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        DEACTIVATED_BY( LPDatabase.FIELDS_NAMES_DEACTIVATED_BY, LPDatabase.string(), null, null, null, null),
         ;
         private StudyUsers(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -200,6 +210,8 @@ public class TblsGenomaData {
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        DEACTIVATED_ON( LPDatabase.FIELDS_NAMES_DEACTIVATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        DEACTIVATED_BY( LPDatabase.FIELDS_NAMES_DEACTIVATED_BY, LPDatabase.string(), null, null, null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
         INDIV_NAME("individual_name", LPDatabase.string(), null, null, null, null),
         ;
@@ -262,6 +274,8 @@ public class TblsGenomaData {
         STUDY("study",  LPDatabase.stringNotNull(100), null, null, null, null),
         INDIVIDUAL_ID("individual_id",  LPDatabase.integerNotNull(), null, null, null, null),
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
+        DEACTIVATED_ON( LPDatabase.FIELDS_NAMES_DEACTIVATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        DEACTIVATED_BY( LPDatabase.FIELDS_NAMES_DEACTIVATED_BY, LPDatabase.string(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
@@ -297,6 +311,8 @@ public class TblsGenomaData {
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        DEACTIVATED_ON( LPDatabase.FIELDS_NAMES_DEACTIVATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        DEACTIVATED_BY( LPDatabase.FIELDS_NAMES_DEACTIVATED_BY, LPDatabase.string(), null, null, null, null),
         COMPLETED("completed", LPDatabase.booleanFld(false), null, null, null, null),
         UNSTRUCT_CONTENT("samples_content", LPDatabase.string(), null, null, null, null),
         ;
@@ -331,8 +347,10 @@ public class TblsGenomaData {
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        DEACTIVATED_ON( LPDatabase.FIELDS_NAMES_DEACTIVATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        DEACTIVATED_BY( LPDatabase.FIELDS_NAMES_DEACTIVATED_BY, LPDatabase.string(), null, null, null, null),
         COMPLETED("completed", LPDatabase.booleanFld(false), null, null, null, null),
-        UNSTRUCT_CONTENT("samples_content", LPDatabase.string(), null, null, null, null),
+        UNSTRUCT_CONTENT("unstruct_content", LPDatabase.string(), null, null, null, null),
         ;
         private StudyFamily(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -370,7 +388,7 @@ public class TblsGenomaData {
         NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
         VALUE("value", LPDatabase.string(), null, null, null, null),
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
-        TYPE("type", LPDatabase.string(), null, null, null, null),
+        PARAM_TYPE("param_type", LPDatabase.string(), null, null, null, null),
         REQUIRED("required", LPDatabase.string(), null, null, null, null),
         ALLOWED_VALUES("allowed_values", LPDatabase.string(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime(), null, null, null, null),
