@@ -186,7 +186,13 @@
     <version>4.1.2</version>
 </dependency>
 
-
+<!-- https://mvnrepository.com/artifact/com.commongroundpublishing/slf4j-servletcontext -->
+<!-- <dependency>
+    <groupId>com.commongroundpublishing</groupId>
+    <artifactId>slf4j-servletcontext</artifactId>
+    <version>1.0.0</version>
+</dependency>
+-->
 
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
