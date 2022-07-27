@@ -5,7 +5,8 @@
  */
 package functionaljavaa.modulegenoma;
 
-import com.labplanet.servicios.modulegenoma.GenomaStudyObjectsVariablesAPI;
+import com.labplanet.servicios.modulegenoma.GenomaStudyAPI;
+import com.labplanet.servicios.modulegenoma.TblsGenomaConfig;
 import com.labplanet.servicios.modulegenoma.TblsGenomaData;
 import databases.Rdbms;
 import databases.RdbmsObject;
@@ -18,10 +19,12 @@ import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 /**
  *
  * @author User
@@ -43,24 +46,25 @@ public class DataStudyObjectsVariableValues {
         }    
         return LPArray.array1dTo2d(fields, 2);
     }
-    public static Object[] addVariableSetToObject(GenomaStudyObjectsVariablesAPI.GenomaStudyObjectsVariablesAPIEndPoints endPoint, String studyName, String variableSetName, String ownerTable, String ownerId){
+    public static InternalMessage addVariableSetToObject(GenomaStudyAPI.GenomaStudyAPIEndPoints endPoint, String studyName, String variableSetName, String ownerTable, String ownerId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] diagn=new Object[0];
-        Object[] isStudyOpenToChanges=isStudyOpenToChanges(studyName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) return isStudyOpenToChanges;
+        InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);    
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) return studyOpenToChanges;        
         
         Object[][] variableSetContent=getVariableSetVariablesProperties(variableSetName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(variableSetContent[0]))) return variableSetContent;
-        String[] fieldHeaders=new String[0];
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(variableSetContent[0]))) 
+            return new InternalMessage(LPPlatform.LAB_FALSE, GenomaEnums.GenomaErrorTrapping.VARIABLES_SET_NOT_FOUND, null);        
         RdbmsObject insertRecordInTable = null;
-        for (Object[] currVar: variableSetContent){
-            if (fieldHeaders.length==0){
-                for (Object currVar1 : currVar) {
+        //for (Object[] currVar: variableSetContent){
+        for (int i=1;i<variableSetContent.length;i++){
+            String[] fieldHeaders=new String[0];
+//            if (fieldHeaders.length==0){
+                for (Object currVar1 : variableSetContent[0]) {
                     fieldHeaders = LPArray.addValueToArray1D(fieldHeaders, currVar1.toString());                
                 }
-            }else{
+//            }else{
                 Object[] fieldVarProperties=new Object[0];
-                for (Object currVar1 : currVar) {
+                for (Object currVar1 : variableSetContent[i]) {
                     fieldVarProperties = LPArray.addValueToArray1D(fieldVarProperties, currVar1);                
                 }
                 String[] fieldsName=new String[]{TblsGenomaData.StudyVariableValues.STUDY.getName(), TblsGenomaData.StudyVariableValues.OWNER_TABLE.getName(), TblsGenomaData.StudyVariableValues.OWNER_ID.getName(),
@@ -76,20 +80,52 @@ public class DataStudyObjectsVariableValues {
                     }
                 }
                 insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, fieldsName, fieldsValue);            
-                if (!insertRecordInTable.getRunSuccess()) return insertRecordInTable.getApiMessage();
-                    GenomaDataAudit.studyAuditAdd(endPoint, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), Arrays.toString(currVar), 
-                        studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);                
-            }
-        }        
-        return insertRecordInTable.getApiMessage();
+                if (insertRecordInTable.getRunSuccess()){
+                    GenomaDataAudit.studyAuditAdd(endPoint, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), Arrays.toString(variableSetContent[i]), 
+                        studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);                                    
+                }else            
+                    return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
+//            }            
+        }    
+        return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), variableSetName);
+        //return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);            
     }
-    public static Object[] objectVariableSetValue(GenomaStudyObjectsVariablesAPI.GenomaStudyObjectsVariablesAPIEndPoints endpoint, String studyName, String ownerTable, String ownerId, String variableSetName, String variableName, String newValue){
+
+    public static InternalMessage addVariableToObject(GenomaStudyAPI.GenomaStudyAPIEndPoints endPoint, String studyName, String variableName, String ownerTable, String ownerId){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);    
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) return studyOpenToChanges;        
+        
+        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getRepositoryName()), TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), 
+                new String[]{TblsGenomaConfig.Variables.NAME.getName()}, new Object[]{variableName});       
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())) 
+            return new InternalMessage(LPPlatform.LAB_FALSE, GenomaEnums.GenomaErrorTrapping.VARIABLE_NOT_FOUND, null);
+        String[] fieldsName=new String[]{TblsGenomaData.StudyVariableValues.STUDY.getName(), TblsGenomaData.StudyVariableValues.OWNER_TABLE.getName(), TblsGenomaData.StudyVariableValues.OWNER_ID.getName(),
+            TblsGenomaData.StudyVariableValues.NAME.getName()};
+        Object[] fieldsValue=new Object[]{studyName, ownerTable, ownerId, variableName};
+        Object[][] extraFields=objectFieldExtraFields(studyName, variableName, ownerTable, ownerId);
+        if (extraFields!=null && extraFields.length>0){
+            for (Object[] curFld: extraFields){
+                fieldsName=LPArray.addValueToArray1D(fieldsName, curFld[0].toString());
+                fieldsValue=LPArray.addValueToArray1D(fieldsValue, curFld[1]);
+            }
+        }
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, fieldsName, fieldsValue);            
+        if (insertRecordInTable.getRunSuccess()){
+            GenomaDataAudit.studyAuditAdd(endPoint, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), variableName, 
+                studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);                
+            return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
+        }            
+        return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
+    }
+
+    public static Object[] objectVariableSetValue(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String ownerTable, String ownerId, String variableSetName, String variableName, String newValue){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isStudyOpenToChanges(studyName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) return isStudyOpenToChanges;
         
-        String[] fieldsToRetrieve=new String[]{TblsGenomaData.StudyVariableValues.ID.getName(), TblsGenomaData.StudyVariableValues.NAME.getName(), TblsGenomaData.StudyVariableValues.TYPE.getName(), TblsGenomaData.StudyVariableValues.REQUIRED.getName(), 
+        String[] fieldsToRetrieve=new String[]{TblsGenomaData.StudyVariableValues.ID.getName(), TblsGenomaData.StudyVariableValues.NAME.getName(), TblsGenomaData.StudyVariableValues.PARAM_TYPE.getName(), TblsGenomaData.StudyVariableValues.REQUIRED.getName(), 
             TblsGenomaData.StudyVariableValues.ALLOWED_VALUES.getName()};
         
         String[] fieldsName=new String[]{TblsGenomaData.StudyVariableValues.STUDY.getName(), TblsGenomaData.StudyVariableValues.OWNER_TABLE.getName(), TblsGenomaData.StudyVariableValues.OWNER_ID.getName(),
@@ -112,6 +148,11 @@ public class DataStudyObjectsVariableValues {
             Object[] isNumeric = isNumeric(newValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) 
                 return isNumeric;
+        }else if (VariableTypes.REAL.toString().equalsIgnoreCase(fieldType)){
+            Object[] isNumeric = isNumeric(newValue);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) 
+                return isNumeric;
+        }else if (VariableTypes.TEXT.toString().equalsIgnoreCase(fieldType)){
         }else 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "not recognized variable type "+fieldType, null);
         String[] updFieldsName=new String[]{TblsGenomaData.StudyVariableValues.VALUE.getName()};

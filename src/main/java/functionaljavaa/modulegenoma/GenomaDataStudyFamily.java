@@ -17,23 +17,26 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
+import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 /**
  *
  * @author User
  */
 public class GenomaDataStudyFamily {
     
-public Object[] createStudyFamily(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName, String[] individuals, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+public InternalMessage createStudyFamily(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName, String[] individuals, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
     
-    Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
-    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
+    InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);    
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) return studyOpenToChanges;        
    
     String classVersionProj = "0.1";
     String[] mandatoryFields = null;
@@ -45,23 +48,10 @@ public Object[] createStudyFamily(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoin
     if (fieldsName==null) fieldsName=new String[0];
     if (fieldsValue==null) fieldsValue=new Object[0];
 
-    if (devMode){
-        StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
-        javaDocLineName = "BEGIN";
-        javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
-        javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);
-        javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);
-        javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersionProj);
-        LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
-    }    
-        String actionName = "Insert";
-        
-        String schemaDataName = GlobalVariables.Schemas.DATA.getName();
-        
-        schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
-        
-        mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), actionName);
-        
+    String actionName = "Insert";
+    String schemaDataName = GlobalVariables.Schemas.DATA.getName();
+    schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
+    mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), actionName);
         
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
@@ -73,33 +63,12 @@ public Object[] createStudyFamily(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoin
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }    
     if (!devMode){
-        String[] diagnosesProj = LPArray.checkTwoArraysSameLength(fieldsName, fieldsValue);
-        if (fieldsName.length!=fieldsValue.length){
-            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-            diagnosesProj[0]= elements[1].getClassName() + "." + elements[1].getMethodName();
-            diagnosesProj[1]= classVersionProj;
-            diagnosesProj[2]= "Code Line " + (elements[1].getLineNumber());   
-            diagnosesProj[3]=LPPlatform.LAB_FALSE;
-            diagnosesProj[4]="ERROR:Field names and values arrays with different length";
-            diagnosesProj[5]="The values in FieldName are:"+ Arrays.toString(fieldsName)+". and in FieldValue are:"+Arrays.toString(fieldsValue);
-            return diagnosesProj;
-        }
+        InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
+            return fieldNameValueArrayChecker;
     }    
-    if (devMode){
-        StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
-        javaDocLineName = "CHECK sampleFieldName and sampleFieldValue match in length";
-        javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
-        javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);
-        javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);
-        javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersionProj);
-        LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
-    }    
-    Object[] diagnosesProj = new Object[0];
+    InternalMessage diagnosesProj = null;
     if (!devMode){        
-        if (LPArray.duplicates(fieldsName)){
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Detected any field duplicated in FieldName, the values are: <*1*>", new String[]{Arrays.toString(fieldsName)});
-        }
-
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
@@ -115,7 +84,7 @@ public Object[] createStudyFamily(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoin
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, GenomaDataProject.GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, GenomaDataProject.GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
         }        
 /*        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){	
@@ -187,38 +156,26 @@ public Object[] createStudyFamily(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoin
            fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyFamily.CREATED_BY.getName())] = token.getPersonName();
         if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyFamily.ACTIVE.getName())==-1){
            fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyFamily.ACTIVE.getName());
-           fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName()));
+           fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName()));
         }else
-           fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyFamily.ACTIVE.getName())] = GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName());        
+           fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyFamily.ACTIVE.getName())] = GenomaEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName());        
 /*        fieldsName = LPArray.addValueToArray1D(fieldsName, GlobalVariables.Schemas.CONFIG.getName());    
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplate);
         fieldsName = LPArray.addValueToArray1D(fieldsName, "config_version");    
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_FAMILY, fieldsName, fieldsValue);
-        diagnosesProj = insertRecordInTable.getApiMessage();
         if (insertRecordInTable.getRunSuccess())
             for (String currIndiv: individuals)
                 studyFamilyAddIndividual(endpoint, studyName, familyName, currIndiv);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())){
+        if (insertRecordInTable.getRunSuccess()){
             GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
-            diagnosesProj=LPArray.addValueToArray1D(diagnosesProj, insertRecordInTable.getNewRowId());
+            return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
         }
-        return diagnosesProj;  
+        return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
     }    
-    if (devMode){
-        StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
-        javaDocLineName = "END";
-        Integer specialFieldIndex = Arrays.asList(javaDocFields).indexOf(ApiMessageReturn.JAVADOC_LINE_FLDNAME);
-        if (specialFieldIndex==-1){
-            javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         
-        }else{    
-            javaDocValues[specialFieldIndex] = javaDocLineName;             
-        }
-        LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
-    }
-    return diagnosesProj; 
+    return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);            
 }    
 
 public Object[] studyFamilyActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName){
@@ -237,9 +194,9 @@ public Object[] studyFamilyActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpo
 public Object[] studyFamilyDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName){
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
-    
-    String[] fieldsName=new String[]{TblsGenomaData.StudyFamily.ACTIVE.getName()};
-    Object[] fieldsValue=new Object[]{false};
+    ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);    
+    String[] fieldsName=new String[]{TblsGenomaData.StudyFamily.ACTIVE.getName(), TblsGenomaData.StudyFamily.DEACTIVATED_BY.getName(), TblsGenomaData.StudyFamily.DEACTIVATED_ON.getName()};
+    Object[] fieldsValue=new Object[]{false, instanceForActions.getToken().getPersonName(),LPDate.getCurrentTimeStamp()};
     SqlWhere sqlWhere = new SqlWhere();
     sqlWhere.addConstraint(TblsGenomaData.StudyFamily.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
     sqlWhere.addConstraint(TblsGenomaData.StudyFamily.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{familyName}, "");
@@ -255,7 +212,7 @@ public Object[] studyFamilyIndividualUpdate(GenomaStudyAPI.GenomaStudyAPIEndPoin
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
-    Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), fieldsName);
+    Object[] specialFieldsPresent=GenomaEnums.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), fieldsName);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString()))
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
     SqlWhere sqlWhere = new SqlWhere();
@@ -282,22 +239,20 @@ public Object[] studyFamilyAddIndividual(GenomaStudyAPI.GenomaStudyAPIEndPoints 
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyIndividualToChanges[0].toString())) return projStudyIndividualToChanges;   
     
     String[] indivList=individualId.split("\\|");
-    Object[] familyAndIndividualLinked=new Object[0];
+    RdbmsObject curFamilyAndIndividualLinked = null;
     for (String curIndiv: indivList){
-        RdbmsObject curFamilyAndIndividualLinked = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL,
+        curFamilyAndIndividualLinked = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL,
                 new String[]{TblsGenomaData.StudyFamilyIndividual.STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FAMILY_NAME.getName(),
                     TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID.getName(), TblsGenomaData.StudyFamilyIndividual.LINKED_ON.getName()}, 
                 new Object[]{studyName, familyName, Integer.valueOf(curIndiv), LPDate.getCurrentTimeStamp()});
-
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(familyAndIndividualLinked[0].toString())) return familyAndIndividualLinked;        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(familyAndIndividualLinked[0].toString())) {
+        if (!curFamilyAndIndividualLinked.getRunSuccess()) return curFamilyAndIndividualLinked.getApiMessage();
+        if (curFamilyAndIndividualLinked.getRunSuccess()){
             GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.UNSTRUCT_CONTENT.getName()}, 
-                        new Object[]{familyAndIndividualLinked[familyAndIndividualLinked.length-1]}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+                        new Object[]{curFamilyAndIndividualLinked.getNewRowId()}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         }
-        familyAndIndividualLinked=LPArray.addValueToArray1D(familyAndIndividualLinked, curFamilyAndIndividualLinked.getApiMessage());
     }
-    return familyAndIndividualLinked;
+    return curFamilyAndIndividualLinked.getApiMessage();
 }
 
 public Object[] studyFamilyRemoveIndividual(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName, String individualId) {
@@ -315,7 +270,7 @@ public Object[] studyFamilyRemoveIndividual(GenomaStudyAPI.GenomaStudyAPIEndPoin
     SqlWhere where =new SqlWhere();
     where.addConstraint(TblsGenomaData.StudyFamilyIndividual.STUDY, null, new Object[]{studyName}, null);
     where.addConstraint(TblsGenomaData.StudyFamilyIndividual.FAMILY_NAME, null, new Object[]{familyName}, null);
-    where.addConstraint(TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID, null, new Object[]{individualId}, null);
+    where.addConstraint(TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID, null, new Object[]{Integer.valueOf(individualId)}, null);
     RdbmsObject removeDiagn=Rdbms.removeRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL, where, null); 
     /*RdbmsObject removeDiagn=Rdbms.removeRecordInTable(.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL.getTableName(),
             new SqlWhere(, new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_FAMILY_NAME.getName(),
