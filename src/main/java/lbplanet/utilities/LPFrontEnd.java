@@ -387,7 +387,7 @@ public class LPFrontEnd {
         Object [] errorMsgEs=null;
         String errorTextEn = "";
         String errorTextEs = "";
-        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){            
+        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1 && !mainMessage[0][0].toString().toUpperCase().contains("NULL")){
             Object[] msgArg3=new Object[]{};
             if (mainMessage[0].length>2)
                 msgArg3=(Object[]) mainMessage[0][2];
