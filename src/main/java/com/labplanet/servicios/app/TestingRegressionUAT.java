@@ -96,6 +96,7 @@ public class TestingRegressionUAT extends HttpServlet {
             }
             procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);
             if (procReqInstance==null){
+                procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, 
                     "Error", null, procReqInstance.getLanguage(), null);              
                 return;
@@ -126,6 +127,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 repositoryName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
                 fileContentBuilder=procedureRepositoryMirrorsTable(procInstanceName, scriptId);
                 if (fileContentBuilder.length()>0){
+                    procReqInstance.killIt();
                     out.println("Mirror stopped this testing");
                     out.println(fileContentBuilder.toString());
                     return;
@@ -137,6 +139,7 @@ public class TestingRegressionUAT extends HttpServlet {
                     new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId}, 
                     fldsToRetrieve, new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
+                procReqInstance.killIt();                
                 String msgStr=" Script "+scriptId.toString()+" Not found in procedure "+procInstanceName;
                 Logger.getLogger(msgStr); 
                 out.println(msgStr);
@@ -162,6 +165,7 @@ public class TestingRegressionUAT extends HttpServlet {
             try{
             endPoints = TestingServletsConfig.valueOf(testerName);
             }catch(Exception e){
+                procReqInstance.killIt();
                 String msgStr="Tester name ("+LPNulls.replaceNull(testerName)+") not recognized. The script cannot be started";
                 Logger.getLogger(msgStr); 
                 out.println(msgStr);
@@ -209,6 +213,7 @@ public class TestingRegressionUAT extends HttpServlet {
                         new String[]{TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.ARGUMENT_01.getName()},
                         new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())){
+                    procReqInstance.killIt();                    
                     String msgStr=" Not found ANY active step for the script "+scriptId.toString();
                     Logger.getLogger(msgStr); 
                     out.println(msgStr);
@@ -229,6 +234,7 @@ public class TestingRegressionUAT extends HttpServlet {
                     userProceduresList=userProceduresList.replace("[", "");
                     userProceduresList=userProceduresList.replace("]", "");        
                     if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName)){
+                        procReqInstance.killIt();                        
                         out.println(Arrays.toString(ApiMessageReturn.trapMessage(LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE, 
                             new String[]{token.getUserName(), procInstanceName, userProceduresList})));
                         return;                    
@@ -249,6 +255,7 @@ public class TestingRegressionUAT extends HttpServlet {
                         }                            
                     }
                     if (actionsList!=null){
+                        procReqInstance.killIt();                        
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getErrorCode(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language, null);
                         return;
                     }
@@ -275,6 +282,7 @@ public class TestingRegressionUAT extends HttpServlet {
             String errMessage=e.getMessage();
         }
         finally{
+            procReqInstance.killIt();
             String scriptIdStr=request.getParameter("scriptId");
             String procInstanceName=request.getParameter("procInstanceName");
             if (scriptTblInfo.length==0 || scriptIdStr==null) return;
