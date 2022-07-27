@@ -626,7 +626,7 @@ public class ProcedureDefinitionToInstance {
             jsonArr.add(convertArrayRowToJSONObject);
         }
         //Build procedureActions and actionEnabled properties
-        fildsToGet=new String[]{TblsReqs.ProcedureUserRequirements.WIDGET_ACTION.getName(), TblsReqs.ProcedureUserRequirements.ROLES.getName(), TblsReqs.ProcedureUserRequirements.ESIGN_REQ.getName(), TblsReqs.ProcedureUserRequirements.USERCONFIRM_REQ.getName()};
+        fildsToGet=new String[]{TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName(), TblsReqs.ProcedureUserRequirements.ROLES.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG_DETAIL.getName()};
         Object[][] procActionsEnabledBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
                 new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRequirements.ACTIVE.getName(), TblsReqs.ProcedureUserRequirements.IN_SYSTEM.getName(), TblsReqs.ProcedureUserRequirements.IN_SCOPE.getName()}, 
                 new Object[]{procedure, procVersion, instanceName, true, true, true}, 
@@ -640,32 +640,22 @@ public class ProcedureDefinitionToInstance {
         String allEsigReq="";
         String allUserConfirmReq="";
         for (Object[] curProcActionEnabled: procActionsEnabledBusRules){
-            String curAction=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WIDGET_ACTION.getName())]).toString();
+            String curAction=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString();
             if (curAction.length()>0){
-                String esigReq=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.ESIGN_REQ.getName())]).toString();
-                String userConfirmReq=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.USERCONFIRM_REQ.getName())]).toString();
-                if ("true".equalsIgnoreCase(esigReq)) allEsigReq=allEsigReq+"|"+curAction;
-                if ("true".equalsIgnoreCase(userConfirmReq)) allUserConfirmReq=allUserConfirmReq+"|"+curAction;
+                String confirmDialog=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName())]).toString();
+                String confirDialogDetail=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG_DETAIL.getName())]).toString();
+                if ("user_esign".equalsIgnoreCase(confirmDialog)) allEsigReq=allEsigReq+"|"+curAction;
+//                if ("true".equalsIgnoreCase(userConfirmReq)) allUserConfirmReq=allUserConfirmReq+"|"+curAction;
 
                 RdbmsObject diagn = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
                         new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}, 
                         new Object[]{GlobalVariables.Schemas.PROCEDURE.getName(), LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+curAction, LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.ROLES.getName())]).toString()}, instanceName);
-/*                
-                String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
-                        LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+curAction,  
-                        LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.ROLES.getName())]).toString());
-                if (!LPArray.valueInArray(fildsToGet, diagnObjName))//{
-                    fildsToGet=LPArray.addValueToArray1D(fildsToGet, diagnObjName);
-*/                
-    //                curProcEventSops=LPArray.addValueToArray1D(curProcEventSops, diagn);
-    //            }else
-    //                curProcEventSops[LPArray.valuePosicInArray(fildsToGet, diagnObjName)]=diagn;
                 curProcActionEnabled=LPArray.addValueToArray1D(curProcActionEnabled, diagn.getApiMessage());
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curProcActionEnabled);
                 //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.PROCEDURE_NAME.getName())];
                 jsonArr.add(convertArrayRowToJSONObject);
                 if (allEnabledActions.length()>0)allEnabledActions=allEnabledActions+"|";
-                allEnabledActions=allEnabledActions+LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WIDGET_ACTION.getName())]).toString();
+                allEnabledActions=allEnabledActions+LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString();
             }
         }        
         String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
