@@ -42,6 +42,7 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.session.InternalMessage;
 /**
  *
  * @author Administrator
@@ -134,8 +135,9 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
 
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.STATUS.getName());
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, sampleStatusFirst);
-        Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())){return fieldNameValueArrayChecker;}        
+        InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic().toString()))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         // spec is not mandatory but when any of the fields involved is added to the parameters 
         //  then it turns mandatory all the fields required for linking this entity.
         Integer fieldIndexSpecCode = Arrays.asList(sampleFieldName).indexOf(TblsData.Sample.SPEC_CODE.getName());
@@ -759,7 +761,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @param sampleFieldName
      * @param sampleFieldValue
      * @param eventName
-     * @param preAuditId
      * @param transactionId
      */
     public void autoSampleAliquoting(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue, String eventName, Integer transactionId){
@@ -778,8 +779,9 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
-        Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpAliqFieldName, smpAliqFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())){return fieldNameValueArrayChecker;}        
+        InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpAliqFieldName, smpAliqFieldValue);
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic().toString()))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
 
         BigDecimal aliqVolume = BigDecimal.ZERO;
         String aliqVolumeuom = "";
@@ -852,8 +854,9 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     public Object[] logSampleSubAliquot(Integer aliquotId, String[] smpSubAliqFieldName, Object[] smpSubAliqFieldValue) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpSubAliqFieldName, smpSubAliqFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())){return fieldNameValueArrayChecker;}          
+        InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpSubAliqFieldName, smpSubAliqFieldValue);
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic().toString()))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
 
         Integer sampleId = 0;
         String[] mandatoryAliquotFields = new String[]{TblsData.SampleAliq.SAMPLE_ID.getName()};
@@ -1017,7 +1020,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                     +" ( "+sqlSelect+" COALESCE(array_to_json(array_agg(row_to_json(saQry))),'[]') from  "
                     +"( "+sqlSelect+" "+sampleAnalysisFieldToRetrieve+", "
                     +"( "+sqlSelect+" COALESCE(array_to_json(array_agg(row_to_json(sarQry))),'[]') from "
-                    +"( "+sqlSelect+" "+sarFieldToRetrieve+" from "+schemaData+".sample_analysis_result sar where sar.test_id=sa.test_id "
+                    +"( "+sqlSelect+" "+sarFieldToRetrieve+" from "+schemaData+".sample_analysis_result_with_spec_limits sar where sar.test_id=sa.test_id "
                     +sqlOrderBy+sarFieldToSort+"     ) sarQry    ) as sample_analysis_result "
                     +sqlFrom+schemaData+".sample_analysis sa where sa.sample_id=s.sample_id "
                     +sqlOrderBy+sampleAnalysisFieldToSort+"      ) saQry    ) as sample_analysis "
