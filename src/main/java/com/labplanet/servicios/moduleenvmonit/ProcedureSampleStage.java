@@ -87,7 +87,7 @@ public class ProcedureSampleStage {
     public String sampleStagePlateReadingPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         return LPPlatform.LAB_TRUE;
     }
-    public String sampleStagePlateReadingNextChecker(String procInstanceName, Integer sampleId, String sampleData) { 
+    public String sampleStagePlateReadingNextCheckerWithNoSecondEntry(String procInstanceName, Integer sampleId, String sampleData) { 
         try{
             Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
@@ -120,6 +120,86 @@ public class ProcedureSampleStage {
             if ("Recuento".equals(paramName)){ 
                 if ("0".equals(rawValue)) return LPPlatform.LAB_TRUE+"|END";
                 else return LPPlatform.LAB_TRUE;
+            }        
+            return LPPlatform.LAB_FALSE+"You win! This logic is not handled";
+        }catch(Exception e){
+            return LPPlatform.LAB_FALSE+e.getMessage();
+        }
+    }
+
+    public String sampleStagePlateReadingNextChecker(String procInstanceName, Integer sampleId, String sampleData) { 
+        try{
+            Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
+               return LPPlatform.LAB_FALSE+"Info not parse-able";
+            JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
+            if (sampleStructure.get("sample_analysis").isJsonNull())
+                return LPPlatform.LAB_FALSE+"sample_analysis value not found";
+            JsonArray smpAna=sampleStructure.getAsJsonArray("sample_analysis");
+            JsonElement jGet = smpAna.get(0);        
+            JsonObject asJsonObject = jGet.getAsJsonObject();
+            if (asJsonObject.getAsJsonArray("sample_analysis_result").isJsonNull())
+                return LPPlatform.LAB_FALSE+"sample_analysis_result value not found";
+            JsonArray asJsonArray = asJsonObject.getAsJsonArray("sample_analysis_result"); //
+            jGet = asJsonArray.get(0);        
+            asJsonObject = jGet.getAsJsonObject();
+
+            String rawValue="";
+            if (asJsonObject.get("raw_value").isJsonNull())
+                return LPPlatform.LAB_FALSE+"stagesCheckerSampleWithNoResult"+"@"+sampleId; //"raw value not entered yet";
+            else
+                rawValue=asJsonObject.get("raw_value").getAsString();
+
+            String paramName="";
+            if (asJsonObject.get("param_name").isJsonNull())
+                return LPPlatform.LAB_FALSE+"stagesParamNameEmpty"+"@"+sampleId; //+"Parameter name is empty";
+            else
+                paramName=asJsonObject.get("param_name").getAsString();
+            
+            //String paramName=asJsonObject.get("param_name").getAsString();
+            if ("Recuento".equals(paramName)){ 
+                if ("0".equals(rawValue)) return LPPlatform.LAB_TRUE; //+"|END";
+                else return LPPlatform.LAB_TRUE;
+            }        
+            return LPPlatform.LAB_FALSE+"You win! This logic is not handled";
+        }catch(Exception e){
+            return LPPlatform.LAB_FALSE+e.getMessage();
+        }
+    }
+    public String sampleStagePlateReadingSecondEntryNextChecker(String procInstanceName, Integer sampleId, String sampleData) { 
+        try{
+            Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
+               return LPPlatform.LAB_FALSE+"Info not parse-able";
+            JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
+            if (sampleStructure.get("sample_analysis").isJsonNull())
+                return LPPlatform.LAB_FALSE+"sample_analysis value not found";
+            JsonArray smpAna=sampleStructure.getAsJsonArray("sample_analysis");
+            JsonElement jGet = smpAna.get(0);
+            JsonObject asJsonObject = jGet.getAsJsonObject();
+            if (asJsonObject.getAsJsonArray("sample_analysis_result").isJsonNull())
+                return LPPlatform.LAB_FALSE+"sample_analysis_result value not found";
+            JsonArray asJsonArray = asJsonObject.getAsJsonArray("sample_analysis_result"); //
+            jGet = asJsonArray.get(0);
+            asJsonObject = jGet.getAsJsonObject();
+
+            String rawValue="";
+            if (asJsonObject.get("sar2_"+"raw_value").isJsonNull())
+                return LPPlatform.LAB_FALSE+"stagesCheckerSampleWithNoResult"+"@"+sampleId; //"raw value not entered yet";
+            else
+                rawValue=asJsonObject.get("sar2_"+"raw_value").getAsString();
+
+            String paramName="";
+            if (asJsonObject.get("sar2_"+"param_name").isJsonNull())
+                return LPPlatform.LAB_FALSE+"stagesParamNameEmpty"+"@"+sampleId; //+"Parameter name is empty";
+            else
+                paramName=asJsonObject.get("sar2_"+"param_name").getAsString();
+            
+            //String paramName=asJsonObject.get("param_name").getAsString();
+            if ("Recuento".equals(paramName)){ 
+                //if ("0".equals(rawValue)) return LPPlatform.LAB_TRUE+"|END";
+                //else 
+                    return LPPlatform.LAB_TRUE;
             }        
             return LPPlatform.LAB_FALSE+"You win! This logic is not handled";
         }catch(Exception e){
