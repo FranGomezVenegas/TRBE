@@ -123,7 +123,7 @@ public class SqlStatement {
         
         Object[] whereFieldValuesNew = new Object[0];
         if (whereFieldNames != null) {
-            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues);            
+            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues, true);            
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
@@ -173,7 +173,7 @@ public class SqlStatement {
         
         Object[] whereFieldValuesNew = new Object[0];
         if (whereFields != null) {
-            Object[] whereClauseContent = buildWhereClause(whereFields, whereFieldValues);            
+            Object[] whereClauseContent = buildWhereClause(whereFields, whereFieldValues, true);            
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
@@ -186,7 +186,7 @@ public class SqlStatement {
         return hm;
     }
     
-    public static Object[] buildWhereClause(String[] whereFieldNames, Object[] whereFieldValues){
+    public static Object[] buildWhereClause(String[] whereFieldNames, Object[] whereFieldValues, Boolean caseSensitive){
         StringBuilder queryWhere = new StringBuilder(0);
         Object[] whereFieldValuesNew = new Object[0];
         for (int iwhereFieldNames=0; iwhereFieldNames<whereFieldNames.length; iwhereFieldNames++){
@@ -201,8 +201,8 @@ public class SqlStatement {
             if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
                 queryWhere.append(fn);
             } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.LIKE.getSqlClause())) {
-                queryWhere.append(fn).append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
+                queryWhere.append(caseSensitive?fn:"lower("+fn+")").append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive?whereFieldValues[iwhereFieldNames]: whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
                 String separator = inNotInSeparator(fn);
                 String textSpecs = (String) whereFieldValues[iwhereFieldNames];
@@ -241,8 +241,8 @@ public class SqlStatement {
                 queryWhere.append(fn).append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else {
-                queryWhere.append(fn).append("=? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
+                queryWhere.append(caseSensitive?fn:"lower("+fn+")").append("=? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive?whereFieldValues[iwhereFieldNames]: whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             }
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
