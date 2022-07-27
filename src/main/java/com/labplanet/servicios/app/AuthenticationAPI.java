@@ -7,6 +7,7 @@ package com.labplanet.servicios.app;
 
 import static functionaljavaa.platformadmin.AppBusinessRules.AllAppBusinessRules;
 import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPI;
+import static com.labplanet.servicios.app.AppProcedureListAPI.SIZE_WHEN_CONSIDERED_MOBILE;
 import static com.labplanet.servicios.app.AppProcedureListAPI.procedureListInfo;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationErrorTrapping;
@@ -208,6 +209,13 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put("sop_tree_list_element", SopUserAPIfrontend.SopTreeListElements(request, response));                    
                     jsonObj.put("all_my_analysis_methods", CertifyAnalysisMethodAPIfrontend.AllMyAnalysisMethodCertif(request, response));
                     jsonObj.put("platform_business_rules", AllAppBusinessRules(request, response));
+                    
+                    Integer sizeValue=SIZE_WHEN_CONSIDERED_MOBILE+1;
+                    String sizeValueStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SIZE_VALUE);
+                    if (sizeValueStr!=null && sizeValueStr.length()>0)
+                        sizeValue=Integer.valueOf(sizeValueStr);                    
+                    jsonObj.put("platform_settings", AppProcedureListAPI.procModel("platform-settings", sizeValue));
+                    
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;                                   
                 case TOKEN_VALIDATE_ESIGN_PHRASE:     
