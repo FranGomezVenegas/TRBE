@@ -44,15 +44,31 @@ public class InstrumentsEnums {
         NEW_INSTRUMENT("NEW_INSTRUMENT", "instrumentName", "", "instrumentNewInstrumentCreated_success",  
             new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments("familyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7 ),
-                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8 ),
-                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9 ),},
+                new LPAPIArguments("modelNumber", LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
+                new LPAPIArguments("serialNumber", LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
+                new LPAPIArguments("supplierName", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),
+                new LPAPIArguments("manufacturerName", LPAPIArguments.ArgumentType.STRING.toString(), false, 11 ),
+                new LPAPIArguments("poDate", LPAPIArguments.ArgumentType.STRING.toString(), false, 12 ),
+                new LPAPIArguments("installationDate", LPAPIArguments.ArgumentType.STRING.toString(), false, 13 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 15 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
         ),        
+        CHANGE_INSTRUMENT_FAMILY("CHANGE_INSTRUMENT_FAMILY", "instrumentName", "", "instrumentFamilyChanged_success",  
+            new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments("newFamilyName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
+        ),                
         UPDATE_INSTRUMENT("UPDATE_INSTRUMENT", "instrumentName", "", "instrumentUpdated_success",  
             new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ),
-                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8 ),},
+                new LPAPIArguments("modelNumber", LPAPIArguments.ArgumentType.STRING.toString(), false, 7 ),
+                new LPAPIArguments("serialNumber", LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
+                new LPAPIArguments("supplierName", LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
+                new LPAPIArguments("manufacturerName", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
         ),
@@ -99,7 +115,7 @@ public class InstrumentsEnums {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesAppProcData.INSTRUMENTS.getTableName()).build()).build()
         ),     
-        START_PREV_MAINT("START_PREV_MAINT", "instrumentName", "", "instrumentPrevMaintStarted_success",  
+        START_PREVENTIVE_MAINTENANCE("START_PREVENTIVE_MAINTENANCE", "instrumentName", "", "instrumentPrevMaintStarted_success",  
             new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8 ),},
@@ -197,11 +213,7 @@ public class InstrumentsEnums {
             hm.put(request, argValues);            
             return hm;
         }        
-
-       /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
+        @Override        public LPAPIArguments[] getArguments() {
             return arguments;
         }     
         private final String name;
@@ -222,8 +234,8 @@ public class InstrumentsEnums {
         INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT("INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT("INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENTS_INPROGRESS("INSTRUMENT_EVENTS_INPROGRESS","", new LPAPIArguments[]{
-            new LPAPIArguments("fieldName", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
-            new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments("fieldName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+            new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENT_VARIABLES("INSTRUMENT_EVENTS_VARIABLES", "",new LPAPIArguments[]{            
             new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6), }, EndPointsToRequirements.endpointWithNoOutputObjects)
         ;
