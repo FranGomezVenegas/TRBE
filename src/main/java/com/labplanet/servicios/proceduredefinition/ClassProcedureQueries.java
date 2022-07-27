@@ -7,6 +7,7 @@ package com.labplanet.servicios.proceduredefinition;
 
 import com.google.gson.JsonParser;
 import databases.Rdbms;
+import databases.SqlStatement;
 import databases.TblsReqs;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
@@ -46,15 +47,29 @@ public class ClassProcedureQueries {
             jBlockObj.put("user_role", jBlockArr);
         }
         fldsArr=new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
+        String[] roleActionsFldsArr=new String[]{TblsReqs.ProcedureUserRequirements.NAME.getName()};
+    
         Object[][] procRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(), 
             new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName()}, 
             new Object[]{procInstanceName}, fldsArr);
         jBlockArr = new JSONArray(); 
+        JSONObject jRolesActions=new JSONObject();
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procRoles[0][0].toString())){
             for (Object[] curRow: procRoles){
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
+                JSONArray jRoleActionsjArr = new JSONArray(); 
+                Object[][] roleActions = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
+                    new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.ROLES.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()}, 
+                    new Object[]{procInstanceName, "%"+curRow[0]+"%"}, roleActionsFldsArr);
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(roleActions[0][0].toString())){
+                    for (Object[] curRolAction: roleActions){
+                        jRoleActionsjArr.add(curRolAction[0]);
+                    }
+                }
+                jRolesActions.put(curRow[0], jRoleActionsjArr);
             }
             jBlockObj.put("roles", jBlockArr);
+            jBlockObj.put("roles_actions", jRolesActions);
         }
         return jBlockObj;
     }
