@@ -447,8 +447,8 @@ public class DataInstruments {
             fldValues=new Object[]{true, InstrLockingReasons.UNDER_MAINTENANCE_EVENT.getPropertyName()};
             turnOffLine(fldNames, fldValues);
         }
-        messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_PREV_MAINT, new Object[]{name});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_PREV_MAINT, new Object[]{name}, insEventIdCreated);
+        messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_PREVENTIVE_MAINTENANCE, new Object[]{name});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.START_PREVENTIVE_MAINTENANCE, new Object[]{name}, insEventIdCreated);
     }
     public InternalMessage completePrevMaint(String decision){
         InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
