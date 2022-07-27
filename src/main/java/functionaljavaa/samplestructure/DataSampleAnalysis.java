@@ -36,6 +36,7 @@ import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysi
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 /**
  *
  * @author Administrator
@@ -419,10 +420,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         String sampleLevel = TblsData.TablesData.SAMPLE.getTableName();
         mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
-        Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())) {
-            return fieldNameValueArrayChecker;
-        }
+        InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic().toString()))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         mandatoryFieldsValue = new Object[mandatoryFields.length];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines = 0; inumLines < mandatoryFields.length; inumLines++) {
@@ -730,6 +730,17 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 Integer resultId = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                     resultId, sampleId, testId, resultId, getResultFields, fieldVal);
+                Object[] dbTableExists = Rdbms.dbTableExists(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY.getTableName());
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
+                    getResultFields=LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResultSecondEntry.FIRST_RESULT_ID.getName());
+                    fieldVal=LPArray.addValueToArray1D(fieldVal, resultId);
+                    newResultRdbmsDiagnObj = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY, 
+                            getResultFields, fieldVal);
+                    Integer resultIdSecondEntry = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_SECONDENTRY_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
+                        resultId, sampleId, testId, resultIdSecondEntry, getResultFields, fieldVal);
+                    
+                }
             }
         }
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())){
