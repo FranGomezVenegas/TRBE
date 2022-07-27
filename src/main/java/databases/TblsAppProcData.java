@@ -68,7 +68,7 @@ public class TblsAppProcData {
                 "i.on_line, i.decommissioned, i.is_locked, i.locked_reason, i.last_calibration, i.next_calibration, " +
                 "i.last_prev_maint, i.next_prev_maint, i.last_verification " +
                 "from #SCHEMA_DATA.instruments i, #SCHEMA_DATA.instrument_event ie " +
-                "where ie.instrument=i.name and i.decommissioned=false"+
+                "where ie.instrument=i.name and i.decommissioned=false and ie.completed_on is null"+
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
             null, "not_decom_instr_event_data_vw", SCHEMA_NAME, true, TblsAppProcData.ViewNotDecommInstrumentAndEventData.values(), "pr_scheduled_locations"),
         ;
@@ -105,6 +105,10 @@ public class TblsAppProcData {
         CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
         FAMILY("family", LPDatabase.string(), null, null, null, null),
+        SUPPLIER("supplier", LPDatabase.string(), null, null, null, null),
+        MANUFACTURER("manufacturer", LPDatabase.string(), null, null, null, null),
+        SERIAL_NUMBER("serial_number", LPDatabase.string(), null, null, null, null),
+        MODEL_NUMBER("model_number", LPDatabase.string(), null, null, null, null),
         DECOMMISSIONED("decommissioned", LPDatabase.booleanFld(), null, null, null, null),
         DECOMMISSIONED_BY("decommissioned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         DECOMMISSIONED_ON("decommissioned_on", LPDatabase.dateTime(), null, null, null, null),
@@ -118,6 +122,10 @@ public class TblsAppProcData {
         LAST_PM("last_prev_maint",LPDatabase.dateTime(), null, null, null, null),
         NEXT_PM("next_prev_maint",LPDatabase.dateTime(), null, null, null, null),
         LAST_VERIF("last_verification",LPDatabase.dateTime(), null, null, null, null),
+        PO_DATE("po_date",LPDatabase.dateTime(), null, null, null, null),
+        INSTALLATION_DATE("installation_date",LPDatabase.dateTime(), null, null, null, null),
+        
+        
         ;
         private Instruments(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
