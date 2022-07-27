@@ -46,6 +46,9 @@ public class TblsData {
         SAMPLE_ANALYSIS_RESULT(null, "sample_analysis_result", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleAnalysisResult.values(), Sample.SAMPLE_ID.getName(),
             new String[]{SampleAnalysisResult.RESULT_ID.getName()}, 
             new Object[]{new ForeignkeyFld(SampleAnalysisResult.TEST_ID.getName(), SCHEMA_NAME, SAMPLE_ANALYSIS.getTableName(), SampleAnalysis.TEST_ID.getName())}, "sample analysis results table"),
+        SAMPLE_ANALYSIS_RESULT_SECONDENTRY(null, "sample_analysis_result_secondentry", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleAnalysisResultSecondEntry.values(), Sample.SAMPLE_ID.getName(),
+            new String[]{SampleAnalysisResult.RESULT_ID.getName()}, 
+            new Object[]{new ForeignkeyFld(SampleAnalysisResult.TEST_ID.getName(), SCHEMA_NAME, SAMPLE_ANALYSIS.getTableName(), SampleAnalysis.TEST_ID.getName())}, "sample analysis results table for second entries"),
         SAMPLE_ALIQ(null, "sample_aliq", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleAliq.values(), SampleAliq.ALIQUOT_ID.getName(),
             new String[]{SampleAliq.ALIQUOT_ID.getName()}, 
             new Object[]{new ForeignkeyFld(SampleAliq.SAMPLE_ID.getName(), SCHEMA_NAME, SAMPLE.getTableName(), Sample.SAMPLE_ID.getName())}, "sample aliquot table"),
@@ -97,6 +100,7 @@ public class TblsData {
     }
     public enum ViewsData implements EnumIntViews{
         SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW(" SELECT #FLDS from #SCHEMA.sample_analysis_result sar " +
+                "   JOIN #SCHEMA.sample_analysis_result_secondentry sar2 ON sar2.result_id=sar.result_id AND sar2.test_id = sar.test_id AND sar2.sample_id = sar.sample_id"+
                 "   INNER JOIN #SCHEMA.sample_analysis sa on sa.test_id = sar.test_id "+
                 "   INNER JOIN #SCHEMA.sample s on s.sample_id = sar.sample_id "+
                 "    left outer join #SCHEMA_CONFIG.spec_limits spcLim on sar.limit_id=spcLim.limit_id " +
@@ -473,6 +477,87 @@ public class TblsData {
         , INCUBATION_PASSED("incubation_passed", LPDatabase.Boolean())*/ 
         ;
         private SampleAnalysisResult(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }            
+
+    public enum SampleAnalysisResultSecondEntry implements EnumIntTableFields{
+        RESULT_ID("result_id", LPDatabase.integer(), null, null, null, null),
+        FIRST_RESULT_ID("first_result_id", LPDatabase.integer(), null, null, null, null),
+        TEST_ID(SampleAnalysis.TEST_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        SAMPLE_ID(Sample.SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(), null, null, null, null),
+        STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.string(), null, null, null, null),
+        ANALYSIS(FIELDS_NAMES_ANALYSIS, LPDatabase.stringNotNull(), null, null, null, null),
+        METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string(), null, null, null, null),
+        METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
+        REPLICA(FIELDS_NAMES_REPLICA, LPDatabase.integer(), null, null, null, null),
+        PARAM_NAME("param_name", LPDatabase.string(), null, null, null, null),
+        PARAM_TYPE("param_type", LPDatabase.string(), null, null, null, null),
+        MANDATORY("mandatory", LPDatabase.booleanFld(false), null, null, null, null),
+        REQUIRES_LIMIT("requires_limit", LPDatabase.booleanFld(false), null, null, null, null),
+        RAW_VALUE("raw_value", LPDatabase.string(), null, null, null, null),
+        PRETTY_VALUE("pretty_value", LPDatabase.string(), null, null, null, null),
+        ENTERED_ON("entered_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        ENTERED_BY("entered_by", LPDatabase.string(), null, null, null, null),
+        REENTERED("reentered", LPDatabase.booleanFld(), null, null, null, null),
+        SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, LPDatabase.string(200), null, null, null, null),
+        SPEC_EVAL_DETAIL("spec_eval_detail",  LPDatabase.string(200), null, null, null, null),
+        UOM("uom", LPDatabase.string(), null, null, null, null),
+        UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string(), null, null, null, null),
+        ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        LIMIT_ID("limit_id", LPDatabase.integer(), null, null, null, null),
+        REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null),
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        MAX_DP("max_dp", LPDatabase.integer(), null, null, null, null),
+        MIN_ALLOWED("min_allowed", LPDatabase.real(), null, null, null, null),
+        MAX_ALLOWED("max_allowed", LPDatabase.real(), null, null, null, null),
+        LIST_ENTRY("list_entry", LPDatabase.string(), null, null, null, null),
+        
+        /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
+        , REVIEWER("reviewer", LPDatabase.String())
+        , REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime())        
+        , REVIEWER_ASSIGNED_BY("reviewer_assigned_by", LPDatabase.String())        
+        , ANALYST("analyst", LPDatabase.String())
+        , ANALYST_ASSIGNED_ON("analyst_assigned_on", LPDatabase.dateTime())        
+        , ANALYST_ASSIGNED_BY("analyst_assigned_by", LPDatabase.String())        
+        , ANALYST_CERTIFICATION_MODE("analyst_certification_mode", LPDatabase.String()) */
+        //, UNDER_DEVIATION("under_deviation", LPDatabase.Boolean()) Desviaciones aún no implementadas
+/*     Este bloque de campos está a nivel de Sample, es posible que pueda ser interesante tb en sample_analysis   
+        , VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.Real())
+        , VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.StringNotNull())
+        , ALIQUOTED("aliquoted", LPDatabase.Boolean(false))
+        , ALIQUOT_STATUS("aliq_status", LPDatabase.StringNotNull())
+        , VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.Real())
+        , VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.StringNotNull())
+        , SAMPLING_DATE("sampling_date", LPDatabase.dateTime())
+        , SAMPLING_COMMENT("sampling_comment", LPDatabase.String())
+        , INCUBATION_START("incubation_start", LPDatabase.dateTime())
+        , INCUBATION_END("incubation_end", LPDatabase.dateTime())
+        , INCUBATION_PASSED("incubation_passed", LPDatabase.Boolean())*/ 
+        ;
+        private SampleAnalysisResultSecondEntry(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
@@ -941,7 +1026,37 @@ public class TblsData {
         INVEST_ID("invest_id", "io.invest_id", InvestObjects.INVEST_ID, null, null, null),
         INVEST_OBJECT_ID("invest_object_id", "io.id", InvestObjects.OBJECT_ID, null, null, null),
         SAMPLE_REVIEWER("sample_reviewer", "s.reviewer", Sample.REVIEWER, null, null, null),
-        TEST_REVIEWER("test_reviewer", "sa.reviewer", SampleAnalysis.REVIEWER, null, null, null),        
+        TEST_REVIEWER("test_reviewer", "sa.reviewer", SampleAnalysis.REVIEWER, null, null, null),    
+        SAR2_RESULT_ID("sar2_"+SampleAnalysisResult.RESULT_ID.getName(), "sar2.result_id", SampleAnalysisResult.RESULT_ID, null, null, null),
+        SAR2_TEST_ID("sar2_"+SampleAnalysis.TEST_ID.getName(), "sar2.test_id", SampleAnalysisResult.TEST_ID, null, null, null),
+        SAR2_SAMPLE_ID("sar2_"+Sample.SAMPLE_ID.getName(), "sar2.sample_id", SampleAnalysisResult.SAMPLE_ID, null, null, null),
+        SAR2_STATUS("sar2_"+FIELDS_NAMES_STATUS, "sar2.status", SampleAnalysisResult.STATUS, null, null, null),
+        SAR2_STATUS_PREVIOUS("sar2_"+FIELDS_NAMES_STATUS_PREVIOUS, "sar2.status_previous", SampleAnalysisResult.STATUS_PREVIOUS, null, null, null),
+        SAR2_ANALYSIS("sar2_"+FIELDS_NAMES_ANALYSIS, "sar2.analysis", SampleAnalysisResult.ANALYSIS, null, null, null),
+        SAR2_METHOD_NAME("sar2_"+LPDatabase.FIELDS_NAMES_METHOD_NAME, "sar2.method_name", SampleAnalysisResult.METHOD_NAME, null, null, null),
+        SAR2_METHOD_VERSION("sar2_"+LPDatabase.FIELDS_NAMES_METHOD_VERSION, "sar2.method_version", SampleAnalysisResult.METHOD_VERSION, null, null, null),
+        SAR2_REPLICA("sar2_"+FIELDS_NAMES_REPLICA, "sar2.replica", SampleAnalysisResult.REPLICA, null, null, null),
+        SAR2_PARAM_NAME("sar2_"+"param_name", "sar2.param_name", SampleAnalysisResult.PARAM_NAME, null, null, null),
+        SAR2_PARAM_TYPE("sar2_"+"param_type", "sar2.param_type", SampleAnalysisResult.PARAM_TYPE, null, null, null),
+        SAR2_MANDATORY("sar2_"+"mandatory", "sar2.mandatory", SampleAnalysisResult.MANDATORY, null, null, null),
+        SAR2_REQUIRES_LIMIT("sar2_"+"requires_limit", "sar2.requires_limit", SampleAnalysisResult.REQUIRES_LIMIT, null, null, null),
+        SAR2_RAW_VALUE("sar2_"+"raw_value", "sar2.raw_value", SampleAnalysisResult.RAW_VALUE, null, null, null),
+        SAR2_RAW_VALUE_NUM("sar2_"+"raw_value_num", "case when isnumeric(sar2.raw_value) then to_number(sar2.raw_value::text, '9999'::text) else null end", SampleAnalysisResult.REPLICA, null, null, null),
+        SAR2_PRETTY_VALUE("sar2_"+"pretty_value", "sar2.pretty_value", SampleAnalysisResult.PRETTY_VALUE, null, null, null),
+        SAR2_ENTERED_ON("sar2_"+"entered_on", "sar2.entered_on", SampleAnalysisResult.ENTERED_ON, null, null, null),
+        SAR2_ENTERED_BY("sar2_"+"entered_by", "sar2.entered_by", SampleAnalysisResult.ENTERED_BY, null, null, null),
+        SAR2_REENTERED("sar2_"+"reentered", "sar2.reentered", SampleAnalysisResult.REENTERED, null, null, null),
+        SAR2_SPEC_EVAL("sar2_"+FIELDS_NAMES_SPEC_EVAL, "sar2.spec_eval", SampleAnalysisResult.SPEC_EVAL, null, null, null),
+        SAR2_SPEC_EVAL_DETAIL("sar2_"+"spec_eval_detail", "sar2.spec_eval_detail", SampleAnalysisResult.SPEC_EVAL_DETAIL, null, null, null),
+        SAR2_UOM("sar2_"+"uom", "sar2.uom", SampleAnalysisResult.UOM, null, null, null),
+        SAR2_SAR2_UOM_CONVERSION_MODE("sar2_"+"uom_conversion_mode", "sar2.uom_conversion_mode", SampleAnalysisResult.UOM_CONVERSION_MODE, null, null, null),
+        SAR2_ALIQUOT_ID("sar2_"+FIELDS_NAMES_ALIQUOT_ID, "sar2.aliquot_id", SampleAnalysisResult.ALIQUOT_ID, null, null, null),
+        SAR2_SUBALIQUOT_ID("sar2_"+FIELDS_NAMES_SUBALIQUOT_ID, "sar2.subaliquot_id", SampleAnalysisResult.SUBALIQUOT_ID, null, null, null),
+        SAR2_MAX_DP("sar2_"+"max_dp", "sar2.max_dp", SampleAnalysisResult.MAX_DP, null, null, null),
+        SAR2_MIN_ALLOWED("sar2_"+"min_allowed", "sar2.min_allowed", SampleAnalysisResult.MIN_ALLOWED, null, null, null),
+        SAR2_MAX_ALLOWED("sar2_"+"max_allowed", "sar2.max_allowed", SampleAnalysisResult.MAX_ALLOWED, null, null, null),
+        SAR2_LIST_ENTRY("sar2_"+"list_entry", "sar2.list_entry", SampleAnalysisResult.LIST_ENTRY, null, null, null),
+        
         ;
         private ViewSampleAnalysisResultWithSpecLimits(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
 //            try{
