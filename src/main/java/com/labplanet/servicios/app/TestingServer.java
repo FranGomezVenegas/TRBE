@@ -90,7 +90,7 @@ public class TestingServer extends HttpServlet {
         response=LPHttp.responsePreparation(response);
     try (PrintWriter out = response.getWriter()) {
         
-        
+//Map<String, ? extends ServletRegistration> registrations = servletContext.getServletRegistrations();        
 //@Override
             //public int hashCode() {
             // TODO Auto-generated method stub
