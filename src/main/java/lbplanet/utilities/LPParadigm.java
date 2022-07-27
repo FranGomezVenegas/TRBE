@@ -6,9 +6,10 @@
 package lbplanet.utilities;
 
 import java.util.Arrays;
+import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntMessages;
-import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -27,9 +28,9 @@ public class LPParadigm {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -41,7 +42,7 @@ public class LPParadigm {
      * @param fValue
      * @return
      */
-    public static Object[] fieldNameValueArrayChecker (String[] fName, Object[] fValue){
+    public static InternalMessage fieldNameValueArrayChecker (String[] fName, Object[] fValue){
         Object[] diagnoses = null;
         String errorCode ="";
         Object[] errorDetailVariables= new Object[0];
@@ -50,15 +51,14 @@ public class LPParadigm {
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fName));
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fValue));
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, errorDetailVariables);
+           return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, errorDetailVariables);
         }
         
         if (LPArray.duplicates(fName)){
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fName));
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.FIELDS_DUPLICATED, errorDetailVariables);                      
-        }        
-        diagnoses = LPArray.addValueToArray1D(diagnoses, LPPlatform.LAB_TRUE);
-        return diagnoses;                
+           return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.FIELDS_DUPLICATED, errorDetailVariables);                      
+        }                
+        return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, new Object[]{});
     }
     
 }
