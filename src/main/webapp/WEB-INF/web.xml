@@ -173,7 +173,7 @@
         <servlet-class>com.labplanet.servicios.modulegenoma.TablesDeployment</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ProjectAPI</servlet-name>
+        <servlet-name>GenomaProjectAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.modulegenoma.GenomaProjectAPI</servlet-class>
     </servlet>
     <servlet>
@@ -494,8 +494,8 @@
         <url-pattern>/modulegenome/TablesDeployment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ProjectAPI</servlet-name>
-        <url-pattern>/modulegenoma/ProjectAPI</url-pattern>
+        <servlet-name>GenomaProjectAPI</servlet-name>
+        <url-pattern>/modulegenoma/GenomaProjectAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GenomaStudyAPI</servlet-name>
