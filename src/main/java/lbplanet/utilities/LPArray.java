@@ -772,10 +772,19 @@ public class  LPArray {
      * @return
      */
     public static String convertArrayToString(Object[] matrix, String fieldsSeparator, String fieldAdorn){
+        return convertArrayToString(matrix, fieldsSeparator, fieldAdorn, false);
+    }
+    public static String convertArrayToString(Object[] matrix, String fieldsSeparator, String fieldAdorn, Boolean removeLastSeparator){
         if (matrix.length > 0) {
+            int curObjIndex=1;
             StringBuilder nameBuilder = new StringBuilder(0);
             for (Object n : matrix) {
-                nameBuilder.append(fieldAdorn).append(LPNulls.replaceNull(n).toString().replace("'", "\\'")).append(fieldAdorn).append(fieldsSeparator);
+                nameBuilder.append(fieldAdorn).append(LPNulls.replaceNull(n).toString().replace("'", "\\'")).append(fieldAdorn);                
+                if (curObjIndex++<matrix.length)
+                    nameBuilder.append(fieldsSeparator);
+                else
+                    if (removeLastSeparator==null || !removeLastSeparator)
+                        nameBuilder.append(fieldsSeparator);
             }
             return nameBuilder.toString();
         } else {
