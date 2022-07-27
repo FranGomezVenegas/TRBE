@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.app.procs;
 
+import databases.TblsAppProcData;
 import databases.TblsAppProcData.TablesAppProcData;
 import databases.TblsAppProcDataAudit;
 import functionaljavaa.audit.SampleAudit;
@@ -17,9 +18,12 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
@@ -68,8 +72,14 @@ public class ClassInstruments {
             switch (endPoint){
                 case NEW_INSTRUMENT:
                     String familyName=argValues[1].toString();
-                    String fieldName=argValues[2].toString();
-                    String fieldValue=argValues[3].toString();
+                    String modelNumber=argValues[2].toString();
+                    String serialNumber=argValues[3].toString();
+                    String supplierName=argValues[4].toString();
+                    String manufacturerName=argValues[5].toString();
+                    String poDateStr=argValues[6].toString();
+                    String installationDateStr=argValues[7].toString();
+                    String fieldName=argValues[8].toString();
+                    String fieldValue=argValues[9].toString();
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
                     if (fieldName!=null) fieldNames = fieldName.split("\\|");
@@ -77,13 +87,47 @@ public class ClassInstruments {
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
                         actionDiagnoses=(InternalMessage) fieldValues[1];
                     else
+                        if (LPNulls.replaceNull(modelNumber).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.MODEL_NUMBER.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, modelNumber);
+                        }
+                        if (LPNulls.replaceNull(serialNumber).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.SERIAL_NUMBER.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, serialNumber);
+                        }
+                        if (LPNulls.replaceNull(supplierName).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.SUPPLIER.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, supplierName);
+                        }
+                        if (LPNulls.replaceNull(manufacturerName).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.MANUFACTURER.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, manufacturerName);
+                        }
+                        if (LPNulls.replaceNull(poDateStr).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.PO_DATE.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.stringFormatToDate(poDateStr));
+                        }
+                        if (LPNulls.replaceNull(installationDateStr).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.INSTALLATION_DATE.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.stringFormatToDate(installationDateStr));
+                        }
                         actionDiagnoses=DataInstruments.createNewInstrument(instrName, familyName, fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(),TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
                     break;
+                case CHANGE_INSTRUMENT_FAMILY:
+                    //this.actionDiagnosesObj=instr.getErrorDetail();
+                    diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+                    this.relatedObj=rObj;
+                    rObj.killInstance();
+                    return;                    
                 case UPDATE_INSTRUMENT:
-                    fieldName=argValues[1].toString();
-                    fieldValue=argValues[2].toString();
+                    modelNumber=argValues[1].toString();
+                    serialNumber=argValues[2].toString();
+                    supplierName=argValues[3].toString();
+                    manufacturerName=argValues[4].toString();
+                    fieldName=argValues[5].toString();
+                    fieldValue=argValues[6].toString();
                     fieldNames=null;
                     fieldValues=null;
                     if (fieldName!=null) fieldNames = fieldName.split("\\|");
@@ -91,6 +135,22 @@ public class ClassInstruments {
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
                         actionDiagnoses=(InternalMessage) fieldValues[1];
                     else
+                        if (LPNulls.replaceNull(modelNumber).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.MODEL_NUMBER.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, modelNumber);
+                        }
+                        if (LPNulls.replaceNull(serialNumber).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.SERIAL_NUMBER.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, serialNumber);
+                        }
+                        if (LPNulls.replaceNull(supplierName).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.SUPPLIER.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, supplierName);
+                        }
+                        if (LPNulls.replaceNull(manufacturerName).length()>0){
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.MANUFACTURER.getName());
+                            fieldValues=LPArray.addValueToArray1D(fieldValues, manufacturerName);
+                        }
                         actionDiagnoses=instr.updateInstrument(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
@@ -176,7 +236,7 @@ public class ClassInstruments {
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
                     }
                     break;
-                case START_PREV_MAINT:
+                case START_PREVENTIVE_MAINTENANCE:
                     instr=new DataInstruments(instrName);
                     actionDiagnoses=instr.startPrevMaint();
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){

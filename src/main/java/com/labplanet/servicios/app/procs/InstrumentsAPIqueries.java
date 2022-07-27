@@ -62,6 +62,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
             response=LPHttp.responsePreparation(response);
 
             String language = LPFrontEnd.setLanguage(request); 
+            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
         try{
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -74,32 +75,41 @@ public class InstrumentsAPIqueries extends HttpServlet {
 
             Token token = new Token(finalToken);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                    LPFrontEnd.servletReturnResponseError(request, response, 
-                            LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
-                    return;                             
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, 
+                    LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+                return;                             
             }
             InstrumentsAPIqueriesEndpoints endPoint = null;
             try{
                 endPoint = InstrumentsAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
+                procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
-            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{argValues[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+                return;
+            }                
+            
+            
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
             switch (endPoint){
             case ACTIVE_INSTRUMENTS_LIST:
-                String[] fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableFields());
-                Object[][] instrumentAudit=QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENTS,
-                        EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, "ALL"),
+                String[] fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENTS);
+                Object[][] instrumentsInfo=QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENTS,
+                        EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcData.INSTRUMENTS),
                         new String[]{TblsAppProcData.Instruments.DECOMMISSIONED.getName()+"<>"}, 
                         new Object[]{true}, 
                         new String[]{TblsAppProcData.Instruments.NAME.getName()+" desc"});
                 JSONArray jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentAudit[0][0].toString())){
-                    for (Object[] currInstr: instrumentAudit){
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString())){
+                    for (Object[] currInstr: instrumentsInfo){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
                         jArr.add(jObj);
                     }
@@ -109,17 +119,17 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 return;  
             case INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT:
                 String instrName=LPNulls.replaceNull(argValues[0]).toString();
-                fieldsToRetrieve=getAllFieldNames(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableFields());
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS);
                 if (!LPArray.valueInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()))
                     fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName());
-                instrumentAudit=QueryUtilitiesEnums.getTableData(TablesAppProcDataAudit.INSTRUMENTS,
-                    EnumIntTableFields.getTableFieldsFromString(TablesAppProcDataAudit.INSTRUMENTS, "ALL"),
+                instrumentsInfo=QueryUtilitiesEnums.getTableData(TablesAppProcDataAudit.INSTRUMENTS,
+                    EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcDataAudit.INSTRUMENTS),
                     new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName(), TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
                     new Object[]{instrName, ""}, 
                     new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName(), TblsAppProcDataAudit.Instruments.DATE.getName()+" asc"});
                 jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentAudit[0][0].toString())){
-                    for (Object[] currInstrAudit: instrumentAudit){
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString())){
+                    for (Object[] currInstrAudit: instrumentsInfo){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrAudit);
 
                         Object[] convertToJsonObjectStringedObject = LPJson.convertToJsonObjectStringedObject(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
@@ -157,9 +167,9 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 return;
             case INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT:
                 instrName=LPNulls.replaceNull(argValues[0]).toString();
-                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENT_EVENT.getTableFields());
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENT_EVENT);
                 Object[][] AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENT_EVENT, 
-                    EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENT_EVENT, "ALL"),
+                    EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcData.INSTRUMENT_EVENT),
                     new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName()},
                     new Object[]{instrName},
                     new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.CREATED_ON.getName()+" desc"});
@@ -198,9 +208,9 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 return;
             case INSTRUMENT_EVENT_VARIABLES:
                 Integer instrEventId=(Integer)argValues[0];
-                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES.getTableFields());
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES);
                 AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, 
-                    EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, "ALL"),
+                    EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES),
                     new String[]{TblsAppProcData.InstrEventVariableValues.EVENT_ID.getName()},
                     new Object[]{instrEventId},
                     new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName(), TblsAppProcData.InstrEventVariableValues.CREATED_ON.getName()+" desc"});
@@ -218,9 +228,9 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 String numDays = LPNulls.replaceNull(argValues[0]).toString();
                 if (numDays.length()==0) numDays=String.valueOf(7);
                 int numDaysInt=0-Integer.valueOf(numDays);               
-                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableFields());
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENTS);
                 Object[][] instrDecommissionedClosedLastDays = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENTS, 
-                    EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, "ALL"),
+                    EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcData.INSTRUMENTS),
                     new String[]{TblsAppProcData.Instruments.DECOMMISSIONED.getName(), TblsAppProcData.Instruments.DECOMMISSIONED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
                     new Object[]{true, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
                     new String[]{TblsAppProcData.Instruments.DECOMMISSIONED_ON.getName()+" desc"});
@@ -235,9 +245,9 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);              
                 return;
             case GET_INSTRUMENT_FAMILY_LIST:
-                fieldsToRetrieve=getAllFieldNames(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY.getTableFields());
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY);
                 Object[][] instrumentFamily=QueryUtilitiesEnums.getTableData(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY, 
-                        EnumIntTableFields.getTableFieldsFromString(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY, "ALL"),
+                        EnumIntTableFields.getAllFieldNamesFromDatabase(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY),
                         new String[]{TblsAppProcConfig.InstrumentsFamily.NAME.getName()+"<>"}, 
                         new Object[]{">>>"}, 
                         new String[]{TblsAppProcConfig.InstrumentsFamily.NAME.getName()+" desc"});
@@ -256,7 +266,6 @@ public class InstrumentsAPIqueries extends HttpServlet {
         }finally {
             // release database resources
             try {           
-                ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
                 procReqInstance.killIt();
                 // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
