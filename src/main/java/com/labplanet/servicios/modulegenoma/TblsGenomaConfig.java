@@ -69,7 +69,7 @@ public class TblsGenomaConfig {
         NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null), 
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null), 
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null), 
-        TYPE("type", LPDatabase.string(), null, null, null, null), 
+        PARAM_TYPE("param_type", LPDatabase.string(), null, null, null, null), 
         REQUIRED("required", LPDatabase.string(), null, null, null, null), 
         ALLOWED_VALUES("allowed_values", LPDatabase.string(), null, null, null, null), 
         CREATED_ON("created_on", dateTime(), null, null, null, null), 
