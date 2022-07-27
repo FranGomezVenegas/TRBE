@@ -44,6 +44,8 @@ public class LPDatabase {
     public static final String FIELDS_NAMES_ACTIVE="active";
     public static final String FIELDS_NAMES_CREATED_BY="created_by";
     public static final String FIELDS_NAMES_CREATED_ON="created_on";
+    public static final String FIELDS_NAMES_DEACTIVATED_BY="deactivated_by";
+    public static final String FIELDS_NAMES_DEACTIVATED_ON="deactivated_on";
     public static final String FIELDS_NAMES_DESCRIPTION="description";
     public static final String FIELDS_NAMES_METHOD_NAME="method_name";
     public static final String FIELDS_NAMES_METHOD_VERSION="method_version";
