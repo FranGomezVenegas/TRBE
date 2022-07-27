@@ -5,7 +5,11 @@
  */
 package trazit.enums;
 
+import databases.Rdbms;
+import java.util.HashMap;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPPlatform;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -28,8 +32,8 @@ public interface EnumIntViewFields {
         return flds;
     }
     public static EnumIntViewFields[] getViewFieldsFromString(EnumIntViews tblObj, Object flds){
-        if (flds==null || flds.toString().length()==0) return tblObj.getViewFields();
-        if ("ALL".equalsIgnoreCase(flds.toString())) return tblObj.getViewFields();
+        if (flds==null || flds.toString().length()==0) return getAllFieldNamesFromDatabase(tblObj);
+        if ("ALL".equalsIgnoreCase(flds.toString())) return getAllFieldNamesFromDatabase(tblObj);        
         return getViewFieldsFromString(tblObj, flds.toString().split("\\|"));
     }
     public static EnumIntViewFields[] getViewFieldsFromString(EnumIntViews tblObj, String[] flds){
@@ -51,5 +55,30 @@ public interface EnumIntViewFields {
         }
         return -1;
     }
+    
+    public static EnumIntViewFields[] getAllFieldNamesFromDatabase(EnumIntViews tblObj){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=instanceForActions.getProcedureInstance();        
+        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getViewName());
+        String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
+        Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
+        String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));        
+
+        tableFldsInfoColumns=LPArray.getUniquesArray(tableFldsInfoColumns);
+        
+        EnumIntViewFields[] custFlds=new EnumIntViewFields[tableFldsInfoColumns.length];
+        EnumIntViewFields[] tableFields = tblObj.getViewFields();
+        for (int i=0;i<tableFldsInfoColumns.length;i++){
+            String curFld=tableFldsInfoColumns[i];
+            Integer valuePosicInArray = getFldPosicInArray(tableFields, curFld);
+            if (valuePosicInArray>-1)
+                custFlds[i]=tableFields[valuePosicInArray]; 
+            else{
+                custFlds[i]=new AdhocViewFields(curFld); 
+            }
+        }
+        return custFlds;
+    }    
+    
     
 }
