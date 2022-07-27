@@ -20,6 +20,7 @@ import databases.TblsProcedure;
 import databases.TblsReqs;
 import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
+import functionaljavaa.moduleenvironmentalmonitoring.ConfigMasterData;
 import functionaljavaa.user.UserProfile;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -153,6 +154,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 String includeProcModelInfo = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_PROC_MODEL_INFO);    
                 if (includeProcModelInfo!=null && Boolean.valueOf(includeProcModelInfo))                
                     procedure.put("procModel", procModel(curProc.toString(), sizeValue));
+                procedure.put("master_data", getMasterData(curProc.toString()));
                 procedures.add(procedure);
             }
             procFldNameArray = LPArray.addValueToArray1D(procFldNameArray, LABEL_PROC_SCHEMA);
@@ -183,6 +185,16 @@ public class AppProcedureListAPI extends HttpServlet {
         }
     }
 
+    public static JSONObject getMasterData(String procInstanceName){
+        JSONObject jObj=new JSONObject();
+        if (procInstanceName.toLowerCase().contains("em-demo-a")){
+            BusinessRules bi=new BusinessRules(procInstanceName, null);
+            
+            return ConfigMasterData.getMasterData(procInstanceName, bi);
+        }else 
+            jObj.put(procInstanceName, "no master date logic defined");
+            return jObj;
+    }
     public static JSONArray procActionsWithESign(String procInstanceName){
         JSONArray jArr = new JSONArray();   
         Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
