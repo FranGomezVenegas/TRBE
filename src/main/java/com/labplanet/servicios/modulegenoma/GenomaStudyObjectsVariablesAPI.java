@@ -28,9 +28,10 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
-import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 /**
  *
  * @author User
@@ -39,7 +40,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
 
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
-    public enum GenomaStudyObjectsVariablesAPIEndPoints  implements EnumIntEndpoints{ 
+    public enum XXXXGenomaStudyObjectsVariablesAPIEndPoints  { 
         ADD_VARIABLE_SET_TO_STUDY_OBJECT("ADD_VARIABLE_SET_TO_STUDY_OBJECT", "variablesSetAdded_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -53,7 +54,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                 new LPAPIArguments(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
                 new LPAPIArguments(GenomaProjectAPIParamsList.NEW_VALUE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 11)}, null, null),
         ;
-        private GenomaStudyObjectsVariablesAPIEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
+        private XXXXGenomaStudyObjectsVariablesAPIEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -70,10 +71,10 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }
-        @Override        public String getName(){return this.name;}
-        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        @Override        public LPAPIArguments[] getArguments() {return arguments;}
+                public String getName(){return this.name;}
+                public String getSuccessMessageCode(){return this.successMessageCode;}           
+                public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+                public LPAPIArguments[] getArguments() {return arguments;}
         public EnumIntAuditEvents getAuditEventObj() {return actionEventObj;}
         
         private final String name;
@@ -146,9 +147,9 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
         //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
             Object[] diagnostic = null;
-            GenomaStudyObjectsVariablesAPIEndPoints endPoint = null;
+            GenomaStudyAPI.GenomaStudyAPIEndPoints endPoint = null;
             try{
-                endPoint = GenomaStudyObjectsVariablesAPIEndPoints.valueOf(actionName.toUpperCase());
+                endPoint = GenomaStudyAPI.GenomaStudyAPIEndPoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
@@ -167,11 +168,13 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                     String studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
                     String ownerTable=request.getParameter(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
                     String ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
-                    diagnostic =DataStudyObjectsVariableValues.addVariableSetToObject(endPoint, studyName, variableSetName, ownerTable, ownerId);
+                    InternalMessage actionDiagnosesObj = DataStudyObjectsVariableValues.addVariableSetToObject(endPoint, studyName, variableSetName, ownerTable, ownerId);
+                    diagnostic=ApiMessageReturn.trapMessage(actionDiagnosesObj.getDiagnostic(), actionDiagnosesObj.getMessageCodeObj(), actionDiagnosesObj.getMessageCodeVariables());
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{variableSetName, ownerTable, ownerId});
                     relatedObject.addSimpleNode(procInstanceName,  TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), variableSetName);
                     relatedObject.addSimpleNode(procInstanceName, ownerTable, ownerId);
                     break;                      
+                      
                 case STUDY_OBJECT_SET_VARIABLE_VALUE:     
                     variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
                     studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());

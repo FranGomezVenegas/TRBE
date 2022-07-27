@@ -40,7 +40,7 @@ public final class GenomaConfigVariablesQueries {
             return variableSetInfo;
         }
         String variableSetContent = LPNulls.replaceNull(variableSetInfo[0][0]).toString();
-        String[] fieldsToRetrieve=new String[]{TblsGenomaConfig.Variables.NAME.getName(), TblsGenomaConfig.Variables.TYPE.getName(), TblsGenomaConfig.Variables.REQUIRED.getName(), 
+        String[] fieldsToRetrieve=new String[]{TblsGenomaConfig.Variables.NAME.getName(), TblsGenomaConfig.Variables.PARAM_TYPE.getName(), TblsGenomaConfig.Variables.REQUIRED.getName(), 
             TblsGenomaConfig.Variables.ALLOWED_VALUES.getName()};
         Object[][] variablesProperties2D= Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), 
             new String[]{TblsGenomaConfig.Variables.NAME.getName()+" in|"}, new Object[]{variableSetContent}, 

@@ -34,6 +34,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
     
             
     public enum  GenomaVariableAPIFrontEndEndPoints implements EnumIntEndpoints{
+            GET_PROCEDURE_USERS("GET_PROCEDURE_USERS", "", new LPAPIArguments[]{}, null, null),
             GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName", new LPAPIArguments[]{}, null, null),
             GET_ACTIVE_CONFIG_VARIABLE_SET("GET_ACTIVE_CONFIG_VARIABLE_SET", "", new LPAPIArguments[]{}, null, null)
           ;
@@ -93,11 +94,15 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
 
         switch (endPoint){
+        case GET_PROCEDURE_USERS:
+            
+            break;
         case GET_ACTIVE_CONFIG_VARIABLE_SET:
             break;
         case GET_VARIABLE_SET_VARIABLES_ID: 
             Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, 
                         LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                  

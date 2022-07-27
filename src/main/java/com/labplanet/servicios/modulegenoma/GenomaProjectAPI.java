@@ -80,7 +80,7 @@ public class GenomaProjectAPI extends HttpServlet {
         PROJECT_USER_ACTIVATE("PROJECT_USER_ACTIVATE", "userProjectActivated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaProjectAuditEvents.PROJECT_USER_ACTIVATE),
+                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8)}, null, DataGenomaProjectAuditEvents.PROJECT_USER_ACTIVATE),
         PROJECT_USER_DEACTIVATE("PROJECT_USER_DEACTIVATE", "userProjectDeactivated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -154,6 +154,7 @@ public class GenomaProjectAPI extends HttpServlet {
         }
         Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response,
                     LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;

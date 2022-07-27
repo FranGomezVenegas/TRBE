@@ -21,6 +21,7 @@ import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 /**
  *
@@ -186,9 +187,9 @@ public class GenomaDataStudyIndividuals {
                fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividual.CREATED_BY.getName())] = token.getPersonName();
             if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividual.ACTIVE.getName())==-1){
                fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividual.ACTIVE.getName());
-               fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName()));
+               fieldsValue=LPArray.addValueToArray1D(fieldsValue, GenomaEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName()));
             }else
-               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividual.ACTIVE.getName())] = GenomaBusinessRules.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName());        
+               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividual.ACTIVE.getName())] = GenomaEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName());        
     /*        fieldsName = LPArray.addValueToArray1D(fieldsName, GlobalVariables.Schemas.CONFIG.getName());    
             fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplate);
             fieldsName = LPArray.addValueToArray1D(fieldsName, "config_version");    
@@ -231,14 +232,21 @@ public class GenomaDataStudyIndividuals {
     }    
 
     public Object[] studyIndividualDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, Integer indivId){
-        Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
-
-        String[] fieldsName=new String[]{TblsGenomaData.StudyIndividual.ACTIVE.getName()};
-        Object[] fieldsValue=new Object[]{false};
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.StudyIndividual.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
         sqlWhere.addConstraint(TblsGenomaData.StudyIndividual.INDIVIDUAL_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{indivId}, "");
+
+        Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
+
+        Object[][] studyIndivInfo = QueryUtilitiesEnums.getTableData(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL,
+                EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL, TblsGenomaData.StudyIndividual.ACTIVE.getName()), sqlWhere, null);
+        if ("false".equalsIgnoreCase(studyIndivInfo[0][0].toString()))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "individualAlreadyDeactivated", new Object[]{studyName, indivId});
+        
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);    
+        String[] fieldsName=new String[]{TblsGenomaData.StudyIndividual.ACTIVE.getName(), TblsGenomaData.StudyIndividual.DEACTIVATED_BY.getName(), TblsGenomaData.StudyIndividual.DEACTIVATED_ON.getName()};
+        Object[] fieldsValue=new Object[]{false, instanceForActions.getToken().getPersonName(),LPDate.getCurrentTimeStamp()};
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL,
             EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL, fieldsName), fieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
@@ -251,7 +259,7 @@ public class GenomaDataStudyIndividuals {
         Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
-        Object[] specialFieldsPresent=GenomaBusinessRules.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), fieldsName);
+        Object[] specialFieldsPresent=GenomaEnums.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), fieldsName);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
         SqlWhere sqlWhere = new SqlWhere();

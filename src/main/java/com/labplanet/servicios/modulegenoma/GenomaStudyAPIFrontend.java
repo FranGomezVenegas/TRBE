@@ -6,7 +6,11 @@
 package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
+import com.labplanet.servicios.modulegenoma.TblsGenomaData.TablesGenomaData;
 import databases.Rdbms;
+import databases.SqlStatement;
+import databases.TblsProcedure;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -22,16 +26,20 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 /**
  *
  * @author User
@@ -42,16 +50,39 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
 //    public static final String API_ENDPOINT_ALL_ACTIVE_PROJECTS="ALL_ACTIVE_PROJECTS";
 //    public static final String API_ENDPOINT_ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET="ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET";
     public enum GenomaStudyAPIFrontendEndpoints implements EnumIntEndpoints{
-
-
         ALL_ACTIVE_PROJECTS("ALL_ACTIVE_PROJECTS", "", new LPAPIArguments[]{
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
-                //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
-                }, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments("get_only_active_objects", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 6),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+            //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
+            }, EndPointsToRequirements.endpointWithNoOutputObjects),
+        DEACTIVATED_PROJECT_USERS_LAST_N_DAYS("DEACTIVATED_PROJECT_USERS_LAST_N_DAYS","",
+            new LPAPIArguments[]{new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)}, 
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        DEACTIVATED_STUDY_USERS_LAST_N_DAYS("DEACTIVATED_STUDY_USERS_LAST_N_DAYS","",
+            new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)}, 
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        DEACTIVATED_STUDY_INDIVIDUALS_LAST_N_DAYS("DEACTIVATED_STUDY_INDIVIDUALS_LAST_N_DAYS","",
+            new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)}, 
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        DEACTIVATED_STUDY_INDIVIDUAL_SAMPLES_LAST_N_DAYS("DEACTIVATED_STUDY_INDIVIDUAL_SAMPLES_LAST_N_DAYS","",
+            new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)}, 
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        DEACTIVATED_STUDY_SAMPLES_SET_LAST_N_DAYS("DEACTIVATED_STUDY_SAMPLES_SET_LAST_N_DAYS","",
+            new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)}, 
+            EndPointsToRequirements.endpointWithNoOutputObjects),
+        DEACTIVATED_STUDY_FAMILIES_LAST_N_DAYS("DEACTIVATED_STUDY_FAMILIES_LAST_N_DAYS","",
+            new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)}, 
+            EndPointsToRequirements.endpointWithNoOutputObjects),
         ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET("ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             }, EndPointsToRequirements.endpointWithNoOutputObjects),
@@ -103,6 +134,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
         }
+        
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
         String procInstanceName=procReqInstance.getProcedureInstance();
@@ -110,20 +142,33 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         try{
             endPoint = GenomaStudyAPIFrontendEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;                   
         }        
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response,
+                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{argValues[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+            return;
+        }                
         
         try (PrintWriter out = response.getWriter()) {            
             switch (endPoint){
                 case ALL_ACTIVE_PROJECTS:
+                    String getOnlyActiveObjectsStr = LPNulls.replaceNull(argValues[0]).toString();
+                    Boolean getOnlyActiveObjects=true;
+                    if (getOnlyActiveObjectsStr.length()>0)
+                        getOnlyActiveObjects=Boolean.valueOf(getOnlyActiveObjectsStr);
                     String schemaConfig=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
                     JSONObject projectsListObj = new JSONObject(); 
                     Object[][] projectInfo = Rdbms.getRecordFieldsByFilter(schemaConfig, TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), 
                         new String[]{TblsGenomaData.Project.ACTIVE.getName()}, new Object[]{true}, 
                         EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.PROJECT.getTableFields()), new String[]{TblsGenomaData.Project.NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectInfo[0][0].toString())){
-                        // Rdbms.closeRdbms();                                           
+                        // Rdbms.closeRdbms();        
+                        procReqInstance.killIt();
                         Object[] errMsg = LPFrontEnd.responseError(projectInfo, language, null);
                         response.sendError((int) errMsg[0], (String) errMsg[1]);    
                         return;
@@ -133,6 +178,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                         JSONObject curProgramJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.PROJECT.getTableFields()), curProject);
 
                         String curProjectName=curProject[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.PROJECT.getTableFields()), TblsGenomaData.Project.NAME.getName())].toString();
+                        curProgramJson=projectUsersJson(curProgramJson, curProjectName, getOnlyActiveObjects);
 
                         Object[][] projStudyInfo = Rdbms.getRecordFieldsByFilter(schemaConfig, TblsGenomaData.TablesGenomaData.STUDY.getTableName(), 
                             new String[]{TblsGenomaData.Study.PROJECT.getName()}, new Object[]{curProjectName}, 
@@ -143,10 +189,11 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                 JSONObject curProjStudyJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY.getTableFields()), curProjStudy);
 
                                 String curStudyName=curProjStudy[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY.getTableFields()), TblsGenomaData.Study.NAME.getName())].toString();
-                                curProjStudyJson=studyIndividualSamplesJson(curProjStudyJson, curStudyName, null);
-                                curProjStudyJson=studyIndividualJson(curProjStudyJson, curStudyName, null);
-                                curProjStudyJson=studySamplesSetJson(curProjStudyJson, curStudyName);
-                                curProjStudyJson=studyFamilyJson(curProjStudyJson, curStudyName);
+                                curProjStudyJson=studyUsersJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);
+                                curProjStudyJson=studyIndividualSamplesJson(curProjStudyJson, curStudyName, null, getOnlyActiveObjects);
+                                curProjStudyJson=studyIndividualJson(curProjStudyJson, curStudyName, null, getOnlyActiveObjects);
+//                                curProjStudyJson=studySamplesSetJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);
+                                curProjStudyJson=studyFamilyJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);
                                 curProjStudyJson=studyVariableValuesJson(curProjStudyJson, 
                                     curStudyName, null, null, null);
                                 curProjStudyJson=studyObjectsFileJson(curProjStudyJson, curStudyName);
@@ -158,6 +205,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                         programsJsonArr.add(curProgramJson);
                     }
                     projectsListObj.put(TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), programsJsonArr);
+                    projectsListObj.put("master_data", genomaMasterData());
                     response.getWriter().write(projectsListObj.toString());
                     Response.ok().build();
                     return;   
@@ -215,6 +263,80 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                     response.getWriter().write(variablesAndVariablesSetObj.toString());
                     Response.ok().build();
                     return;
+                case DEACTIVATED_PROJECT_USERS_LAST_N_DAYS:
+                case DEACTIVATED_STUDY_USERS_LAST_N_DAYS:
+                case DEACTIVATED_STUDY_FAMILIES_LAST_N_DAYS:
+                case DEACTIVATED_STUDY_INDIVIDUALS_LAST_N_DAYS:
+                case DEACTIVATED_STUDY_INDIVIDUAL_SAMPLES_LAST_N_DAYS:
+                case DEACTIVATED_STUDY_SAMPLES_SET_LAST_N_DAYS:
+                    String studyName = LPNulls.replaceNull(argValues[0]).toString();
+                    String numDays = LPNulls.replaceNull(argValues[1]).toString();
+                    if (numDays.length()==0) numDays=String.valueOf(7);
+                    int numDaysInt=0-Integer.valueOf(numDays);   
+                    Object[][] objectsDeactivactedLastDays=null;
+                    String[] fieldsToRetrieve = null;
+                    switch(endPoint){
+                        case DEACTIVATED_PROJECT_USERS_LAST_N_DAYS:
+                            fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.PROJECT_USERS);
+                            objectsDeactivactedLastDays = QueryUtilitiesEnums.getTableData(TablesGenomaData.PROJECT_USERS, 
+                                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.PROJECT_USERS),
+                                new String[]{TblsGenomaData.ProjectUsers.PROJECT.getName(), TblsGenomaData.ProjectUsers.ACTIVE.getName(), TblsGenomaData.ProjectUsers.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+                                new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                                new String[]{TblsGenomaData.ProjectUsers.DEACTIVATED_ON.getName()+" desc"});
+                            break;
+                        case DEACTIVATED_STUDY_USERS_LAST_N_DAYS:
+                            fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_USERS);
+                            objectsDeactivactedLastDays = QueryUtilitiesEnums.getTableData(TablesGenomaData.STUDY_USERS, 
+                                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_USERS),
+                                new String[]{TblsGenomaData.StudyUsers.STUDY.getName(), TblsGenomaData.StudyUsers.ACTIVE.getName(), TblsGenomaData.StudyUsers.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+                                new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                                new String[]{TblsGenomaData.StudyUsers.DEACTIVATED_ON.getName()+" desc"});
+                            break;
+                        case DEACTIVATED_STUDY_INDIVIDUALS_LAST_N_DAYS:
+                            fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL);
+                            objectsDeactivactedLastDays = QueryUtilitiesEnums.getTableData(TablesGenomaData.STUDY_INDIVIDUAL, 
+                                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_INDIVIDUAL),
+                                new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividual.ACTIVE.getName(), TblsGenomaData.StudyIndividual.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+                                new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                                new String[]{TblsGenomaData.StudyIndividual.DEACTIVATED_ON.getName()+" desc"});
+                            break;
+                        case DEACTIVATED_STUDY_INDIVIDUAL_SAMPLES_LAST_N_DAYS:                            
+                            fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE);
+                            objectsDeactivactedLastDays = QueryUtilitiesEnums.getTableData(TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE, 
+                                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE),
+                                new String[]{TblsGenomaData.StudyIndividualSample.STUDY.getName(), TblsGenomaData.StudyIndividual.ACTIVE.getName(), TblsGenomaData.StudyIndividualSample.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+                                new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                                new String[]{TblsGenomaData.StudyIndividualSample.DEACTIVATED_ON.getName()+" desc"});
+                            break;
+                        case DEACTIVATED_STUDY_SAMPLES_SET_LAST_N_DAYS:
+                            fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET);
+                            objectsDeactivactedLastDays = QueryUtilitiesEnums.getTableData(TablesGenomaData.STUDY_SAMPLES_SET, 
+                                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_SAMPLES_SET),
+                                new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName(), TblsGenomaData.StudySamplesSet.ACTIVE.getName(), TblsGenomaData.StudySamplesSet.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+                                new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                                new String[]{TblsGenomaData.StudySamplesSet.DEACTIVATED_ON.getName()+" desc"});
+                            break;
+                        case DEACTIVATED_STUDY_FAMILIES_LAST_N_DAYS:
+                            fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_FAMILY);
+                            objectsDeactivactedLastDays = QueryUtilitiesEnums.getTableData(TablesGenomaData.STUDY_FAMILY, 
+                                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_FAMILY),
+                                new String[]{TblsGenomaData.StudyFamily.STUDY.getName(), TblsGenomaData.StudyFamily.ACTIVE.getName(), TblsGenomaData.StudyFamily.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+                                new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                                new String[]{TblsGenomaData.StudyFamily.DEACTIVATED_ON.getName()+" desc"});
+                            break;
+                    }
+                    JSONArray jArr = new JSONArray();
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(objectsDeactivactedLastDays[0][0].toString())){
+                        for (Object[] currIncident: objectsDeactivactedLastDays){
+                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                            jArr.add(jObj);
+                        }
+                    }
+                    Rdbms.closeRdbms();  
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);              
+                    return;
+
+
                 default:      
                     procReqInstance.killIt();
             }
@@ -250,12 +372,17 @@ JSONObject studyObjectsFileJson(JSONObject curProjStudyJson, String curStudyName
     return curProjStudyJson;
 }    
 
-JSONObject studyFamilyJson(JSONObject curProjStudyJson, String curStudyName){
+JSONObject studyFamilyJson(JSONObject curProjStudyJson, String curStudyName, Boolean getOnlyActiveObjects){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
+    String[] whereFldNames=new String[]{TblsGenomaData.StudyFamily.STUDY.getName()};
+    Object[] whereFldValues=new Object[]{curStudyName};
+    if (getOnlyActiveObjects){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualSample.ACTIVE.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
+    }
     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
     Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), 
-        new String[]{TblsGenomaData.StudyFamily.STUDY.getName()}, new Object[]{curStudyName}, 
+        whereFldNames, whereFldValues,
         EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamily.values()), new String[]{TblsGenomaData.StudyFamily.NAME.getName()});
     JSONArray studyFamiliesJsonArr = new JSONArray();     
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString())){
@@ -264,7 +391,7 @@ JSONObject studyFamilyJson(JSONObject curProjStudyJson, String curStudyName){
             String curFamilyName=curStudyFamily[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamily.values()), TblsGenomaData.StudyFamily.NAME.getName())].toString();
             curStudyFamilyJson=studyVariableValuesJson(curStudyFamilyJson, 
                 curStudyName, null, null, curFamilyName);
-            curStudyFamilyJson=studyIndividualJson(curStudyFamilyJson, curStudyName, curFamilyName);
+            curStudyFamilyJson=studyIndividualJson(curStudyFamilyJson, curStudyName, curFamilyName, getOnlyActiveObjects);
             studyFamiliesJsonArr.add(curStudyFamilyJson);
         }
         curProjStudyJson.put(TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), studyFamiliesJsonArr);
@@ -272,12 +399,59 @@ JSONObject studyFamilyJson(JSONObject curProjStudyJson, String curStudyName){
     return curProjStudyJson;
 }    
 
-JSONObject studyIndividualJson(JSONObject curProjStudyJson, String curStudyName, String familyName){
+JSONObject projectUsersJson(JSONObject curProjJson, String curProjectName, Boolean getOnlyActiveObjects){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+    String[] whereFldNames=new String[]{TblsGenomaData.ProjectUsers.PROJECT.getName()};
+    Object[] whereFldValues=new Object[]{curProjectName};   
+    if (getOnlyActiveObjects){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.ProjectUsers.ACTIVE.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
+    }    
+    Object[][] projectUsersInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(), 
+        whereFldNames, whereFldValues, 
+        EnumIntTableFields.getAllFieldNames(TblsGenomaData.ProjectUsers.values()));
+    JSONArray projectUsersJsonArr = new JSONArray();     
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(projectUsersInfo[0][0].toString())){
+        for (Object[] curProjectUser: projectUsersInfo){
+            JSONObject curProjectUserJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.ProjectUsers.values()), curProjectUser);
+            projectUsersJsonArr.add(curProjectUserJson);
+        }
+    }    
+    curProjJson.put(TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(), projectUsersJsonArr);
+    return curProjJson;
+}
+        
+JSONObject studyUsersJson(JSONObject curProjStudyJson, String curStudyName, Boolean getOnlyActiveObjects){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+    String[] whereFldNames=new String[]{TblsGenomaData.StudyUsers.STUDY.getName()};
+    Object[] whereFldValues=new Object[]{curStudyName};   
+    if (getOnlyActiveObjects){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyUsers.ACTIVE.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
+    }    
+    Object[][] studyUsersInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName(), 
+        whereFldNames, whereFldValues, 
+        EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyUsers.values()));
+    JSONArray studyUsersJsonArr = new JSONArray();     
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyUsersInfo[0][0].toString())){
+        for (Object[] curStudyUser: studyUsersInfo){
+            JSONObject curStudyUserJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyUsers.values()), curStudyUser);
+            studyUsersJsonArr.add(curStudyUserJson);
+        }
+    }    
+    curProjStudyJson.put(TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName(), studyUsersJsonArr);
+    return curProjStudyJson;
+}
+JSONObject studyIndividualJson(JSONObject curProjStudyJson, String curStudyName, String familyName, Boolean getOnlyActiveObjects){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
     String[] whereFldNames=new String[]{TblsGenomaData.StudyIndividual.STUDY.getName()};
-    String[] whereFldValues=new String[]{curStudyName};
+    Object[] whereFldValues=new Object[]{curStudyName};   
     if (familyName!=null && familyName.length()>0){
         Object[][] studyFamilyIndividualInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL.getTableName(), 
             LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyFamilyIndividual.FAMILY_NAME.getName()),
@@ -293,6 +467,10 @@ JSONObject studyIndividualJson(JSONObject curProjStudyJson, String curStudyName,
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName()+" IN|");
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, "INTEGER*"+familyIndivsStr);
     }
+    if (getOnlyActiveObjects){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividual.ACTIVE.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
+    }    
     Object[][] studyIndividualInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), 
         whereFldNames, whereFldValues, 
         EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividual.values()), new String[]{TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName()});
@@ -305,7 +483,7 @@ JSONObject studyIndividualJson(JSONObject curProjStudyJson, String curStudyName,
             curStudyIndividualJson=studyVariableValuesJson(curStudyIndividualJson, 
                     curStudyName, curStudyIndividualId, null, null);
             curStudyIndividualJson= studyIndividualFamiliesJson(curStudyIndividualJson, curStudyName, curStudyIndividualId);
-            curStudyIndividualJson=studyIndividualSamplesJson(curStudyIndividualJson, curStudyName, curStudyIndividualId);
+            curStudyIndividualJson=studyIndividualSamplesJson(curStudyIndividualJson, curStudyName, curStudyIndividualId, getOnlyActiveObjects);
             studyIndividualJsonArr.add(curStudyIndividualJson);
         }
         curProjStudyJson.put(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), studyIndividualJsonArr);
@@ -316,8 +494,10 @@ JSONObject studyIndividualFamiliesJson(JSONObject curProjStudyJson, String curSt
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+    String[] whereFldNames=new String[]{TblsGenomaData.StudyFamilyIndividual.STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID.getName()};
+    Object[] whereFldValues=new Object[]{curStudyName, individualId};
     Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL.getTableName(), 
-        new String[]{TblsGenomaData.StudyFamilyIndividual.STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID.getName()}, new Object[]{curStudyName, individualId}, 
+        whereFldNames, whereFldValues,
         EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamilyIndividual.values()), new String[]{TblsGenomaData.StudyFamilyIndividual.FAMILY_NAME.getName()});
     JSONArray studyFamiliesJsonArr = new JSONArray();     
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString())){
@@ -329,7 +509,7 @@ JSONObject studyIndividualFamiliesJson(JSONObject curProjStudyJson, String curSt
     }    
     return curProjStudyJson;
 }   
-JSONObject studyIndividualSamplesJson(JSONObject curProjStudyJson, String curStudyName, Integer individualId){
+JSONObject studyIndividualSamplesJson(JSONObject curProjStudyJson, String curStudyName, Integer individualId, Boolean getOnlyActiveObjects){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
@@ -338,6 +518,10 @@ JSONObject studyIndividualSamplesJson(JSONObject curProjStudyJson, String curStu
     if (individualId!=null){
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName());
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, individualId);
+    }
+    if (getOnlyActiveObjects){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualSample.ACTIVE.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
     }
     Object[][] studyIndividualSampleInfo=new Object[0][0];
 //    if (familyName==null || familyName.length()==0){
@@ -387,8 +571,6 @@ JSONObject studyIndividualSampleSamplesSetJson(JSONObject curProjStudyJson, Stri
     }
     return curProjStudyJson;
 }   
- 
-
 JSONObject studyVariableValuesJson(JSONObject curProjStudyJson, String curStudyName, Integer individualId, Integer sampleId, String familyName){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
@@ -420,14 +602,17 @@ JSONObject studyVariableValuesJson(JSONObject curProjStudyJson, String curStudyN
     }
     return curProjStudyJson;
 }
-
-
-JSONObject studySamplesSetJson(JSONObject curProjStudyJson, String curStudyName){
+JSONObject studySamplesSetJson(JSONObject curProjStudyJson, String curStudyName, Boolean getOnlyActiveObjects){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
+    String[] whereFldNames=new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName()};
+    Object[] whereFldValues=new Object[]{curStudyName};
+    if (getOnlyActiveObjects){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudySamplesSet.ACTIVE.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
+    }
     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
     Object[][] studySamplesSetInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), 
-        new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName()}, new Object[]{curStudyName}, 
+        whereFldNames, whereFldValues, 
         EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudySamplesSet.values()), new String[]{TblsGenomaData.StudySamplesSet.NAME.getName()});
     JSONArray studySamplesSetJsonArr = new JSONArray();     
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studySamplesSetInfo[0][0].toString())){
@@ -456,7 +641,67 @@ JSONObject studySamplesSetJson(JSONObject curProjStudyJson, String curStudyName)
     curProjStudyJson.put(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), studySamplesSetJsonArr);                                
     return curProjStudyJson;
 }
+
+
+JSONObject genomaMasterData(){
+    JSONObject masterDataJson=new JSONObject();
+    masterDataJson.put("users", studyUsersJson());
+    masterDataJson.put(TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), VariablesList());
+    masterDataJson.put(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), VariableSetList());
+    
+    return masterDataJson;
+}
+JSONArray studyUsersJson(){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
+    String[] fldsArr=new String[]{TblsProcedure.ViewProcUserAndRoles.USER_NAME.getName()};
+    Object[][] procUsers = Rdbms.getRecordFieldsByFilter(schemaName, "proc_user_and_roles", 
+        new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()}, 
+        new Object[]{true}, fldsArr);
+    JSONObject jBlockObj = new JSONObject();
+    JSONArray jBlockArr = new JSONArray(); 
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString())){
+        for (Object[] curRow: procUsers){
+            jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
+        }
         
+    }
+    return jBlockArr;
+}
+JSONArray VariableSetList(){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
+    String[] fldsArr=EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableFields());
+    Object[][] variableSetListInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), 
+        new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()}, 
+        new Object[]{true}, fldsArr);
+    JSONObject jBlockObj = new JSONObject();
+    JSONArray jBlockArr = new JSONArray(); 
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetListInfo[0][0].toString())){
+        for (Object[] curRow: variableSetListInfo){
+            jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
+        }
+    }
+    return jBlockArr;
+}
+
+JSONArray VariablesList(){
+    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
+    String[] fldsArr=EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableFields());
+    Object[][] variablesListInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), 
+        new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()}, 
+        new Object[]{true}, fldsArr);
+    JSONObject jBlockObj = new JSONObject();
+    JSONArray jBlockArr = new JSONArray(); 
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesListInfo[0][0].toString())){
+        for (Object[] curRow: variablesListInfo){
+            jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
+        }
+    }
+    return jBlockArr;
+}
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
