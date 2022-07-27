@@ -148,7 +148,7 @@ Object[][] firstStageData=new Object[0][0];
                 
             
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) return sampleAuditRevision;
-        Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Next");
+        Object[] javaScriptDiagnostic = moveStageChecker(sampleId, currStage, "Next");
                 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic; 
         if (!javaScriptDiagnostic[0].toString().contains(LPPlatform.LAB_TRUE)) return javaScriptDiagnostic;
@@ -178,7 +178,7 @@ Object[][] firstStageData=new Object[0][0];
      */
     public Object[] moveToPreviousStage(Integer sampleId, String currStage, String previousStageFromPull){  
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] javaScriptDiagnostic = moveStagetChecker(sampleId, currStage, "Previous");
+        Object[] javaScriptDiagnostic = moveStageChecker(sampleId, currStage, "Previous");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic;
 
         String sampleStagePreviousStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), "sampleStage"+currStage+"Previous");
@@ -230,7 +230,7 @@ Object[][] firstStageData=new Object[0][0];
         }
         return moveDiagn;
     }        
-    private Object[] moveStagetChecker(Integer sampleId, String currStage, String moveDirection){
+    private Object[] moveStageChecker(Integer sampleId, String currStage, String moveDirection){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String sampleStagesType = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_TYPE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_TYPE.getTagName());
         if (SampleStagesTypes.JAVA.toString().equalsIgnoreCase(sampleStagesType)) return moveStageCheckerJava(sampleId, currStage, moveDirection);
