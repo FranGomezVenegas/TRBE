@@ -30,6 +30,7 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
+import functionaljavaa.moduleenvironmentalmonitoring.ConfigMasterData;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
@@ -98,6 +99,8 @@ GlobalAPIsParams. GlobalAPIsParams. GlobalAPIsParams.
 GlobalAPIsParams.
 */    
     public enum EnvMonAPIfrontendEndpoints implements EnumIntEndpoints{
+        GET_MASTER_DATA("GET_MASTER_DATA", "", 
+            new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         PROGRAMS_LIST("PROGRAMS_LIST", "", 
             new LPAPIArguments[]{new LPAPIArguments("programFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
                 new LPAPIArguments("programFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),                    
@@ -185,13 +188,16 @@ GlobalAPIsParams.
                 return;                   
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            if (endPoint.getArguments().length>0 && argValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
                 //this.diagnostic=argValues;
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
 //                LPFrontEnd.servletReturnResponseError(request, response, argValues[1].toString(), new Object[]{argValues[2].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;
             }            
             switch (endPoint){
+                case GET_MASTER_DATA:
+                    LPFrontEnd.servletReturnSuccess(request, response, ConfigMasterData.getMasterData(procInstanceName, null));
+                    return;                      
                 case PROGRAMS_LIST: 
                     String[] programFldNameArray = getFieldsListToRetrieve(argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableFields()));
                     String[] programFldSortArray = getFieldsListToRetrieve(argValues[1].toString(), new String[]{});
