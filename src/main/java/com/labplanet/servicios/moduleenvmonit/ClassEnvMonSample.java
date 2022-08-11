@@ -73,7 +73,8 @@ public class ClassEnvMonSample {
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
-    
+    private Boolean isSuccess=false;
+    private Object[] responseError=null;
     public ClassEnvMonSample(HttpServletRequest request, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
@@ -83,6 +84,15 @@ public class ClassEnvMonSample {
 
         Object[] dynamicDataObjects=new Object[]{};        
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            //procReqSession.killIt();
+            String language=procReqSession.getLanguage();
+            this.isSuccess=false;           
+            this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                    argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.diagnostic=this.responseError;
+            return;                        
+        }
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         try {
             DataProgramSampleAnalysis prgSmpAna = new DataProgramSampleAnalysis();
