@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.platformdefinition;
 
-import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
+import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionpParametersEndpoints;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
@@ -23,10 +23,10 @@ public class PlatformDefinition {
     public enum PlatformDefinitionAPIEndpoints implements EnumIntEndpoints{
         CREATE_PLATFORM_INSTANCE_STRUCTURE("CREATE_PLATFORM_INSTANCE_STRUCTURE", "createPlatformInstanceStructure_success", 
                 new LPAPIArguments[]{new LPAPIArguments("platformName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(ProcedureDefinitionAPI.ProcedureDefinitionpParametersEndpoints.CREATE_DATABASE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-                new LPAPIArguments(ProcedureDefinitionAPI.ProcedureDefinitionpParametersEndpoints.DEPLOY_SCHEMAS_AND_PROC_TBLS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                new LPAPIArguments(ProcedureDefinitionAPI.ProcedureDefinitionpParametersEndpoints.CREATE_CHECKPLATFORM_PROCEDURE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
-                new LPAPIArguments(ProcedureDefinitionAPI.ProcedureDefinitionpParametersEndpoints.REMOVE_CHECKPLATFORM_PROCEDURE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10)}
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.CREATE_DATABASE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.CREATE_REPOSITORIES_AND_PROC_TBLS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.CREATE_CHECKPLATFORM_PROCEDURE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.REMOVE_CHECKPLATFORM_PROCEDURE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10)}
         )
         ;
         private PlatformDefinitionAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
