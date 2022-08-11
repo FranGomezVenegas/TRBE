@@ -142,6 +142,9 @@ public class TblsReqs {
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         LABEL_EN("label_en", LPDatabase.stringNotNull(), null, null, null, null),
         LABEL_ES("label_es", LPDatabase.stringNotNull(), null, null, null, null),
+        LOCKED_FOR_ACTIONS("locked_for_actions", LPDatabase.booleanFld(false), null, null, null, null),
+        NAVIGATION_ICON_NAME("navigation_icon_name", LPDatabase.string(), null, null, null, null),
+        
         ;
         private ProcedureInfo(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -376,7 +379,7 @@ public class TblsReqs {
         IS_VIEW("is_view", LPDatabase.booleanNotNull(false), null, null, null, null),
         FIELD_NAME("field_name", LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null)
+        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),        
         ;
         private ProcedureModuleTables(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
