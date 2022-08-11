@@ -16,8 +16,11 @@ import databases.SqlStatement;
 import databases.TblsAppProcDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData.TablesData;
+import databases.TblsDataAudit;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
+import databases.TblsTesting;
+import static databases.TblsTesting.getScriptPublicFieldNames;
 import databases.TblsTrazitDocTrazit;
 import databases.features.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
@@ -67,6 +70,8 @@ import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntTables;
+import trazit.enums.deployrepository.DeployTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 
 
@@ -105,12 +110,28 @@ public class TestingServer extends HttpServlet {
             Object[] decryptVal = DbEncryption.decryptValue(valueToDecrypt);
             out.println("Decrypted back: "+decryptVal[decryptVal.length-1].toString());
             
-            
+            Rdbms.stablishDBConection("labplanet"); 
+            String[] scriptPublicFieldNames = TblsTesting.getScriptPublicFieldNames("em-demo-a");
+if (1==1)return;           
         JSONObject procedure=new JSONObject();
         JSONArray procEventsIconsDown = new JSONArray(); 
         JSONObject procEventJson = new JSONObject();
         String[] procEventFldNameArray = PROC_NEW_EVENT_FLD_NAME.split("\\|");
             Rdbms.stablishDBConection("labplanet"); 
+/*        EnumIntTables[] tblsTesting = new EnumIntTables[]{TblsProcedure.TablesProcedure.PERSON_PROFILE, TblsProcedure.TablesProcedure.PROCEDURE_INFO,
+            TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS,
+            , TblsTesting.TablesTesting.SCRIPT_STEPS,
+            TblsTesting.TablesTesting.SCRIPT_BUS_RULES, TblsTesting.TablesTesting.SCRIPTS_COVERAGE, TblsTesting.TablesTesting.SCRIPT_SAVE_POINT,
+            TblsCnfg.TablesConfig.SOP_META_DATA, TblsCnfg.TablesConfig.ZZZ_DB_ERROR, TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR,
+            TablesData.USER_SOP,
+            TablesProcedureAudit.PROC_HASH_CODES, TblsDataAudit.TablesDataAudit.SESSION};
+        for (EnumIntTables curTbl: tblsTesting){
+        }*/
+EnumIntTables curTbl=TblsTesting.TablesTesting.SCRIPT;
+String tblCreateScript3 = DeployTables.createTableScript(curTbl, "sample-coa-rel1", true, true);
+Object[] prepUpQuery2 = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript3, new Object[]{});
+            
+if (1==1) return;            
         Object[][] procEvent = Rdbms.getRecordFieldsByFilter("proc-deploy-procedure", TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
             new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.TYPE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()}, 
             new String[]{"ER-FQ", "coordinator",AppProcedureListAPI.elementType.TREE_LIST.toString().toLowerCase().replace("_","-")+"|"+AppProcedureListAPI.elementType.ICONS_GROUP.toString().toLowerCase().replace("_","-")}, 
