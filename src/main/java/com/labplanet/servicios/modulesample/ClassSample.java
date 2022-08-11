@@ -57,6 +57,8 @@ public class ClassSample {
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
+    private Boolean isSuccess=false;
+    private Object[] responseError=null;
     
     public ClassSample(HttpServletRequest request, SampleAPIEndpoints endPoint){
         
@@ -80,7 +82,16 @@ public class ClassSample {
             Integer incubationStage=null;
             Integer sampleId = null;
             Object[] diagn = null;
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+                //procReqSession.killIt();
+                language=procReqSession.getLanguage();
+                this.isSuccess=false;           
+                this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                        argValues[1].toString(), new Object[]{argValues[2].toString()});
+                this.diagnostic=this.responseError;
+                return;                        
+            }            
             for (LPAPIArguments currArg: endPoint.getArguments()){
                 if (GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.equalsIgnoreCase(currArg.getName())){
                     String sampleIdStr = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.toString());
@@ -110,24 +121,25 @@ public class ClassSample {
                 case LOGSAMPLE:
                     String sampleTemplate= argValues[0].toString();
                     Integer sampleTemplateVersion = (Integer) argValues[1];
-                    String fieldName=argValues[2].toString();
-                    String fieldValue=argValues[3].toString();
+                    String specName=argValues[2].toString();
+                    Integer specVersion = (Integer) argValues[3];
+                    String variationName=argValues[4].toString();
+                    String fieldName=argValues[5].toString();
+                    String fieldValue=argValues[6].toString();
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                    if (fieldName!=null&&fieldName.length()>0) fieldNames = fieldName.split("\\|");
+                    if (fieldValue!=null&&fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
                         diagn=fieldValues;
                         break;
                     }
-
-    //                String numSmplsToLogStr = argValues[7].toString();
-    //                Integer numSamplesToLog=(Integer) argValues[7];
-
-                    if (argValues[6]==null){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsData.Sample.SPEC_CODE.getName(), TblsData.Sample.SPEC_CODE_VERSION.getName(), TblsData.Sample.SPEC_VARIATION_NAME.getName()});
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{specName, specVersion, variationName});
+                    if (argValues[7]==null||argValues[7].toString().length()==0){
                         diagn = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues);
                     }else{
-                        Integer numSamplesToLog=(Integer) argValues[6];
+                        Integer numSamplesToLog=(Integer) argValues[7];
                         diagn = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
                     }
                     Object[] dynamicDataObjects = new Object[]{diagn[diagn.length-1]};
