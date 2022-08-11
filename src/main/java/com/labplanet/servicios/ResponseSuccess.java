@@ -34,12 +34,14 @@ public class ResponseSuccess extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)           {
         request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);        
+        response=LPHttp.responsePreparation(response); 
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        String actionName= procReqInstance.getActionName();
         try (PrintWriter out = response.getWriter()) {
             DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
             String responseMsg="";
             String toJSONString ="";
-            if (dbLogSummary!=null && dbLogSummary.hadAnyFailure()){
+            if (actionName!=null && !actionName.toUpperCase().contains("DEPLOY") && dbLogSummary!=null && dbLogSummary.hadAnyFailure()){
                 //response.getWriter().write("Transaction failed! "+dbLogSummary.getFailureStatement());
                 Object[] addValueToArray1D = LPArray.addValueToArray1D(new Object[]{dbLogSummary.getFailureStatement()}, dbLogSummary.getFailureStatementData());
                 if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsTransactional()){
