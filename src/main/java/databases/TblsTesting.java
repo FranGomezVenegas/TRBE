@@ -5,12 +5,16 @@
  */
 package databases;
 
+import java.util.HashMap;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
+import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author User
@@ -250,4 +254,22 @@ public class TblsTesting {
         private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
+    
+    public static String[] getScriptPublicFieldNames(String procInstanceName){
+        TablesTesting tblObj = TblsTesting.TablesTesting.SCRIPT;
+        String[] fieldsToNotGet=new String[]{Script.DB_ERRORS_IDS_VALUES.getName(), Script.MSG_ERRORS_IDS_VALUES.getName(), Script.AUDIT_IDS_VALUES.getName(), Script.MESSAGES_VISITED.getName(), Script.BUSINESS_RULES_VISITED.getName()};
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        if (procInstanceName==null)
+            procInstanceName=instanceForActions.getProcedureInstance();        
+        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName());
+        String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
+        Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
+        String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));
+        String[] newTableFlds=new String[]{};
+        for (String curFld: tableFldsInfoColumns){
+            if (!LPArray.valueInArray(fieldsToNotGet, curFld))
+                newTableFlds=LPArray.addValueToArray1D(newTableFlds, curFld);
+        }
+        return newTableFlds;
+    } 
 }
