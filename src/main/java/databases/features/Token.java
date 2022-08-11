@@ -167,17 +167,19 @@ public final class Token {
         UserProfile usProf = new UserProfile();
         Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(userDBId);
         myParams.put(TOKEN_PARAM_USER_PROCEDURES, Arrays.toString(allUserProcedurePrefix));
-        String procHashCodes="";
+        String procHashCodes="";        
         for (Object curProcPrefix: allUserProcedurePrefix){            
-            if (procHashCodes.length()>0)procHashCodes=procHashCodes+"|";
-            Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), 
-                TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
-                new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{curProcPrefix.toString()}, 
-                new String[]{TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))
-                return "ERROR: procedure_info into node procedure not found for instance "+curProcPrefix.toString();  
-            else
-                procHashCodes=procHashCodes+curProcPrefix.toString()+"*"+procInfo[0][0].toString()+"*"+procInfo[0][1].toString();            
+            if (!"proc_management".equalsIgnoreCase(curProcPrefix.toString())){
+                if (procHashCodes.length()>0)procHashCodes=procHashCodes+"|";
+                Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), 
+                    TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
+                    new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{curProcPrefix.toString()}, 
+                    new String[]{TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()});
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))
+                    return "ERROR: procedure_info into node procedure not found for instance "+curProcPrefix.toString();  
+                else
+                    procHashCodes=procHashCodes+curProcPrefix.toString()+"*"+procInfo[0][0].toString()+"*"+procInfo[0][1].toString();            
+            }
         }   
         myParams.put(TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES, procHashCodes);
         try{
