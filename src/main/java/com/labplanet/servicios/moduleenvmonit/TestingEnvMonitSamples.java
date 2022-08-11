@@ -8,7 +8,7 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
-import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
+import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import functionaljavaa.investigation.ClassInvestigationController;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
@@ -113,7 +113,7 @@ if (iLines==25){
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
 
-                if (actionName.toString().equalsIgnoreCase(ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints.SET_PROCEDURE_BUSINESS_RULES.getName())){
+                if (actionName.toString().equalsIgnoreCase(ProcedureDefinitionAPIActionsEndpoints.SET_PROCEDURE_BUSINESS_RULES.getName())){
                     procInstanceName=LPNulls.replaceNull(testingContent[iLines][6]).toString();
                     fileContentTable1Builder.append(procInstanceName);                    
                     String suffixName=LPNulls.replaceNull(testingContent[iLines][7]).toString();
