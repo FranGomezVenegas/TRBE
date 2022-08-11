@@ -36,7 +36,7 @@ public class UserProfile {
             filterFieldValue[0]=userName;
             filterFieldName[1]=FIELDVALUE_ACTIVE;
             filterFieldValue[1]=true;
-            filterFieldName[2]="proc_name is not null";            
+            filterFieldName[2]="proc_name is not null";                        
             //if (!Rdbms.stablishDBConection()){return new Object[0];}   
             Object[][] userProc =  Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName, 
                 filterFieldName, filterFieldValue, fieldsToReturn);            
@@ -92,11 +92,16 @@ public class UserProfile {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "personNameIsEmpty", new Object[]{});
         }               
         for (Object procInstanceName1 : procInstanceName) {
-            String currProcPrefix = procInstanceName1.toString();
-            Object[] currProcUserProfiles =  getProcedureUserProfileFieldValues(currProcPrefix, personName);
-            for (Object fn: currProcUserProfiles ){
-                if (!LPArray.valueInArray(totalProcUserProfiles, fn))
-                    totalProcUserProfiles = LPArray.addValueToArray1D(totalProcUserProfiles, fn);}
+            if ("proc_management".equalsIgnoreCase(procInstanceName1.toString())){
+                totalProcUserProfiles = LPArray.addValueToArray1D(totalProcUserProfiles, procInstanceName1.toString());
+            }else{
+                String currProcPrefix = procInstanceName1.toString();
+                Object[] currProcUserProfiles =  getProcedureUserProfileFieldValues(currProcPrefix, personName);
+                for (Object fn: currProcUserProfiles ){
+                    if (!LPArray.valueInArray(totalProcUserProfiles, fn))
+                        totalProcUserProfiles = LPArray.addValueToArray1D(totalProcUserProfiles, fn);
+                }
+            }
         }            
             return totalProcUserProfiles;                         
         }                
