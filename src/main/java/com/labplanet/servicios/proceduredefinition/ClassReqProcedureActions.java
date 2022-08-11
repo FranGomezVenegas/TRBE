@@ -1,5 +1,7 @@
 package com.labplanet.servicios.proceduredefinition;
 
+import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
+import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ReqProcedureDefinitionErrorTraping;
 import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
 import databases.RdbmsObject;
@@ -30,13 +32,14 @@ import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
  */
-public class ClassProcedureDefinition {
+public class ClassReqProcedureActions {
     
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
@@ -44,7 +47,18 @@ public class ClassProcedureDefinition {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassProcedureDefinition(HttpServletRequest request, HttpServletResponse response, ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint){
+    public static Boolean isProcInstLocked(String procName, Integer procVersion, String instanceName){
+        String[] fieldsToRetrieve=new String[]{TblsReqs.ProcedureInfo.LOCKED_FOR_ACTIONS.getName()};
+        Object[][] procAndInstanceArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
+        new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, 
+        new Object[]{procName, procVersion, instanceName}, fieldsToRetrieve, fieldsToRetrieve);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procAndInstanceArr[0][0].toString()))
+            return true;
+        if ("true".equalsIgnoreCase(procAndInstanceArr[0][0].toString()))
+            return true;
+        return false;
+    } 
+    public ClassReqProcedureActions(HttpServletRequest request, HttpServletResponse response, ProcedureDefinitionAPIActionsEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         String[] mandatArgs=new String[]{};
         for (LPAPIArguments curArg:endPoint.getArguments()){
@@ -61,13 +75,24 @@ public class ClassProcedureDefinition {
         }
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
+        String procedureName=argValues[0].toString();
+        Integer procedureVersion = (Integer) argValues[1];   
+        String procInstanceName=argValues[2].toString();
+        if (isProcInstLocked(procedureName, procedureVersion, procInstanceName)){
+            LPFrontEnd.servletReturnResponseError(request, response, 
+                ReqProcedureDefinitionErrorTraping.INSTANCE_LOCKED_FOR_ACTIONS.getErrorCode(), new Object[]{procedureName, procedureVersion, procInstanceName}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
+            return;                      
+        }
+        
         this.functionFound=true;
             switch (endPoint){
                 case SET_PROCEDURE_BUSINESS_RULES:
-                    String procInstanceName=argValues[0].toString();
-                    String suffixName=argValues[1].toString();
-                    String propName=argValues[2].toString();
-                    String propValue=argValues[3].toString();
+                    procedureName=argValues[0].toString();
+                    procedureVersion = (Integer) argValues[1];   
+                    procInstanceName=argValues[2].toString();
+                    String suffixName=argValues[3].toString();
+                    String propName=argValues[4].toString();
+                    String propValue=argValues[5].toString();
                     Parameter parm=new Parameter();
 //                    parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
 //                    procInstanceName+"-"+suffixName);  
@@ -76,8 +101,8 @@ public class ClassProcedureDefinition {
 
                     break;
                 case ADD_USER:
-                    String procedureName=argValues[0].toString();
-                    Integer procedureVersion = (Integer) argValues[1];   
+                    procedureName=argValues[0].toString();
+                    procedureVersion = (Integer) argValues[1];   
                     procInstanceName=argValues[2].toString();
                     String userName=argValues[3].toString();
                     Object[] personByUserObj = getPersonByUser(userName);
@@ -139,13 +164,27 @@ public class ClassProcedureDefinition {
                     }   
                     actionDiagnoses=getUomFromConfig(uomName, importType);
                     break;                    
+                case PROC_DEPLOY_CHECKER:
+                    request.setAttribute("run_as_checker", true);
+/*                    JSONObject jMainObj = new JSONObject();
+                    String mainObjectName = "proc_deploy_check_summary"; 
+                    procedureName=argValues[0].toString();
+                    procedureVersion = (Integer) argValues[1];  
+                    procInstanceName=argValues[2].toString();       
+                    JSONObject jObj=new JSONObject();                
+
+                    
+                    jObj.put("Status", "Under Development");
+                    jMainObj.put(mainObjectName, jObj);
+                    LPFrontEnd.servletReturnSuccess(request, response, jMainObj);                    
+                    return;                    */
                 case DEPLOY_REQUIREMENTS:
                     procedureName=argValues[0].toString();
                     procedureVersion = (Integer) argValues[1];  
                     procInstanceName=argValues[2].toString();
                     request.setAttribute("procedureName", procedureName);
                     request.setAttribute("procInstanceName", procInstanceName);
-                    
+                    request.setAttribute("endPointName", endPoint.getName());
                     //RequestDispatcher rd = request.getRequestDispatcher("/testing/platform/ProcedureDeployment");
                     RequestDispatcher rd = request.getRequestDispatcher("/ProcedureDefinitionToInstance");
                     

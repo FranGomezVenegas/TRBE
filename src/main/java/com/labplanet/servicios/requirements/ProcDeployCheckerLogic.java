@@ -1,0 +1,496 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.labplanet.servicios.requirements;
+
+import com.labplanet.servicios.app.TestingRegressionUAT;
+import databases.Rdbms;
+import databases.SqlStatement;
+import databases.TblsCnfg;
+import databases.TblsProcedure;
+import databases.TblsReqs;
+import static functionaljavaa.requirement.ProcedureDefinitionToInstance.FLDSTORETR_PROCEDURE_INFO_SOURCE;
+import static functionaljavaa.requirement.ProcedureDefinitionToInstance.FLDSTORETR_REQS_PROCINFOSRC;
+import functionaljavaa.requirement.masterdata.ClassMasterData;
+import functionaljavaa.user.UserAndRolesViews;
+import java.util.HashMap;
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONArray;
+import trazit.globalvariables.GlobalVariables;
+import org.json.simple.JSONObject;
+import trazit.enums.EnumIntTableFields;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntTables;
+
+public class ProcDeployCheckerLogic {
+    
+    private static JSONObject publishJson(Boolean anyMismatch, JSONObject mismatchesObj, JSONObject detailsObj){
+        JSONObject mainObj=new JSONObject();
+        if (anyMismatch==null)
+            mainObj.put("status", "under development");
+        else{
+            if (!anyMismatch){
+                mainObj.put("pass", "yes");
+                mainObj.put("pass_icon", "/images/Pass.jpg");
+            }else{
+                mainObj.put("pass", "no");
+                mainObj.put("pass_icon", "/images/NotPass.png");
+            }
+            if (!detailsObj.isEmpty())
+                mainObj.put("detail", detailsObj);
+            if (!mismatchesObj.isEmpty())
+                mainObj.put("mismatches_detail", mismatchesObj);
+        }
+        return mainObj;        
+    }
+    
+    public static JSONObject createModuleSchemasAndBaseTables(String procInstanceName, String dbName){
+        Boolean anyMismatch=false;
+        JSONObject detailsObj=new JSONObject();
+        JSONObject mismatchesObj=new JSONObject();
+        String[] schemaNames=ProcDeployEnums.moduleBaseSchemas(procInstanceName);
+        schemaNames=LPArray.getUniquesArray(schemaNames);
+        for (int i=0;i<schemaNames.length;i++)
+            schemaNames[i]=schemaNames[i].replaceAll("\"", "");
+        detailsObj.put("expected_and_checked_repositories", LPJson.convertToJSON(schemaNames));
+        Object[] dbSchemasList = Rdbms.dbSchemasList(procInstanceName);
+        dbSchemasList=LPArray.getUniquesArray(dbSchemasList);
+        HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasList, schemaNames);
+        String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+            anyMismatch=true;
+            Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
+            mismatchesObj.put("missing_schemas", LPJson.convertToJSONArray(missingObjects));
+        }
+        EnumIntTables[] moduleBaseTables = ProcDeployEnums.moduleBaseTables();
+        String[] moduleBaseTablesArr=new String[]{};
+        for (EnumIntTables curTbl: moduleBaseTables)
+            moduleBaseTablesArr=LPArray.addValueToArray1D(moduleBaseTablesArr, 
+                LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()).replaceAll("\"", "")+"."+curTbl.getTableName());
+        detailsObj.put("expected_and_checked_tables", LPJson.convertToJSON(moduleBaseTablesArr));
+        Object[] dbSchemasTablesList = Rdbms.dbSchemaAndTableList(procInstanceName);
+        dbSchemasTablesList=LPArray.getUniquesArray(dbSchemasTablesList);
+        evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasTablesList, moduleBaseTablesArr);
+        evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+            anyMismatch=true;
+            Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
+            mismatchesObj.put("missing_tables", LPJson.convertToJSONArray(missingObjects));
+        }
+        return publishJson(anyMismatch, mismatchesObj, detailsObj);
+    }    
+    
+    public static final JSONObject createDBProcedureInfo(String procedure,  Integer procVersion, String procInstanceName){
+        Boolean anyMismatch=false;
+        JSONObject detailsObj=new JSONObject();
+        JSONObject mismatchesObj=new JSONObject();        
+        Object[][] procInfoRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
+               new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()}, new Object[]{procedure, procVersion}, 
+               FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|"));
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsDestination[0][0].toString())){
+            anyMismatch=true;
+            String errMsg="Not Deployed yet, there is no record in table "+TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName();
+            Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
+               new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
+               FLDSTORETR_REQS_PROCINFOSRC.split("\\|"));
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString()))
+                errMsg=errMsg+". Not found the info in the requirements definition neither";
+            else{
+                errMsg=errMsg+". Found the info in the requirements definition neither";
+                detailsObj.put("In requirements", 
+                    LPJson.convertArrayRowToJSONObject(FLDSTORETR_REQS_PROCINFOSRC.split("\\|"), procInfoRecordsSource[0]));                
+            }
+            mismatchesObj.put("error", errMsg);
+        }else
+            detailsObj.put(TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
+                LPJson.convertArrayRowToJSONObject(FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|"), procInfoRecordsDestination[0]));
+        return publishJson(anyMismatch, mismatchesObj, detailsObj);
+    }     
+
+    public static final  JSONObject createDBPersonProfiles(String procedure,  Integer procVersion, String procInstanceName){
+        Boolean anyMismatch=false;
+        JSONObject detailsObj=new JSONObject();
+        JSONObject mismatchesObj=new JSONObject();   
+        JSONArray personProfilesDest = new JSONArray();
+        JSONArray procUserRolesSource = new JSONArray();
+        String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsProcedure.TablesProcedure.PERSON_PROFILE);
+
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getRepositoryName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
+               new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+               personProfilesDestFlds);
+        Integer personNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.PersonProfile.PERSON_NAME.getName());
+        Integer roleNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.PersonProfile.ROLE_NAME.getName());
+        for (int i=0;i<personProfileRecordsDestination.length;i++)
+            personProfileRecordsDestination[i][personNameFldPosic]=UserAndRolesViews.getUserByPerson(personProfileRecordsDestination[i][personNameFldPosic].toString());
+        for (Object[] curRow: personProfileRecordsDestination)
+            personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
+        detailsObj.put("data_deployed_table_"+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), personProfilesDest);
+
+        String[] procUserRolesSourceFlds = new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName() , TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()};
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
+           new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
+           procUserRolesSourceFlds);
+        for (Object[] curRow: procUserAndRolesRecordsSource)
+            procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
+        detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), procUserRolesSource);
+
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
+            anyMismatch=true;
+            String errMsg="Not Deployed yet, there is no record in table "+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))
+                errMsg=errMsg+". Not found the info in the requirements definition neither";
+            else{
+                errMsg=errMsg+". Found the info in the requirements definition neither";
+            }
+            mismatchesObj.put("error", errMsg);
+        }else{
+            if (personProfileRecordsDestination.length!=procUserAndRolesRecordsSource.length){
+                anyMismatch=true;
+                mismatchesObj.put("error", "Not the same record number found in both places");
+            }
+            String[] sourceInfo=new String[procUserAndRolesRecordsSource.length];
+            String[] destInfo=new String[personProfileRecordsDestination.length];
+            for (int i=0;i<procUserAndRolesRecordsSource.length;i++){
+                sourceInfo[i]=procUserAndRolesRecordsSource[i][personNameFldPosic]+"-"+procUserAndRolesRecordsSource[i][roleNameFldPosic];
+                destInfo[i]=personProfileRecordsDestination[i][0]+"-"+personProfileRecordsDestination[i][1];                
+            }
+            HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(sourceInfo, destInfo);
+            String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
+            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+                anyMismatch=true;
+                Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
+                mismatchesObj.put("missing_user-role pairs", LPJson.convertToJSONArray(missingObjects));
+            }
+            
+        }
+        return publishJson(anyMismatch, mismatchesObj, detailsObj);
+    }
+    
+    public static final  JSONObject createDBProcedureEvents(String procedure,  Integer procVersion, String procInstanceName){        
+        //if (1==1)
+//            publishJson(null, null, null);
+        Boolean anyMismatch=false;
+        JSONObject detailsObj=new JSONObject();
+        JSONObject mismatchesObj=new JSONObject();   
+        JSONArray personProfilesDest = new JSONArray();
+        JSONArray procUserRolesSource = new JSONArray();
+
+        String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableFields());
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), 
+            new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName},                 procUserRolesSourceFlds);
+        for (Object[] curRow: procUserAndRolesRecordsSource)
+            procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
+        detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), procUserRolesSource);
+        
+        String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS);
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
+               new String[]{TblsProcedure.ProcedureEvents.NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+               personProfilesDestFlds);
+        for (Object[] curRow: personProfileRecordsDestination)
+            personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
+        detailsObj.put("data_deployed_table_"+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), personProfilesDest);
+
+
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
+            anyMismatch=true;
+            String errMsg="Not Deployed yet, there is no record in table "+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))
+                errMsg=errMsg+". Not found the info in the requirements definition neither";
+            else{
+                errMsg=errMsg+". Found the info in the requirements definition neither";
+            }
+            mismatchesObj.put("error", errMsg);
+        }else{
+            if (personProfileRecordsDestination.length!=procUserAndRolesRecordsSource.length){
+                anyMismatch=true;
+                mismatchesObj.put("error", "Not the same record number found in both places");
+            }
+/*            
+            Integer personNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.PersonProfile.PERSON_NAME.getName());
+            Integer roleNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.PersonProfile.ROLE_NAME.getName());
+            
+            String[] sourceInfo=new String[procUserAndRolesRecordsSource.length];
+            String[] destInfo=new String[personProfileRecordsDestination.length];
+            for (int i=0;i<procUserAndRolesRecordsSource.length;i++){
+                sourceInfo[i]=procUserAndRolesRecordsSource[i][personNameFldPosic]+"-"+procUserAndRolesRecordsSource[i][roleNameFldPosic];
+                destInfo[i]=personProfileRecordsDestination[i][0]+"-"+personProfileRecordsDestination[i][1];                
+            }
+            HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(sourceInfo, destInfo);
+            String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
+            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+                anyMismatch=true;
+                Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
+                mismatchesObj.put("missing_user-role pairs", LPJson.convertToJSONArray(missingObjects));
+            }
+*/            
+        }
+        return publishJson(anyMismatch, mismatchesObj, detailsObj);
+    }        
+
+    public static final  JSONObject createBusinessRules(String procedure,  Integer procVersion, String procInstanceName){        
+        //if (1==1)
+//            publishJson(null, null, null);
+        Boolean anyMismatch=false;
+        JSONObject detailsObj=new JSONObject();
+        JSONObject mismatchesObj=new JSONObject();   
+        JSONArray personProfilesDest = new JSONArray();
+        JSONArray procUserRolesSource = new JSONArray();
+
+        String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROC_BUS_RULES.getTableFields());
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), 
+                new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
+                procUserRolesSourceFlds);
+        for (Object[] curRow: procUserAndRolesRecordsSource)
+            procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
+        detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), procUserRolesSource);
+        
+        String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE);
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
+               new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+               personProfilesDestFlds);
+        for (Object[] curRow: personProfileRecordsDestination)
+            personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
+        detailsObj.put("data_deployed_table_"+TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), personProfilesDest);
+
+
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
+            anyMismatch=true;
+            String errMsg="Not Deployed yet, there is no record in table "+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))
+                errMsg=errMsg+". Not found the info in the requirements definition neither";
+            else{
+                errMsg=errMsg+". Found the info in the requirements definition neither";
+            }
+            mismatchesObj.put("error", errMsg);
+        }else{
+            Integer srcAreaFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName());
+            Integer srcRuleNameFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureBusinessRules.RULE_NAME.getName());
+            Integer srcRuleValueFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName());
+            Integer destAreaFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.ProcedureBusinessRules.AREA.getName());
+            Integer destRuleNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName());
+            Integer destRuleValueFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName());
+            
+            String[] sourceInfo=new String[procUserAndRolesRecordsSource.length];
+            String[] destInfo=new String[personProfileRecordsDestination.length];
+            for (int i=0;i<procUserAndRolesRecordsSource.length;i++){
+                sourceInfo[i]=procUserAndRolesRecordsSource[i][srcAreaFldPosic]+"-"+procUserAndRolesRecordsSource[i][srcRuleNameFldPosic]+"-"+procUserAndRolesRecordsSource[i][srcRuleValueFldPosic];
+                destInfo[i]=personProfileRecordsDestination[i][destAreaFldPosic]+"-"+personProfileRecordsDestination[i][destRuleNameFldPosic]+"-"+personProfileRecordsDestination[i][destRuleValueFldPosic];
+            }
+            HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
+            String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
+            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+                anyMismatch=true;
+                Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
+                mismatchesObj.put("missing_pairs", LPJson.convertToJSONArray(missingObjects));
+            }
+            
+        }
+        return publishJson(anyMismatch, mismatchesObj, detailsObj);
+    }        
+
+    public static final  JSONObject createDBSopMetaDataAndUserSop(String procedure,  Integer procVersion, String procInstanceName){        
+        //if (1==1)
+//            publishJson(null, null, null);
+        Boolean anyMismatch=false;
+        JSONObject detailsObj=new JSONObject();
+        JSONObject mismatchesObj=new JSONObject();   
+        JSONArray personProfilesDest = new JSONArray();
+        JSONArray procUserRolesSource = new JSONArray();
+
+        String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableFields());
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
+                new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
+                procUserRolesSourceFlds);
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString())){
+            for (Object[] curRow: procUserAndRolesRecordsSource)
+                procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
+            detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
+        }
+        String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.SOP_META_DATA.getTableFields());
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
+               new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+               personProfilesDestFlds);
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
+            for (Object[] curRow: personProfileRecordsDestination)
+                personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
+            detailsObj.put("data_deployed_table_"+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), personProfilesDest);
+        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
+            anyMismatch=true;
+            String errMsg="Not Deployed yet, there is no record in table "+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))
+                errMsg=errMsg+". Not found the info in the requirements definition neither";
+            else{
+                errMsg=errMsg+". Found the info in the requirements definition neither";
+            }
+            mismatchesObj.put("error", errMsg);
+        }else{
+            Integer srcSopNameFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureSopMetaData.SOP_NAME.getName());
+            Integer destSopNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsCnfg.SopMetaData.SOP_NAME.getName());
+            
+            String[] sourceInfo=new String[procUserAndRolesRecordsSource.length];
+            String[] destInfo=new String[personProfileRecordsDestination.length];
+            for (int i=0;i<procUserAndRolesRecordsSource.length;i++){
+                sourceInfo[i]=procUserAndRolesRecordsSource[i][srcSopNameFldPosic].toString();
+                destInfo[i]=personProfileRecordsDestination[i][destSopNameFldPosic].toString();
+            }
+            HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
+            String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
+            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+                anyMismatch=true;
+                Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
+                mismatchesObj.put("missing_pairs", LPJson.convertToJSONArray(missingObjects));
+            }
+            
+        }
+        return publishJson(anyMismatch, mismatchesObj, detailsObj);
+    }        
+
+    public static final  JSONObject addProcedureSOPtoUsers(String procedure,  Integer procVersion, String procInstanceName){        
+        if (1==1)
+            publishJson(null, null, null);
+        Boolean anyMismatch=false;
+        JSONObject detailsObj=new JSONObject();
+        JSONObject mismatchesObj=new JSONObject();   
+        JSONArray personProfilesDest = new JSONArray();
+        JSONArray procUserRolesSource = new JSONArray();
+
+        String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableFields());
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
+                new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
+                procUserRolesSourceFlds);
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString())){
+            for (Object[] curRow: procUserAndRolesRecordsSource)
+                procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
+            detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
+        }
+        String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.SOP_META_DATA.getTableFields());
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
+               new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+               personProfilesDestFlds);
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
+            for (Object[] curRow: personProfileRecordsDestination)
+                personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
+            detailsObj.put("data_deployed_table_"+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), personProfilesDest);
+        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
+            anyMismatch=true;
+            String errMsg="Not Deployed yet, there is no record in table "+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))
+                errMsg=errMsg+". Not found the info in the requirements definition neither";
+            else{
+                errMsg=errMsg+". Found the info in the requirements definition neither";
+            }
+            mismatchesObj.put("error", errMsg);
+        }else{
+            Integer srcSopNameFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureSopMetaData.SOP_NAME.getName());
+            Integer destSopNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsCnfg.SopMetaData.SOP_NAME.getName());
+            
+            String[] sourceInfo=new String[procUserAndRolesRecordsSource.length];
+            String[] destInfo=new String[personProfileRecordsDestination.length];
+            for (int i=0;i<procUserAndRolesRecordsSource.length;i++){
+                sourceInfo[i]=procUserAndRolesRecordsSource[i][srcSopNameFldPosic].toString();
+                destInfo[i]=personProfileRecordsDestination[i][destSopNameFldPosic].toString();
+            }
+            HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
+            String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
+            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+                anyMismatch=true;
+                Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
+                mismatchesObj.put("missing_pairs", LPJson.convertToJSONArray(missingObjects));
+            }
+            
+        }
+        return publishJson(anyMismatch, mismatchesObj, detailsObj);
+    }        
+
+    public static JSONObject createDBModuleTablesAndFields(String procedure,  Integer procVersion, String procInstanceName, String moduleName){
+        Boolean anyMismatch=false;
+        JSONObject detailsObj=new JSONObject();
+        JSONObject mismatchesObj=new JSONObject();
+        JSONArray procUserRolesSource = new JSONArray();
+                
+        String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableFields());
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
+                new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
+                procUserRolesSourceFlds);
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString())){
+            for (Object[] curRow: procUserAndRolesRecordsSource)
+                procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
+            detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), procUserRolesSource);
+        }        
+        
+        Integer srcRepositoryNameFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName());
+        Integer srcTableNameFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureModuleTables.TABLE_NAME.getName());
+
+        String[] moduleBaseTablesArr=new String[procUserAndRolesRecordsSource.length];
+        for (int i=0;i<procUserAndRolesRecordsSource.length;i++)            
+            moduleBaseTablesArr[i]=procUserAndRolesRecordsSource[i][srcRepositoryNameFldPosic]+"-"+procUserAndRolesRecordsSource[i][srcTableNameFldPosic];
+        detailsObj.put("expected_and_checked_tables", LPJson.convertToJSON(moduleBaseTablesArr));
+        Object[] dbSchemasTablesList = Rdbms.dbSchemaAndTableList(procInstanceName);
+        dbSchemasTablesList=LPArray.getUniquesArray(dbSchemasTablesList);
+        HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasTablesList, moduleBaseTablesArr);
+        String evaluation = evaluateValuesAreInArray.keySet().iterator().next();        
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+            anyMismatch=true;
+            Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
+            mismatchesObj.put("missing_tables", LPJson.convertToJSONArray(missingObjects));
+        }
+        return publishJson(anyMismatch, mismatchesObj, detailsObj);
+    }    
+    
+    public static final  JSONObject deployMasterData(String procedure,  Integer procVersion, String instanceName){
+        if (1==1)
+            return publishJson(null, null, null);        
+        try{
+            JSONArray jsonArr=new JSONArray();
+            JSONObject jsonObj = new JSONObject();
+             Object[][] procMasterDataObjs = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName(), 
+                new String[]{TblsReqs.ProcedureMasterData.PROCEDURE_NAME.getName(), TblsReqs.ProcedureMasterData.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureMasterData.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureMasterData.ACTIVE.getName()}, 
+                    new Object[]{procedure, procVersion, instanceName, true}, 
+                new String[]{TblsReqs.ProcedureMasterData.OBJECT_TYPE.getName(), TblsReqs.ProcedureMasterData.JSON_OBJ.getName()},
+                new String[]{TblsReqs.ProcedureMasterData.ORDER_NUMBER.getName()});
+            JSONArray jsonRowArr=new JSONArray();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procMasterDataObjs[0][0].toString())){
+              jsonObj.put(functionaljavaa.requirement.ProcedureDefinitionToInstance.JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procMasterDataObjs[0]));
+              jsonArr.add(jsonObj);
+            }else{
+                jsonArr.add(jsonObj);
+                for (Object[] curRow: procMasterDataObjs){
+                    ClassMasterData clssMD= new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString());
+                    JSONObject jsonRowObj = new JSONObject();
+                    jsonRowObj.put(curRow[0], clssMD.getDiagnostic()[clssMD.getDiagnostic().length-1]);
+                    jsonRowArr.add(jsonRowObj);
+                }            
+            }
+//            jsonObjSummary.put("summary", jsonRowArr);
+//            return jsonObjSummary;
+            return publishJson(null, null, null);
+        }catch(Exception e){
+            return publishJson(null, null, null);
+//            return (JSONObject) jsonObjSummary.put("error", e.getMessage());
+        }
+    }
+
+    public static JSONObject dataRepositoriesAreMirror(String procInstanceName, String dbName){
+        Boolean anyMismatch=false;
+        JSONObject detailsObj=new JSONObject();
+        JSONObject mismatchesObj=new JSONObject();        
+        Object[] allMismatchesDiagnAll = TestingRegressionUAT.procedureRepositoryMirrors(procInstanceName);
+        Object[] allMismatchesDiagn=(Object[]) allMismatchesDiagnAll[0];
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn[0].toString())){
+            Object[][] allMismatches= (Object[][])allMismatchesDiagnAll[1];
+            JSONArray jArr=new JSONArray();
+            for (int i=1;i<allMismatches.length;i++){
+                    jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(allMismatches[0]), allMismatches[i]));
+            }
+            anyMismatch=true;
+            mismatchesObj.put("error_not_mirror_tables",jArr);
+        } 
+        return publishJson(anyMismatch, mismatchesObj, detailsObj);
+    }
+}

@@ -20,12 +20,12 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class ClassProcedureQueries {    
+public class ClassReqProcedureQueries {    
     
-    static JSONObject procAccessBlock(String procInstanceName){
+    static JSONObject procAccessBlockInRequirements(String procInstanceName){
         String[] fldsArr=new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()};
         Object[][] procUsers = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
-            new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName()}, 
+            new String[]{TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName()}, 
             new Object[]{procInstanceName}, fldsArr);
         JSONObject jBlockObj = new JSONObject();
         JSONArray jBlockArr = new JSONArray(); 
@@ -37,7 +37,7 @@ public class ClassProcedureQueries {
         }
         fldsArr=new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()};
         Object[][] procUserRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
-            new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName()}, 
+            new String[]{TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName()}, 
             new Object[]{procInstanceName}, fldsArr);
         jBlockArr = new JSONArray(); 
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserRoles[0][0].toString())){
@@ -50,7 +50,7 @@ public class ClassProcedureQueries {
         String[] roleActionsFldsArr=new String[]{TblsReqs.ProcedureUserRequirements.NAME.getName()};
     
         Object[][] procRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(), 
-            new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName()}, 
+            new String[]{TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()}, 
             new Object[]{procInstanceName}, fldsArr);
         jBlockArr = new JSONArray(); 
         JSONObject jRolesActions=new JSONObject();
@@ -79,7 +79,11 @@ public class ClassProcedureQueries {
                 new String[]{TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procInstanceName}, 
                 new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON_MOBILE.getName()});
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){
+            JSONObject jObj= new JSONObject();
+            jObj.put("No Data", "No Data");
+            jArr.add(jObj);
+        }else{
             JsonParser parser = new JsonParser();
             JSONObject jObj= new JSONObject();
             jObj.put("laptop_mode", parser.parse(ruleValue[0][0].toString()).getAsJsonObject());
@@ -96,20 +100,32 @@ public class ClassProcedureQueries {
     }
     static JSONObject dbSingleRowToJsonObj(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue){
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, 
-            whereFldName, whereFldValue, fldsToGet);
-        String blockLabel="procedure_info";
-        JSONObject jBlockObj=new JSONObject();
-        JSONObject jObj=new JSONObject();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString()))
+            whereFldName, whereFldValue, fldsToGet);        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
+            JSONObject jObj= new JSONObject();
+            jObj.put("No Data", "No Data");
+            return jObj;
+        }else{       
+            JSONObject jObj=new JSONObject();
             jObj=LPJson.convertArrayRowToJSONObject(fldsToGet, procTblRows[0]);                    
-        return jObj;
+            return jObj;
+        }
     }
 
     static JSONArray dbRowsToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] jsonFlds){
+        String demo="";
+        if ("sample-coa-rel1".equalsIgnoreCase(procInstanceName) && tblName.equalsIgnoreCase(TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName()))
+           demo="1";
+        
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, 
             whereFldName, whereFldValue, fldsToGet, sortFlds);
         JSONArray jBlockArr = new JSONArray(); 
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
+            JSONObject jObj= new JSONObject();
+            jObj.put("No Data", "No Data");
+            jBlockArr.add(jObj);
+        }else{ 
+            try{
             for (Object[] curRow: procTblRows){
                 if (jsonFlds==null)
                     jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow));
@@ -122,6 +138,10 @@ public class ClassProcedureQueries {
                     jBlockArr.add(jObj);
                 }
             }
+            }catch(Exception e){                
+                jBlockArr.add("Errors trying to get the master data records info. "+e.getMessage());
+                return jBlockArr;        
+            }
         }        
         return jBlockArr;        
     }
@@ -131,7 +151,10 @@ public class ClassProcedureQueries {
             whereFldName, whereFldValue, fldsToGet, sortFlds);
         JSONArray jBlockArr = new JSONArray(); 
         JSONObject jBlockObj = new JSONObject();        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
+            jBlockObj.put("No Data", "No Data");
+            return jBlockObj;
+        }else{
             String curSchema="";
             JSONObject jSchemaObj=new JSONObject();
             JSONArray jSchemaArr=new JSONArray();
