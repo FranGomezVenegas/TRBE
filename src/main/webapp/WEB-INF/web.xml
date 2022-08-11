@@ -257,12 +257,12 @@
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIStats</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ProcedureDefinitionfrontend</servlet-name>
-        <servlet-class>com.labplanet.servicios.proceduredefinition.ProcedureDefinitionfrontend</servlet-class>
+        <servlet-name>RequirementsProcedureDefinitionAPIQueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.proceduredefinition.ReqProcedureDefinitionQueries</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>ProcedureDefinitionAPI</servlet-name>
-        <servlet-class>com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI</servlet-class>
+        <servlet-name>RequirementsProcedureDefinitionAPIActions</servlet-name>
+        <servlet-class>com.labplanet.servicios.proceduredefinition.ReqProcedureDefinitionAPIActions</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
@@ -581,18 +581,17 @@
         <servlet-name>TestingGenoma</servlet-name>
         <url-pattern>/testing/moduleGenoma/TestingGenoma</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>EnvMonAPIStats</servlet-name>
         <url-pattern>/moduleenvmon/EnvMonAPIstats</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ProcedureDefinitionfrontend</servlet-name>
-        <url-pattern>/frontend/ProcedureDefinitionfrontend</url-pattern>
+        <servlet-name>RequirementsProcedureDefinitionAPIQueries</servlet-name>
+        <url-pattern>/appProcMgr/RequirementsProcedureDefinitionAPIQueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ProcedureDefinitionAPI</servlet-name>
-        <url-pattern>/app/ProcedureDefinitionAPI</url-pattern>
+        <servlet-name>RequirementsProcedureDefinitionAPIActions</servlet-name>
+        <url-pattern>/appProcMgr/RequirementsProcedureDefinitionAPIActions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
