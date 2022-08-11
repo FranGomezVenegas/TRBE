@@ -5,15 +5,12 @@
  */
 package databases;
 
+import com.labplanet.servicios.requirements.ProcDeployEnums;
 import static databases.DbObjects.SchemaActions.CREATE;
 import static databases.DbObjects.SchemaActions.DELETE;
 import databases.TblsApp.TablesApp;
 import databases.TblsAppAudit.TablesAppAudit;
 import databases.TblsAppConfig.TablesAppConfig;
-import databases.TblsCnfg.TablesConfig;
-import databases.TblsData.TablesData;
-import databases.TblsDataAudit.TablesDataAudit;
-import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsReqs.TablesReqs;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
@@ -65,9 +62,11 @@ public class DbObjects {
         for (TablesApp curTbl: tblsApp){
             tblCreateScript = createTableScript(curTbl, null, false, true);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
+            
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
+            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))            
+                scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("app."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getTableName(), scriptLog);
@@ -81,7 +80,8 @@ public class DbObjects {
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
+            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))            
+                scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("app_audit."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getTableName(), scriptLog);
@@ -95,7 +95,8 @@ public class DbObjects {
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
+            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))        
+                scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("config."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getTableName(), scriptLog);
@@ -109,7 +110,8 @@ public class DbObjects {
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
+            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))        
+                scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("requirements."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getTableName(), scriptLog);
@@ -130,35 +132,21 @@ public class DbObjects {
     
     public static JSONObject createModuleSchemasAndBaseTables(String procInstanceName, String dbName){
         String tblCreateScript="";
-        String[] schemaNames = new String[]{
-            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), 
-            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
-            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_TESTING.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()), 
-            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_CONFIG.getName()),
-            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_AUDIT.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_AUDIT_TESTING.getName()),
-            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()),        
-            LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_TESTING.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName())};        
         JSONObject schemasObj=new JSONObject();
         JSONObject jsonObj=new JSONObject();
         JSONObject errorsOnlyObj=new JSONObject();
-
+        String[] schemaNames=ProcDeployEnums.moduleBaseSchemas(procInstanceName);
         JSONArray createSchemas = createSchemas(schemaNames, procInstanceName);
         schemasObj.put("create_schemas", createSchemas);
-
+        EnumIntTables[] moduleBaseTables = ProcDeployEnums.moduleBaseTables();
         jsonObj=new JSONObject();
-        EnumIntTables[] tblsTesting = new EnumIntTables[]{TblsProcedure.TablesProcedure.PERSON_PROFILE, TblsProcedure.TablesProcedure.PROCEDURE_INFO,
-            TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS,
-            TblsTesting.TablesTesting.SCRIPT, TblsTesting.TablesTesting.SCRIPT_STEPS,
-            TblsTesting.TablesTesting.SCRIPT_BUS_RULES, TblsTesting.TablesTesting.SCRIPTS_COVERAGE, TblsTesting.TablesTesting.SCRIPT_SAVE_POINT,
-            TablesConfig.SOP_META_DATA, TablesConfig.ZZZ_DB_ERROR, TablesConfig.ZZZ_PROPERTIES_ERROR,
-            TablesData.USER_SOP,
-            TablesProcedureAudit.PROC_HASH_CODES, TablesDataAudit.SESSION};
-        for (EnumIntTables curTbl: tblsTesting){
+        for (EnumIntTables curTbl: moduleBaseTables){
             tblCreateScript = createTableScript(curTbl, procInstanceName, false, true);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
+            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))            
+                scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put(curTbl.getRepositoryName()+"."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getRepositoryName()+"."+curTbl.getTableName(), scriptLog);
