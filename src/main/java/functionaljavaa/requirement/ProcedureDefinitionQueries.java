@@ -120,10 +120,10 @@ public class ProcedureDefinitionQueries {
     }
     
     public static JSONObject procedureActionsAndRoles(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){
-        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(), LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).toString().split("\\|");
-        String[] verifyUserRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).toString().split("\\|");
-        String[] eSignRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
-        String[] sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName()).toString().split("\\|");
+        String[] procedureActions = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(), LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).split("\\|");
+        String[] verifyUserRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).split("\\|");
+        String[] eSignRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).split("\\|");
+        String[] sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName()).split("\\|");
         JSONArray procActionsArr = new JSONArray();
         for (Object curProcAction: procedureActions){                                                      
             JSONObject procedureActionsObj = convertArrayRowToJSONObject(new String[]{"action_name"}, new Object[]{curProcAction});                
