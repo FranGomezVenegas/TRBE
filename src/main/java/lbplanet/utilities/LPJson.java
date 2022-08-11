@@ -64,6 +64,14 @@ public class LPJson {
         return jObj;
     }
 
+    public static JSONArray convertToJSONArray(Object[] diagn) {
+        StringBuilder jsonStr = new StringBuilder(0).append("{");
+        JSONArray jMainArr=new JSONArray();
+        for(Object curItem: diagn)
+            jMainArr.add(curItem);
+        return jMainArr;
+    }
+
     /**
      *
      * @param diagn
@@ -137,6 +145,22 @@ public class LPJson {
         }
     }
 
+    public static JsonObject convertToJsonObjectStringedValue(String value){
+        try{
+            if ("TBD".equalsIgnoreCase(value)){
+               JsonObject jObj = new JsonObject();
+               jObj.addProperty("TBD", value);
+               return jObj;
+            }
+            JsonParser parser = new JsonParser();
+            return parser.parse(value).getAsJsonObject();
+        }catch(Exception e){
+           JsonObject jObj = new JsonObject();
+           jObj.addProperty("error", e.getMessage());
+           jObj.addProperty("value", value);
+           return jObj; 
+        }
+    }
    
 
 
