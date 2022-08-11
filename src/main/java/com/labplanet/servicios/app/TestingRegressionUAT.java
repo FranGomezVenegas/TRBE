@@ -206,6 +206,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 rd.forward(request,response);   
                 return;                       */
             case DB_SCHEMADATA_GENOMA:
+            case DB_SCHEMADATA_SAMPLES:
             case DB_SCHEMADATA_ENVMONIT_SAMPLES:
             case DB_SCHEMADATA_INSPECTION_LOT_RM:
                 Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
@@ -358,8 +359,10 @@ public class TestingRegressionUAT extends HttpServlet {
             Object[][] mismatchesArr=(Object[][]) mirrorCheckDiagn[0];
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatchesArr[0][0].toString())){
                 if (allMismatches==null || (allMismatches[0].length==mismatchesArr[0].length)){
-                    allMismatches=LPArray.joinTwo2DArrays(allMismatches, new String[][]{{"table info",curSchToCheck[0].toString(), "counter"}});
-                    allMismatches=LPArray.joinTwo2DArrays(allMismatches, mismatchesArr);
+                    allMismatches=LPArray.joinTwo2DArrays(allMismatches, new String[][]{{"table_name", "field_name", "counter", "schema"}});
+//                    Object[][] schemaInfoArr2D=new Object[mismatchesArr.length][1];
+//                    schemaInfoArr2D=LPArray.setColumnValueToArray2D(schemaInfoArr2D, 0, curSchToCheck[0]);
+                    allMismatches=LPArray.joinTwo2DArrays(allMismatches, LPArray.addColumnToArray2D(mismatchesArr, curSchToCheck[0]));
                 }
             //}else{
             //    summaryInfo[0]=mirrorCheckDiagn;
