@@ -1,0 +1,4 @@
+#!/bin/bash
+scp  root@51.75.202.142:~/
+scp /target/LabPLANET-API.war root@51.75.202.142:~/
+docker cp LabPLANET-API.war backend:/usr/local/tomcat/webapps
