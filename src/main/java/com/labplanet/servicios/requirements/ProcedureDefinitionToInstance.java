@@ -6,8 +6,7 @@
 package com.labplanet.servicios.requirements;
 
 import com.labplanet.servicios.ResponseSuccess;
-import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
-import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints;
+import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import databases.DbObjects;
 import lbplanet.utilities.LPFrontEnd;
 import databases.Rdbms;
@@ -30,7 +29,7 @@ import org.json.simple.JSONObject;
  */
 public class ProcedureDefinitionToInstance extends HttpServlet {
 
-    private static final Boolean  CREATE_SCHEMAS_AND_PROC_TBLS=false;
+    private static final Boolean  CREATE_REPOSITORIES_AND_PROC_TBLS=false;
     private static final Boolean  PROCDEPL_PROCEDURE_INFO=false;
     private static final Boolean  PROCDEPL_PROCEDURE_USER_ROLES=false;
     private static final Boolean  PROCDEPL_PROCEDURE_SOP_META_DATA=false;
@@ -51,93 +50,214 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response=LPTestingOutFormat.responsePreparation(response);
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-        ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint = ProcedureDefinitionAPIEndpoints.DEPLOY_REQUIREMENTS;
+        Object endPointName = request.getAttribute("endPointName");
+        Object runAsCheckerAttrValue = request.getAttribute("run_as_checker");        
+        ProcedureDefinitionAPIActionsEndpoints endPoint = ProcedureDefinitionAPIActionsEndpoints.valueOf(endPointName.toString());
         LPAPIArguments[] arguments = endPoint.getArguments();
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, arguments);                
         String procName = argValues[0].toString();
         Integer procVersion= (Integer) argValues[1];
         String procInstanceName=argValues[2].toString();
         String dbName=argValues[3].toString();
-        String moduleName=argValues[4].toString();
-        String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
-                            , {"Process Name", procName}, {"Process Version", procVersion.toString()}, {"Instance", procInstanceName}
-                            , {"CREATE_SCHEMAS_AND_PROC_TBLS", argValues[4].toString()}
-                            , {"PROC_DEPLOY_PROCEDURE_INFO", argValues[5].toString()}
-                            , {"PROC_DEPLOY_PROCEDURE_USER_ROLES", argValues[6].toString()}
-                            , {"PROC_DEPLOY_PROCEDURE_SOP_META_DATA", argValues[7].toString()}    
-                            , {"PROC_DEPLOY_PROC_EVENTS", argValues[8].toString()}                
-                            , {"PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS", argValues[9].toString()}                
-                            , {"PROC_DEPLOY_BUSINESS_RULES_PROPERTIES", argValues[10].toString()}
-                            , {"PROC_DEPLOY_TABLES_AND_FIELDS", argValues[11].toString()}
-                            , {"PROC_DEPLOY_MASTER_DATA", argValues[12].toString()}
-                    };
+        String moduleName=null;
+        String[][] businessVariablesHeader=null;
+        if (!Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            moduleName=argValues[4].toString();
+            businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
+                , {"Process Name", procName}, {"Process Version", procVersion.toString()}, {"Instance", procInstanceName}
+                , {"CREATE_REPOSITORIES_AND_PROC_TBLS", argValues[4].toString()}
+                , {"PROC_DEPLOY_PROCEDURE_INFO", argValues[5].toString()}
+                , {"PROC_DEPLOY_PROCEDURE_USER_ROLES", argValues[6].toString()}
+                , {"PROC_DEPLOY_PROCEDURE_SOP_META_DATA", argValues[7].toString()}    
+                , {"PROC_DEPLOY_PROC_EVENTS", argValues[8].toString()}                
+                , {"PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS", argValues[9].toString()}                
+                , {"PROC_DEPLOY_BUSINESS_RULES_PROPERTIES", argValues[10].toString()}
+                , {"PROC_DEPLOY_TABLES_AND_FIELDS", argValues[11].toString()}
+                , {"PROC_DEPLOY_MASTER_DATA", argValues[12].toString()}
+            };
+        }
         JSONObject mainObj=new JSONObject();
         JSONObject sectionsSettingJobj=new JSONObject();
         JSONObject sectionsDetailObj=new JSONObject();
+        JSONArray sectionsDetailCheckerArr=new JSONArray();
         JSONObject procInstanceInfo=new JSONObject();
         procInstanceInfo.put("Process Name", procName);
         procInstanceInfo.put("Process Version", procVersion);
         procInstanceInfo.put("Instance Name", procInstanceName);        
         procInstanceInfo.put("dbName", dbName);        
         mainObj.put("Procedure Instance Info", procInstanceInfo);
-        
+        Boolean runSection=false;
+        Integer iSection=0;
         try (PrintWriter out = response.getWriter()) {
-            Boolean runSection=Boolean.valueOf(argValues[5].toString()) || CREATE_SCHEMAS_AND_PROC_TBLS;
-            sectionsSettingJobj.put("1) CREATE_SCHEMAS_AND_PROC_TBLS", runSection);
-            if (runSection){            
-                JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(procInstanceName, null);
-                sectionsDetailObj.put("CREATE_SCHEMAS_AND_PROC_TBLS", createDBProcedureInfo);
-            }               
-            runSection=Boolean.valueOf(argValues[6].toString()) || PROCDEPL_PROCEDURE_INFO;
-            sectionsSettingJobj.put("2) PROCDEPL_PROCEDURE_INFO", runSection);
-            if (runSection){
-                JSONObject createDBProcedureInfo = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureInfo(procName, procVersion, procInstanceName);
-                sectionsDetailObj.put("PROCDEPL_PROCEDURE_INFO", createDBProcedureInfo);
-            }   
-            runSection=Boolean.valueOf(argValues[7].toString()) || PROCDEPL_PROCEDURE_USER_ROLES;
-            sectionsSettingJobj.put("3) PROCDEPL_PROCEDURE_USER_ROLES", runSection);
-            if (runSection){
-                JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procName, procVersion, procInstanceName);
-                sectionsDetailObj.put("PROCDEPL_PROCEDURE_USER_ROLES", createDBProcedureUserRoles);
-            }            
-            runSection=Boolean.valueOf(argValues[8].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA;
-            sectionsSettingJobj.put("4) PROCDEPL_PROCEDURE_SOP_META_DATA", runSection);
-            if (runSection){
-                JSONObject createDBSopMetaDataAndUserSop = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
-                sectionsDetailObj.put("PROCDEPL_PROCEDURE_SOP_META_DATA", createDBSopMetaDataAndUserSop);
-            }       
-            runSection=Boolean.valueOf(argValues[9].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS;
-            sectionsSettingJobj.put("5) PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", runSection);
-            if (runSection){
-                JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
-                sectionsDetailObj.put("PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", createDBProcedureUserRoles);
-            }  
-            runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_EVENTS;
-            sectionsSettingJobj.put("6) PROCDEPL_PROCEDURE_EVENTS", runSection);
-            if (runSection){
-                JSONObject createDBProcedureEvents = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureEvents(procName, procVersion, procInstanceName);
-                sectionsDetailObj.put("PROCDEPL_PROCEDURE_EVENTS", createDBProcedureEvents);
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject createDBProcedureInfo = ProcDeployCheckerLogic.createModuleSchemasAndBaseTables(procInstanceName, null);
+                createDBProcedureInfo.put("section_name", "CREATE_REPOSITORIES_AND_PROC_TBLS");
+                createDBProcedureInfo.put("section_label_en", "Repositories and Base Procedure Tables creation");
+                createDBProcedureInfo.put("section_label_es", "Creación de Repositorios y Tablas Base del Proceso");
+                iSection++;
+                createDBProcedureInfo.put("index", iSection);
+                sectionsDetailCheckerArr.add(createDBProcedureInfo);
+//                sectionsDetailObj.put("CREATE_REPOSITORIES_AND_PROC_TBLS", createDBProcedureInfo);                
+            }else{
+                runSection=Boolean.valueOf(argValues[5].toString()) || CREATE_REPOSITORIES_AND_PROC_TBLS;
+                sectionsSettingJobj.put("1) CREATE_REPOSITORIES_AND_PROC_TBLS", runSection);
+                if (runSection){            
+                    JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(procInstanceName, null);
+                    sectionsDetailObj.put("CREATE_REPOSITORIES_AND_PROC_TBLS", createDBProcedureInfo);
+                }               
             }
-            runSection=Boolean.valueOf(argValues[11].toString()) || PROCDEPL_BUSINESS_RULES_PROPTS_FILS;
-            sectionsSettingJobj.put("7) PROCDEPL_BUSINESS_RULES_PROPTS_FILS", runSection);
-            if (runSection){
-                JSONArray createPropBusinessRules = functionaljavaa.requirement.ProcedureDefinitionToInstance.createBusinessRules(procName, procVersion, procInstanceName);
-                sectionsDetailObj.put("PROCDEPL_BUSINESS_RULES_PROPTS_FILS", createPropBusinessRules);
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject createDBProcedureInfo = ProcDeployCheckerLogic.createDBProcedureInfo(procName, procVersion, procInstanceName);
+                createDBProcedureInfo.put("section_name", "PROCDEPL_PROCEDURE_INFO");
+                createDBProcedureInfo.put("section_label_en", "Procedure Info section creation");
+                createDBProcedureInfo.put("section_label_es", "Creación de sección Procedure Info");
+                iSection++;
+                createDBProcedureInfo.put("index", iSection);
+                sectionsDetailCheckerArr.add(createDBProcedureInfo);
+//                sectionsDetailObj.put("PROCDEPL_PROCEDURE_INFO", createDBProcedureInfo);
+            }else{                
+                runSection=Boolean.valueOf(argValues[6].toString()) || PROCDEPL_PROCEDURE_INFO;
+                sectionsSettingJobj.put("2) PROCDEPL_PROCEDURE_INFO", runSection);
+                if (runSection){
+                    JSONObject createDBProcedureInfo = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureInfo(procName, procVersion, procInstanceName);
+                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_INFO", createDBProcedureInfo);
+                }   
             }
-            runSection=Boolean.valueOf(argValues[12].toString()) || PROCDEPL_MODULE_TABLES_AND_FIELDS;
-            sectionsSettingJobj.put("8) PROCDEPL_MODULE_TABLES_AND_FIELDS", runSection);
-            if (runSection){
-                JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
-                sectionsDetailObj.put("PROCDEPL_MODULE_TABLES_AND_FIELDS", createDBModuleTablesAndFields);
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject createDBProcedureUserRoles = ProcDeployCheckerLogic.createDBPersonProfiles(procName, procVersion, procInstanceName);
+                createDBProcedureUserRoles.put("section_name", "PROCDEPL_PROCEDURE_USER_ROLES");
+                createDBProcedureUserRoles.put("section_label_en", "Procedure User and Roles section creation");
+                createDBProcedureUserRoles.put("section_label_es", "Creación de sección Usuarios y Roles");
+                iSection++;
+                createDBProcedureUserRoles.put("index", iSection);
+                sectionsDetailCheckerArr.add(createDBProcedureUserRoles);
+//                sectionsDetailObj.put("PROCDEPL_PROCEDURE_USER_ROLES", createDBProcedureUserRoles);
+            }else{                
+                runSection=Boolean.valueOf(argValues[7].toString()) || PROCDEPL_PROCEDURE_USER_ROLES;
+                sectionsSettingJobj.put("3) PROCDEPL_PROCEDURE_USER_ROLES", runSection);
+                if (runSection){
+                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procName, procVersion, procInstanceName);
+                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_USER_ROLES", createDBProcedureUserRoles);
+                } 
             }
-            runSection=Boolean.valueOf(argValues[13].toString()) || PROCDEPL_MASTER_DATA;
-            sectionsSettingJobj.put("9) PROCDEPL_MASTER_DATA", runSection);
-            if (runSection){
-                JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.deployMasterData(procName, procVersion, procInstanceName);
-                sectionsDetailObj.put("PROCDEPL_MASTER_DATA", createDBModuleTablesAndFields);
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject createDBSopMetaDataAndUserSop = ProcDeployCheckerLogic.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
+                createDBSopMetaDataAndUserSop.put("section_name", "PROCDEPL_PROCEDURE_SOP_META_DATA");
+                createDBSopMetaDataAndUserSop.put("section_label_en", "Procedure SOPs section");
+                createDBSopMetaDataAndUserSop.put("section_label_es", "Sección de PNTs");
+                iSection++;
+                createDBSopMetaDataAndUserSop.put("index", iSection);
+                sectionsDetailCheckerArr.add(createDBSopMetaDataAndUserSop);
+//                sectionsDetailObj.put("PROCDEPL_PROCEDURE_SOP_META_DATA", createDBSopMetaDataAndUserSop);
+            }else{
+                runSection=Boolean.valueOf(argValues[8].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA;
+                sectionsSettingJobj.put("4) PROCDEPL_PROCEDURE_SOP_META_DATA", runSection);
+                if (runSection){
+                    JSONObject createDBSopMetaDataAndUserSop = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
+                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_SOP_META_DATA", createDBSopMetaDataAndUserSop);
+                } 
             }
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject createDBProcedureUserRoles = ProcDeployCheckerLogic.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
+                createDBProcedureUserRoles.put("section_name", "PROCDEPL_ASIGN_PROC_SOPS_TO_USERS");
+                createDBProcedureUserRoles.put("section_label_en", "Procedure assignment of SOPs to Users");
+                createDBProcedureUserRoles.put("section_label_es", "Sección de asignación de PNTs a Usuarios");
+                iSection++;
+                createDBProcedureUserRoles.put("index", iSection);
+                sectionsDetailCheckerArr.add(createDBProcedureUserRoles);
+//                sectionsDetailObj.put("PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", createDBProcedureUserRoles);
+            }else{
+                runSection=Boolean.valueOf(argValues[9].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS;
+                sectionsSettingJobj.put("5) PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", runSection);
+                if (runSection){
+                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
+                    sectionsDetailObj.put("PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", createDBProcedureUserRoles);
+                } 
+            }
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject createDBProcedureEvents = ProcDeployCheckerLogic.createDBProcedureEvents(procName, procVersion, procInstanceName);
+                createDBProcedureEvents.put("section_name", "PROCDEPL_PROCEDURE_EVENTS");
+                createDBProcedureEvents.put("section_label_en", "Procedure Events section creation");
+                createDBProcedureEvents.put("section_label_es", "Sección de Procedure Events");
+                iSection++;
+                createDBProcedureEvents.put("index", iSection);
+                sectionsDetailCheckerArr.add(createDBProcedureEvents);
+//                sectionsDetailObj.put("PROCDEPL_PROCEDURE_EVENTS", createDBProcedureEvents);
+            }else{
+                runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_EVENTS;
+                sectionsSettingJobj.put("6) PROCDEPL_PROCEDURE_EVENTS", runSection);
+                if (runSection){
+                    JSONObject createDBProcedureEvents = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureEvents(procName, procVersion, procInstanceName);
+                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_EVENTS", createDBProcedureEvents);
+                }
+            }
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject createPropBusinessRules = ProcDeployCheckerLogic.createBusinessRules(procName, procVersion, procInstanceName);
+                createPropBusinessRules.put("section_name", "PROCDEPL_BUSINESS_RULES");
+                createPropBusinessRules.put("section_label_en", "Procedure Business Rules section creation");
+                createPropBusinessRules.put("section_label_es", "Sección de Procedure Business Rules");
+                iSection++;
+                createPropBusinessRules.put("index", iSection);
+                sectionsDetailCheckerArr.add(createPropBusinessRules);
+//                sectionsDetailObj.put("PROCDEPL_BUSINESS_RULES_PROPTS_FILS", createPropBusinessRules);
+            }else{
+                runSection=Boolean.valueOf(argValues[11].toString()) || PROCDEPL_BUSINESS_RULES_PROPTS_FILS;
+                sectionsSettingJobj.put("7) PROCDEPL_BUSINESS_RULES_PROPTS_FILS", runSection);
+                if (runSection){
+                    JSONArray createPropBusinessRules = functionaljavaa.requirement.ProcedureDefinitionToInstance.createBusinessRules(procName, procVersion, procInstanceName);
+                    sectionsDetailObj.put("PROCDEPL_BUSINESS_RULES_PROPTS_FILS", createPropBusinessRules);
+                }
+            }
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject createDBModuleTablesAndFields = ProcDeployCheckerLogic.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
+                createDBModuleTablesAndFields.put("section_name", "PROCDEPL_MODULE_TABLES_AND_FIELDS");
+                createDBModuleTablesAndFields.put("section_label_en", "Module Tables and Fields section creation");
+                createDBModuleTablesAndFields.put("section_label_es", "Sección de Creación de Tablas y Campos del módulo");
+                iSection++;
+                createDBModuleTablesAndFields.put("index", iSection);
+                sectionsDetailCheckerArr.add(createDBModuleTablesAndFields);
+//                sectionsDetailObj.put("PROCDEPL_MODULE_TABLES_AND_FIELDS", createDBModuleTablesAndFields);
+            }else{
+                runSection=Boolean.valueOf(argValues[12].toString()) || PROCDEPL_MODULE_TABLES_AND_FIELDS;
+                sectionsSettingJobj.put("8) PROCDEPL_MODULE_TABLES_AND_FIELDS", runSection);
+                if (runSection){
+                    JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
+                    sectionsDetailObj.put("PROCDEPL_MODULE_TABLES_AND_FIELDS", createDBModuleTablesAndFields);
+                }
+            }
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject createDBModuleTablesAndFields = ProcDeployCheckerLogic.deployMasterData(procName, procVersion, procInstanceName);
+                createDBModuleTablesAndFields.put("section_name", "PROCDEPL_MASTER_DATA");
+                createDBModuleTablesAndFields.put("section_label_en", "Master Data section creation");
+                createDBModuleTablesAndFields.put("section_label_es", "Sección de Creación de Data Maestra");
+                iSection++;
+                createDBModuleTablesAndFields.put("index", iSection);
+                sectionsDetailCheckerArr.add(createDBModuleTablesAndFields);
+//                sectionsDetailObj.put("PROCDEPL_MASTER_DATA", createDBModuleTablesAndFields);
+            }else{
+                runSection=Boolean.valueOf(argValues[13].toString()) || PROCDEPL_MASTER_DATA;
+                sectionsSettingJobj.put("9) PROCDEPL_MASTER_DATA", runSection);
+                if (runSection){
+                    JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.deployMasterData(procName, procVersion, procInstanceName);
+                    sectionsDetailObj.put("PROCDEPL_MASTER_DATA", createDBModuleTablesAndFields);
+                }
+            }
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+                JSONObject dataRepositoriesAreMirror = ProcDeployCheckerLogic.dataRepositoriesAreMirror(procInstanceName, null);
+                dataRepositoriesAreMirror.put("section_name", "DATA_REPOSITORIES_MIRROR");
+                dataRepositoriesAreMirror.put("section_label_en", "Procedure Data Repositories are Mirror checker");
+                dataRepositoriesAreMirror.put("section_label_es", "Sección para Comprobar que los Repositorios de Datos son Espejo");
+                iSection++;
+                dataRepositoriesAreMirror.put("index", iSection);
+                sectionsDetailCheckerArr.add(dataRepositoriesAreMirror);
+//                sectionsDetailObj.put("DATA_REPOSITORIES_MIRROR", dataRepositoriesAreMirror);                
+            }
+            
             mainObj.put("endpoint_call_settings", sectionsSettingJobj);
-            mainObj.put("sections_log", sectionsDetailObj);
+            if (Boolean.valueOf(runAsCheckerAttrValue.toString()))
+                mainObj.put("sections_log", sectionsDetailCheckerArr);
+            else
+                mainObj.put("sections_log", sectionsDetailObj);
             Rdbms.closeRdbms();
             LPFrontEnd.servletReturnSuccess(request, response, mainObj);
         }catch(Exception e){
