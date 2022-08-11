@@ -5,8 +5,7 @@
  */
 package com.labplanet.servicios.testing.platform;
 
-import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
-import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints;
+import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
@@ -67,7 +66,7 @@ public class ProcedureDeployment extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
-        ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint = ProcedureDefinitionAPIEndpoints.DEPLOY_REQUIREMENTS;
+        ProcedureDefinitionAPIActionsEndpoints endPoint = ProcedureDefinitionAPIActionsEndpoints.DEPLOY_REQUIREMENTS;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                
         String procName = argValues[0].toString(); //request.getParameter("procedureName"); //"process-us";         
         String procInstanceName=argValues[2].toString(); //request.getParameter("procInstanceName"); //"process-us";
