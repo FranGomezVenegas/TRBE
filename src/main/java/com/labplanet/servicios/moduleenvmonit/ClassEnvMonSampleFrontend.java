@@ -86,6 +86,8 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                 //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects, null),
@@ -283,13 +285,6 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
             this.isSuccess=false;           
             this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
                     argValues[1].toString(), new Object[]{argValues[2].toString()});
-/*            JSONObject errJSONMsg = LPFrontEnd.responseJSONError(argValues[1].toString(), 
-                    new Object[]{argValues[2].toString()},                     
-                    this.getClass().getSimpleName());
-*/
-//            LPFrontEnd.servletReturnResponseError(request, null, argValues[1].toString(), new Object[]{argValues[2].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
-            //LPFrontEnd.servletReturnResponseError(request, null, argValues[1].toString(), 
-//                new Object[]{argValues[2].toString()}, procReqInstance.getLanguage(), null);                   
             return;                        
         }
         
@@ -312,9 +307,16 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     String sampleAnalysisWhereFieldsValue = argValues[3].toString();
                     if ( (sampleAnalysisWhereFieldsValue!=null) && (sampleAnalysisWhereFieldsValue.length()>0) )
                         sampleAnalysisWhereFieldsValueArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
+
+                    String sarWhereFieldsName = argValues[4].toString();
+                    if ( (sarWhereFieldsName!=null ) && (sarWhereFieldsName.length()>0) ) 
+                        sampleAnalysisWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sarWhereFieldsName.split("\\|"));
+                    String sarWhereFieldsValue = argValues[5].toString();
+                    if ( (sarWhereFieldsValue!=null) && (sarWhereFieldsValue.length()>0) )
+                        sampleAnalysisWhereFieldsValueArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
                     
                     String[] sortFieldsNameArr = null;
-                    String sortFieldsName = argValues[4].toString();
+                    String sortFieldsName = argValues[6].toString();
                     if ( (sortFieldsName!=null) && (sortFieldsName.length()>0) ) 
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     else
