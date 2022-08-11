@@ -45,14 +45,18 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
             if (valuePosicInArray>-1){
                 Object[][] fldValues = dbTableGetFieldDefinition.get(fldName);
                 Object[] tbldFldsArrObj = LPArray.getColumnFromArray2D(fldValues, valuePosicInArray);
-                String[] tbldFldsArr = LPArray.convertObjectArrayToStringArray(tbldFldsArrObj);                     
+                String[] tbldFldsArr = LPArray.convertObjectArrayToStringArray(tbldFldsArrObj);    
+                Boolean fieldToAdd=false;
                 for (EnumIntTableFields curFld: tableObj.getTableFields()){
                     if (!LPArray.valueInArray(tbldFldsArrObj, curFld.getName())){
                         if (seqScript.length()>0)seqScript=seqScript.append(", ");
                         StringBuilder currFieldDefBuilder = new StringBuilder(curFld.getFieldType());
                         seqScript=seqScript.append(" add column "+curFld.getName()+" "+currFieldDefBuilder);
+                        fieldToAdd=true;
                     }
                 }
+                if (!fieldToAdd)
+                    return "table "+tableObj.getTableName()+" already exists and up to date";
                 seqScript=new StringBuilder(0).append(alterTableScript(tableObj, procInstanceName, true)).append(seqScript);
             }
         }        
@@ -62,6 +66,7 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(schemaName, tableObj.getTableName(), seqScript.toString(), new Object[]{});
         }else
             seqScript=new StringBuilder(0);
+            seqScript=seqScript.append(sequenceScript(tableObj, procInstanceName));
         seqScript=seqScript.append(createTableBeginScript(tableObj, procInstanceName));
         seqScript=seqScript.append(primaryKeyScript(tableObj));
         seqScript=seqScript.append(foreignKeyScript(tableObj, procInstanceName));
