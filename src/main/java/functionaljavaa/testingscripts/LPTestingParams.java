@@ -43,7 +43,6 @@ public class LPTestingParams {
                 return;
             reqSession.setAlternativeToken(nwTokn);
         }
-        return;
     }
     public enum TestingServletsConfig{
         NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT("/testing/config/testingConfigSpecQualitativeRuleFormat", "noDBSchema_config_SpecQualitativeRuleGeneratorChecker.txt", 1, "Rule;Text Spec;Separator", false),
