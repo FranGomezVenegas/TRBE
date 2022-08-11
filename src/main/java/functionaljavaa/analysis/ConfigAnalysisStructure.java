@@ -380,13 +380,14 @@ if (1==1){return "ERROR";}
 //                    new String[]{TblsCnfg.AnalysisRules.CODE.getName(), TblsCnfg.AnalysisRules.CONFIG_VERSION.getName(), 
 //                        TblsCnfg.AnalysisRules.ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.AnalysisRules.ALLOW_MULTI_SPEC.getName()}, 
 //                    new Object[]{specCode, specCodeVersion, false, false});       
-            if (!diagnObj.getRunSuccess()){
+            if (diagnObj.getRunSuccess()){
                 ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS, code, 
                     code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, code);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.ANALYSIS_CREATED, errorDetailVariables);                   
-            }    
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.ANALYSIS_CREATED, errorDetailVariables);
+            }else
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, diagnObj.getErrorMessageCode(), diagnObj.getErrorMessageVariables());
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(ConfigAnalysisStructure.class.getName()).log(Level.SEVERE, null, ex);
         }                    
@@ -486,13 +487,13 @@ if (1==1){return "ERROR";}
                 mandatoryFieldValue = LPArray.addValueToArray1D(mandatoryFieldValue, currFieldValue);
             }
         }                    
-        Object[] diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.TablesConfig.ANALYSIS.getTableName(), 
+/*        Object[] diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.TablesConfig.ANALYSIS.getTableName(), 
                 new String[]{TblsCnfg.Analysis.CODE.getName(), TblsCnfg.Analysis.CONFIG_VERSION.getName()}, 
                 new Object[] {analysisCode, analysisCodeVersion});        
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){                       
             return diagnoses;
         }
-        
+*/        
         if (mandatoryFieldsMissingBuilder.length()>0){           
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, mandatoryFieldsMissingBuilder.toString());
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, errorDetailVariables);    
@@ -540,7 +541,7 @@ if (1==1){return "ERROR";}
         }                    
         String[] whereFields = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName()};
         Object[] whereFieldsValue = new Object[] {analysisCode, methodName, methodVersion};
-        diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), whereFields, whereFieldsValue);                
+        Object[] diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), whereFields, whereFieldsValue);                
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
 /*            Object[] whereFieldsAndValues = LPArray.joinTwo1DArraysInOneOf1DString(diagnoses, whereFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName());
@@ -565,11 +566,12 @@ if (1==1){return "ERROR";}
             fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName());
             fieldValue = LPArray.addValueToArray1D(fieldValue, methodVersion);            
             RdbmsObject diagnObj = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS, fieldName, fieldValue); //, schemaName); 
-            if (!diagnObj.getRunSuccess()){
+            if (diagnObj.getRunSuccess()){
                 ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_METHOD_PARAM_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS, analysisCode, 
                     analysisCode, analysisCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
-            }
-            return diagnoses;
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.ANALYSIS_METHOD_PARAM_CREATED, errorDetailVariables);                
+            }else
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, diagnObj.getErrorMessageCode(), diagnObj.getErrorMessageVariables());
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(ConfigAnalysisStructure.class.getName()).log(Level.SEVERE, null, ex);
         }                    
