@@ -87,6 +87,8 @@ public class Rdbms {
         RDBMS_TABLE_FOUND("existsTable_TableFound", "", ""),
         TRANSFERRED_RECORDS_BETWEEN_INSTANCES("transferredRecordsBetweenInstances", "", ""), 
         ANALYSIS_CREATED("analysisRecord_createdSuccessfully", "", ""), 
+        ANALYSIS_METHOD_CREATED("analysisMethodRecord_createdSuccessfully", "", ""), 
+        ANALYSIS_METHOD_PARAM_CREATED("analysisMethodParamRecord_createdSuccessfully", "", ""), 
         ;
         RdbmsSuccess(String cl, String msgEn, String msgEs){
             this.errorCode=cl;
@@ -637,6 +639,40 @@ if (1==1){Rdbms.transactionId=1; return;}
         }                    
     }
 
+    public static Object[] existsRecord(EnumIntTables tblObj, String[] keyFieldNames, Object[] keyFieldValues, String alternativeProcInstanceName){
+        String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
+        String[] errorDetailVariables = new String[0];
+        Object[] filteredValues = new Object[0];
+        
+        if (keyFieldNames.length==0){           
+           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, tblObj.getTableName());
+           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, tblObj.getRepositoryName());          
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, errorDetailVariables);                         
+        }
+        EnumIntTableFields[] keyFieldNamesObj = EnumIntTableFields.getTableFieldsFromString(tblObj, keyFieldNames);
+        SqlWhere sqlWhere=new SqlWhere(tblObj, keyFieldNames, keyFieldValues);                
+        SqlStatementEnums  sql = new SqlStatementEnums (); 
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable(SQLSELECT, tblObj, sqlWhere
+                , keyFieldNamesObj,  null, null, null, null, false, alternativeProcInstanceName);          
+        String query= hmQuery.keySet().iterator().next();   
+        Object[] keyFieldValueNew = hmQuery.get(query);
+        try{
+            ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
+            if (res==null){
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES+ Arrays.toString(keyFieldValueNew)});
+            }            
+            res.first();
+            Integer numRows=res.getRow();
+            if (numRows>0){
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_FOUND, new Object[]{Arrays.toString(filteredValues), tblObj.getTableName(), schemaName});                
+            }else{
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{Arrays.toString(filteredValues), tblObj.getTableName(), schemaName});                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+        }                    
+    }
 
     /**
      *
@@ -1650,6 +1686,41 @@ if (1==1){Rdbms.transactionId=1; return;}
          return this.savepoint;
      }
     
+    public static Object[] dbSchemaAndTableList(String procInstanceName){
+        String[] fieldsToRetrieve=new String[]{"table_name"};
+        String query="select concat(concat(table_schema,'.'),table_name) from INFORMATION_SCHEMA.tables " +
+                    "  where table_schema like ? " + " and table_type =?";
+        try{
+            char procsSeparator = (char)34;
+            procInstanceName = procInstanceName.replace(String.valueOf(procsSeparator), "");
+            String[] filter=new String[]{procInstanceName+"%", "BASE TABLE"};
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res==null){
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES+ Arrays.toString(filter)});
+            }       
+            res.last();
+            if (res.getRow()>0){
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;                
+                Object[] diagnoses2 = new Object[totalLines];
+                while(icurrLine<=totalLines-1) {
+                    Object currValue = res.getObject(1);
+                    diagnoses2[icurrLine] =  LPNulls.replaceNull(currValue);
+                   res.next();
+                   icurrLine++;
+                }
+                return diagnoses2;
+            }else{
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(filter), procInstanceName});                         
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }          
+    }
+
     public static Object[] dbSchemaTablesList(String schemaName){
         String[] fieldsToRetrieve=new String[]{"table_name"};
         String query="select table_name from INFORMATION_SCHEMA.tables " +
@@ -1954,6 +2025,43 @@ if (1==1){Rdbms.transactionId=1; return;}
         }  
     }
 
+    public static Object[] dbSchemasList(String schemaName){
+        String[] fieldsToRetrieve=new String[]{"table_name"};
+        String query="select schema_name from INFORMATION_SCHEMA.schemata " +
+                    "  where schema_name like ? ";
+        try{
+            char procsSeparator = (char)34;
+            schemaName = schemaName.replace(String.valueOf(procsSeparator), "");
+            String[] filter=new String[]{schemaName+"%"};
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res==null){
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES+ Arrays.toString(filter)});
+            }       
+            res.last();
+            if (res.getRow()>0){
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;                
+                Object[] diagnoses2 = new Object[totalLines];
+                while(icurrLine<=totalLines-1) {
+                   for (Integer icurrCol=0;icurrCol<fieldsToRetrieve.length;icurrCol++){
+                       Object currValue = res.getObject(icurrCol+1);
+                       diagnoses2[icurrLine] =  LPNulls.replaceNull(currValue);
+                   }        
+                   res.next();
+                   icurrLine++;
+                }         
+                 return diagnoses2;
+            }else{
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(filter), schemaName});                         
+                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+        }          
+    }
+    
     public static Object[] dbExists(String dbName){
         String query="SELECT FROM pg_database WHERE datname = ? ";
         try{
