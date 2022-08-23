@@ -14,6 +14,7 @@ import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import functionaljavaa.parameter.Parameter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -71,33 +72,102 @@ public class InvestigationAPIfrontend extends HttpServlet {
                         LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                             
         }
-        InvestigationAPIfrontendEndpoints endPoint = null;
-        try{
-            endPoint = InvestigationAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
-        }catch(Exception e){
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
-            return;                   
-        }
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
-        JSONArray jArray = new JSONArray(); 
+        try (PrintWriter out = response.getWriter()) {            
+            InvestigationAPIfrontendEndpoints endPoint = null;
+            try{
+                endPoint = InvestigationAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
+                return;                   
+            }
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
+            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+            JSONArray jArray = new JSONArray(); 
 
-        switch (endPoint){
-            case OPEN_INVESTIGATIONS:              
-                String[] fieldsToRetrieve=getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
-                Object[][] incidentsNotClosed=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVESTIGATION, 
-                    EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, "ALL"),
-                    new String[]{TblsProcedure.Investigation.CLOSED.getName()+"<>"}, 
-                    new Object[]{true}, 
-                    new String[]{TblsProcedure.Investigation.ID.getName()+" desc"});
-                JSONArray investigationJArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
-                    for (Object[] currInvestigation: incidentsNotClosed){
-                        JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
-                        Integer investFldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsProcedure.Investigation.ID.getName());
-                        if (investFldPosic>-1){
-                            Integer investigationId=Integer.valueOf(currInvestigation[investFldPosic].toString());
-                            String[] fieldsToRetrieveInvestObj=getAllFieldNames(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableFields());
+            switch (endPoint){
+                case OPEN_INVESTIGATIONS:              
+                    String[] fieldsToRetrieve=getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
+                    Object[][] incidentsNotClosed=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVESTIGATION, 
+                        EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, "ALL"),
+                        new String[]{TblsProcedure.Investigation.CLOSED.getName()+"<>"}, 
+                        new Object[]{true}, 
+                        new String[]{TblsProcedure.Investigation.ID.getName()+" desc"});
+                    JSONArray investigationJArr = new JSONArray();
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
+                        for (Object[] currInvestigation: incidentsNotClosed){
+                            JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
+                            Integer investFldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsProcedure.Investigation.ID.getName());
+                            if (investFldPosic>-1){
+                                Integer investigationId=Integer.valueOf(currInvestigation[investFldPosic].toString());
+                                String[] fieldsToRetrieveInvestObj=getAllFieldNames(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableFields());
+                                incidentsNotClosed=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVEST_OBJECTS, 
+                                    EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVEST_OBJECTS, "ALL"),
+                                    new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, 
+                                    new Object[]{investigationId}, 
+                                    new String[]{TblsProcedure.InvestObjects.ID.getName()});
+                                JSONArray investObjectsJArr = new JSONArray();
+                                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
+                                    for (Object[] currInvestObject: incidentsNotClosed){
+                                        JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveInvestObj, currInvestObject);
+                                        investObjectsJArr.add(investObjectsJObj);
+                                    }
+                                }
+                                investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
+                            }
+                            investigationJArr.add(investigationJObj);
+                        }
+                    }
+                    //Rdbms.closeRdbms();  
+                    instanceForQueries.killIt();                
+                    LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
+                    return;                  
+                case INVESTIGATION_RESULTS_PENDING_DECISION:
+                    String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
+                    if (!isProgramCorrectiveActionEnable(procInstanceName)){
+                      JSONObject jObj=new JSONObject();
+                      jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!");
+                      jArray.add(jObj);
+                    }
+                    else{
+                        Object[][] investigationResultsPendingDecision = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, 
+                            EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, "ALL"),
+                            new String[]{TblsProcedure.ProgramCorrectiveAction.STATUS.getName()+"<>"}, 
+                            new String[]{statusClosed}, 
+                            new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName()});
+                      if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationResultsPendingDecision[0][0].toString()))LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+
+
+                      for (Object[] curRow: investigationResultsPendingDecision){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()), curRow);
+                        jArray.add(jObj);
+                      }
+                    }
+                    // Rdbms.closeRdbms();       
+                    instanceForQueries.killIt();                
+                    LPFrontEnd.servletReturnSuccess(request, response, jArray);
+                    break;                
+                case INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION:
+                    if (!isProgramCorrectiveActionEnable(procInstanceName)){
+                      JSONObject jObj=new JSONObject();
+                      jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!");
+                      jArray.add(jObj);
+                      LPFrontEnd.servletReturnSuccess(request, response, jArray);
+                    }
+                    Integer investigationId=null;
+                    String investigationIdStr=LPNulls.replaceNull(argValues[0]).toString();
+                    if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
+
+                    fieldsToRetrieve=getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
+                    incidentsNotClosed=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVESTIGATION, 
+                        EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, "ALL"),
+                        new String[]{TblsProcedure.Investigation.ID.getName()}, 
+                        new Object[]{investigationId}, 
+                        new String[]{TblsProcedure.Investigation.ID.getName()+" desc"});
+                    investigationJArr = new JSONArray();
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
+                        for (Object[] currInvestigation: incidentsNotClosed){
+                            JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
+                            fieldsToRetrieve=getAllFieldNames(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableFields());
                             incidentsNotClosed=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVEST_OBJECTS, 
                                 EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVEST_OBJECTS, "ALL"),
                                 new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, 
@@ -106,89 +176,33 @@ public class InvestigationAPIfrontend extends HttpServlet {
                             JSONArray investObjectsJArr = new JSONArray();
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
                                 for (Object[] currInvestObject: incidentsNotClosed){
-                                    JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveInvestObj, currInvestObject);
+                                    JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestObject);
                                     investObjectsJArr.add(investObjectsJObj);
                                 }
                             }
                             investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
+                            investigationJArr.add(investigationJObj);
                         }
-                        investigationJArr.add(investigationJObj);
                     }
-                }
-                //Rdbms.closeRdbms();  
-                instanceForQueries.killIt();                
-                LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
-                return;                  
-            case INVESTIGATION_RESULTS_PENDING_DECISION:
-                String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
-                if (!isProgramCorrectiveActionEnable(procInstanceName)){
-                  JSONObject jObj=new JSONObject();
-                  jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!");
-                  jArray.add(jObj);
-                }
-                else{
-                    Object[][] investigationResultsPendingDecision = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, 
-                        EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, "ALL"),
-                        new String[]{TblsProcedure.ProgramCorrectiveAction.STATUS.getName()+"<>"}, 
-                        new String[]{statusClosed}, 
-                        new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName()});
-                  if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationResultsPendingDecision[0][0].toString()))LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-
-
-                  for (Object[] curRow: investigationResultsPendingDecision){
-                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()), curRow);
-                    jArray.add(jObj);
-                  }
-                }
-                // Rdbms.closeRdbms();       
-                instanceForQueries.killIt();                
-                LPFrontEnd.servletReturnSuccess(request, response, jArray);
-                break;                
-            case INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION:
-                if (!isProgramCorrectiveActionEnable(procInstanceName)){
-                  JSONObject jObj=new JSONObject();
-                  jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!");
-                  jArray.add(jObj);
-                  LPFrontEnd.servletReturnSuccess(request, response, jArray);
-                }
-                Integer investigationId=null;
-                String investigationIdStr=LPNulls.replaceNull(argValues[0]).toString();
-                if (investigationIdStr!=null && investigationIdStr.length()>0) investigationId=Integer.valueOf(investigationIdStr);
-
-                fieldsToRetrieve=getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
-                incidentsNotClosed=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVESTIGATION, 
-                    EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, "ALL"),
-                    new String[]{TblsProcedure.Investigation.ID.getName()}, 
-                    new Object[]{investigationId}, 
-                    new String[]{TblsProcedure.Investigation.ID.getName()+" desc"});
-                investigationJArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
-                    for (Object[] currInvestigation: incidentsNotClosed){
-                        JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
-                        fieldsToRetrieve=getAllFieldNames(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableFields());
-                        incidentsNotClosed=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVEST_OBJECTS, 
-                            EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVEST_OBJECTS, "ALL"),
-                            new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, 
-                            new Object[]{investigationId}, 
-                            new String[]{TblsProcedure.InvestObjects.ID.getName()});
-                        JSONArray investObjectsJArr = new JSONArray();
-                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
-                            for (Object[] currInvestObject: incidentsNotClosed){
-                                JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestObject);
-                                investObjectsJArr.add(investObjectsJObj);
-                            }
-                        }
-                        investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
-                        investigationJArr.add(investigationJObj);
-                    }
-                }
-                Rdbms.closeRdbms();  
+                    Rdbms.closeRdbms();  
+                    instanceForQueries.killIt();
+                    LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
+                    return;
+            default: 
+            }
+        }catch(Exception e){      
+            instanceForQueries.killIt();
+            String[] errObject = new String[]{e.getMessage()};
+            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
+        } finally {
+            // release database resources
+            try {
+                // Rdbms.closeRdbms();                    
                 instanceForQueries.killIt();
-                LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
-                return;
-        default: 
-        }
-    }
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            }
+        }      }    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
