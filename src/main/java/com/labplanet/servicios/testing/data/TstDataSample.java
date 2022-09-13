@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.testing.data;
 
+import static com.labplanet.servicios.app.TestingAPIActions.scriptExecutionEvidenceSave;
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import lbplanet.utilities.LPArray;
@@ -21,6 +22,7 @@ import functionaljavaa.samplestructure.DataSampleAnalysisResult;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.modulesample.DataModuleSampleAnalysisResult;
 import functionaljavaa.samplestructure.DataSampleIncubation;
+import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.FileReader;
@@ -476,7 +478,27 @@ public class TstDataSample extends HttpServlet {
             }                          
             tstAssertSummary.notifyResults();
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, null, null);
+            
+            String summaryPhrase ="";
+            String scriptIdStr=request.getParameter("scriptId");                       
+            Integer scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr));             
+            if (numEvaluationArguments==0) summaryPhrase="COMPLETED ALL STEPS";
+            else{
+                if (tstAssertSummary.getTotalSyntaxisMatch()==csvFileContent.length){
+                    summaryPhrase="COMPLETED SUCCESSFULLY";
+                    String savePoint= LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
+                    if (savePoint==null || savePoint.length()==0)
+                        savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
+                    if (Boolean.valueOf(savePoint))
+                        scriptExecutionEvidenceSave(scriptId, summaryPhrase);
+                }else{
+                    summaryPhrase="COMPLETED WITH UNEXPECTED RESULTS. ";
+                    if (tstAssertSummary.getTotalSyntaxisUnMatch()>0) summaryPhrase=summaryPhrase+"Unmatched="+tstAssertSummary.getTotalSyntaxisUnMatch()+". ";
+                    if (tstAssertSummary.getTotalSyntaxisUndefined()>0) summaryPhrase=summaryPhrase+"Undefined="+tstAssertSummary.getTotalSyntaxisUndefined()+". ";
+                }
+            }
+            
+            String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, summaryPhrase, null);
             fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder.toString());
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());     

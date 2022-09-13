@@ -86,6 +86,7 @@ public class LPTestingOutFormat {
         Integer actionNmePosic=numEvalArgs+1;
         String[] fieldsName=new String[]{TblsTesting.ScriptSteps.EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.ESIGN_TO_CHECK.getName(),
             TblsTesting.ScriptSteps.CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.CONFIRMUSER_PW_TO_CHECK.getName(),
+            TblsTesting.ScriptSteps.ACTION_NAME.getName(),            
             TblsTesting.ScriptSteps.ARGUMENT_01.getName(), TblsTesting.ScriptSteps.ARGUMENT_02.getName(),
             TblsTesting.ScriptSteps.ARGUMENT_03.getName(), TblsTesting.ScriptSteps.ARGUMENT_04.getName(),
             TblsTesting.ScriptSteps.ARGUMENT_05.getName(), TblsTesting.ScriptSteps.ARGUMENT_06.getName(),

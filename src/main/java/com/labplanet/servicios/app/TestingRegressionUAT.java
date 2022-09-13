@@ -211,7 +211,7 @@ public class TestingRegressionUAT extends HttpServlet {
             case DB_SCHEMADATA_INSPECTION_LOT_RM:
                 Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
                         new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.ACTIVE.getName()}, new Object[]{scriptId, true}, 
-                        new String[]{TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.ARGUMENT_01.getName()},
+                        new String[]{TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.ACTION_NAME.getName()},
                         new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())){
                     procReqInstance.killIt();                    
