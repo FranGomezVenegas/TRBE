@@ -15,6 +15,7 @@ import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -64,7 +65,8 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
                 out.println(fileContentBuilder.toString()); 
                 return;
-            }            
+            }         
+            LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
             Integer numEvaluationArguments = tstOut.getNumEvaluationArguments();
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
             
@@ -98,6 +100,8 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                     
                 Object[] functionEvaluation = mSpec.specLimitIsCorrectQualitative(ruleType, specText, separator);
                     
+                BigDecimal SecondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(SecondsInDateRange)));
                 
                 if (numEvaluationArguments==0){                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));                     
@@ -132,9 +136,12 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
             //fileContentTable1Builder.append();
-            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
-                        
-            fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+            //fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
+
+            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>")
+                .append(fileContentTable1Builder);
+            
+            fileContentBuilder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
             tstAssertSummary=null; mSpec=null;

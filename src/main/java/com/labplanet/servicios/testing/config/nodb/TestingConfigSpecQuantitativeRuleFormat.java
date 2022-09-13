@@ -16,6 +16,7 @@ import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -24,6 +25,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPDate;
+
 
 /**
  *
@@ -99,12 +102,16 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
 
 //            String table2Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"2").toString();            
             StringBuilder fileContentTable2Builder = new StringBuilder(0);
+            LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
             fileContentTable2Builder.append(LPTestingOutFormat.createTableWithHeader(table2Header, numEvaluationArguments));
+
+
 //testingContent.length    
 //Integer totall=5;
 //numHeaderLines=27;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
+                LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
 //out.println(iLines.toString());
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
                 
@@ -133,6 +140,9 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                     fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, getprettyValue(minSpec, false, "MIN"), getprettyValue(minControl, false, "MIN"), getprettyValue(maxControl, false, "MAX"), getprettyValue(maxSpec, false, "MAX")}));
                     resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
                 }        
+                BigDecimal SecondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(SecondsInDateRange)));
+                
                 if (numEvaluationArguments==0){                    
                     if (minControl==null){
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));                     
@@ -153,11 +163,35 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
             }    
             tstAssertSummary.notifyResults();
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());                                                
-            fileContentTable2Builder.append(LPTestingOutFormat.tableEnd());                                                
+            fileContentTable2Builder.append(LPTestingOutFormat.tableEnd());       
+            
+            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>")
+                .append(fileContentTable1Builder).append(fileContentTable2Builder);
+            
+/*            String summaryPhrase ="";
+            String scriptIdStr=request.getParameter("scriptId");                       
+            Integer scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr));             
+            if (numEvaluationArguments==0) summaryPhrase="COMPLETED ALL STEPS";
+            else{
+                if (tstAssertSummary.getTotalSyntaxisMatch()==testingContent.length){
+                    summaryPhrase="COMPLETED SUCCESSFULLY";
+                    String savePoint= LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
+                    if (savePoint==null || savePoint.length()==0)
+                        savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
+                    if (Boolean.valueOf(savePoint))
+                        scriptExecutionEvidenceSave(scriptId, summaryPhrase);
+                }else{
+                    summaryPhrase="COMPLETED WITH UNEXPECTED RESULTS. ";
+                    if (tstAssertSummary.getTotalSyntaxisUnMatch()>0) summaryPhrase=summaryPhrase+"Unmatched="+tstAssertSummary.getTotalSyntaxisUnMatch()+". ";
+                    if (tstAssertSummary.getTotalSyntaxisUndefined()>0) summaryPhrase=summaryPhrase+"Undefined="+tstAssertSummary.getTotalSyntaxisUndefined()+". ";
+                }
+            }
+            
             if (numEvaluationArguments>0){
-                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, null, null);
+                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, summaryPhrase, null);
                 fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder).append(fileContentTable2Builder);
             }
+*/            
             fileContentBuilder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
