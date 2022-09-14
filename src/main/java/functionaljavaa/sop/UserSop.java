@@ -341,12 +341,14 @@ public class UserSop {
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
         
         
-        Object[] filterFieldValueAllSchemas = new Object[filterFieldValue.length*correctProcess];
+        //Object[] filterFieldValueAllSchemas = new Object[filterFieldValue.length*correctProcess];
+        Object[] filterFieldValueAllSchemas =new Object[]{};
         //Integer iFldValue=0;
         //for(String sPref: procInstanceName){
         for (int iFldValue=0;iFldValue<correctProcess;iFldValue++){
             for(Object fVal: filterFieldValue){
-                filterFieldValueAllSchemas[iFldValue]=fVal;    
+                //filterFieldValueAllSchemas[iFldValue]=fVal;    
+                filterFieldValueAllSchemas=LPArray.addValueToArray1D(filterFieldValueAllSchemas, fVal);
             }
         }               
         try{
