@@ -16,11 +16,9 @@ import databases.SqlStatement;
 import databases.TblsAppProcDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData.TablesData;
-import databases.TblsDataAudit;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsTesting;
-import static databases.TblsTesting.getScriptPublicFieldNames;
 import databases.TblsTrazitDocTrazit;
 import databases.features.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
@@ -111,7 +109,12 @@ public class TestingServer extends HttpServlet {
             out.println("Decrypted back: "+decryptVal[decryptVal.length-1].toString());
             
             Rdbms.stablishDBConection("labplanet"); 
-            String[] scriptPublicFieldNames = TblsTesting.getScriptPublicFieldNames("em-demo-a");
+
+            Token token=null;
+            String myToken = "eyJ1c2VyREIiOiJ3YXRlciIsImVTaWduIjoiZWxvY28iLCJ1c2VyREJQYXNzd29yZCI6ImxvY28iLCJkYk5hbWUiOiJsYWJwbGFuZXQiLCJ1c2VyX3Byb2NlZHVyZXMiOiJbcHJvYy1kZXBsb3ldIiwidHlwIjoiSldUIiwiYXBwU2Vzc2lvbklkIjoiMjIxOTUiLCJhcHBTZXNzaW9uU3RhcnRlZERhdGUiOiJXZWQgQXVnIDE3IDAxOjM2OjMzIFVUQyAyMDIyIiwidXNlclJvbGUiOiJjb29yZGluYXRvciIsInVzZXJfcHJvY2VkdXJlX2hhc2hjb2RlcyI6InByb2MtZGVwbG95KjEqNjc4OSIsImFsZyI6IkhTMjU2IiwiaW50ZXJuYWxVc2VySUQiOiI5In0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.1Sxz5EXqdpwdHP4Qh8NlwbiyTuS6t3aepcMfYrn3s3w";
+            token = new Token(myToken);
+            JSONArray newProcedureDefinition = AppProcedureListAPI.newProcedureDefinition(token, "proc-deploy");
+            //String[] scriptPublicFieldNames = TblsTesting.getScriptPublicFieldNames("em-demo-a");
 if (1==1)return;           
         JSONObject procedure=new JSONObject();
         JSONArray procEventsIconsDown = new JSONArray(); 
@@ -134,8 +137,8 @@ Object[] prepUpQuery2 = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), c
 if (1==1) return;            
         Object[][] procEvent = Rdbms.getRecordFieldsByFilter("proc-deploy-procedure", TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
             new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.TYPE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()}, 
-            new String[]{"ER-FQ", "coordinator",AppProcedureListAPI.elementType.TREE_LIST.toString().toLowerCase().replace("_","-")+"|"+AppProcedureListAPI.elementType.ICONS_GROUP.toString().toLowerCase().replace("_","-")}, 
-            procEventFldNameArray, new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.PARENT_NAME.getName(), TblsProcedure.ProcedureEvents.POSITION.getName(), TblsProcedure.ProcedureEvents.BRANCH_LEVEL.getName()});
+            new String[]{"ER-FQ", "coordinator",AppProcedureListAPI.elementType.SIMPLE.toString().toLowerCase()+"|"+AppProcedureListAPI.elementType.TWOICONS.toString().toLowerCase()}, 
+            procEventFldNameArray, new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.POSITION.getName()});
         JSONObject procEventSopDetail = new JSONObject();
         for (Object[] procEvent1: procEvent){
             procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameArray, procEvent1, null);
@@ -645,7 +648,7 @@ out.println("Bye");
 
             if ((Boolean) isConnected[0]){out.println("Connected to the db !:)");
             }else{out.println("NOT Connected to the db :( "+ Arrays.toString(isConnected));}
-            Token token = new Token("eyJ1c2VyREIiOiJtYXJjIiwiZVNpZ24iOiJ2YWxlZSIsInVzZXJEQlBhc3N3b3JkIjoiYXVsaW4iLCJ1c2VyX3Byb2NlZHVyZXMiOiJbZW0tZGVtby1hXSIsInR5cCI6IkpXVCIsImFwcFNlc3Npb25JZCI6IjExNTQxIiwiYXBwU2Vzc2lvblN0YXJ0ZWREYXRlIjoiVHVlIFNlcCAwOCAyMjoyNDoxNyBDRVNUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEyIn0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.IOclIuaUZ-OhyTif3Mmmt4r9m8F9PYC2ECZ4coX3Jno");
+            token = new Token("eyJ1c2VyREIiOiJtYXJjIiwiZVNpZ24iOiJ2YWxlZSIsInVzZXJEQlBhc3N3b3JkIjoiYXVsaW4iLCJ1c2VyX3Byb2NlZHVyZXMiOiJbZW0tZGVtby1hXSIsInR5cCI6IkpXVCIsImFwcFNlc3Npb25JZCI6IjExNTQxIiwiYXBwU2Vzc2lvblN0YXJ0ZWREYXRlIjoiVHVlIFNlcCAwOCAyMjoyNDoxNyBDRVNUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEyIn0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.IOclIuaUZ-OhyTif3Mmmt4r9m8F9PYC2ECZ4coX3Jno");
             out.println("Today in Date format: "+LPDate.getTimeStampLocalDate().toString());
             //out.println("Today in DateTime format: "+LPDate.getDateTimeLocalDate().toString());
 /*            
@@ -843,7 +846,7 @@ String holidaysCalendar="España Comunidad X 2019";
 //Structured Batches. End
             
             out.println("Before creating the token");
-            String myToken = token.createToken(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, "3", "Admin", "", "", "", null);
+            myToken = token.createToken(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, "3", "Admin", "", "", "", null);
             out.println("Token created: "+myToken);
             
             out.println("Reading web text file");
