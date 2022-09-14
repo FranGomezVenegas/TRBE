@@ -89,7 +89,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 return;                   
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            if (argValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{argValues[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
