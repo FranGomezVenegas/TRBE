@@ -78,7 +78,9 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
                 //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects, null),
         GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY("GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY", "", new LPAPIArguments[]{
@@ -293,7 +295,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY:
                     String[] vwFlds=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());
-                    Integer sampleId = (Integer) argValues[0];  
+                    Integer sampleId = Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
                     String[] resultFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL"));
                     EnumIntViewFields[] fldsToGet= EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL");
                     resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
@@ -301,22 +303,22 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     String[] sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
                     Object[] sampleAnalysisWhereFieldsValueArr = new Object[]{sampleId};
 
-                    String sampleAnalysisWhereFieldsName = argValues[2].toString();
+                    String sampleAnalysisWhereFieldsName = LPNulls.replaceNull(argValues[2]).toString();
                     if ( (sampleAnalysisWhereFieldsName!=null ) && (sampleAnalysisWhereFieldsName.length()>0) ) 
                         sampleAnalysisWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
-                    String sampleAnalysisWhereFieldsValue = argValues[3].toString();
+                    String sampleAnalysisWhereFieldsValue = LPNulls.replaceNull(argValues[3]).toString();
                     if ( (sampleAnalysisWhereFieldsValue!=null) && (sampleAnalysisWhereFieldsValue.length()>0) )
                         sampleAnalysisWhereFieldsValueArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
 
-                    String sarWhereFieldsName = argValues[4].toString();
+                    String sarWhereFieldsName = LPNulls.replaceNull(argValues[4]).toString();
                     if ( (sarWhereFieldsName!=null ) && (sarWhereFieldsName.length()>0) ) 
                         sampleAnalysisWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sarWhereFieldsName.split("\\|"));
-                    String sarWhereFieldsValue = argValues[5].toString();
+                    String sarWhereFieldsValue = LPNulls.replaceNull(argValues[5]).toString();
                     if ( (sarWhereFieldsValue!=null) && (sarWhereFieldsValue.length()>0) )
                         sampleAnalysisWhereFieldsValueArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
                     
                     String[] sortFieldsNameArr = null;
-                    String sortFieldsName = argValues[6].toString();
+                    String sortFieldsName = LPNulls.replaceNull(argValues[6]).toString();
                     if ( (sortFieldsName!=null) && (sortFieldsName.length()>0) ) 
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     else
@@ -1088,7 +1090,8 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         new Object[]{"Incubation", true, true}, null);
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(smpArr[0][0].toString())){
                         for (Object[] curSmp: smpArr){
-                            jArr.add(LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp));
+                            JSONObject curRecordJObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp);
+                            jArr.add(curRecordJObj);
                         }
                     }
                     jObj.put("samples_stillIncubationStageAndBothIncubCompleted", jArr);
@@ -1173,12 +1176,32 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             JSONObject incubRow = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp);
                             Integer incub1Passed=LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsEnvMonitData.Sample.INCUBATION_PASSED.getName());
                             if (incub1Passed>-1){
+                                String currPendingIncubBatch="";
                                 String incub1PassedStr=LPNulls.replaceNull(curSmp[incub1Passed]).toString();
-                                if (Boolean.valueOf(incub1PassedStr))
+                                if (Boolean.valueOf(incub1PassedStr)){
                                     incubRow.put("pending_incub", 2);
-                                else
+                                    Integer valuePosicInArray = LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION2_PASSED.getName());
+                                }else{
+                                    Integer valuePosicInArray = LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION_PASSED.getName());
                                     incubRow.put("pending_incub", 1);
+                                }
+                                currPendingIncubBatch= curSmp[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION2_BATCH.getName())].toString();
+                                incubRow.put("current_pending_incub_batch",currPendingIncubBatch);
                             }
+                            
+                            
+/*                            
+                            if (valuePosicInArray>-1 &&                                                                 
+                                (Boolean.valueOf(curSmp[valuePosicInArray].toString())))
+                                    
+                            valuePosicInArray = LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION_PASSED.getName());                            
+                            if (valuePosicInArray>-1 &&                                                                 
+                                (Boolean.valueOf(curSmp[valuePosicInArray].toString())))
+                                    currPendingIncubBatch= curSmp[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION_BATCH.getName())].toString();                                                                    
+                            
+*/                            
+                            
+                            
                             jArr.add(incubRow);
                         }
                         jObj.put("samplesWithAnyPendingIncubation", jArr);
@@ -1495,7 +1518,7 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
             return new Object[]{fldNameArr, fldValueArr};
         }catch(Exception e){
             String erMsg=e.getMessage();
-            return new Object[]{"ERROR", e.getMessage()};            
+            return new Object[]{new String[]{"ERROR"}, e.getMessage()};            
         }
     }
 
