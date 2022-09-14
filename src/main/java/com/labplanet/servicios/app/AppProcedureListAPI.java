@@ -133,13 +133,14 @@ public class AppProcedureListAPI extends HttpServlet {
 
                         String propValue = "NO";
 
-                        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
+                        Object[][] rulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
                             new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.AREA.getName()},
-                            new Object[]{UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getAreaName()}, 
-                            new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
-                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))
-                            propValue=ruleValue[0][0].toString();
-                        procedure.put(UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName(), propValue);
+                            new Object[]{UserSop.UserSopBusinessRules.USERSOP_MODE.getTagName(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getAreaName()}, 
+                            new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});                        
+                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesInfo[0][0].toString())){
+                            for (Object[] curRule: rulesInfo)                            
+                                procedure.put(curRule[0].toString(), curRule[1].toString());
+                        }
                         procedure.put(LABEL_PROC_SCHEMA, curProc);
 
                         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}      
