@@ -456,7 +456,7 @@ public class SampleAPIParams extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST="sample_id|test_id|result_id|param_name|limit_id"; 
+    public static final String MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST="sample_id|test_id|result_id|param_name|limit_id|param_type|spec_eval|spec_eval_detail|method_name|method_version|is_locked|warning_reason"; 
 
     /**
      *
