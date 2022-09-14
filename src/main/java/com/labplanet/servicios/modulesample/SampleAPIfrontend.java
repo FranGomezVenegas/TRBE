@@ -397,7 +397,11 @@ public class SampleAPIfrontend extends HttpServlet {
                     String resultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE);
                     String[] resultFieldToRetrieveArr=null;
                     if (resultFieldToRetrieve!=null){resultFieldToRetrieveArr=  resultFieldToRetrieve.split("\\|");}
-                    resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
+                    else{
+                        resultFieldToRetrieveArr= EnumIntViewFields.getAllFieldNames(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewFields());
+                        //resultFieldToRetrieveArr=EnumIntTableFields.getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableFields());
+                    }
+                    //resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
                     sampleAnalysisWhereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME); 
                     sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
                     if ( (sampleAnalysisWhereFieldsName!=null) && (sampleAnalysisWhereFieldsName.length()>0) ) {
@@ -443,9 +447,10 @@ public class SampleAPIfrontend extends HttpServlet {
                 case SAMPLES_PENDING_TESTINGGROUP_REVISION:
                     String testingGroup=argValues[0].toString();
                     fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE); 
-                    if (fieldToRetrieve==null || fieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldToRetrieve))
-                        fieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleTestingGroup.values());
-                    else
+                    if (fieldToRetrieve==null || fieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldToRetrieve)){
+                        EnumIntViewFields[] viewFieldsFromString = EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW, "ALL");
+                        fieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(viewFieldsFromString);
+                    }else
                         
                         fieldToRetrieveArr=fieldToRetrieve.split("\\|");
                     
@@ -468,9 +473,12 @@ public class SampleAPIfrontend extends HttpServlet {
                     sampleFieldToRetrieve = argValues[0].toString();
                     sampleFieldToRetrieveArr = new String[]{TblsData.Sample.SAMPLE_ID.getName()};
                     
-                    if ((sampleFieldToRetrieve==null) || (sampleFieldToRetrieve.length()==0) || ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) )
-                        sampleFieldToRetrieveArr=getAllFieldNames(TblsData.TablesData.SAMPLE.getTableFields());
-                    else
+                    if ((sampleFieldToRetrieve==null) || (sampleFieldToRetrieve.length()==0) || ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) ){
+
+                        EnumIntTableFields[] tableFieldsFromString = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, "ALL");
+                        sampleFieldToRetrieveArr=EnumIntTableFields.getAllFieldNames(tableFieldsFromString);
+                        
+                    }else
                         sampleFieldToRetrieveArr=LPArray.addValueToArray1D(sampleFieldToRetrieveArr, sampleFieldToRetrieve.split("\\|"));
                       
                     myData = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
