@@ -43,7 +43,7 @@ public class ClassInvestigationController {
                     endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
             HttpServletRequest query= hmQuery.keySet().iterator().next();   
             argsForLogFiles = hmQuery.get(query);
-            for (int inumArg=argsForLogFiles.length+4;inumArg<table1NumArgs;inumArg++){
+            for (int inumArg=argsForLogFiles.length+3;inumArg<table1NumArgs;inumArg++){
                 argsForLogFiles=LPArray.addValueToArray1D(argsForLogFiles, "");
             }
             this.functionFound=true;
