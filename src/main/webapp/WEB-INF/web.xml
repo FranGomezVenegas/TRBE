@@ -117,9 +117,6 @@
         <servlet-name>EnvMonitSampleAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonitSampleAPIfrontend</servlet-class>
     </servlet>
-    <!--// testing for the Platform. End  
-    
-// testing for the Config. Begin -->
     <servlet>
         <servlet-name>ProcedureDeployment</servlet-name>
         <servlet-class>com.labplanet.servicios.testing.platform.ProcedureDeployment</servlet-class>
@@ -326,17 +323,6 @@
         <servlet-name>PlatformAdminActions</servlet-name>
         <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminActions</servlet-class>
     </servlet>
-    <servlet-mapping>
-        <servlet-name>DownloadFileServlet</servlet-name>
-        <url-pattern>/DownloadFileServlet</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TestingConfigSop</servlet-name>
-        <url-pattern>/testing/config/Sop</url-pattern>
-    </servlet-mapping>
-    <!--/ testing for the Config. End    
-// testing for the Data. Begin -->
-    <!--/// testing for the Data. End   -->
     <servlet>
         <servlet-name>SavedQueries</servlet-name>
         <servlet-class>com.labplanet.servicios.app.SavedQueriesAPI</servlet-class>
@@ -345,41 +331,86 @@
         <servlet-name>SavedQueriesAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.app.SavedQueriesAPIfrontend</servlet-class>
     </servlet>
+
+<!-- Start mapping and urls block -->
+
+<!-- Block #1. App Platform Begin. -->
     <servlet-mapping>
-        <servlet-name>TestingUOMConversionTable</servlet-name>
-        <url-pattern>/testing/config/UOMConversionTable</url-pattern>
+        <servlet-name>AuthenticationAPI</servlet-name>
+        <url-pattern>/frontend/AuthenticationAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestingUOMFamilyTable</servlet-name>
-        <url-pattern>/testing/config/UOMFamilyTable</url-pattern>
+        <servlet-name>AppTrazitInitSession</servlet-name>
+        <url-pattern>/AppTrazitInitSession</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ProcedureDeployment</servlet-name>
-        <url-pattern>/testing/platform/ProcedureDeployment</url-pattern>
+        <servlet-name>PlatformAdminQueries</servlet-name>
+        <url-pattern>/app/PlatformAdminQueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AuthenticationAPIParams</servlet-name>
-        <url-pattern>/AuthenticationAPIParams</url-pattern>
+        <servlet-name>PlatformAdminActions</servlet-name>
+        <url-pattern>/app/PlatformAdminActions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GlobalAPIsParams</servlet-name>
-        <url-pattern>/GlobalAPIsParams</url-pattern>
+        <servlet-name>AppHeaderAPI</servlet-name>
+        <url-pattern>/frontend/AppHeaderAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>SopUser</servlet-name>
-        <url-pattern>/app/SopUserAPI</url-pattern>
+        <servlet-name>AppProcedureListAPI</servlet-name>
+        <url-pattern>/frontend/AppProcedureListAPI</url-pattern>
+    </servlet-mapping>    
+    <servlet-mapping>
+        <servlet-name>ResponseSuccess</servlet-name>
+        <url-pattern>/ResponseSuccess</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CertifyAPIfrontend</servlet-name>
-        <url-pattern>/app/frontend/CertifyAPIfrontend</url-pattern>
+        <servlet-name>ResponseError</servlet-name>
+        <url-pattern>/ResponseError</url-pattern>
+    </servlet-mapping>    
+<!-- Block #1. App Platform End. -->
+
+<!-- Block #2. App Proc Managements Area Begin.-->
+    <servlet-mapping>
+        <servlet-name>RequirementsProcedureDefinitionAPIQueries</servlet-name>
+        <url-pattern>/appProcMgr/RequirementsProcedureDefinitionAPIQueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CertifyAnalysisMethod</servlet-name>
-        <url-pattern>/app/CertifyAnalysisMethodAPI</url-pattern>
+        <servlet-name>RequirementsProcedureDefinitionAPIActions</servlet-name>
+        <url-pattern>/appProcMgr/RequirementsProcedureDefinitionAPIActions</url-pattern>
+    </servlet-mapping>
+<!-- Block #2. App Proc Managements Area End.-->
+
+<!-- Block 3# App Platform Modules Begin. -->
+    <servlet-mapping>
+        <servlet-name>SavedQueries</servlet-name>
+        <url-pattern>/app/SavedQueriesAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestingServer</servlet-name>
-        <url-pattern>/app/TestingServer</url-pattern>
+        <servlet-name>SavedQueriesAPIfrontend</servlet-name>
+        <url-pattern>/frontend/SavedQueriesAPIfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>VideoTutorialAPIfrontend</servlet-name>
+        <url-pattern>/frontend/VideoTutorialAPIfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserSessionAPIfrontend</servlet-name>
+        <url-pattern>/frontend/UserSessionAPIfrontend</url-pattern>
+    </servlet-mapping>
+<!-- Block 3# App Platform Modules End. -->
+
+<!-- Block 4# App Modules/Procedures Deployment Begin. -->
+    <servlet-mapping>
+        <servlet-name>ModuleDefinitionAPI</servlet-name>
+        <url-pattern>/app/ModuleDefinitionAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingCoverageRun</servlet-name>
+        <url-pattern>/testing/platform/TestingCoverageRun</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EndpointsDocAPIqueries</servlet-name>
+        <url-pattern>/Doc/EndpointsDocAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PlatformDefinitionToInstance</servlet-name>
@@ -388,71 +419,46 @@
     <servlet-mapping>
         <servlet-name>ProcedureDefinitionToInstance</servlet-name>
         <url-pattern>/ProcedureDefinitionToInstance</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>    
+<!-- Block 4# App Modules Deployment End. -->
+
+<!-- Block 5# Modules Master Data definition Begin. -->
     <servlet-mapping>
-        <servlet-name>DbTestingLimitAndResult</servlet-name>
-        <url-pattern>/testing/config/db/DbTestingLimitAndResult</url-pattern>
+        <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
+        <url-pattern>/modules/ConfigMasterDataAPI</url-pattern>
     </servlet-mapping>
+<!-- Block 5# Modules Master Data definition End. -->
+
+<!-- Block 6# Testing Begin. -->
     <servlet-mapping>
-        <servlet-name>TestingConfigSamplingPlanStructure</servlet-name>
-        <url-pattern>/testing/config/SamplingPlanStructure</url-pattern>
+        <servlet-name>TestingRegressionUAT</servlet-name>
+        <url-pattern>/testing/platform/TestingRegressionUAT</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TestingResultCheckSpecQualitative</servlet-name>
-        <url-pattern>/testing/config/ResultCheckSpecQualitative</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TestingResultCheckSpecQuantitative</servlet-name>
-        <url-pattern>/testing/config/ResultCheckSpecQuantitative</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ResponseSuccess</servlet-name>
-        <url-pattern>/ResponseSuccess</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TstDataSample</servlet-name>
-        <url-pattern>/testing/db/TstDataSample</url-pattern>
-    </servlet-mapping>
+<!-- Block 6# Testing End. -->
+        
+    
+<!-- Block 7# Modules Begin. -->
+
+<!-- Block 7.1 Samples Module Begin. -->
     <servlet-mapping>
         <servlet-name>SampleAPI</servlet-name>
         <url-pattern>/modulesample/SampleAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AuthenticationAPI</servlet-name>
-        <url-pattern>/frontend/AuthenticationAPI</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AppHeaderAPI</servlet-name>
-        <url-pattern>/frontend/AppHeaderAPI</url-pattern>
-    </servlet-mapping>
+        <servlet-name>SampleAPIParams</servlet-name>
+        <url-pattern>/modulesample/SampleAPIParams</url-pattern>
+    </servlet-mapping>    
     <servlet-mapping>
         <servlet-name>SampleAPIfrontend</servlet-name>
         <url-pattern>/frontend/SampleAPIfrontEnd</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AppProcedureListAPI</servlet-name>
-        <url-pattern>/frontend/AppProcedureListAPI</url-pattern>
+        <servlet-name>TestingSamples</servlet-name>
+        <url-pattern>/testing/moduleSamples/TestingSamples</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SopUserAPIfrontend</servlet-name>
-        <url-pattern>/frontend/SopUserAPIfrontend</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>AnalysisMethodCertifUserAPIfrontend</servlet-name>
-        <url-pattern>/frontend/AnalysisMethodCertifUserAPIfrontend</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TstDataBatchArrSequence</servlet-name>
-        <url-pattern>/testing/db/TstDataBatchArrSequence</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>BatchAPI</servlet-name>
-        <url-pattern>/modulebatch/BatchAPI</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TstDataEnvMonit</servlet-name>
-        <url-pattern>/testing/db/TstDataEnvMonit</url-pattern>
-    </servlet-mapping>
+<!-- Block 7.1 Samples Module End. -->
+
+<!-- Block 7.2 Environmental Monitoring Module Begin. -->
     <servlet-mapping>
         <servlet-name>EnvMonAPI</servlet-name>
         <url-pattern>/moduleenvmon/EnvMonAPI</url-pattern>
@@ -460,14 +466,6 @@
     <servlet-mapping>
         <servlet-name>EnvMonitSampleAPIfrontend</servlet-name>
         <url-pattern>/moduleenvmon/frontend/EnvMonSampleAPIfrontend</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ResponseError</servlet-name>
-        <url-pattern>/ResponseError</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SampleAPIParams</servlet-name>
-        <url-pattern>/modulesample/SampleAPIParams</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EnvMonSampleAPI</servlet-name>
@@ -489,6 +487,21 @@
         <servlet-name>EnvMonIncubBatchAPIfrontend</servlet-name>
         <url-pattern>/moduleenvmon/frontend/EnvMonIncubBatchAPIfrontend</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EnvMonAPIfrontend</servlet-name>
+        <url-pattern>/moduleenvmon/frontend/EnvMonAPIfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EnvMonAPIStats</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonAPIstats</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingEnvMonitSamples</servlet-name>
+        <url-pattern>/testing/moduleEnvMonit/TestingEnvMonitSamples</url-pattern>
+    </servlet-mapping>
+<!-- Block 7.2 Environmental Monitoring Module End. -->
+
+<!-- Block 7.3 Genoma Module Begin. -->
     <servlet-mapping>
         <servlet-name>TablesDeployment</servlet-name>
         <url-pattern>/modulegenome/TablesDeployment</url-pattern>
@@ -518,41 +531,47 @@
         <url-pattern>/modulegenoma/GenomaStudyObjectsVariablesAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestingConfigSpecQuantitativeRuleFormat</servlet-name>
-        <url-pattern>/testing/config/testingConfigSpecQualitativeRuleFormat</url-pattern>
+        <servlet-name>TestingGenoma</servlet-name>
+        <url-pattern>/testing/moduleGenoma/TestingGenoma</url-pattern>
+    </servlet-mapping>
+<!-- Block 7.3 Genoma Module End. -->
+
+<!-- Block 7.5 Inspection Lots Module Begin. -->
+    <servlet-mapping>
+        <servlet-name>InspLotRMAPI</servlet-name>
+        <url-pattern>/moduleinsplotrm/InspLotRMAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestingConfigSpecQualitativeRuleFormat</servlet-name>
-        <url-pattern>/testing/config/testingConfigSpecQuantitativeRuleFormat</url-pattern>
+        <servlet-name>InspLotRMAPIfrontend</servlet-name>
+        <url-pattern>/moduleinsplotrm/InspLotRMAPIfrontend</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TesterFromUploadFile</servlet-name>
-        <url-pattern>/testing/platform/TesterFromUploadFile</url-pattern>
+        <servlet-name>TestingInspLotRM</servlet-name>
+        <url-pattern>/testing/moduleInspLotRM/TestingInspLotRM</url-pattern>
+    </servlet-mapping>
+<!-- Block 7.5 Inspection Lots Module End. -->
+<!-- Block 7# Modules End -->
+
+
+
+
+
+
+
+
+<!-- Block 8# Generic or Common Modules Begin -->
+<!-- Block 8.1 Investigation Module Begin. -->
+    <servlet-mapping>
+        <servlet-name>InvestigationAPI</servlet-name>
+        <url-pattern>/app/InvestigationAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestingRegressionUAT</servlet-name>
-        <url-pattern>/testing/platform/TestingRegressionUAT</url-pattern>
+        <servlet-name>InvestigationAPIfrontend</servlet-name>
+        <url-pattern>/frontend/InvestigationAPIfrontend</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TestingAPIActions</servlet-name>
-        <url-pattern>/testing/platform/TestingAPIActions</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>HolidayCalendarAPIactions</servlet-name>
-        <url-pattern>/app/HolidayCalendarAPIactions</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>HolidayCalendarAPIqueries</servlet-name>
-        <url-pattern>/app/HolidayCalendarAPIqueries</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>IncidentAPI</servlet-name>
-        <url-pattern>/app/IncidentAPI</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>IncidentAPIfrontend</servlet-name>
-        <url-pattern>/frontend/IncidentAPIfrontend</url-pattern>
-    </servlet-mapping>
+<!-- Block 8.1 Investigation Module End. -->
+
+<!-- Block 8.2 Instruments Module Begin. -->
     <servlet-mapping>
         <servlet-name>InstrumentsAPIactions</servlet-name>
         <url-pattern>/app/procs/InstrumentsAPIactions</url-pattern>
@@ -565,98 +584,138 @@
         <servlet-name>TestingPlatformInstruments</servlet-name>
         <url-pattern>/testing/app/TestingPlatformInstruments</url-pattern>
     </servlet-mapping>
+<!-- Block 8.2 Instruments Module End. -->
+    
+<!-- Block 8.3 SOPs Module Begin. -->
     <servlet-mapping>
-        <servlet-name>TestingInspLotRM</servlet-name>
-        <url-pattern>/testing/moduleInspLotRM/TestingInspLotRM</url-pattern>
+        <servlet-name>SopUser</servlet-name>
+        <url-pattern>/app/SopUserAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestingEnvMonitSamples</servlet-name>
-        <url-pattern>/testing/moduleEnvMonit/TestingEnvMonitSamples</url-pattern>
+        <servlet-name>CertifyAPIfrontend</servlet-name>
+        <url-pattern>/app/frontend/CertifyAPIfrontend</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestingSamples</servlet-name>
-        <url-pattern>/testing/moduleSamples/TestingSamples</url-pattern>
+        <servlet-name>CertifyAnalysisMethod</servlet-name>
+        <url-pattern>/app/CertifyAnalysisMethodAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestingGenoma</servlet-name>
-        <url-pattern>/testing/moduleGenoma/TestingGenoma</url-pattern>
+        <servlet-name>SopUserAPIfrontend</servlet-name>
+        <url-pattern>/frontend/SopUserAPIfrontend</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonAPIStats</servlet-name>
-        <url-pattern>/moduleenvmon/EnvMonAPIstats</url-pattern>
+        <servlet-name>AnalysisMethodCertifUserAPIfrontend</servlet-name>
+        <url-pattern>/frontend/AnalysisMethodCertifUserAPIfrontend</url-pattern>
+    </servlet-mapping>    
+<!-- Block 8.3 SOPs Module End. -->
+    
+<!-- Block 8.4 Holidays Calendar Module Begin. -->
+    <servlet-mapping>
+        <servlet-name>HolidayCalendarAPIactions</servlet-name>
+        <url-pattern>/app/HolidayCalendarAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>RequirementsProcedureDefinitionAPIQueries</servlet-name>
-        <url-pattern>/appProcMgr/RequirementsProcedureDefinitionAPIQueries</url-pattern>
+        <servlet-name>HolidayCalendarAPIqueries</servlet-name>
+        <url-pattern>/app/HolidayCalendarAPIqueries</url-pattern>
+    </servlet-mapping>
+<!-- Block 8.4 Holidays Calendar Module End. -->    
+
+<!-- Block 8.5 Incidents Module Begin. -->
+    <servlet-mapping>
+        <servlet-name>IncidentAPI</servlet-name>
+        <url-pattern>/app/IncidentAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>RequirementsProcedureDefinitionAPIActions</servlet-name>
-        <url-pattern>/appProcMgr/RequirementsProcedureDefinitionAPIActions</url-pattern>
+        <servlet-name>IncidentAPIfrontend</servlet-name>
+        <url-pattern>/frontend/IncidentAPIfrontend</url-pattern>
+    </servlet-mapping>
+<!-- Block 8.5 Incidents Module End -->
+    
+<!-- Block 8# Generic or Common Modules End -->
+
+
+<!-- Servlets not sorted yet -->
+    <servlet-mapping>
+        <servlet-name>BatchAPI</servlet-name>
+        <url-pattern>/modulebatch/BatchAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
-        <url-pattern>/modules/ConfigMasterDataAPI</url-pattern>
+        <servlet-name>AuthenticationAPIParams</servlet-name>
+        <url-pattern>/AuthenticationAPIParams</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>ModuleDefinitionAPI</servlet-name>
-        <url-pattern>/app/ModuleDefinitionAPI</url-pattern>
+        <servlet-name>GlobalAPIsParams</servlet-name>
+        <url-pattern>/GlobalAPIsParams</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonAPIfrontend</servlet-name>
-        <url-pattern>/moduleenvmon/frontend/EnvMonAPIfrontend</url-pattern>
+        <servlet-name>ProcedureDeployment</servlet-name>
+        <url-pattern>/testing/platform/ProcedureDeployment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>InvestigationAPI</servlet-name>
-        <url-pattern>/app/InvestigationAPI</url-pattern>
+        <servlet-name>DownloadFileServlet</servlet-name>
+        <url-pattern>/DownloadFileServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>InvestigationAPIfrontend</servlet-name>
-        <url-pattern>/frontend/InvestigationAPIfrontend</url-pattern>
+        <servlet-name>TestingConfigSop</servlet-name>
+        <url-pattern>/testing/config/Sop</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>SavedQueries</servlet-name>
-        <url-pattern>/app/SavedQueriesAPI</url-pattern>
+        <servlet-name>TestingUOMConversionTable</servlet-name>
+        <url-pattern>/testing/config/UOMConversionTable</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>SavedQueriesAPIfrontend</servlet-name>
-        <url-pattern>/frontend/SavedQueriesAPIfrontend</url-pattern>
+        <servlet-name>TestingUOMFamilyTable</servlet-name>
+        <url-pattern>/testing/config/UOMFamilyTable</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>VideoTutorialAPIfrontend</servlet-name>
-        <url-pattern>/frontend/VideoTutorialAPIfrontend</url-pattern>
+        <servlet-name>TestingServer</servlet-name>
+        <url-pattern>/app/TestingServer</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UserSessionAPIfrontend</servlet-name>
-        <url-pattern>/frontend/UserSessionAPIfrontend</url-pattern>
+        <servlet-name>DbTestingLimitAndResult</servlet-name>
+        <url-pattern>/testing/config/db/DbTestingLimitAndResult</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>InspLotRMAPI</servlet-name>
-        <url-pattern>/moduleinsplotrm/InspLotRMAPI</url-pattern>
+        <servlet-name>TestingConfigSamplingPlanStructure</servlet-name>
+        <url-pattern>/testing/config/SamplingPlanStructure</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>InspLotRMAPIfrontend</servlet-name>
-        <url-pattern>/moduleinsplotrm/InspLotRMAPIfrontend</url-pattern>
+        <servlet-name>TestingResultCheckSpecQualitative</servlet-name>
+        <url-pattern>/testing/config/ResultCheckSpecQualitative</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AppTrazitInitSession</servlet-name>
-        <url-pattern>/AppTrazitInitSession</url-pattern>
+        <servlet-name>TestingResultCheckSpecQuantitative</servlet-name>
+        <url-pattern>/testing/config/ResultCheckSpecQuantitative</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EndpointsDocAPIqueries</servlet-name>
-        <url-pattern>/Doc/EndpointsDocAPIqueries</url-pattern>
+        <servlet-name>TstDataSample</servlet-name>
+        <url-pattern>/testing/db/TstDataSample</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>TestingCoverageRun</servlet-name>
-        <url-pattern>/testing/platform/TestingCoverageRun</url-pattern>
+        <servlet-name>TstDataBatchArrSequence</servlet-name>
+        <url-pattern>/testing/db/TstDataBatchArrSequence</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>PlatformAdminQueries</servlet-name>
-        <url-pattern>/app/PlatformAdminQueries</url-pattern>
+        <servlet-name>TstDataEnvMonit</servlet-name>
+        <url-pattern>/testing/db/TstDataEnvMonit</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>PlatformAdminActions</servlet-name>
-        <url-pattern>/app/PlatformAdminActions</url-pattern>
+        <servlet-name>TestingConfigSpecQuantitativeRuleFormat</servlet-name>
+        <url-pattern>/testing/config/testingConfigSpecQualitativeRuleFormat</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingConfigSpecQualitativeRuleFormat</servlet-name>
+        <url-pattern>/testing/config/testingConfigSpecQuantitativeRuleFormat</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TesterFromUploadFile</servlet-name>
+        <url-pattern>/testing/platform/TesterFromUploadFile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingAPIActions</servlet-name>
+        <url-pattern>/testing/platform/TestingAPIActions</url-pattern>
+    </servlet-mapping>
+
     <session-config>
         <session-timeout>
             30
