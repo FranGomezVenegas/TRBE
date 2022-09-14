@@ -293,7 +293,9 @@ public class SopUserAPIfrontend extends HttpServlet {
         }else
             fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndMetaDataSopView.values());
         
-        fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
+        Integer procedureFldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
+        if (procedureFldPosic==-1)        
+            fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
         UserSop userSop = new UserSop();                               
         Object[][] userSops = UserSop.getUserProfileFieldValues( 
                 new String[]{TblsData.ViewUserAndMetaDataSopView.USER_ID.getName()}, new Object[]{token.getPersonName()}, fieldsToRetrieve, allUserProcedurePrefix);
@@ -311,7 +313,11 @@ public class SopUserAPIfrontend extends HttpServlet {
         //JSONObject columns = new JSONObject();        
         for (Object[] curSop: userSops){
             JSONObject sop = new JSONObject();
+            procedureFldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
+            if (procedureFldPosic>-1)
+              curSop[procedureFldPosic]=curSop[procedureFldPosic].toString().replace("-config", "");
             sop=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curSop);
+            
             sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curSop));                            
             
 /*            Boolean columnsCreated =false;
