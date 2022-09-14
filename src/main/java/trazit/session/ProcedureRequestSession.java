@@ -513,6 +513,8 @@ return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_F
      * @return the dbLogSummary
      */
     public DbLogSummary getDbLogSummary() {
+        if (dbLogSummary==null)
+            this.dbLogSummary=new DbLogSummary();
         return dbLogSummary;
     }
 
