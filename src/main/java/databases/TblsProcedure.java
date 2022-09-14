@@ -123,26 +123,22 @@ public class TblsProcedure {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
 
-    /**
-     *
-     */
     public enum ProcedureEvents implements EnumIntTableFields{
         NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.stringNotNull(), null, null, null, null),
         MODE("mode", LPDatabase.string(), null, null, null, null),
         TYPE("type", LPDatabase.string(), null, null, null, null),
-        BRANCH_LEVEL("branch_level", LPDatabase.string(), null, null, null, null),
         LABEL_EN("label_en", LPDatabase.string(), null, null, null, null),
         LABEL_ES("label_es", LPDatabase.string(), null, null, null, null),
         ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
+        //PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),        
+        POSITION("position", LPDatabase.string(), null, null, null, null),
         SOP("sop", LPDatabase.string(), null, null, null, null),
         ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld(), null, null, null, null),
         USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
-        LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
         ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null),
-        ICON_NAME_WHENNOTCERTIF("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null),        
-        POSITION("position", LPDatabase.string(), null, null, null, null),
-        PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),        
+        ICON_NAME_WHENNOTCERTIF("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null)
         ;
         private ProcedureEvents(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
