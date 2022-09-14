@@ -82,8 +82,8 @@ public class ClassInstruments {
                     String fieldValue=argValues[9].toString();
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldName!=null&&fieldName.length()>0) fieldNames = fieldName.split("\\|");
+                    if (fieldValue!=null&&fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
                         actionDiagnoses=(InternalMessage) fieldValues[1];
                     else
@@ -314,8 +314,8 @@ public class ClassInstruments {
 //                    message.addMainForError(TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
 //                    actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null,null);
 //if (1==2){
-                    String instrumentName=null;
-                    Integer auditId = (Integer) argValues[0];
+                    String instrumentName=LPNulls.replaceNull(argValues[0]).toString();
+                    Integer auditId = Integer.valueOf(LPNulls.replaceNull(argValues[1]).toString());
                     Object[][] auditInfo=QueryUtilitiesEnums.getTableData(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS,
                         EnumIntTableFields.getTableFieldsFromString(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName()}),
                         new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId}, 
