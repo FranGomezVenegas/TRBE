@@ -409,7 +409,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 JSONArray scriptStepsList = new JSONArray();
                 for (Object[] curStep: scriptStepsTblInfo){
                     JSONObject curStepObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScriptSteps, curStep);
-                    Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.ScriptSteps.ARGUMENT_01.getName());
+                    Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.ScriptSteps.ACTION_NAME.getName());
                     if (actionPosic>-1)
                         actionsList=LPArray.addValueToArray1D(actionsList, LPNulls.replaceNull(curStep[actionPosic]).toString());
                     scriptStepsList.add(curStepObj);
