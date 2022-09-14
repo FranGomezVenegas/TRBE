@@ -117,7 +117,7 @@ if (iLines==2){
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
                 instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                    new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
+                    new Object[]{iLines-numHeaderLines+1, LPNulls.replaceNull(testingContent[iLines][5]).toString()})); //print actionName
 
                 ClassProjectController clssProjectController=new ClassProjectController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                 if (clssProjectController.getFunctionFound()){

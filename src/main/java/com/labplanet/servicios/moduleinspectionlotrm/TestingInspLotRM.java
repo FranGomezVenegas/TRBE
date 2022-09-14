@@ -97,7 +97,7 @@ public class TestingInspLotRM extends HttpServlet {
                 instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                    new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
+                    new Object[]{iLines-numHeaderLines+1, LPNulls.replaceNull(testingContent[iLines][5]).toString()})); //print actionName
 
                 ClassInspLotRMController clssInspLotRMController=new ClassInspLotRMController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                 if (clssInspLotRMController.getFunctionFound()){
