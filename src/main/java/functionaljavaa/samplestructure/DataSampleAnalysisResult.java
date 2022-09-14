@@ -555,7 +555,7 @@ public class DataSampleAnalysisResult {
             return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{sampleId.toString(), schemaDataName})};
         }
         String sampleConfigCode = (String) sampleData[0][1];
-        Integer sampleConfigCodeVersion = Integer.valueOf(LPNulls.replaceNull(sampleData[0][0]).toString());
+        Integer sampleConfigCodeVersion = Integer.valueOf(LPNulls.replaceNull(sampleData[0][2]).toString());
         sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
         sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, new Object[]{sampleId, sampleConfigCode, sampleConfigCodeVersion});
 
