@@ -293,7 +293,7 @@ public class UserSop {
         
     public static final Object[][] getUserProfileFieldValues(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName){                
         //String sopView = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName();
-        String viewName = "user_and_meta_data_sop_vw"; //sopView.getViewName();
+        String viewName = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName(); //"user_and_meta_data_sop_vw"; //sopView.getViewName();
         if (fieldsToReturn.length<=0){
             String[][] getUserProfileNEW = new String[1][2];
             getUserProfileNEW[0][0]=DIAGNOSES_ERROR_CODE;
@@ -326,7 +326,8 @@ public class UserSop {
 
                 if (currProcInstanceName.contains(GlobalVariables.Schemas.DATA.getName())){
                     query.append(" from \"").append(currProcInstanceName).append("\".").append(viewName).append(" where 1=1");}
-                else{query.append(" from \"").append(currProcInstanceName).append("-data\".").append(viewName).append(" where 1=1");}
+                else{
+                    query.append(" from \"").append(currProcInstanceName.replace("\"", "")).append("-data\".").append(viewName).append(" where 1=1");}
                 for(String fFN: filterFieldName){
                     query.append(" and ").append(fFN); 
                     if (!fFN.contains("null")){query.append("= ?");}
