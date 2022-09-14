@@ -133,7 +133,7 @@ public class TestingCoverage {
         Object[] whereFldValue=new Object[]{scrId, true};
         Object[][] scriptsEndpoints = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
                 new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()+"|", TblsTesting.ScriptSteps.ACTIVE.getName()}, whereFldValue, 
-                new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.ARGUMENT_01.getName()});
+                new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.ACTION_NAME.getName()});
         //this.endpointsCoverageDetail=new JsonArray();
         JSONArray visitedjObj=new JSONArray();
         JSONArray missingjObj=new JSONArray();
