@@ -2018,7 +2018,8 @@ if (1==1){Rdbms.transactionId=1; return;}
         String schema=schemaName;
         schemaName=addSuffixIfItIsForTesting(schemaName, viewName);                   
         if (viewCategory.length()>0){
-            schema=schema+"-"+viewCategory;
+            schema=LPPlatform.buildSchemaName(schema, viewCategory).replace("\"", "");
+            //schema=schema+"-"+viewCategory;
         }
         String query="select table_schema from INFORMATION_SCHEMA.VIEWS " +
                      " where table_name=? " + " and table_schema=?";
