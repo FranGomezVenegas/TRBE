@@ -213,8 +213,7 @@ public class TblsTrazitDocModules {
         WIDGET_LABEL_ES("widget_label_es", LPDatabase.string(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.string(), null, null, null, null),
         MODE("mode", LPDatabase.string(), null, null, null, null),
-        TYPE("type", LPDatabase.string(), null, null, null, null),
-        BRANCH_LEVEL("branch_level", LPDatabase.string(), null, null, null, null),
+        TYPE("type", LPDatabase.string(), null, null, null, null),        
         ;
         private ProcedureUserRequirements(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
