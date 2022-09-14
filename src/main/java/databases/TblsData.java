@@ -775,6 +775,7 @@ public class TblsData {
         SOP_NAME(FIELDS_NAMES_SOP_NAME, LPDatabase.string(), null, null, null, null),
         USER_NAME(FIELDS_NAMES_USER_NAME, LPDatabase.string(), null, null, null, null),
         LIGHT(FIELDS_NAMES_LIGHT, LPDatabase.stringNotNull(), null, null, null, null),
+        CERTIF_EXPIRY_DATE("certif_expiry_date", LPDatabase.dateTime(), null, null, null, null),
         ;
         private UserSop(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
