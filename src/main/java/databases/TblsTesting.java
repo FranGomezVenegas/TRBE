@@ -123,6 +123,7 @@ public class TblsTesting {
         TIME_STARTED("time_started", LPDatabase.dateTime(), null, null, null, null),
         TIME_COMPLETED("time_completed", LPDatabase.dateTime(), null, null, null, null),
         TIME_CONSUME("time_consume", LPDatabase.real(), null, null, null, null),
+        ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
         ARGUMENT_01("argument_01", LPDatabase.string(), null, null, null, null),
         ARGUMENT_02("argument_02", LPDatabase.string(), null, null, null, null),
         ARGUMENT_03("argument_03", LPDatabase.string(), null, null, null, null),
