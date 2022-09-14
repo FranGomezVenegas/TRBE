@@ -13,6 +13,7 @@ import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
 import databases.TblsAppProcData.TablesAppProcData;
 import databases.TblsAppProcDataAudit;
+import databases.TblsAppProcDataAudit.TablesAppProcDataAudit;
 import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
 import functionaljavaa.instruments.InstrumentsEnums.InstrEventsErrorTrapping;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
@@ -295,8 +296,8 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         Object[] updFieldsValue = new Object[]{true, personName, LPDate.getCurrentTimeStamp()};
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsAppProcDataAudit.Instruments.AUDIT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{auditId}, "");
-	Object[] updateRecordFieldsByFilter=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENTS,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, updFieldsName), updFieldsValue, sqlWhere, null);
+	Object[] updateRecordFieldsByFilter=Rdbms.updateRecordFieldsByFilter(TablesAppProcDataAudit.INSTRUMENTS,
+		EnumIntTableFields.getTableFieldsFromString(TablesAppProcDataAudit.INSTRUMENTS, updFieldsName), updFieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString()))
             return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InstrumentsAPIactionsEndpoints.INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED, new Object[]{auditId});
         else
