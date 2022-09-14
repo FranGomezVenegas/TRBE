@@ -400,13 +400,21 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                     break;
                 case IN:
                 case NOT_IN:
-                    if (separator==null) separator="|";
+                    if (separator==null||separator.length()==0) separator="|";
                     String textSpecs = fldV[0].toString();
+                    Boolean valuesAreNumbers=false;
+                    if (textSpecs.toUpperCase().contains("INTEGER*")){
+                        textSpecs=textSpecs.replace("INTEGER*", "");
+                        valuesAreNumbers = true;
+                    }
                     String[] textSpecArray = textSpecs.split("\\" + separator);
                     queryWhere.append(fn).append(" ").append(symbol.toLowerCase()).append("(");
                     for (String f : textSpecArray) {
                         queryWhere.append("?,");
-                        whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
+                        if (valuesAreNumbers)
+                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Integer.valueOf(f.toString()));
+                        else
+                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
                     }
                     queryWhere.deleteCharAt(queryWhere.length() - 1);
                     queryWhere.append(")");
