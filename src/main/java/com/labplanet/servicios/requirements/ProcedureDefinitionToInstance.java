@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -51,7 +52,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         response=LPTestingOutFormat.responsePreparation(response);
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
         Object endPointName = request.getAttribute("endPointName");
-        Object runAsCheckerAttrValue = request.getAttribute("run_as_checker");        
+        Object runAsCheckerAttrValue = LPNulls.replaceNull(request.getAttribute("run_as_checker"));
         ProcedureDefinitionAPIActionsEndpoints endPoint = ProcedureDefinitionAPIActionsEndpoints.valueOf(endPointName.toString());
         LPAPIArguments[] arguments = endPoint.getArguments();
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, arguments);                
@@ -61,6 +62,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         String dbName=argValues[3].toString();
         String moduleName=null;
         String[][] businessVariablesHeader=null;
+        
         if (!Boolean.valueOf(runAsCheckerAttrValue.toString())){
             moduleName=argValues[4].toString();
             businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
@@ -187,8 +189,12 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_EVENTS;
                 sectionsSettingJobj.put("6) PROCDEPL_PROCEDURE_EVENTS", runSection);
                 if (runSection){
+                    JSONArray jArr=new JSONArray();
                     JSONObject createDBProcedureEvents = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureEvents(procName, procVersion, procInstanceName);
-                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_EVENTS", createDBProcedureEvents);
+                    jArr.add(createDBProcedureEvents);
+                    JSONObject createdDBProcedureActions = functionaljavaa.requirement.ProcedureDefinitionToInstance.createdDBProcedureActions(procName,  procVersion, procInstanceName);
+                    jArr.add(createdDBProcedureActions);
+                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_EVENTS", jArr);
                 }
             }
             if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
