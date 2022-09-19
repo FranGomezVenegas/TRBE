@@ -40,10 +40,10 @@ public class AppTrazitInitSession extends HttpServlet {
         JSONObject trazitInitSession=new JSONObject();
         trazitInitSession.put("procedures_list", procedureListInfo(request, response));
         trazitInitSession.put("header_info", AppHeaderAPI(request, response));
-        trazitInitSession.put("all_my_sops", SopUserAPIfrontend.AllMySops(request, response));
-        trazitInitSession.put("my_pending_sops", SopUserAPIfrontend.MyPendingSops(request, response));
-        trazitInitSession.put("procedures_sops", SopUserAPIfrontend.ProceduresSops(request, response));
-        trazitInitSession.put("sop_tree_list_element", SopUserAPIfrontend.SopTreeListElements(request, response));
+        trazitInitSession.put("all_my_sops", SopUserAPIqueries.AllMySops(request, response));
+        trazitInitSession.put("my_pending_sops", SopUserAPIqueries.MyPendingSops(request, response));
+        trazitInitSession.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));
+        trazitInitSession.put("sop_tree_list_element", SopUserAPIqueries.SopTreeListElements(request, response));
         
     }
 

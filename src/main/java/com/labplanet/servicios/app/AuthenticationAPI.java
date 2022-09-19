@@ -204,9 +204,9 @@ public class AuthenticationAPI extends HttpServlet {
                     request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put("header_info", AppHeaderAPI(request, response));
                     jsonObj.put("procedures_list", procedureListInfo(request, response));
-                    jsonObj.put("all_my_sops", SopUserAPIfrontend.AllMySops(request, response));
-                     jsonObj.put("procedures_sops", SopUserAPIfrontend.ProceduresSops(request, response));
-                    jsonObj.put("sop_tree_list_element", SopUserAPIfrontend.SopTreeListElements(request, response));                    
+                    jsonObj.put("all_my_sops", SopUserAPIqueries.AllMySops(request, response));
+                     jsonObj.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));
+                    jsonObj.put("sop_tree_list_element", SopUserAPIqueries.SopTreeListElements(request, response));                    
                     jsonObj.put("all_my_analysis_methods", CertifyAnalysisMethodAPIfrontend.AllMyAnalysisMethodCertif(request, response));
                     jsonObj.put("platform_business_rules", AllAppBusinessRules(request, response));
                     

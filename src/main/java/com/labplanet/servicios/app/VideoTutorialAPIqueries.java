@@ -30,7 +30,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class VideoTutorialAPIfrontend extends HttpServlet {
+public class VideoTutorialAPIqueries extends HttpServlet {
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -138,13 +138,13 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
      */
     public static final String JSON_TAG_VALUE_WINDOWS_URL_HOME="Modulo1/home.js";
      
-    public enum VideoTutorialAPIfrontendEndpoints{
+    public enum VideoTutorialAPIqueriesEndpoints{
         ALL_ACTIVE_VIDEO_TUTORIALS("ALL_ACTIVE_VIDEO_TUTORIALS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
         ALL_ACTIVE_VIDEO_TUTORIALS_TABLE("ALL_ACTIVE_VIDEO_TUTORIALS_TABLE", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
 //        ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY("ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
 //        ALL_USER_VIDEO_TUTORIALS("ALL_USER_VIDEO_TUTORIALS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
         ; 
-        private VideoTutorialAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private VideoTutorialAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -209,9 +209,9 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
             }                  
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             
-            VideoTutorialAPIfrontendEndpoints endPoint = null;
+            VideoTutorialAPIqueriesEndpoints endPoint = null;
             try{
-                endPoint = VideoTutorialAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = VideoTutorialAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   

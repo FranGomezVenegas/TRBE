@@ -1,6 +1,6 @@
 package com.labplanet.servicios.app;
 
-import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
+import static com.labplanet.servicios.app.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.TblsApp;
 import databases.features.Token;
 import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIqueriesEndpoints;

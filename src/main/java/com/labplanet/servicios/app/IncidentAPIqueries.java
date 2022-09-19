@@ -5,8 +5,8 @@
  */
 package com.labplanet.servicios.app;
 
-import com.labplanet.servicios.app.IncidentAPI.IncidentAPIfrontendEndpoints;
-import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
+import com.labplanet.servicios.app.IncidentAPIactions.IncidentAPIqueriesEndpoints;
+import static com.labplanet.servicios.app.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -43,7 +43,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class IncidentAPIfrontend extends HttpServlet {
+public class IncidentAPIqueries extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -75,9 +75,9 @@ public class IncidentAPIfrontend extends HttpServlet {
                         LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                             
         }
-        IncidentAPIfrontendEndpoints endPoint = null;
+        IncidentAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = IncidentAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = IncidentAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   

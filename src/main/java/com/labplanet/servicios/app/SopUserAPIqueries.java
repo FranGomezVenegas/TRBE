@@ -42,7 +42,7 @@ import trazit.enums.EnumIntViewFields;
  *
  * @author Administrator
  */
-public class SopUserAPIfrontend extends HttpServlet {
+public class SopUserAPIqueries extends HttpServlet {
 
     /**
      *
@@ -139,7 +139,7 @@ public class SopUserAPIfrontend extends HttpServlet {
      */
     public static final String JSON_TAG_VALUE_WINDOWS_URL_HOME="Modulo1/home.js";
      
-    public enum SopUserAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum SopUserAPIqueriesEndpoints implements EnumIntEndpoints{
         ALL_MY_SOPS("ALL_MY_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
             EndPointsToRequirements.endpointWithNoOutputObjects),
         MY_PENDING_SOPS("MY_PENDING_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
@@ -151,7 +151,7 @@ public class SopUserAPIfrontend extends HttpServlet {
         ALL_IN_ONE("ALL_IN_ONE", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
             EndPointsToRequirements.endpointWithNoOutputObjects),
         ; 
-        private SopUserAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private SopUserAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -204,9 +204,9 @@ public class SopUserAPIfrontend extends HttpServlet {
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             
             Token token = new Token(finalToken);
-            SopUserAPIfrontendEndpoints endPoint = null;
+            SopUserAPIqueriesEndpoints endPoint = null;
             try{
-                endPoint = SopUserAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = SopUserAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
@@ -233,10 +233,10 @@ public class SopUserAPIfrontend extends HttpServlet {
                 //request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                 //jsonObj.put("header_info", AppHeaderAPI(request, response));
                 jsonObj.put("procedures_list", procedureListInfo(request, response));
-                jsonObj.put("all_my_sops", SopUserAPIfrontend.AllMySops(request, response));
-                jsonObj.put("my_pending_sops", SopUserAPIfrontend.MyPendingSops(request, response));
-                jsonObj.put("procedures_sops", SopUserAPIfrontend.ProceduresSops(request, response));
-                jsonObj.put("sop_tree_list_element", SopUserAPIfrontend.SopTreeListElements(request, response));                    
+                jsonObj.put("all_my_sops", SopUserAPIqueries.AllMySops(request, response));
+                jsonObj.put("my_pending_sops", SopUserAPIqueries.MyPendingSops(request, response));
+                jsonObj.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));
+                jsonObj.put("sop_tree_list_element", SopUserAPIqueries.SopTreeListElements(request, response));                    
                 LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                 return;                                                   
             default:                
@@ -268,7 +268,7 @@ public class SopUserAPIfrontend extends HttpServlet {
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
         Token token = new Token(finalToken);
         
-        SopUserAPIfrontendEndpoints endPoint = SopUserAPIfrontendEndpoints.ALL_MY_SOPS;
+        SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.ALL_MY_SOPS;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
 
@@ -349,7 +349,7 @@ public class SopUserAPIfrontend extends HttpServlet {
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
-        SopUserAPIfrontendEndpoints endPoint = SopUserAPIfrontendEndpoints.MY_PENDING_SOPS;
+        SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.MY_PENDING_SOPS;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
         
@@ -415,7 +415,7 @@ public class SopUserAPIfrontend extends HttpServlet {
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
-        SopUserAPIfrontendEndpoints endPoint = SopUserAPIfrontendEndpoints.PROCEDURE_SOPS;
+        SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.PROCEDURE_SOPS;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
         
@@ -476,7 +476,7 @@ public class SopUserAPIfrontend extends HttpServlet {
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
-        SopUserAPIfrontendEndpoints endPoint = SopUserAPIfrontendEndpoints.SOP_TREE_LIST_ELEMENT;
+        SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.SOP_TREE_LIST_ELEMENT;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
     

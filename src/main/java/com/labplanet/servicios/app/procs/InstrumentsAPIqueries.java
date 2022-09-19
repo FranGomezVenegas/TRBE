@@ -6,7 +6,7 @@
 package com.labplanet.servicios.app.procs;
 
 import com.labplanet.servicios.app.*;
-import static com.labplanet.servicios.app.IncidentAPI.MANDATORY_PARAMS_MAIN_SERVLET;
+import static com.labplanet.servicios.app.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;

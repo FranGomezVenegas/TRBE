@@ -43,7 +43,7 @@ import trazit.session.InternalMessage;
  *
  * @author User
  */
-public class IncidentAPI extends HttpServlet {
+public class IncidentAPIactions extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -55,7 +55,7 @@ public class IncidentAPI extends HttpServlet {
     static final String COMMON_PARAMS="incidentId|note";
 
     
-    public enum IncidentAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum IncidentAPIqueriesEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -63,7 +63,7 @@ public class IncidentAPI extends HttpServlet {
         INCIDENT_DETAIL_FOR_GIVEN_INCIDENT("INCIDENT_DETAIL_FOR_GIVEN_INCIDENT", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         CLOSED_INCIDENTS_LAST_N_DAYS("CLOSED_INCIDENTS_LAST_N_DAYS","",new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private IncidentAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private IncidentAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  

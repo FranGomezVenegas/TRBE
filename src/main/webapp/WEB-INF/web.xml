@@ -46,11 +46,11 @@
         <servlet-class>com.labplanet.servicios.testing.data.TstDataBatchArrSequence</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AuthenticationAPI</servlet-name>
+        <servlet-name>AuthenticationAPIactions</servlet-name>
         <servlet-class>com.labplanet.servicios.app.AuthenticationAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AppHeaderAPI</servlet-name>
+        <servlet-name>AppHeaderAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.app.AppHeaderAPI</servlet-class>
     </servlet>
     <servlet>
@@ -78,27 +78,27 @@
         <servlet-class>com.labplanet.servicios.app.SopUserAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CertifyAPIfrontend</servlet-name>
+        <servlet-name>CertifyAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.app.CertifyAPIfrontend</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CertifyAnalysisMethod</servlet-name>
+        <servlet-name>CertifyAnalysisMethodactions</servlet-name>
         <servlet-class>com.labplanet.servicios.app.CertifyAnalysisMethodAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>SopUserAPIfrontend</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.SopUserAPIfrontend</servlet-class>
+        <servlet-name>SopUserAPIqueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.SopUserAPIqueries</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>AnalysisMethodCertifUserAPIfrontend</servlet-name>
+        <servlet-name>AnalysisMethodCertifUserAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.app.CertifyAnalysisMethodAPIfrontend</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>SampleAPI</servlet-name>
+        <servlet-name>SampleAPIactions</servlet-name>
         <servlet-class>com.labplanet.servicios.modulesample.SampleAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>SampleAPIfrontend</servlet-name>
+        <servlet-name>SampleAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.modulesample.SampleAPIfrontend</servlet-class>
     </servlet>
     <servlet>
@@ -110,11 +110,11 @@
         <servlet-class>com.labplanet.servicios.modulebatch.BatchAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonAPI</servlet-name>
+        <servlet-name>EnvMonAPIactions</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonitSampleAPIfrontend</servlet-name>
+        <servlet-name>EnvMonitSampleAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonitSampleAPIfrontend</servlet-class>
     </servlet>
     <servlet>
@@ -146,23 +146,23 @@
         <servlet-class>com.labplanet.servicios.testing.config.db.DbTestingLimitAndResult</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonSampleAPI</servlet-name>
+        <servlet-name>EnvMonSampleAPIactions</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonProdLotAPI</servlet-name>
+        <servlet-name>EnvMonProdLotAPIactions</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonProdLotAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonIncubationAPI</servlet-name>
+        <servlet-name>EnvMonIncubationAPIactions</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonIncubationAPIfrontend</servlet-name>
+        <servlet-name>EnvMonIncubationAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPIfrontend</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonIncubBatchAPIfrontend</servlet-name>
+        <servlet-name>EnvMonIncubBatchAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonIncubBatchAPIfrontend</servlet-class>
     </servlet>
     <servlet>
@@ -170,15 +170,15 @@
         <servlet-class>com.labplanet.servicios.modulegenoma.TablesDeployment</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GenomaProjectAPI</servlet-name>
+        <servlet-name>GenomaProjectAPIactions</servlet-name>
         <servlet-class>com.labplanet.servicios.modulegenoma.GenomaProjectAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GenomaStudyAPI</servlet-name>
+        <servlet-name>GenomaStudyAPIactions</servlet-name>
         <servlet-class>com.labplanet.servicios.modulegenoma.GenomaStudyAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GenomaStudyAPIFrontend</servlet-name>
+        <servlet-name>GenomaStudyAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.modulegenoma.GenomaStudyAPIFrontend</servlet-class>
     </servlet>
     <servlet>
@@ -186,7 +186,7 @@
         <servlet-class>com.labplanet.servicios.modulegenoma.GenomaConfigVariableAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GenomaConfigVariableAPIFrontend</servlet-name>
+        <servlet-name>GenomaConfigVariableAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.modulegenoma.GenomaConfigVariableAPIFrontend</servlet-class>
     </servlet>
     <servlet>
@@ -214,12 +214,12 @@
         <servlet-class>com.labplanet.servicios.app.HolidayCalendarAPIqueries</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>IncidentAPI</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.IncidentAPI</servlet-class>
+        <servlet-name>IncidentAPIactions</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.IncidentAPIactions</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>IncidentAPIfrontend</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.IncidentAPIfrontend</servlet-class>
+        <servlet-name>IncidentAPIqueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.IncidentAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InstrumentsAPIactions</servlet-name>
@@ -270,7 +270,7 @@
         <servlet-class>com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonAPIfrontend</servlet-name>
+        <servlet-name>EnvMonAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIfrontend</servlet-class>
     </servlet>
     <servlet>
@@ -278,7 +278,7 @@
         <servlet-class>com.labplanet.servicios.app.InvestigationAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>InvestigationAPIfrontend</servlet-name>
+        <servlet-name>InvestigationAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.app.InvestigationAPIfrontend</servlet-class>
     </servlet>
     <servlet>
@@ -288,19 +288,19 @@
         <servlet-class>net.codejava.DownloadFileServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>VideoTutorialAPIfrontend</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.VideoTutorialAPIfrontend</servlet-class>
+        <servlet-name>VideoTutorialAPIqueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.VideoTutorialAPIqueries</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UserSessionAPIfrontend</servlet-name>
+        <servlet-name>UserSessionAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.app.UserSessionAPIfrontend</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>InspLotRMAPI</servlet-name>
+        <servlet-name>InspLotRMAPIactions</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>InspLotRMAPIfrontend</servlet-name>
+        <servlet-name>InspLotRMAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPIfrontend</servlet-class>
     </servlet>
     <servlet>
@@ -324,20 +324,18 @@
         <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminActions</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>SavedQueries</servlet-name>
+        <servlet-name>SavedQueriesactions</servlet-name>
         <servlet-class>com.labplanet.servicios.app.SavedQueriesAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>SavedQueriesAPIfrontend</servlet-name>
+        <servlet-name>SavedQueriesAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.app.SavedQueriesAPIfrontend</servlet-class>
     </servlet>
-
-<!-- Start mapping and urls block -->
-
-<!-- Block #1. App Platform Begin. -->
+    <!-- Start mapping and urls block -->
+    <!-- Block #1. App Platform Begin. -->
     <servlet-mapping>
-        <servlet-name>AuthenticationAPI</servlet-name>
-        <url-pattern>/frontend/AuthenticationAPI</url-pattern>
+        <servlet-name>AuthenticationAPIactions</servlet-name>
+        <url-pattern>/app/AuthenticationAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AppTrazitInitSession</servlet-name>
@@ -352,13 +350,13 @@
         <url-pattern>/app/PlatformAdminActions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AppHeaderAPI</servlet-name>
-        <url-pattern>/frontend/AppHeaderAPI</url-pattern>
+        <servlet-name>AppHeaderAPIqueries</servlet-name>
+        <url-pattern>/app/AppHeaderAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AppProcedureListAPI</servlet-name>
-        <url-pattern>/frontend/AppProcedureListAPI</url-pattern>
-    </servlet-mapping>    
+        <url-pattern>/app/AppProcedureListAPIqueries</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ResponseSuccess</servlet-name>
         <url-pattern>/ResponseSuccess</url-pattern>
@@ -366,10 +364,9 @@
     <servlet-mapping>
         <servlet-name>ResponseError</servlet-name>
         <url-pattern>/ResponseError</url-pattern>
-    </servlet-mapping>    
-<!-- Block #1. App Platform End. -->
-
-<!-- Block #2. App Proc Managements Area Begin.-->
+    </servlet-mapping>
+    <!-- Block #1. App Platform End. -->
+    <!-- Block #2. App Proc Managements Area Begin.-->
     <servlet-mapping>
         <servlet-name>RequirementsProcedureDefinitionAPIQueries</servlet-name>
         <url-pattern>/appProcMgr/RequirementsProcedureDefinitionAPIQueries</url-pattern>
@@ -378,28 +375,26 @@
         <servlet-name>RequirementsProcedureDefinitionAPIActions</servlet-name>
         <url-pattern>/appProcMgr/RequirementsProcedureDefinitionAPIActions</url-pattern>
     </servlet-mapping>
-<!-- Block #2. App Proc Managements Area End.-->
-
-<!-- Block 3# App Platform Modules Begin. -->
+    <!-- Block #2. App Proc Managements Area End.-->
+    <!-- Block 3# App Platform Modules Begin. -->
     <servlet-mapping>
-        <servlet-name>SavedQueries</servlet-name>
-        <url-pattern>/app/SavedQueriesAPI</url-pattern>
+        <servlet-name>SavedQueriesactions</servlet-name>
+        <url-pattern>/app/SavedQueriesAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>SavedQueriesAPIfrontend</servlet-name>
-        <url-pattern>/frontend/SavedQueriesAPIfrontend</url-pattern>
+        <servlet-name>SavedQueriesAPIqueries</servlet-name>
+        <url-pattern>/app/SavedQueriesAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>VideoTutorialAPIfrontend</servlet-name>
-        <url-pattern>/frontend/VideoTutorialAPIfrontend</url-pattern>
+        <servlet-name>VideoTutorialAPIqueries</servlet-name>
+        <url-pattern>/app/VideoTutorialAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UserSessionAPIfrontend</servlet-name>
-        <url-pattern>/frontend/UserSessionAPIfrontend</url-pattern>
+        <servlet-name>UserSessionAPIqueries</servlet-name>
+        <url-pattern>/app/UserSessionAPIqueries</url-pattern>
     </servlet-mapping>
-<!-- Block 3# App Platform Modules End. -->
-
-<!-- Block 4# App Modules/Procedures Deployment Begin. -->
+    <!-- Block 3# App Platform Modules End. -->
+    <!-- Block 4# App Modules/Procedures Deployment Begin. -->
     <servlet-mapping>
         <servlet-name>ModuleDefinitionAPI</servlet-name>
         <url-pattern>/app/ModuleDefinitionAPI</url-pattern>
@@ -419,77 +414,71 @@
     <servlet-mapping>
         <servlet-name>ProcedureDefinitionToInstance</servlet-name>
         <url-pattern>/ProcedureDefinitionToInstance</url-pattern>
-    </servlet-mapping>    
-<!-- Block 4# App Modules Deployment End. -->
-
-<!-- Block 5# Modules Master Data definition Begin. -->
+    </servlet-mapping>
+    <!-- Block 4# App Modules Deployment End. -->
+    <!-- Block 5# Modules Master Data definition Begin. -->
     <servlet-mapping>
         <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
         <url-pattern>/modules/ConfigMasterDataAPI</url-pattern>
     </servlet-mapping>
-<!-- Block 5# Modules Master Data definition End. -->
-
-<!-- Block 6# Testing Begin. -->
+    <!-- Block 5# Modules Master Data definition End. -->
+    <!-- Block 6# Testing Begin. -->
     <servlet-mapping>
         <servlet-name>TestingRegressionUAT</servlet-name>
         <url-pattern>/testing/platform/TestingRegressionUAT</url-pattern>
     </servlet-mapping>
-<!-- Block 6# Testing End. -->
-        
-    
-<!-- Block 7# Modules Begin. -->
-
-<!-- Block 7.1 Samples Module Begin. -->
+    <!-- Block 6# Testing End. -->
+    <!-- Block 7# Modules Begin. -->
+    <!-- Block 7.1 Samples Module Begin. -->
     <servlet-mapping>
-        <servlet-name>SampleAPI</servlet-name>
-        <url-pattern>/modulesample/SampleAPI</url-pattern>
+        <servlet-name>SampleAPIactions</servlet-name>
+        <url-pattern>/modulesample/SampleAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SampleAPIParams</servlet-name>
         <url-pattern>/modulesample/SampleAPIParams</url-pattern>
-    </servlet-mapping>    
+    </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>SampleAPIfrontend</servlet-name>
-        <url-pattern>/frontend/SampleAPIfrontEnd</url-pattern>
+        <servlet-name>SampleAPIqueries</servlet-name>
+        <url-pattern>/modulesample/SampleAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestingSamples</servlet-name>
         <url-pattern>/testing/moduleSamples/TestingSamples</url-pattern>
     </servlet-mapping>
-<!-- Block 7.1 Samples Module End. -->
-
-<!-- Block 7.2 Environmental Monitoring Module Begin. -->
+    <!-- Block 7.1 Samples Module End. -->
+    <!-- Block 7.2 Environmental Monitoring Module Begin. -->
     <servlet-mapping>
-        <servlet-name>EnvMonAPI</servlet-name>
-        <url-pattern>/moduleenvmon/EnvMonAPI</url-pattern>
+        <servlet-name>EnvMonAPIactions</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonitSampleAPIfrontend</servlet-name>
-        <url-pattern>/moduleenvmon/frontend/EnvMonSampleAPIfrontend</url-pattern>
+        <servlet-name>EnvMonitSampleAPIqueries</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonSampleAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonSampleAPI</servlet-name>
-        <url-pattern>/moduleenvmon/EnvMonSampleAPI</url-pattern>
+        <servlet-name>EnvMonSampleAPIactions</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonSampleAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonProdLotAPI</servlet-name>
-        <url-pattern>/moduleenvmon/EnvMonProdLotAPI</url-pattern>
+        <servlet-name>EnvMonProdLotAPIactions</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonProdLotAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonIncubationAPI</servlet-name>
-        <url-pattern>/moduleenvmon/EnvMonIncubationAPI</url-pattern>
+        <servlet-name>EnvMonIncubationAPIactions</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonIncubationAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonIncubationAPIfrontend</servlet-name>
-        <url-pattern>/moduleenvmon/frontend/EnvMonIncubationAPIfrontend</url-pattern>
+        <servlet-name>EnvMonIncubationAPIqueries</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonIncubationAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonIncubBatchAPIfrontend</servlet-name>
-        <url-pattern>/moduleenvmon/frontend/EnvMonIncubBatchAPIfrontend</url-pattern>
+        <servlet-name>EnvMonIncubBatchAPIqueries</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonIncubBatchAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonAPIfrontend</servlet-name>
-        <url-pattern>/moduleenvmon/frontend/EnvMonAPIfrontend</url-pattern>
+        <servlet-name>EnvMonAPIqueries</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EnvMonAPIStats</servlet-name>
@@ -499,32 +488,31 @@
         <servlet-name>TestingEnvMonitSamples</servlet-name>
         <url-pattern>/testing/moduleEnvMonit/TestingEnvMonitSamples</url-pattern>
     </servlet-mapping>
-<!-- Block 7.2 Environmental Monitoring Module End. -->
-
-<!-- Block 7.3 Genoma Module Begin. -->
+    <!-- Block 7.2 Environmental Monitoring Module End. -->
+    <!-- Block 7.3 Genoma Module Begin. -->
     <servlet-mapping>
         <servlet-name>TablesDeployment</servlet-name>
         <url-pattern>/modulegenome/TablesDeployment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GenomaProjectAPI</servlet-name>
-        <url-pattern>/modulegenoma/GenomaProjectAPI</url-pattern>
+        <servlet-name>GenomaProjectAPIactions</servlet-name>
+        <url-pattern>/modulegenoma/GenomaProjectAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GenomaStudyAPI</servlet-name>
-        <url-pattern>/modulegenoma/GenomaStudyAPI</url-pattern>
+        <servlet-name>GenomaStudyAPIactions</servlet-name>
+        <url-pattern>/modulegenoma/GenomaStudyAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GenomaStudyAPIFrontend</servlet-name>
-        <url-pattern>/modulegenoma/GenomaStudyAPIFrontend</url-pattern>
+        <servlet-name>GenomaStudyAPIqueries</servlet-name>
+        <url-pattern>/modulegenoma/GenomaStudyAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GenomaConfigVariableAPI</servlet-name>
         <url-pattern>/modulegenoma/GenomaConfigVariableAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GenomaConfigVariableAPIFrontend</servlet-name>
-        <url-pattern>/modulegenoma/GenomaConfigVariableAPIFrontend</url-pattern>
+        <servlet-name>GenomaConfigVariableAPIqueries</servlet-name>
+        <url-pattern>/modulegenoma/GenomaConfigVariableAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GenomaStudyObjectsVariablesAPI</servlet-name>
@@ -534,44 +522,34 @@
         <servlet-name>TestingGenoma</servlet-name>
         <url-pattern>/testing/moduleGenoma/TestingGenoma</url-pattern>
     </servlet-mapping>
-<!-- Block 7.3 Genoma Module End. -->
-
-<!-- Block 7.5 Inspection Lots Module Begin. -->
+    <!-- Block 7.3 Genoma Module End. -->
+    <!-- Block 7.5 Inspection Lots Module Begin. -->
     <servlet-mapping>
-        <servlet-name>InspLotRMAPI</servlet-name>
-        <url-pattern>/moduleinsplotrm/InspLotRMAPI</url-pattern>
+        <servlet-name>InspLotRMAPIactions</servlet-name>
+        <url-pattern>/moduleinsplotrm/InspLotRMAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>InspLotRMAPIfrontend</servlet-name>
-        <url-pattern>/moduleinsplotrm/InspLotRMAPIfrontend</url-pattern>
+        <servlet-name>InspLotRMAPIqueries</servlet-name>
+        <url-pattern>/moduleinsplotrm/InspLotRMAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestingInspLotRM</servlet-name>
         <url-pattern>/testing/moduleInspLotRM/TestingInspLotRM</url-pattern>
     </servlet-mapping>
-<!-- Block 7.5 Inspection Lots Module End. -->
-<!-- Block 7# Modules End -->
-
-
-
-
-
-
-
-
-<!-- Block 8# Generic or Common Modules Begin -->
-<!-- Block 8.1 Investigation Module Begin. -->
+    <!-- Block 7.5 Inspection Lots Module End. -->
+    <!-- Block 7# Modules End -->
+    <!-- Block 8# Generic or Common Modules Begin -->
+    <!-- Block 8.1 Investigation Module Begin. -->
     <servlet-mapping>
         <servlet-name>InvestigationAPI</servlet-name>
         <url-pattern>/app/InvestigationAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>InvestigationAPIfrontend</servlet-name>
-        <url-pattern>/frontend/InvestigationAPIfrontend</url-pattern>
+        <servlet-name>InvestigationAPIqueries</servlet-name>
+        <url-pattern>/app/InvestigationAPIqueries</url-pattern>
     </servlet-mapping>
-<!-- Block 8.1 Investigation Module End. -->
-
-<!-- Block 8.2 Instruments Module Begin. -->
+    <!-- Block 8.1 Investigation Module End. -->
+    <!-- Block 8.2 Instruments Module Begin. -->
     <servlet-mapping>
         <servlet-name>InstrumentsAPIactions</servlet-name>
         <url-pattern>/app/procs/InstrumentsAPIactions</url-pattern>
@@ -584,32 +562,30 @@
         <servlet-name>TestingPlatformInstruments</servlet-name>
         <url-pattern>/testing/app/TestingPlatformInstruments</url-pattern>
     </servlet-mapping>
-<!-- Block 8.2 Instruments Module End. -->
-    
-<!-- Block 8.3 SOPs Module Begin. -->
+    <!-- Block 8.2 Instruments Module End. -->
+    <!-- Block 8.3 SOPs Module Begin. -->
     <servlet-mapping>
         <servlet-name>SopUser</servlet-name>
-        <url-pattern>/app/SopUserAPI</url-pattern>
+        <url-pattern>/app/SopUserAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CertifyAPIfrontend</servlet-name>
-        <url-pattern>/app/frontend/CertifyAPIfrontend</url-pattern>
+        <servlet-name>CertifyAPIqueries</servlet-name>
+        <url-pattern>/app/CertifyAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CertifyAnalysisMethod</servlet-name>
-        <url-pattern>/app/CertifyAnalysisMethodAPI</url-pattern>
+        <servlet-name>CertifyAnalysisMethodactions</servlet-name>
+        <url-pattern>/app/CertifyAnalysisMethodAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>SopUserAPIfrontend</servlet-name>
-        <url-pattern>/frontend/SopUserAPIfrontend</url-pattern>
+        <servlet-name>SopUserAPIqueries</servlet-name>
+        <url-pattern>/app/SopUserAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>AnalysisMethodCertifUserAPIfrontend</servlet-name>
-        <url-pattern>/frontend/AnalysisMethodCertifUserAPIfrontend</url-pattern>
-    </servlet-mapping>    
-<!-- Block 8.3 SOPs Module End. -->
-    
-<!-- Block 8.4 Holidays Calendar Module Begin. -->
+        <servlet-name>AnalysisMethodCertifUserAPIqueries</servlet-name>
+        <url-pattern>/app/AnalysisMethodCertifUserAPIqueries</url-pattern>
+    </servlet-mapping>
+    <!-- Block 8.3 SOPs Module End. -->
+    <!-- Block 8.4 Holidays Calendar Module Begin. -->
     <servlet-mapping>
         <servlet-name>HolidayCalendarAPIactions</servlet-name>
         <url-pattern>/app/HolidayCalendarAPIactions</url-pattern>
@@ -618,23 +594,19 @@
         <servlet-name>HolidayCalendarAPIqueries</servlet-name>
         <url-pattern>/app/HolidayCalendarAPIqueries</url-pattern>
     </servlet-mapping>
-<!-- Block 8.4 Holidays Calendar Module End. -->    
-
-<!-- Block 8.5 Incidents Module Begin. -->
+    <!-- Block 8.4 Holidays Calendar Module End. -->
+    <!-- Block 8.5 Incidents Module Begin. -->
     <servlet-mapping>
-        <servlet-name>IncidentAPI</servlet-name>
-        <url-pattern>/app/IncidentAPI</url-pattern>
+        <servlet-name>IncidentAPIactions</servlet-name>
+        <url-pattern>/app/IncidentAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>IncidentAPIfrontend</servlet-name>
-        <url-pattern>/frontend/IncidentAPIfrontend</url-pattern>
+        <servlet-name>IncidentAPIqueries</servlet-name>
+        <url-pattern>/app/IncidentAPIqueries</url-pattern>
     </servlet-mapping>
-<!-- Block 8.5 Incidents Module End -->
-    
-<!-- Block 8# Generic or Common Modules End -->
-
-
-<!-- Servlets not sorted yet -->
+    <!-- Block 8.5 Incidents Module End -->
+    <!-- Block 8# Generic or Common Modules End -->
+    <!-- Servlets not sorted yet -->
     <servlet-mapping>
         <servlet-name>BatchAPI</servlet-name>
         <url-pattern>/modulebatch/BatchAPI</url-pattern>
@@ -715,7 +687,6 @@
         <servlet-name>TestingAPIActions</servlet-name>
         <url-pattern>/testing/platform/TestingAPIActions</url-pattern>
     </servlet-mapping>
-
     <session-config>
         <session-timeout>
             30
