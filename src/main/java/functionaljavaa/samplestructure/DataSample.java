@@ -438,10 +438,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString())) return sampleCurrentInfo;
         String currentDateStr=LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString();
         if (currentDateStr==null || currentDateStr.length()==0)
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDate_cannotBeAppliedForNullValue", new Object[]{sampleId, newDate});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.CHANGESAMPLINGDATE_NOT_ALLOW_WHEN_NOT_PREVIOUSDATE, new Object[]{sampleId, newDate});
         if (currentDateStr!=null && currentDateStr.length()>0){
             if (newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T"))))
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDate_sameSamplingDate", new Object[]{sampleId, newDate});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.CHANGESAMPLINGDATE_NOT_ALLOW_WHEN_SAME_PREVIOUSDATE, new Object[]{sampleId, newDate});
         }
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
@@ -471,10 +471,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString())) return sampleCurrentInfo;
         String currentDateStr=LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString();
         if (currentDateStr==null || currentDateStr.length()==0)
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDateEnd_cannotBeAppliedForNullValue", new Object[]{sampleId, newDate});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.CHANGESAMPLINGDATEEND_NOT_ALLOW_WHEN_NOT_PREVIOUSDATE, new Object[]{sampleId, newDate});
         if (currentDateStr!=null && currentDateStr.length()>0){
             if (newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T"))))
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "changeSamplingDateEnd_sameSamplingDate", new Object[]{sampleId, newDate});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.CHANGESAMPLINGDATEEND_NOT_ALLOW_WHEN_SAME_PREVIOUSDATE, new Object[]{sampleId, newDate});
         }
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");

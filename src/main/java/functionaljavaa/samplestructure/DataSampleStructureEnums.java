@@ -59,6 +59,12 @@ public class DataSampleStructureEnums {
     
     public enum DataSampleErrorTrapping implements EnumIntMessages{  
         SETSAMPLINGDATE_NOT_ALLOW_CHANGE_PREVIOUS_VALUE ("SetSamplingDate_notAllowChangePreviousValue", "", ""),
+
+        CHANGESAMPLINGDATE_NOT_ALLOW_WHEN_NOT_PREVIOUSDATE ("changeSamplingDate_cannotBeAppliedForNullValue", "", ""),
+        CHANGESAMPLINGDATE_NOT_ALLOW_WHEN_SAME_PREVIOUSDATE ("changeSamplingDate_sameSamplingDate", "", ""),
+        CHANGESAMPLINGDATEEND_NOT_ALLOW_WHEN_NOT_PREVIOUSDATE ("changeSamplingDateEnd_cannotBeAppliedForNullValue", "", ""),
+        CHANGESAMPLINGDATEEND_NOT_ALLOW_WHEN_SAME_PREVIOUSDATE ("changeSamplingDateEnd_sameSamplingDate", "", ""),
+
         SAMPLINGDATE_REQUIRED_FOR_SAMPLINGDATEEND("SamplingDateRequiredForSampleDateEnd", "", ""),
         SAMPLINGDATEEND_NOTREQUIRED_ASTOPERFORMTHEACTION("SamplingDateEndNotRequiredAsToPerformTheAction", "", ""),
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
