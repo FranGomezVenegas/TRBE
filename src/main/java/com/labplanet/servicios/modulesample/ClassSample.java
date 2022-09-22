@@ -42,6 +42,7 @@ import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ResponseMessages;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
+import trazit.enums.EnumIntMessages;
 /**
  *
  * @author User
@@ -82,13 +83,15 @@ public class ClassSample {
             Integer incubationStage=null;
             Integer sampleId = null;
             Object[] diagn = null;
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+            this.functionFound=true;
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
                 //procReqSession.killIt();
                 language=procReqSession.getLanguage();
                 this.isSuccess=false;           
                 this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
-                        argValues[1].toString(), new Object[]{argValues[2].toString()});
+                        (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+                this.messageDynamicData=new Object[]{argValues[2].toString()};
                 this.diagnostic=this.responseError;
                 return;                        
             }            
@@ -160,7 +163,8 @@ public class ClassSample {
                     break;
                 case CHANGESAMPLINGDATE:
                     sampleId = (Integer) argValues[0];
-                    LocalDateTime newDate=(LocalDateTime) argValues[1];
+                    
+                    LocalDateTime newDate=LPDate.stringFormatToLocalDateTime(argValues[1].toString());
                     if (newDate==null)
                         diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.NEWDATETIMENULL_OR_WRONGFORMAT, new Object[]{LPNulls.replaceNull(newDate)});
                     else

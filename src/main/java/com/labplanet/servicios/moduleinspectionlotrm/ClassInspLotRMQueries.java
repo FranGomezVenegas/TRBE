@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -35,8 +36,15 @@ public class ClassInspLotRMQueries {
             RelatedObjects rObj=RelatedObjects.getInstanceForActions();
             Object[] actionDiagnoses = null;
             String lotName = null;
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());    
             this.functionFound=true;
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+            this.functionFound=true;
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+                this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                        (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+                this.messageDynamicData=new Object[]{argValues[2].toString()};
+                return;                        
+            }            
             switch (endPoint){
                     case GET_LOT_INFO:
                         lotName=LPNulls.replaceNull(argValues[0]).toString();

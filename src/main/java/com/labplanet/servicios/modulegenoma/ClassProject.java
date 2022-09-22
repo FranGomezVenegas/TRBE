@@ -40,8 +40,15 @@ public class ClassProject {
         
         Object[] actionDiagnoses = null;
         InternalMessage actionDiagnosesObj = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            //procReqSession.killIt();
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                    argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.messageDynamicData=new Object[]{argValues[2].toString()};
+            return;                        
+        }        
             switch (endPoint){
                 case PROJECT_NEW:
                 case PROJECT_UPDATE:

@@ -19,6 +19,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -44,8 +45,16 @@ public class ClassEnvMon {
         String incubationName = "";
         
         Object[] actionDiagnoses = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            String language = ProcedureRequestSession.getInstanceForActions(null, null, null).getLanguage();
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                    (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+            this.messageDynamicData=new Object[]{argValues[2].toString()};
+            return;                        
+        }         
+        
             switch (endPoint){
                 case CORRECTIVE_ACTION_COMPLETE:
                     String programName=argValues[0].toString();

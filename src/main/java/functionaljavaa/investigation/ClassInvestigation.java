@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
@@ -60,6 +61,7 @@ public class ClassInvestigation {
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
+    private Boolean functionFound=false;
     
     public ClassInvestigation(HttpServletRequest request, InvestigationAPIEndpoints endPoint){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -69,7 +71,14 @@ public class ClassInvestigation {
         ResponseMessages messages = procReqSession.getMessages();
         Object[] actionDiagnoses=null;
         Object[] dynamicDataObjects=new Object[]{};        
+        this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                    (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+            this.messageDynamicData=new Object[]{argValues[2].toString()};
+            return;                        
+        }            
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         Integer investigationId=null;
         switch (endPoint){

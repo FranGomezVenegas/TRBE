@@ -30,12 +30,14 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
@@ -229,6 +231,12 @@ public class EnvMonAPIStats extends HttpServlet {
             return;
         }        
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            EnumIntMessages errCode=(EnumIntMessages) argValues[1];
+            LPFrontEnd.servletReturnResponseError(request, response,
+                    errCode.getErrorCode(), new Object[]{argValues[2].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+            return;            
+        }          
         JSONObject jObjMainObject=new JSONObject();
         try { //try (PrintWriter out = response.getWriter()) {
             SqlWhere wObj=new SqlWhere();

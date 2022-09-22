@@ -75,6 +75,8 @@ public class ClassEnvMonSample {
     private Object[] diagnostic=new Object[0];
     private Boolean isSuccess=false;
     private Object[] responseError=null;
+    private Boolean functionFound=false;
+    
     public ClassEnvMonSample(HttpServletRequest request, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
@@ -82,7 +84,8 @@ public class ClassEnvMonSample {
         String procInstanceName = procReqSession.getProcedureInstance();
         Token token=procReqSession.getToken();
 
-        Object[] dynamicDataObjects=new Object[]{};        
+        Object[] dynamicDataObjects=new Object[]{}; 
+        this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
             //procReqSession.killIt();
@@ -91,6 +94,7 @@ public class ClassEnvMonSample {
             this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
                     argValues[1].toString(), new Object[]{argValues[2].toString()});
             this.diagnostic=this.responseError;
+            this.messageDynamicData=new Object[]{argValues[2].toString()};
             return;                        
         }
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();

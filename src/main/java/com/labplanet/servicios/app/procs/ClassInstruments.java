@@ -24,6 +24,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
+import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
@@ -48,7 +49,16 @@ public class ClassInstruments {
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            //procReqSession.killIt();
+                String language = ProcedureRequestSession.getInstanceForActions(null, null, null).getLanguage();
+                this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                        (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+                this.messageDynamicData=new Object[]{argValues[2].toString()};
+                return;                        
+            }         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
             //this.diagnostic=argValues;
             this.diagnostic=ApiMessageReturn.trapMessage(argValues[0].toString(), argValues[1].toString(), new Object[]{argValues[2].toString()});

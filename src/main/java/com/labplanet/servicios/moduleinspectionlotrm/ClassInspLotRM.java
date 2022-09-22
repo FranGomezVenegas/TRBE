@@ -17,6 +17,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntMessages;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
@@ -39,8 +40,14 @@ public class ClassInspLotRM {
         
     
         Object[] actionDiagnoses = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
-        this.functionFound=true;
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+            this.functionFound=true;
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+                this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                        (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+                this.messageDynamicData=new Object[]{argValues[2].toString()};
+                return;                        
+            }            
         switch (endPoint){
             case NEW_LOT:
                 String lotName= argValues[0].toString();

@@ -25,11 +25,12 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
+import trazit.session.ApiMessageReturn;
 
 /**
  *
@@ -54,8 +55,17 @@ public class ClassSampleQueries {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         Object[] actionDiagnoses = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
-        this.functionFound=true;
+            this.functionFound=true;
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+            this.functionFound=true;
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+                this.isSuccess=false;           
+                this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                        (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+                this.messageDynamicData=new Object[]{argValues[2].toString()};
+                this.diagnostic=this.responseError;
+                return;                        
+            }            
             switch (endPoint){
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
                     Integer sampleId = (Integer) argValues[0];                        

@@ -287,6 +287,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
             this.isSuccess=false;           
             this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
                     argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.messageDynamicData=new Object[]{argValues[2].toString()};
             return;                        
         }
         

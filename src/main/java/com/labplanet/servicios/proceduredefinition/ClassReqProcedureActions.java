@@ -30,6 +30,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
@@ -74,7 +75,14 @@ public class ClassReqProcedureActions {
             }             
         }
         Object[] actionDiagnoses = null;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
+        this.functionFound=true;
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                    (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+            this.messageDynamicData=new Object[]{argValues[2].toString()};
+            return;                        
+        }            
         String procedureName=argValues[0].toString();
         Integer procedureVersion = (Integer) argValues[1];   
         String procInstanceName=argValues[2].toString();
