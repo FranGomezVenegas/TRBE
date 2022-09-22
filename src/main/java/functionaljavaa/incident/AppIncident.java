@@ -13,7 +13,6 @@ import databases.TblsAppAudit;
 import databases.features.Token;
 import functionaljavaa.audit.AppIncidentAudit;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
-import trazit.session.ResponseMessages;
 import javax.json.JsonObject;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -153,12 +152,6 @@ public class AppIncident {
     public InternalMessage reopenIncident(Integer incidentId, String note){  
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Token token=instanceForActions.getToken();
-/*        InternalMessage isActive=isIncidentActive(incidentId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isActive.getDiagnostic())){
-            ResponseMessages messages = instanceForActions.getMessages();
-            messages.addMainForError(isActive.getMessageCodeObj().getErrorCode(), new Object[]{incidentId}, IncidentAPIErrorMessages.class.getSimpleName());
-            return isActive;
-        }*/
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();
         String previousStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS_PREVIOUS.getName())].toString();
 
