@@ -59,7 +59,14 @@ public class IncidentAPIqueries extends HttpServlet {
         response=LPHttp.responsePreparation(response);
 
         String language = LPFrontEnd.setLanguage(request); 
-
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
+        if (procReqInstance.getHasErrors()){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
+            return;
+        }
+        
+        try{
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
@@ -82,7 +89,7 @@ public class IncidentAPIqueries extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
         }
-        ProcedureRequestSession.getInstanceForActions(request, response, false);
+        //ProcedureRequestSession.getInstanceForActions(request, response, false);
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
@@ -144,7 +151,7 @@ public class IncidentAPIqueries extends HttpServlet {
                         jArr.add(jObj);
                     }
                 }
-                Rdbms.closeRdbms();  
+                Rdbms.closeRdbms();                  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
             case CLOSED_INCIDENTS_LAST_N_DAYS:
@@ -168,8 +175,16 @@ public class IncidentAPIqueries extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, jArr); 
                 return;
             default: 
-                return;
-        }
+                return;    
+            }
+        }finally {
+            // release database resources
+            try {           
+                procReqInstance.killIt();
+                // Rdbms.closeRdbms();   
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            }
+        }          
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
