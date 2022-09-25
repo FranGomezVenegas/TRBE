@@ -286,18 +286,19 @@ public class TestingRegressionUAT extends HttpServlet {
             procReqInstance.killIt();
             String scriptIdStr=request.getParameter("scriptId");
             String procInstanceName=request.getParameter("procInstanceName");
-            if (scriptTblInfo.length==0 || scriptIdStr==null) return;
-            scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr)); 
-            if ( (procReqInstance!=null) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())) ){
-                if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
-                    LPTestingOutFormat.setAuditIndexValues(procInstanceName, scriptId, scriptTblInfo[0][2].toString(), "completed");
+            if (scriptTblInfo!=null && scriptIdStr.length()>0){ 
+                scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr)); 
+                if ( (procReqInstance!=null) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())) ){
+                    if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
+                        LPTestingOutFormat.setAuditIndexValues(procInstanceName, scriptId, scriptTblInfo[0][2].toString(), "completed");
 
-                if (scriptTblInfo[0][3]!=null && Boolean.valueOf(scriptTblInfo[0][3].toString()))
-                    LPTestingOutFormat.setDbErrorIndexValues(procInstanceName, scriptId, "completed");
+                    if (scriptTblInfo[0][3]!=null && Boolean.valueOf(scriptTblInfo[0][3].toString()))
+                        LPTestingOutFormat.setDbErrorIndexValues(procInstanceName, scriptId, "completed");
 
-                if (scriptTblInfo[0][4]!=null && Boolean.valueOf(scriptTblInfo[0][4].toString()))
-                    LPTestingOutFormat.setMessagesErrorIndexValues(procInstanceName, scriptId, "completed");
-                procReqInstance.killIt();
+                    if (scriptTblInfo[0][4]!=null && Boolean.valueOf(scriptTblInfo[0][4].toString()))
+                        LPTestingOutFormat.setMessagesErrorIndexValues(procInstanceName, scriptId, "completed");
+                    procReqInstance.killIt();
+                }
             }
         }
     }
