@@ -10,6 +10,7 @@ import functionaljavaa.platformadmin.PlatformAdminEnums;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonObject;
@@ -113,7 +114,11 @@ public class PlatformAdminActions extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
     }
 
     /**
@@ -127,9 +132,13 @@ public class PlatformAdminActions extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
+        
     }
-
     /**
      * Returns a short description of the servlet.
      *

@@ -12,6 +12,7 @@ import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import javax.json.JsonArray;
@@ -197,7 +198,11 @@ public class EndpointsDocAPIqueries extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
     }
 
     /**
@@ -211,9 +216,13 @@ public class EndpointsDocAPIqueries extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
+        
     }
-
     /**
      * Returns a short description of the servlet.
      *

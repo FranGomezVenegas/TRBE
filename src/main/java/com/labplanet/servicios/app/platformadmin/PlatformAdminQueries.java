@@ -16,6 +16,7 @@ import databases.features.Token;
 import static functionaljavaa.platformadmin.AppBusinessRules.AllAppBusinessRules;
 import functionaljavaa.platformadmin.PlatformAdminEnums.PlatformAdminAPIqueriesEndpoints;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -164,7 +165,11 @@ public class PlatformAdminQueries extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
     }
 
     /**
@@ -178,9 +183,13 @@ public class PlatformAdminQueries extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
+        
     }
-
     /**
      * Returns a short description of the servlet.
      *
