@@ -465,7 +465,6 @@ public class AppProcedureListAPI extends HttpServlet {
             JSONObject procEventJson = new JSONObject();
             procEventJson.put("Error on get procedure_events records", procEvent[0][procEvent.length-1].toString());                        
             procedure.put(LABEL_ARRAY_PROC_EVENTS_ERROR, procEventJson);
-            procedure.put(LABEL_ARRAY_PROC_EVENTS, new JSONObject());
             procedure.put(LABEL_ARRAY_PROC_EVENTS, new JSONArray());
         }                    
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEvent[0][0].toString())){                                                
