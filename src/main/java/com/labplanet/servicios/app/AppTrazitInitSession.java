@@ -8,6 +8,7 @@ package com.labplanet.servicios.app;
 import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPI;
 import static com.labplanet.servicios.app.AppProcedureListAPI.procedureListInfo;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +45,6 @@ public class AppTrazitInitSession extends HttpServlet {
         trazitInitSession.put("my_pending_sops", SopUserAPIqueries.MyPendingSops(request, response));
         trazitInitSession.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));
         trazitInitSession.put("sop_tree_list_element", SopUserAPIqueries.SopTreeListElements(request, response));
-        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -59,7 +59,11 @@ public class AppTrazitInitSession extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
     }
 
     /**
@@ -73,7 +77,12 @@ public class AppTrazitInitSession extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
+        
     }
 
     /**
