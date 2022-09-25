@@ -111,9 +111,9 @@ public class TestingServer extends HttpServlet {
             Rdbms.stablishDBConection("labplanet"); 
 
             Token token=null;
-            String myToken = "eyJ1c2VyREIiOiJ3YXRlciIsImVTaWduIjoiZWxvY28iLCJ1c2VyREJQYXNzd29yZCI6ImxvY28iLCJkYk5hbWUiOiJsYWJwbGFuZXQiLCJ1c2VyX3Byb2NlZHVyZXMiOiJbcHJvYy1kZXBsb3ldIiwidHlwIjoiSldUIiwiYXBwU2Vzc2lvbklkIjoiMjIxOTUiLCJhcHBTZXNzaW9uU3RhcnRlZERhdGUiOiJXZWQgQXVnIDE3IDAxOjM2OjMzIFVUQyAyMDIyIiwidXNlclJvbGUiOiJjb29yZGluYXRvciIsInVzZXJfcHJvY2VkdXJlX2hhc2hjb2RlcyI6InByb2MtZGVwbG95KjEqNjc4OSIsImFsZyI6IkhTMjU2IiwiaW50ZXJuYWxVc2VySUQiOiI5In0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.1Sxz5EXqdpwdHP4Qh8NlwbiyTuS6t3aepcMfYrn3s3w";
-            token = new Token(myToken);
-            JSONArray newProcedureDefinition = AppProcedureListAPI.newProcedureDefinition(token, "proc-deploy");
+            //String myToken = "";
+            //token = new Token(myToken);
+            //JSONArray newProcedureDefinition = AppProcedureListAPI.newProcedureDefinition(token, "proc-deploy");
             //String[] scriptPublicFieldNames = TblsTesting.getScriptPublicFieldNames("em-demo-a");
 if (1==1)return;           
         JSONObject procedure=new JSONObject();
@@ -846,8 +846,8 @@ String holidaysCalendar="España Comunidad X 2019";
 //Structured Batches. End
             
             out.println("Before creating the token");
-            myToken = token.createToken(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, "3", "Admin", "", "", "", null);
-            out.println("Token created: "+myToken);
+            String myToken2 = token.createToken(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, "3", "Admin", "", "", "", null);
+            out.println("Token created: "+myToken2);
             
             out.println("Reading web text file");
             String exampleUrl = "http://51.75.202.142:8888/myfiles/txtfile.txt";
