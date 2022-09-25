@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import functionaljavaa.testingscripts.TestingCoverage;
+import java.net.UnknownHostException;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 
@@ -104,7 +105,11 @@ public class TestingCoverageRun extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
     }
 
     /**
@@ -118,9 +123,13 @@ public class TestingCoverageRun extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
+        
     }
-
     /**
      * Returns a short description of the servlet.
      *

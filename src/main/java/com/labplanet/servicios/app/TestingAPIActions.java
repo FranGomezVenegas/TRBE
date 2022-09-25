@@ -13,6 +13,7 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.UnknownHostException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -67,14 +68,14 @@ public class TestingAPIActions extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override public String getName(){return this.name;}
+        @Override public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
 
         /**
          * @return the arguments
          */
-        public LPAPIArguments[] getArguments() {
+        @Override public LPAPIArguments[] getArguments() {
             return arguments;
         }     
         private final String name;
@@ -91,9 +92,9 @@ public class TestingAPIActions extends HttpServlet {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override public String getErrorCode(){return this.errorCode;}
+        @Override public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -237,7 +238,11 @@ public class TestingAPIActions extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
     }
 
     /**
@@ -251,9 +256,13 @@ public class TestingAPIActions extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try{
+            processRequest(request, response);
+        }catch (UnknownHostException uhex) {
+            //...
+        }        
+        
     }
-
     /**
      * Returns a short description of the servlet.
      *
