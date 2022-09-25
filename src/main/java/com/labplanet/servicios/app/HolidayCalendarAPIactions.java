@@ -26,6 +26,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 /**
@@ -77,6 +78,14 @@ public class HolidayCalendarAPIactions extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
+
+        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+            LPFrontEnd.servletReturnResponseError(request, response, 
+                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+            return;          
+        }    
+        
         JsonObject jsonObject=null;
         String[] argList=new String[]{};
         LPAPIArguments[] arguments = endPoint.getArguments();
@@ -85,6 +94,13 @@ public class HolidayCalendarAPIactions extends HttpServlet {
         }
         argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+                //procReqSession.killIt();
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, (EnumIntMessages)argValues[1], new Object[]{argValues[2].toString()});   
+                //actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+                //this.messageDynamicData=new Object[]{argValues[2].toString()};
+                return;                        
+            }             
             Integer incId=null;
             switch (endPoint){
                 case NEW_CALENDAR:
