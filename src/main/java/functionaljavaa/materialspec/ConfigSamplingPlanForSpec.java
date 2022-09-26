@@ -177,7 +177,7 @@ public class ConfigSamplingPlanForSpec {
     }    
     
     public Integer samplingAlgorithmQuantityDisable(Integer val){
-        return val-val;
+        return 0;
     }    
         
 }
