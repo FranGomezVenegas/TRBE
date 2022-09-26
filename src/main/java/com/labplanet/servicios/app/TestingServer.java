@@ -103,7 +103,7 @@ public class TestingServer extends HttpServlet {
             //int hashCode=LPDate.getCurrentTimeStamp().hashCode();
             //int hashCode = this.getClass().hashCode();
             //out.println(hashCode);
-            String valueToDecrypt="noencrypted";
+            String valueToDecrypt="noencrypted with spaces";
             out.println("Value: " + valueToDecrypt);
             Object[] decryptVal = DbEncryption.decryptValue(valueToDecrypt);
             out.println("Decrypted back: "+decryptVal[decryptVal.length-1].toString());

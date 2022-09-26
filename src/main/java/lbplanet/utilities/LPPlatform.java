@@ -478,7 +478,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             String text = stringToEncrypt;
             // Create key and cipher
             Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
             // encrypt the text
             cipher.init(Cipher.ENCRYPT_MODE, aesKey);
             byte[] encrypted = cipher.doFinal(text.getBytes());
@@ -515,7 +515,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             String enc = encryptedString;
             // Create key and cipher
             Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES");
+            Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
 
             // for decryption
             byte[] bb = new byte[enc.length()];
