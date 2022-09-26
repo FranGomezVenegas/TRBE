@@ -123,10 +123,9 @@ public class DataProgramSample{
                         fieldValue[fieldPosic] = diagnosis[0][i];
                 }
             }
-            if (numSamplesToLog!=null)
-                newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 
-            else
-                newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE);
+            if (numSamplesToLog==null)
+                numSamplesToLog=1;
+            newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
                 return newProjSample; //newProjSample=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, ":"));
             messages.addMainForSuccess(EnvMonSampleAPIEndpoints.LOGSAMPLE, 
