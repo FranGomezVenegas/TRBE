@@ -12,7 +12,6 @@ import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import javax.json.JsonArray;
@@ -173,11 +172,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
                 }
             }
                 Rdbms.closeRdbms();  
-                LPFrontEnd.servletReturnSuccess(request, response, jMainArr);
-                return;  
-            
-            
-            
+                LPFrontEnd.servletReturnSuccess(request, response, jMainArr);            
         }catch(Exception e){
             String eMsg=e.getMessage();
         }  
@@ -187,22 +182,19 @@ public class EndpointsDocAPIqueries extends HttpServlet {
     }    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
+/**
      * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
         try{
-            processRequest(request, response);
-        }catch (UnknownHostException uhex) {
-            //...
-        }        
+        processRequest(request, response);
+        }catch(ServletException|IOException e){
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
+        }
     }
 
     /**
@@ -210,19 +202,20 @@ public class EndpointsDocAPIqueries extends HttpServlet {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)  {
         try{
-            processRequest(request, response);
-        }catch (UnknownHostException uhex) {
-            //...
-        }        
-        
+        processRequest(request, response);
+        }catch(ServletException|IOException e){
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
+        }
     }
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
     /**
      * Returns a short description of the servlet.
      *
