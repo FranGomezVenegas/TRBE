@@ -153,12 +153,12 @@ public class Parameter {
         return returnBusinessRuleValue(valueToReturn, procInstanceName, area, parameterName, callerInfo, isOptional, false);
     }
     private static String returnBusinessRuleValue(String valueToReturn, String procInstanceName, String area, String parameterName, Object[] callerInfo, Boolean isOptional, Boolean disabledByPreReq){        
-        if ((valueToReturn==null || valueToReturn.length()==0) && (!Boolean.valueOf(isOptional)))
+        if ((valueToReturn==null || valueToReturn.length()==0) && (!isOptional))
             LPPlatform.saveParameterPropertyInDbErrorLog("", procInstanceName+"-"+area, 
                 callerInfo, parameterName, isOptional);
         if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting() && (!disabledByPreReq) ){
-            if (parameterName.toUpperCase().contains("STATUS"))
-                parameterName=parameterName;
+//            if (parameterName.toUpperCase().contains("STATUS"))
+//                parameterName=parameterName;
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
                 testingBusinessRulesVisitedObj.AddObject(procInstanceName, area, callerInfo[0].toString(), parameterName, valueToReturn);        
