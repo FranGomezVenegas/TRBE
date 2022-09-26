@@ -166,7 +166,7 @@ public class ProcedureDefinitionToInstance {
                         sqlWhere.addConstraint(TblsProcedure.ProcedureEvents.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())]}, "");
                         Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS,
                             EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName()}), new Object[]{procRoles[0][0].toString()}, sqlWhere, procInstanceName);
-                        multiRolCurEvent.put("updated?", LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()) ? false: true);
+                        multiRolCurEvent.put("updated?", !LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()));
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()))
                             multiRolCurEvent.put("update error log", Arrays.toString(diagnoses));
                     }else{
@@ -261,19 +261,19 @@ public class ProcedureDefinitionToInstance {
                 }
                 String[] confirmDialog=LPNulls.replaceNull(curAction[2]).toString().split("\\|");
                 if (confirmDialog.length>0){
-                    if (confirmDialog.toString().toLowerCase().contains("esign")){
+                    if (Arrays.toString(confirmDialog).toLowerCase().contains("esign")){
                         if (esigns.length()>0)esigns=esigns+"|";
                         esigns=esigns+actionName;
                     }
-                    if (confirmDialog.toString().toLowerCase().contains("user")){
+                    if (Arrays.toString(confirmDialog).toLowerCase().contains("user")){
                         if (verifUsers.length()>0)verifUsers=verifUsers+"|";
                         verifUsers=verifUsers+actionName;
                     }
-                    if (confirmDialog.toString().toLowerCase().contains("confirm")){
+                    if (Arrays.toString(confirmDialog).toLowerCase().contains("confirm")){
                         if (actionConfirm.length()>0)actionConfirm=actionConfirm+"|";
                         actionConfirm=actionConfirm+actionName;
                     }
-                    if (confirmDialog.toString().toLowerCase().contains("justif")){
+                    if (Arrays.toString(confirmDialog).toLowerCase().contains("justif")){
                         if (justifReason.length()>0)justifReason=justifReason+"|";
                         justifReason=justifReason+actionName;
                     }
@@ -285,9 +285,9 @@ public class ProcedureDefinitionToInstance {
                     insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
                     jObj=new JSONObject();
                     if (insertRecordInTable.getRunSuccess())
-                        jObj.put(actionName+LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), confirmDialogDetail+" "+"Added");
+                        jObj.put(actionName+LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), Arrays.toString(confirmDialogDetail)+" "+"Added");
                     else
-                        jObj.put(actionName+LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), confirmDialogDetail+" "+"error adding"+insertRecordInTable.getErrorMessageCode());
+                        jObj.put(actionName+LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), Arrays.toString(confirmDialogDetail)+" "+"error adding"+insertRecordInTable.getErrorMessageCode());
                     jArr.add(jObj);                                        
                 }                
             }
@@ -501,7 +501,7 @@ public class ProcedureDefinitionToInstance {
                     case "ENVIRONMENTAL_MONITORING":       
                         Boolean cont=true;
                         try{
-                            switch (curSchemaName.toString().toLowerCase()){                            
+                            switch (curSchemaName.toLowerCase()){                            
                                 case "config":
                                     try{
                                         tblCreateScript = createTableScript(TablesEnvMonitConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
@@ -612,7 +612,7 @@ public class ProcedureDefinitionToInstance {
                     case "SAMPLES":       
                         cont=true;
                         try{
-                            switch (curSchemaName.toString().toLowerCase()){                            
+                            switch (curSchemaName.toLowerCase()){                            
                                 case "config":
                                     tblCreateScript = createTableScript(TablesConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                     break;
@@ -844,7 +844,7 @@ public class ProcedureDefinitionToInstance {
         }
         jsonArr.add(jsonObj);
         Parameter parm=new Parameter();
-        Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName()));
+       // Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName()));
 /*        String[] filesNames=LPArray.getUniquesArray(procBusRulesFiles);
         for (String curFile: filesNames){
             parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
