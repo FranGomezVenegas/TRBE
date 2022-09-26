@@ -133,7 +133,7 @@ input[type=button], input[type=reset] {
 }
 
 .btn-group input:hover {
-	background:-webkit-gradient( center top, color-stop(0.05, #A4E9CE), color-stop(1, #A9E2F3) );
+	background:-webkit-gradient( center top, color-stop(0.05, #A4E9CE), color-stop(1, #A9E2F3));
 	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#A4E9CE', endColorstr='#A9E2F3');
 	background-color:#A4E9CE;
 	cursor: pointer;
