@@ -19,7 +19,7 @@ var sampleStageIncubationPreviousChecker = function(sampleId, sampleData) {
 };
 
 var sampleStageIncubationNextChecker = function(sampleId, sampleData) {
-    sampleStructure=JSON.parse(sampleData);
+    let sampleStructure=JSON.parse(sampleData);
     var incubationPassed = sampleStructure.incubation_passed;
     var incubation2Passed = sampleStructure.incubation2_passed;
     if (incubationPassed!==true){
