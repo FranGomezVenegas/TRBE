@@ -158,8 +158,7 @@ public class ProcedureSampleStage {
             
             //String paramName=asJsonObject.get("param_name").getAsString();
             if ("Recuento".equals(paramName)){ 
-                if ("0".equals(rawValue)) return LPPlatform.LAB_TRUE; //+"|END";
-                else return LPPlatform.LAB_TRUE;
+                return LPPlatform.LAB_TRUE;
             }        
             return LPPlatform.LAB_FALSE+"You win! This logic is not handled";
         }catch(Exception e){
