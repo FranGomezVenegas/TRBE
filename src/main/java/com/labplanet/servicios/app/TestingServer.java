@@ -96,7 +96,6 @@ public class TestingServer extends HttpServlet {
 //Map<String, ? extends ServletRegistration> registrations = servletContext.getServletRegistrations();        
 //@Override
             //public int hashCode() {
-            // TODO Auto-generated method stub
             //return 
 //         Objects.hash(nombre,apellidos);
             //}

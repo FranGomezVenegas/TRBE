@@ -34,7 +34,7 @@ public class DbEncryptionObject {
         if (!tableHasEncryptedFlds) return fieldValue;
 //if (1==1) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
-        String keyStr="AES/ECB/NoPadding";
+        String keyStr="AES/GCM/NoPadding";
 //        String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
@@ -69,7 +69,7 @@ public class DbEncryptionObject {
         if (!tableHasEncryptedFlds) return fieldValue;
 //if (1==1) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
-        String keyStr="AES/ECB/NoPadding";
+        String keyStr="AES/GCM/NoPadding";
 //        String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
@@ -116,7 +116,7 @@ public class DbEncryptionObject {
                     String text = fieldValue[iFields].toString();
                     // Create key and cipher
                     Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-                    Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+                    Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
                     // encrypt the text
                     cipher.init(Cipher.ENCRYPT_MODE, aesKey);
                     byte[] encrypted = cipher.doFinal(text.getBytes());
