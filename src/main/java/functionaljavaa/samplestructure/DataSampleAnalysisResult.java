@@ -32,6 +32,7 @@ import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuse
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Objects;
 import lbplanet.utilities.LPDate;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
@@ -404,7 +405,7 @@ public class DataSampleAnalysisResult {
                     , TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
                 fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, resSpecEvaluation[resSpecEvaluation.length - 2]
                     , token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus});
-                if (limitId==null || limitId!=specLimitId){
+                if (limitId==null || !Objects.equals(limitId, specLimitId)){
                     fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
                     fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
                 }                
@@ -459,7 +460,7 @@ public class DataSampleAnalysisResult {
                 fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName()
                     , TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
                 fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, specEvalDetail, token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus});
-                if (limitId==null || limitId!=specLimitId){
+                if (limitId==null || !Objects.equals(limitId, specLimitId)){
                     fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
                     fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
                 }                                
@@ -478,7 +479,7 @@ public class DataSampleAnalysisResult {
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     checkMsgCode=(EnumIntMessages) resSpecEvaluation[resSpecEvaluation.length - 1];
                     specEval = checkMsgCode.getErrorCode();
-                  if (specEval.toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL))
+                  if (specEval.toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL))
                     this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                   if ((resSpecEvaluation[resSpecEvaluation.length - 1]).toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS))
                     this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
@@ -687,7 +688,7 @@ public class DataSampleAnalysisResult {
                     , TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
                 fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, resSpecEvaluation[resSpecEvaluation.length - 2]
                     , token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus});
-                if (limitId==null || limitId!=specLimitId){
+                if (limitId==null || !Objects.equals(limitId, specLimitId)){
                     fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
                     fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
                 }                
@@ -742,7 +743,7 @@ public class DataSampleAnalysisResult {
                 fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName()
                     , TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
                 fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, specEvalDetail, token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus});
-                if (limitId==null || limitId!=specLimitId){
+                if (limitId==null || !Objects.equals(limitId, specLimitId)){
                     fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
                     fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
                 }                                
@@ -761,7 +762,7 @@ public class DataSampleAnalysisResult {
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                     checkMsgCode=(EnumIntMessages) resSpecEvaluation[resSpecEvaluation.length - 1];
                     specEval = checkMsgCode.getErrorCode();
-                  if (specEval.toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL))
+                  if (specEval.toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL))
                     this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                   if ((resSpecEvaluation[resSpecEvaluation.length - 1]).toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS))
                     this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
@@ -770,7 +771,7 @@ public class DataSampleAnalysisResult {
                 return new Object[]{diagnoses, sampleAuditAdd};
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.SPECRULE_NOTIMPLEMENTED, new Object[]{resultId.toString(), schemaDataName, ruleType});
-    }catch(Exception e){
+    }catch(NumberFormatException e){
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, e.getMessage(), null);
     }
     }
@@ -789,7 +790,7 @@ public class DataSampleAnalysisResult {
         Integer testId = Integer.valueOf(resultInfo[0][4].toString());
         Integer sampleId = Integer.valueOf(resultInfo[0][5].toString());
         String specUomConversionMode = resultInfo[0][6].toString();
-        if (LPNulls.replaceNull(currValue).toString().length()==0)
+        if (LPNulls.replaceNull(currValue).length()==0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CURRENTRESULT_ISEMPTY, new Object[]{paramName, sampleId});
         if (specUomConversionMode == null || specUomConversionMode.equalsIgnoreCase("DISABLED") || ((!specUomConversionMode.contains(newuom)) && !specUomConversionMode.equalsIgnoreCase("ALL"))) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERSION_NOT_ALLOWED, new Object[]{specUomConversionMode, newuom, curruom, resultId.toString(), schemaDataName});
@@ -1082,11 +1083,7 @@ public class DataSampleAnalysisResult {
         objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, cancelScopeTable, 
                 new String[]{cancelScope}, new Object[]{cancelScopeId}, 
                 new String[]{TblsData.SampleAnalysisResult.STATUS.getName(), cancelScope});// TblsData.SampleAnalysisResult.RESULT_ID.getName(), TblsData.SampleAnalysisResult.TEST_ID.getName(), TblsData.SampleAnalysisResult.SAMPLE_ID.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfo[0][0].toString())) {
-            String[] filter = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + LPNulls.replaceNull(sampleId).toString() + TblsData.SampleAnalysisResult.TEST_ID.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + LPNulls.replaceNull(testId).toString() 
-                    + TblsData.SampleAnalysisResult.RESULT_ID.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + LPNulls.replaceNull(resultId).toString()};
-            //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{Arrays.toString(filter), schemaDataName});
-        } else {
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfo[0][0].toString())) {
             objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
                     new String[]{cancelScope}, new Object[]{cancelScopeId}, 
                     new String[]{TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.RESULT_ID.getName(), TblsData.SampleAnalysisResult.TEST_ID.getName(), TblsData.SampleAnalysisResult.SAMPLE_ID.getName()});
