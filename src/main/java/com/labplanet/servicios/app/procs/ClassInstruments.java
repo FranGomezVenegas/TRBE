@@ -243,7 +243,7 @@ public class ClassInstruments {
                     String decision=argValues[3].toString();
                     actionDiagnoses=instr.completeCalibration(decision);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);
                     }
                     break;
                 case START_PREVENTIVE_MAINTENANCE:
