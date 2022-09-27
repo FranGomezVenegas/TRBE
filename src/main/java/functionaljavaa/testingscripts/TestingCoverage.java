@@ -286,7 +286,7 @@ public final class TestingCoverage {
         divisor=divisor-this.coverageBusRulesExcludeList.length;
         double divident = (double)this.busRuleVisitedTotal+(double) this.busRuleVisitedMissingInProcTotal;
         double operatedVal = (divident/divisor)*100;
-        this.busRuleCovPerc = new BigDecimal(operatedVal);
+        this.busRuleCovPerc = new BigDecimal(String.valueOf(operatedVal));
         String busRulesPercExplStr=percExplPatternStr.replace("<*1*>", (this.busRuleCovPerc).setScale(DECIMAL_PLACES, RoundingMode.UP).toString())
             .replace("<*2*>", "Visited="+this.busRuleVisitedTotal.toString()+" + Missing="+this.busRuleVisitedMissingInProcTotal.toString())
             .replace("<*3*>", String.valueOf(divisor));
