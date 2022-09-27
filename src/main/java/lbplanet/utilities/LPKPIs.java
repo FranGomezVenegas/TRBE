@@ -190,7 +190,7 @@ public final class LPKPIs {
                 }
                 if (endPosic>-1){                         
                     curWhereFieldsNameArr[endPosic]="";
-                    curWhereFieldsValueArr[endPosic]=curWhereFieldsValueArr[endPosic];
+                    //curWhereFieldsValueArr[endPosic]=curWhereFieldsValueArr[endPosic];
                 }
                 curWhereFieldsNameArr[j]=buildDateRangeFromStrings[1].toString();                    
             }

@@ -209,7 +209,7 @@ public class ProcedureRequestSession {
             this.busRuleVisited = TestingBusinessRulesVisited.getInstance();
             this.msgCodeVisited = TestingMessageCodeVisited.getInstance();
         }
-        this.isForQuery=isForQuery;
+        //this.isForQuery=isForQuery;
         this.hasErrors=false;
         if (this.tokenStr==null)
             this.tokenStr=finalToken;
