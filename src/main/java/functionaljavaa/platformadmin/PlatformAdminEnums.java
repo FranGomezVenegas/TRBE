@@ -25,10 +25,10 @@ public class PlatformAdminEnums {
 
     public enum PlatformAdminAPIActionsEndpoints implements EnumIntEndpoints{
         ADD_WHITE_IP("ADD_WHITE_IP", "whiteIpAdded_success",new LPAPIArguments[]{
-            new LPAPIArguments(TblsApp.IPWhiteList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-            new LPAPIArguments(TblsApp.IPWhiteList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
-            new LPAPIArguments(TblsApp.IPWhiteList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8 ),
-            new LPAPIArguments(TblsApp.IPWhiteList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9 ),
+            new LPAPIArguments(TblsApp.IPWhiteList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+            new LPAPIArguments(TblsApp.IPWhiteList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+            new LPAPIArguments(TblsApp.IPWhiteList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
+            new LPAPIArguments(TblsApp.IPWhiteList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
             new LPAPIArguments(TblsApp.IPWhiteList.DESCRIPTION.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
@@ -42,11 +42,11 @@ public class PlatformAdminEnums {
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
         UPDATE_WHITE_IP("UPDATE_WHITE_IP", "whiteIpUpdated_success",new LPAPIArguments[]{
             new LPAPIArguments(TblsApp.IPBlackList.ID.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10 ),
-            new LPAPIArguments(TblsApp.IPWhiteList.DESCRIPTION.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 11 ),}, 
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),
+            new LPAPIArguments(TblsApp.IPWhiteList.DESCRIPTION.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 11 )}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
         REMOVE_WHITE_IP("REMOVE_WHITE_IP", "whiteIpRemoved_success",new LPAPIArguments[]{
@@ -54,10 +54,10 @@ public class PlatformAdminEnums {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
         ADD_BLACK_IP("ADD_BLACK_IP", "blackIpAdded_success",new LPAPIArguments[]{
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
             new LPAPIArguments(TblsApp.IPWhiteList.DESCRIPTION.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_BLACK_LIST.getTableName()).build()).build()),
@@ -71,10 +71,10 @@ public class PlatformAdminEnums {
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),
         UPDATE_BLACK_IP("UPDATE_BLACK_IP", "blackIpUpdated_success",new LPAPIArguments[]{
             new LPAPIArguments(TblsApp.IPBlackList.ID.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9 ),
-            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE1.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE2.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE3.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
+            new LPAPIArguments(TblsApp.IPBlackList.IP_VALUE4.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),
             new LPAPIArguments(TblsApp.IPWhiteList.DESCRIPTION.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 11 ),}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.IP_WHITE_LIST.getTableName()).build()).build()),

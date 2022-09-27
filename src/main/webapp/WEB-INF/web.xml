@@ -316,12 +316,12 @@
         <servlet-class>com.labplanet.servicios.app.TestingCoverageRun</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>PlatformAdminQueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminQueries</servlet-class>
+        <servlet-name>PlatformAdminAPIQueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminAPIQueries</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>PlatformAdminActions</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminActions</servlet-class>
+        <servlet-name>PlatformAdminAPIActions</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminAPIActions</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SavedQueriesactions</servlet-name>
@@ -342,12 +342,12 @@
         <url-pattern>/AppTrazitInitSession</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>PlatformAdminQueries</servlet-name>
-        <url-pattern>/app/PlatformAdminQueries</url-pattern>
+        <servlet-name>PlatformAdminAPIQueries</servlet-name>
+        <url-pattern>/app/PlatformAdminAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>PlatformAdminActions</servlet-name>
-        <url-pattern>/app/PlatformAdminActions</url-pattern>
+        <servlet-name>PlatformAdminAPIActions</servlet-name>
+        <url-pattern>/app/PlatformAdminAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AppHeaderAPIqueries</servlet-name>
