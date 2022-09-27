@@ -103,7 +103,11 @@ if (response.statusCode() == 200) {
             //           rd.forward(request,response);               
         zebraLabel.getZplCode();
         ZebraUtils.printZpl(zebraLabel, ip, port);
-        } catch (InterruptedException|ZebraPrintException|URISyntaxException|IOException ex) {
+        } catch (InterruptedException ex2){
+            //LOGGER.log(Level.WARN, "Interrupted!", e);
+            // Restore interrupted state...
+            Thread.currentThread().interrupt();
+        } catch (ZebraPrintException|URISyntaxException|IOException ex){                
             Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
