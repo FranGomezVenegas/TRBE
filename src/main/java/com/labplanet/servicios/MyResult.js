@@ -5,7 +5,6 @@
  */
 
 var getValue = function(val) {
-val = val * 2;
-return val;
+    return val * 2;
 };
 
