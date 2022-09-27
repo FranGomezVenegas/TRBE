@@ -374,8 +374,8 @@ public final class TestingCoverage {
         JSONObject endpointsSummaryJObj=new JSONObject();
         double divisor = (double)this.procActionsArr.length;
         divisor=divisor-this.coverageEndpointsExcludeList.length;
-        this.endpointsCovPerc = new BigDecimal(((double)this.endpointsVisitedTotal/
-                divisor)*100);
+        double operatorVal=((double)this.endpointsVisitedTotal/divisor)*100;
+        this.endpointsCovPerc = new BigDecimal(String.valueOf(operatorVal));
         String endpointsPercExplStr=percExplPatternStr.replace("<*1*>", this.endpointsCovPerc.setScale(DECIMAL_PLACES, RoundingMode.UP).toString())
             .replace("<*2*>", this.endpointsVisitedTotal.toString())
             .replace("<*3*>", String.valueOf(divisor));
