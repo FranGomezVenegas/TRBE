@@ -196,6 +196,7 @@ public class ClassSample {
                     }
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{LPNulls.replaceNull(newDate), sampleId};
+                    
                     break;
                 case SAMPLINGCOMMENTADD:
                     sampleId = (Integer) argValues[0];
