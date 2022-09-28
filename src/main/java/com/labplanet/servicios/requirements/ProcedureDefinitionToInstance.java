@@ -62,21 +62,9 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         String dbName=argValues[3].toString();
         String moduleName=null;
         
-        if (!Boolean.valueOf(runAsCheckerAttrValue.toString())){
+        if (!Boolean.valueOf(runAsCheckerAttrValue.toString()))
             moduleName=argValues[4].toString();
-            String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
-                    , {"Process Name", procName}, {"Process Version", procVersion.toString()}, {"Instance", procInstanceName}
-                    , {"CREATE_REPOSITORIES_AND_PROC_TBLS", argValues[4].toString()}
-                    , {"PROC_DEPLOY_PROCEDURE_INFO", argValues[5].toString()}
-                    , {"PROC_DEPLOY_PROCEDURE_USER_ROLES", argValues[6].toString()}
-                    , {"PROC_DEPLOY_PROCEDURE_SOP_META_DATA", argValues[7].toString()}
-                    , {"PROC_DEPLOY_PROC_EVENTS", argValues[8].toString()}
-                    , {"PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS", argValues[9].toString()}
-                    , {"PROC_DEPLOY_BUSINESS_RULES_PROPERTIES", argValues[10].toString()}
-                    , {"PROC_DEPLOY_TABLES_AND_FIELDS", argValues[11].toString()}
-                    , {"PROC_DEPLOY_MASTER_DATA", argValues[12].toString()}
-            };
-        }
+        
         JSONObject mainObj=new JSONObject();
         JSONObject sectionsSettingJobj=new JSONObject();
         JSONObject sectionsDetailObj=new JSONObject();
