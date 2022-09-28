@@ -92,7 +92,6 @@ public class AppHeaderAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
-                // Rdbms.closeRdbms();   
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
@@ -100,8 +99,6 @@ public class AppHeaderAPI extends HttpServlet {
     }
 
     public static JSONObject AppHeaderAPI(HttpServletRequest request, HttpServletResponse response){
-        String language = LPFrontEnd.setLanguage(request); 
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -129,7 +126,6 @@ public class AppHeaderAPI extends HttpServlet {
             return personInfoJsonObj;
         }
         personInfoJsonObj=LPJson.convertArrayRowToJSONObject(personFieldsNameArr, personInfoArr[0]);
-        token=null;
         return personInfoJsonObj;
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
