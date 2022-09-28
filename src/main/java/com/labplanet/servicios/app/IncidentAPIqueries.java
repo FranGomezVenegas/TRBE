@@ -122,7 +122,6 @@ public class IncidentAPIqueries extends HttpServlet {
                     new String[]{TblsAppAudit.Incident.INCIDENT_ID.getName()}, new Object[]{incId}, 
                     new String[]{TblsAppAudit.Incident.DATE.getName()+" desc"});
                 jArr = new JSONArray();
-                Integer fieldsUpdatedPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.FIELDS_UPDATED.getName());
                 Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.ACTION_NAME.getName());
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
                     for (Object[] currIncident: incidentsClosedLastDays){
@@ -172,8 +171,7 @@ public class IncidentAPIqueries extends HttpServlet {
                     }
                 }
                 Rdbms.closeRdbms();  
-                LPFrontEnd.servletReturnSuccess(request, response, jArr); 
-                return;
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
             default: 
             }
         }finally {

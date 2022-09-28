@@ -91,10 +91,10 @@ public class InvestigationAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override public String getName(){return this.name;}
+        @Override public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;       
         private final LPAPIArguments[] arguments;
@@ -126,10 +126,10 @@ public class InvestigationAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override public String getName(){return this.name;}
+        @Override public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override public LPAPIArguments[] getArguments() {return arguments;}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -162,9 +162,7 @@ public class InvestigationAPI extends HttpServlet {
         String language=procReqInstance.getLanguage();
 
         try (PrintWriter out = response.getWriter()) {
-            InvestigationAPIEndpoints endPoint = null;
-            Object[] actionDiagnoses = null;
-        
+            InvestigationAPIEndpoints endPoint = null;                    
             try{
                 endPoint = InvestigationAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
@@ -175,14 +173,9 @@ public class InvestigationAPI extends HttpServlet {
                 if (clssInv.getEndpointExists()){
                     Object[] diagnostic=clssInv.getDiagnostic();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-        /*                Rdbms.rollbackWithSavePoint();
-                        if (!con.getAutoCommit()){
-                            con.rollback();
-                            con.setAutoCommit(true);}                */     
                         String errorCode =diagnostic[4].toString();
                         Object[] msgVariables=clssInv.getMessageDynamicData();
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, errorCode, msgVariables);               
-    //                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
                     }else{
                         JSONObject dataSampleJSONMsg =new JSONObject();
                         if (endPoint!=null)
@@ -194,21 +187,12 @@ public class InvestigationAPI extends HttpServlet {
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 }
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
-            // release database resources
             try {
-//                con.close();
                 procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

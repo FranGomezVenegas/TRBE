@@ -38,8 +38,6 @@ public class TestingCoverageRun extends HttpServlet {
         ProcedureRequestSession procReqInstance = null;
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
-        StringBuilder fileContentBuilder = new StringBuilder(0);        
-        String language = LPFrontEnd.setLanguage(request); 
 
         procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);
         try (PrintWriter out = response.getWriter()) {               

@@ -36,7 +36,6 @@ import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
-import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 /**
  *
@@ -61,7 +60,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
     public static final String JSON_TAG_VALUE_BRANCH_LEVEL_LEVEL_1="level1";
     public static final String JSON_TAG_VALUE_WINDOWS_URL_HOME="Modulo1/home.js";
      
-    public enum CertifyAnalysisMethodAPIfrontendEndpoints{
+    public enum CertifyAnalysisMethodAPIqueriesEndpoints{
         ALL_MY_ANA_METHOD_CERTIF("ALL_MY_ANA_METHOD_CERTIF", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
             EndPointsToRequirements.endpointWithNoOutputObjects),
         MY_PENDING_ANA_METHOD_CERTIF("MY_PENDING_ANA_METHOD_CERTIF", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
@@ -71,7 +70,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         ALL_IN_ONE("ALL_IN_ONE", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )},
             EndPointsToRequirements.endpointWithNoOutputObjects),
         ; 
-        private CertifyAnalysisMethodAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private CertifyAnalysisMethodAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -121,17 +120,13 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                 return;          
             }                  
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
-            
-            Token token = new Token(finalToken);
-            CertifyAnalysisMethodAPIfrontendEndpoints endPoint = null;
+            CertifyAnalysisMethodAPIqueriesEndpoints endPoint = null;
             try{
-                endPoint = CertifyAnalysisMethodAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = CertifyAnalysisMethodAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
              
             switch (endPoint){
@@ -146,10 +141,6 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                 return;
             case ALL_IN_ONE:
                 JSONObject jsonObj = new JSONObject();
-                
-                //jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_USER_TABS_ON_LOGIN, jArr);
-                //request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
-                //jsonObj.put("header_info", AppHeaderAPI(request, response));
                 jsonObj.put("procedures_list", procedureListInfo(request, response));
                 jsonObj.put("all_my_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.AllMyAnalysisMethodCertif(request, response));
                 jsonObj.put("my_pending_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.MyPendingAnalysisMethodCertif(request, response));
@@ -166,11 +157,9 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, "This call raised one unhandled exception. Error:"+errMessage);     
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);    
-            // Rdbms.closeRdbms();        
         } finally {
             // release database resources
             try {
-                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       
@@ -178,21 +167,20 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
 
     public static JSONArray AllMyAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
     try{
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String language = LPFrontEnd.setLanguage(request); 
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
         Token token = new Token(finalToken);
         
-        CertifyAnalysisMethodAPIfrontendEndpoints endPoint = CertifyAnalysisMethodAPIfrontendEndpoints.ALL_MY_ANA_METHOD_CERTIF;
+        CertifyAnalysisMethodAPIqueriesEndpoints endPoint = CertifyAnalysisMethodAPIqueriesEndpoints.ALL_MY_ANA_METHOD_CERTIF;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
 
         UserProfile usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-            Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+            LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
             Rdbms.closeRdbms(); 
             return new JSONArray();
         }
@@ -210,7 +198,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                 new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName()}, new Object[]{token.getUserName()}, fieldsToRetrieve, allUserProcedurePrefix);
         if (userAnaMethCertifByProcess==null)return new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userAnaMethCertifByProcess[0][0]).toString())){
-            Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+            LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
             Rdbms.closeRdbms();
             return new JSONArray();
         }
@@ -229,14 +217,12 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         return myAnaMethCertifListArr;
     }catch(Exception e){
         JSONArray proceduresList = new JSONArray();
-        //proceduresList.add("Error:"+e.getMessage());
         return proceduresList;            
     }
     }
     public static JSONArray MyPendingAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
     try{
         String language = LPFrontEnd.setLanguage(request); 
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -244,7 +230,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
-        CertifyAnalysisMethodAPIfrontendEndpoints endPoint = CertifyAnalysisMethodAPIfrontendEndpoints.MY_PENDING_ANA_METHOD_CERTIF;
+        CertifyAnalysisMethodAPIqueriesEndpoints endPoint = CertifyAnalysisMethodAPIqueriesEndpoints.MY_PENDING_ANA_METHOD_CERTIF;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
         
@@ -254,7 +240,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-            Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+            LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
             Rdbms.closeRdbms();
             return new JSONArray();
         }
@@ -274,7 +260,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             Object[][] userProcAnaMethCertif = UserMethod.getNotCertifAnaMethCertif(token.getUserName(), currProc, fieldsToRetrieve);
             if (userProcAnaMethCertif!=null && userProcAnaMethCertif.length>0){
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(userProcAnaMethCertif[0]))){
-                    Object[] errMsg = LPFrontEnd.responseError(userProcAnaMethCertif, language, null);
+                    LPFrontEnd.responseError(userProcAnaMethCertif, language, null);
                     Rdbms.closeRdbms();
                     return new JSONArray(); 
                 }
@@ -286,8 +272,6 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                     anaMethCertifJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curAnaMethCertif);
                     myAnaMethCertifList.put("pending_analysis_method_certification", myAnaMethCertif);
                     myAnaMethCertifList.put("procedure_name", currProc);
-                    String[] userSopTblAllFields=getAllFieldNames(TblsData.TablesData.USER_SOP.getTableFields());
-                    JSONArray jArrPieceOfInfo=new JSONArray();
                     anaMethCertifJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curAnaMethCertif));
                     myAnaMethCertif.add(anaMethCertifJObj);
                 }    
@@ -304,7 +288,6 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
     public static JSONArray ProceduresAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
     try{
         String language = LPFrontEnd.setLanguage(request); 
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -312,14 +295,14 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
-        CertifyAnalysisMethodAPIfrontendEndpoints endPoint = CertifyAnalysisMethodAPIfrontendEndpoints.PROCEDURE_ANA_METHOD_CERTIF;
+        CertifyAnalysisMethodAPIqueriesEndpoints endPoint = CertifyAnalysisMethodAPIqueriesEndpoints.PROCEDURE_ANA_METHOD_CERTIF;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
         
         UserProfile usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-            Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+            LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
             Rdbms.closeRdbms();
             return new JSONArray();
         }
@@ -336,7 +319,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             Object[][] procAnaMethCertif = Rdbms.getRecordFieldsByFilter(currProc+"-config", TblsCnfg.TablesConfig.METHODS.getTableName(), 
                     new String[]{TblsCnfg.Methods.CODE.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procAnaMethCertif[0]))){
-                Object[] errMsg = LPFrontEnd.responseError(procAnaMethCertif, language, null);
+                LPFrontEnd.responseError(procAnaMethCertif, language, null);
                 Rdbms.closeRdbms();
                 return new JSONArray();
             }

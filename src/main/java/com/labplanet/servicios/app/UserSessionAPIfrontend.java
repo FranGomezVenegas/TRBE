@@ -39,7 +39,6 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
-import trazit.session.ProcedureRequestSession;
 
 
 /**
@@ -76,10 +75,10 @@ public class UserSessionAPIfrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){            return this.name;        }
-        public String getSuccessMessageCode(){            return this.successMessageCode;        }           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {            return arguments;        }     
+        @Override public String getName(){            return this.name;        }
+        @Override public String getSuccessMessageCode(){            return this.successMessageCode;        }           
+        @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override public LPAPIArguments[] getArguments() {            return arguments;        }     
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -159,9 +158,6 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 JSONArray userSessionArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString())){
                     for (Object[] currUsrSession: userSessionInfo){
-                        Integer sessionId=-1;
-                        if (LPArray.valueInArray(fieldsToRetrieve, TblsApp.AppSession.SESSION_ID.getName()))
-                            sessionId=(Integer) currUsrSession[LPArray.valuePosicInArray(fieldsToRetrieve, TblsApp.AppSession.SESSION_ID.getName())];
                         JSONObject userSessionObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currUsrSession);
                         userSessionArr.add(userSessionObj);
                     }
@@ -170,7 +166,6 @@ public class UserSessionAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, userSessionArr);
                 return; 
             case USER_SESSION_INCLUDING_AUDIT_HISTORY:
-                ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForQueries(null, null, false);
                 fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.APP_SESSION.getTableFields());
                 userSessionInfo=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_SESSION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, "ALL"),

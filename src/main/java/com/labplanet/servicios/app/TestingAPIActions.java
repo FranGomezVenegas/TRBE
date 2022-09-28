@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
-import javax.json.JsonObject;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -122,7 +121,6 @@ public class TestingAPIActions extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
-            JsonObject jsonObject=null;
             String[] argList=new String[]{};
             LPAPIArguments[] arguments = endPoint.getArguments();
             for (LPAPIArguments curArg: arguments){
@@ -167,7 +165,6 @@ public class TestingAPIActions extends HttpServlet {
             //LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
         }
-        Object[] actionDiagnoses = null;
         String[] scriptFldToRetrieve=getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields());
         //String[] scriptFldToRetrieve=new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.DATE_CREATION.getName()};
         Object[][] scriptInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
@@ -175,7 +172,7 @@ public class TestingAPIActions extends HttpServlet {
             new Object[]{scriptId},
             scriptFldToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptInfo[0][0].toString())){
-            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TestingAPIErrorTrapping.SCRIPT_NOT_FOUND, new Object[]{scriptId});
+            ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TestingAPIErrorTrapping.SCRIPT_NOT_FOUND, new Object[]{scriptId});
             return;
         }
         JSONObject jObj=LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, scriptInfo[0]);

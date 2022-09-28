@@ -57,16 +57,14 @@ public class SopUserAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public String getName(){return this.name;}
+        @Override public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
 
         /**
          * @return the arguments
          */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        @Override public LPAPIArguments[] getArguments() {return arguments;}     
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -100,9 +98,7 @@ public class SopUserAPI extends HttpServlet {
         String language=procReqInstance.getLanguage();
 
         try (PrintWriter out = response.getWriter()) {
-            SopUserAPIEndpoints endPoint = null;
-            Object[] actionDiagnoses = null;
-        
+            SopUserAPIEndpoints endPoint = null;        
             try{
                 endPoint = SopUserAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
@@ -110,7 +106,6 @@ public class SopUserAPI extends HttpServlet {
                 return;                   
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
-            Integer incId=null;
             Token token=procReqInstance.getToken();
             RelatedObjects rObj=RelatedObjects.getInstanceForActions();
             Object[] userSopDiagnostic=new Object[0];

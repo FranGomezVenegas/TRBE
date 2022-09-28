@@ -153,7 +153,6 @@ public class TestingRegressionUAT extends HttpServlet {
             request.setAttribute(LPTestingParams.TESTING_SOURCE, "DB");
             request.setAttribute(LPTestingParams.NUM_EVAL_ARGS, numEvalArgs);
             request.setAttribute(LPTestingParams.SCRIPT_ID, scriptId);
-            String saveExecEvidOnSuccess=null;
             Integer fldPosic=LPArray.valuePosicInArray(fldsToRetrieve, TblsTesting.Script.SAVE_EXEC_EVID_ON_SUCCESS.getName());            
             if (fldPosic>-1)
                 request.setAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE, scriptTblInfo[0][fldPosic]);            
@@ -228,7 +227,6 @@ public class TestingRegressionUAT extends HttpServlet {
                         LPTestingOutFormat.cleanLastRun(procInstanceName, scriptId);
                         LPTestingOutFormat.getIdsBefore(procInstanceName, scriptId, scriptTblInfo[0]);
                     }catch(Exception err){
-                        String errMessage=err.getMessage();
                     }
                     
                     String userProceduresList=token.getUserProcedures();
@@ -280,7 +278,6 @@ public class TestingRegressionUAT extends HttpServlet {
             }
         }
         catch(Exception e){
-            String errMessage=e.getMessage();
         }
         finally{
             procReqInstance.killIt();

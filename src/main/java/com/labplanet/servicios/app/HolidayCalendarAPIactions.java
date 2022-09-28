@@ -15,7 +15,6 @@ import java.io.PrintWriter;
 import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.json.JsonObject;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -86,7 +85,6 @@ public class HolidayCalendarAPIactions extends HttpServlet {
             return;          
         }    
         
-        JsonObject jsonObject=null;
         String[] argList=new String[]{};
         LPAPIArguments[] arguments = endPoint.getArguments();
         for (LPAPIArguments curArg: arguments){

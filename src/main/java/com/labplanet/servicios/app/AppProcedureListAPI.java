@@ -31,6 +31,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import functionaljavaa.sop.UserSop;
 import static functionaljavaa.sop.UserSop.isProcedureSopEnable;
+import java.util.Arrays;
 import lbplanet.utilities.LPNulls;
 import trazit.globalvariables.GlobalVariables;
 
@@ -189,9 +190,10 @@ public class AppProcedureListAPI extends HttpServlet {
         if (procInstanceName.toLowerCase().contains("em-demo-a")){
             BusinessRules bi=new BusinessRules(procInstanceName, null);
             return ConfigMasterData.getMasterData(procInstanceName, bi);
-        }else 
+        }else{ 
             jObj.put(procInstanceName, "no master date logic defined");
             return jObj;
+        }
     }
     public static JSONArray procActionsWithESign(String procInstanceName){
         JSONArray jArr = new JSONArray();   
@@ -249,9 +251,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;
         String[] justifReasonRequired = LPNulls.replaceNull(ruleValue[0][0]).toString().split("\\|");
-        for (String curAction: justifReasonRequired){
-            jArr.add(curAction);
-        }
+        jArr.addAll(Arrays.asList(justifReasonRequired));
         return jArr;
     }
     
@@ -459,7 +459,6 @@ public class AppProcedureListAPI extends HttpServlet {
             procedure.put(LABEL_ARRAY_PROC_EVENTS, new JSONArray());
         }                    
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEvent[0][0].toString())){                                                
-            String currParentIconName="";
             JSONObject procEventJson = new JSONObject();
             JSONArray childs=new JSONArray();
             for (Object[] procEvent1 : procEvent) {
@@ -480,7 +479,6 @@ public class AppProcedureListAPI extends HttpServlet {
                 if (curProcEventType.equalsIgnoreCase(elementType.TWOICONS.toString().toLowerCase())){
                     String curProcEventPosition=procEvent1[LPArray.valuePosicInArray(procEventFldNameArray, TblsProcedure.ProcedureEvents.POSITION.getName())].toString();
                     if ("0".equalsIgnoreCase(curProcEventPosition)){
-                        currParentIconName=curProcEventPosition;
                         if (!childs.isEmpty()){
                             procEventJson.put("icons", childs);
                             procEvents.add(procEventJson);
