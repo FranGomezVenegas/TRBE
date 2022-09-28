@@ -260,7 +260,6 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                return;  
             default: 
             }
         }finally {

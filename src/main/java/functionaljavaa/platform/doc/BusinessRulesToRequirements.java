@@ -142,7 +142,6 @@ public class BusinessRulesToRequirements {
         jMainObj.put("06_not_found_total", eventsNotFound.size());
         this.summaryInfo=jMainObj;
         //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
-        return;
     }
 private static void declareBusinessRuleInDatabaseOld(String apiName, String areaName, String tagName, String[] fieldNames, Object[] fieldValues){
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
@@ -173,7 +172,6 @@ private static void declareBusinessRuleInDatabaseOld(String apiName, String area
                     EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.BUSINESS_RULES_DECLARATION,
                     (String[]) docInfoForBusinessRule[0]), (String[]) docInfoForBusinessRule[1], sqlWhere, null);
             }
-            return;
 //        }
     }else{
         fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.CREATION_DATE.getName());
@@ -234,8 +232,7 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
                         EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.BUSINESS_RULES_DECLARATION,
                         updFldName), updFldValue, sqlWhere, null);
                 }
-                return;
-    //        }
+            //        }
         }else{
             fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.CREATION_DATE.getName());
             fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
@@ -247,7 +244,6 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
         }
     }catch(Exception e){
         String errMsg=e.getMessage();
-            return;
     }
     
 }

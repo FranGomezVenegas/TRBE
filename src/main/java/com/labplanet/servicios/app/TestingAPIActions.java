@@ -222,8 +222,7 @@ public class TestingAPIActions extends HttpServlet {
                 updFldValue=LPArray.addValueToArray1D(updFldValue, scriptInfo[0][fldPosicInArray]);
             }
         }
-       // Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPT_SAVE_POINT, updFldName, updFldValue, null);
-        return;
+        // Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPT_SAVE_POINT, updFldName, updFldValue, null);
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 /**

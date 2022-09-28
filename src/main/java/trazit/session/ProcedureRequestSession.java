@@ -427,7 +427,6 @@ return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_F
     }
     public void setBusinessRulesTesting(BusinessRules br){
         this.busRulesTesting=br;
-        return;
     }
     public void setBusinessProcInstance(BusinessRules br, String procInstanceName, String finalToken){
         if (theSession!=null || theSession.getTokenString()!=null){
@@ -435,7 +434,6 @@ return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_F
             theSession.procedureInstance=procInstanceName;
             theSession.tokenStr=finalToken;
         }
-        return;
     }
     public void setActionNameForTesting(Integer scriptId, Integer stepId, String actionName){
         String tstAction="Script:"+scriptId.toString()+" Step:"+stepId.toString()+" ActionName:"+actionName;

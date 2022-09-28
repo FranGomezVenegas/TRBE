@@ -53,7 +53,6 @@ public class ProcReqSessionAutomatisms {
                     EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldName), updFldValue, sqlWhere, null);                */
             }
         }
-        return;
     }
     
 }

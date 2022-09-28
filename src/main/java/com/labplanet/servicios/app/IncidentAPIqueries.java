@@ -175,7 +175,6 @@ public class IncidentAPIqueries extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, jArr); 
                 return;
             default: 
-                return;    
             }
         }finally {
             // release database resources

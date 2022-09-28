@@ -192,7 +192,6 @@ public class InvestigationAPI extends HttpServlet {
                     }            
                 }else{
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
-                    return;                                       
                 }
         }catch(Exception e){   
  /*           try {

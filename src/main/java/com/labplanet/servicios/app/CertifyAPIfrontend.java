@@ -158,7 +158,6 @@ public class CertifyAPIfrontend extends HttpServlet {
                 case OBJECTS_ENABLED_CERTIFICATION:
                     procReqInstance.killIt();
                     LPFrontEnd.servletReturnSuccess(request, response, objectsUponCertificationProcedure(true));
-                    return;
                     
             default:
             }

@@ -338,7 +338,6 @@ public final class Investigation {
                 sampleId=Integer.valueOf(objInfo[0][0].toString());
                 smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE.getTableName(), resultId, 
                     sampleId, null, resultId, new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, new Object[]{investId.toString()});
-                return;
             default:
         }
 

@@ -148,7 +148,6 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         
         this.summaryInfo=jMainObj;
         //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
-        return;
     }    
     
     public EndPointsToRequirements() {
@@ -206,7 +205,6 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
             Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
                             new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName()}), new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()}, sqlWhere, null);
-            return;
         }else{
             //String[] flds=(String[]) docInfoForEndPoint[0];
             String[] fldNames=new String[]{};
@@ -227,7 +225,6 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
             Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
                 EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
                 fldNames), fldValues, sqlWhere, null);
-            return;
         }
     }else{
         fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.CREATION_DATE.getName(), EndpointsDeclaration.NUM_ENDPOINTS_IN_API.getName()});
@@ -240,10 +237,8 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
             fieldValues=LPArray.addValueToArray1D(fieldValues, outputObjectTypes.toString());
         Rdbms.insertRecordInTable(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, fieldNames, fieldValues);    
         this.endpointsFromDatabase=LPArray.joinTwo2DArrays(endpointsFromDatabase, LPArray.array1dTo2d(fieldValues,1));
-        return;
     }
     }catch(Exception e){
-      return;      
     }
 }
 

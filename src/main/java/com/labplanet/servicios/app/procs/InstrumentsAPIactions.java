@@ -178,7 +178,6 @@ public class InstrumentsAPIactions extends HttpServlet {
         } catch (IOException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
-        return;
         
     }
 

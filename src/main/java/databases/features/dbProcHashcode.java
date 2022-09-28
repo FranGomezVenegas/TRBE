@@ -60,7 +60,6 @@ public class dbProcHashcode {
         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROCEDURE_INFO,
             EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROCEDURE_INFO, new String[]{TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()}),
             new Object[]{String.valueOf(hashCode)}, sqlWhere, null);
-        return;
     }
     
     public static JSONObject procDefPicture(String newHashCode){

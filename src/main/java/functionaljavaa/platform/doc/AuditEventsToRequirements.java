@@ -138,7 +138,6 @@ public final class AuditEventsToRequirements {
         jMainObj.put("07_not_found_total", eventsNotFound.size());
         this.summaryInfo=jMainObj;
         //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
-        return;
     }    
 
 
@@ -184,7 +183,6 @@ private static void declareInDatabase(String objectName, String eventName){
             sqlWhere.addConstraint(TblsTrazitDocTrazit.AuditEventsDeclaration.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEvAuditInfo[0][0]}, "");
             Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION,
                     EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION, updFldName), updFldValue, sqlWhere, null);            
-            return;
         }
     }else{
         String[] fieldNames=new String[]{};
@@ -201,7 +199,6 @@ private static void declareInDatabase(String objectName, String eventName){
         fieldNames=LPArray.addValueToArray1D(fieldNames, AuditEventsDeclaration.EVENT_PRETTY_ES.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, propValueEs);
         Rdbms.insertRecordInTable(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION, fieldNames, fieldValues);    
-        return;
     }
 }
 

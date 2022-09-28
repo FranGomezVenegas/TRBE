@@ -140,7 +140,6 @@ public class ErrorMessageCodesToRequirements {
             jMainObj.put("07_not_found_total", msgCodesNotFound.size());        
             this.summaryInfo=jMainObj;
             //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
-            return;
         }catch(Exception e){
             Rdbms.closeRdbms();
         }
@@ -187,11 +186,9 @@ public class ErrorMessageCodesToRequirements {
                         new Object[]{fldValues[fldIdPosic]});        */
                     String s="";
             }
-            return;
-        //        }
+            //        }
         }catch(Exception e){
             String errMsg=e.getMessage();
-            return;
         }
     }
     public static Object[] getDocInfoForMessage(String apiName, String endpointName){
