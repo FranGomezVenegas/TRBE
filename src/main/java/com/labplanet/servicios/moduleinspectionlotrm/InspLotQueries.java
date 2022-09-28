@@ -110,7 +110,9 @@ public final class InspLotQueries {
         String[] fieldsToRetrieve=getFieldsListToRetrieve(filterFieldsToRetrieve, EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return jArr;
         for (Object[] currRec: materialInfo){
-            sampleId=Integer.valueOf(currRec[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInspLotRMData.Sample.SAMPLE_ID.getName())].toString());
+            if (sampleId==null){
+                sampleId=Integer.valueOf(currRec[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInspLotRMData.Sample.SAMPLE_ID.getName())].toString());
+            }
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
             if (includeAnalysis==null || includeAnalysis) jObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), dataSampleAnalysisStructure(sampleId, null, new String[]{}, includeAnalysisResults));
             jArr.add(jObj);
