@@ -73,7 +73,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
     public static final String JSON_TAG_NAME_NAME="name";
     public static final String JSON_TAG_NAME_LABEL_EN="label_en";
     public static final String JSON_TAG_NAME_LABEL_ES="label_es";
-    public static final String JSON_TAG_NAME_PSWD="password";
+    public static final String JSON_TAG_NAME_PASS="password";
     public static final String JSON_TAG_NAME_PSWD_VALUE_FALSE="false";
     public static final String JSON_TAG_NAME_TYPE="type";
     public static final String JSON_TAG_NAME_TYPE_VALUE_TREE_LIST="tree-list";
@@ -323,7 +323,7 @@ GlobalAPIsParams.
                                                 programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_DB_TYPE, "");
                                             }
                                         }
-                                        programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_PSWD, JSON_TAG_NAME_PSWD_VALUE_FALSE);
+                                        programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_PASS, JSON_TAG_NAME_PSWD_VALUE_FALSE);
                                         programLocationCardInfoJsonArr.add(programLocationCardInfoJsonObj);                                    
                                     }    
                                 }
@@ -346,7 +346,7 @@ GlobalAPIsParams.
                                     programSampleSummaryJsonObj.put(JSON_TAG_NAME_LABEL_ES, statusListEs[iStatuses]);
                                     programSampleSummaryJsonObj.put(JSON_TAG_NAME_VALUE, samplesStatusCounter[iStatuses]);
                                     programSampleSummaryJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
-                                    programSampleSummaryJsonObj.put(JSON_TAG_NAME_PSWD, JSON_TAG_NAME_PSWD_VALUE_FALSE);
+                                    programSampleSummaryJsonObj.put(JSON_TAG_NAME_PASS, JSON_TAG_NAME_PSWD_VALUE_FALSE);
                                     programSampleSummaryJsonArray.add(programSampleSummaryJsonObj);
                                 }
                                 programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY, programSampleSummaryJsonArray); 
@@ -387,7 +387,7 @@ GlobalAPIsParams.
                                 programSampleSummaryJsonObj.put(JSON_TAG_NAME_LABEL_ES, LPNulls.replaceNull(statusListEs[iStatuses]));
                                 programSampleSummaryJsonObj.put(JSON_TAG_NAME_VALUE, LPNulls.replaceNull(samplesStatusCounter[iStatuses]));
                                 programSampleSummaryJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
-                                programSampleSummaryJsonObj.put(JSON_TAG_NAME_PSWD, JSON_TAG_NAME_PSWD_VALUE_FALSE);
+                                programSampleSummaryJsonObj.put(JSON_TAG_NAME_PASS, JSON_TAG_NAME_PSWD_VALUE_FALSE);
                                 programSampleSummaryJsonArray.add(programSampleSummaryJsonObj);
                             }
                             programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY, programSampleSummaryJsonArray);                             
