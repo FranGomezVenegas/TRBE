@@ -20,7 +20,7 @@ public class ProcedureSampleStage {
         return LPPlatform.LAB_FALSE+"Sampling is the first stage, has no previous.";
     }
     public String sampleStageSamplingNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
-        Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
+        Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];

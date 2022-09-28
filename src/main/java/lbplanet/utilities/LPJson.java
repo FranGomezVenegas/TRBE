@@ -8,6 +8,7 @@ package lbplanet.utilities;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import java.util.Arrays;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -65,10 +66,8 @@ public class LPJson {
     }
 
     public static JSONArray convertToJSONArray(Object[] diagn) {
-        StringBuilder jsonStr = new StringBuilder(0).append("{");
         JSONArray jMainArr=new JSONArray();
-        for(Object curItem: diagn)
-            jMainArr.add(curItem);
+        jMainArr.addAll(Arrays.asList(diagn));
         return jMainArr;
     }
 
@@ -109,19 +108,27 @@ public class LPJson {
     }
 
     public static Object[] convertToJsonObjectStringedObject(String value){
+        return convertToJsonObjectStringedObject(value, false);
+    }
+    public static Object[] convertToJsonObjectStringedObject(String value, Boolean skipAsteriskSplit){
         try{
         JsonParser parser = new JsonParser();
         JsonObject asJsonObject=new JsonObject();
+        if (Boolean.TRUE.equals(skipAsteriskSplit)){
+            asJsonObject = parser.parse(value).getAsJsonObject();
+            Object[] infoArr=new Object[]{LPPlatform.LAB_TRUE, asJsonObject};
+            return infoArr;
+        }
         String[] valueArr=value.split("\\*");
         if(valueArr.length==1)
             asJsonObject = parser.parse(valueArr[0]).getAsJsonObject();
         else
             // Solo cubre el escenario en el cual el json ref esta en la última posicion del valor.
-            asJsonObject = parser.parse(valueArr[valueArr.length-1]).getAsJsonObject();
+            asJsonObject = parser.parse(valueArr[valueArr.length-1]).getAsJsonObject();                    
         Object[] infoArr=new Object[]{LPPlatform.LAB_TRUE, asJsonObject};
-        if (valueArr.length==2) infoArr=LPArray.addValueToArray1D(infoArr, valueArr[1]);
+        if (valueArr.length==2) infoArr=LPArray.addValueToArray1D(infoArr, valueArr[1]);        
         return infoArr;
-        }catch(Exception e){
+        }catch(JsonSyntaxException e){
            return new Object[]{LPPlatform.LAB_FALSE, e.getMessage()}; 
         }
         
@@ -136,7 +143,7 @@ public class LPJson {
             }
             JsonParser parser = new JsonParser();
             return parser.parse(value).getAsJsonArray();
-        }catch(Exception e){
+        }catch(JsonSyntaxException e){
            
            JsonArray jArr = new JsonArray();
            jArr.add(e.getMessage());
@@ -154,7 +161,7 @@ public class LPJson {
             }
             JsonParser parser = new JsonParser();
             return parser.parse(value).getAsJsonObject();
-        }catch(Exception e){
+        }catch(JsonSyntaxException e){
            JsonObject jObj = new JsonObject();
            jObj.addProperty("error", e.getMessage());
            jObj.addProperty("value", value);
