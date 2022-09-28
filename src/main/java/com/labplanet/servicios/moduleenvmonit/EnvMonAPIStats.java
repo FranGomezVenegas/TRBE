@@ -37,7 +37,6 @@ import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
-import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User

@@ -5,16 +5,8 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import databases.TblsCnfg.TablesConfig;
-import databases.TblsCnfgAudit.TablesCfgAudit;
-import databases.TblsData.TablesData;
-import databases.TblsDataAudit.TablesDataAudit;
-import databases.TblsProcedure.TablesProcedure;
-import databases.TblsProcedureAudit.TablesProcedureAudit;
-import databases.TblsProcedureConfig.TablesProcedureConfig;
 import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
-import trazit.enums.EnumIntModuleTablesDeployment;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;

@@ -4,12 +4,6 @@
  * and open the template in the editor.
  */
 package lbplanet.utilities;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import org.apache.poi.ss.usermodel.*;
-//import org.molgenis.data.Writable;
 //import org.molgenis.data.WritableFactory;
 //import org.molgenis.data.excel.ExcelWriter;
 

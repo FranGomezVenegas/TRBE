@@ -19,7 +19,6 @@ import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;

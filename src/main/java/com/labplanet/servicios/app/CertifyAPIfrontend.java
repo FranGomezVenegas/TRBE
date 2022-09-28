@@ -108,7 +108,6 @@ public class CertifyAPIfrontend extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-            String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME); 
 
             Token token = new Token(finalToken);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){

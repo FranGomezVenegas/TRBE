@@ -36,7 +36,6 @@ public class AppTrazitInitSession extends HttpServlet {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
-        String language = LPFrontEnd.setLanguage(request); 
         JSONObject trazitInitSession=new JSONObject();
         trazitInitSession.put("procedures_list", procedureListInfo(request, response));
         trazitInitSession.put("header_info", AppHeaderAPI(request, response));

@@ -106,7 +106,6 @@ public class AppProcedureListAPI extends HttpServlet {
 
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}               
          
-            String rolName = token.getUserRole();
             UserProfile usProf = new UserProfile();
             Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(token.getUserName());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0].toString())){
@@ -118,8 +117,6 @@ public class AppProcedureListAPI extends HttpServlet {
             JSONArray procedures = new JSONArray();     
             for (Object curProc: allUserProcedurePrefix){
                 if (!"proc_management".equalsIgnoreCase(curProc.toString())){
-                    BusinessRules bi=new BusinessRules(curProc.toString(), null);
-
                     JSONObject procedure = new JSONObject();
                     String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
 
@@ -130,8 +127,6 @@ public class AppProcedureListAPI extends HttpServlet {
                             , PROC_FLD_NAME.split("\\|"));
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){
                         procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
-
-                        String propValue = "NO";
 
                         Object[][] rulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
                             new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.AREA.getName()},
@@ -165,7 +160,7 @@ public class AppProcedureListAPI extends HttpServlet {
             JSONObject proceduresList = new JSONObject();
             proceduresList.put(LABEL_ARRAY_PROCEDURES, procedures);
             return proceduresList;
-        }catch(Exception e){
+        }catch(NumberFormatException e){
             JSONObject proceduresList = new JSONObject();
             proceduresList.put(LABEL_ARRAY_PROCEDURES, e.getMessage());
             return proceduresList;            
@@ -193,7 +188,6 @@ public class AppProcedureListAPI extends HttpServlet {
         JSONObject jObj=new JSONObject();
         if (procInstanceName.toLowerCase().contains("em-demo-a")){
             BusinessRules bi=new BusinessRules(procInstanceName, null);
-            
             return ConfigMasterData.getMasterData(procInstanceName, bi);
         }else 
             jObj.put(procInstanceName, "no master date logic defined");
@@ -269,7 +263,6 @@ public class AppProcedureListAPI extends HttpServlet {
                 new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesValues[0][0].toString()))return jObj;
         for (Object[] curRule: rulesValues){
-            JSONObject jActionObj = new JSONObject();              
             jObj.put(curRule[0], curRule[1]);
         }
         return jObj;
@@ -315,7 +308,6 @@ public class AppProcedureListAPI extends HttpServlet {
                     
         UserSop userSop = new UserSop();        
 
-//        Boolean isProcedureSopEnable = userSop.isProcedureSopEnable((String) curProc);
         Object[] procedureSopEnable = isProcedureSopEnable((String) curProc);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) 
             procedure.put(LABEL_SOP_CERTIFICATION, LBL_VAL_SOP_CERTIF_DISABLE);                 
@@ -447,7 +439,6 @@ public class AppProcedureListAPI extends HttpServlet {
         String rolName = token.getUserRole();
         String[] procEventFldNameArray = PROC_NEW_EVENT_FLD_NAME.split("\\|");
         String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
-        JSONArray procEventsTreeList = new JSONArray();         
         String[] excludedAttributesForOtherItem=new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), 
             TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.POSITION.getName()};
         String[] excludedAttributesForParentIconGroupItem=new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), 
@@ -473,7 +464,6 @@ public class AppProcedureListAPI extends HttpServlet {
             JSONArray childs=new JSONArray();
             for (Object[] procEvent1 : procEvent) {
                 String curProcEventType=procEvent1[LPArray.valuePosicInArray(procEventFldNameArray, TblsProcedure.ProcedureEvents.TYPE.getName())].toString();
-                String curProcEventName=procEvent1[LPArray.valuePosicInArray(procEventFldNameArray, TblsProcedure.ProcedureEvents.NAME.getName())].toString();
                 if (!curProcEventType.equalsIgnoreCase(elementType.TWOICONS.toString().toLowerCase())){
                     if (!childs.isEmpty()){
                         procEventJson.put("icons", childs);
@@ -509,21 +499,11 @@ public class AppProcedureListAPI extends HttpServlet {
                         childs.add(procEventJson2);
                         procEventJson2 = new JSONObject();
                     }
-/*                }else{
-                    procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameArray, procEvent1);
-                    JSONObject procEventSopDetail = procEventSops(token.getPersonName(), curProc.toString(), procedure, procEventJson, procEventFldNameArray, procEvent1);
-                    procEventJson.put(LABEL_ARRAY_SOPS, procEventSopDetail);                    
-                    childs=new JSONArray();*/
                 }
-                
-                //if (!curProcEventType.equalsIgnoreCase(elementType.ICONS_GROUP.toString().toLowerCase().replace("_","-")))
-                //    procEvents.add(procEventJson);
             }
             if (!childs.isEmpty())
                 procEventJson.put("icons", childs);
             procEvents.add(procEventJson);
-            
-            //procedure.put(LABEL_ARRAY_PROC_EVENTS, procEvents);
         } 
         return procEvents;
     }
