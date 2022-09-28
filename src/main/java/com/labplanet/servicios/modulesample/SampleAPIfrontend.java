@@ -208,7 +208,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(smplsAnaData[0][0].toString()))
                     LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr); 
                 for (Object[] curSmpAna: smplsAnaData){
-                    smplAnaJsArr.add(LPJson.convertArrayRowToJSONObject(sampleAnalysisFieldToRetrieveArr, curSmpAna));
+                    smplAnaJsArr.add(LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curSmpAna));
                 }
                 Rdbms.closeRdbms();
                 LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr);       
