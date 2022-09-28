@@ -53,7 +53,6 @@ public class PlatformAdminAPIActions extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        InternalMessage actionDiagnoses=null;
 
         PlatformAdminEnums.PlatformAdminAPIActionsEndpoints endPoint = null;
         try{
@@ -62,14 +61,12 @@ public class PlatformAdminAPIActions extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
         }
-        JsonObject jsonObject=null;
         String[] argList=new String[]{};
         LPAPIArguments[] arguments = endPoint.getArguments();
         for (LPAPIArguments curArg: arguments){
             argList=LPArray.addValueToArray1D(argList, curArg.getName());
         }
         argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
         try (PrintWriter out = response.getWriter()) {
             ClassPlatformAdmin clss = new ClassPlatformAdmin(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();            

@@ -55,9 +55,9 @@ public class ProcedureSampleStage {
         String incubation2PassedStr=sampleStructure.get("incubation2_passed").getAsString();
         Boolean incubation2Passed=Boolean.valueOf(incubation2PassedStr);
         if ((!incubationStartIsNull) && (!incubationPassed))
-            return "stagesCheckerIncubationInProgress"+"@"+sampleId;;
+            return "stagesCheckerIncubationInProgress"+"@"+sampleId;
         if ((!incubation2StartIsNull) && (!incubation2Passed))
-            return "stagesCheckerIncubationInProgress"+"@"+sampleId;;
+            return "stagesCheckerIncubationInProgress"+"@"+sampleId;
         if (!incubationPassed){
             return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (!incubation2Passed){
@@ -144,11 +144,8 @@ public class ProcedureSampleStage {
             jGet = asJsonArray.get(0);        
             asJsonObject = jGet.getAsJsonObject();
 
-            String rawValue="";
             if (asJsonObject.get("raw_value").isJsonNull())
                 return LPPlatform.LAB_FALSE+"stagesCheckerSampleWithNoResult"+"@"+sampleId; //"raw value not entered yet";
-            else
-                rawValue=asJsonObject.get("raw_value").getAsString();
 
             String paramName="";
             if (asJsonObject.get("param_name").isJsonNull())
