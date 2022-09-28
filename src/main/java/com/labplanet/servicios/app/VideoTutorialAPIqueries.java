@@ -19,7 +19,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
-import org.json.simple.parser.JSONParser;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.queries.QueryUtilitiesEnums;
@@ -252,13 +251,6 @@ public class VideoTutorialAPIqueries extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
                 }
-/*                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL.getTableName(), 
-                    new String[]{TblsApp.VideoTutorial.ACTIVE.getName()}, new Object[]{true},
-                    TblsApp.VideoTutorial.getAllFieldNames(), 
-                    new String[]{TblsApp.VideoTutorial.PARENT_ID.getName(), TblsApp.VideoTutorial.ORDER_NUMBER.getName()});
-*/
-                JSONObject jObj=new JSONObject();
-                JSONParser parser = new JSONParser();  
                 String[] itemPosic=new String[]{};
                 for (Object[] curItem: videoTutorialItems){
                     Object curItemId=curItem[LPArray.valuePosicInArray(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), TblsApp.VideoTutorial.ID.getName())];
@@ -268,7 +260,6 @@ public class VideoTutorialAPIqueries extends HttpServlet {
                         jArr.add(LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), curItem));
                     }else{
                         Integer parentValuePosicInArray = LPArray.valuePosicInArray(itemPosic, curItemParentId.toString());
-//                        itemPosic=(String[]) LPArray.addValueToArray1D(itemPosic, curItemId.toString());
                         if (parentValuePosicInArray!=-1){
                             JSONObject get = (JSONObject) jArr.get(parentValuePosicInArray);
                             get.putIfAbsent("children", LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), curItem));
@@ -276,249 +267,8 @@ public class VideoTutorialAPIqueries extends HttpServlet {
                         }
                     }                   
                 }
-                //JSONArray json = (JSONArray) parser.parse(allActiveVideoTutorialsJson); 
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
-/*            case ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY:
-                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL.getTableName(), 
-                        new String[]{TblsApp.VideoTutorial.ACTIVE.getName()}, new Object[]{true},
-                        TblsApp.VideoTutorial.getAllFieldNames(), new String[]{TblsApp.VideoTutorial.ID.getName(), TblsApp.VideoTutorial.PARENT_ID.getName(), TblsApp.VideoTutorial.ORDER_NUMBER.getName()});
-
-                return;
-            case ALL_USER_VIDEO_TUTORIALS:
-                return;
-*/                
-/*                UserProfile usProf = new UserProfile();
-                String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-                    Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
-                    response.sendError((int) errMsg[0], (String) errMsg[1]);    
-                    Rdbms.closeRdbms(); 
-                    return;
-                }
-                String[] fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
-                String sopFieldsToRetrieve = argValues[0].toString();
-                if (sopFieldsToRetrieve!=null) {                
-                    String[] sopFieldsToRetrieveArr = sopFieldsToRetrieve.split("\\|");
-                    for (String fv: sopFieldsToRetrieveArr){
-                        fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
-                    }
-                }
-                UserSop userSop = new UserSop();                               
-                Object[][] userSops = UserSop.getUserProfileFieldValues( 
-                        new String[]{"user_id"}, new Object[]{token.getPersonName()}, fieldsToRetrieve, allUserProcedurePrefix);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-                    Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
-                    response.sendError((int) errMsg[0], (String) errMsg[1]);    
-                    Rdbms.closeRdbms();
-                    return;
-                }
-                JSONArray columnNames = new JSONArray(); 
-                JSONArray mySops = new JSONArray(); 
-                JSONObject mySopsList = new JSONObject();
-                JSONArray mySopsListArr = new JSONArray();
-                
-                JSONObject columns = new JSONObject();
-                for (Object[] curSop: userSops){
-                    JSONObject sop = new JSONObject();
-                    Boolean columnsCreated =false;
-                    for (int yProc=0; yProc<userSops[0].length; yProc++){
-                        sop.put(fieldsToRetrieve[yProc], curSop[yProc]);
-                        if (!columnsCreated){
-                            columns.put("column_"+yProc, fieldsToRetrieve[yProc]);
-                        }                       
-                    }                    
-                    columnsCreated=true;
-                    String[] userSopTblAllFields=TblsData.UserSop.getAllFieldNames();
-                    JSONArray jArrPieceOfInfo=new JSONArray();
-                    for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
-                        if (LPArray.valueInArray(userSopTblAllFields, fieldsToRetrieve[iFlds])){
-                            JSONObject jObjPieceOfInfo = new JSONObject();
-                            jObjPieceOfInfo.put("field_name", fieldsToRetrieve[iFlds]);
-                            jObjPieceOfInfo.put("field_value", curSop[iFlds].toString());
-                            jArrPieceOfInfo.add(jObjPieceOfInfo);
-                        }
-                    }
-                    sop.put(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELD_TO_DISPLAY, jArrPieceOfInfo);
-                    mySops.add(sop);
-                }    
-                columnNames.add(columns);
-                mySopsList.put("columns_names", columnNames);
-                mySopsList.put("my_sops", mySops);
-                mySopsListArr.add(mySopsList);
-                LPFrontEnd.servletReturnSuccess(request, response, mySopsListArr); 
-                return; */
-/*            case MY_PENDING_SOPS:    
-                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-                usProf = new UserProfile();
-                allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-                    Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
-                    response.sendError((int) errMsg[0], (String) errMsg[1]);   
-                    Rdbms.closeRdbms();
-                    return;
-                }
-                fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
-                sopFieldsToRetrieve = argValues[0].toString(); 
-                if (sopFieldsToRetrieve!=null) {                
-                    String[] sopFieldsToRetrieveArr = sopFieldsToRetrieve.split("\\|");
-                    for (String fv: sopFieldsToRetrieveArr){
-                        fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
-                    }
-                }
-                JSONArray  myPendingSopsByProc = new JSONArray();                 
-                userSop = new UserSop();      
-                for (String currProc: allUserProcedurePrefix) {                   
-                    
-                    Object[][] userProcSops = userSop.getNotCompletedUserSOP(token.getPersonName(), currProc, fieldsToRetrieve);
-                    if (userProcSops.length>0){
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(userProcSops[0]))){
-                            Object[] errMsg = LPFrontEnd.responseError(userProcSops, language, null);
-                            response.sendError((int) errMsg[0], (String) errMsg[1]);    
-                            Rdbms.closeRdbms();
-                            return; 
-                        }
-                        mySops = new JSONArray(); 
-                        mySopsList = new JSONObject();
-
-                        for (Object[] userProcSop : userProcSops) {                                                
-                            JSONObject sop = new JSONObject();
-                            for (int yProc = 0; yProc<userProcSops[0].length; yProc++) {
-                                sop.put(fieldsToRetrieve[yProc], userProcSop[yProc]);
-                            }
-                            mySopsList.put("pending_sops", mySops);
-                            mySopsList.put("procedure_name", currProc);
-                            String[] userSopTblAllFields=TblsData.UserSop.getAllFieldNames();
-                            JSONArray jArrPieceOfInfo=new JSONArray();
-                            for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
-                                if (LPArray.valueInArray(userSopTblAllFields, fieldsToRetrieve[iFlds])){
-                                    JSONObject jObjPieceOfInfo = new JSONObject();
-                                    jObjPieceOfInfo.put("field_name", fieldsToRetrieve[iFlds]);
-                                    jObjPieceOfInfo.put("field_value", userProcSop[iFlds].toString());
-                                    jArrPieceOfInfo.add(jObjPieceOfInfo);
-                                }
-                            }
-                            sop.put(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELD_TO_DISPLAY, jArrPieceOfInfo);
-                            mySops.add(sop);
-                        }    
-                        myPendingSopsByProc.add(mySopsList);
-                    }
-                }                
-                LPFrontEnd.servletReturnSuccess(request, response, myPendingSopsByProc);
-                return;
-            case PROCEDURE_SOPS:    
-              if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-                usProf = new UserProfile();
-                allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-                    Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
-                    response.sendError((int) errMsg[0], (String) errMsg[1]);    
-                    Rdbms.closeRdbms();
-                    return;
-                }
-                fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
-                sopFieldsToRetrieve = argValues[0].toString(); 
-                if (sopFieldsToRetrieve!=null) {                
-                    String[] sopFieldsToRetrieveArr = sopFieldsToRetrieve.split("\\|");
-                    for (String fv: sopFieldsToRetrieveArr){
-                        fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
-                    }
-                }
-                myPendingSopsByProc = new JSONArray();                 
-                userSop = new UserSop();      
-                for (String currProc: allUserProcedurePrefix) {                   
-                    Object[][] procSops = Rdbms.getRecordFieldsByFilter(currProc+"-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
-                            new String[]{TblsCnfg.SopMetaData.SOP_ID.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procSops[0]))){
-                        Object[] errMsg = LPFrontEnd.responseError(procSops, language, null);
-                        response.sendError((int) errMsg[0], (String) errMsg[1]);    
-                        Rdbms.closeRdbms();
-                        return;
-                    }
-                    mySops = new JSONArray(); 
-                    mySopsList = new JSONObject();
-                    if ( (procSops.length>0) &&
-                         (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procSops[0][0].toString())) ){
-                            for (Object[] procSop : procSops) {                                                
-                                JSONObject sop = new JSONObject();
-                                for (int yProc = 0; yProc<procSops[0].length; yProc++) {
-                                    sop.put(fieldsToRetrieve[yProc], procSop[yProc]);
-                                }
-                                mySops.add(sop);
-                            }    
-                    }
-                    mySopsList.put("procedure_sops", mySops);
-                    mySopsList.put("procedure_name", currProc);
-                    myPendingSopsByProc.add(mySopsList);
-                }                
-                response.getWriter().write(myPendingSopsByProc.toString());                    
-                LPFrontEnd.servletReturnSuccess(request, response, myPendingSopsByProc);
-                return;
-            case SOP_TREE_LIST_ELEMENT:
-                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-                usProf = new UserProfile();
-                allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-                    Object[] errMsg = LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
-                    response.sendError((int) errMsg[0], (String) errMsg[1]);   
-                    Rdbms.closeRdbms();
-                    return;
-                }     
-                Integer numPendingSOPs = 0;
-                fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID};
-                for (String curProc: allUserProcedurePrefix){
-                    userSop = new UserSop();  
-                    Object[][] userProcSops = userSop.getNotCompletedUserSOP(token.getPersonName(), curProc, fieldsToRetrieve);       
-                    if ( (userProcSops.length>0) &&
-                       (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userProcSops[0][0].toString())) ){
-                            numPendingSOPs=numPendingSOPs+userProcSops.length;}                                                    
-                }
-                   JSONArray sopOptions = new JSONArray(); 
-                    
-                    JSONObject sopOption = new JSONObject();
-                    sopOption.put(JSON_TAG_NAME, "AllMySOPs");
-                    sopOption.put(JSON_TAG_LABEL_EN, "All my SOPs");
-                    sopOption.put(JSON_TAG_LABEL_ES, "Todos Mis PNTs");
-                    sopOption.put(JSON_TAG_WINDOWS_URL, JSON_TAG_VALUE_WINDOWS_URL_HOME);
-                    sopOption.put(JSON_TAG_MODE, "edit");
-                    sopOption.put(JSON_TAG_BRANCH_LEVEL, JSON_TAG_VALUE_BRANCH_LEVEL_LEVEL_1); 
-                    sopOption.put(JSON_TAG_TYPE, JSON_TAG_VALUE_TYPE_TREE_LIST);
-                    sopOptions.add(sopOption);
-                   
-                    sopOption = new JSONObject();
-                    sopOption.put(JSON_TAG_NAME, "MyPendingSOPs");
-                    sopOption.put(JSON_TAG_LABEL_EN, "My Pending SOPs");
-                    sopOption.put(JSON_TAG_LABEL_ES, "Mis PNT Pendientes");
-                    sopOption.put(JSON_TAG_WINDOWS_URL, JSON_TAG_VALUE_WINDOWS_URL_HOME);
-                    sopOption.put(JSON_TAG_MODE, "edit");
-                    sopOption.put(JSON_TAG_BRANCH_LEVEL, JSON_TAG_VALUE_BRANCH_LEVEL_LEVEL_1);
-                    sopOption.put(JSON_TAG_BADGE, numPendingSOPs);
-                    sopOption.put(JSON_TAG_TYPE, JSON_TAG_VALUE_TYPE_TREE_LIST);
-                    sopOptions.add(sopOption);
-                    
-                    sopOption = new JSONObject();
-                    sopOption.put(JSON_TAG_NAME, "ProcSOPs");
-                    sopOption.put(JSON_TAG_LABEL_EN, "Procedure SOPs");
-                    sopOption.put(JSON_TAG_LABEL_ES, "PNTs del proceso");
-                    sopOption.put(JSON_TAG_WINDOWS_URL, JSON_TAG_VALUE_WINDOWS_URL_HOME);
-                    sopOption.put(JSON_TAG_MODE, "edit");
-                    sopOption.put(JSON_TAG_BRANCH_LEVEL, JSON_TAG_VALUE_BRANCH_LEVEL_LEVEL_1);
-                    sopOption.put(JSON_TAG_TYPE, JSON_TAG_VALUE_TYPE_TREE_LIST);
-                    sopOptions.add(sopOption);
-                    
-                    JSONObject sopElement = new JSONObject();
-                    sopElement.put(JSON_TAG_DEFINITION, sopOptions);
-                    sopElement.put(JSON_TAG_NAME, "SOP");
-                    sopElement.put(JSON_TAG_VERSION, "1");
-                    sopElement.put(JSON_TAG_LABEL_EN, "SOPs");
-                    sopElement.put(JSON_TAG_LABEL_ES, "P.N.T.");
-                    sopElement.put(JSON_TAG_SCHEMA_PREFIX, "process-us");
-                    
-                    JSONArray arrFinal = new JSONArray();
-                    arrFinal.add(sopElement);                    
-                    LPFrontEnd.servletReturnSuccess(request, response, arrFinal);
-                    return;
-*/
             default:                
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             }
@@ -529,7 +279,6 @@ public class VideoTutorialAPIqueries extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, "This call raised one unhandled exception. Error:"+errMessage);     
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);    
-            // Rdbms.closeRdbms();        
         } finally {
             
             // release database resources
