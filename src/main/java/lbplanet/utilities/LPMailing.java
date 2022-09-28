@@ -57,8 +57,8 @@ public class LPMailing {
     
 public static void main(String[] args) {
 
-        final String username = "fgomezlw@gmail.com";
-        final String password = "Madrugada20.";
+        final String uname = "fgomezlw@gmail.com";
+        final String pass = "Madrugada20.";
 
         Properties prop = new Properties();
 		prop.put("mail.smtp.host", "smtp.gmail.com");
@@ -70,7 +70,7 @@ public static void main(String[] args) {
                 new javax.mail.Authenticator() {
                     @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
-                        return new PasswordAuthentication(username, password);
+                        return new PasswordAuthentication(uname, pass);
                     }
                 });
 
