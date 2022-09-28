@@ -34,8 +34,6 @@ public class DbEncryptionObject {
         if (!tableHasEncryptedFlds) return fieldValue;
 //if (1==1) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
-        String keyStr="AES/GCM/NoPadding";
-//        String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
             if (isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
@@ -43,8 +41,8 @@ public class DbEncryptionObject {
                 if (enc!=null){
                     try{                    
                         // Create key and cipher for decryption
-                        Key aesKey = new SecretKeySpec(key.getBytes(), keyStr);
-                        Cipher cipher = Cipher.getInstance(keyStr);
+                        Key aesKey = new SecretKeySpec(key.getBytes(), DbEncryption.CYPHER_TYPE);
+                        Cipher cipher = Cipher.getInstance(DbEncryption.CYPHER_TYPE);
                         byte[] bb = new byte[enc.length()];
                         for (int i=0; i<enc.length(); i++) {
                             bb[i] = (byte) enc.charAt(i);
@@ -64,13 +62,9 @@ public class DbEncryptionObject {
     }    
 
     public static Object[][] decryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[][] fieldValue){
-//if (1==1) return fieldValue;
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
         if (!tableHasEncryptedFlds) return fieldValue;
-//if (1==1) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
-        String keyStr="AES/GCM/NoPadding";
-//        String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
             if (isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
@@ -79,8 +73,8 @@ public class DbEncryptionObject {
                         if (enc!=null){
                             try{                    
                                 // Create key and cipher for decryption
-                                Key aesKey = new SecretKeySpec(key.getBytes(), keyStr);
-                                Cipher cipher = Cipher.getInstance(keyStr);
+                                Key aesKey = new SecretKeySpec(key.getBytes(), DbEncryption.CYPHER_TYPE);
+                                Cipher cipher = Cipher.getInstance(DbEncryption.CYPHER_TYPE);
                                 byte[] bb = new byte[enc.length()];
                                 for (int i=0; i<enc.length(); i++) {
                                     bb[i] = (byte) enc.charAt(i);
@@ -100,14 +94,9 @@ public class DbEncryptionObject {
         return fieldValue;        
     }    
     public static Object[] encryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValue){
-//if (1==1) return fieldValue;
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
         if (!tableHasEncryptedFlds) return fieldValue;
-//if (1==1) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; // 128 bit key
-        //? Should be by procInstanceName? config or data???
-//        String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
-
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
             if (isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
@@ -116,7 +105,7 @@ public class DbEncryptionObject {
                     String text = fieldValue[iFields].toString();
                     // Create key and cipher
                     Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-                    Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+                    Cipher cipher = Cipher.getInstance(DbEncryption.CYPHER_TYPE);
                     // encrypt the text
                     cipher.init(Cipher.ENCRYPT_MODE, aesKey);
                     byte[] encrypted = cipher.doFinal(text.getBytes());
@@ -125,7 +114,6 @@ public class DbEncryptionObject {
                     for (byte b: encrypted) {
                         sb.append((char)b);
                     }
-                    // the encrypted String
                     String enc = sb.toString();
                     fieldValue[iFields] = enc;
                 }

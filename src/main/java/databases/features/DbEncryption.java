@@ -29,6 +29,7 @@ import trazit.session.ProcedureRequestSession;
  */
 public class DbEncryption {
     static final String ENCRYPTION_KEY = "Bar12345Bar12345";
+    static final String CYPHER_TYPE = "AES/GCM/NoPadding";
     /**
      *
      * @param schemaName
@@ -53,7 +54,7 @@ if (1==1) return fieldValue;
                     String text = fieldValue[iFields].toString();
                     // Create key and cipher
                     Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-                    Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+                    Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
                     // encrypt the text
                     cipher.init(Cipher.ENCRYPT_MODE, aesKey);
                     byte[] encrypted = cipher.doFinal(text.getBytes());
@@ -98,7 +99,7 @@ if (1==1) return fieldValue;
             String text = val.toString();
             // Create key and cipher
             Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+            Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
             // encrypt the text
             cipher.init(Cipher.ENCRYPT_MODE, aesKey);
             byte[] encrypted = cipher.doFinal(text.getBytes());
@@ -119,11 +120,10 @@ if (1==1) return fieldValue;
     }
     public static Object[] decryptValue(String val){
         String key = ENCRYPTION_KEY; // 128 bit key
-        String keyStr="AES/GCM/NoPadding";
         try{                    
             // Create key and cipher for decryption
-            Key aesKey = new SecretKeySpec(key.getBytes(), keyStr);
-            Cipher cipher = Cipher.getInstance(keyStr);
+            Key aesKey = new SecretKeySpec(key.getBytes(), CYPHER_TYPE);
+            Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
             byte[] bb = new byte[val.length()];
             for (int i=0; i<val.length(); i++) {
                 bb[i] = (byte) val.charAt(i);
@@ -155,7 +155,6 @@ if (1==1) return fieldValue;
         if (!tableHasEncryptedFlds) return fieldValue;
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
-        String keyStr="AES/GCM/NoPadding";
         String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
         for (int iFields=0;iFields<fieldName.length;iFields++){
             if (fieldsEncrypted.contains(fieldName[iFields])){
@@ -164,8 +163,8 @@ if (1==1) return fieldValue;
                         if (enc!=null){
                             try{                    
                                 // Create key and cipher for decryption
-                                Key aesKey = new SecretKeySpec(key.getBytes(), keyStr);
-                                Cipher cipher = Cipher.getInstance(keyStr);
+                                Key aesKey = new SecretKeySpec(key.getBytes(), CYPHER_TYPE);
+                                Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
                                 byte[] bb = new byte[enc.length()];
                                 for (int i=0; i<enc.length(); i++) {
                                     bb[i] = (byte) enc.charAt(i);
@@ -206,7 +205,7 @@ if (1==1) return fieldValue;
                     String enc = fieldValue[iFields].toString();
                     // Create key and cipher
                     Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-                    Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+                    Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
                     // for decryption
                     byte[] bb = new byte[enc.length()];
                     for (int i=0; i<enc.length(); i++) {

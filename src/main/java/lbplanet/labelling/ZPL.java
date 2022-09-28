@@ -99,13 +99,9 @@ if (response.statusCode() == 200) {
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse response = null;
         response = client.send(request, BodyHandlers.ofByteArray());
-//           RequestDispatcher rd = request.getRequestDispatcher(command);
-            //           rd.forward(request,response);               
         zebraLabel.getZplCode();
         ZebraUtils.printZpl(zebraLabel, ip, port);
         } catch (InterruptedException ex2){
-            //LOGGER.log(Level.WARN, "Interrupted!", e);
-            // Restore interrupted state...
             Thread.currentThread().interrupt();
         } catch (ZebraPrintException|URISyntaxException|IOException ex){                
             Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);

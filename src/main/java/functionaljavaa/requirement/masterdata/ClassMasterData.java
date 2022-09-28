@@ -193,13 +193,7 @@ public class ClassMasterData {
                             Float maxSpec = null;
                             if (jO.getAsJsonObject().has(curFldName))
                                 maxSpec = jO.getAsJsonObject().get(curFldName).getAsFloat();
-/*                            if (minControl==null){
-                                resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
-                            }else{
-                                resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
-                            }        */
                             resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
-                           //fieldValue=LPArray.addValueToArray1D(fieldValue, mSpec.getQuantitativeRuleValues());
                            ruleValues = mSpec.getQuantitativeRuleValues();
                         }else if ("qualitative".equalsIgnoreCase(ruleType)){
                             curFldName="rule";

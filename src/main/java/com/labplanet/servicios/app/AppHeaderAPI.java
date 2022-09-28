@@ -21,8 +21,6 @@ import databases.features.Token;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;

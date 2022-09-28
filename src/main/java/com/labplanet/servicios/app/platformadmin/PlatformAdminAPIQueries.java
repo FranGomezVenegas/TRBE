@@ -78,13 +78,13 @@ public class PlatformAdminAPIQueries extends HttpServlet {
                 return;                   
             }
             ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false, true);
-            if (procReqInstance.getHasErrors()){
+            if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
                 return;
             }
                 
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}          
 
             JSONObject jMainObj=new JSONObject();
             EnumIntTables[] tblsIP=null;
