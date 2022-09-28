@@ -100,7 +100,7 @@ public class BusinessRulesToRequirements {
                                 curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
                             }catch(Exception e){
                                 JSONObject jObj=new JSONObject();
-                                jObj.put("enum",getMine.getSimpleName().toString());
+                                jObj.put("enum",getMine.getSimpleName());
                                 jObj.put("endpoint",curBusRul.toString());
                                 jObj.put("error",e.getMessage());
                                 enumsIncomplete.add(jObj);
@@ -112,7 +112,7 @@ public class BusinessRulesToRequirements {
                         return;
                     }else{
                         JSONObject jObj=new JSONObject();
-                        jObj.put("enum",getMine.getSimpleName().toString());
+                        jObj.put("enum",getMine.getSimpleName());
                         jObj.put("endpoints",enumConstantObjects.size());
                         busRulesVisitedSuccess.add(jObj);
                     }

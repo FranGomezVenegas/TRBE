@@ -136,7 +136,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.STATUS.getName());
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, sampleStatusFirst);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic().toString()))
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         // spec is not mandatory but when any of the fields involved is added to the parameters 
         //  then it turns mandatory all the fields required for linking this entity.
@@ -780,7 +780,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpAliqFieldName, smpAliqFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic().toString()))
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
 
         BigDecimal aliqVolume = BigDecimal.ZERO;
@@ -855,7 +855,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpSubAliqFieldName, smpSubAliqFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic().toString()))
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
 
         Integer sampleId = 0;

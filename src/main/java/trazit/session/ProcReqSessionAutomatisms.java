@@ -40,12 +40,12 @@ public class ProcReqSessionAutomatisms {
                 String whereFldValue="";
                 for (Object[] curObj: expiredRecordsArr){
                     if (whereFldValue.length()>0)whereFldValue=whereFldValue+"|";
-                    whereFldValue=whereFldValue+curEntityInfo[3].toString()+"*"+curObj[0].toString();
+                    whereFldValue=whereFldValue+curEntityInfo[3]+"*"+curObj[0].toString();
                 }
                 String[] updFldName=new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.STATUS.getName()};
                 Object[] updFldValue=new Object[]{CertifGlobalVariables.CertifLight.GREEN.toString(), "NOT_PASS"};
                 Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1], 
-                    updFldName, updFldValue, new String[]{curEntityInfo[2].toString()+" "+WHERECLAUSE_TYPES.IN.getSqlClause()},
+                    updFldName, updFldValue, new String[]{curEntityInfo[2]+" "+WHERECLAUSE_TYPES.IN.getSqlClause()},
                     new Object[]{whereFldValue});               
 /*                SqlWhere sqlWhere = new SqlWhere();
                 sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");

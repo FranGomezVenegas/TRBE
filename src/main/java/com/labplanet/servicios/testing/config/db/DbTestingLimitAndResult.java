@@ -216,7 +216,7 @@ if (currentLine==23)
                             ConfigSpecRule specRule = new ConfigSpecRule();
                             specRule.specLimitsRule(limitId, null);
                             if (!specRule.getRuleIsQualitative() && !specRule.getRuleIsQuantitative())
-                                resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE.toString(), qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED, null);                    
+                                resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED, null);                    
                             if (specRule.getRuleIsQualitative()){        
                               resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
                                       specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());

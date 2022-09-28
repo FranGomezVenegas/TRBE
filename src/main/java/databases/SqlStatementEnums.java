@@ -412,7 +412,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                     for (String f : textSpecArray) {
                         queryWhere.append("?,");
                         if (valuesAreNumbers)
-                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Integer.valueOf(f.toString()));
+                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Integer.valueOf(f));
                         else
                             whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
                     }
@@ -742,7 +742,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                                     fn="to_char("+fn+",'YYYY-MM-DD')";                
                                 else if ("DATETIME".equalsIgnoreCase(curFld.getFieldType()))
                                     fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
-                                else if (curFld.getFieldType().toString().toLowerCase().contains("timestamp"))
+                                else if (curFld.getFieldType().toLowerCase().contains("timestamp"))
                                     fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
                                 else if (fn.toUpperCase().contains(" IN")) {
                                     Integer posicINClause = fn.toUpperCase().indexOf("IN");
@@ -786,7 +786,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                                 fn="to_date(to_char("+fn+",'yyyy-mon-dd'), 'YYYY MON DD')";                
                             else if ("DATETIME".equalsIgnoreCase(curFld.getTableField().getFieldType()))
                                 fn="to_char("+fn+",'DD.MON.YYYY HH:MI')";                
-                            else if (curFld.getTableField().getFieldType().toString().toLowerCase().contains("timestamp"))
+                            else if (curFld.getTableField().getFieldType().toLowerCase().contains("timestamp"))
                                 fn="to_char("+fn+",'DD.MON.YY HH:MI')";                
                             else if (fn.toUpperCase().contains(" IN")) {
                                 Integer posicINClause = fn.toUpperCase().indexOf("IN");

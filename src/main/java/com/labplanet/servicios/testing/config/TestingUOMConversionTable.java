@@ -105,7 +105,7 @@ public class TestingUOMConversionTable extends HttpServlet {
                         if (!uom.getConvertedFine()) {
                             tableConversionsBuilder.append(LPTestingOutFormat.rowAddField("Not Converted"));
                         }else{
-                            tableConversionsBuilder.append(LPTestingOutFormat.rowAddField("Value "+baseValue+" in "+baseUnitName+" is equal to "+uom.getConvertedQuantity().toString()+" in "+uom.getConvertedQuantityUom().toString()+" once converted."));
+                            tableConversionsBuilder.append(LPTestingOutFormat.rowAddField("Value "+baseValue+" in "+baseUnitName+" is equal to "+uom.getConvertedQuantity().toString()+" in "+uom.getConvertedQuantityUom()+" once converted."));
                         }
                         tableConversionsBuilder.append(LPTestingOutFormat.rowEnd());
                     }                 

@@ -1115,7 +1115,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             if (schemaName.toUpperCase().contains("AUDIT")){
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
                 if (tstAuditId!=null)
-                    tstAuditId.AddObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis[1].toString()), fieldNames, fieldValues);
+                    tstAuditId.AddObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis[1]), fieldNames, fieldValues);
             }
             Object[] diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
@@ -1861,7 +1861,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         String schema=LPPlatform.buildSchemaName(procInstanceName, schemaName1).replace("\"", "");
         String[] filter=new String[]{schema};
         String query=" SELECT distinct table_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema in (?)";
-        if (GlobalVariables.Schemas.PROCEDURE.getName().toString().equalsIgnoreCase(schemaName1)){
+        if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(schemaName1)){
             query=query+" and table_name not in(";
             for (int i=0;i<ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone.length;i++){
                 if (i>0)query=query+",";
@@ -1870,7 +1870,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             query=query+")";
             filter=LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone);
         }
-        if (GlobalVariables.Schemas.PROCEDURE_AUDIT.getName().toString().equalsIgnoreCase(schemaName1)){
+        if (GlobalVariables.Schemas.PROCEDURE_AUDIT.getName().equalsIgnoreCase(schemaName1)){
             query=query+" and table_name not in(";
             for (int i=0;i<ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone.length;i++){
                 if (i>0)query=query+",";
@@ -2294,7 +2294,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
             if (schemaName.toUpperCase().contains("AUDIT")){
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
                 if (tstAuditId!=null)
-                    tstAuditId.AddObject(schemaName, tblObj.getTableName(), Integer.valueOf(insertRecordDiagnosis[1].toString()), getAllFieldNames(fieldsToRetrieve), fieldValues);
+                    tstAuditId.AddObject(schemaName, tblObj.getTableName(), Integer.valueOf(insertRecordDiagnosis[1]), getAllFieldNames(fieldsToRetrieve), fieldValues);
             }
             Object[] diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);

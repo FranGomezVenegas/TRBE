@@ -37,7 +37,7 @@ public InternalMessage createStudy(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoi
     Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
     
     InternalMessage projectOpenToChanges = GenomaDataProject.isProjectOpenToChanges2(projectName);    
-    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectOpenToChanges.getDiagnostic().toString())) return projectOpenToChanges;
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectOpenToChanges.getDiagnostic())) return projectOpenToChanges;
    
     String classVersionProj = "0.1";
     String[] mandatoryFieldsProj = null;

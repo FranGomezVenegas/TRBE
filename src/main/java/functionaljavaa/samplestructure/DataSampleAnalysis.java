@@ -421,7 +421,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String sampleLevel = TblsData.TablesData.SAMPLE.getTableName();
         mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic().toString()))
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         mandatoryFieldsValue = new Object[mandatoryFields.length];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);

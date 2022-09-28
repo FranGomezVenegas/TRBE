@@ -97,9 +97,9 @@ public class ClassSample {
             }            
             for (LPAPIArguments currArg: endPoint.getArguments()){
                 if (GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.equalsIgnoreCase(currArg.getName())){
-                    String sampleIdStr = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.toString());
+                    String sampleIdStr = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
                     if (sampleIdStr==null)
-                        sampleIdStr = (String) request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.toString());
+                        sampleIdStr = (String) request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
                     if (sampleIdStr!=null) 
                         sampleId = Integer.valueOf(sampleIdStr);
                 }

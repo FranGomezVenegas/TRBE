@@ -106,7 +106,7 @@ public class DataInspectionLot {
         lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.ANALYSIS_STATUS.getName());
         lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, lotStatusFirst);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(lotFieldName, lotFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic().toString()))
+        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         // spec is not mandatory but when any of the fields involved is added to the parameters 
         //  then it turns mandatory all the fields required for linking this entity.

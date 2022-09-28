@@ -212,7 +212,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.USE_ENTER_WHEN_PARAM_HAS_NO_VALUE, 
             new Object[]{});            
         }
-        if (currentValue.toString().equalsIgnoreCase(newValue.toString())){
+        if (currentValue.equalsIgnoreCase(newValue)){
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.SAME_RESULT_VALUE, 
             new Object[]{variableName, appProcInstance, newValue});                        
         }

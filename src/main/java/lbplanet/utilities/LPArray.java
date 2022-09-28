@@ -150,7 +150,7 @@ public class  LPArray {
             if (rowParse.length!=2){
                 //myObjectsArray[i]=myStringsArray[i];
                 return new Object[]{LPPlatform.LAB_FALSE,
-                    new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.OBJECTOFARRAY_WRONGFORMAT, new Object[]{i, myStringsArray[i].toString()})};
+                    new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.OBJECTOFARRAY_WRONGFORMAT, new Object[]{i, myStringsArray[i]})};
             }else{
                 switch (rowParse[1].toUpperCase()){                                    
                     case "STRING":

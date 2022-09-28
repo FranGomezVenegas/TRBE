@@ -225,7 +225,7 @@ public class LPTestingOutFormat {
                             summaryPhrase="COMPLETED SUCCESSFULLY";
                             String savePoint= LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
                             if (savePoint==null || savePoint.length()==0)
-                                savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
+                                savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE));
                             if (Boolean.valueOf(savePoint))
                                 scriptExecutionEvidenceSave(scriptId, summaryPhrase);
                         }else{
@@ -919,7 +919,7 @@ public class LPTestingOutFormat {
                            for (int iObjs=0;iObjs<valueArr.length-1;iObjs++){
                                 if (objsToJsonObjToStr.length()>0)
                                     objsToJsonObjToStr=objsToJsonObjToStr+"*";
-                                objsToJsonObjToStr=objsToJsonObjToStr+valueArr[iObjs].toString();
+                                objsToJsonObjToStr=objsToJsonObjToStr+valueArr[iObjs];
                            }
                            valueReplaced=objsToJsonObjToStr+"*"+valueReplaced;
                        }

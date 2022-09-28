@@ -52,7 +52,7 @@ public class LPAPIArguments {
         Object[] returnArgsDef=new Object[0];
         for (LPAPIArguments currArg: argsDef){
             String requestArgValue=(String) request.getAttribute(currArg.getName());
-            if (requestArgValue==null) requestArgValue=LPNulls.replaceNull(request.getParameter(currArg.getName())).toString();
+            if (requestArgValue==null) requestArgValue=LPNulls.replaceNull(request.getParameter(currArg.getName()));
             if (LPNulls.replaceNull(requestArgValue).length()==0){
                 if (currArg.getMandatory())
                     return new Object[]{LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, currArg.getName()};

@@ -96,7 +96,7 @@ public class ErrorMessageCodesToRequirements {
                                     declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);
                                 }catch(Exception e){
                                     JSONObject jObj=new JSONObject();
-                                    jObj.put("enum",getMine.getSimpleName().toString());
+                                    jObj.put("enum",getMine.getSimpleName());
                                     jObj.put("message_code",curBusRul.toString());
                                     jObj.put("error",e.getMessage());
                                     enumsIncomplete.add(jObj);
@@ -108,7 +108,7 @@ public class ErrorMessageCodesToRequirements {
                             return;
                         }else{
                             JSONObject jObj=new JSONObject();
-                            jObj.put("enum",getMine.getSimpleName().toString());
+                            jObj.put("enum",getMine.getSimpleName());
                             jObj.put("messages",enumConstantObjects.size());
                             enumsCompleteSuccess.add(jObj);
                         }

@@ -84,25 +84,25 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                         totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
                         for (int j=0;j<enumConstantObjects.size();j++) {
                             EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);                        
-                            evName=curEndpoint.getName().toString();
+                            evName=curEndpoint.getName();
                             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(),  EndpointsDeclaration.ENDPOINT_NAME.getName()});//,  EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
                             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName()}); //, curEndpoint.getSuccessMessageCode()});
                             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
                             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curEndpoint.getArguments())});                
 
-                            if (LPArray.valueInArray(endpointsApiAndEndpointNamesKey, curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString())){
-                                endpointsFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString());
+                            if (LPArray.valueInArray(endpointsApiAndEndpointNamesKey, curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName())){
+                                endpointsFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName());
                             }else{
-                                endpointsNotFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName().toString());
+                                endpointsNotFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName());
                             }
                             if (!summaryOnlyMode){
                                 AddCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
                                 try{
-                                    declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName().toString(), 
+                                    declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName(), 
                                             fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size());
                                 }catch(Exception e){
                                     JSONObject jObj=new JSONObject();
-                                    jObj.put("enum",getMine.getSimpleName().toString());
+                                    jObj.put("enum",getMine.getSimpleName());
                                     jObj.put("endpoint_code",curEndpoint.toString());
                                     jObj.put("error",e.getMessage());
                                     enumsIncomplete.add(jObj);
@@ -114,7 +114,7 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                             return;
                         }else{
                             JSONObject jObj=new JSONObject();
-                            jObj.put("enum",getMine.getSimpleName().toString());
+                            jObj.put("enum",getMine.getSimpleName());
                             jObj.put("messages",enumConstantObjects.size());
                             enumsCompleteSuccess.add(jObj);
                         }

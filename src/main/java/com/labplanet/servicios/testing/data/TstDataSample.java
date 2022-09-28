@@ -488,7 +488,7 @@ public class TstDataSample extends HttpServlet {
                     summaryPhrase="COMPLETED SUCCESSFULLY";
                     String savePoint= LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
                     if (savePoint==null || savePoint.length()==0)
-                        savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
+                        savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE));
                     if (Boolean.valueOf(savePoint))
                         scriptExecutionEvidenceSave(scriptId, summaryPhrase);
                 }else{

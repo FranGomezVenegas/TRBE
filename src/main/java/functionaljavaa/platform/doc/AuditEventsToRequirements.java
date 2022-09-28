@@ -95,7 +95,7 @@ public final class AuditEventsToRequirements {
                                 declareInDatabase(curAudEv.getClass().getSimpleName(), curAudEv.toString());
                             }catch(Exception e){
                                 JSONObject jObj=new JSONObject();
-                                jObj.put("enum",getMine.getSimpleName().toString());
+                                jObj.put("enum",getMine.getSimpleName());
                                 jObj.put("endpoint_code",curAudEv.toString());
                                 jObj.put("error",e.getMessage());
                                 enumsIncomplete.add(jObj);
@@ -107,7 +107,7 @@ public final class AuditEventsToRequirements {
                         return;
                     }else{
                         JSONObject jObj=new JSONObject();
-                        jObj.put("enum",getMine.getSimpleName().toString());
+                        jObj.put("enum",getMine.getSimpleName());
                         jObj.put("messages",enumConstantObjects.size());
                         enumsCompleteSuccess.add(jObj);
                     }
