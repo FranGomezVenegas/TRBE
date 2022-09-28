@@ -90,11 +90,6 @@ public class AppHeaderAPI extends HttpServlet {
             response.sendError((int) errMsg[0], (String) errMsg[1]); 
             Rdbms.closeRdbms(); 
         } finally {
-            // release database resources
-            try {
-            } catch (Exception ex) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            }
         }                                       
     }
 
