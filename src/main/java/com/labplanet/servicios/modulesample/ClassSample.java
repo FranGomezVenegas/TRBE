@@ -162,13 +162,17 @@ public class ClassSample {
                     this.messageDynamicData=new Object[]{LPDate.getCurrentTimeStamp(), sampleId};
                     break;
                 case CHANGESAMPLINGDATE:
+                    LocalDateTime newDate=null;
                     sampleId = (Integer) argValues[0];
-                    
-                    LocalDateTime newDate=LPDate.stringFormatToLocalDateTime(argValues[1].toString());
-                    if (newDate==null)
-                        diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.NEWDATETIMENULL_OR_WRONGFORMAT, new Object[]{LPNulls.replaceNull(newDate)});
-                    else
-                        diagn = smp.changeSamplingDate(sampleId, newDate);
+                    if (argValues[1]==null)
+                        diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.NEWDATETIMENULL_OR_WRONGFORMAT, new Object[]{});
+                    else{
+                        newDate=LPDate.stringFormatToLocalDateTime(argValues[1].toString());
+                        if (newDate==null)
+                            diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.NEWDATETIMENULL_OR_WRONGFORMAT, new Object[]{LPNulls.replaceNull(newDate)});
+                        else
+                            diagn = smp.changeSamplingDate(sampleId, newDate);
+                    }
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{LPNulls.replaceNull(newDate), sampleId};
                     break;
@@ -179,12 +183,17 @@ public class ClassSample {
                     this.messageDynamicData=new Object[]{LPDate.getCurrentTimeStamp(), sampleId};
                     break;
                 case CHANGESAMPLINGDATEEND:
+                    newDate=null;
                     sampleId = (Integer) argValues[0];
-                    newDate=(LocalDateTime) argValues[1];
-                    if (newDate==null)
-                        diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.NEWDATETIMENULL_OR_WRONGFORMAT, new Object[]{LPNulls.replaceNull(newDate)});
-                    else
-                        diagn = smp.changeSamplingDateEnd(sampleId, newDate);
+                    if (argValues[1]==null)
+                        diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.NEWDATETIMENULL_OR_WRONGFORMAT, new Object[]{});                    
+                    else{
+                        newDate=LPDate.stringFormatToLocalDateTime(argValues[1].toString());
+                        if (newDate==null)
+                            diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.NEWDATETIMENULL_OR_WRONGFORMAT, new Object[]{LPNulls.replaceNull(newDate)});
+                        else
+                            diagn = smp.changeSamplingDateEnd(sampleId, newDate);
+                    }
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{LPNulls.replaceNull(newDate), sampleId};
                     break;
