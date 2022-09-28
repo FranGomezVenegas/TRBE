@@ -187,7 +187,7 @@ public class LPTestingOutFormat {
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTesting.ScriptSteps.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
             sqlWhere.addConstraint(TblsTesting.ScriptSteps.STEP_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{stepId}, "");
-            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT_STEPS,
+            Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT_STEPS,
                 EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT_STEPS, updFldNames), updFldValues, sqlWhere, null);
         }
         return fileContentBuilder;
@@ -257,13 +257,6 @@ public class LPTestingOutFormat {
 
                 ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, null, true);
 
-/*                TestingAuditIds testingAuditObj = procReqInstance.getTestingAuditObj();
-                if (testingAuditObj!=null){
-                JSONArray jsonContent = testingAuditObj.getJsonContent();
-                updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.AUDIT_IDS_VALUES.getName());
-                updFldValues=LPArray.addValueToArray1D(updFldValues, jsonContent.toJSONString());
-                }
-                 */
                 Object[] fieldsForSessionObjects = getFieldsForSessionObjects();
                 if (fieldsForSessionObjects!=null && fieldsForSessionObjects.length>0)
                     updFldNames=LPArray.addValueToArray1D(updFldNames, (String[]) fieldsForSessionObjects[0]);
@@ -271,7 +264,7 @@ public class LPTestingOutFormat {
                     updFldValues=LPArray.addValueToArray1D(updFldValues, (Object[]) fieldsForSessionObjects[1]);
                 SqlWhere sqlWhere = new SqlWhere();
                 sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
-                Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+                Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
                     EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldNames), updFldValues, sqlWhere, null);
                 procReqInstance.killIt();
             }
@@ -306,12 +299,12 @@ public class LPTestingOutFormat {
     /**
      *
      */
-    public static final String TESTING_FILES_PATH = "http://51.75.202.142:8888/testingRepository-20200203/";
+    public static final String TESTING_FILES_PATH = "";
 
     /**
      *
      */
-    public static final String TESTING_FILES_PATH_NAS = "\\\\FRANCLOUD\\fran\\LabPlanet\\testingRepository\\";
+    public static final String TESTING_FILES_PATH_NAS = "";
 
     /**
      *
@@ -347,7 +340,7 @@ public class LPTestingOutFormat {
             this.tagValue=value;
         }
         public Object getTagValue(){return this.tagValue;}
-        private Object tagValue;
+        private final Object tagValue;
     }
 
     /**

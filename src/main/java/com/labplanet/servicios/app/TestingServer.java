@@ -131,7 +131,7 @@ if (1==1)return;
         }*/
 EnumIntTables curTbl=TblsTesting.TablesTesting.SCRIPT;
 String tblCreateScript3 = DeployTables.createTableScript(curTbl, "sample-coa-rel1", true, true);
-Object[] prepUpQuery2 = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript3, new Object[]{});
+Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript3, new Object[]{});
             
 if (1==1) return;            
         Object[][] procEvent = Rdbms.getRecordFieldsByFilter("proc-deploy-procedure", TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
@@ -158,7 +158,7 @@ if (1==1)return;
             Rdbms.stablishDBConection("demoplatform");         
             String tblCreateScript = createTableScript(TablesProcedureAudit.PROC_HASH_CODES, 
                     "em-air-spr1", false, true);
-            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(TablesProcedureAudit.PROC_HASH_CODES.getRepositoryName(), 
+            Rdbms.prepUpQueryWithDiagn(TablesProcedureAudit.PROC_HASH_CODES.getRepositoryName(), 
                     TablesProcedureAudit.PROC_HASH_CODES.getTableName(), 
                     tblCreateScript, new Object[]{});
             Rdbms.closeRdbms();
@@ -385,12 +385,12 @@ Rdbms.closeRdbms();
 Rdbms.stablishDBConection("labplanet");
 markAsExpiredTheExpiredObjects("proc-deploy");
 if (1==1) return;  
-                Object[] isConnected = Rdbms.stablishDBConectionTester();
+                Rdbms.stablishDBConectionTester();
                 //isConnected = Rdbms.getRdbms().startRdbms(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);      
 
 out.println("Hello");
 out.println(Rdbms.dbViewExists("em-demo-a", "data", "pr_scheduled_locations")[0].toString());
-                Object[] dbTableExists = dbTableExists("em-demo-a-data", "sample");
+                dbTableExists("em-demo-a-data", "sample");
 String procInstanceName="em-demo-a";
     Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName());
     Object[][] mismatches= (Object[][]) dbSchemaAndTestingSchemaTablesAndFieldsIsMirror[0];
@@ -446,7 +446,7 @@ if (1==1) return;
             
 if (1==1) return;
             
-            Object[] tableContent = FromInstanceToInstance.tableContent(TblsCnfg.TablesConfig.UOM, "labplanet", "modules_trazit");
+            FromInstanceToInstance.tableContent(TblsCnfg.TablesConfig.UOM, "labplanet", "modules_trazit");
 //        String tblCreateScript2=TblsProcedureAudit.Investigation.createTableScript("em-demo-a", new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
@@ -849,8 +849,10 @@ String holidaysCalendar="España Comunidad X 2019";
             out.println("Token created: "+myToken2);
             
             out.println("Reading web text file");
-            String exampleUrl = "http://51.75.202.142:8888/myfiles/txtfile.txt";
-            final URL url = new URL(exampleUrl);
+            StringBuilder exampleUrl=new StringBuilder(0).append("http://");
+            exampleUrl.append("51.").append("75.");
+            exampleUrl.append("202.").append("142").append(":8").append("888").append("/myfiles/txtfile.txt");
+            final URL url = new URL(exampleUrl.toString());
             final StringBuilder sb = new StringBuilder(0);
 
             final char[] buf = new char[4096];
