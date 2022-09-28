@@ -337,7 +337,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 SampleAudit smpAudit = new SampleAudit();       
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_SET_READY_FOR_REVISION, TblsData.TablesData.SAMPLE.getTableName(), 
                     sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
-                Object[] sampleEvaluateStatusAutomatismForAutoApprove = sampleEvaluateStatusAutomatismForAutoApprove(sampleId); //, parentAuditAction, parentAuditId);
+                Object[] sampleEvaluateStatusAutomatismForAutoApprove = sampleEvaluateStatusAutomatismForAutoApprove(sampleId); 
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(sampleEvaluateStatusAutomatismForAutoApprove[0].toString())) 
                     return sampleEvaluateStatusAutomatismForAutoApprove;                        
             }    

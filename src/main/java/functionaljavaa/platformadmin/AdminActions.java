@@ -100,8 +100,6 @@ public class AdminActions {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.IP_VALUE4.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, val4);
         }   
-        String[] extraFldNames=null;
-        Object[] extraFldValues=null;
         if (description!=null && description.length()>0){
             fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.DESCRIPTION.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, description);
@@ -173,9 +171,6 @@ public class AdminActions {
                     Integer fldPosicInArray = getFldPosicInArray(tblObj.getTableFields(), fldNames[iFld]);
                     fldNamesObj[iFld]=tblObj.getTableFields()[fldPosicInArray];
                 }
-                EnumIntTableFields[] whereFldNamesObj=new EnumIntTableFields[1];
-                Integer fldPosicInArray = getFldPosicInArray(tblObj.getTableFields(), TblsApp.IPWhiteList.ID.getName());
-                whereFldNamesObj[0]=tblObj.getTableFields()[fldPosicInArray];
                 SqlWhere sqlW=new SqlWhere();
                 sqlW.addConstraint(TblsApp.IPWhiteList.ID, null, new Object[]{id}, null);
                 dbActionDiagn = Rdbms.updateRecordFieldsByFilter(tblObj, fldNamesObj, fldValues, sqlW, null);
@@ -184,7 +179,7 @@ public class AdminActions {
             case "DELETE":
                 fldNamesObj=new EnumIntTableFields[fldNames.length];
                 for (int iFld=0;iFld<fldNames.length;iFld++){
-                    fldPosicInArray = getFldPosicInArray(tblObj.getTableFields(), fldNames[iFld]);
+                    Integer fldPosicInArray = getFldPosicInArray(tblObj.getTableFields(), fldNames[iFld]);
                     fldNamesObj[iFld]=tblObj.getTableFields()[fldPosicInArray];
                 }
                 sqlW=new SqlWhere();
