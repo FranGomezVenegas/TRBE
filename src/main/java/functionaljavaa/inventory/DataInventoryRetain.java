@@ -149,7 +149,7 @@ public final class DataInventoryRetain {
         }        
         newAmount=newAmount.subtract(resultConverted);
         Integer isNegative=newAmount.compareTo(BigDecimal.ZERO);
-        if (newAmount.compareTo(BigDecimal.ZERO)==-1)
+        if (newAmount.compareTo(BigDecimal.ZERO)<0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.NOT_ENOUGH_QUANTITY, new Object[]{newAmount, newAmountUom, resultConverted, procReqSession.getProcedureInstance()});
         String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.AMOUNT_UOM.getName()};
         Object[] updFldValue=new Object[]{newAmount, newAmountUom};

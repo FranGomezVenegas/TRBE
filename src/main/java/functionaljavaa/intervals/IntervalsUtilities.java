@@ -59,7 +59,7 @@ public class IntervalsUtilities {
         long seconds = SecondsInDateRange(startDate, endDate);               
         int compareTo = Integer.valueOf((int) seconds).compareTo((int) interval);
         //if (secondsInDateRange.interval);
-        if (compareTo==1)
+        if (compareTo>0)
             return LPArray.addValueToArray1D(ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "not", null), seconds);
         else
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "yes", null);

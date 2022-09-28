@@ -310,7 +310,7 @@ public class ConfigSpecRule {
         if ((minSpec==null) && (maxSpec!=null)){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MAX_SPEC_SUCCESS.getSuccessCode(), errorDetailVariables);}                                           
         int comparsion = minSpec.compareTo(maxSpec);
-        if ((comparsion==-1) || (isStrict && comparsion<1)){
+        if ((comparsion<0) || (isStrict && comparsion<1)){
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS.getSuccessCode(), errorDetailVariables);}                                    
         
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(minSpec).toString());        

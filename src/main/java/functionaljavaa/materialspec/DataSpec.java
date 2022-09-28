@@ -377,7 +377,7 @@ public class DataSpec {
             if (minControlStrict==null){minControlStrict=true;}
             
             int comparingMIN = minControl.compareTo(result);
-            if ( (comparingMIN==1) || (comparingMIN==0 && minControlStrict) ) {
+            if ( (comparingMIN>0) || (comparingMIN==0 && minControlStrict) ) {
                     errorVariables = LPArray.addValueToArray1D(errorVariables, new Object[]{minSpec.toString(), " < "+result.toString()+" < ", minControl});
                     Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ResultCheckErrorsErrorTrapping.QUANT_OUT_MIN_CONTROL_IN_SPEC, errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, DataSampleStructureSuccess.EVALUATION_UPON_CONTROL_MIN);
