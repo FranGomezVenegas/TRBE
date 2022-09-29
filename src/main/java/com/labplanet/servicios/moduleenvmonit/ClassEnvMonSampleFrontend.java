@@ -8,7 +8,6 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.JSON_TAG_NAME_SAMPLE_RESULTS;
 import static com.labplanet.servicios.moduleenvmonit.EnvMonIncubBatchAPIfrontend.getActiveBatchData;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewSampleMicroorganismList;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
@@ -283,7 +282,6 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
             procReqInstance.killIt();
-            String language=procReqInstance.getLanguage();
             this.isSuccess=false;           
             this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
                     argValues[1].toString(), new Object[]{argValues[2].toString()});
@@ -295,7 +293,6 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
             switch (endPoint){
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY:
-                    String[] vwFlds=EnumIntViewFields.getAllFieldNames(TblsData.ViewSampleAnalysisResultWithSpecLimits.values());
                     Integer sampleId = Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
                     String[] resultFieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL"));
                     EnumIntViewFields[] fldsToGet= EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL");
@@ -433,7 +430,6 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     }            
                     whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.CURRENT_STAGE.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.RAW_VALUE.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()});
                     whereFieldsValueArr=LPArray.addValueToArray1D(whereFieldsValueArr, new Object[]{"MicroorganismIdentification"});
-                    ViewSampleMicroorganismList[] fieldsList = TblsEnvMonitData.ViewSampleMicroorganismList.values();
                     if (fieldsNameToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldsNameToRetrieve))
                         fieldsToRetrieve = EnumIntViewFields.getAllFieldNames(TblsEnvMonitData.ViewSampleMicroorganismList.values());
                     else 
@@ -1517,7 +1513,7 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
             if (isLockedByUserCertification[0]!=null) return isLockedByUserCertification;
 
             return new Object[]{fldNameArr, fldValueArr};
-        }catch(Exception e){
+        }catch(NumberFormatException e){
             String erMsg=e.getMessage();
             return new Object[]{new String[]{"ERROR"}, e.getMessage()};            
         }
@@ -1569,8 +1565,7 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
                 }
             }
             return new Object[]{null, null};
-        }catch(Exception e){
-            String erMsg=e.getMessage();
+        }catch(NumberFormatException e){
             return new Object[]{"ERROR", e.getMessage()};            
         }            
     }
