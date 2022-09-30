@@ -110,6 +110,12 @@ public class DataProgramProductionLot{
         Object[] proLotOpen = isProLotOpen(lotName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(proLotOpen[0].toString()))
             return proLotOpen;
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Object[] batchExistsAndActive=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), 
+            new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName(), TblsEnvMonitData.ProductionLot.ACTIVE.getName()}, 
+            new Object[]{lotName, true});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(batchExistsAndActive[0].toString()))   
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "productLotAlreadyActive", new Object[]{lotName, procInstanceName});
         String[] fieldName=new String[]{TblsEnvMonitData.ProductionLot.ACTIVE.getName()};
         Object[] fieldValue=new Object[]{true};
         return updateProgramProductionLot(lotName, fieldName, fieldValue);
