@@ -19,6 +19,7 @@ import databases.TblsAppProcDataAudit.TablesAppProcDataAudit;
 import databases.TblsDataAudit;
 import databases.features.Token;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIqueriesEndpoints;
+import functionaljavaa.parameter.Parameter;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -111,6 +112,9 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString())){
                     for (Object[] currInstr: instrumentsInfo){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                        JSONObject instLockingDetail=instrumentLockingInfo(fieldsToRetrieve, currInstr);
+                        if (!instLockingDetail.isEmpty())
+                            jObj.put("locking_reason", instLockingDetail);                        
                         jArr.add(jObj);
                     }
                 }
@@ -270,6 +274,28 @@ public class InstrumentsAPIqueries extends HttpServlet {
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }         
+    }
+    
+    private JSONObject instrumentLockingInfo(String[] fieldsToRetrieve, Object[] currInstr){
+        JSONObject jObj=new JSONObject();
+        
+        Integer fldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppProcData.Instruments.IS_LOCKED.getName());
+        if (fldPosic==-1) return jObj;
+        if (!Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(currInstr[fldPosic]).toString())))
+            return jObj;
+        fldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppProcData.Instruments.LOCKED_REASON.getName());
+        if (fldPosic==-1){
+            jObj.put("message_en", "Locked");
+            jObj.put("message_es", "Bloqueado");            
+            return jObj;
+        }
+        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+"InstrumentsAPIactionsEndpoints", null, LPNulls.replaceNull(currInstr[fldPosic]).toString(), "en", null, true, "InstrumentsAPIactionsEndpoints");
+        if (errorTextEn.length()==0) errorTextEn=LPNulls.replaceNull(currInstr[fldPosic]).toString();
+        String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+"InstrumentsAPIactionsEndpoints", null, LPNulls.replaceNull(currInstr[fldPosic]).toString(), "es", null, false, "InstrumentsAPIactionsEndpoints");
+        if (errorTextEs.length()==0) errorTextEs=LPNulls.replaceNull(currInstr[fldPosic]).toString();
+        jObj.put("message_en", errorTextEn);
+        jObj.put("message_es", errorTextEs);            
+        return jObj;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
