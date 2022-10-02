@@ -27,6 +27,7 @@ import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStages;
+import functionaljavaa.samplestructure.DataSampleStructureStatuses;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -1506,6 +1507,9 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
             Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.RESULT_ID.getName());
             Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
 
+            Object[] lockedByStatus = isLockedByStatus(procInstanceName, resultFieldToRetrieveArr, curRow);
+            if (lockedByStatus[0]!=null) return lockedByStatus;
+            
             Object[] lockedByCorrectiveAction = isLockedByCorrectiveAction(procInstanceName, resultFieldToRetrieveArr, curRow);
             if (lockedByCorrectiveAction[0]!=null) return lockedByCorrectiveAction;
 
@@ -1568,6 +1572,30 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         }catch(NumberFormatException e){
             return new Object[]{"ERROR", e.getMessage()};            
         }            
+    }
+
+    static Object[] isLockedByStatus(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow){
+        String[] fldNameArr=null;
+        Object[] fldValueArr=null;
+        Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.STATUS.getName());
+        String resultStatus=curRow[resultFldPosic].toString();
+        String sampleAnalysisStatusCanceled = DataSampleStructureStatuses.SampleAnalysisStatuses.CANCELED.getStatusCode("");
+        String sampleAnalysisStatusReviewed = DataSampleStructureStatuses.SampleAnalysisStatuses.REVIEWED.getStatusCode("");
+        if ((resultStatus.equalsIgnoreCase(sampleAnalysisStatusReviewed)) || (resultStatus.equalsIgnoreCase(sampleAnalysisStatusCanceled))){
+            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
+            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
+            String msgCode = "resultLockedByStatus";
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, msgCode);
+            String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "en", null, true, null);
+            String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false, null);
+            JSONObject reasonInfo = new JSONObject();
+            reasonInfo.put("message_en", resultStatus);
+            reasonInfo.put("message_es", resultStatus);
+            return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};        
+        }
+        return new Object[]{null, null};
     }
     
     static Object[] isLockedByUserCertification(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow){

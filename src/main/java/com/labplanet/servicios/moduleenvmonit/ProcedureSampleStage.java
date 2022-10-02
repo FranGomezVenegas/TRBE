@@ -39,7 +39,7 @@ public class ProcedureSampleStage {
     }  
 
     public String sampleStageIncubationPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
-        Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
+        Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
@@ -66,7 +66,7 @@ public class ProcedureSampleStage {
     }  
 
     public String sampleStageIncubationNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
-        Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
+        Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
@@ -89,7 +89,7 @@ public class ProcedureSampleStage {
     }
     public String sampleStagePlateReadingNextCheckerWithNoSecondEntry(String procInstanceName, Integer sampleId, String sampleData) { 
         try{
-            Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
+            Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
                return LPPlatform.LAB_FALSE+"Info not parse-able";
             JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
@@ -129,7 +129,7 @@ public class ProcedureSampleStage {
 
     public String sampleStagePlateReadingNextChecker(String procInstanceName, Integer sampleId, String sampleData) { 
         try{
-            Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
+            Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
                return LPPlatform.LAB_FALSE+"Info not parse-able";
             JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
@@ -164,7 +164,7 @@ public class ProcedureSampleStage {
     }
     public String sampleStagePlateReadingSecondEntryNextChecker(String procInstanceName, Integer sampleId, String sampleData) { 
         try{
-            Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData);
+            Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
                return LPPlatform.LAB_FALSE+"Info not parse-able";
             JsonObject sampleStructure=(JsonObject) objToJsonObj[1];

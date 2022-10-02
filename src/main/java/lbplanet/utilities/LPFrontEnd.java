@@ -343,7 +343,7 @@ public class LPFrontEnd {
         Object[][] mainMessage = messages.getMainMessage();
         Object [] errorMsgEn=null;
         Object [] errorMsgEs=null;
-        if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
+        if (mainMessage!=null && messages.getMainMessageCode()!=null && mainMessage.length>0 && mainMessage[0].length>1){
             errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
             errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
         }else{

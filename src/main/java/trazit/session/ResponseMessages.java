@@ -96,6 +96,8 @@ public class ResponseMessages {
         this.setIsSuccess((Boolean) true);
         this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3);
+        mainStructureObject.mainMessageCode=null;
+        mainStructureObject.mainMessageVariables=msgCodeVariables;
     }
     public void addMainForError(EnumIntMessages messageCode, Object[] msgCodeVariables){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
