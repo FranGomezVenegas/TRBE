@@ -542,7 +542,7 @@
     <!-- Block 8.1 Investigation Module Begin. -->
     <servlet-mapping>
         <servlet-name>InvestigationAPI</servlet-name>
-        <url-pattern>/app/InvestigationAPI</url-pattern>
+        <url-pattern>/app/InvestigationAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InvestigationAPIqueries</servlet-name>
