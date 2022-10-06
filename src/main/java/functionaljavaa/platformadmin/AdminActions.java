@@ -124,8 +124,8 @@ public class AdminActions {
         String[] extraFldNames=null;
         Object[] extraFldValues=null;
         if (description!=null && description.length()>0){
-            fldNames=LPArray.addValueToArray1D(extraFldNames, TblsApp.IPWhiteList.DESCRIPTION.getName());
-            fldValues=LPArray.addValueToArray1D(extraFldValues, description);
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.DESCRIPTION.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, description);
         }        
         return ipActions(TblsApp.TablesApp.IP_WHITE_LIST, "UPDATE", id, fldNames, fldValues, null, null);
     }
