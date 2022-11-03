@@ -239,7 +239,7 @@ public class ProcedureRequestSession {
                 Integer numIns=this.getDbLogSummary().getNumInserts();
             }
         }*/
-
+        
         if (this.getIsForQuery()!=null && !this.getIsForQuery()){
             this.token=null;
             this.previousToken=null;
