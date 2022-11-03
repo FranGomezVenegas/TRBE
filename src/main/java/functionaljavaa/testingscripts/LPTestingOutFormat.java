@@ -238,6 +238,11 @@ public class LPTestingOutFormat {
                 }
                 String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, summaryPhrase, secondsInDateRange);
                 fileContentBuilder.append(fileContentSummary);
+
+                fileContentSummary = LPTestingOutFormat.createLogsTable();
+                fileContentBuilder.append(fileContentSummary);
+                
+                
                 
                 if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}
                 String procInstanceName=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
@@ -676,7 +681,6 @@ public class LPTestingOutFormat {
 
             FileHeaderTags lineKeyTag = FileHeaderTags.valueOf(getLineKey.toUpperCase());
 
-
             if (fieldsRequired.containsKey(getLineKey)){
                 switch (lineKeyTag){
                     case NUM_HEADER_LINES:
@@ -704,6 +708,22 @@ public class LPTestingOutFormat {
         return hm;
     }
 
+    public static String createLogsTable(){
+        String fileContentHeaderSummary = LPTestingOutFormat.tableStart("Logs info")+rowStart();
+        String fileContentSummary =rowStart();
+        
+        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Logs detail created by running this script")+headerEnd();
+        fileContentSummary=fileContentSummary+rowStart()+rowAddField("Audit Ids");
+        fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull("1 - 10"))+rowEnd();
+        fileContentSummary=fileContentSummary+rowStart()+rowAddField("DB Errors Ids");
+        fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull("1 - 10"))+rowEnd();
+        fileContentSummary=fileContentSummary+rowStart()+rowAddField("Properties Ids");
+        fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull("1 - 10"))+rowEnd();
+        
+        fileContentSummary = fileContentHeaderSummary+fileContentSummary +rowEnd();
+        fileContentSummary = fileContentSummary +tableEnd();
+        return fileContentSummary;        
+    }
     /**
      *
      * @param tstAssert
@@ -1046,6 +1066,8 @@ public class LPTestingOutFormat {
     }
     
     public static void setDbErrorIndexValues(String procInstanceName, Integer scriptId, String moment){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
+
         //JSONArray auditIndexInfo=new JSONArray();       
 //        auditIndexInfo.add(getScriptCurrentFldValue(procInstanceName, scriptId, TblsTesting.Script.DB_ERRORS_IDS_VALUES.getName()));
 //        auditIndexInfo.add(getScriptDbErrorIncrements(procInstanceName, scriptId, moment));
@@ -1053,10 +1075,13 @@ Integer dbErrorCurrentIncrement=getScriptDbErrorIncrementsInt(procInstanceName, 
         //JSONArray scriptDbErrorIncrements = getScriptDbErrorIncrements(procInstanceName, scriptId, moment);
         if (dbErrorCurrentIncrement!=null){
             String[] updFldNames = null;
-            if ("before".equalsIgnoreCase(moment))
+            if ("before".equalsIgnoreCase(moment)){
+                procReqInstance.getTestingMainInfo().setDbLogErrorStart(dbErrorCurrentIncrement);
                 updFldNames = new String[]{TblsTesting.Script.DB_ERROR_START.getName()};
-            else
+            }else{
+                procReqInstance.getTestingMainInfo().setDbLogErrorEnd(dbErrorCurrentIncrement);
                 updFldNames = new String[]{TblsTesting.Script.DB_ERROR_END.getName()};
+            }
             Object[] updFldValues = new Object[]{dbErrorCurrentIncrement};
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");

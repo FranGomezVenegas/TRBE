@@ -16,6 +16,7 @@ import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.testingscripts.TestingAuditIds;
 import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
+import functionaljavaa.testingscripts.TestingMainInfo;
 import functionaljavaa.testingscripts.TestingMessageCodeVisited;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -72,6 +73,7 @@ public class ProcedureRequestSession {
     private Object[] procedureEncryptFields;
     private Boolean isTransactional;
     private DbLogSummary dbLogSummary;
+    private TestingMainInfo testingMainInfo;
     
     
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, EnumIntEndpoints actionEndpoint, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation){
@@ -208,6 +210,7 @@ public class ProcedureRequestSession {
             this.tstAuditObj = TestingAuditIds.getInstance();
             this.busRuleVisited = TestingBusinessRulesVisited.getInstance();
             this.msgCodeVisited = TestingMessageCodeVisited.getInstance();
+            this.testingMainInfo = new TestingMainInfo();
         }
         //this.isForQuery=isForQuery;
         this.hasErrors=false;
@@ -256,6 +259,7 @@ public class ProcedureRequestSession {
         if (this.busRulesProcInstance!=null) this.busRulesProcInstance=null;
         if (this.busRulesTesting!=null) this.busRulesTesting=null;
         if (this.sessionAuditActions!=null) this.sessionAuditActions=null;
+        if (this.testingMainInfo!=null) this.testingMainInfo=null;
         Rdbms.closeRdbms(); 
     }
     public void auditActionsKill(){
@@ -328,6 +332,10 @@ public class ProcedureRequestSession {
     public BusinessRules getBusinessRulesTesting(){
         return this.busRulesTesting;
     }
+    public TestingMainInfo getTestingMainInfo(){
+        return this.testingMainInfo;
+    }
+    
     
    
     public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
