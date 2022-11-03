@@ -186,7 +186,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         }
         String[] fieldsToRetrieve = new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.METHOD_NAME.getName(), TblsData.ViewUserAndAnalysisMethodCertificationView.METHOD_VERSION.getName()};
         String anaMethCertFieldsToRetrieve = argValues[0].toString();
-        if (anaMethCertFieldsToRetrieve!=null && anaMethCertFieldsToRetrieve.length()>0) {                
+        if (anaMethCertFieldsToRetrieve!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldsToRetrieve[0])&& anaMethCertFieldsToRetrieve.length()>0) {                
             String[] sopFieldsToRetrieveArr = anaMethCertFieldsToRetrieve.split("\\|");
             for (String fv: sopFieldsToRetrieveArr){
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
@@ -206,8 +206,12 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         JSONObject myAnaMethCertifList = new JSONObject();
         JSONArray myAnaMethCertifListArr = new JSONArray();
 
+        Integer procedureFldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.ViewUserAndAnalysisMethodCertificationView.PROCEDURE.getName());
+ 
         for (Object[] curCertif: userAnaMethCertifByProcess){            
             JSONObject anaMethodJObj = new JSONObject();
+            if (procedureFldPosic>-1)
+                curCertif[procedureFldPosic]=curCertif[procedureFldPosic].toString().replace("-config", "").replace("\"", "");
             anaMethodJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curCertif);
             anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curCertif));
             myAnaMethCertif.add(anaMethodJObj);

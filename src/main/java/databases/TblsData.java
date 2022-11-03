@@ -1,18 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package databases;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
+import databases.SqlStatementEnums.JOIN_TYPES;
 import databases.TblsCnfg.Methods;
 import databases.TblsCnfg.SpecLimits;
+import databases.TblsCnfg.TablesConfig;
 import databases.TblsProcedure.InvestObjects;
 import databases.TblsProcedure.ProgramCorrectiveAction;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntTablesJoin;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
@@ -107,7 +105,22 @@ public class TblsData {
                 "    left outer join #SCHEMA_PROCEDURE.program_corrective_action pca on pca.result_id=sar.result_id " +
                 "    left outer join #SCHEMA_PROCEDURE.invest_objects io on io.object_id=sar.result_id and io.object_type='sample_analysis_result' ;" +                        
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
-            null, "sample_analysis_result_with_spec_limits", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleAnalysisResultWithSpecLimits.values(), "ViewSampleAnalysisResultWithSpecLimits"),        
+            null, "sample_analysis_result_with_spec_limits", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleAnalysisResultWithSpecLimits.values(), "ViewSampleAnalysisResultWithSpecLimits",
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY, "sar2", false,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsData.SampleAnalysisResultSecondEntry.FIRST_RESULT_ID}}, "", JOIN_TYPES.INNER),
+            new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TablesData.SAMPLE_ANALYSIS, "sa", true,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.TEST_ID, TblsData.SampleAnalysis.TEST_ID}}, "", JOIN_TYPES.INNER),
+            new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TablesData.SAMPLE, "s", true,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.SAMPLE_ID, TblsData.Sample.SAMPLE_ID}}, "", JOIN_TYPES.INNER),
+            new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsCnfg.TablesConfig.SPEC_LIMITS, "spcLim", true,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.LIMIT_ID, TblsCnfg.SpecLimits.LIMIT_ID}}, "", JOIN_TYPES.LEFT),
+            new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, "pca", false,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsProcedure.ProgramCorrectiveAction.RESULT_ID}}, "", JOIN_TYPES.LEFT),
+            new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsProcedure.TablesProcedure.INVEST_OBJECTS, "io", false,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsProcedure.InvestObjects.OBJECT_ID}}, "", JOIN_TYPES.LEFT)
+        }, " and io.object_type='sample_analysis_result'"
+        ),        
         SAMPLE_COC_NAMES_VIEW(" SELECT smp_coc.sample_id, smp_coc.custodian, smp_coc.custodian_candidate, smp_coc.coc_started_on, smp_coc.coc_confirmed_on, smp_coc.coc_custodian_notes, "
                 + "          smp_coc.coc_new_custodian_notes, smp_coc.sample_picture, smp_coc.id, smp_coc.status, usr_custodian.user_name AS custodian_name," +
                     "         usr_candidate.user_name AS candidate_name " +
@@ -118,7 +131,15 @@ public class TblsData {
                     "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
                     "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;"
         ,
-            null, "sample_coc_names", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleCocNames.values(), "ViewSampleCocNames"),        
+            null, "sample_coc_names", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleCocNames.values(), "ViewSampleCocNames", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TablesData.SAMPLE_COC, "smp_coc", TblsApp.TablesApp.USERS, "usr_custodian", true,
+                new EnumIntTableFields[][]{{null, null}}, " smp_coc.custodian::text = usr_custodian.person_name::text ",
+                JOIN_TYPES.INNER),
+            new EnumIntTablesJoin(TablesData.SAMPLE_COC, "smp_coc", TblsApp.TablesApp.USERS, "usr_candidate", true,
+                new EnumIntTableFields[][]{{null, null}}, " smp_coc.custodian::text = usr_candidate.person_name::text ",
+                JOIN_TYPES.INNER)
+        }, null),        
         USER_AND_META_DATA_SOP_VIEW(" SELECT '#SCHEMA_CONFIG'::text AS procedure, usr.user_sop_id, usr.user_id, usr.sop_id, usr.sop_list_id, usr.assigned_on, usr.assigned_by, usr.status, usr.mandatory_level," +
                 "            usr.read_started, usr.read_completed, usr.understood, usr.expiration_date, usr.sop_name, usr.user_name, usr.light, metadata.brief_summary, metadata.file_link, metadata.author " +
                 "   FROM #SCHEMA.user_sop usr," +
@@ -126,7 +147,11 @@ public class TblsData {
                 "  WHERE usr.sop_name::text = metadata.sop_name::text; "+
                     "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
                     "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;",
-            null, "user_and_meta_data_sop_vw", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewUserAndMetaDataSopView.values(), "ViewUserAndMetaDataSopView"),        
+            null, "user_and_meta_data_sop_vw", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewUserAndMetaDataSopView.values(), "ViewUserAndMetaDataSopView", 
+                new EnumIntTablesJoin[]{
+                new EnumIntTablesJoin(TablesData.USER_SOP, "usr", TablesConfig.SOP_META_DATA, "metadata", true,
+                null,"", JOIN_TYPES.INNER)}
+                , "usr.sop_name::text = metadata.sop_name::text"),        
         USER_AND_ANALYSISMETHOD_CERTIF_VIEW(" SELECT '#SCHEMA_CONFIG'::text AS procedure, usr.id, usr.user_id, metadata.code, usr.method_name, usr.method_version, "+
                 "   usr.assigned_on, usr.assigned_by, usr.status, usr.certification_date, usr.certif_expiry_date," +
                 "   usr.certif_started, usr.certif_completed, usr.sop_name, usr.user_name, usr.light, , usr.training_id,"+
@@ -137,14 +162,25 @@ public class TblsData {
                 "    and usr.method_version::integer =metadata.config_version::integer;"+
                     "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
                     "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;",
-            null, "user_and_analysis_method_certification_vw", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewUserAndAnalysisMethodCertificationView.values(), "ViewUserAndMetaDataSopView"),
+            null, "user_and_analysis_method_certification_vw", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewUserAndAnalysisMethodCertificationView.values(), "ViewUserAndMetaDataSopView",
+            new EnumIntTablesJoin[]{
+                new EnumIntTablesJoin(TablesData.CERTIF_USER_ANALYSIS_METHOD, "usr", TablesConfig.METHODS, "metadata", true,
+                null,"", JOIN_TYPES.INNER)}
+                , " usr.method_name::text = metadata.code::text "+
+                "    and usr.method_version::integer =metadata.config_version::integer")                
+                ,
         SAMPLE_TESTING_GROUP_VIEW(" SELECT #FLDS from #SCHEMA_CONFIG.sample s " +
                 "   INNER JOIN #SCHEMA_CONFIG.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
                 "ALTER VIEW  #SCHEMA_CONFIG.#TBL  OWNER TO #OWNER;",
-            null, "sample_testing_group_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleTestingGroup.values(), "ViewUserAndMetaDataSopView"),        
+            null, "sample_testing_group_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleTestingGroup.values(), "ViewUserAndMetaDataSopView", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TablesData.SAMPLE, "s", TablesData.SAMPLE_REVISION_TESTING_GROUP, "stg", true,
+                null,"", JOIN_TYPES.INNER)}
+                , " usr.method_name::text = metadata.code::text "+
+                "    and usr.method_version::integer =metadata.config_version::integer"),        
         ;
         private ViewsData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment){
+                String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -152,6 +188,8 @@ public class TblsData {
             this.isProcedure=isProcedure;
             this.viewComment=comment;
             this.viewScript=viewScript;
+            this.tablesInTheView=TablesInView;
+            this.extraFilters=extraFilters;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -160,6 +198,7 @@ public class TblsData {
         @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        public String getExtraFilters() {return this.extraFilters;}
         
         private final FldBusinessRules[] getTblBusinessRules;      
         private final String viewName;             
@@ -168,6 +207,9 @@ public class TblsData {
         private final EnumIntViewFields[] viewFields;
         private final String viewComment;
         private final String viewScript;
+        private final EnumIntTablesJoin[] tablesInTheView;
+        private final String extraFilters;
+        @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
     }
 /*    public static final String getTableCreationScriptFromDataTable(String tableName, String schemaNamePrefix, String[] fields){
         switch (tableName.toUpperCase()){
@@ -832,18 +874,18 @@ public class TblsData {
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
     public enum ViewSampleCocNames implements EnumIntViewFields{
-        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "", Sample.SAMPLE_ID, null, null, null),
-        CUSTODIAN(FIELDS_NAMES_CUSTODIAN, "", Sample.CUSTODIAN, null, null, null),
-        CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE, "", Sample.CUSTODIAN_CANDIDATE, null, null, null),
-        COC_STARTED_ON("coc_started_on", "", SampleCoc.STARTED_ON, null, null, null),
-        COC_CONFIRMED_ON(FIELDS_NAMES_COC_CONFIRMED_ON, "", SampleCoc.CONFIRMED_ON, null, null, null),
-        COC_CUSTODIAN_NOTES("coc_custodian_notes", "", SampleCoc.CUSTODIAN_NOTES, null, null, null),
-        NEW_CUSTODIAN_NOTES("coc_new_custodian_notes","", SampleCoc.NEW_CUSTODIAN_NOTES, null, null, null),
-        SAMPLE_PICTURE("sample_picture", "", SampleCoc.SAMPLE_PICTURE, null, null, null),
-        ID("id", "", SampleCoc.ID, null, null, null),
-        STATUS(FIELDS_NAMES_STATUS, "", SampleCoc.STATUS, null, null, null),
-        CUSTODIAN_NAME("custodian_name", "", SampleCoc.CUSTODIAN, null, null, null),
-        CANDIDATE_NAME("candidate_name", "", SampleCoc.CUSTODIAN_CANDIDATE, null, null, null),
+        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "smp_coc.sample_id", Sample.SAMPLE_ID, null, null, null),
+        CUSTODIAN(FIELDS_NAMES_CUSTODIAN, "smp_coc.custodian", Sample.CUSTODIAN, null, null, null),
+        CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE, "smp_coc.custodian_candidate", Sample.CUSTODIAN_CANDIDATE, null, null, null),
+        COC_STARTED_ON("coc_started_on", "smp_coc.coc_started_on", SampleCoc.STARTED_ON, null, null, null),
+        COC_CONFIRMED_ON(FIELDS_NAMES_COC_CONFIRMED_ON, "smp_coc.coc_confirmed_on", SampleCoc.CONFIRMED_ON, null, null, null),
+        COC_CUSTODIAN_NOTES("coc_custodian_notes", "smp_coc.coc_custodian_notes", SampleCoc.CUSTODIAN_NOTES, null, null, null),
+        NEW_CUSTODIAN_NOTES("coc_new_custodian_notes","smp_coc.coc_new_custodian_notes", SampleCoc.NEW_CUSTODIAN_NOTES, null, null, null),
+        SAMPLE_PICTURE("sample_picture", "smp_coc.sample_picture", SampleCoc.SAMPLE_PICTURE, null, null, null),
+        ID("id", "smp_coc.id", SampleCoc.ID, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, "smp_coc.status", SampleCoc.STATUS, null, null, null),
+        CUSTODIAN_NAME("custodian_name", "usr_custodian.user_name AS custodian_name", SampleCoc.CUSTODIAN, null, null, null),
+        CANDIDATE_NAME("candidate_name", "usr_candidate.user_name AS candidate_name", SampleCoc.CUSTODIAN_CANDIDATE, null, null, null),
         ;
         private ViewSampleCocNames(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
@@ -867,24 +909,26 @@ public class TblsData {
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
     public enum ViewUserAndMetaDataSopView implements EnumIntViewFields{
-        PROCEDURE("procedure", "", UserSop.USER_NAME, null, null, null),
-        USER_SOP_ID("user_sop_id", "", UserSop.USER_SOP_ID, null, null, null),
-        USER_ID(FIELDS_NAMES_USER_ID, "", UserSop.USER_ID, null, null, null),
-        SOP_LIST_ID("sop_list_id", "", UserSop.SOP_LIST_ID, null, null, null),
-        ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, "", UserSop.ASSIGNED_ON, null, null, null),
-        STATUS(FIELDS_NAMES_STATUS, "", UserSop.STATUS, null, null, null),
-        MANDATORY_LEVEL(FIELDS_NAMES_MANDATORY_LEVEL, "", UserSop.MANDATORY_LEVEL, null, null, null),
-        READ_STARTED("read_started","", UserSop.READ_STARTED, null, null, null),
-        READ_COMPLETED("read_completed", "", UserSop.READ_COMPLETED, null, null, null),
-        UNDERSTOOD("understood", "", UserSop.UNDERSTOOD, null, null, null),
-        EXPIRATION_DATE(FIELDS_NAMES_EXPIRATION_DATE, "", UserSop.EXPIRATION_DATE, null, null, null),
-        SOP_NAME(FIELDS_NAMES_SOP_NAME, "", UserSop.SOP_NAME, null, null, null),
-        USER_NAME(FIELDS_NAMES_USER_NAME, "", UserSop.USER_NAME, null, null, null),
-        LIGHT(FIELDS_NAMES_LIGHT, "", UserSop.LIGHT, null, null, null),
-        BRIEF_SUMMARY("brief_summary", "", TblsCnfg.SopMetaData.BRIEF_SUMMARY, null, null, null),
-        FILE_LINK("file_link", "", TblsCnfg.SopMetaData.FILE_LINK, null, null, null),
-        AUTHOR("author", "", TblsCnfg.SopMetaData.AUTHOR, null, null, null),
-        CERTIFICATION_MODE("certification_mode", "", TblsCnfg.SopMetaData.CERTIFICATION_MODE, null, null, null),        
+        PROCEDURE("procedure", "'#SCHEMA_CONFIG'::text AS procedure", UserSop.USER_NAME, null, null, null),
+        USER_SOP_ID("user_sop_id", "usr.user_sop_id", UserSop.USER_SOP_ID, null, null, null),
+        SOP_ID("sop_id", "usr.sop_id", UserSop.SOP_ID, null, null, null),
+        USER_ID(FIELDS_NAMES_USER_ID, "usr.user_id", UserSop.USER_ID, null, null, null),
+        SOP_LIST_ID("sop_list_id", "usr.sop_list_id", UserSop.SOP_LIST_ID, null, null, null),
+        ASSIGNED_BY(FIELDS_NAMES_ASSIGNED_BY, "usr.assigned_by", UserSop.ASSIGNED_BY, null, null, null),
+        ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, "usr.assigned_on", UserSop.ASSIGNED_ON, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, "usr.status", UserSop.STATUS, null, null, null),
+        MANDATORY_LEVEL(FIELDS_NAMES_MANDATORY_LEVEL, "usr.mandatory_level", UserSop.MANDATORY_LEVEL, null, null, null),
+        READ_STARTED("read_started","usr.read_started", UserSop.READ_STARTED, null, null, null),
+        READ_COMPLETED("read_completed", "usr.read_completed", UserSop.READ_COMPLETED, null, null, null),
+        UNDERSTOOD("understood", "usr.understood", UserSop.UNDERSTOOD, null, null, null),
+        EXPIRATION_DATE(FIELDS_NAMES_EXPIRATION_DATE, "usr.expiration_date", UserSop.EXPIRATION_DATE, null, null, null),
+        SOP_NAME(FIELDS_NAMES_SOP_NAME, "usr.sop_name", UserSop.SOP_NAME, null, null, null),
+        USER_NAME(FIELDS_NAMES_USER_NAME, "usr.user_name", UserSop.USER_NAME, null, null, null),
+        LIGHT(FIELDS_NAMES_LIGHT, "usr.light", UserSop.LIGHT, null, null, null),
+        BRIEF_SUMMARY("brief_summary", "metadata.brief_summary", TblsCnfg.SopMetaData.BRIEF_SUMMARY, null, null, null),
+        FILE_LINK("file_link", "metadata.file_link", TblsCnfg.SopMetaData.FILE_LINK, null, null, null),
+        AUTHOR("author", "metadata.author", TblsCnfg.SopMetaData.AUTHOR, null, null, null),
+        CERTIFICATION_MODE("certification_mode", "metadata.certification_mode", TblsCnfg.SopMetaData.CERTIFICATION_MODE, null, null, null),        
         ;
         private ViewUserAndMetaDataSopView(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
@@ -909,27 +953,27 @@ public class TblsData {
     }        
 
     public enum ViewUserAndAnalysisMethodCertificationView implements EnumIntViewFields{
-        PROCEDURE("procedure", "", CertifUserAnalysisMethod.USER_NAME, null, null, null),
-        ID("id", "", CertifUserAnalysisMethod.ID, null, null, null),
-        USER_ID(FIELDS_NAMES_USER_ID, "", CertifUserAnalysisMethod.USER_ID, null, null, null),
-        METHOD_CODE("code", "", Methods.CODE, null, null, null),
-        METHOD_NAME("method_name", "", CertifUserAnalysisMethod.METHOD_NAME, null, null, null),
-        METHOD_VERSION("method_version", "", CertifUserAnalysisMethod.METHOD_VERSION, null, null, null),
-        ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, "", CertifUserAnalysisMethod.ASSIGNED_ON, null, null, null),
-        ASSIGNED_BY(FIELDS_NAMES_ASSIGNED_BY, "", CertifUserAnalysisMethod.ASSIGNED_BY, null, null, null),
-        STATUS(FIELDS_NAMES_STATUS, "", CertifUserAnalysisMethod.STATUS, null, null, null),
-        CERTIFICATION_DATE("certification_date", "", CertifUserAnalysisMethod.CERTIFICATION_DATE, null, null, null),
-        CERTIF_EXPIRY_DATE("certif_expiry_date", "", CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE, null, null, null),
-        CERTIF_STARTED("certif_started","", CertifUserAnalysisMethod.CERTIF_STARTED, null, null, null),
-        CERTIF_COMPLETED("certif_completed", "", CertifUserAnalysisMethod.CERTIF_COMPLETED, null, null, null),
-        SOP_NAME(FIELDS_NAMES_SOP_NAME, "", CertifUserAnalysisMethod.SOP_NAME, null, null, null),
-        USER_NAME(FIELDS_NAMES_USER_NAME, "", CertifUserAnalysisMethod.USER_NAME, null, null, null),
-        LIGHT(FIELDS_NAMES_LIGHT, "", CertifUserAnalysisMethod.LIGHT, null, null, null),
-        TRAINING_ID("training_id", "", CertifUserAnalysisMethod.TRAINING_ID, null, null, null),
-        METHOD_IS_ACTIVE("active", "method_is_active", Methods.ACTIVE, null, null, null),
-        METHOD_EXPIRES("expires", "method_expires", Methods.EXPIRES, null, null, null),
-        METHOD_EXPIRY_INTERVAL_INFO("expiry_interval_info", "method_expiry_interval_info", Methods.EXPIRY_INTERVAL_INFO, null, null, null),
-        CERTIFICATION_MODE("certification_mode", "method_certification_mode", Methods.CERTIFICATION_MODE, null, null, null),
+        PROCEDURE("procedure", "'#SCHEMA_CONFIG'::text AS procedure", CertifUserAnalysisMethod.USER_NAME, null, null, null),
+        ID("id", "usr.id", CertifUserAnalysisMethod.ID, null, null, null),
+        USER_ID(FIELDS_NAMES_USER_ID, "usr.user_id", CertifUserAnalysisMethod.USER_ID, null, null, null),
+        METHOD_CODE("code", "metadata.code", Methods.CODE, null, null, null),
+        METHOD_NAME("method_name", "usr.method_name", CertifUserAnalysisMethod.METHOD_NAME, null, null, null),
+        METHOD_VERSION("method_version", "usr.method_version", CertifUserAnalysisMethod.METHOD_VERSION, null, null, null),
+        ASSIGNED_ON(FIELDS_NAMES_ASSIGNED_ON, "usr.assigned_on", CertifUserAnalysisMethod.ASSIGNED_ON, null, null, null),
+        ASSIGNED_BY(FIELDS_NAMES_ASSIGNED_BY, "usr.assigned_by", CertifUserAnalysisMethod.ASSIGNED_BY, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, "usr.status", CertifUserAnalysisMethod.STATUS, null, null, null),
+        CERTIFICATION_DATE("certification_date", "usr.certification_date", CertifUserAnalysisMethod.CERTIFICATION_DATE, null, null, null),
+        CERTIF_EXPIRY_DATE("certif_expiry_date", "usr.certif_expiry_date", CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE, null, null, null),
+        CERTIF_STARTED("certif_started","usr.certif_started", CertifUserAnalysisMethod.CERTIF_STARTED, null, null, null),
+        CERTIF_COMPLETED("certif_completed", "usr.certif_completed", CertifUserAnalysisMethod.CERTIF_COMPLETED, null, null, null),
+        SOP_NAME(FIELDS_NAMES_SOP_NAME, "usr.sop_name", CertifUserAnalysisMethod.SOP_NAME, null, null, null),
+        USER_NAME(FIELDS_NAMES_USER_NAME, "usr.user_name", CertifUserAnalysisMethod.USER_NAME, null, null, null),
+        LIGHT(FIELDS_NAMES_LIGHT, "usr.light", CertifUserAnalysisMethod.LIGHT, null, null, null),
+        TRAINING_ID("training_id", "usr.training_id", CertifUserAnalysisMethod.TRAINING_ID, null, null, null),
+        METHOD_IS_ACTIVE("active", "metadata.active", Methods.ACTIVE, null, null, null),
+        METHOD_EXPIRES("expires", "metadata.expires", Methods.EXPIRES, null, null, null),
+        METHOD_EXPIRY_INTERVAL_INFO("expiry_interval_info", "metadata.expiry_interval_info", Methods.EXPIRY_INTERVAL_INFO, null, null, null),
+        CERTIFICATION_MODE("certification_mode", "metadata.certification_mode", Methods.CERTIFICATION_MODE, null, null, null),
         ;
         private ViewUserAndAnalysisMethodCertificationView(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
@@ -968,7 +1012,10 @@ public class TblsData {
         MANDATORY("mandatory", "sar.mandatory", SampleAnalysisResult.MANDATORY, null, null, null),
         REQUIRES_LIMIT("requires_limit", "sar.requires_limit", SampleAnalysisResult.REQUIRES_LIMIT, null, null, null),
         RAW_VALUE("raw_value", "sar.raw_value", SampleAnalysisResult.RAW_VALUE, null, null, null),
-        RAW_VALUE_NUM("raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end", SampleAnalysisResult.REPLICA, null, null, null),
+        RAW_VALUE_NUM("raw_value_num", "CASE " +
+"            WHEN isnumeric(sar.raw_value::text) THEN to_number(sar.raw_value::text, '9999'::text) " +
+"            ELSE NULL::numeric END "
+             , SampleAnalysisResult.REPLICA, null, null, null),
         PRETTY_VALUE("pretty_value", "sar.pretty_value", SampleAnalysisResult.PRETTY_VALUE, null, null, null),
         ENTERED_ON("entered_on", "sar.entered_on", SampleAnalysisResult.ENTERED_ON, null, null, null),
         ENTERED_BY("entered_by", "sar.entered_by", SampleAnalysisResult.ENTERED_BY, null, null, null),
@@ -998,6 +1045,7 @@ public class TblsData {
         SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.SampleAnalysis.READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.READY_FOR_REVISION.getName(), SampleAnalysis.READY_FOR_REVISION, null, null, null),
         TESTING_GROUP("testing_group", "sa.testing_group", SampleAnalysis.TESTING_GROUP, null, null, null),
         LOGGED_ON("logged_on", "s.logged_on", Sample.LOGGED_ON, null, null, null),
+        LOGGED_BY("logged_by", "s.logged_by", Sample.LOGGED_BY, null, null, null),
         SAMPLER("sampler", "s.sampler", Sample.SAMPLER, null, null, null),
         SAMPLER_AREA("sampler_area", "s.sampler_area", TblsEnvMonitData.Sample.SAMPLER_AREA, null, null, null),
         READY_FOR_REVISION(TblsData.Sample.READY_FOR_REVISION.getName(), "s."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.Sample.READY_FOR_REVISION, null, null, null),
@@ -1021,9 +1069,11 @@ public class TblsData {
         MAX_VAL_FOR_UNDETERMINED("max_undetermined", "spcLim.max_undetermined", SpecLimits.MAX_VAL_FOR_UNDETERMINED, null, null, null),
         MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", "spcLim.min_undet_strict", SpecLimits.MIN_VAL_UNDETERMINED_IS_STRICT, null, null, null),
         MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", "spcLim.max_undet_strict", SpecLimits.MAX_VAL_UNDETERMINED_IS_STRICT, null, null, null),
-        HAS_PREINVEST("has_pre_invest", "CASE WHEN pca.id IS NULL THEN 'NO' ELSE 'YES' END", SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        HAS_PREINVEST("has_pre_invest", "CASE WHEN pca.id IS NULL THEN 'NO'::text " +
+            " ELSE 'YES'::text END ", SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
         PREINVEST_ID("pre_invest_id", "pca.id", ProgramCorrectiveAction.ID, null, null, null),
-        HAS_INVEST("has_invest", "CASE WHEN io.id IS NULL THEN 'NO' ELSE 'YES' END", SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        HAS_INVEST("has_invest", "CASE WHEN io.id IS NULL THEN 'NO'::text " +
+            " ELSE 'YES'::text END ", SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
         INVEST_ID("invest_id", "io.invest_id", InvestObjects.INVEST_ID, null, null, null),
         INVEST_OBJECT_ID("invest_object_id", "io.id", InvestObjects.OBJECT_ID, null, null, null),
         SAMPLE_REVIEWER("sample_reviewer", "s.reviewer", Sample.REVIEWER, null, null, null),
@@ -1042,7 +1092,11 @@ public class TblsData {
         SAR2_MANDATORY("sar2_"+"mandatory", "sar2.mandatory", SampleAnalysisResult.MANDATORY, null, null, null),
         SAR2_REQUIRES_LIMIT("sar2_"+"requires_limit", "sar2.requires_limit", SampleAnalysisResult.REQUIRES_LIMIT, null, null, null),
         SAR2_RAW_VALUE("sar2_"+"raw_value", "sar2.raw_value", SampleAnalysisResult.RAW_VALUE, null, null, null),
-        SAR2_RAW_VALUE_NUM("sar2_"+"raw_value_num", "case when isnumeric(sar2.raw_value) then to_number(sar2.raw_value::text, '9999'::text) else null end", SampleAnalysisResult.REPLICA, null, null, null),
+        SAR2_RAW_VALUE_NUM("sar2_"+"raw_value_num",
+            "CASE " +
+            " WHEN isnumeric(sar2.raw_value::text) THEN to_number(sar2.raw_value::text, '9999'::text) " +
+            " ELSE NULL::numeric END "                
+            , SampleAnalysisResult.REPLICA, null, null, null),
         SAR2_PRETTY_VALUE("sar2_"+"pretty_value", "sar2.pretty_value", SampleAnalysisResult.PRETTY_VALUE, null, null, null),
         SAR2_ENTERED_ON("sar2_"+"entered_on", "sar2.entered_on", SampleAnalysisResult.ENTERED_ON, null, null, null),
         SAR2_ENTERED_BY("sar2_"+"entered_by", "sar2.entered_by", SampleAnalysisResult.ENTERED_BY, null, null, null),
@@ -1120,7 +1174,9 @@ public class TblsData {
         private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;        
+        private final FldBusinessRules[] fldBusinessRules; 
+        
+        
         @Override public String getName() {return fldName;}
         @Override public String getViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}

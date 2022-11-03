@@ -44,6 +44,15 @@ public class SqlStatementEnums {
             return clause;
         }
     }
+    
+    public enum JOIN_TYPES{INNER(" inner join "), LEFT(" left outer join "), RIGHT(" right outer join ");
+        private final String clause;
+        JOIN_TYPES(String cl){this.clause=cl;}
+        public String getSqlClause(){
+            return clause;
+        }
+    }
+    
     public static Object[] buildDateRangeFromStrings(String fieldName, Date startStr, Object endStr){
         if (startStr==null)
             return new Object[]{LPPlatform.LAB_FALSE};
@@ -407,14 +416,21 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                         textSpecs=textSpecs.replace("INTEGER*", "");
                         valuesAreNumbers = true;
                     }
-                    String[] textSpecArray = textSpecs.split("\\" + separator);
+                    Object[] textSpecArray = textSpecs.split("\\" + separator);
                     queryWhere.append(fn).append(" ").append(symbol.toLowerCase()).append("(");
-                    for (String f : textSpecArray) {
+                    if (!valuesAreNumbers)
+                        if (curEntry.getFldValue()[0] instanceof Object[])
+                            textSpecArray=(Object[]) curEntry.getFldValue()[0];
+                        else if (curEntry.getFldValue()[0] instanceof String[])
+                            textSpecArray=(Object[]) curEntry.getFldValue()[0];
+                        else
+                            textSpecArray=new Object[]{curEntry.getFldValue()[0]};
+                    for (Object f : textSpecArray) {
                         queryWhere.append("?,");
                         if (valuesAreNumbers)
-                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Integer.valueOf(f));
+                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Integer.valueOf(f.toString()));
                         else
-                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
+                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f.toString()));
                     }
                     queryWhere.deleteCharAt(queryWhere.length() - 1);
                     queryWhere.append(")");

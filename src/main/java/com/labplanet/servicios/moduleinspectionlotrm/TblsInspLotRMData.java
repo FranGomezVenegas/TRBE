@@ -6,6 +6,7 @@
 package com.labplanet.servicios.moduleinspectionlotrm;
 
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
+import databases.SqlStatementEnums;
 import databases.TblsCnfg;
 import databases.TblsData;
 import static databases.TblsData.FIELDS_NAMES_ALIQUOT_ID;
@@ -19,6 +20,7 @@ import databases.TblsProcedure;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntTablesJoin;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
@@ -71,7 +73,7 @@ public class TblsInspLotRMData {
         private final Object[] foreignkey;
         private final String tableComment;
     }   
-    public enum ViewsData implements EnumIntViews{
+    public enum ViewsInspLotRMData implements EnumIntViews{
         SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW(" SELECT #FLDS from #SCHEMA.sample_analysis_result sar " +
                 "   INNER JOIN #SCHEMA.sample_analysis sa on sa.test_id = sar.test_id "+
                 "   INNER JOIN #SCHEMA.sample s on s.sample_id = sar.sample_id "+
@@ -79,10 +81,26 @@ public class TblsInspLotRMData {
                 "    left outer join #SCHEMA_PROCEDURE.program_corrective_action pca on pca.result_id=sar.result_id " +
                 "    left outer join #SCHEMA_PROCEDURE.invest_objects io on io.object_id=sar.result_id and io.object_type='sample_analysis_result' ;" +                        
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
-            null, "sample_analysis_result_with_spec_limits", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleAnalysisResultWithSpecLimits.values(), "ViewSampleAnalysisResultWithSpecLimits"),        
+            null, "sample_analysis_result_with_spec_limits", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleAnalysisResultWithSpecLimits.values(), "ViewSampleAnalysisResultWithSpecLimits", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY, "sar2", false,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsData.SampleAnalysisResultSecondEntry.FIRST_RESULT_ID},
+                {TblsData.SampleAnalysisResult.TEST_ID, TblsData.SampleAnalysisResultSecondEntry.TEST_ID}
+                }, "", SqlStatementEnums.JOIN_TYPES.INNER),
+            new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsData.TablesData.SAMPLE_ANALYSIS, "sa", true,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.TEST_ID, TblsData.SampleAnalysis.TEST_ID}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
+            new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsData.TablesData.SAMPLE, "s", true,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.SAMPLE_ID, TblsData.Sample.SAMPLE_ID}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
+            new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsCnfg.TablesConfig.SPEC_LIMITS, "specLimit", true,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsCnfg.SpecLimits.LIMIT_ID}}, "", SqlStatementEnums.JOIN_TYPES.LEFT),
+            new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, "progCorAct", false,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsProcedure.ProgramCorrectiveAction.RESULT_ID}}, "", SqlStatementEnums.JOIN_TYPES.LEFT),
+            new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsProcedure.TablesProcedure.INVEST_OBJECTS, "invObjs", false,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.SAMPLE_ID, TblsProcedure.InvestObjects.OBJECT_ID}}, "and io.object_type='sample_analysis_result'", SqlStatementEnums.JOIN_TYPES.LEFT)
+        }, " "),        
         ;
-        private ViewsData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment){
+        private ViewsInspLotRMData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
+                String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -90,6 +108,8 @@ public class TblsInspLotRMData {
             this.isProcedure=isProcedure;
             this.viewComment=comment;
             this.viewScript=viewScript;
+            this.tablesInTheView=TablesInView;
+            this.extraFilters=extraFilters;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -99,6 +119,9 @@ public class TblsInspLotRMData {
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         
+        public String getExtraFilters() {return this.extraFilters;}
+        private final EnumIntTablesJoin[] tablesInTheView;
+        @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
         private final FldBusinessRules[] getTblBusinessRules;      
         private final String viewName;             
         private final String repositoryName;
@@ -106,6 +129,7 @@ public class TblsInspLotRMData {
         private final EnumIntViewFields[] viewFields;
         private final String viewComment;
         private final String viewScript;
+        private final String extraFilters;
     }
 
 public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{

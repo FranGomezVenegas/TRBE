@@ -305,7 +305,7 @@ public class SopUserAPIqueries extends HttpServlet {
             JSONObject sop = new JSONObject();
             procedureFldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
             if (procedureFldPosic>-1)
-              curSop[procedureFldPosic]=curSop[procedureFldPosic].toString().replace("-config", "");
+              curSop[procedureFldPosic]=curSop[procedureFldPosic].toString().replace("-config", "").replace("\"", "");
             sop=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curSop);
             
             sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curSop));                            

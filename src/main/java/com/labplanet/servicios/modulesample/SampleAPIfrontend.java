@@ -468,7 +468,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         fieldToRetrieveArr,
                         new String[]{TblsData.ViewSampleTestingGroup.SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()});
                     Rdbms.closeRdbms();
-                    if (myData.contains(LPPlatform.LAB_FALSE)){  
+                    if (myData==null||myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
                         return;
 //                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);

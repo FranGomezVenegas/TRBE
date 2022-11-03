@@ -27,6 +27,7 @@ import databases.TblsData.ViewsData;
 import databases.TblsDataAudit.TablesDataAudit;
 import databases.TblsProcedure;
 import databases.TblsProcedure.TablesProcedure;
+import databases.TblsProcedure.ViewsProcedure;
 import databases.TblsProcedureAudit;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsReqs;
@@ -39,6 +40,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntViews;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 
@@ -468,7 +470,7 @@ public class ProcedureDefinitionToInstance {
                 new String[]{TblsReqs.ProcedureModuleTables.ACTIVE.getName(), TblsReqs.ProcedureModuleTables.PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTables.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName()}, 
                 new Object[]{true, procedure, procVersion, procInstanceName}, 
                 getAllFieldNames(TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableFields()), 
-                new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.ORDER_NUMBER.getName()});        
+                new String[]{TblsReqs.ProcedureModuleTables.IS_VIEW.getName(), TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.ORDER_NUMBER.getName()});        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procModuleTablesAndFieldsSource[0][0].toString())){
           jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procModuleTablesAndFieldsSource[0]));
           return jsonObj;
@@ -527,8 +529,12 @@ public class ProcedureDefinitionToInstance {
                                         }
                                     }else{
                                         try{
-                                            tblCreateScript = ViewsEnvMonData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
-                                            tblCreateScriptTesting = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
+                                            tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
+                                            if (tblCreateScript.length()==0){
+                                                tblCreateScript = ViewsEnvMonData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
+                                                tblCreateScriptTesting = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                            }
                                         }catch(Exception e){
                                             tblCreateScript = ViewsData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
                                         }                                        
@@ -544,14 +550,27 @@ public class ProcedureDefinitionToInstance {
                                     }
                                     break;
                                 case "procedure":
-                                    try{
-                                        tblCreateScript = createTableScript(TablesEnvMonitProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                        if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
-                                            tblCreateScriptTesting = createTableScript(TablesEnvMonitProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
-                                    }catch(Exception e){
-                                        tblCreateScript = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                        if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
-                                            tblCreateScriptTesting = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                    if (curIsView==null || !Boolean.valueOf(curIsView)){
+                                        try{
+                                            tblCreateScript = createTableScript(TablesEnvMonitProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                            if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
+                                                tblCreateScriptTesting = createTableScript(TablesEnvMonitProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                        }catch(Exception e){
+                                            tblCreateScript = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                            if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
+                                                tblCreateScriptTesting = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                        }
+                                    }else{
+                                        try{
+                                            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsProcedure.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
+                                            tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
+                                            if (tblCreateScript.length()==0){
+                                                tblCreateScript = ViewsEnvMonData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
+                                                tblCreateScriptTesting = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                            }
+                                        }catch(Exception e){
+                                            tblCreateScript = ViewsData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
+                                        }                                        
                                     }
                                     break;
                                 case "procedure-audit":

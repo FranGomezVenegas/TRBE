@@ -10,14 +10,47 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntMessages;
 
 /**
  *
  * @author User
  */
 public class ProcedureSampleStage {  
+    
+   public enum ProcedureSampleStageErrorTrapping implements EnumIntMessages{ 
+        NOTPARSEABLE("EnvMonSampleStageChecker_NotParseable", "", ""),
+        SAMPLEANALYSIS_NOTFOUND("EnvMonSampleStageChecker_SampleAnalysisNotFound", "sample_analysis value not found", ""),
+        SAMPLEANALYSISRESULT_NOTFOUND("EnvMonSampleStageChecker_SampleAnalysisResultNotFound", "sample_analysis_result value not found", ""),
+        SAMPLING_PREV_FIRSTSTAGE("EnvMonSampleStageChecker_SamplingPrevious_InFirstStage", "Sampling is the first stage, has no previous.", ""),
+        SAMPLINGDATE_MANDATORY("EnvMonSampleStageChecker_SamplingNext_stagesCheckerSamplingDateIsMandatory", "", ""),
+        FIRSTINCUB_MANDATORY("EnvMonSampleStageChecker_IncubationNext_stagesCheckerPendingFirstIncubation", "", ""),
+        SECONDINCUB_MANDATORY("EnvMonSampleStageChecker_IncubationNext_stagesCheckerPendingSecondIncubation", "", ""),
+        INCUB_INPROGRESS("EnvMonSampleStageChecker_IncubationNext_stagesCheckerIncubationInProgress", "", ""),
+        ALREADY_LASTSTAGE("EnvMonSampleStageChecker_EndNext_InLastStage", "END is the last stage, has no next one.", ""),
+        SAMPLEWITHNORESULT("EnvMonSampleStageChecker_stagesCheckerSampleWithNoResult", "", ""),
+        PARAMNAMEEMPTY("EnvMonSampleStageChecker_stagesParamNameEmpty", "", ""),
+        YOUWIN("EnvMonSampleStageChecker_YoWin", "You win! This logic is not handled", "")
+        
+        ;
+        
+        private ProcedureSampleStageErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+       
+    
     public String sampleStageSamplingPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
-        return LPPlatform.LAB_FALSE+"Sampling is the first stage, has no previous.";
+        return LPPlatform.LAB_FALSE+"SAMPLING_PREV_FIRSTSTAGE";
     }
     public String sampleStageSamplingNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
@@ -25,16 +58,16 @@ public class ProcedureSampleStage {
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
         if (sampleStructure.get("sampling_date").isJsonNull())
-            return LPPlatform.LAB_FALSE+"stagesCheckerSamplingDateIsMandatory"+"@"+sampleId; //" Fecha de muestreo es obligatoria para la muestra "+sampleId;
+            return LPPlatform.LAB_FALSE+"SAMPLINGDATE_MANDATORY"+"@"+sampleId; //" Fecha de muestreo es obligatoria para la muestra "+sampleId;
         String samplingDate=sampleStructure.get("sampling_date").toString();
         if (samplingDate==null || "null".equalsIgnoreCase(samplingDate)) {
-            return LPPlatform.LAB_FALSE+"stagesCheckerSamplingDateIsMandatory"+"@"+sampleId;} // Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+            return LPPlatform.LAB_FALSE+"SAMPLINGDATE_MANDATORY"+"@"+sampleId;} // Fecha de muestreo es obligatoria para la muestra "+sampleId;}
         String reqsTrackingSamplingEnd=sampleStructure.get("requires_tracking_sampling_end").toString();        
         if (reqsTrackingSamplingEnd==null || !Boolean.valueOf(reqsTrackingSamplingEnd))
             return "LABPLANET_TRUE";
         String samplingDateEnd=sampleStructure.get("sampling_date_end").toString();        
         if (samplingDateEnd==null || "null".equalsIgnoreCase(samplingDateEnd)) {
-            return LPPlatform.LAB_FALSE+"stagesCheckerSamplingDateEndIsMandatory"+"@"+sampleId;} // Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+            return LPPlatform.LAB_FALSE+"SAMPLINGDATE_MANDATORY"+"@"+sampleId;} // Fecha de muestreo es obligatoria para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
 
@@ -44,9 +77,9 @@ public class ProcedureSampleStage {
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
         if (sampleStructure.get("incubation_passed").isJsonNull())
-            return "stagesCheckerPendingFirstIncubation"+"@"+sampleId; //" Pendiente 1a Incubacion para la muestra "+sampleId;}
+            return "FIRSTINCUB_MANDATORY"+"@"+sampleId; //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (sampleStructure.get("incubation2_passed").isJsonNull())
-            return "stagesCheckerPendingSecondIncubation"+"@"+sampleId; //" Pendiente 2a Incubacion para la muestra "+sampleId;}        
+            return "SECONDINCUB_MANDATORY"+"@"+sampleId; //" Pendiente 2a Incubacion para la muestra "+sampleId;}        
         boolean incubationStartIsNull = sampleStructure.get("incubation_start").isJsonNull();
         boolean incubation2StartIsNull = sampleStructure.get("incubation2_start").isJsonNull();
         String incubationStartStr=sampleStructure.get("incubation_start").getAsString();
@@ -55,13 +88,13 @@ public class ProcedureSampleStage {
         String incubation2PassedStr=sampleStructure.get("incubation2_passed").getAsString();
         Boolean incubation2Passed=Boolean.valueOf(incubation2PassedStr);
         if ((!incubationStartIsNull) && (!incubationPassed))
-            return "stagesCheckerIncubationInProgress"+"@"+sampleId;
+            return "INCUB_INPROGRESS"+"@"+sampleId;
         if ((!incubation2StartIsNull) && (!incubation2Passed))
-            return "stagesCheckerIncubationInProgress"+"@"+sampleId;
+            return "INCUB_INPROGRESS"+"@"+sampleId;
         if (!incubationPassed){
-            return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
+            return "FIRSTINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (!incubation2Passed){
-            return "stagesCheckerPendingSecondIncubation"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
+            return "SECONDINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
 
@@ -71,17 +104,17 @@ public class ProcedureSampleStage {
            return LPPlatform.LAB_FALSE;
         JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
         if (sampleStructure.get("incubation_passed").isJsonNull())
-            return "stagesCheckerPendingFirstIncubation"+"@"+sampleId; //" Pendiente 1a Incubacion para la muestra "+sampleId;}
+            return "FIRSTINCUB_MANDATORY"+"@"+sampleId; //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (sampleStructure.get("incubation2_passed").isJsonNull())
-            return "stagesCheckerPendingSecondIncubation"+"@"+sampleId; //" Pendiente 2a Incubacion para la muestra "+sampleId;}
+            return "SECONDINCUB_MANDATORY"+"@"+sampleId; //" Pendiente 2a Incubacion para la muestra "+sampleId;}
         String incubationPassedStr=sampleStructure.get("incubation_passed").getAsString();
         Boolean incubationPassed=Boolean.valueOf(incubationPassedStr);
         String incubation2PassedStr=sampleStructure.get("incubation2_passed").getAsString();
         Boolean incubation2Passed=Boolean.valueOf(incubation2PassedStr);
         if (!incubationPassed){
-            return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
+            return "FIRSTINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
         if (!incubation2Passed){
-            return "stagesCheckerPendingSecondIncubation"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
+            return "SECONDINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
     public String sampleStagePlateReadingPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
@@ -91,28 +124,28 @@ public class ProcedureSampleStage {
         try{
             Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
-               return LPPlatform.LAB_FALSE+"Info not parse-able";
+               return LPPlatform.LAB_FALSE+"NOTPARSEABLE";
             JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
             if (sampleStructure.get("sample_analysis").isJsonNull())
-                return LPPlatform.LAB_FALSE+"sample_analysis value not found";
+                return LPPlatform.LAB_FALSE+"SAMPLEANALYSIS_NOTFOUND";
             JsonArray smpAna=sampleStructure.getAsJsonArray("sample_analysis");
             JsonElement jGet = smpAna.get(0);        
             JsonObject asJsonObject = jGet.getAsJsonObject();
             if (asJsonObject.getAsJsonArray("sample_analysis_result").isJsonNull())
-                return LPPlatform.LAB_FALSE+"sample_analysis_result value not found";
+                return LPPlatform.LAB_FALSE+"SAMPLEANALYSISRESULT_NOTFOUND";
             JsonArray asJsonArray = asJsonObject.getAsJsonArray("sample_analysis_result"); //
             jGet = asJsonArray.get(0);        
             asJsonObject = jGet.getAsJsonObject();
 
             String rawValue="";
             if (asJsonObject.get("raw_value").isJsonNull())
-                return LPPlatform.LAB_FALSE+"stagesCheckerSampleWithNoResult"+"@"+sampleId; //"raw value not entered yet";
+                return LPPlatform.LAB_FALSE+"SAMPLEWITHNORESULT"+"@"+sampleId; //"raw value not entered yet";
             else
                 rawValue=asJsonObject.get("raw_value").getAsString();
 
             String paramName="";
             if (asJsonObject.get("param_name").isJsonNull())
-                return LPPlatform.LAB_FALSE+"stagesParamNameEmpty"+"@"+sampleId; //+"Parameter name is empty";
+                return LPPlatform.LAB_FALSE+"PARAMNAMEEMPTY"+"@"+sampleId; //+"Parameter name is empty";
             else
                 paramName=asJsonObject.get("param_name").getAsString();
             
@@ -121,7 +154,7 @@ public class ProcedureSampleStage {
                 if ("0".equals(rawValue)) return LPPlatform.LAB_TRUE+"|END";
                 else return LPPlatform.LAB_TRUE;
             }        
-            return LPPlatform.LAB_FALSE+"You win! This logic is not handled";
+            return LPPlatform.LAB_FALSE+"YOUWIN";
         }catch(Exception e){
             return LPPlatform.LAB_FALSE+e.getMessage();
         }
@@ -131,25 +164,25 @@ public class ProcedureSampleStage {
         try{
             Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
-               return LPPlatform.LAB_FALSE+"Info not parse-able";
+               return LPPlatform.LAB_FALSE+"NOTPARSEABLE";
             JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
             if (sampleStructure.get("sample_analysis").isJsonNull())
-                return LPPlatform.LAB_FALSE+"sample_analysis value not found";
+                return LPPlatform.LAB_FALSE+"SAMPLEANALYSIS_NOTFOUND";
             JsonArray smpAna=sampleStructure.getAsJsonArray("sample_analysis");
             JsonElement jGet = smpAna.get(0);        
             JsonObject asJsonObject = jGet.getAsJsonObject();
             if (asJsonObject.getAsJsonArray("sample_analysis_result").isJsonNull())
-                return LPPlatform.LAB_FALSE+"sample_analysis_result value not found";
+                return LPPlatform.LAB_FALSE+"SAMPLEANALYSISRESULT_NOTFOUND";
             JsonArray asJsonArray = asJsonObject.getAsJsonArray("sample_analysis_result"); //
             jGet = asJsonArray.get(0);        
             asJsonObject = jGet.getAsJsonObject();
 
             if (asJsonObject.get("raw_value").isJsonNull())
-                return LPPlatform.LAB_FALSE+"stagesCheckerSampleWithNoResult"+"@"+sampleId; //"raw value not entered yet";
+                return LPPlatform.LAB_FALSE+"SAMPLEWITHNORESULT"+"@"+sampleId; //"raw value not entered yet";
 
             String paramName="";
             if (asJsonObject.get("param_name").isJsonNull())
-                return LPPlatform.LAB_FALSE+"stagesParamNameEmpty"+"@"+sampleId; //+"Parameter name is empty";
+                return LPPlatform.LAB_FALSE+"PARAMNAMEEMPTY"+"@"+sampleId; //+"Parameter name is empty";
             else
                 paramName=asJsonObject.get("param_name").getAsString();
             
@@ -157,7 +190,7 @@ public class ProcedureSampleStage {
             if ("Recuento".equals(paramName)){ 
                 return LPPlatform.LAB_TRUE;
             }        
-            return LPPlatform.LAB_FALSE+"You win! This logic is not handled";
+            return LPPlatform.LAB_FALSE+"YOUWIN";
         }catch(Exception e){
             return LPPlatform.LAB_FALSE+e.getMessage();
         }
@@ -166,28 +199,28 @@ public class ProcedureSampleStage {
         try{
             Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
-               return LPPlatform.LAB_FALSE+"Info not parse-able";
+               return LPPlatform.LAB_FALSE+"NOTPARSEABLE";
             JsonObject sampleStructure=(JsonObject) objToJsonObj[1];
             if (sampleStructure.get("sample_analysis").isJsonNull())
-                return LPPlatform.LAB_FALSE+"sample_analysis value not found";
+                return LPPlatform.LAB_FALSE+"SAMPLEANALYSIS_NOTFOUND";
             JsonArray smpAna=sampleStructure.getAsJsonArray("sample_analysis");
             JsonElement jGet = smpAna.get(0);
             JsonObject asJsonObject = jGet.getAsJsonObject();
             if (asJsonObject.getAsJsonArray("sample_analysis_result").isJsonNull())
-                return LPPlatform.LAB_FALSE+"sample_analysis_result value not found";
+                return LPPlatform.LAB_FALSE+"SAMPLEANALYSISRESULT_NOTFOUND";
             JsonArray asJsonArray = asJsonObject.getAsJsonArray("sample_analysis_result"); //
             jGet = asJsonArray.get(0);
             asJsonObject = jGet.getAsJsonObject();
 
             String rawValue="";
             if (asJsonObject.get("sar2_"+"raw_value").isJsonNull())
-                return LPPlatform.LAB_FALSE+"stagesCheckerSampleWithNoResult"+"@"+sampleId; //"raw value not entered yet";
+                return LPPlatform.LAB_FALSE+"SAMPLEWITHNORESULT"+"@"+sampleId; //"raw value not entered yet";
             else
                 rawValue=asJsonObject.get("sar2_"+"raw_value").getAsString();
 
             String paramName="";
             if (asJsonObject.get("sar2_"+"param_name").isJsonNull())
-                return LPPlatform.LAB_FALSE+"stagesParamNameEmpty"+"@"+sampleId; //+"Parameter name is empty";
+                return LPPlatform.LAB_FALSE+"PARAMNAMEEMPTY"+"@"+sampleId; //+"Parameter name is empty";
             else
                 paramName=asJsonObject.get("sar2_"+"param_name").getAsString();
             
@@ -197,7 +230,7 @@ public class ProcedureSampleStage {
                 //else 
                     return LPPlatform.LAB_TRUE;
             }        
-            return LPPlatform.LAB_FALSE+"You win! This logic is not handled";
+            return LPPlatform.LAB_FALSE+"YOUWIN";
         }catch(Exception e){
             return LPPlatform.LAB_FALSE+e.getMessage();
         }
@@ -212,7 +245,7 @@ public class ProcedureSampleStage {
         return LPPlatform.LAB_TRUE;
     }    
     public String sampleStageENDNextChecker(String procInstanceName, Integer sampleId, String sampleData) {   
-        return LPPlatform.LAB_FALSE+"END is the last stage, has no next one.";
+        return LPPlatform.LAB_FALSE+"ALREADYLASTSTAGE";
     }
 }
 

@@ -278,6 +278,7 @@ public final class TestingCoverage {
         
     }
     
+    
     void generateSummaryForBusinessRules(){
         final int DECIMAL_PLACES = 2;
         String percExplPatternStr="The <*1*> is <*2*> div <*3*> ";

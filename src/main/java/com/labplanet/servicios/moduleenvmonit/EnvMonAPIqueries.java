@@ -55,7 +55,7 @@ import trazit.queries.QueryUtilitiesEnums;
  *
  * @author Administrator
  */
-public class EnvMonAPIfrontend extends HttpServlet {
+public class EnvMonAPIqueries extends HttpServlet {
   
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     public static final String MANDATORY_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST="programName";
@@ -98,7 +98,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
 GlobalAPIsParams. GlobalAPIsParams. GlobalAPIsParams.  
 GlobalAPIsParams.
 */    
-    public enum EnvMonAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum EnvMonAPIqueriesEndpoints implements EnumIntEndpoints{
         GET_MASTER_DATA("GET_MASTER_DATA", "", 
             new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         PROGRAMS_LIST("PROGRAMS_LIST", "", 
@@ -130,7 +130,7 @@ GlobalAPIsParams.
             }, EndPointsToRequirements.endpointWithNoOutputObjects),            
         DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS("DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS","",new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private EnvMonAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -179,9 +179,9 @@ GlobalAPIsParams.
         String procInstanceName = procReqInstance.getProcedureInstance();
 
         try (PrintWriter out = response.getWriter()) {            
-            EnvMonAPIfrontendEndpoints endPoint = null;
+            EnvMonAPIqueriesEndpoints endPoint = null;
             try{
-                endPoint = EnvMonAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = EnvMonAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 //procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              

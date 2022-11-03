@@ -1800,8 +1800,8 @@ if (1==1){Rdbms.transactionId=1; return;}
         if (tableName==null)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, null);                            
         String schema=schemaName;
-        String buildSchemaName = LPPlatform.buildSchemaName(procName, schemaName);
-        String query="SELECT last_value FROM "+buildSchemaName+".";
+        String buildSchemaName = LPPlatform.buildSchemaName(schemaName, procName);
+        String query="SELECT last_value FROM "+buildSchemaName.replace("\"","")+".";
         if (tableName!=null && tableName.length()>0)
             query=query+tableName+"_audit_id_seq";
         else

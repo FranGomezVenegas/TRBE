@@ -22,6 +22,8 @@ public class TestingAuditIds {
 
     private static TestingAuditIds auditInfo;
     private JSONArray jsonContent;
+    private Integer minAuditId;
+    private Integer maxAuditId;
 
     public static synchronized TestingAuditIds getInstance(){
         if (auditInfo==null){
@@ -33,6 +35,8 @@ public class TestingAuditIds {
         auditInfo=null;
         jsonContent=new JSONArray();
     }
+    public Integer getMinAudit(){return this.minAuditId;}
+    public Integer getMaxAudit(){return this.maxAuditId;}
     public JSONArray getJsonContent(){return jsonContent;}
     public void AddObject(String schemaName, String tableName, Integer auditId, String[] fldName, Object[] fldValue){
         JSONObject jObj=new JSONObject();
@@ -42,7 +46,10 @@ public class TestingAuditIds {
         jObj.put("fldName", Arrays.toString(fldName));
         jObj.put("fldValue", Arrays.toString(fldValue));
         jObj.put("fieldsPretty", Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)));
+        if (this.jsonContent.size()==0)
+            this.minAuditId=auditId;
+        this.maxAuditId=auditId;
         this.jsonContent.add(jObj);
     }
-    
+   
 }

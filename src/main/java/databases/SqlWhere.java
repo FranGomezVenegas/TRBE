@@ -86,7 +86,7 @@ public class SqlWhere {
                     String separator=symbStr.toLowerCase().replace("in", "").replace("not", "").trim();
                     if (separator.length()==0)
                         separator = inNotInSeparator(fldName[iFld]);
-                    fldV=new Object[]{fldValue[iFld]};
+                    fldV=new Object[]{fldValue[iFld].toString().split(separator)};
                 }else
                     fldV=new Object[]{fldValue[iFld]};
                     

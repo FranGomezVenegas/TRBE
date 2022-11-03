@@ -132,7 +132,7 @@ public class IncidentAPIactions extends HttpServlet {
                 argList=LPArray.addValueToArray1D(argList, curArg.getName());
             }
             argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
-            if (IncidentAPIEndpoints.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
+/*            if (IncidentAPIEndpoints.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
                 JSONArray paramJArr=new JSONArray();
                 Enumeration params = request.getParameterNames();
                 String theBody="";
@@ -150,6 +150,7 @@ public class IncidentAPIactions extends HttpServlet {
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
                     jsonObject=(JsonObject) objToJsonObj[1];
             }
+*/            
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
             Integer incId=null;
             switch (endPoint){

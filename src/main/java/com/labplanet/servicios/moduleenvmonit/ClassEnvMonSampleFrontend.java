@@ -27,7 +27,9 @@ import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStages;
+import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses;
+import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.sql.Timestamp;
 import java.util.HashMap;
@@ -217,7 +219,9 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),}, null, null),        
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),
+                new LPAPIArguments("includeOnlyIfResultsInProgress", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 20),                
+                }, null, null),        
         SAMPLES_INPROGRESS_LIST("SAMPLES_INPROGRESS_LIST", "",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -232,9 +236,10 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),}, null, null),
-
-;
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),
+                new LPAPIArguments("includeOnlyIfResultsInProgress", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 20),
+                }, null, null),
+        ;
         private EnvMonSampleAPIFrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, JsonArray reportInfo){
             this.name=name;
             this.successMessageCode=successMessageCode;
@@ -339,8 +344,8 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         // Rdbms.closeRdbms();   
                         this.isSuccess=true;
                         this.responseSuccessJArr=new JSONArray();                       
-                    }else{                           
-                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), sampleId);
+                    }else{    
+                       rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), sampleId);
                         Object[] objectsIds=getObjectsId(EnumIntViewFields.getAllFieldNames(fldsToGet), analysisResultList, "-");
                         for (Object curObj: objectsIds){
                             String[] curObjDet=curObj.toString().split("-");
@@ -1129,7 +1134,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             JSONArray samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName, 
                                     whereFieldsValue, sortFieldsName,
                                     addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
-                                    addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue);
+                                    addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue, false);
                             jObj.put("incub_"+String.valueOf(i), samplesArray);                    
                         } 
                     }
@@ -1259,13 +1264,15 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     sampleAnalysisResultWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisResultWhereFieldsNameArr, sampleAnalysisResultWhereFieldsName.split("\\|"));
                 }                                
                 String sampleAnalysisResultWhereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE); 
-                
+                Boolean includeOnlyWhenResultsInProgress = Boolean.valueOf(LPNulls.replaceNull(argValues[14]).toString());
+
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);  
                 JSONArray samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName, 
                         whereFieldsValue, sortFieldsName,
                         addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
                         addSampleAnalysisResult,
-                        sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue);
+                        sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue,
+                        includeOnlyWhenResultsInProgress);
                 this.isSuccess=true;
                 this.responseSuccessJArr=samplesArray;
                 return;                         
@@ -1282,7 +1289,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
     }
     public static JSONArray samplesByStageData(String sampleLastLevel, String[] sampleFieldToRetrieveArr, String whereFieldsName, String whereFieldsValue, String sortFieldsName,
         String addSampleAnalysis, String[] sampleAnalysisFieldToRetrieveArr, String sampleAnalysisWhereFieldsName, String sampleAnalysisWhereFieldsValue,
-        String addSampleAnalysisResult, String[] sampleAnalysisResultFieldToRetrieveArr, String sampleAnalysisResultWhereFieldsName, String sampleAnalysisResultWhereFieldsValue){
+        String addSampleAnalysisResult, String[] sampleAnalysisResultFieldToRetrieveArr, String sampleAnalysisResultWhereFieldsName, String sampleAnalysisResultWhereFieldsValue, Boolean includeOnlyWhenResultsInProgress){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);        
         String procInstanceName = procReqInstance.getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());    
@@ -1343,6 +1350,9 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
             JSONArray mySamplesJSArr = new JSONArray();
             for (Object[] mySample : mySamples) {
                 JSONObject mySampleJSObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, mySample);                
+            if (includeOnlyWhenResultsInProgress && !isThereResultsInProgress(sampleFieldToRetrieveArr, mySample))
+                continue;            
+
                 if ("TRUE".equalsIgnoreCase(addSampleAnalysis)){
                     String[] testWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()};
                     testWhereFieldsNameArr=LPArray.addValueToArray1D(testWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));                                
@@ -1617,15 +1627,19 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsCnfg.TablesConfig.METHODS.getTableName());
-        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");        
-        
-        fldValueArr=LPArray.addValueToArray1D(fldValueArr, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode());
+//        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");        
+//        fldValueArr=LPArray.addValueToArray1D(fldValueArr, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED.getErrorCode());
         Object[] errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, "en");
         Object[] errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, "es");
-        fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorMsgEn[errorMsgEn.length-1]);
-        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_es");
-        fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorMsgEs[errorMsgEs.length-1]);
-        return new Object[]{fldNameArr, fldValueArr};
+//        fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorMsgEn[errorMsgEn.length-1]);
+//        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason_message_es");
+ //       fldValueArr=LPArray.addValueToArray1D(fldValueArr, errorMsgEs[errorMsgEs.length-1]);
+        JSONObject reasonInfo = new JSONObject();
+        reasonInfo.put("message_en", errorMsgEn[errorMsgEs.length-1]);
+        reasonInfo.put("message_es", errorMsgEs[errorMsgEs.length-1]);
+        return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};        
+
+        //return new Object[]{fldNameArr, fldValueAr};
     }
 
     
@@ -1739,5 +1753,20 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
     public Object getResponseError() {
         return responseError;
     }
-    
+    private static Boolean isThereResultsInProgress(String[] fldsName, Object[] fldsValue){
+        Integer smFldPosic=LPArray.valuePosicInArray(fldsName, TblsData.Sample.SAMPLE_ID.getName());
+        if (smFldPosic==-1) return false;
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
+        new String[]{TblsData.SampleAnalysis.STATUS.getName()}, 
+        new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.STATUS.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, 
+        new Object[]{fldsValue[smFldPosic], 
+            SampleStatuses.REVIEWED.getStatusCode("")+"|"+SampleStatuses.CANCELED.getStatusCode("")                            }, 
+        null);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(groupedInfo[0][0].toString())) 
+            return false;
+        if (groupedInfo.length>0) return true;
+        
+        return false;
+    }
 }

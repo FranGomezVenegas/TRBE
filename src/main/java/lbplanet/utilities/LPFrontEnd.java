@@ -36,7 +36,7 @@ public class LPFrontEnd {
 //    public static final String ERROR_TRAPPING_TABLE_NO_RECORDS="tableWithNoRecords";
 
     public enum ResponseTags{
-        DIAGNOSTIC("diagnostic"), CATEGORY("category"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
+        DIAGNOSTIC("diagnostic"), CATEGORY("category"), MESSAGE_CODE("messageCode"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
         private ResponseTags(String labelName){
             this.labelName=labelName;            
         }    
@@ -145,6 +145,7 @@ public class LPFrontEnd {
                 errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", LPNulls.replaceNull(errorPropertyValue[iVarValue-1]).toString());
             }         
         }
+        errJsObj.put(ResponseTags.MESSAGE_CODE.getLabelName(), errorPropertyName);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_FALSE); 
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
@@ -343,15 +344,20 @@ public class LPFrontEnd {
         Object[][] mainMessage = messages.getMainMessage();
         Object [] errorMsgEn=null;
         Object [] errorMsgEs=null;
+        String errorCodeStr="";
         if (mainMessage!=null && messages.getMainMessageCode()!=null && mainMessage.length>0 && mainMessage[0].length>1){
             errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
             errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
+            errorCodeStr=messages.getMainMessageCode().getErrorCode();
         }else{
             errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
             errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
+            errorCodeStr=errorCode;
         }
         String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
-        String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
+        String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();  
+        errJsObj.put(ResponseTags.MESSAGE_CODE.getLabelName(), errorCodeStr);
+
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
@@ -368,13 +374,18 @@ public class LPFrontEnd {
             errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
             errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
             String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
-            String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
+            String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();      
+            errJsObj.put(ResponseTags.MESSAGE_CODE.getLabelName(), messages.getMainMessageCode().getErrorCode());
+
             errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
             errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
         }else{
+            errJsObj.put(ResponseTags.MESSAGE_CODE.getLabelName(), lpFalseStructure[lpFalseStructure.length-2]);
+
             errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpFalseStructure[lpFalseStructure.length-1]);
             errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpFalseStructure[lpFalseStructure.length-1]);
         }
+        
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpFalseStructure[0]);
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
         return errJsObj;
@@ -387,15 +398,18 @@ public class LPFrontEnd {
         Object [] errorMsgEs=null;
         String errorTextEn = "";
         String errorTextEs = "";
+        String errorCode = "";
         if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1 && !mainMessage[0][0].toString().toUpperCase().contains("NULL")){
             Object[] msgArg3=new Object[]{};
             if (mainMessage[0].length>2)
                 msgArg3=(Object[]) mainMessage[0][2];
+            errorCode=(String) mainMessage[0][1].toString();
             errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
             errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
             errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
             errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();                        
         }else{
+            errorCode=endpoint.getSuccessMessageCode();
             errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "en", null, true, endpoint.getClass().getSimpleName());
             errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "es", null, false, endpoint.getClass().getSimpleName());
             if (endpoint!=null){
@@ -420,6 +434,7 @@ public class LPFrontEnd {
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_TRUE);
         errJsObj.put(ResponseTags.CATEGORY.getLabelName(), endpoint.getClass().getSimpleName().toUpperCase().replace("API", ""));
+        errJsObj.put(ResponseTags.MESSAGE_CODE.getLabelName(), errorCode);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
         errJsObj.put(ResponseTags.RELATED_OBJECTS.getLabelName(), relatedObjects);        
@@ -434,15 +449,19 @@ public class LPFrontEnd {
         Object[][] mainMessage = messages.getMainMessage();
         Object [] errorMsgEn=null;
         Object [] errorMsgEs=null;
+        String errorCodeStr="";
         if (mainMessage!=null && mainMessage.length>0 && mainMessage[0].length>1){
+            errorCodeStr=messages.getMainMessageCode().getErrorCode();
             errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
             errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
         }else{
+            errorCodeStr=errorCode.getErrorCode();
             errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
             errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
         }
         String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
         String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString();            
+        errJsObj.put(ResponseTags.MESSAGE_CODE.getLabelName(), errorCodeStr);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);

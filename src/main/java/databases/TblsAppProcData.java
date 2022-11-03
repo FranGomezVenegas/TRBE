@@ -5,9 +5,11 @@
  */
 package databases;
 
+import databases.SqlStatementEnums.JOIN_TYPES;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntTablesJoin;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
@@ -70,10 +72,15 @@ public class TblsAppProcData {
                 "from #SCHEMA_DATA.instruments i, #SCHEMA_DATA.instrument_event ie " +
                 "where ie.instrument=i.name and i.decommissioned=false and ie.completed_on is null"+
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
-            null, "not_decom_instr_event_data_vw", SCHEMA_NAME, true, TblsAppProcData.ViewNotDecommInstrumentAndEventData.values(), "pr_scheduled_locations"),
+            null, "not_decom_instr_event_data_vw", SCHEMA_NAME, true, TblsAppProcData.ViewNotDecommInstrumentAndEventData.values(), "pr_scheduled_locations", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TablesAppProcData.INSTRUMENTS, "i", TablesAppProcData.INSTRUMENT_EVENT, "ie", true,
+                new EnumIntTableFields[][]{{TblsAppProcData.Instruments.NAME, TblsAppProcData.InstrumentEvent.INSTRUMENT}
+                }, " and i.decommissioned=false and ie.completed_on is null", JOIN_TYPES.INNER),
+        }, ""),
         ;
         private ViewsAppProcData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment){
+                String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -81,6 +88,8 @@ public class TblsAppProcData {
             this.isProcedure=isProcedure;
             this.viewComment=comment;
             this.viewScript=viewScript;
+            this.tablesInTheView=TablesInView;
+            this.extraFilters=extraFilters;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -90,6 +99,8 @@ public class TblsAppProcData {
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         
+        private final EnumIntTablesJoin[] tablesInTheView;
+        @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
         private final FldBusinessRules[] getTblBusinessRules;      
         private final String viewName;             
         private final String repositoryName;
@@ -97,6 +108,9 @@ public class TblsAppProcData {
         private final EnumIntViewFields[] viewFields;
         private final String viewComment;
         private final String viewScript;
+
+        @Override public String getExtraFilters() {return this.extraFilters;}
+        private final String extraFilters;
     }
     
     public enum Instruments implements EnumIntTableFields{
@@ -115,7 +129,7 @@ public class TblsAppProcData {
         UNDECOMMISSIONED_BY("undecommissioned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         UNDECOMMISSIONED_ON("undecommissioned_on", LPDatabase.dateTime(), null, null, null, null),
         ON_LINE("on_line", LPDatabase.booleanFld(), null, null, null, null),
-        IS_LOCKED("is_locked", LPDatabase.booleanFld(), null, null, null, null),
+        IS_LOCKED("is_locked", LPDatabase.booleanFld(false), null, null, null, null),
         LOCKED_REASON("locked_reason", LPDatabase.string(), null, null, null, null),
         LAST_CALIBRATION("last_calibration",LPDatabase.dateTime(), null, null, null, null),
         NEXT_CALIBRATION("next_calibration",LPDatabase.dateTime(), null, null, null, null),
@@ -238,11 +252,17 @@ public class TblsAppProcData {
         CREATED_BY("created_by", "ie.created_by", InstrumentEvent.CREATED_BY, null, null, null),
         COMPLETED_ON("completed_on", "ie.completed_on", InstrumentEvent.COMPLETED_ON, null, null, null),
         COMPLETED_BY("completed_by", "ie.completed_by", InstrumentEvent.COMPLETED_BY, null, null, null),
-        DECISION("decision", "ie.decision", InstrumentEvent.DECISION, null, null, null),
+        COMPLETED_DECISION("completed_decision", "ie.completed_decision", InstrumentEvent.DECISION, null, null, null),
+        ATTACHMENT("attachment", "ie.attachment", InstrumentEvent.ATTACHMENT, null, null, null),
         INST_ONLINE("on_line", "i.on_line", Instruments.ON_LINE, null, null, null),
         INST_DECOM("decommissioned", "i.decommissioned", Instruments.DECOMMISSIONED, null, null, null),
         INST_ISLOCKED("is_locked", "i.is_locked", Instruments.IS_LOCKED, null, null, null),
         INST_LOCKED_REASON("locked_reason", "i.locked_reason", Instruments.LOCKED_REASON, null, null, null),
+        LAST_CALIBRATION("last_calibration", "i.last_calibration", Instruments.LAST_CALIBRATION, null, null, null),
+        NEXT_CALIBRATION("next_calibration", "i.next_calibration", Instruments.NEXT_CALIBRATION, null, null, null),
+        LAST_PREV_MAINT("last_prev_maint", "i.last_prev_maint", Instruments.LAST_PM, null, null, null),
+        NEXT_PREV_MAINT("next_prev_maint", "i.next_prev_maint", Instruments.NEXT_PM, null, null, null),
+        LAST_VERIFICATION("last_verification", "i.last_verification", Instruments.LAST_VERIF, null, null, null),
         ;
         private ViewNotDecommInstrumentAndEventData(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;

@@ -5,6 +5,8 @@
  */
 package databases;
 
+import databases.SqlStatementEnums.JOIN_TYPES;
+import databases.TblsApp.TablesApp;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
@@ -12,6 +14,9 @@ import static lbplanet.utilities.LPDatabase.dateTimeWithDefaultNow;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntTablesJoin;
+import trazit.enums.EnumIntViewFields;
+import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
@@ -74,6 +79,51 @@ public class TblsProcedure {
         private final Object[] foreignkey;
         private final String tableComment;
     }
+    
+    public enum ViewsProcedure implements EnumIntViews{
+        PROC_USER_AND_ROLES(" SELECT #FLDS from #SCHEMA_CONFIG.sample s " +
+                "   INNER JOIN #SCHEMA_CONFIG.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
+                "ALTER VIEW  #SCHEMA_CONFIG.#TBL  OWNER TO #OWNER;",
+            null, "sample_testing_group_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewProcUserAndRolesNewDef.values(), "ProcUserAndRoles", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TablesProcedure.PERSON_PROFILE, "persprof", TablesApp.USERS, "usr", true,
+                new EnumIntTableFields[][]{{TblsProcedure.PersonProfile.PERSON_NAME, TblsApp.Users.PERSON_NAME}}
+                ,"", JOIN_TYPES.INNER)}
+                , null),        
+        ;
+        private ViewsProcedure(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
+                String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
+            this.getTblBusinessRules=fldBusRules;
+            this.viewName=dbVwName;
+            this.viewFields=vwFlds;
+            this.repositoryName=repositoryName;
+            this.isProcedure=isProcedure;
+            this.viewComment=comment;
+            this.viewScript=viewScript;
+            this.tablesInTheView=TablesInView;
+            this.extraFilters=extraFilters;
+        }
+        @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public String getViewCreatecript() {return this.viewScript;}
+        @Override        public String getViewName() {return this.viewName;}
+        @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
+        @Override        public String getViewComment() {return this.viewComment;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        public String getExtraFilters() {return this.extraFilters;}
+        
+        private final FldBusinessRules[] getTblBusinessRules;      
+        private final String viewName;             
+        private final String repositoryName;
+        private final Boolean isProcedure;
+        private final EnumIntViewFields[] viewFields;
+        private final String viewComment;
+        private final String viewScript;
+        private final EnumIntTablesJoin[] tablesInTheView;
+        private final String extraFilters;
+        @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
+    }
+    
     
     /**
      *
@@ -280,6 +330,44 @@ public class TblsProcedure {
         private final String dbObjTypePostgres;           
     } 
 */
+    public enum ViewProcUserAndRolesNewDef implements EnumIntViewFields{
+        USER_NAME(TblsApp.Users.USER_NAME.getName(), "usr.user_name", TblsApp.Users.USER_NAME, null, null, null),
+
+        EMAIL(TblsApp.Users.EMAIL.getName(), "usr.email", TblsApp.Users.EMAIL, null, null, null),
+        ROLE_NAME(TblsProcedure.PersonProfile.ROLE_NAME.getName(), "persprof.role_name", TblsProcedure.PersonProfile.ROLE_NAME, null, null, null),
+        USER_TITLE(TblsProcedure.PersonProfile.USER_TITLE.getName(), "persprof.user_title", TblsProcedure.PersonProfile.USER_TITLE, null, null, null),
+        ACTIVE(TblsProcedure.PersonProfile.ACTIVE.getName(), "persprof.active", TblsProcedure.PersonProfile.ACTIVE, null, null, null)
+        
+        ;
+        private ViewProcUserAndRolesNewDef(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+//            try{
+//            this.fldName="";
+            this.fldName=name;
+            this.fldAliasInView=vwAliasName;
+            this.fldMask=fldMask;
+            this.fldComment=comment;
+            this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
+/*            }catch(Exception e){
+                String s= e.getMessage();
+                //String s2=name;
+                this.fldName="";
+            }*/
+        }
+        private final String fldName;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;        
+        @Override public String getName() {return fldName;}
+        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFieldMask() {return this.fldMask;}
+        @Override public String getFieldComment() {return this.fldComment;}
+        @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+    }        
+    
     public enum ViewProcUserAndRoles{
 
         /**

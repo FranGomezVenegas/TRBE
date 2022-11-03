@@ -31,7 +31,7 @@ public class TblsTesting {
         SCRIPTS_COVERAGE(null, "scripts_coverage", SCHEMA_NAME, true, ScriptsCoverage.values(), ScriptsCoverage.COVERAGE_ID.getName(),
             new String[]{ScriptsCoverage.COVERAGE_ID.getName()}, null, "Testing coverage table"),
         SCRIPT_SAVE_POINT(null, "script_save_point", SCHEMA_NAME, true, ScriptSavePoint.values(), ScriptSavePoint.ID.getName(),
-            new String[]{ScriptSavePoint.ID.getName()}, null, "Testing scripts table"),
+            new String[]{ScriptSavePoint.ID.getName()}, null, "Testing scripts Save Point table"),
         ;
         private TablesTesting(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -95,6 +95,13 @@ public class TblsTesting {
         MSG_ERRORS_IDS_VALUES("msg_error_ids_values", LPDatabase.string(), null, null, null, null),
         BUSINESS_RULES_VISITED("business_rules_visited", LPDatabase.string(), null, null, null, null),
         MESSAGES_VISITED("messages_visited", LPDatabase.string(), null, null, null, null),
+        AUDIT_ID_START("audit_id_start", LPDatabase.integer(), null, null, null, null),
+        AUDIT_ID_END("audit_id_end", LPDatabase.integer(), null, null, null, null),
+        DB_ERROR_START("db_error_start", LPDatabase.integer(), null, null, null, null),
+        DB_ERROR_END("db_error_end", LPDatabase.integer(), null, null, null, null),
+        PROPERTY_ERROR_START("property_error_start", LPDatabase.integer(), null, null, null, null),
+        PROPERTY_ERROR_END("property_error_end", LPDatabase.integer(), null, null, null, null),
+        
         ;
         private Script(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -255,6 +262,9 @@ public class TblsTesting {
         private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
+    
+   
+    
     
     public static String[] getScriptPublicFieldNames(String procInstanceName){
         TablesTesting tblObj = TblsTesting.TablesTesting.SCRIPT;

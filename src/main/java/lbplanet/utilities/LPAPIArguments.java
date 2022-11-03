@@ -21,10 +21,10 @@ public class LPAPIArguments {
     private final Boolean mandatory;
     private final Integer testingArgPosic;
 
-    public LPAPIArguments(String nme, String tpe, Boolean mandatry, Integer tstArg){
+    public LPAPIArguments(String nme, String tpe, Boolean mandatory, Integer tstArg){
         this.name=nme;
         if (tpe!=null) this.type=tpe;
-        this.mandatory=mandatry;
+        this.mandatory=mandatory;
         this.testingArgPosic=tstArg;
     }
     public LPAPIArguments(String nme){
@@ -59,6 +59,7 @@ public class LPAPIArguments {
                 else
                     returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, "");
             }else{
+                requestArgValue=specialTagFilter(requestArgValue);
                 try{
                     ArgumentType argType=ArgumentType.valueOf(currArg.getType().toUpperCase());                
                     switch (argType){
@@ -109,6 +110,11 @@ public class LPAPIArguments {
         return returnArgsDef;
     }
 
+    public static String specialTagFilter(String value){
+        String tagName="{TZ_DATE}";
+        if (value.contains(tagName)) value=value.replace(tagName, LPDate.getCurrentTimeStamp().toString());
+        return value;
+    }
     /**
      * @return the name
      */

@@ -1,8 +1,10 @@
 package com.labplanet.servicios.moduleenvmonit;
 
+import databases.SqlStatementEnums.JOIN_TYPES;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntTablesJoin;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
@@ -90,10 +92,20 @@ public class TblsEnvMonitConfig {
                 "  inner join #SCHEMA_CONFIG.program  dpr on dpr.name=cnfpcd.program_id "+
                 "  inner join #SCHEMA_CONFIG.program_location dpl on dpl.program_name=cnfpcd.program_id and dpl.location_name=cnfpcd.location_name;"+
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
-            null, "pr_scheduled_locations", SCHEMA_NAME, true, TblsEnvMonitConfig.ViewProgramScheduledLocations.values(), "pr_scheduled_locations"),
+            null, "pr_scheduled_locations", SCHEMA_NAME, true, TblsEnvMonitConfig.ViewProgramScheduledLocations.values(), "pr_scheduled_locations", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TablesEnvMonitConfig.PROGRAM, "dpr", TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, "cnfpcd", true,
+                new EnumIntTableFields[][]{{TblsEnvMonitConfig.Program.NAME, TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_CONFIG_ID}
+                },"", JOIN_TYPES.INNER),
+            new EnumIntTablesJoin(TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, "cnfpcd", TablesEnvMonitConfig.PROGRAM_LOCATION, "dpl", true,
+                new EnumIntTableFields[][]{{TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_CONFIG_ID, TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME},
+                        {TblsEnvMonitConfig.ProgramCalendarDate.LOCATION_NAME, TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME}
+                }, "", JOIN_TYPES.INNER),
+        }
+                , null),
         ;
         private ViewsEnvMonConfig(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment){
+                String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -101,6 +113,8 @@ public class TblsEnvMonitConfig {
             this.isProcedure=isProcedure;
             this.viewComment=comment;
             this.viewScript=viewScript;
+            this.tablesInTheView=TablesInView;
+            this.extraFilters=extraFilters;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -109,7 +123,11 @@ public class TblsEnvMonitConfig {
         @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        @Override        public String getExtraFilters() {return this.extraFilters;}
+
         
+        private final EnumIntTablesJoin[] tablesInTheView;
+        @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}        
         private final FldBusinessRules[] getTblBusinessRules;      
         private final String viewName;             
         private final String repositoryName;
@@ -117,6 +135,7 @@ public class TblsEnvMonitConfig {
         private final EnumIntViewFields[] viewFields;
         private final String viewComment;
         private final String viewScript;
+        private final String extraFilters;
     }
 
     public enum Program implements EnumIntTableFields{

@@ -607,6 +607,9 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
  * @return String
  */    
     public static String buildSchemaName(String procInstanceName, String schemaName){
+        return buildSchemaName(procInstanceName, schemaName, false, "");
+    }
+    public static String buildSchemaName(String procInstanceName, String schemaName, Boolean isForTesting, String tableName){
         if (procInstanceName==null) return schemaName; 
         if (procInstanceName.length()>0){
             //Remove this to re-create the schemaName when not called for the first time.
@@ -616,11 +619,17 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
 
             if (!procInstanceName.contains(schemaName)){            
                 schemaName = procInstanceName + "-" + schemaName;
+                if (isForTesting)
+                    schemaName=Rdbms.suffixForTesting(schemaName, tableName);
                 return "\""+schemaName+"\"";
             }else{
+                //if (isForTesting&&Rdbms.suffixForTesting(schemaName, tableName))
+                //procInstanceName=procInstanceName+"_testing";
                 return "\""+procInstanceName+"\"";}
         }
         schemaName = schemaName.replace("\"", "");
+        if (isForTesting)
+        schemaName=schemaName+"_testing";
         return "\""+schemaName+"\"";                  
     }
     

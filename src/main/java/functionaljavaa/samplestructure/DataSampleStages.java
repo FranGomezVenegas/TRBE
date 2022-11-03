@@ -7,6 +7,7 @@ package functionaljavaa.samplestructure;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.ProcedureSampleStage;
+import com.labplanet.servicios.moduleenvmonit.ProcedureSampleStage.ProcedureSampleStageErrorTrapping;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
@@ -271,6 +272,12 @@ Object[][] firstStageData=new Object[0][0];
             if (errorCodeArr.length>1)
                 msgVariables=new Object[]{errorCodeArr[1]};
             ResponseMessages messages = instanceForActions.getMessages();
+            ProcedureSampleStageErrorTrapping smpStgErr=null;
+            try{
+                smpStgErr = ProcedureSampleStageErrorTrapping.valueOf(errorCodeArr[0].toString().toUpperCase());
+                errorCodeArr[0] = smpStgErr.getErrorCode();
+            }catch(Exception e){                
+            }
             messages.addMainForError(errorCodeArr[0], msgVariables, null);
             
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{errorCode});

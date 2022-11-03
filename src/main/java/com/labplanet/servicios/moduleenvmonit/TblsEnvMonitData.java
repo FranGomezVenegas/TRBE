@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import databases.SqlStatementEnums.JOIN_TYPES;
 import databases.TblsAppConfig;
 import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
@@ -13,6 +14,7 @@ import databases.TblsData;
 import databases.TblsData.SampleAnalysisResult;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntTablesJoin;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
@@ -66,6 +68,7 @@ public class TblsEnvMonitData {
         @Override        public Object[] getForeignKey() {return this.foreignkey;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+
         private final FldBusinessRules[] getTblBusinessRules;      
         private final String tableName;             
         private final String repositoryName;
@@ -87,10 +90,16 @@ public class TblsEnvMonitData {
                    " group by s.sample_id, s.status, s.sampling_date, s.current_stage, s.program_name, s.location_name, s.incubation_start, s.incubation_end, s.incubation2_start, s.incubation2_end, sar.raw_value, sar.result_id, sar.test_id;"+
                    "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
                    "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;",
-            null, "sample_microorganism_list_vw", SCHEMA_NAME, true, TblsEnvMonitData.ViewSampleMicroorganismList.values(), "ViewSampleMicroorganismList"),
+            null, "sample_microorganism_list_vw", SCHEMA_NAME, true, TblsEnvMonitData.ViewSampleMicroorganismList.values(), "ViewSampleMicroorganismList", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsData.TablesData.SAMPLE, "s", true,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.SAMPLE_ID, TblsData.Sample.SAMPLE_ID}}, "", JOIN_TYPES.INNER),
+            new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TablesEnvMonitData.SAMPLE_MICROORGANISM, "sorg", true,
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.SAMPLE_ID, TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID}}, "", JOIN_TYPES.INNER),
+        }, "where sar.param_name='Recuento' group by s.sample_id, s.status, s.sampling_date, s.current_stage, s.sample_config_code, s.program_name, s.location_name, s.incubation_start, s.incubation_end, s.incubation2_start, s.incubation2_end, sar.raw_value, sar.result_id, sar.test_id"),
         ;
         private ViewsEnvMonData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment){
+                String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -98,6 +107,8 @@ public class TblsEnvMonitData {
             this.isProcedure=isProcedure;
             this.viewComment=comment;
             this.viewScript=viewScript;
+            this.tablesInTheView=TablesInView;
+            this.extraFilters=extraFilters;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -106,7 +117,10 @@ public class TblsEnvMonitData {
         @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        public String getExtraFilters() {return this.extraFilters;}
         
+        private final EnumIntTablesJoin[] tablesInTheView;
+        @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
         private final FldBusinessRules[] getTblBusinessRules;      
         private final String viewName;             
         private final String repositoryName;
@@ -114,8 +128,8 @@ public class TblsEnvMonitData {
         private final EnumIntViewFields[] viewFields;
         private final String viewComment;
         private final String viewScript;
+        private final String extraFilters;
     }
-    
     
     public enum Sample implements EnumIntTableFields{
         SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), LPDatabase.integerNotNull(), null, null, null, null),
@@ -364,22 +378,22 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
     public enum ViewSampleMicroorganismList implements EnumIntViewFields{
-        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "", Sample.SAMPLE_ID, null, null, null),
-        SAMPLE_TEMPLATE("sample_config_code", "", Sample.CONFIG_CODE, null, null, null),
-        STATUS("status", "", Sample.STATUS, null, null, null),
-        CURRENT_STAGE("current_stage", "", Sample.CURRENT_STAGE, null, null, null),
-        SAMPLING_DATE("sampling_date", "", Sample.SAMPLING_DATE, null, null, null),
-        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, "", Sample.PROGRAM_NAME, null, null, null),
-        LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME, "", Sample.LOCATION_NAME, null, null, null),
-        INCUBATION_START(FIELDS_NAMES_INCUBATION_START, "", Sample.INCUBATION_START, null, null, null),
-        INCUBATION_END(FIELDS_NAMES_INCUBATION_END, "", Sample.INCUBATION_END, null, null, null),
-        INCUBATION2_START(FIELDS_NAMES_INCUBATION2_START, "", Sample.INCUBATION2_START, null, null, null),
-        INCUBATION2_END(FIELDS_NAMES_INCUBATION2_END, "", Sample.INCUBATION2_END, null, null, null),
-        RESULT_ID(FIELDS_NAMES_INCUBATION2_START, "", SampleAnalysisResult.RESULT_ID, null, null, null),
-        TEST_ID(FIELDS_NAMES_INCUBATION2_END, "", SampleAnalysisResult.TEST_ID, null, null, null),
-        RAW_VALUE("raw_value","", SampleAnalysisResult.RAW_VALUE, null, null, null),
-        MICROORGANISM_COUNT("microorganism_count", "", SampleAnalysisResult.RESULT_ID,  null, null, null),
-        MICROORGANISM_LIST("microorganism_list", "", SampleAnalysisResult.RAW_VALUE, null, null, null),
+        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "s.sample_id", Sample.SAMPLE_ID, null, null, null),
+        SAMPLE_TEMPLATE("sample_config_code", "s.sample_config_code", Sample.CONFIG_CODE, null, null, null),
+        STATUS("status", "s.status", Sample.STATUS, null, null, null),
+        CURRENT_STAGE("current_stage", "s.current_stage", Sample.CURRENT_STAGE, null, null, null),
+        SAMPLING_DATE("sampling_date", "s.sampling_date", Sample.SAMPLING_DATE, null, null, null),
+        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, "s.program_name", Sample.PROGRAM_NAME, null, null, null),
+        LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME, "s.location_name", Sample.LOCATION_NAME, null, null, null),
+        INCUBATION_START(FIELDS_NAMES_INCUBATION_START, "s.incubation_start", Sample.INCUBATION_START, null, null, null),
+        INCUBATION_END(FIELDS_NAMES_INCUBATION_END, "s.incubation_end", Sample.INCUBATION_END, null, null, null),
+        INCUBATION2_START(FIELDS_NAMES_INCUBATION2_START, "s.incubation2_start", Sample.INCUBATION2_START, null, null, null),
+        INCUBATION2_END(FIELDS_NAMES_INCUBATION2_END, "s.incubation2_end", Sample.INCUBATION2_END, null, null, null),
+        RESULT_ID(FIELDS_NAMES_INCUBATION2_START, "sar.result_id", SampleAnalysisResult.RESULT_ID, null, null, null),
+        TEST_ID(FIELDS_NAMES_INCUBATION2_END, "sar.test_id", SampleAnalysisResult.TEST_ID, null, null, null),
+        RAW_VALUE("raw_value","sar.raw_value", SampleAnalysisResult.RAW_VALUE, null, null, null),
+        MICROORGANISM_COUNT("microorganism_count", "count(distinct sorg.id)", SampleAnalysisResult.RESULT_ID,  null, null, null),
+        MICROORGANISM_LIST("microorganism_list", "array_to_string(array_agg(distinct sorg.microorganism_name), ', ')", SampleAnalysisResult.RAW_VALUE, null, null, null),
        ;
         private ViewSampleMicroorganismList(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
