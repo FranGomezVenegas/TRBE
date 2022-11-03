@@ -154,12 +154,12 @@
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonProdLotAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonIncubationAPIactions</servlet-name>
-        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI</servlet-class>
+        <servlet-name>EnvMonIncubatorAPIactions</servlet-name>
+        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonIncubatorAPIactions</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonIncubationAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPIfrontend</servlet-class>
+        <servlet-name>EnvMonIncubatorAPIqueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonIncubatorAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EnvMonIncubBatchAPIqueries</servlet-name>
@@ -271,7 +271,7 @@
     </servlet>
     <servlet>
         <servlet-name>EnvMonAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIfrontend</servlet-class>
+        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InvestigationAPI</servlet-name>
@@ -465,12 +465,12 @@
         <url-pattern>/moduleenvmon/EnvMonProdLotAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonIncubationAPIactions</servlet-name>
-        <url-pattern>/moduleenvmon/EnvMonIncubationAPIactions</url-pattern>
+        <servlet-name>EnvMonIncubatorAPIactions</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonIncubatorAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonIncubationAPIqueries</servlet-name>
-        <url-pattern>/moduleenvmon/EnvMonIncubationAPIqueries</url-pattern>
+        <servlet-name>EnvMonIncubatorAPIqueries</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonIncubatorAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>EnvMonIncubBatchAPIqueries</servlet-name>
@@ -692,4 +692,84 @@
             30
         </session-timeout>
     </session-config>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </web-app>

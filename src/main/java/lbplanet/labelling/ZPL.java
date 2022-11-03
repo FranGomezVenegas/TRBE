@@ -15,11 +15,11 @@ import functionaljavaa.parameter.Parameter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
+/* import java.net.http.HttpClient;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+*/
 import java.util.Arrays;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -30,6 +30,7 @@ import javax.print.DocPrintJob;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import org.apache.http.HttpRequest;
 
 /**
  *
@@ -92,17 +93,15 @@ if (response.statusCode() == 200) {
         Process process = Runtime.getRuntime().exec(command);
         URI ur=null;
         ur = new URI(command);
-        HttpRequest request = HttpRequest.newBuilder(ur)
+/*        HttpRequest request = HttpRequest.newBuilder(ur)
             .header("Accept", "application/pdf") // omit this line to get PNG images back
             .POST(BodyPublishers.ofString(command))
             .build();
         HttpClient client = HttpClient.newHttpClient();
         HttpResponse response = null;
-        response = client.send(request, BodyHandlers.ofByteArray());
+        response = client.send(request, BodyHandlers.ofByteArray()); */
         zebraLabel.getZplCode();
         ZebraUtils.printZpl(zebraLabel, ip, port);
-        } catch (InterruptedException ex2){
-            Thread.currentThread().interrupt();
         } catch (ZebraPrintException|URISyntaxException|IOException ex){                
             Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
         }

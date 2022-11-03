@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints;
+import com.labplanet.servicios.moduleenvmonit.EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -27,9 +27,9 @@ public class ClassEnvMonIncubatorController {
     public ClassEnvMonIncubatorController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
-        EnvMonIncubationAPIEndpoints endPoint = null;
+        EnvMonIncubatorAPIactionsEndpoints endPoint = null;
         try{
-            endPoint = EnvMonIncubationAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = EnvMonIncubatorAPIactionsEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);

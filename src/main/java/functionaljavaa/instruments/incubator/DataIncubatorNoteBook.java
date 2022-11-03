@@ -5,7 +5,7 @@
  */
 package functionaljavaa.instruments.incubator;
 
-import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints;
+import com.labplanet.servicios.moduleenvmonit.EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
@@ -185,7 +185,7 @@ public class DataIncubatorNoteBook {
         
         incubatorLocking(instName, new Object[]{specEval, specEvalDetail}, fieldsToRetrieve, instrInfo[0]);
         
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubationAPIEndpoints.EM_INCUBATION_ADD_TEMP_READING, new Object[]{instName, procInstanceName});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubatorAPIactionsEndpoints.EM_INCUBATOR_ADD_TEMP_READING, new Object[]{instName, procInstanceName});
     }
     
     /**

@@ -12,6 +12,8 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
@@ -29,7 +31,7 @@ public class ClassEnvMonIncubator {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassEnvMonIncubator(HttpServletRequest request, EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints endPoint){
+    public ClassEnvMonIncubator(HttpServletRequest request, EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints endPoint){
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         Object[] actionDiagnoses = null;
@@ -46,19 +48,38 @@ public class ClassEnvMonIncubator {
         String instrName="";
         BigDecimal temperature=null;
         switch (endPoint){
-                case EM_INCUBATION_ACTIVATE:
+                case EM_INCUBATOR_NEW:
+                    instrName=argValues[0].toString();
+                    String incubStage=argValues[1].toString();
+                    BigDecimal minTemp=BigDecimal.valueOf(Double.valueOf(LPNulls.replaceNull(argValues[2]).toString()));
+                    BigDecimal maxTemp=BigDecimal.valueOf(Double.valueOf(LPNulls.replaceNull(argValues[3]).toString()));             
+                    String fieldName=argValues[4].toString();
+                    String fieldValue=argValues[5].toString();
+                    String[] fieldNames=new String[0];
+                    Object[] fieldValues=new Object[0];
+                    if (fieldName!=null && fieldName.length()>0 && !"undefined".equalsIgnoreCase(fieldName)) fieldNames = fieldName.split("\\|");                                            
+                    if (fieldValue!=null && fieldValue.length()>0 && !"undefined".equalsIgnoreCase(fieldValue)) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
+                    if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                        actionDiagnoses=fieldValues;
+                        break;
+                    }                    
+                    actionDiagnoses=ConfigIncubator.newIncubator(instrName, incubStage, minTemp, maxTemp, fieldNames, fieldValues);
+                    rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), instrName);                
+                    this.messageDynamicData=new Object[]{instrName};
+                    break;            
+                case EM_INCUBATOR_ACTIVATE:
                     instrName=argValues[0].toString();               
                     actionDiagnoses=ConfigIncubator.activateIncubator(instrName, token.getPersonName());
                     rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), instrName);                
                     this.messageDynamicData=new Object[]{instrName};
                     break;
-                case EM_INCUBATION_DEACTIVATE:
+                case EM_INCUBATOR_DEACTIVATE:
                     instrName=argValues[0].toString();
                     actionDiagnoses=ConfigIncubator.deactivateIncubator(instrName, token.getPersonName());                    
                     rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), instrName);                
                     this.messageDynamicData=new Object[]{instrName};
                     break;
-                case EM_INCUBATION_ADD_TEMP_READING:
+                case EM_INCUBATOR_ADD_TEMP_READING:
                     instrName=argValues[0].toString();
                     temperature=(BigDecimal) argValues[1];
                     actionDiagnoses=DataIncubatorNoteBook.newTemperatureReading(instrName, token.getPersonName(),temperature);                    

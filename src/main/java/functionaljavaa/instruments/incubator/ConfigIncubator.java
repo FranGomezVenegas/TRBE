@@ -5,12 +5,16 @@
  */
 package functionaljavaa.instruments.incubator;
 
-import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints;
+import com.labplanet.servicios.moduleenvmonit.EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
+import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.features.Token;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
@@ -28,9 +32,11 @@ import trazit.session.ApiMessageReturn;
 public class ConfigIncubator {
     
 public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{ 
+        ALREADY_EXISTS("incubatorAlreadyExist", "", ""),
         NOT_EXISTS("incubatorDoesnotExist", "", ""),
         ALREADY_ACTIVE("incubatorAlreadyActive", "", ""),
         CURRENTLY_DEACTIVE("incubatorCurrentlyDeactive", "", ""),
+        MIN_GREATERTHAN_MAX_TEMP("incubatorCreationMinCannotBeGreaterThanMaxTemp", "", "")
         ;
         private ConfigIncubatorErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -129,6 +135,47 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
         private final String code;
     }
 */
+    
+    public static Object[] newIncubator(String instName, String incubStage, BigDecimal minTemp, BigDecimal maxTemp, String[] fldNames, Object[] fldValues){
+    ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=instanceForActions.getProcedureInstance();
+        Token token = instanceForActions.getToken();
+                Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName}, 
+                new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(instrInfo[0][0].toString()))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.ALREADY_EXISTS, new Object[]{instName, procInstanceName});
+        fldNames=LPArray.addValueToArray1D(fldNames, TblsEnvMonitConfig.InstrIncubator.NAME.getName());
+        fldValues=LPArray.addValueToArray1D(fldValues, instName);
+        if (incubStage!=null&&incubStage.length()>0){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsEnvMonitConfig.InstrIncubator.STAGE.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, incubStage);
+        }
+        if (minTemp!=null&&minTemp.toString().length()>0){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsEnvMonitConfig.InstrIncubator.MIN.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, minTemp);
+        }
+        if (maxTemp!=null&&maxTemp.toString().length()>0){
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsEnvMonitConfig.InstrIncubator.MAX.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, maxTemp);
+        }
+        if (minTemp!=null&&maxTemp!=null&&minTemp.compareTo(maxTemp)>0)
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.MIN_GREATERTHAN_MAX_TEMP, new Object[]{instName, procInstanceName});
+            
+        fldNames=LPArray.addValueToArray1D(fldNames, TblsEnvMonitConfig.InstrIncubator.CREATED_BY.getName());
+        fldValues=LPArray.addValueToArray1D(fldValues, token.getPersonName());
+        fldNames=LPArray.addValueToArray1D(fldNames, TblsEnvMonitConfig.InstrIncubator.CREATED_ON.getName());
+        fldValues=LPArray.addValueToArray1D(fldValues, LPDate.getCurrentTimeStamp());
+        fldNames=LPArray.addValueToArray1D(fldNames, TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName());
+        fldValues=LPArray.addValueToArray1D(fldValues, true);
+        
+        RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, fldNames, fldValues, null);
+        if (Boolean.FALSE.equals(insertRecord.getRunSuccess()))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables());
+        else
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubatorAPIactionsEndpoints.EM_INCUBATOR_NEW, new Object[]{instName, procInstanceName});
+    }    
+    
     /**
      *
      * @param instName
@@ -153,7 +200,7 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubUpdate[0].toString())) return incubUpdate;
         Object[] incubNoteBookDiag=DataIncubatorNoteBook.activation(instName, personName); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubNoteBookDiag[0].toString())) return incubNoteBookDiag;
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubationAPIEndpoints.EM_INCUBATION_ACTIVATE, new Object[]{instName, procInstanceName});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubatorAPIactionsEndpoints.EM_INCUBATOR_ACTIVATE, new Object[]{instName, procInstanceName});
     }    
 
     /**
@@ -180,7 +227,7 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubUpdate[0].toString())) return incubUpdate;
         Object[] incubNoteBookDiag=DataIncubatorNoteBook.deactivation(instName, personName); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubNoteBookDiag[0].toString())) return incubNoteBookDiag;
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubationAPIEndpoints.EM_INCUBATION_DEACTIVATE, new Object[]{instName, procInstanceName});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubatorAPIactionsEndpoints.EM_INCUBATOR_DEACTIVATE, new Object[]{instName, procInstanceName});
 
     }    
 

@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -31,23 +32,33 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class EnvMonIncubationAPI extends HttpServlet {
+public class EnvMonIncubatorAPIactions extends HttpServlet {
 
-    public enum EnvMonIncubationAPIEndpoints implements EnumIntEndpoints{
+    public enum EnvMonIncubatorAPIactionsEndpoints implements EnumIntEndpoints{
         /**
          *
          */
-        EM_INCUBATION_ACTIVATE("EM_INCUBATION_ACTIVATE", "incubator_activate_success", 
+        EM_INCUBATOR_NEW("EM_INCUBATOR_NEW", "new_incubator_success", 
+            new LPAPIArguments[]{new LPAPIArguments("newIncubator", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+            new LPAPIArguments("incubStage", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+            new LPAPIArguments("minTemp", LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 8),
+            new LPAPIArguments("maxTemp", LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
+                .add("table", TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()).build()).build()
+        ),
+        EM_INCUBATOR_ACTIVATE("EM_INCUBATOR_ACTIVATE", "incubator_activate_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
                 .add("table", TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()).build()).build()
         ),
-        EM_INCUBATION_DEACTIVATE("EM_INCUBATION_DEACTIVATE", "incubator_deactivate_success", 
+        EM_INCUBATOR_DEACTIVATE("EM_INCUBATOR_DEACTIVATE", "incubator_deactivate_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
                 .add("table", TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()).build()).build()
         ),
-        EM_INCUBATION_ADD_TEMP_READING("EM_INCUBATION_ADD_TEMP_READING", "incubator_add_temp_reading_success", 
+        EM_INCUBATOR_ADD_TEMP_READING("EM_INCUBATOR_ADD_TEMP_READING", "incubator_add_temp_reading_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_TEMPERATURE, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), true, 7)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
@@ -56,7 +67,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
                     .add("table", TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName()).build()).build()
         ), 
         ;
-        private EnvMonIncubationAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonIncubatorAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -123,9 +134,9 @@ public class EnvMonIncubationAPI extends HttpServlet {
 */
         try (PrintWriter out = response.getWriter()) {
 
-            EnvMonIncubationAPIEndpoints endPoint = null;
+            EnvMonIncubatorAPIactionsEndpoints endPoint = null;
             try{
-                endPoint = EnvMonIncubationAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = EnvMonIncubatorAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   

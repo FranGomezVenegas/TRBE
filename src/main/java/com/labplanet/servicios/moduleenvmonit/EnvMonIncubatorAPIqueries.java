@@ -40,9 +40,9 @@ import trazit.queries.QueryUtilitiesEnums;
  *
  * @author User
  */
-public class EnvMonIncubationAPIfrontend extends HttpServlet {
+public class EnvMonIncubatorAPIqueries extends HttpServlet {
 
-    public enum EnvMonIncubationAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum EnvMonIncubatorAPIqueriesEndpoints implements EnumIntEndpoints{
         GET_INCUBATOR_TEMP_READINGS("GET_INCUBATOR_TEMP_READINGS", "", 
                 new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),}, null),
@@ -52,7 +52,7 @@ public class EnvMonIncubationAPIfrontend extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments("incubStage", LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, null),
         GET_INCUBATORS_DEACTIVATED_LAST_N_DAYS("GET_INCUBATORS_DEACTIVATED_LAST_N_DAYS","",new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private EnvMonIncubationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonIncubatorAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -107,9 +107,9 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
 
     try (PrintWriter out = response.getWriter()) {
 
-        EnvMonIncubationAPIfrontendEndpoints endPoint = null;
+        EnvMonIncubatorAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = EnvMonIncubationAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = EnvMonIncubatorAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
