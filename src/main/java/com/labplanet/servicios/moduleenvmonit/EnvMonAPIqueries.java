@@ -31,8 +31,7 @@ import databases.TblsCnfg;
 import databases.TblsProcedure;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.moduleenvironmentalmonitoring.ConfigMasterData;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
-import functionaljavaa.parameter.Parameter;
+import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
@@ -420,7 +419,7 @@ GlobalAPIsParams.
                     LPFrontEnd.servletReturnSuccess(request, response, programsListObj);
                     return;  
                 case PROGRAMS_CORRECTIVE_ACTION_LIST:   
-                    String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
+                    String statusClosed=ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
                     String programName = argValues[0].toString();
                     String[] progCorrFldNameList = getFieldsListToRetrieve(argValues[1].toString(), getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()));
                     String[] progCorrFldSortArray=null;
