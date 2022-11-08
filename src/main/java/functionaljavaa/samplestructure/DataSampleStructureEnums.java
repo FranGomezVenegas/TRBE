@@ -83,7 +83,7 @@ public class DataSampleStructureEnums {
         NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
         SAMPLE_ALREADY_REVIEWED("sampleAlreadyReviewed", "", ""),
         SAMPLE_ALREADY_READY_FOR_REVISION("alreadyReadyForRevision", "", ""),
-        SAMPLE_CANNOT_BE_UNCANCELLED("sampleCannotBeUncanceled", "", ""),
+        SAMPLE_CANNOT_BE_UNCANCELLED("DataSample_sampleCannotBeUncanceled", "", ""),
         ;
         private DataSampleErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
