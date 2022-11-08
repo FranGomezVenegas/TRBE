@@ -108,9 +108,11 @@ public class TblsData {
             null, "sample_analysis_result_with_spec_limits", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleAnalysisResultWithSpecLimits.values(), "ViewSampleAnalysisResultWithSpecLimits",
         new EnumIntTablesJoin[]{
             new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY, "sar2", false,
-                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsData.SampleAnalysisResultSecondEntry.FIRST_RESULT_ID}}, "", JOIN_TYPES.INNER),
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsData.SampleAnalysisResultSecondEntry.FIRST_RESULT_ID},
+                    {TblsData.SampleAnalysisResult.TEST_ID, TblsData.SampleAnalysisResultSecondEntry.TEST_ID},
+                    {TblsData.SampleAnalysisResult.SAMPLE_ID, TblsData.SampleAnalysisResultSecondEntry.SAMPLE_ID}}, "", JOIN_TYPES.INNER),
             new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TablesData.SAMPLE_ANALYSIS, "sa", true,
-                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.TEST_ID, TblsData.SampleAnalysis.TEST_ID}}, "", JOIN_TYPES.INNER),
+                new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.TEST_ID, TblsData.SampleAnalysis.TEST_ID}, {TblsData.SampleAnalysisResult.SAMPLE_ID, TblsData.SampleAnalysis.SAMPLE_ID}}, "", JOIN_TYPES.INNER),
             new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TablesData.SAMPLE, "s", true,
                 new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.SAMPLE_ID, TblsData.Sample.SAMPLE_ID}}, "", JOIN_TYPES.INNER),
             new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsCnfg.TablesConfig.SPEC_LIMITS, "spcLim", true,
@@ -175,9 +177,9 @@ public class TblsData {
             null, "sample_testing_group_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleTestingGroup.values(), "ViewUserAndMetaDataSopView", 
         new EnumIntTablesJoin[]{
             new EnumIntTablesJoin(TablesData.SAMPLE, "s", TablesData.SAMPLE_REVISION_TESTING_GROUP, "stg", true,
-                null,"", JOIN_TYPES.INNER)}
-                , " usr.method_name::text = metadata.code::text "+
-                "    and usr.method_version::integer =metadata.config_version::integer"),        
+                new EnumIntTableFields[][]{{TblsData.Sample.SAMPLE_ID, TblsData.SampleRevisionTestingGroup.SAMPLE_ID}}
+            ,"", JOIN_TYPES.INNER)}
+            , ""),        
         ;
         private ViewsData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
                 String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
