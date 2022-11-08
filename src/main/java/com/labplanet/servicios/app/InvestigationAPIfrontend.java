@@ -10,6 +10,7 @@ import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN
 import databases.Rdbms;
 import databases.TblsProcedure;
 import databases.features.Token;
+import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import functionaljavaa.parameter.Parameter;
@@ -122,7 +123,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
                     return;                  
                 case INVESTIGATION_RESULTS_PENDING_DECISION:
-                    String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
+                    String statusClosed=DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
                     if (!isProgramCorrectiveActionEnable(procInstanceName)){
                       JSONObject jObj=new JSONObject();
                       jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!");
