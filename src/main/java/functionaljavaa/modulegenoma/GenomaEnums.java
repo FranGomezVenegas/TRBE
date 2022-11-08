@@ -25,7 +25,7 @@ public final class GenomaEnums {
     
     public enum GenomaBusnessRules implements EnumIntBusinessRules{
         SUFFIX_ACTIVEONCREATION("_activeOnCreation", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
-        SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT("_specialFieldsLockedForProjectUpdateEndPoint", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
+        SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT("specialFieldsLockedForProjectUpdateEndPoint", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
         ;
         private GenomaBusnessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator
         , Boolean isOpt, ArrayList<String[]> preReqs){
@@ -111,7 +111,7 @@ if (1==1) return true;
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaSuffix);
         
-        String propertyEntryValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, GenomaBusnessRules.SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT.getAreaName(), GenomaBusnessRules.SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT.getTagName());        
+        String propertyEntryValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, GenomaBusnessRules.SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT.getAreaName(), GenomaBusnessRules.SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT.getTagName(), true);        
 
         if (propertyEntryValue.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "", null);
         String[] propertyEntryValueArr=propertyEntryValue.split("\\|");
