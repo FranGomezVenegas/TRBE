@@ -907,7 +907,8 @@ public class DataSampleAnalysisResult {
                             currTest, sampleId, currTest, null, updFldNames, updFldValues);
                     }
                 } else {
-                    diagnoses[5] = "The "+TblsData.TablesData.SAMPLE_ANALYSIS.getTableName()+" "+currTest+" has status "+currStatus+" then cannot be canceled in schema "+schemaDataName;                 
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_CANNOT_BE_UNCANCELLED, new Object[]{currTest, currStatus});
+                    //diagnoses[5] = "The "+TblsData.TablesData.SAMPLE_ANALYSIS.getTableName()+" "+currTest+" has status "+currStatus+" then cannot be canceled in schema "+schemaDataName;                 
                 }
             }
         }
@@ -931,8 +932,8 @@ public class DataSampleAnalysisResult {
                     smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_UNCANCELED, TblsData.TablesData.SAMPLE.getTableName(), 
                             currSample, currSample, null, null, updFldNames, updFldValues);
                 }
-            } else {
-                diagnoses[5] = "The "+TblsData.TablesData.SAMPLE.getTableName()+" "+currSample+" has status "+currStatus+" then cannot be canceled in schema "+schemaDataName;
+            } else {                
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_CANNOT_BE_UNCANCELLED, new Object[]{currSample, currStatus});
             }
         }
         diagnoses[5] = Arrays.toString(diagPerResult);

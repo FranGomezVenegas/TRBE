@@ -83,6 +83,7 @@ public class DataSampleStructureEnums {
         NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
         SAMPLE_ALREADY_REVIEWED("sampleAlreadyReviewed", "", ""),
         SAMPLE_ALREADY_READY_FOR_REVISION("alreadyReadyForRevision", "", ""),
+        SAMPLE_CANNOT_BE_UNCANCELLED("sampleCannotBeUncanceled", "", ""),
         ;
         private DataSampleErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -125,11 +126,11 @@ public class DataSampleStructureEnums {
             this.isOptional=isOptional;
             this.preReqsBusRules=preReqs;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         
         private final String tagName;
         private final String areaName;
@@ -139,8 +140,8 @@ public class DataSampleStructureEnums {
         private final Boolean isOptional;
         private final String preReqsBusRules;
 
-        public Boolean getIsOptional(){return this.isOptional;}
-        public ArrayList<String[]> getPreReqs(){
+        @Override        public Boolean getIsOptional(){return this.isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs(){
             ArrayList<String[]> d = new ArrayList<String[]>();
             if (preReqsBusRules!=null && preReqsBusRules.length()>0){
                 String[] rulesArr=preReqsBusRules.split("\\|");
@@ -176,13 +177,13 @@ public class DataSampleStructureEnums {
             this.isOptional=isOptional;
             this.preReqsBusRules=preReqs;
         }             
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
-        public Boolean getIsOptional(){return this.isOptional;}
-        public ArrayList<String[]> getPreReqs(){
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional(){return this.isOptional;}
+        @Override        public ArrayList<String[]> getPreReqs(){
             ArrayList<String[]> d = new ArrayList<String[]>();
             if (preReqsBusRules!=null && preReqsBusRules.length()>0){
                 String[] rulesArr=preReqsBusRules.split("\\|");
@@ -223,7 +224,8 @@ public class DataSampleStructureEnums {
         RESULT_NOT_REVIEWABLE("DataSample_SampleAnalysisResultNotReviewable", "", ""),
         RULE_ANALYST_NOT_ASSIGNED("DataSample_SampleAnalysisRuleAnalystNotAssigned", "", ""),
         RULE_OTHERANALYSIS_ENTER_RESULT("DataSample_SampleAnalysisRuleOtherAnalystEnterResult", "", ""),
-        ALREADY_REVIEWED("DataSample_SampleAnalysisAlreadyReviewed","", "")
+        ALREADY_REVIEWED("DataSample_SampleAnalysisAlreadyReviewed","", ""),
+        SAMPLE_ANALYSIS_CANNOT_BE_UNCANCELLED("DataSample_sampleAnalysisCannotBeUncanceled","", "")
         ;
         
         private DataSampleAnalysisErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
@@ -231,9 +233,9 @@ public class DataSampleStructureEnums {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -259,12 +261,13 @@ public class DataSampleStructureEnums {
             this.isOptional=isOptional;
             this.preReqsBusRules=preReqs;
         }       
-        public String getTagName(){return this.tagName;}
-        public String getAreaName(){return this.areaName;}
-        public JSONArray getValuesList(){return this.valuesList;}
-        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        public char getMultiValueSeparator(){return this.multiValueSeparator;}
-        public Boolean getIsOptional(){return this.isOptional;}
+        @Override        public String getTagName(){return this.tagName;}
+        @Override        public String getAreaName(){return this.areaName;}
+        @Override        public JSONArray getValuesList(){return this.valuesList;}
+        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
+        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
+        @Override        public Boolean getIsOptional(){return this.isOptional;}
+        @Override
         public ArrayList<String[]> getPreReqs(){
             ArrayList<String[]> d = new ArrayList<String[]>();
             if (preReqsBusRules!=null && preReqsBusRules.length()>0){
@@ -289,7 +292,7 @@ public class DataSampleStructureEnums {
     }
     public enum DataSampleAnalysisResultErrorTrapping implements EnumIntMessages{ 
         NOT_FOUND("DataSampleAnalysisResult_SampleAnalysisResultNotFound", "", ""),
-        RESULT_CANNOT_BE_CANCELLED("DataSampleAnalysisResult_resultCannotBeCanceled", "", ""),
+        RESULT_CANNOT_BE_CANCELLED("DataSampleAnalysisResult_resultCannotBeCanceled", "", ""),        
         ANALYSIS_HAS_SOME_PARAMETERS("DataSampleAnalysisResult_analysisWithManyParameters", "", ""),
         RESULT_LOCKED("DataSampleAnalysisResult_SampleAnalysisResultLocked", "", ""),
         SAME_RESULT_VALUE("DataSampleAnalysisResult_SampleAnalysisResultSameValue", "", ""),
