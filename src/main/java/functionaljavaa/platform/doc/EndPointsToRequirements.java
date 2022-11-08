@@ -89,7 +89,7 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName()}); //, curEndpoint.getSuccessMessageCode()});
                             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
                             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curEndpoint.getArguments())});                
-
+                            Integer numEndpointArguments=curEndpoint.getArguments().length;
                             if (LPArray.valueInArray(endpointsApiAndEndpointNamesKey, curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName())){
                                 endpointsFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName());
                             }else{
@@ -99,7 +99,7 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                                 AddCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
                                 try{
                                     declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName(), 
-                                            fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size());
+                                            fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size(), numEndpointArguments);
                                 }catch(Exception e){
                                     JSONObject jObj=new JSONObject();
                                     jObj.put("enum",getMine.getSimpleName());
@@ -189,7 +189,7 @@ private Object[] existsEndPointInDatabase(String apiName, String endpointName){
     if (valuePosicInArray==-1)return new Object[]{LPPlatform.LAB_FALSE};
     return this.endpointsFromDatabase[valuePosicInArray];    
 }
-public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi){
+public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi, Integer numEndpointArguments){
 //if ("InspLotRMQueriesAPIEndpoints".equalsIgnoreCase(apiName) && "GET_LOT_INFO".equalsIgnoreCase(endpointName))
 //    apiName=apiName;
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
@@ -198,13 +198,15 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
 //    Object[] docInfoForEndPoint = getDocInfoForEndPoint(apiName, endpointName);
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0].toString())){
         String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, EndpointsDeclaration.ARGUMENTS_ARRAY.getName())].toString();
+        
         if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[1].toString())){
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTrazitDocTrazit.EndpointsDeclaration.ID,
                     SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0]}, "");
             Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
-                            new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName()}), new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp()}, sqlWhere, null);
+                        new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName(), EndpointsDeclaration.NUM_ARGUMENTS.getName()}), 
+                        new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp(), numEndpointArguments}, sqlWhere, null);
         }else{
             //String[] flds=(String[]) docInfoForEndPoint[0];
             String[] fldNames=new String[]{};
@@ -222,6 +224,8 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTrazitDocTrazit.EndpointsDeclaration.ID,
                     SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0]}, "");
+            fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.NUM_ARGUMENTS.getName());
+            fieldValues=LPArray.addValueToArray1D(fieldValues, numEndpointArguments);            
             Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
                 EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
                 fldNames), fldValues, sqlWhere, null);
@@ -232,9 +236,12 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
         //fieldNames=LPArray.addValueToArray1D(fieldNames, (String[]) docInfoForEndPoint[0]);
         //fieldValues=LPArray.addValueToArray1D(fieldValues, (Object[]) docInfoForEndPoint[1]);
         fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName());
+        
         if (outputObjectTypes==null) fieldValues=LPArray.addValueToArray1D(fieldValues, "TBD");
         else
             fieldValues=LPArray.addValueToArray1D(fieldValues, outputObjectTypes.toString());
+        fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.NUM_ARGUMENTS.getName());
+        fieldValues=LPArray.addValueToArray1D(fieldValues, numEndpointArguments);
         Rdbms.insertRecordInTable(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, fieldNames, fieldValues);    
         this.endpointsFromDatabase=LPArray.joinTwo2DArrays(endpointsFromDatabase, LPArray.array1dTo2d(fieldValues,1));
     }
