@@ -174,6 +174,9 @@ public class Parameter {
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, ArrayList<String[]> rulePreReqs) {
         return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, false, rulePreReqs, null);
     }    
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, ArrayList<String[]> rulePreReqs, Boolean isOptional) {
+        return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, isOptional, rulePreReqs, null);
+    }        
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, Boolean isOptional, ArrayList<String[]> rulePreReqs, BusinessRules biProcInst) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
