@@ -15,6 +15,8 @@ import databases.TblsProcedure;
 import databases.features.Token;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.parameter.Parameter;
+import static functionaljavaa.parameter.Parameter.isTagValueOneOfDisableOnes;
+import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import java.util.ArrayList;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
@@ -37,6 +39,40 @@ public class DataProgramCorrectiveAction {
     
     public enum ProgramCorrectiveStatus{CREATED, CLOSED} 
 
+    
+    public enum ProgramCorrectiveActionStatuses{
+        STATUS_CLOSED(DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED),
+        STATUS_FIRST(DataProgramCorrectiveActionBusinessRules.STATUS_FIRST),
+        
+/*        BLANK(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_FIRST), 
+        ENTERED(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_ENTERED), 
+        REENTERED(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_REENTERED), 
+        REVIEWED(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED), 
+        CANCELED(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_CANCELED)*/
+        ;
+        ProgramCorrectiveActionStatuses(DataProgramCorrectiveActionBusinessRules busRulName){
+            this.busRulName=busRulName;
+        }
+        public static String getStatusFirstCode(){
+            ArrayList<String[]> preReqs = new ArrayList<String[]>();
+            preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
+            String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
+            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysisResult"+DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs, true );     
+            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst)) ) 
+                return "CREATED";
+            return sampleStatusFirst;        
+        }
+        public String getStatusCode(){
+            ArrayList<String[]> preReqs = new ArrayList<String[]>();
+            preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
+            String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
+            String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs, true);     
+            if (statusPropertyValue==null || statusPropertyValue.length()==0 || (isTagValueOneOfDisableOnes(statusPropertyValue)) ) return this.toString();
+            return statusPropertyValue;
+        }
+        private final DataProgramCorrectiveActionBusinessRules busRulName;
+    }
+    
     public enum DataProgramCorrectiveActionBusinessRules implements EnumIntBusinessRules{
         STATUS_CLOSED("programCorrectiveAction_statusClosed", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
         STATUS_FIRST("programCorrectiveAction_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
@@ -105,7 +141,7 @@ public class DataProgramCorrectiveAction {
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{resultId, procInstanceName});
         
-        String statusFirst=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_FIRST.getAreaName(),DataProgramCorrectiveActionBusinessRules.STATUS_FIRST.getTagName());
+        String statusFirst=ProgramCorrectiveActionStatuses.getStatusFirstCode();
         String[] sampleFldsToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName(), 
         TblsProcedure.ProgramCorrectiveAction.LOCATION_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.AREA.getName()};
         String[] sampleAnalysisResultToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(),
@@ -209,7 +245,7 @@ public class DataProgramCorrectiveAction {
     public static Object[] markAsCompleted(Integer correctiveActionId, Integer investId){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
+        String statusClosed=ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
         Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), 
         new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, new Object[]{correctiveActionId},
         new String[]{TblsProcedure.ProgramCorrectiveAction.STATUS.getName()});
@@ -236,7 +272,7 @@ public class DataProgramCorrectiveAction {
     public static Object[] markAsAddedToInvestigation(Integer investId, String objectType, Object objectId){    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
+        String statusClosed=ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
         String objectIdClass=null;
         String fieldToFindRecord=null;
         if (TblsData.TablesData.SAMPLE.getTableName().equalsIgnoreCase(objectType)) fieldToFindRecord=TblsProcedure.ProgramCorrectiveAction.SAMPLE_ID.getName();
