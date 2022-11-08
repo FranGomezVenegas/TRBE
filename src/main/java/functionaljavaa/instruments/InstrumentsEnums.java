@@ -235,7 +235,7 @@ public class InstrumentsEnums {
         INSTRUMENT_EVENTS_INPROGRESS("INSTRUMENT_EVENTS_INPROGRESS","", new LPAPIArguments[]{
             new LPAPIArguments("fieldName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
             new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        INSTRUMENT_EVENT_VARIABLES("INSTRUMENT_EVENTS_VARIABLES", "",new LPAPIArguments[]{            
+        INSTRUMENT_EVENT_VARIABLES("INSTRUMENT_EVENT_VARIABLES", "",new LPAPIArguments[]{            
             new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6), }, EndPointsToRequirements.endpointWithNoOutputObjects)
         ;
         private InstrumentsAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
