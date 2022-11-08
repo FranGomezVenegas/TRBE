@@ -22,7 +22,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsAppProcData {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_PROC_DATA.getName();
-    private static final Boolean IS_PRODEDURE_INSTANCE = false;
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesAppProcData implements EnumIntTables{
         INSTRUMENTS(null, "instruments", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Instruments.values(), Instruments.NAME.getName(),
             new String[]{Instruments.NAME.getName()}, null, ""),
