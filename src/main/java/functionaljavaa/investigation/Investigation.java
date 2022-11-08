@@ -37,6 +37,9 @@ import trazit.session.ApiMessageReturn;
  * @author User
  */
 public final class Investigation {
+    
+    
+    
     public enum DataInvestigationAuditEvents implements EnumIntAuditEvents{NEW_INVESTIGATION_CREATED, OBJECT_ADDED_TO_INVESTIGATION, CLOSED_INVESTIGATION, CAPA_DECISION
     //CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT
     }
@@ -108,19 +111,7 @@ public final class Investigation {
             Object[] trapMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
             return trapMessage=LPArray.addValueToArray1D(trapMessage, insertDiagn);
         }else
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());        
-/*        if (!diagnostic.getRunSuccess())
-        else
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
-        String investIdStr=diagnostic[diagnostic.length-1].toString();
-        Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), Integer.valueOf(investIdStr), investIdStr,  
-                LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationAuditAdd[0].toString())) return investigationAuditAdd; 
-            String investAuditIdStr=investigationAuditAdd[investigationAuditAdd.length-1].toString();
-        if (objectsToAdd!=null && objectsToAdd.length()>0)
-            addInvestObjects(Integer.valueOf(investIdStr), objectsToAdd, Integer.valueOf(investAuditIdStr));
-        return diagnostic;
-*/               
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                  
     }
     public static Object[] closeInvestigation(Integer investId){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
