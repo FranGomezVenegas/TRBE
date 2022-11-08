@@ -163,6 +163,7 @@ public class TestingPlatformInstruments extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(SecondsInDateRange)));
                 if (numEvaluationArguments==0){                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));                     
+                    fileContentTable1Builder.append(LPTestingOutFormat.createLogsTable(scriptId));
                 }                                
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   

@@ -283,7 +283,8 @@ public class TestingRegressionUAT extends HttpServlet {
             procReqInstance.killIt();
             String scriptIdStr=request.getParameter("scriptId");
             String procInstanceName=request.getParameter("procInstanceName");
-            if (scriptTblInfo!=null && scriptIdStr.length()>0){ 
+            //moved to a method
+        /*    if (scriptTblInfo!=null && scriptIdStr.length()>0){ 
                 scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr)); 
                 if ( (procReqInstance!=null) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())) ){
                     if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
@@ -296,7 +297,7 @@ public class TestingRegressionUAT extends HttpServlet {
                         LPTestingOutFormat.setMessagesErrorIndexValues(procInstanceName, scriptId, "completed");
                     procReqInstance.killIt();
                 }
-            }
+            } */
         }
     }
     private StringBuilder procedureRepositoryMirrorsTable(String procInstanceName, Integer scriptId){

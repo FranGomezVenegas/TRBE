@@ -6,9 +6,6 @@
 package com.labplanet.servicios.app;
 
 import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_NEW_EVENT_FLD_NAME;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig.ViewsEnvMonConfig;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewsEnvMonData;
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData.ViewsInspLotRMData;
 import databases.features.DbEncryption;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
@@ -24,14 +21,12 @@ import databases.TblsData.TablesData;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsTesting;
-import databases.TblsTrazitDocTrazit;
 import databases.features.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.intervals.IntervalsUtilities;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.platform.doc.EndPointsToRequirements;
 //import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
 import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
@@ -67,7 +62,6 @@ import static lbplanet.utilities.LPDate.SecondsInDateRange;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
-import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
@@ -75,7 +69,6 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViews;
-import static trazit.enums.EnumIntViews.getViewScriptCreation;
 import trazit.enums.deployrepository.DeployTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 
@@ -349,24 +342,6 @@ for (EnumIntBusinessRules implClass : loader) {
 }            
             try{
                 
-                        AuthenticationAPIParams.AuthenticationAPIEndpoints[] valuesAuth = AuthenticationAPIParams.AuthenticationAPIEndpoints.values();
-        for (AuthenticationAPIParams.AuthenticationAPIEndpoints curApi: valuesAuth){
-
-            String[] argHeader=new String[]{"name", "type", "is_mandatory?","testing arg posic"};
-            JSONArray argsJsonArr = new JSONArray();
-            for (LPAPIArguments curArg: curApi.getArguments()){
-                JSONObject argsJson = LPJson.convertArrayRowToJSONObject(argHeader, new Object[]{curArg.getName(), curArg.getType(), curArg.getMandatory(), curArg.getTestingArgPosic()});
-                argsJsonArr.add(argsJson);
-            }
-
-            //getEndPointArguments(curApi.getArguments());
-            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.EndpointsDeclaration.ENDPOINT_NAME.getName(),  TblsTrazitDocTrazit.EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
-            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName(), curApi.getSuccessMessageCode()});
-            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
-//            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
-            EndPointsToRequirements end=new EndPointsToRequirements();
-            end.declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues, curApi.getOutputObjectTypes(), AuthenticationAPIParams.AuthenticationAPIEndpoints.values().length);
-        }
 
 if (1==1)return;      
 lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba desde Trazit", new String[]{"info.fran.gomez@gmail.com", "joel.sada.nillni@gmail.com"}, 
