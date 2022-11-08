@@ -617,14 +617,14 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(readyForRevision[0].toString()))
             return readyForRevision;
         
-        String sampleStatusReviewed = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
-        if (sampleStatusReviewed.length()==0)sampleStatusReviewed=SampleStatuses.REVIEWED.getStatusCode("");        
-            String[] updFldsNames=new String[]{TblsData.Sample.STATUS.getName()};
-            Object[] updFldsValues=new Object[]{sampleStatusReviewed};
-            SqlWhere sqlWhere = new SqlWhere();
-            sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
-            Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
-                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, updFldsNames), updFldsValues, sqlWhere, null);
+        String sampleStatusReviewed = sampleStatusReviewed=SampleStatuses.REVIEWED.getStatusCode(""); //Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
+        //if (sampleStatusReviewed.length()==0)sampleStatusReviewed=SampleStatuses.REVIEWED.getStatusCode("");        
+        String[] updFldsNames=new String[]{TblsData.Sample.STATUS.getName()};
+        Object[] updFldsValues=new Object[]{sampleStatusReviewed};
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
+        Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, updFldsNames), updFldsValues, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, new String[]{TblsData.Sample.STATUS.getName()}, new Object[]{sampleStatusReviewed});       
