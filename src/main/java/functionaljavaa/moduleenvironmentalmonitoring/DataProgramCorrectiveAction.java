@@ -44,17 +44,12 @@ public class DataProgramCorrectiveAction {
         STATUS_CLOSED(DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED),
         STATUS_FIRST(DataProgramCorrectiveActionBusinessRules.STATUS_FIRST),
         
-/*        BLANK(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_FIRST), 
-        ENTERED(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_ENTERED), 
-        REENTERED(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_REENTERED), 
-        REVIEWED(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_REVIEWED), 
-        CANCELED(DataSampleStructureEnums.DataSampleAnalysisResultBusinessRules.STATUS_CANCELED)*/
         ;
         ProgramCorrectiveActionStatuses(DataProgramCorrectiveActionBusinessRules busRulName){
             this.busRulName=busRulName;
         }
         public static String getStatusFirstCode(){
-            ArrayList<String[]> preReqs = new ArrayList<String[]>();
+            ArrayList<String[]> preReqs = new ArrayList<>();
             preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
             String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysisResult"+DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs, true );     
@@ -63,7 +58,7 @@ public class DataProgramCorrectiveAction {
             return sampleStatusFirst;        
         }
         public String getStatusCode(){
-            ArrayList<String[]> preReqs = new ArrayList<String[]>();
+            ArrayList<String[]> preReqs = new ArrayList<>();
             preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
             String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs, true);     
@@ -115,9 +110,9 @@ public class DataProgramCorrectiveAction {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -145,10 +140,10 @@ public class DataProgramCorrectiveAction {
         String[] sampleFldsToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName(), 
         TblsProcedure.ProgramCorrectiveAction.LOCATION_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.AREA.getName()};
         String[] sampleAnalysisResultToGet= new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(),
-      TblsProcedure.ProgramCorrectiveAction.TEST_ID.getName(), TblsProcedure.ProgramCorrectiveAction.SPEC_EVAL.getName(),
-      TblsProcedure.ProgramCorrectiveAction.SPEC_EVAL_DETAIL.getName(), TblsProcedure.ProgramCorrectiveAction.LIMIT_ID.getName(),
-      TblsProcedure.ProgramCorrectiveAction.ANALYSIS.getName(), TblsProcedure.ProgramCorrectiveAction.METHOD_NAME.getName(),
-      TblsProcedure.ProgramCorrectiveAction.METHOD_VERSION.getName(), TblsProcedure.ProgramCorrectiveAction.PARAM_NAME.getName()};
+        TblsProcedure.ProgramCorrectiveAction.TEST_ID.getName(), TblsProcedure.ProgramCorrectiveAction.SPEC_EVAL.getName(),
+        TblsProcedure.ProgramCorrectiveAction.SPEC_EVAL_DETAIL.getName(), TblsProcedure.ProgramCorrectiveAction.LIMIT_ID.getName(),
+        TblsProcedure.ProgramCorrectiveAction.ANALYSIS.getName(), TblsProcedure.ProgramCorrectiveAction.METHOD_NAME.getName(),
+        TblsProcedure.ProgramCorrectiveAction.METHOD_VERSION.getName(), TblsProcedure.ProgramCorrectiveAction.PARAM_NAME.getName()};
         String[] myFldName=new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName()};    
         Object[] myFldValue=new Object[]{""};        
         for (TblsProcedure.ProgramCorrectiveAction obj: TblsProcedure.ProgramCorrectiveAction.values()){
