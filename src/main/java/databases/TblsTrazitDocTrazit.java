@@ -63,6 +63,7 @@ public class TblsTrazitDocTrazit {
         ENDPOINT_VERSION("endpoint_version", LPDatabase.integer(), null, null, null, null),
         ARGUMENTS("arguments", LPDatabase.stringNotNull(), null, null, null, null),
         ARGUMENTS_ARRAY("arguments_array", LPDatabase.string(), null, null, null, null),
+        NUM_ARGUMENTS("num_arguments", LPDatabase.integer(), null, null, null, null),
         OUTPUT_OBJECT_TYPES("output_object_types", LPDatabase.string(), null, null, null, null),
         CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow(), null, null, null, null),
         LAST_UPDATE("last_update", LPDatabase.dateTime(), null, null, null, null),
@@ -76,6 +77,7 @@ public class TblsTrazitDocTrazit {
         DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string(), null, null, null, null),
         NUM_ENDPOINTS_IN_API("num_endpoints_in_api", LPDatabase.integer(), null, null, null, null),
         SUCCESS_MESSAGE_CODE("success_message_code", LPDatabase.string(), null, null, null, null),
+        
         ;
         private EndpointsDeclaration(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
