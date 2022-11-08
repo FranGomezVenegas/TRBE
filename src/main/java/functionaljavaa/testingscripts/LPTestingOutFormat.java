@@ -12,7 +12,6 @@ import databases.Rdbms;
 import static databases.Rdbms.dbGetIndexLastNumberInUse;
 import databases.SqlStatement;
 import databases.SqlWhere;
-import databases.TblsCnfg;
 import databases.TblsTesting;
 import functionaljavaa.businessrules.BusinessRules;
 import lbplanet.utilities.LPHashMap;
@@ -236,10 +235,18 @@ public class LPTestingOutFormat {
                         }
                     }
                 }
+                ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, null, true);
+/*
+                if (procReqInstance!=null&&procReqInstance.getTestingMainInfo()!=null){
+                    if (!(procReqInstance.getTestingMainInfo().getDbLogErrorStart().compareTo(procReqInstance.getTestingMainInfo().getDbLogErrorEnd())==0))
+                        summaryPhrase=summaryPhrase+"(with db Errors)";
+                    if (!(procReqInstance.getTestingMainInfo().getPropertiesErrorStart().compareTo(procReqInstance.getTestingMainInfo().getPropertiesErrorEnd())==0))
+                        summaryPhrase=summaryPhrase+"(with Property Errors)";
+                }
+*/
                 String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, summaryPhrase, secondsInDateRange);
                 fileContentBuilder.append(fileContentSummary);
-
-                fileContentSummary = LPTestingOutFormat.createLogsTable();
+                fileContentSummary = LPTestingOutFormat.createLogsTable(scriptId);
                 fileContentBuilder.append(fileContentSummary);
                 
                 
@@ -261,7 +268,7 @@ public class LPTestingOutFormat {
                 updFldValues=LPArray.addValueToArray1D(updFldValues, summaryPhrase);
                 
 
-                ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, null, true);
+                
 
                 Object[] fieldsForSessionObjects = getFieldsForSessionObjects();
                 if (fieldsForSessionObjects!=null && fieldsForSessionObjects.length>0)
@@ -352,12 +359,6 @@ public class LPTestingOutFormat {
         public Object getTagValue(){return this.tagValue;}
         private final Object tagValue;
     }
-
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_FILEHEADER_MISSING_TAGS="There are missing tags in the file header: ";
-
     /**
      *
      */
@@ -708,18 +709,70 @@ public class LPTestingOutFormat {
         return hm;
     }
 
-    public static String createLogsTable(){
+    public static String createLogsTable(Integer scriptId){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        LPTestingOutFormat.getIdsComplete(procReqInstance.getProcedureInstance(), scriptId);
+
         String fileContentHeaderSummary = LPTestingOutFormat.tableStart("Logs info")+rowStart();
         String fileContentSummary =rowStart();
         
         fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Logs detail created by running this script")+headerEnd();
-        fileContentSummary=fileContentSummary+rowStart()+rowAddField("Audit Ids");
-        fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull("1 - 10"))+rowEnd();
-        fileContentSummary=fileContentSummary+rowStart()+rowAddField("DB Errors Ids");
-        fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull("1 - 10"))+rowEnd();
-        fileContentSummary=fileContentSummary+rowStart()+rowAddField("Properties Ids");
-        fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull("1 - 10"))+rowEnd();
+        //fileContentSummary=fileContentSummary+rowStart()+rowAddField("Audit Ids");
+        String msgStr="Audit Ids";
+        if (procReqInstance!=null&&procReqInstance.getTestingMainInfo()!=null)
+            msgStr=msgStr+" (First: "+LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMinAudit()).toString()
+                +", Last: "+LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMaxAudit()).toString()+")";
+/*            fileContentSummary = fileContentSummary
+                +rowAddField(LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMinAudit()).toString())
+                +" - "+rowAddField(LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMaxAudit()).toString())
+                +rowEnd();*/
+        else            
+            msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" No Audit Ids found";
+        fileContentSummary=fileContentSummary+rowStart()+rowAddField(msgStr);
         
+        msgStr="DB Errors Ids";
+        if (procReqInstance!=null&&procReqInstance.getTestingMainInfo()!=null){
+            if( procReqInstance.getTestingMainInfo().getDbLogErrorStart()==null)
+                msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" get DB Errors Ids not activated for this script";
+            else{
+                if (procReqInstance.getTestingMainInfo().getDbLogErrorStart().compareTo(procReqInstance.getTestingMainInfo().getDbLogErrorEnd())==0)
+                    msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_MATCH;
+                else
+                    msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNMATCH;
+            
+                msgStr=msgStr+" (Before: "+LPNulls.replaceNull(procReqInstance.getTestingMainInfo().getDbLogErrorStart()).toString()
+                +", After: "+LPNulls.replaceNull(procReqInstance.getTestingMainInfo().getDbLogErrorEnd()).toString()+")";
+            }
+        }else            
+            msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" No DB Errors found";
+        fileContentSummary=fileContentSummary+rowStart()+rowAddField(msgStr);
+
+        msgStr="Properties Errors Ids";
+        if (procReqInstance!=null&&procReqInstance.getTestingMainInfo()!=null){
+            if( procReqInstance.getTestingMainInfo().getPropertiesErrorStart()==null)
+                msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" get Properties Errors Ids not activated for this script";
+            else{
+                if (procReqInstance.getTestingMainInfo().getPropertiesErrorStart().compareTo(procReqInstance.getTestingMainInfo().getPropertiesErrorEnd())==0)
+                    msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_MATCH;
+                else
+                    msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNMATCH;            
+                
+                msgStr=msgStr+" (Before: "+LPNulls.replaceNull(procReqInstance.getTestingMainInfo().getPropertiesErrorStart()).toString()
+                +", After: "+LPNulls.replaceNull(procReqInstance.getTestingMainInfo().getPropertiesErrorEnd()).toString()+")";
+            }
+        }else            
+            msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" No Properties Errors found";
+        fileContentSummary=fileContentSummary+rowStart()+rowAddField(msgStr);
+        
+/*        fileContentSummary=fileContentSummary+rowStart()+rowAddField("Properties Ids");
+        if (procReqInstance!=null&&procReqInstance.getTestingMainInfo()!=null)
+            fileContentSummary = fileContentSummary
+                +rowAddField(LPNulls.replaceNull(procReqInstance.getTestingMainInfo().getPropertiesErrorStart()).toString())
+                +" - "+rowAddField(LPNulls.replaceNull(procReqInstance.getTestingMainInfo().getPropertiesErrorEnd()).toString())
+                +rowEnd();
+        else            
+            fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull("No Properties Errors found"))+rowEnd();
+*/        
         fileContentSummary = fileContentHeaderSummary+fileContentSummary +rowEnd();
         fileContentSummary = fileContentSummary +tableEnd();
         return fileContentSummary;        
@@ -1065,6 +1118,24 @@ public class LPTestingOutFormat {
             LPTestingOutFormat.setMessagesErrorIndexValues(procInstanceName, scriptId, "before");
     }
     
+    public static void getIdsComplete(String procInstanceName, Integer scriptId){
+        String repositoryName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
+        String[] fldsToRetrieve=new String[]{TblsTesting.Script.TESTER_NAME.getName(), TblsTesting.Script.EVAL_NUM_ARGS.getName(), TblsTesting.Script.AUDIT_IDS_TO_GET.getName(),
+            TblsTesting.Script.GET_DB_ERRORS.getName(), TblsTesting.Script.GET_MSG_ERRORS.getName(), TblsTesting.Script.SAVE_EXEC_EVID_ON_SUCCESS.getName()};
+        Object[][] scriptTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(), 
+            new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId}, 
+            fldsToRetrieve, new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
+        
+        if (scriptTblInfo[0][2]!=null && scriptTblInfo[0][2].toString().length()>0)
+            LPTestingOutFormat.setAuditIndexValues(procInstanceName, scriptId, scriptTblInfo[0][2].toString(), "completed");
+
+        if (scriptTblInfo[0][3]!=null && Boolean.valueOf(scriptTblInfo[0][3].toString()))
+            LPTestingOutFormat.setDbErrorIndexValues(procInstanceName, scriptId, "completed");
+
+        if (scriptTblInfo[0][4]!=null && Boolean.valueOf(scriptTblInfo[0][4].toString()))
+            LPTestingOutFormat.setMessagesErrorIndexValues(procInstanceName, scriptId, "completed");
+    }
+    
     public static void setDbErrorIndexValues(String procInstanceName, Integer scriptId, String moment){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
 
@@ -1091,16 +1162,21 @@ Integer dbErrorCurrentIncrement=getScriptDbErrorIncrementsInt(procInstanceName, 
     }
 
     public static void setMessagesErrorIndexValues(String procInstanceName, Integer scriptId, String moment){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
 //        JSONArray auditIndexInfo=new JSONArray();       
 //        auditIndexInfo.add(getScriptCurrentFldValue(procInstanceName, scriptId, TblsTesting.Script.MSG_ERRORS_IDS_VALUES.getName()));
 //        auditIndexInfo.add(getScriptPropertiesErrorIncrements(procInstanceName, scriptId, moment));
         Integer scriptPropertiesErrorIncrementsInt = getScriptPropertiesErrorIncrementsInt(procInstanceName, scriptId, moment);
         if (scriptPropertiesErrorIncrementsInt!=null){
             String[] updFldNames = null;
-            if ("begin".equalsIgnoreCase(moment))
+            if ("before".equalsIgnoreCase(moment)){
+                procReqInstance.getTestingMainInfo().setPropertiesErrorStart(scriptPropertiesErrorIncrementsInt);
                 updFldNames = new String[]{TblsTesting.Script.PROPERTY_ERROR_START.getName()};
-            else
+                
+            }else{
                 updFldNames = new String[]{TblsTesting.Script.PROPERTY_ERROR_END.getName()};
+                procReqInstance.getTestingMainInfo().setPropertiesErrorEnd(scriptPropertiesErrorIncrementsInt);
+            }
 //            String[] updFldNames = new String[]{TblsTesting.Script.MSG_ERRORS_IDS_VALUES.getName()};
             Object[] updFldValues = new Object[]{scriptPropertiesErrorIncrementsInt};
             SqlWhere sqlWhere = new SqlWhere();
@@ -1144,7 +1220,7 @@ Integer dbErrorCurrentIncrement=getScriptDbErrorIncrementsInt(procInstanceName, 
         if (moment==null) return null;
         JSONArray indxInfo=new JSONArray();
         String indexName="zzz_db_error_log_id_seq";
-        Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(GlobalVariables.Schemas.CONFIG.getName(), procInstanceName, TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName(), indexName);
+        Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(GlobalVariables.Schemas.CONFIG.getName(), procInstanceName, null, indexName);
         JSONObject currIndxInfo=new JSONObject();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbGetIndexLastNumberInUse[0].toString()))
            return -1;
@@ -1155,7 +1231,7 @@ Integer dbErrorCurrentIncrement=getScriptDbErrorIncrementsInt(procInstanceName, 
         if (moment==null) return null;
         JSONArray indxInfo=new JSONArray();
         String indexName="zzz_db_error_log_id_seq";
-        Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(GlobalVariables.Schemas.CONFIG.getName(), procInstanceName, TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName(), indexName);
+        Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(GlobalVariables.Schemas.CONFIG.getName(), procInstanceName, null, indexName);
         JSONObject currIndxInfo=new JSONObject();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbGetIndexLastNumberInUse[0].toString()))
             currIndxInfo.put(indexName.replace("\\*", "_")+"_"+moment, "error getting the value");
@@ -1168,7 +1244,7 @@ Integer dbErrorCurrentIncrement=getScriptDbErrorIncrementsInt(procInstanceName, 
         if (moment==null) return null;
         JSONArray indxInfo=new JSONArray();
         String indexName="zzz_properties_error_id_seq";
-        Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(GlobalVariables.Schemas.CONFIG.getName(), procInstanceName, TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName(), indexName);
+        Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(GlobalVariables.Schemas.CONFIG.getName(), procInstanceName, null, indexName);
         JSONObject currIndxInfo=new JSONObject();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbGetIndexLastNumberInUse[0].toString()))
            return -1;
