@@ -1797,11 +1797,11 @@ if (1==1){Rdbms.transactionId=1; return;}
     }
     
     public static Object[] dbGetIndexLastNumberInUse(String procName, String schemaName, String tableName, String indexName){
-        if (tableName==null)
+        if (tableName==null&&indexName==null)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, null);                            
         String schema=schemaName;
         String buildSchemaName = LPPlatform.buildSchemaName(schemaName, procName);
-        String query="SELECT last_value FROM "+buildSchemaName.replace("\"","")+".";
+        String query="SELECT last_value, last_value FROM "+buildSchemaName+".";
         if (tableName!=null && tableName.length()>0)
             query=query+tableName+"_audit_id_seq";
         else
