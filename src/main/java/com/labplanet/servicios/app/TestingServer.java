@@ -6,6 +6,7 @@
 package com.labplanet.servicios.app;
 
 import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_NEW_EVENT_FLD_NAME;
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewsEnvMonData;
 import databases.features.DbEncryption;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
@@ -163,14 +164,14 @@ out.println("************ ViewsData.SAMPLE_TESTING_GROUP_VIEW NO testing. Begin"
 out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW, "proc-deploy", false, false, false));
 out.println("************ ViewsData.SAMPLE_TESTING_GROUP_VIEW NO testing. End");  
 
-/*
+
 out.println("************ ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW testing. Begin");  
 out.println(EnumIntViews.getViewScriptCreation(ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, "em-demo-a",false, false, true));
 out.println("************ ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW testing. End");  
 out.println("************ ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW NO testing. Begin");  
 out.println(EnumIntViews.getViewScriptCreation(ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, "em-demo-a", false, false, false));
 out.println("************ ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW NO testing. End");  
-*/
+
 
 out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VWtesting. Begin");  
 out.println(EnumIntViews.getViewScriptCreation(ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW, "app-proc",false, false, true));

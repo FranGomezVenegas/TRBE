@@ -380,7 +380,7 @@ public class DataInstruments {
             return eventHasNotEnteredVariables;
         }
 
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
+        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
         Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
@@ -478,7 +478,7 @@ public class DataInstruments {
         InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) return eventHasNotEnteredVariables;
         
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
+        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
         Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
@@ -577,7 +577,7 @@ public class DataInstruments {
         InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) return eventHasNotEnteredVariables;
 
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
+        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
         Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
@@ -669,7 +669,7 @@ public class DataInstruments {
         InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) return eventHasNotEnteredVariables;
 
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
+        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
         Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
@@ -699,7 +699,7 @@ public class DataInstruments {
         Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
                 new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()}, 
                 new Object[]{this.name, instrEventId}, 
-                new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.DECISION.getName()});        
+                new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName()});        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{name}, name);
@@ -714,7 +714,7 @@ public class DataInstruments {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId}, name);
         }
 
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
+        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
         Object[] fldValues=new Object[]{"NULL>>>STRING", "NULL>>>LOCALDATETIME", "NULL>>>STRING"};
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{instrEventId}, "");

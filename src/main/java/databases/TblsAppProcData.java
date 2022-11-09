@@ -173,7 +173,7 @@ public class TblsAppProcData {
         CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         COMPLETED_ON("completed_on", LPDatabase.dateTime(), null, null, null, null),
         COMPLETED_BY("completed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        DECISION("decision", LPDatabase.string(), null, null, null, null),
+        COMPLETED_DECISION("completed_decision", LPDatabase.string(), null, null, null, null),
         ATTACHMENT("attachment", LPDatabase.string(), null, null, null, null),         
         ;
         private InstrumentEvent(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -252,7 +252,7 @@ public class TblsAppProcData {
         CREATED_BY("created_by", "ie.created_by", InstrumentEvent.CREATED_BY, null, null, null),
         COMPLETED_ON("completed_on", "ie.completed_on", InstrumentEvent.COMPLETED_ON, null, null, null),
         COMPLETED_BY("completed_by", "ie.completed_by", InstrumentEvent.COMPLETED_BY, null, null, null),
-        COMPLETED_DECISION("completed_decision", "ie.completed_decision", InstrumentEvent.DECISION, null, null, null),
+        COMPLETED_DECISION("completed_decision", "ie.completed_decision", InstrumentEvent.COMPLETED_DECISION, null, null, null),
         ATTACHMENT("attachment", "ie.attachment", InstrumentEvent.ATTACHMENT, null, null, null),
         INST_ONLINE("on_line", "i.on_line", Instruments.ON_LINE, null, null, null),
         INST_DECOM("decommissioned", "i.decommissioned", Instruments.DECOMMISSIONED, null, null, null),
