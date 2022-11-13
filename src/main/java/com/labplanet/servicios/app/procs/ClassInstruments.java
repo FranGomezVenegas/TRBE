@@ -45,8 +45,9 @@ public class ClassInstruments {
     private Boolean functionFound=false;
 
     public ClassInstruments(HttpServletRequest request, InstrumentsAPIactionsEndpoints endPoint){
-        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
+        
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName = procReqSession.getProcedureInstance();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
@@ -66,6 +67,14 @@ public class ClassInstruments {
             rObj.killInstance();
             return;
         }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            //procReqSession.killIt();
+            String language=procReqSession.getLanguage();
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                    argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.messageDynamicData=new Object[]{argValues[2].toString()};
+            return;                        
+        }        
         DataInstruments instr=null;
         String instrName=argValues[0].toString();
         if (!"NEW_INSTRUMENT".equalsIgnoreCase(endPoint.getName())){
