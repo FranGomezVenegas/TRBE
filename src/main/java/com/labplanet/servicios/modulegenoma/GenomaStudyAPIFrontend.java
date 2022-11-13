@@ -49,7 +49,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
     
 //    public static final String API_ENDPOINT_ALL_ACTIVE_PROJECTS="ALL_ACTIVE_PROJECTS";
 //    public static final String API_ENDPOINT_ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET="ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET";
-    public enum GenomaStudyAPIFrontendEndpoints implements EnumIntEndpoints{
+    public enum GenomaStudyAPIqueriesEndpoints implements EnumIntEndpoints{
         ALL_ACTIVE_PROJECTS("ALL_ACTIVE_PROJECTS", "", new LPAPIArguments[]{
             new LPAPIArguments("get_only_active_objects", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),
@@ -87,7 +87,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             }, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private GenomaStudyAPIFrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private GenomaStudyAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -138,9 +138,9 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
         String procInstanceName=procReqInstance.getProcedureInstance();
-        GenomaStudyAPIFrontendEndpoints endPoint = null;
+        GenomaStudyAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = GenomaStudyAPIFrontendEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = GenomaStudyAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());

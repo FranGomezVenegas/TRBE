@@ -32,7 +32,7 @@ import trazit.session.ProcedureRequestSession;
  * @author Administrator
  */
 public class CertifyAnalysisMethodAPI extends HttpServlet {
-    public enum CertifyAnalysisMethodAPIEndpoints implements EnumIntEndpoints{
+    public enum CertifyAnalysisMethodAPIactionsEndpoints implements EnumIntEndpoints{
         CERTIFY_ASSIGN_METHOD_TO_USER("CERTIFY_ASSIGN_METHOD_TO_USER", "certificationAnalysisMethodAssigned_success", "CERTIF_ADDED_TO_USER", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
@@ -77,7 +77,7 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
         CERTIFUSER_TRAINING_REQUIRED("CERTIFUSER_TRAINING_REQUIRED", "certifUser_trainingRequired_succes","",
                 new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private CertifyAnalysisMethodAPIEndpoints(String name, String successMessageCode, String audtEv, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private CertifyAnalysisMethodAPIactionsEndpoints(String name, String successMessageCode, String audtEv, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.auditEvent=audtEv;
@@ -129,9 +129,9 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-            CertifyAnalysisMethodAPIEndpoints endPoint = null;
+            CertifyAnalysisMethodAPIactionsEndpoints endPoint = null;
             try{
-                endPoint = CertifyAnalysisMethodAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = CertifyAnalysisMethodAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
@@ -154,15 +154,15 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                 String methodName = argValues[0].toString();
                 Integer methodVersion = (Integer) argValues[1];
                 String userName = argValues[2].toString();
-                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getName()))
+                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getName()))
                     diagnostic=AnalysisMethodCertif.newRecord(methodName, methodVersion, userName, sopName, trainingId);
-                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIEndpoints.CERTIFY_START_USER_METHOD.getName()))
+                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_START_USER_METHOD.getName()))
                     diagnostic=AnalysisMethodCertif.startCertification(methodName, userName);
-                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIEndpoints.CERTIFY_COMPLETE_CERTIFIED_USER_METHOD.getName()))
+                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_COMPLETE_CERTIFIED_USER_METHOD.getName()))
                     diagnostic=AnalysisMethodCertif.completeCertificationCertified(methodName, userName);
-                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIEndpoints.CERTIFY_COMPLETE_NOT_CERTIFIED_USER_METHOD.getName()))
+                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_COMPLETE_NOT_CERTIFIED_USER_METHOD.getName()))
                     diagnostic=AnalysisMethodCertif.completeCertificationNotCertified(methodName, userName);
-                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIEndpoints.CERTIFY_REVOKE_USER_METHOD.getName()))
+                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_REVOKE_USER_METHOD.getName()))
                     diagnostic=AnalysisMethodCertif.revokeCertification(methodName, userName);
 
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
@@ -170,7 +170,7 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                 }else{
                     messageDynamicData=new Object[]{methodName, userName, procReqInstance.getProcedureInstance()};                
                 }
-                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getName()))
+                if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getName()))
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), diagnostic[diagnostic.length-1]);
                     
                 break;

@@ -39,10 +39,10 @@ public class AppHeaderAPI extends HttpServlet {
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     public static final String[] MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE=getAllFieldNames(TblsAppConfig.Person.values());
-    public enum AppHeaderAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum AppHeaderAPIqueriesEndpoints implements EnumIntEndpoints{
         GETAPPHEADER("GETAPPHEADER", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private AppHeaderAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private AppHeaderAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -97,9 +97,9 @@ public class AppHeaderAPI extends HttpServlet {
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
         JSONObject personInfoJsonObj = new JSONObject();
-        AppHeaderAPIfrontendEndpoints endPoint = null;
+        AppHeaderAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = AppHeaderAPIfrontendEndpoints.GETAPPHEADER;
+            endPoint = AppHeaderAPIqueriesEndpoints.GETAPPHEADER;
         }catch(Exception e){
             return personInfoJsonObj;                   
         }

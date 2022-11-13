@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.modulegenoma;
 
-import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIEndPoints;
+import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIactionsEndPoints;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -28,9 +28,9 @@ public class ClassProjectController implements ClassControllerActionsEndpointFor
     public ClassProjectController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
-        GenomaProjectAPIEndPoints endPoint = null;
+        GenomaProjectAPIactionsEndPoints endPoint = null;
         try{
-            endPoint = GenomaProjectAPIEndPoints.valueOf(actionName.toUpperCase());
+            endPoint = GenomaProjectAPIactionsEndPoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);

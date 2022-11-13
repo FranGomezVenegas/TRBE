@@ -9,7 +9,7 @@ import static functionaljavaa.platformadmin.AppBusinessRules.AllAppBusinessRules
 import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPI;
 import static com.labplanet.servicios.app.AppProcedureListAPI.SIZE_WHEN_CONSIDERED_MOBILE;
 import static com.labplanet.servicios.app.AppProcedureListAPI.procedureListInfo;
-import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
+import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIactionsEndpoints;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationErrorTrapping;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPDate;
@@ -76,9 +76,9 @@ public class AuthenticationAPI extends HttpServlet {
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
             
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);                                    
-            AuthenticationAPIEndpoints endPoint=null;
+            AuthenticationAPIactionsEndpoints endPoint=null;
             try{
-                endPoint = AuthenticationAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = AuthenticationAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 Rdbms.closeRdbms(); 
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              

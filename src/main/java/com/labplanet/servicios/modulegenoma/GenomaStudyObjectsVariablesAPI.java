@@ -147,9 +147,9 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
         //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
             Object[] diagnostic = null;
-            GenomaStudyAPI.GenomaStudyAPIEndPoints endPoint = null;
+            GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint = null;
             try{
-                endPoint = GenomaStudyAPI.GenomaStudyAPIEndPoints.valueOf(actionName.toUpperCase());
+                endPoint = GenomaStudyAPI.GenomaStudyAPIactionsEndPoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   

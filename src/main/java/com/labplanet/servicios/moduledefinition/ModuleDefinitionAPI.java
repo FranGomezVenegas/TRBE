@@ -59,14 +59,14 @@ public class ModuleDefinitionAPI extends HttpServlet {
         }
     }
     
-    public enum ModuleDefinitionAPIEndpoints implements EnumIntEndpoints{
+    public enum ModuleDefinitionAPIactionsEndpoints implements EnumIntEndpoints{
         DOC_API_ENDPOINTS_IN_DB("DOC_API_ENDPOINTS_IN_DB", "documentedApiEndpointsInDb_success: <*1*>", new LPAPIArguments[]{}),
         DOC_API_BUSINESS_RULES_IN_DB("DOC_API_BUSINESS_RULES_IN_DB", "documentedApiBusinessRulesInDb_success", new LPAPIArguments[]{}),
         DOC_API_ERROR_MESSAGE_CODES_IN_DB("DOC_API_ERROR_MESSAGE_CODES_IN_DB", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{}),
         DOC_API_AUDIT_EVENTS_IN_DB("DOC_API_AUDIT_EVENTS_IN_DB", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{}),
         DOC_API_ALL_IN_ONE("DOC_API_ALL_IN_ONE", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{}),
         ;
-        private ModuleDefinitionAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private ModuleDefinitionAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -140,9 +140,9 @@ public class ModuleDefinitionAPI extends HttpServlet {
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
         //Rdbms.setTransactionId(schemaConfigName);
-        ModuleDefinitionAPIEndpoints endPoint = null;
+        ModuleDefinitionAPIactionsEndpoints endPoint = null;
         try{
-            endPoint = ModuleDefinitionAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = ModuleDefinitionAPIactionsEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   

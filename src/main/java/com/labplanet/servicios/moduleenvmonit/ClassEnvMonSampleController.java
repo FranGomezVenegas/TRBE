@@ -27,7 +27,7 @@ public class ClassEnvMonSampleController {
     public ClassEnvMonSampleController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {
         
         Object[] argsForLogFiles=new Object[0];
-        EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint = null;
+        EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints endPoint = null;
         try{
 //            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
 /*                AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, "en");
@@ -37,7 +37,7 @@ public class ClassEnvMonSampleController {
                     return;          
                 }                  
 */            
-            endPoint = EnvMonSampleAPI.EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines, auditReasonPosic);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);

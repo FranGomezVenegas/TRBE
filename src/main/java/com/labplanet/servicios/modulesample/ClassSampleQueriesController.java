@@ -26,9 +26,9 @@ public class ClassSampleQueriesController {
     public ClassSampleQueriesController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
-        SampleAPIParams.SampleAPIfrontendEndpoints endPoint = null;
+        SampleAPIParams.SampleAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = SampleAPIParams.SampleAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = SampleAPIParams.SampleAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);

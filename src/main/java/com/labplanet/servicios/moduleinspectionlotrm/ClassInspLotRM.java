@@ -6,7 +6,7 @@
 package com.labplanet.servicios.moduleinspectionlotrm;
 
 //import com.labplanet.servicios.moduleenvmonit.*;
-import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEndpoints;
+import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIactionsEndpoints;
 import static functionaljavaa.inventory.DataInventoryRetain.*;
 import functionaljavaa.moduleinspectionlot.DataInspectionLot;
 import functionaljavaa.moduleinspectionlot.DataInspectionLotDecision;
@@ -32,7 +32,7 @@ public class ClassInspLotRM {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassInspLotRM(HttpServletRequest request, InspLotRMAPIEndpoints endPoint){
+    public ClassInspLotRM(HttpServletRequest request, InspLotRMAPIactionsEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
     //try () {
         DataInspectionLot insplot = new DataInspectionLot();     

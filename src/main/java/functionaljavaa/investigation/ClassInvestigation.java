@@ -10,7 +10,7 @@ package functionaljavaa.investigation;
  * and open the template in the editor.
  */
 import com.labplanet.servicios.app.InvestigationAPI;
-import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIEndpoints;
+import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIactionsEndpoints;
 import databases.RdbmsObject;
 import databases.TblsProcedure;
 import databases.features.Token;
@@ -63,7 +63,7 @@ public class ClassInvestigation {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
     
-    public ClassInvestigation(HttpServletRequest request, InvestigationAPIEndpoints endPoint){
+    public ClassInvestigation(HttpServletRequest request, InvestigationAPIactionsEndpoints endPoint){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Boolean isForTesting = procReqSession.getIsForTesting();
         String procInstanceName = procReqSession.getProcedureInstance();

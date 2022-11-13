@@ -43,7 +43,7 @@ public class InvestigationAPI extends HttpServlet {
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
     static final String COMMON_PARAMS="investigationId|note";
-    public enum InvestigationAPIEndpoints implements EnumIntEndpoints{
+    public enum InvestigationAPIactionsEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -75,7 +75,7 @@ public class InvestigationAPI extends HttpServlet {
                 new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
             new LPAPIArguments(ParamsList.NEW_STATUS.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7)}),*/
         ;
-        private InvestigationAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private InvestigationAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;
@@ -102,7 +102,7 @@ public class InvestigationAPI extends HttpServlet {
     }
 
     
-    public enum InvestigationAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum InvestigationAPIqueriesEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -110,7 +110,7 @@ public class InvestigationAPI extends HttpServlet {
         INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects ),
         INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private InvestigationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private InvestigationAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -162,9 +162,9 @@ public class InvestigationAPI extends HttpServlet {
         String language=procReqInstance.getLanguage();
 
         try (PrintWriter out = response.getWriter()) {
-            InvestigationAPIEndpoints endPoint = null;                    
+            InvestigationAPIactionsEndpoints endPoint = null;                    
             try{
-                endPoint = InvestigationAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = InvestigationAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   

@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
+import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIactionsEndpoints;
 import databases.Rdbms;
 import databases.TblsProcedure;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
@@ -35,7 +35,7 @@ public class ClassEnvMon {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassEnvMon(HttpServletRequest request, EnvMonAPIEndpoints endPoint){
+    public ClassEnvMon(HttpServletRequest request, EnvMonAPIactionsEndpoints endPoint){
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();

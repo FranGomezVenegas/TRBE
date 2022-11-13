@@ -9,7 +9,7 @@ import com.labplanet.servicios.ClassPath;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPHttp;
-import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIactionsEndpoints;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -83,9 +83,9 @@ public class SampleAPI extends HttpServlet {
 //        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
 //        Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
-            SampleAPIEndpoints endPoint = null;
+            SampleAPIactionsEndpoints endPoint = null;
             try{
-                endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = SampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                   

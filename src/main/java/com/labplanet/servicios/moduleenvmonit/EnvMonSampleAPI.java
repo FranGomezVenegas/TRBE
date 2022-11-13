@@ -11,7 +11,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.ClassSample;
-import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIactionsEndpoints;
 import databases.TblsData;
 import static functionaljavaa.audit.SampleAudit.sampleAuditRevisionPassByAction;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -41,7 +41,7 @@ public class EnvMonSampleAPI extends HttpServlet {
     
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
-    public enum EnvMonSampleAPIEndpoints implements EnumIntEndpoints{
+    public enum EnvMonSampleAPIactionsEndpoints implements EnumIntEndpoints{
         LOGSAMPLE("LOGSAMPLE", "sampleLogged_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7), 
@@ -169,7 +169,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
         ),        
         ;      
-        private EnvMonSampleAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonSampleAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -220,13 +220,13 @@ public class EnvMonSampleAPI extends HttpServlet {
         if (actionName==null || actionName.length()==0)
             actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String language = LPFrontEnd.setLanguage(request); 
-        EnvMonSampleAPIEndpoints endPoint = null;
+        EnvMonSampleAPIactionsEndpoints endPoint = null;
         try{
-            endPoint = EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = EnvMonSampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
-            SampleAPIEndpoints endPointSmp = null;
+            SampleAPIactionsEndpoints endPointSmp = null;
             try{
-                endPointSmp = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPointSmp = SampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception er){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
@@ -301,9 +301,9 @@ public class EnvMonSampleAPI extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                 }            
             }else{
-                SampleAPIEndpoints endPointSmp = null;
+                SampleAPIactionsEndpoints endPointSmp = null;
                 try{
-                    endPointSmp = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+                    endPointSmp = SampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
                 }catch(Exception e){
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                     return;                   

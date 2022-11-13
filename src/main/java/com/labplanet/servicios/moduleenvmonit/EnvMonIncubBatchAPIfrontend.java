@@ -45,7 +45,7 @@ import trazit.queries.QueryUtilitiesEnums;
  */
 public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
     
-    public enum EnvMonIncubBatchAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum EnvMonIncubBatchAPIqueriesEndpoints implements EnumIntEndpoints{
         ACTIVE_BATCH_LIST("ACTIVE_BATCH_LIST", "", 
             new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
@@ -53,7 +53,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8) 
             }, EndPointsToRequirements.endpointWithNoOutputObjects)        
         ;
-        private EnvMonIncubBatchAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonIncubBatchAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -107,9 +107,9 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
 
         try (PrintWriter out = response.getWriter()) {
 
-            EnvMonIncubBatchAPIfrontendEndpoints endPoint = null;
+            EnvMonIncubBatchAPIqueriesEndpoints endPoint = null;
             try{
-                endPoint = EnvMonIncubBatchAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = EnvMonIncubBatchAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   

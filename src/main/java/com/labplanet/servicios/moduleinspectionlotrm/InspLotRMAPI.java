@@ -37,7 +37,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */ 
 public class InspLotRMAPI extends HttpServlet {
-    public enum InspLotRMAPIEndpoints implements EnumIntEndpoints{
+    public enum InspLotRMAPIactionsEndpoints implements EnumIntEndpoints{
         NEW_LOT("NEW_LOT", "createNewLot", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MATERIAL_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -86,7 +86,7 @@ public class InspLotRMAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
             }, "LOT_RETAIN_EXTRACTED", null),
         ;
-        private InspLotRMAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, String actNameForAudit, JsonArray outputObjectTypes){
+        private InspLotRMAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, String actNameForAudit, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -185,13 +185,13 @@ public class InspLotRMAPI extends HttpServlet {
             return;
         }
         
-        InspLotRMAPIEndpoints endPoint = null;
+        InspLotRMAPIactionsEndpoints endPoint = null;
         try{
-            endPoint = InspLotRMAPIEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
+            endPoint = InspLotRMAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
         }catch(Exception e){
-            SampleAPIParams.SampleAPIEndpoints endPointSmp = null;
+            SampleAPIParams.SampleAPIactionsEndpoints endPointSmp = null;
             try{
-                endPointSmp = SampleAPIParams.SampleAPIEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
+                endPointSmp = SampleAPIParams.SampleAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
             }catch(Exception er){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                   

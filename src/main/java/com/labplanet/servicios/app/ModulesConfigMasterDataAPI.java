@@ -43,7 +43,7 @@ import trazit.session.ProcedureRequestSession;
  */
 public class ModulesConfigMasterDataAPI extends HttpServlet {
     
-    public enum ConfigMasterDataAPIEndpoints implements EnumIntEndpoints{
+    public enum ConfigMasterDataAPIactionsEndpoints implements EnumIntEndpoints{
         ANALYSIS_NEW("ANALYSIS_NEW", "analysisNew_success",  
             new LPAPIArguments[]{ new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7 ),
@@ -87,7 +87,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.CONFIG.getName())
                 .add("table", TblsCnfg.TablesConfig.SPEC.getTableName()).build()).build()),
         ;
-        private ConfigMasterDataAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private ConfigMasterDataAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -135,9 +135,9 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
         
-        ConfigMasterDataAPIEndpoints endPoint = null;
+        ConfigMasterDataAPIactionsEndpoints endPoint = null;
         try{
-            endPoint = ConfigMasterDataAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = ConfigMasterDataAPIactionsEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   

@@ -10,7 +10,7 @@ import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATO
 import databases.RdbmsObject;
 import databases.TblsApp;
 import functionaljavaa.incident.AppIncident;
-import functionaljavaa.incident.AppIncidentEnums.IncidentAPIEndpoints;
+import functionaljavaa.incident.AppIncidentEnums.IncidentAPIactionsEndpoints;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -116,11 +116,11 @@ public class IncidentAPIactions extends HttpServlet {
 
         try (PrintWriter out = response.getWriter()) {
 
-            IncidentAPIEndpoints endPoint = null;
+            IncidentAPIactionsEndpoints endPoint = null;
             Object[] actionDiagnoses = null;
             InternalMessage actionDiagnObj=null;
             try{
-                endPoint = IncidentAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = IncidentAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
@@ -132,7 +132,7 @@ public class IncidentAPIactions extends HttpServlet {
                 argList=LPArray.addValueToArray1D(argList, curArg.getName());
             }
             argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
-/*            if (IncidentAPIEndpoints.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
+/*            if (IncidentAPIactionsEndpoints.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
                 JSONArray paramJArr=new JSONArray();
                 Enumeration params = request.getParameterNames();
                 String theBody="";

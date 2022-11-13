@@ -34,7 +34,7 @@ import trazit.session.ProcedureRequestSession;
  * @author Administrator
  */
 public class EnvMonAPI extends HttpServlet {  
-    public enum EnvMonAPIEndpoints implements EnumIntEndpoints{
+    public enum EnvMonAPIactionsEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -75,7 +75,7 @@ public class EnvMonAPI extends HttpServlet {
         
         
         ;
-        private EnvMonAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -178,9 +178,9 @@ public class EnvMonAPI extends HttpServlet {
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
 
-        EnvMonAPIEndpoints endPoint = null;
+        EnvMonAPIactionsEndpoints endPoint = null;
         try{
-            endPoint = EnvMonAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = EnvMonAPIactionsEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   

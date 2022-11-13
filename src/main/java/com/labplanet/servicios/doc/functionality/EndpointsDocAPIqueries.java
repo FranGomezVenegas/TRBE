@@ -103,7 +103,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
             
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
         
-            String apiName=argValues[0].toString();//"IncidentAPIEndpoints";
+            String apiName=argValues[0].toString();//"IncidentAPIactionsEndpoints";
             String endpointName=argValues[1].toString();//"NEW_INCIDENT";
             Boolean groupedByAPI=Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
             String[] whereFldName=new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName()};

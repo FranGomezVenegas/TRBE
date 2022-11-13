@@ -77,7 +77,7 @@ public class ClassEnvMonSample {
     private Object[] responseError=null;
     private Boolean functionFound=false;
     
-    public ClassEnvMonSample(HttpServletRequest request, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint){
+    public ClassEnvMonSample(HttpServletRequest request, EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints endPoint){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         Boolean isForTesting = procReqSession.getIsForTesting();
@@ -164,12 +164,12 @@ public class ClassEnvMonSample {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND, new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                     else{      
                         String currRawValue = (String) resultData[0][7];
-                        if (currRawValue!=null && currRawValue.length()>0 && EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
+                        if (currRawValue!=null && currRawValue.length()>0 && EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
                             procReqSession.killIt();                            
                             if ("ENTERRESULT".equalsIgnoreCase(endPoint.getName()))
-                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTERRESULT.getName());
+                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.REENTERRESULT.getName());
                             if ("ENTER_PLATE_READING".equalsIgnoreCase(endPoint.getName())){
-                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTER_PLATE_READING.getName());
+                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.REENTER_PLATE_READING.getName());
                                 altAuditEntry="PLATE_READING_REENTERED";
                             }
                             procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
@@ -221,12 +221,12 @@ public class ClassEnvMonSample {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND, new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                     else{      
                         String currRawValue = (String) resultData[0][7];
-                        if (currRawValue!=null && currRawValue.length()>0 && EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
+                        if (currRawValue!=null && currRawValue.length()>0 && EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
                             procReqSession.killIt();                            
                             if ("ENTERRESULT".equalsIgnoreCase(endPoint.getName()))
-                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTERRESULT.getName());
+                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.REENTERRESULT.getName());
                             if ("ENTER_PLATE_READING_SECONDENTRY".equalsIgnoreCase(endPoint.getName())){
-                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIEndpoints.REENTER_PLATE_READING.getName());
+                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.REENTER_PLATE_READING.getName());
                                 altAuditEntry="PLATE_READING_REENTERED_SECONDENTRY";
                             }
                             procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
@@ -302,7 +302,7 @@ public class ClassEnvMonSample {
                         actionDiagnoses = DataProgramSample.addSampleMicroorganism((Integer) argValues[0], orgName, numItems);
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), actionDiagnoses[actionDiagnoses.length-1]);
                     }
-                    if (EnvMonSampleAPI.EnvMonSampleAPIEndpoints.ADD_ADHOC_SAMPLE_MICROORGANISM.getName().equalsIgnoreCase(endPoint.getName()) && actionDiagnoses!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                    if (EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.ADD_ADHOC_SAMPLE_MICROORGANISM.getName().equalsIgnoreCase(endPoint.getName()) && actionDiagnoses!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                         for (String orgName: (String[]) argValues[1].toString().split("\\|")){                        
                             adhocMicroorganismAdd(orgName);
                         }

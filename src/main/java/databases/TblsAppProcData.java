@@ -138,6 +138,8 @@ public class TblsAppProcData {
         LAST_VERIF("last_verification",LPDatabase.dateTime(), null, null, null, null),
         PO_DATE("po_date",LPDatabase.dateTime(), null, null, null, null),
         INSTALLATION_DATE("installation_date",LPDatabase.dateTime(), null, null, null, null),
+        RESPONSIBLE("responsible",LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        RESPONSIBLE_BACKUP("responsible_backup",LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null)
         
         
         ;
@@ -247,6 +249,9 @@ public class TblsAppProcData {
     public enum ViewNotDecommInstrumentAndEventData implements EnumIntViewFields{
         ID("id", "ie.id", InstrumentEvent.ID, null, null, null),
         INSTRUMENT("instrument", "ie.instrument", InstrumentEvent.INSTRUMENT, null, null, null),
+        INSTRUMENT_FAMILY("instrument_family", "i.family as instrument_family", Instruments.FAMILY, null, null, null),                
+        RESPONSIBLE("responsible", "i.responsible as instrument_responsible", Instruments.RESPONSIBLE, null, null, null),                
+        RESPONSIBLE_BACKUP("responsible_backup", "i.responsible_backup as instrument_responsible_backup", Instruments.RESPONSIBLE_BACKUP, null, null, null),                
         EVENT_TYPE("event_type", "ie.event_type", InstrumentEvent.EVENT_TYPE, null, null, null),
         CREATED_ON("created_on", "ie.created_on", InstrumentEvent.CREATED_ON, null, null, null),
         CREATED_BY("created_by", "ie.created_by", InstrumentEvent.CREATED_BY, null, null, null),
@@ -263,6 +268,9 @@ public class TblsAppProcData {
         LAST_PREV_MAINT("last_prev_maint", "i.last_prev_maint", Instruments.LAST_PM, null, null, null),
         NEXT_PREV_MAINT("next_prev_maint", "i.next_prev_maint", Instruments.NEXT_PM, null, null, null),
         LAST_VERIFICATION("last_verification", "i.last_verification", Instruments.LAST_VERIF, null, null, null),
+        TOTAL_PARAMS("total_params", "(select count(*) from \"#PROC_INSTANCE_NAME-#SCHEMA_DATA\".instr_event_variable_values eparam where  eparam.event_id=ie.id) as total_params", null, null, null, null),
+        PENDING_PARAMS("pending_params", "(select count(*) from \"#PROC_INSTANCE_NAME-#SCHEMA_DATA\".instr_event_variable_values eparam where  eparam.event_id=ie.id and eparam.value is null) as pending_params", null, null, null, null),
+        
         ;
         private ViewNotDecommInstrumentAndEventData(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;

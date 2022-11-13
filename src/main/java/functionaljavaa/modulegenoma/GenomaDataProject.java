@@ -53,7 +53,7 @@ public class GenomaDataProject {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
     
-public InternalMessage createProject(GenomaProjectAPI.GenomaProjectAPIEndPoints endpoint, String projectName, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+public InternalMessage createProject(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
@@ -177,7 +177,7 @@ public InternalMessage createProject(GenomaProjectAPI.GenomaProjectAPIEndPoints 
     return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);            
 }    
 
-public Object[] projectActivate(GenomaProjectAPI.GenomaProjectAPIEndPoints endpoint, String projectName){
+public Object[] projectActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Object[] projOpenToChanges=isProjectOpenToChanges(projectName);    
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
@@ -194,7 +194,7 @@ public Object[] projectActivate(GenomaProjectAPI.GenomaProjectAPIEndPoints endpo
     return diagnosesProj;      
 }    
 
-public Object[] projectDeActivate(GenomaProjectAPI.GenomaProjectAPIEndPoints endpoint, String projectName){
+public Object[] projectDeActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     
     Object[] projOpenToChanges=isProjectOpenToChanges(projectName);    
@@ -213,7 +213,7 @@ public Object[] projectDeActivate(GenomaProjectAPI.GenomaProjectAPIEndPoints end
     return diagnosesProj;      
 }   
 
-public Object[] projectUpdate(GenomaProjectAPI.GenomaProjectAPIEndPoints endpoint, String projectName, String[] fieldsName, Object[] fieldsValue){
+public Object[] projectUpdate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String[] fieldsName, Object[] fieldsValue){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Object[] projOpenToChanges=isProjectOpenToChanges(projectName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
@@ -231,7 +231,7 @@ public Object[] projectUpdate(GenomaProjectAPI.GenomaProjectAPIEndPoints endpoin
     return diagnosesProj;      
 } 
 
-public Object[] projectUserManagement(GenomaProjectAPI.GenomaProjectAPIEndPoints endpoint, String projectName, String userName, String userRole){
+public Object[] projectUserManagement(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     String[] fieldsName = new String[]{TblsGenomaData.ProjectUsers.PROJECT.getName(), TblsGenomaData.ProjectUsers.PERSON.getName(), TblsGenomaData.ProjectUsers.ROLES.getName()};
     Object[] fieldsValue=new Object[]{projectName, userName, userRole};
@@ -277,7 +277,7 @@ public Object[] projectUserManagement(GenomaProjectAPI.GenomaProjectAPIEndPoints
     }
     return diagnosesProj;      
 } 
-public Object[] projectUserActivate(GenomaProjectAPI.GenomaProjectAPIEndPoints endpoint, String projectName, String userName, String userRole){
+public Object[] projectUserActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     String[] fieldsName=new String[]{TblsGenomaData.ProjectUsers.ACTIVE.getName()};
@@ -295,7 +295,7 @@ public Object[] projectUserActivate(GenomaProjectAPI.GenomaProjectAPIEndPoints e
     return diagnosesProj;      
 }    
 
-public Object[] projectUserDeActivate(GenomaProjectAPI.GenomaProjectAPIEndPoints endpoint, String projectName, String userName, String userRole){
+public Object[] projectUserDeActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole){
     ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
     String procInstanceName=instanceForActions.getProcedureInstance();
     Object[] projOpenToChanges=isProjectOpenToChanges(projectName);    
@@ -340,7 +340,7 @@ public static InternalMessage isProjectOpenToChanges2(String projectName){
 }
 
 
-public Object[] projectUserChangeRole(GenomaProjectAPI.GenomaProjectAPIEndPoints endpoint, String projectName, String userName, String userRole){
+public Object[] projectUserChangeRole(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     String[] fieldsName=new String[]{TblsGenomaData.ProjectUsers.ROLES.getName()};

@@ -38,7 +38,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class CertifyAPIfrontend extends HttpServlet {
-    public enum CertifyAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum CertifyAPIqueriesEndpoints implements EnumIntEndpoints{
         CERTIFICATIONS_IN_PROGRESS("CERTIFICATIONS_IN_PROGRESS", "",new LPAPIArguments[]{
             new LPAPIArguments("areasToInclude", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
             new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7)},
@@ -59,7 +59,7 @@ public class CertifyAPIfrontend extends HttpServlet {
             new LPAPIEndPointdocumentation("certify-frontend", "OBJECTS_ENABLED_CERTIFICATION", "", -1,""),
             EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private CertifyAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, LPAPIEndPointdocumentation docInfo, JsonArray outputObjectTypes){
+        private CertifyAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, LPAPIEndPointdocumentation docInfo, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -115,9 +115,9 @@ public class CertifyAPIfrontend extends HttpServlet {
                             LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                     return;                             
             }
-            CertifyAPIfrontendEndpoints endPoint = null;
+            CertifyAPIqueriesEndpoints endPoint = null;
             try{
-                endPoint = CertifyAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = CertifyAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   

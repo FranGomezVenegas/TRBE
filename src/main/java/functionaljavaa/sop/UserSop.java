@@ -5,7 +5,7 @@
  */
 package functionaljavaa.sop;
 
-import com.labplanet.servicios.app.SopUserAPI.SopUserAPIEndpoints;
+import com.labplanet.servicios.app.SopUserAPI.SopUserAPIactionsEndpoints;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
@@ -449,7 +449,7 @@ public class UserSop {
         RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsData.TablesData.USER_SOP, insertFieldNames, insertFieldValues);
         if (!insertDiagn.getRunSuccess()) return insertDiagn.getApiMessage();
         else
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SopUserAPIEndpoints.ADD_SOP_TO_USER.getSuccessMessageCode(), new Object[]{sopIdFieldValue, personName, schemaName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SopUserAPIactionsEndpoints.ADD_SOP_TO_USER.getSuccessMessageCode(), new Object[]{sopIdFieldValue, personName, schemaName});
     }    
     
     /**

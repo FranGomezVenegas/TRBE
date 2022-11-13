@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import com.labplanet.servicios.moduleenvmonit.EnvMonProdLotAPI.EnvMonProdLotAPIEndpoints;
+import com.labplanet.servicios.moduleenvmonit.EnvMonProdLotAPI.EnvMonProdLotAPIactionsEndpoints;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramProductionLot;
@@ -36,7 +36,7 @@ public class ClassEnvMonProdLot {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassEnvMonProdLot(HttpServletRequest request, EnvMonProdLotAPIEndpoints endPoint){
+    public ClassEnvMonProdLot(HttpServletRequest request, EnvMonProdLotAPIactionsEndpoints endPoint){
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();

@@ -31,7 +31,7 @@ import trazit.session.InternalMessage;
  */
 public class GenomaDataStudyFamily {
     
-public InternalMessage createStudyFamily(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName, String[] individuals, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+public InternalMessage createStudyFamily(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String familyName, String[] individuals, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
     
@@ -178,7 +178,7 @@ public InternalMessage createStudyFamily(GenomaStudyAPI.GenomaStudyAPIEndPoints 
     return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);            
 }    
 
-public Object[] studyFamilyActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName){
+public Object[] studyFamilyActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String familyName){
     String[] fieldsName=new String[]{TblsGenomaData.StudyFamily.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
     SqlWhere sqlWhere = new SqlWhere();
@@ -191,7 +191,7 @@ public Object[] studyFamilyActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpo
     return diagnosesProj;      
 }    
 
-public Object[] studyFamilyDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName){
+public Object[] studyFamilyDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String familyName){
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
     ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);    
@@ -208,7 +208,7 @@ public Object[] studyFamilyDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints end
     return diagnosesProj;      
 }   
 
-public Object[] studyFamilyIndividualUpdate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName, String[] fieldsName, Object[] fieldsValue){
+public Object[] studyFamilyIndividualUpdate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String familyName, String[] fieldsName, Object[] fieldsValue){
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
@@ -226,7 +226,7 @@ public Object[] studyFamilyIndividualUpdate(GenomaStudyAPI.GenomaStudyAPIEndPoin
     return diagnosesProj;      
 } 
 
-public Object[] studyFamilyAddIndividual(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName, String individualId) {
+public Object[] studyFamilyAddIndividual(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String familyName, String individualId) {
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
@@ -255,7 +255,7 @@ public Object[] studyFamilyAddIndividual(GenomaStudyAPI.GenomaStudyAPIEndPoints 
     return curFamilyAndIndividualLinked.getApiMessage();
 }
 
-public Object[] studyFamilyRemoveIndividual(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String familyName, String individualId) {
+public Object[] studyFamilyRemoveIndividual(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String familyName, String individualId) {
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    

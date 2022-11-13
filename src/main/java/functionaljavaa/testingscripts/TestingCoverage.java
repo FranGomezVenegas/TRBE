@@ -73,6 +73,7 @@ public final class TestingCoverage {
     private Integer busRuleVisitedMissingInProcConfig;
     private Integer busRuleVisitedMissingInProcData;
     private Integer busRuleVisitedMissingInProcProcedure;
+    private String[] busRuleExcludedByExcludeEndpoint;
     private BusinessRules busRuleVisitedMissingInProcRules;
     private JSONObject busRuleCoverageDetail;
     private BigDecimal busRuleCovPerc;
@@ -83,6 +84,7 @@ public final class TestingCoverage {
         this.msgCodeVisited=new JSONArray();
         this.procInstanceName=procInstanceName;
         this.coverageId=coverageId;
+        this.busRuleExcludedByExcludeEndpoint=new String[]{};
         String[] covFldNameArr=getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields());
         Object[][] coverageInfoArr=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(),
             new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()},
@@ -137,16 +139,18 @@ public final class TestingCoverage {
         //this.endpointsCoverageDetail=new JsonArray();
         JSONArray visitedjObj=new JSONArray();
         JSONArray missingjObj=new JSONArray();
-        for (Object[] curStep: scriptsEndpoints){
+        for (Object[] curStep: scriptsEndpoints){            
             String curScriptEndpoint=curStep[1].toString();
-            if (calcProcedureActions==null || calcProcedureActions.isEmpty() || !calcProcedureActions.contains(curScriptEndpoint)){
-                calcProcedureActions.add(curScriptEndpoint);
-                if (LPArray.valueInArray(this.procActionsArr, curScriptEndpoint)){
-                    this.endpointsVisitedTotal++;
-                    visitedjObj.add(curScriptEndpoint);
-                }else{
-                    this.endpointsMissingTotal++;
-                    missingjObj.add(curScriptEndpoint);
+            if (curScriptEndpoint!=null && curScriptEndpoint.length()>0){
+                if (calcProcedureActions==null || calcProcedureActions.isEmpty() || !calcProcedureActions.contains(curScriptEndpoint)){
+                    calcProcedureActions.add(curScriptEndpoint);
+                    if (LPArray.valueInArray(this.procActionsArr, curScriptEndpoint)){
+                        this.endpointsVisitedTotal++;
+                        visitedjObj.add(curScriptEndpoint);
+                    }else{
+                        this.endpointsMissingTotal++;
+                        missingjObj.add(curScriptEndpoint);
+                    }
                 }
             }
         }
@@ -282,6 +286,7 @@ public final class TestingCoverage {
     
     
     void generateSummaryForBusinessRules(){
+        removeProcBusRulesByEndpointExclusion();
         final int DECIMAL_PLACES = 2;
         String percExplPatternStr="The <*1*> is <*2*> div <*3*> ";
                
@@ -290,7 +295,7 @@ public final class TestingCoverage {
             if (curRule.getRuleName().contains("AuditReasonPhrase"))
                 procBusRulesTotal=procBusRulesTotal-1;
         }
-        double divisor = procBusRulesTotal-this.coverageBusRulesExcludeList.length;
+        double divisor = procBusRulesTotal-this.coverageBusRulesExcludeList.length-this.busRuleExcludedByExcludeEndpoint.length;
         double divident = (double)this.busRuleVisitedTotal+(double) this.busRuleVisitedMissingInProcTotal;
         double operatedVal = (divident/divisor)*100;
         this.busRuleCovPerc = new BigDecimal(String.valueOf(operatedVal));
@@ -300,6 +305,8 @@ public final class TestingCoverage {
         if (this.coverageBusRulesExcludeList.length>0)
             busRulesPercExplStr=busRulesPercExplStr+" have on mind that the exclusions are "+this.coverageBusRulesExcludeList.length+
                 " what means that the divider is the total ("+procBusRulesTotal+") minus the excluded ("+this.coverageBusRulesExcludeList.length+")";
+        if(this.busRuleExcludedByExcludeEndpoint.length>0)
+            busRulesPercExplStr=busRulesPercExplStr+" minus the excluded by exclude the endpoint("+this.busRuleExcludedByExcludeEndpoint.length+")";
         JSONObject busRulesSummaryJObj=new JSONObject();
         busRulesSummaryJObj.put("percentage_explanation", busRulesPercExplStr);        
         busRulesSummaryJObj.put("procedure_total", procBusRulesTotal);
@@ -328,7 +335,7 @@ public final class TestingCoverage {
             ruleJObj.put(curRule.getRuleName(), curRule.getRuleValue());
             procBusRulesAreaJArr.add(ruleJObj);
             String curRuleStr="config_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
-            boolean inExclList = LPArray.valueInArray(this.coverageMsgCodeExcludeList, curRuleStr);
+            boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
             if (!valueInArray && !inExclList && !notCoveredBusRules.contains(curRuleStr))
                 notCoveredBusRules.add(curRuleStr);
@@ -342,27 +349,38 @@ public final class TestingCoverage {
             ruleJObj.put(curRule.getRuleName(), curRule.getRuleValue());
             procBusRulesAreaJArr.add(ruleJObj);
             String curRuleStr="data_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
-            boolean inExclList = LPArray.valueInArray(this.coverageMsgCodeExcludeList, curRuleStr);
+            boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
             if (!valueInArray && !inExclList && !notCoveredBusRules.contains(curRuleStr))
                 notCoveredBusRules.add(curRuleStr);
         }
         procBusRulesJObj.put("data", procBusRulesAreaJArr); 
 
-
+        
         
         ArrayList<RuleInfo> procedureBusinessRules = this.procBusRules.getProcedureBusinessRules();
+        
         procBusRulesAreaJArr=new JSONArray();
         for (RuleInfo curRule:procedureBusinessRules){
             JSONObject ruleJObj=new JSONObject();
             ruleJObj.put(curRule.getRuleName(), curRule.getRuleValue());
             procBusRulesAreaJArr.add(ruleJObj);
             String curRuleStr="procedure_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
-            boolean inExclList = LPArray.valueInArray(this.coverageMsgCodeExcludeList, curRuleStr);
+            boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
-            if (!valueInArray && !inExclList && !notCoveredBusRules.contains(curRuleStr) && !curRuleStr.contains("AuditReasonPhrase"))
-                notCoveredBusRules.add(curRuleStr);
+            if (!valueInArray && !notCoveredBusRules.contains(curRuleStr) && !procedureRulesNotToPutInPlace(curRuleStr) ){
+                if (!inExclList && !LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curRuleStr))
+                    notCoveredBusRules.add(curRuleStr);
+            }
         }
+        if (this.busRuleExcludedByExcludeEndpoint.length>0){
+            JSONArray busRuleExcludedByExcludeEndpointJArr=new JSONArray();
+            for (String curRule: busRuleExcludedByExcludeEndpoint){
+                busRuleExcludedByExcludeEndpointJArr.add(curRule);
+            }
+            unCoveredBusRules.put("business_rules_excluded_by_exclude_the_endpoint", busRuleExcludedByExcludeEndpointJArr);
+        }
+                
         procBusRulesJObj.put("procedure", procBusRulesAreaJArr);
         procBusRulesJArr.add(procBusRulesJObj);
         
@@ -372,12 +390,14 @@ public final class TestingCoverage {
         this.busRuleCoverageDetail.put("uncoverage_summary", unCoveredBusRules);        
         this.busRuleCoverageDetail.put("summary", busRulesSummaryJObj);
     }
+    
     void generateSummaryForEndpoint(){
         final int DECIMAL_PLACES = 2;
         String percExplPatternStr="The <*1*> is <*2*> div <*3*> ";
         
         JSONArray procActionsJArr = new JSONArray();
         procActionsJArr.addAll(Arrays.asList(this.procActionsArr));
+        
         JSONObject endpointsSummaryJObj=new JSONObject();
         double divisor = (double)this.procActionsArr.length;
         divisor=divisor-this.coverageEndpointsExcludeList.length;
@@ -404,8 +424,8 @@ public final class TestingCoverage {
             boolean inExclList = LPArray.valueInArray(this.coverageEndpointsExcludeList, curEnd);
             JSONArray accVisited = (JSONArray) this.endpointsCoverageDetail.get("visited");            
             boolean inVisitedList = accVisited.contains(curEnd);
-            if (!inExclList && !inVisitedList)
-            notCoveredEndPoints.add(curEnd);
+            if (!inExclList && !inVisitedList && curEnd.length()>0 && !LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curEnd))
+                notCoveredEndPoints.add(curEnd);
         }
         unCoveredEndPoints.put("uncoverage_list", notCoveredEndPoints);
         this.endpointsCoverageDetail.put("uncoverage_summary", unCoveredEndPoints);
@@ -553,5 +573,46 @@ public final class TestingCoverage {
         
         return mainObj;
     }
-    
+
+/*    void removeUnvisitedEndPointsWhenExcluded(){
+        if (this.coverageEndpointsExcludeList==null) return;
+        for (String curExclEndpoint : this.coverageEndpointsExcludeList){
+            this.
+        }
+    }
+  */  
+    void removeProcBusRulesByEndpointExclusion(){
+        ArrayList<RuleInfo> procedureBusinessRules = this.procBusRules.getProcedureBusinessRules();
+        if (this.coverageEndpointsExcludeList==null) return;
+        for (String curExclEndpoint : this.coverageEndpointsExcludeList){
+            String endPointActionEnabledRule="procedure_actionEnabled"+curExclEndpoint;
+            //boolean remove = this.procBusRules.getProcedureBusinessRules().remove(new RuleInfo(endPointActionEnabledRule, ""));
+            this.busRuleExcludedByExcludeEndpoint=LPArray.addValueToArray1D(this.busRuleExcludedByExcludeEndpoint, endPointActionEnabledRule);
+        }        
+//        Object[] toArrayObjArr = this.procBusRules.getProcedureBusinessRules().toArray();
+        String[] toArray=new String[]{};
+        for (RuleInfo curRuleI: procedureBusinessRules){
+            toArray=LPArray.addValueToArray1D(toArray, curRuleI.getRuleName());
+        }
+        if (LPArray.valueInArray(toArray, "actionConfirmRequired"))
+            this.busRuleExcludedByExcludeEndpoint=LPArray.addValueToArray1D(this.busRuleExcludedByExcludeEndpoint, "actionConfirmRequired");
+        if (LPArray.valueInArray(toArray, "verifyUserRequired"))
+            this.busRuleExcludedByExcludeEndpoint=LPArray.addValueToArray1D(this.busRuleExcludedByExcludeEndpoint, "verifyUserRequired");
+        if (LPArray.valueInArray(toArray, "auditJustifReasonRequired"))
+            this.busRuleExcludedByExcludeEndpoint=LPArray.addValueToArray1D(this.busRuleExcludedByExcludeEndpoint, "auditJustifReasonRequired");
+        if (LPArray.valueInArray(toArray, "eSignRequired"))
+            this.busRuleExcludedByExcludeEndpoint=LPArray.addValueToArray1D(this.busRuleExcludedByExcludeEndpoint, "eSignRequired");
+    }
+
+    private static Boolean procedureRulesNotToPutInPlace(String curRuleStr){
+        if (curRuleStr.contains("AuditReasonPhrase")) return true;
+        if (curRuleStr.equalsIgnoreCase("procedure_actionConfirmRequired")) return true;
+        if (curRuleStr.equalsIgnoreCase("procedure_verifyUserRequired")) 
+            return true;
+        if (curRuleStr.equalsIgnoreCase("procedure_auditJustifReasonRequired")) return true;
+        if (curRuleStr.equalsIgnoreCase("procedure_eSignRequired")) 
+            return true;
+        
+        return false;
+    }
 }

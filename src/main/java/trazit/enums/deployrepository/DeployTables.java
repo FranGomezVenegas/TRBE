@@ -30,14 +30,20 @@ public enum CreateFldTypes{ADD, STOP, DISCARD}
 public static String createTableScript(EnumIntTables tableObj, Boolean run, Boolean refreshTableIfExists){
     return createTableScript(tableObj, null, run, refreshTableIfExists);
 }
-    
 public static String createTableScript(EnumIntTables tableObj, String procInstanceName, Boolean run, Boolean refreshTableIfExists){
+    return createTableScript(tableObj, procInstanceName, run, refreshTableIfExists, false);
+}    
+public static String createTableScript(EnumIntTables tableObj, String procInstanceName, Boolean run, Boolean refreshTableIfExists, Boolean isView){
     String schemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), tableObj.getRepositoryName());        
     Object[] dbTableExists = Rdbms.dbTableExists(schemaName, tableObj.getTableName());
     StringBuilder seqScript=new StringBuilder(0);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
-        if (!run && !refreshTableIfExists)
-            return "table "+tableObj.getTableName()+" already exists";        
+        if (!run && !refreshTableIfExists){
+            if (isView)
+                return "view "+tableObj.getTableName()+" already exists";        
+            else
+                return "table "+tableObj.getTableName()+" already exists";        
+        }
         if (refreshTableIfExists){
             HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(schemaName, tableObj.getTableName());
             String[] fldName= dbTableGetFieldDefinition.keySet().iterator().next();   
@@ -56,7 +62,10 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
                     }
                 }
                 if (!fieldToAdd)
-                    return "table "+tableObj.getTableName()+" already exists and up to date";
+                    if (isView)
+                        return "view "+tableObj.getTableName()+" already exists and up to date";
+                    else
+                        return "table "+tableObj.getTableName()+" already exists and up to date";
                 seqScript=new StringBuilder(0).append(alterTableScript(tableObj, procInstanceName, true)).append(seqScript);
             }
         }        

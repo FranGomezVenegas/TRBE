@@ -6,7 +6,7 @@
 package com.labplanet.servicios.requirements;
 
 import com.labplanet.servicios.ResponseSuccess;
-import com.labplanet.servicios.platformdefinition.PlatformDefinition.PlatformDefinitionAPIEndpoints;
+import com.labplanet.servicios.platformdefinition.PlatformDefinition.PlatformDefinitionAPIactionsEndpoints;
 import databases.DbObjects;
 import static databases.DbObjects.createSchemas;
 import lbplanet.utilities.LPFrontEnd;
@@ -58,7 +58,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response=LPTestingOutFormat.responsePreparation(response);
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-        PlatformDefinitionAPIEndpoints endPoint = PlatformDefinitionAPIEndpoints.CREATE_PLATFORM_INSTANCE_STRUCTURE;
+        PlatformDefinitionAPIactionsEndpoints endPoint = PlatformDefinitionAPIactionsEndpoints.CREATE_PLATFORM_INSTANCE_STRUCTURE;
         LPAPIArguments[] arguments = endPoint.getArguments();
         Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){

@@ -30,9 +30,9 @@ public class ClassEnvMonSampleFrontendController {
     public ClassEnvMonSampleFrontendController(HttpServletRequest request, HttpServletResponse response, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
-        ClassEnvMonSampleFrontend.EnvMonSampleAPIFrontendEndpoints endPoint = null;
+        ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = ClassEnvMonSampleFrontend.EnvMonSampleAPIFrontendEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);

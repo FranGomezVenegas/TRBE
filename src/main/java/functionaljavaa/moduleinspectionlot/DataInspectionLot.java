@@ -5,7 +5,7 @@
  */
 package functionaljavaa.moduleinspectionlot;
 
-import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIEndpoints;
+import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIactionsEndpoints;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMConfig;
 import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
 import databases.DataDataIntegrity;
@@ -253,7 +253,7 @@ public class DataInspectionLot {
 //            smpStages.dataLotStagesTimingCapture(procPrefix, sampleId, firstStage[firstStage.length-1][1].toString(), DataLotStages.SampleStageTimingCapturePhases.START.toString());
             
             LotAudit lotAudit = new LotAudit();            
-            lotAudit.lotAuditAdd(InspLotRMAPIEndpoints.NEW_LOT.getAuditActionName(), 
+            lotAudit.lotAuditAdd(InspLotRMAPIactionsEndpoints.NEW_LOT.getAuditActionName(), 
                     TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotName, lotName, fieldsOnLogLot, null);            
             DataInspectionLotDecision lotDec=new DataInspectionLotDecision();
             lotDec.lotDecisionRecordCreateOrUpdate(lotName, null);

@@ -6,7 +6,7 @@
 package com.labplanet.servicios.modulesample;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIactionsEndpoints;
 import databases.Rdbms;
 import databases.SqlWhere;
 import databases.TblsData;
@@ -61,7 +61,7 @@ public class ClassSample {
     private Boolean isSuccess=false;
     private Object[] responseError=null;
     
-    public ClassSample(HttpServletRequest request, SampleAPIEndpoints endPoint){
+    public ClassSample(HttpServletRequest request, SampleAPIactionsEndpoints endPoint){
         
         String[] exceptionsToSampleReviewArr=new String[]{"UNCANCELSAMPLE", "UNREVIEWSAMPLE"};
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -281,9 +281,9 @@ public class ClassSample {
                             diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND, new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                         else{            
                             String currRawValue = (String) resultData[0][7];
-                            if (currRawValue!=null && currRawValue.length()>0 && SampleAPIParams.SampleAPIEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
+                            if (currRawValue!=null && currRawValue.length()>0 && SampleAPIParams.SampleAPIactionsEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())){
                                 procReqSession.killIt();
-                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, SampleAPIParams.SampleAPIEndpoints.REENTERRESULT.getName());
+                                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, SampleAPIParams.SampleAPIactionsEndpoints.REENTERRESULT.getName());
                                 procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
                                 if (procReqSession.getHasErrors()){
                                     procReqSession.killIt();
@@ -526,9 +526,9 @@ public class ClassSample {
                         }
                         sampleStage=sampleInfo[0][0].toString();
                     }
-                    if (SampleAPIEndpoints.SAMPLESTAGE_MOVETONEXT.getName().equalsIgnoreCase(endPoint.getName()))
+                    if (SampleAPIactionsEndpoints.SAMPLESTAGE_MOVETONEXT.getName().equalsIgnoreCase(endPoint.getName()))
                         diagn=smpStage.moveToNextStage(sampleId, sampleStage, sampleStageNext);
-                    if (SampleAPIEndpoints.SAMPLESTAGE_MOVETOPREVIOUS.getName().equalsIgnoreCase(endPoint.getName()))
+                    if (SampleAPIactionsEndpoints.SAMPLESTAGE_MOVETOPREVIOUS.getName().equalsIgnoreCase(endPoint.getName()))
                         diagn=smpStage.moveToPreviousStage(sampleId, sampleStage, sampleStageNext);
                     String[] sampleFieldName=new String[]{TblsData.Sample.CURRENT_STAGE.getName(), TblsData.Sample.PREVIOUS_STAGE.getName()};
                     Object[] sampleFieldValue=new Object[0];

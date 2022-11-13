@@ -27,7 +27,6 @@ import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStages;
-import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -74,7 +73,7 @@ public class ClassEnvMonSampleFrontend {
     private static final String[] SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION=new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName()};
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
-    public enum EnvMonSampleAPIFrontendEndpoints implements EnumIntEndpoints{        
+    public enum EnvMonSampleAPIqueriesEndpoints implements EnumIntEndpoints{        
         GET_SAMPLE_ANALYSIS_RESULT_LIST("GET_SAMPLE_ANALYSIS_RESULT_LIST", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -240,7 +239,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                 new LPAPIArguments("includeOnlyIfResultsInProgress", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 20),
                 }, null, null),
         ;
-        private EnvMonSampleAPIFrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, JsonArray reportInfo){
+        private EnvMonSampleAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, JsonArray reportInfo){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;
@@ -270,7 +269,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
         @Override        public String getSuccessMessageCode(){            return this.successMessageCode;        }           
     }
     
-    public ClassEnvMonSampleFrontend(HttpServletRequest request, HttpServletResponse response, EnvMonSampleAPIFrontendEndpoints endPoint){
+    public ClassEnvMonSampleFrontend(HttpServletRequest request, HttpServletResponse response, EnvMonSampleAPIqueriesEndpoints endPoint){
         String reportInfoTagNAme="report_info";
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
@@ -1277,7 +1276,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                 this.responseSuccessJArr=samplesArray;
                 return;                         
                          
-                default:      
+            default:      
 //                  RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
 //                  rd.forward(request, null);                                   
             }    
@@ -1438,7 +1437,8 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
     }
     
 }
-    
+
+   
 private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
     if (sampleStageFldValue==null) return null;
     if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())) return null; //new Object[][]{{}};

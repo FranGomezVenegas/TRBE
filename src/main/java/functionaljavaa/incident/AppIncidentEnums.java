@@ -19,7 +19,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class AppIncidentEnums {
     static final String COMMON_PARAMS="incidentId|note";
-    public enum IncidentAPIEndpoints implements EnumIntEndpoints{
+    public enum IncidentAPIactionsEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -58,7 +58,7 @@ public class AppIncidentEnums {
                 .add("table", TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
                 ),
         ;
-        private IncidentAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private IncidentAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.mandatoryParams=mandatoryParams;
             this.optionalParams=optionalParams;

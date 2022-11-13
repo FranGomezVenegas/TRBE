@@ -5,7 +5,7 @@
  */
 package functionaljavaa.samplestructure;
 
-import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIEndpoints;
+import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
@@ -151,7 +151,7 @@ public class DataSampleIncubation {
         Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
             EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldName), sampleFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-            diagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonSampleAPIEndpoints.SINGLE_SAMPLE_INCUB_END.getSuccessMessageCode(), 
+            diagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonSampleAPIactionsEndpoints.SINGLE_SAMPLE_INCUB_END.getSuccessMessageCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
             SampleAudit smpAudit = new SampleAudit();
             EnumIntAuditEvents sampleAuditEvName=null;
@@ -192,7 +192,7 @@ public class DataSampleIncubation {
         Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
             EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldName), sampleFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
-            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonSampleAPIEndpoints.SINGLE_SAMPLE_INCUB_START.getSuccessMessageCode(), 
+            diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonSampleAPIactionsEndpoints.SINGLE_SAMPLE_INCUB_START.getSuccessMessageCode(), 
                     new Object[]{sampleId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});           
             SampleAudit smpAudit = new SampleAudit();
             EnumIntAuditEvents sampleAuditEvName=null;

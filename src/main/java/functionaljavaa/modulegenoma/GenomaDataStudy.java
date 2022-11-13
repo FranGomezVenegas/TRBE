@@ -32,7 +32,7 @@ import trazit.session.InternalMessage;
  * @author User
  */
 public class GenomaDataStudy {
-public InternalMessage createStudy(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String projectName, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+public InternalMessage createStudy(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String projectName, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
     
@@ -169,7 +169,7 @@ public InternalMessage createStudy(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoi
         return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);            
 }    
 
-public Object[] studyActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName){
+public Object[] studyActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName){
     String[] fieldsName=new String[]{TblsGenomaData.Study.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
     SqlWhere sqlWhere = new SqlWhere();
@@ -182,7 +182,7 @@ public Object[] studyActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, S
     return diagnosesProj;      
 }    
 
-public Object[] studyDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName){
+public Object[] studyDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName){
     Object[] projOpenToChanges=isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
     String[] fieldsName=new String[]{TblsGenomaData.Study.ACTIVE.getName()};
@@ -197,7 +197,7 @@ public Object[] studyDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint,
     return diagnosesProj;      
 }   
 
-public Object[] studyUpdate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String[] fieldsName, Object[] fieldsValue){
+public Object[] studyUpdate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String[] fieldsName, Object[] fieldsValue){
     Object[] projOpenToChanges=isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
     Object[] specialFieldsPresent=GenomaEnums.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY.getTableName(), fieldsName);
@@ -213,7 +213,7 @@ public Object[] studyUpdate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, Str
     return diagnosesProj;      
 } 
 
-public Object[] studyUserManagement(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String userName, String userRole){
+public Object[] studyUserManagement(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String userName, String userRole){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     String[] fieldsName = new String[]{TblsGenomaData.StudyUsers.STUDY.getName(), TblsGenomaData.StudyUsers.PERSON.getName(), TblsGenomaData.StudyUsers.ROLES.getName()};
@@ -248,7 +248,7 @@ public Object[] studyUserManagement(GenomaStudyAPI.GenomaStudyAPIEndPoints endpo
     return diagnosesProj;      
 } 
 
-public Object[] studyUserActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String userName, String userRole){
+public Object[] studyUserActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String userName, String userRole){
     Object[] projOpenToChanges=isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
     String[] fieldsName=new String[]{TblsGenomaData.StudyUsers.ACTIVE.getName()};
@@ -266,7 +266,7 @@ public Object[] studyUserActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoin
     return diagnosesProj;      
 }    
 
-public Object[] studyUserDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String userName, String userRole){
+public Object[] studyUserDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String userName, String userRole){
     Object[] projOpenToChanges=isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
 
@@ -307,7 +307,7 @@ public static InternalMessage isStudyOpenToChanges2(String studyName){
 }
 
 
-public Object[] studyUserChangeRole(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String userName, String userRole){
+public Object[] studyUserChangeRole(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String userName, String userRole){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
     String[] fieldsName=new String[]{TblsGenomaData.StudyUsers.ROLES.getName()};

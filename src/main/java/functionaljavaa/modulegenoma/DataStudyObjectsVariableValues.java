@@ -45,7 +45,7 @@ public class DataStudyObjectsVariableValues {
         }    
         return LPArray.array1dTo2d(fields, 2);
     }
-    public static InternalMessage addVariableSetToObject(GenomaStudyAPI.GenomaStudyAPIEndPoints endPoint, String studyName, String variableSetName, String ownerTable, String ownerId){
+    public static InternalMessage addVariableSetToObject(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint, String studyName, String variableSetName, String ownerTable, String ownerId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) return studyOpenToChanges;        
@@ -90,7 +90,7 @@ public class DataStudyObjectsVariableValues {
         //return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);            
     }
 
-    public static InternalMessage addVariableToObject(GenomaStudyAPI.GenomaStudyAPIEndPoints endPoint, String studyName, String variableName, String ownerTable, String ownerId){
+    public static InternalMessage addVariableToObject(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint, String studyName, String variableName, String ownerTable, String ownerId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) return studyOpenToChanges;        
@@ -118,7 +118,7 @@ public class DataStudyObjectsVariableValues {
         return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
     }
 
-    public static Object[] objectVariableSetValue(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String ownerTable, String ownerId, String variableSetName, String variableName, String newValue){
+    public static Object[] objectVariableSetValue(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String ownerTable, String ownerId, String variableSetName, String variableName, String newValue){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isStudyOpenToChanges(studyName);

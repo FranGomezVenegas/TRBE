@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
-import com.labplanet.servicios.app.SavedQueriesAPI.SavedQueriesAPIfrontendEndpoints;
+import com.labplanet.servicios.app.SavedQueriesAPI.SavedQueriesAPIqueriesEndpoints;
 import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.TblsData;
@@ -66,9 +66,9 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                         LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                             
         }
-        SavedQueriesAPIfrontendEndpoints endPoint = null;
+        SavedQueriesAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = SavedQueriesAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = SavedQueriesAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   

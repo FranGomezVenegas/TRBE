@@ -44,10 +44,10 @@ import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
  */
 public class InspLotRMAPIfrontend extends HttpServlet {
 
-    public enum EnvMonIncubBatchAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum EnvMonIncubBatchAPIqueriesEndpoints implements EnumIntEndpoints{
         ACTIVE_BATCH_LIST("ACTIVE_BATCH_LIST", "", new LPAPIArguments[]{}),
         ;
-        private EnvMonIncubBatchAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonIncubBatchAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  

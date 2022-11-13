@@ -248,6 +248,27 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);              
                 return;
+            case COMPLETED_EVENTS_LAST_N_DAYS:
+                numDays = LPNulls.replaceNull(argValues[0]).toString();
+                if (numDays.length()==0) numDays=String.valueOf(7);
+                numDaysInt=0-Integer.valueOf(numDays);               
+                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENT_EVENT);
+                Object[][] instrEventsCompletedLastDays = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENT_EVENT, 
+                        EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcData.INSTRUMENT_EVENT),
+                        new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause(), TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                        new Object[]{LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)},
+                        new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventsCompletedLastDays[0][0].toString())){
+                    for (Object[] currIncident: instrEventsCompletedLastDays){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);              
+                return;
+
             case GET_INSTRUMENT_FAMILY_LIST:
                 fieldsToRetrieve=getAllFieldNames(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY);
                 Object[][] instrumentFamily=QueryUtilitiesEnums.getTableData(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY, 

@@ -20,7 +20,7 @@ import trazit.enums.EnumIntEndpoints;
  * @author User
  */
 public class PlatformDefinition {
-    public enum PlatformDefinitionAPIEndpoints implements EnumIntEndpoints{
+    public enum PlatformDefinitionAPIactionsEndpoints implements EnumIntEndpoints{
         CREATE_PLATFORM_INSTANCE_STRUCTURE("CREATE_PLATFORM_INSTANCE_STRUCTURE", "createPlatformInstanceStructure_success", 
                 new LPAPIArguments[]{new LPAPIArguments("platformName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.CREATE_DATABASE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -29,7 +29,7 @@ public class PlatformDefinition {
                 new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.REMOVE_CHECKPLATFORM_PROCEDURE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10)}
         )
         ;
-        private PlatformDefinitionAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private PlatformDefinitionAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  

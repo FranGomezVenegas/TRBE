@@ -38,13 +38,13 @@ import trazit.enums.EnumIntEndpoints;
 public class BatchAPI extends HttpServlet {
     static final String COMMON_PARAMS="incidentId|note";
 
-    public enum BatchAPIEndpoints implements EnumIntEndpoints{
+    public enum BatchAPIactionsEndpoints implements EnumIntEndpoints{
         CREATE_BATCH_ARRAY("CREATE_BATCH_ARRAY", "createBatchArray_success",
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
         LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", "loadBatchArray_success",
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
         ;
-        private BatchAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private BatchAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -161,9 +161,9 @@ public class BatchAPI extends HttpServlet {
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
                 
             Token token = new Token(finalToken);
-            BatchAPIEndpoints endPoint = null;
+            BatchAPIactionsEndpoints endPoint = null;
             try{
-                endPoint = BatchAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = BatchAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   

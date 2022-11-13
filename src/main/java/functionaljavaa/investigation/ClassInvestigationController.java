@@ -28,7 +28,7 @@ public class ClassInvestigationController {
     public ClassInvestigationController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
-        InvestigationAPI.InvestigationAPIEndpoints endPoint = null;
+        InvestigationAPI.InvestigationAPIactionsEndpoints endPoint = null;
         try{
 //            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
 /*                AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, "en");
@@ -38,7 +38,7 @@ public class ClassInvestigationController {
                     return;          
                 }                  
 */            
-            endPoint = InvestigationAPI.InvestigationAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             HashMap<HttpServletRequest, Object[]> hmQuery = 
                     endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
             HttpServletRequest query= hmQuery.keySet().iterator().next();   

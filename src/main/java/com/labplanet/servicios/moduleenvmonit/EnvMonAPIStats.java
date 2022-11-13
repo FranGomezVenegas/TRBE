@@ -48,7 +48,7 @@ public class EnvMonAPIStats extends HttpServlet {
      * methods.
      *
      */
-    public enum EnvMonAPIstatsEndpoints implements EnumIntEndpoints{
+    public enum EnvMonAPIqueriesStatsEndpoints implements EnumIntEndpoints{
         /**
          *
          */        
@@ -175,7 +175,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments("percNumDecimals", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 13),                
                 }, EndPointsToRequirements.endpointWithNoOutputObjects, "RECOVERY_RATE"),                            
         ;
-        private EnvMonAPIstatsEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes, String successMessageCode){
+        private EnvMonAPIqueriesStatsEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes, String successMessageCode){
             this.name=name;
             this.arguments=argums;  
             this.outputObjectTypes=outputObjectTypes;  
@@ -216,9 +216,9 @@ public class EnvMonAPIStats extends HttpServlet {
         String procInstanceName = procReqInstance.getProcedureInstance();
 
             
-        EnvMonAPIstatsEndpoints endPoint = null;
+        EnvMonAPIqueriesStatsEndpoints endPoint = null;
         try{
-            endPoint = EnvMonAPIstatsEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = EnvMonAPIqueriesStatsEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   

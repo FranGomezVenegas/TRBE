@@ -393,7 +393,7 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         TEST_ID(FIELDS_NAMES_INCUBATION2_END, "sar.test_id", SampleAnalysisResult.TEST_ID, null, null, null),
         RAW_VALUE("raw_value","sar.raw_value", SampleAnalysisResult.RAW_VALUE, null, null, null),
         MICROORGANISM_COUNT("microorganism_count", "count(distinct sorg.id) as microorganism_count", SampleAnalysisResult.RESULT_ID,  null, null, null),
-        MICROORGANISM_LIST("microorganism_list", "array_to_string(array_agg(distinct sorg.microorganism_name), ', ')", SampleAnalysisResult.RAW_VALUE, null, null, null),
+        MICROORGANISM_LIST("microorganism_list", "array_to_string(array_agg(distinct sorg.microorganism_name), ', ') AS microorganism_list ", SampleAnalysisResult.RAW_VALUE, null, null, null),
        ;
         private ViewSampleMicroorganismList(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;

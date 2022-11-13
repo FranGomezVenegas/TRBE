@@ -6,7 +6,7 @@
 package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import static com.labplanet.servicios.modulegenoma.GenomaConfigVariableAPI.GenomaVariableAPIEndPoints.VARIABLE_SET_ADD_VARIABLE;
+import static com.labplanet.servicios.modulegenoma.GenomaConfigVariableAPI.GenomaVariableAPIactionsEndpoints.VARIABLE_SET_ADD_VARIABLE;
 import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIParamsList;
 import databases.Rdbms;
 import functionaljavaa.modulegenoma.GenomaConfigVariables;
@@ -35,11 +35,11 @@ public class GenomaConfigVariableAPI extends HttpServlet {
 
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
             
-    public enum GenomaVariableAPIEndPoints implements EnumIntEndpoints{
+    public enum GenomaVariableAPIactionsEndpoints implements EnumIntEndpoints{
           VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects), 
           VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects)
           ;
-        private GenomaVariableAPIEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private GenomaVariableAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -80,9 +80,9 @@ public class GenomaConfigVariableAPI extends HttpServlet {
         Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
             Object[] dataSample = null;
-                    GenomaVariableAPIEndPoints endPoint = null;
+                    GenomaVariableAPIactionsEndpoints endPoint = null;
                     try{
-                        endPoint = GenomaVariableAPIEndPoints.valueOf(actionName.toUpperCase());
+                        endPoint = GenomaVariableAPIactionsEndpoints.valueOf(actionName.toUpperCase());
                     }catch(Exception e){
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                         return;                   

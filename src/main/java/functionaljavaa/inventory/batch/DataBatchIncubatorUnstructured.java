@@ -163,7 +163,7 @@ public final class DataBatchIncubatorUnstructured {
                 setSampleIncubStarted=(Object[]) setSampleIncubStarted[0];
                 DataSampleStages smpStage=new DataSampleStages();
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIEndpoints.EM_BATCH_INCUB_START.getName(), sampleId);
+                    smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIactionsEndpoints.EM_BATCH_INCUB_START.getName(), sampleId);
             }
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchSuccess.SAMPLES_IN_BATCH_SET_AS_BATCHSTARTED, new Object[]{batchName});
@@ -195,7 +195,7 @@ public final class DataBatchIncubatorUnstructured {
             }else{
                 DataSampleStages smpStage=new DataSampleStages();
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);
+                    smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIactionsEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);
             }
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchSuccess.SAMPLES_IN_BATCH_SET_AS_BATCHENDED, new Object[]{batchName});

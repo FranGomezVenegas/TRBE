@@ -26,9 +26,9 @@ public class ClassEnvMonController {
     public ClassEnvMonController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
-        EnvMonAPI.EnvMonAPIEndpoints endPoint = null;
+        EnvMonAPI.EnvMonAPIactionsEndpoints endPoint = null;
         try{
-            endPoint = EnvMonAPI.EnvMonAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = EnvMonAPI.EnvMonAPIactionsEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);

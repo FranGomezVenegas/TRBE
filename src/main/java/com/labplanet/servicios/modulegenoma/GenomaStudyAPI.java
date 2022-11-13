@@ -36,7 +36,7 @@ public class GenomaStudyAPI extends HttpServlet {
 
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
             
-    public enum GenomaStudyAPIEndPoints  implements EnumIntEndpoints{
+    public enum GenomaStudyAPIactionsEndPoints  implements EnumIntEndpoints{
         STUDY_NEW("STUDY_NEW", "newStudyCreated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -157,7 +157,7 @@ public class GenomaStudyAPI extends HttpServlet {
         STUDY_SAMPLES_SET_REMOVE_SAMPLE("STUDY_SAMPLE_SET_REMOVE_SAMPLE", "studyName|samplesSetName|sampleId"),
 */        
         ;
-        private GenomaStudyAPIEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
+        private GenomaStudyAPIactionsEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -186,7 +186,7 @@ public class GenomaStudyAPI extends HttpServlet {
         private final JsonArray outputObjectTypes;   
         private final EnumIntAuditEvents actionEventObj;
     }
-/*        private GenomaStudyAPIEndPoints(String name, String successMessageCode, LPAPIArguments[] argums){
+/*        private GenomaStudyAPIactionsEndPoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -233,9 +233,9 @@ public class GenomaStudyAPI extends HttpServlet {
         String language=procReqInstance.getLanguage();
         
         String[] errObject = new String[]{"Servlet Genoma ProjectAPI at " + request.getServletPath()};   
-        GenomaStudyAPIEndPoints endPoint = null;
+        GenomaStudyAPIactionsEndPoints endPoint = null;
         try{
-            endPoint = GenomaStudyAPIEndPoints.valueOf(actionName.toUpperCase());
+            endPoint = GenomaStudyAPIactionsEndPoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   

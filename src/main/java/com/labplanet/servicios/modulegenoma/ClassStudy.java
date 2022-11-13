@@ -34,7 +34,7 @@ public class ClassStudy {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassStudy(HttpServletRequest request, GenomaStudyAPI.GenomaStudyAPIEndPoints endPoint){
+    public ClassStudy(HttpServletRequest request, GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();

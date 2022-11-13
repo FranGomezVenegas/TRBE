@@ -73,8 +73,8 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                 for (i=0;i<classesImplementing.size();i++){
                     ClassInfo getMine = classesImplementing.get(i); 
                     audEvObjStr=getMine.getSimpleName();
-                    if ("GenomaVariableAPIEndPoints".equalsIgnoreCase(audEvObjStr) ||
-                        "GenomaVariableAPIFrontEndEndPoints".equalsIgnoreCase(audEvObjStr) ||
+                    if ("GenomaVariableAPIactionsEndpoints".equalsIgnoreCase(audEvObjStr) ||
+                        "GenomaVariableAPIqueriesEndpoints".equalsIgnoreCase(audEvObjStr) ||
                         i==34 || i==35 || i==36 || i==37|| i==38|| i==39|| i==40|| i==41
                         || i==43    ){
                         String iStr="1";

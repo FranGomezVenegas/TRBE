@@ -23,7 +23,7 @@ import trazit.globalvariables.GlobalVariables;
 public final class SampleAPIlogic {
     private SampleAPIlogic() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
-    public static JSONObject performAction  (HttpServletRequest request, DataSample smp, SampleAPIParams.SampleAPIEndpoints endPoint, RelatedObjects rObj)  {
+    public static JSONObject performAction  (HttpServletRequest request, DataSample smp, SampleAPIParams.SampleAPIactionsEndpoints endPoint, RelatedObjects rObj)  {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
     

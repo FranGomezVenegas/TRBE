@@ -52,7 +52,7 @@ public class GenomaProjectAPI extends HttpServlet {
     }
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
        
-    public enum GenomaProjectAPIEndPoints implements EnumIntEndpoints{
+    public enum GenomaProjectAPIactionsEndPoints implements EnumIntEndpoints{
         PROJECT_NEW("PROJECT_NEW", "newProjectCreated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -91,7 +91,7 @@ public class GenomaProjectAPI extends HttpServlet {
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9)}, null, DataGenomaProjectAuditEvents.STUDY_ADDED),*/
         ;
-        private GenomaProjectAPIEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
+        private GenomaProjectAPIactionsEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -145,9 +145,9 @@ public class GenomaProjectAPI extends HttpServlet {
         
         String[] errObject = new String[]{"Servlet Genoma ProjectAPI at " + request.getServletPath()};   
 
-        GenomaProjectAPIEndPoints endPoint = null;
+        GenomaProjectAPIactionsEndPoints endPoint = null;
         try{
-            endPoint = GenomaProjectAPIEndPoints.valueOf(actionName.toUpperCase());
+            endPoint = GenomaProjectAPIactionsEndPoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;                   

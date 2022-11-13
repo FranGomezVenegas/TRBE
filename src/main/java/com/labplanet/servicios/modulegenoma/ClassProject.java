@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.modulegenoma;
 
-import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIEndPoints;
+import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIactionsEndPoints;
 import functionaljavaa.modulegenoma.GenomaDataProject;
 import functionaljavaa.modulegenoma.GenomaDataStudy;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -30,7 +30,7 @@ public class ClassProject {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassProject(HttpServletRequest request, GenomaProjectAPIEndPoints endPoint){
+    public ClassProject(HttpServletRequest request, GenomaProjectAPIactionsEndPoints endPoint){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 

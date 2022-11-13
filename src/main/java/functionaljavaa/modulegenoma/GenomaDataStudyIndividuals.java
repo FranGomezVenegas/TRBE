@@ -28,7 +28,7 @@ import trazit.session.ApiMessageReturn;
  * @author User
  */
 public class GenomaDataStudyIndividuals {
-    public Object[] createStudyIndividual(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String indivName, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+    public Object[] createStudyIndividual(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String indivName, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
@@ -218,7 +218,7 @@ public class GenomaDataStudyIndividuals {
         return diagnosesProj; 
     }    
 
-    public Object[] studyIndividualActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, Integer indivId){
+    public Object[] studyIndividualActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId){
         String[] fieldsName=new String[]{TblsGenomaData.StudyIndividual.ACTIVE.getName()};
         Object[] fieldsValue=new Object[]{true};
         SqlWhere sqlWhere = new SqlWhere();
@@ -231,7 +231,7 @@ public class GenomaDataStudyIndividuals {
         return diagnosesProj;      
     }    
 
-    public Object[] studyIndividualDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, Integer indivId){
+    public Object[] studyIndividualDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId){
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.StudyIndividual.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
         sqlWhere.addConstraint(TblsGenomaData.StudyIndividual.INDIVIDUAL_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{indivId}, "");
@@ -255,7 +255,7 @@ public class GenomaDataStudyIndividuals {
         return diagnosesProj;      
     }   
 
-    public Object[] studyIndividualUpdate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, Integer indivId, String[] fieldsName, Object[] fieldsValue){
+    public Object[] studyIndividualUpdate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, String[] fieldsName, Object[] fieldsValue){
         Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 

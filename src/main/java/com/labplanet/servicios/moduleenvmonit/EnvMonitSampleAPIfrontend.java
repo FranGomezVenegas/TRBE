@@ -3,7 +3,7 @@ package com.labplanet.servicios.moduleenvmonit;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.moduleenvmonit.ClassEnvMonSampleFrontend.EnvMonSampleAPIFrontendEndpoints;
+import com.labplanet.servicios.moduleenvmonit.ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServlet;
@@ -31,9 +31,9 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         try (PrintWriter out = response.getWriter()) {
-            EnvMonSampleAPIFrontendEndpoints endPoint = null;
+            EnvMonSampleAPIqueriesEndpoints endPoint = null;
             try{
-                endPoint = EnvMonSampleAPIFrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = EnvMonSampleAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 procReqInstance.killIt();
                 RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);

@@ -62,7 +62,7 @@ public class GenomaDataAudit {
      * @param parentAuditId 
      * @return  
  */    
-    public static Object[] projectAuditAdd(GenomaProjectAPI.GenomaProjectAPIEndPoints action, String tableName, String tableId, 
+    public static Object[] projectAuditAdd(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints action, String tableName, String tableId, 
                         String project, String study, Object[] auditlog, Integer parentAuditId) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();

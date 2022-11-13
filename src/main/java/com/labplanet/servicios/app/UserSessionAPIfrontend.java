@@ -46,7 +46,7 @@ import trazit.queries.QueryUtilitiesEnums;
  * @author User
  */
 public class UserSessionAPIfrontend extends HttpServlet {
-    public enum UserSessionAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum UserSessionAPIqueriesEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -59,7 +59,7 @@ public class UserSessionAPIfrontend extends HttpServlet {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build() ),
         ;
-        private UserSessionAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private UserSessionAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -115,9 +115,9 @@ public class UserSessionAPIfrontend extends HttpServlet {
                         LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                             
         }
-        UserSessionAPIfrontendEndpoints endPoint = null;
+        UserSessionAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = UserSessionAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = UserSessionAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   

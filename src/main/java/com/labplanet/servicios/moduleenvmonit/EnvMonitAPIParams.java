@@ -163,12 +163,12 @@ public class EnvMonitAPIParams extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_FRONTEND_UNRECEIVESAMPLES_LIST="sortFieldsName|sampleFieldToRetrieve"; 
+    public static final String MANDATPARMS_FE_UNRECSMPS_LIST="sortFieldsName|sampleFieldToRetrieve"; 
 
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_FRONTEND_UNRECEIVESAMPLES_LIST_SORT_FIELDS_NAME_DEFAULT_VALUE="";
+    public static final String MPARAMS_FE_UNRECSMPS_SORTFLDSNAME_DEFAULTV="";
 
     /**
      *
@@ -183,12 +183,12 @@ public class EnvMonitAPIParams extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_FRONTEND_UNRECEIVESAMPLES_LIST_SAMPLE_FIELD_RETRIEVE_DEFAULT_VALUE="sample_id";
+    public static final String MANDATPARMS_FE_UNRECSMPS_LIST_SAMPLE_FIELD_RETRIEVE_DEFAULT_VALUE="sample_id";
 
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_LIST=GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID; 
+    public static final String MANDATPARMS_FE_GETSMPANA_LIST=GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID; 
 
     /**
      *

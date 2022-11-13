@@ -33,12 +33,12 @@ import trazit.session.ProcedureRequestSession;
 public class GenomaConfigVariableAPIFrontend extends HttpServlet {
     
             
-    public enum  GenomaVariableAPIFrontEndEndPoints implements EnumIntEndpoints{
+    public enum  GenomaVariableAPIqueriesEndpoints implements EnumIntEndpoints{
             GET_PROCEDURE_USERS("GET_PROCEDURE_USERS", "", new LPAPIArguments[]{}, null, null),
             GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName", new LPAPIArguments[]{}, null, null),
             GET_ACTIVE_CONFIG_VARIABLE_SET("GET_ACTIVE_CONFIG_VARIABLE_SET", "", new LPAPIArguments[]{}, null, null)
           ;
-        private GenomaVariableAPIFrontEndEndPoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
+        private GenomaVariableAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -83,9 +83,9 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         
         try (PrintWriter out = response.getWriter()) {
 
-        GenomaVariableAPIFrontEndEndPoints endPoint = null;
+        GenomaVariableAPIqueriesEndpoints endPoint = null;
         try{
-            endPoint = GenomaVariableAPIFrontEndEndPoints.valueOf(actionName.toUpperCase());
+            endPoint = GenomaVariableAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;                   

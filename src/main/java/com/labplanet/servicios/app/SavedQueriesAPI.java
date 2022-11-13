@@ -91,7 +91,7 @@ public class SavedQueriesAPI extends HttpServlet {
 
     }
 
-    public enum SavedQueriesAPIfrontendEndpoints implements EnumIntEndpoints{
+    public enum SavedQueriesAPIqueriesEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -99,7 +99,7 @@ public class SavedQueriesAPI extends HttpServlet {
         //INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "",new LPAPIArguments[]{}),
         //INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}),
         ;
-        private SavedQueriesAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private SavedQueriesAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  

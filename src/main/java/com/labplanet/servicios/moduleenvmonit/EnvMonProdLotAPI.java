@@ -34,7 +34,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class EnvMonProdLotAPI extends HttpServlet {
-    public enum EnvMonProdLotAPIEndpoints implements EnumIntEndpoints{
+    public enum EnvMonProdLotAPIactionsEndpoints implements EnumIntEndpoints{
         /**
          *
          */
@@ -51,7 +51,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
                 EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
-        private EnvMonProdLotAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonProdLotAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
@@ -141,9 +141,9 @@ public class EnvMonProdLotAPI extends HttpServlet {
 //        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
 //        Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
-            EnvMonProdLotAPIEndpoints endPoint = null;
+            EnvMonProdLotAPIactionsEndpoints endPoint = null;
             try{
-                endPoint = EnvMonProdLotAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = EnvMonProdLotAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception er){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
@@ -242,9 +242,9 @@ public class EnvMonProdLotAPI extends HttpServlet {
 
 //            String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
 //            Rdbms.setTransactionId(schemaConfigName);      
-            EnvMonProdLotAPIEndpoints endPoint = null;
+            EnvMonProdLotAPIactionsEndpoints endPoint = null;
             try{
-                endPoint = EnvMonProdLotAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = EnvMonProdLotAPIactionsEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   

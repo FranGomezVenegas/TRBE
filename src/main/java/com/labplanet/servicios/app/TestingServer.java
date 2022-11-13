@@ -142,14 +142,14 @@ out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW testing. End");
 out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. Begin");  
 out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW, "em-demo-a", false, false, false));
 out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. End");  
-
+*/
 out.println("************ ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW testing. Begin");  
 out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW, "proc-deploy",false, false, true));
 out.println("************ ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW testing. End");  
 out.println("************ ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW NO testing. Begin");  
 out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW, "proc-deploy", false, false, false));
 out.println("************ ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW NO testing. End");  
-*/
+
 out.println("************ ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW testing. Begin");  
 out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "em-demo-a", false, false, true));
 out.println("************ ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW testing. End");  

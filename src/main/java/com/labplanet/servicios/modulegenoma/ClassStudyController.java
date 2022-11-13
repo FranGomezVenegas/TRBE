@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.modulegenoma;
 
-import com.labplanet.servicios.modulegenoma.GenomaStudyAPI.GenomaStudyAPIEndPoints;
+import com.labplanet.servicios.modulegenoma.GenomaStudyAPI.GenomaStudyAPIactionsEndPoints;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -27,9 +27,9 @@ public class ClassStudyController implements ClassControllerActionsEndpointForTe
     
     public ClassStudyController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         Object[] argsForLogFiles=new Object[0];
-        GenomaStudyAPIEndPoints endPoint = null;
+        GenomaStudyAPIactionsEndPoints endPoint = null;
         try{
-            endPoint = GenomaStudyAPIEndPoints.valueOf(actionName.toUpperCase());
+            endPoint = GenomaStudyAPIactionsEndPoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);

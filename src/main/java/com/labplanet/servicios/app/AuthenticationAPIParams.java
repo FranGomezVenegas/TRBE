@@ -25,7 +25,7 @@ import trazit.enums.EnumIntMessages;
  */
 public class AuthenticationAPIParams extends HttpServlet {
 
-    public enum AuthenticationAPIEndpoints implements EnumIntEndpoints{
+    public enum AuthenticationAPIactionsEndpoints implements EnumIntEndpoints{
         USER_CHANGE_PSWD("USER_CHANGE_PASSWORD", "userChangePswd_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -67,7 +67,7 @@ public class AuthenticationAPIParams extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABS_STRING, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         ;      
-        private AuthenticationAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private AuthenticationAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  

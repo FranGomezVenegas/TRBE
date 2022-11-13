@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
-import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIfrontendEndpoints;
+import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIqueriesEndpoints;
 import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.TblsProcedure;
@@ -74,9 +74,9 @@ public class InvestigationAPIfrontend extends HttpServlet {
                 return;                             
         }
         try (PrintWriter out = response.getWriter()) {            
-            InvestigationAPIfrontendEndpoints endPoint = null;
+            InvestigationAPIqueriesEndpoints endPoint = null;
             try{
-                endPoint = InvestigationAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = InvestigationAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   

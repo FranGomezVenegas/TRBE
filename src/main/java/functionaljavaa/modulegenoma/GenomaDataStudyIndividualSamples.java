@@ -31,7 +31,7 @@ import trazit.session.ResponseMessages;
  */
 public class GenomaDataStudyIndividualSamples {
 
-public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, Integer indivId, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
     ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
@@ -167,7 +167,7 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
         return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);            
      }    
 
-    public Object[] studyIndividualSampleActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, Integer indivId, Integer sampleId){
+    public Object[] studyIndividualSampleActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, Integer sampleId){
         String[] fieldsName=new String[]{TblsGenomaData.StudyIndividualSample.ACTIVE.getName()};
         Object[] fieldsValue=new Object[]{true};
         SqlWhere sqlWhere = new SqlWhere();
@@ -180,7 +180,7 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
         return diagnosesProj;      
     }    
 
-    public Object[] studyIndividualSampleDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, Integer indivId, Integer sampleId){
+    public Object[] studyIndividualSampleDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, Integer sampleId){
         Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
@@ -199,7 +199,7 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
         return diagnosesProj;      
     }   
 
-    public Object[] studyIndividualSampleUpdate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, Integer indivId, Integer sampleId, String[] fieldsName, Object[] fieldsValue){
+    public Object[] studyIndividualSampleUpdate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, Integer sampleId, String[] fieldsName, Object[] fieldsValue){
         Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 

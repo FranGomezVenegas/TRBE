@@ -31,7 +31,7 @@ import trazit.session.InternalMessage;
  * @author User
  */
 public class GenomaDataStudySamplesSet {
-public InternalMessage createStudySamplesSet(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String sampleSetName, String[] samples, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+public InternalMessage createStudySamplesSet(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String sampleSetName, String[] samples, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
     
@@ -170,7 +170,7 @@ public InternalMessage createStudySamplesSet(GenomaStudyAPI.GenomaStudyAPIEndPoi
     return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);            
 }    
 
-public Object[] studySamplesSetActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String sampleSetName){
+public Object[] studySamplesSetActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String sampleSetName){
     String[] fieldsName=new String[]{TblsGenomaData.StudySamplesSet.ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};
     SqlWhere sqlWhere = new SqlWhere();
@@ -183,7 +183,7 @@ public Object[] studySamplesSetActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints e
     return diagnosesProj;      
 }    
 
-public Object[] studySamplesSetDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String sampleSetName){
+public Object[] studySamplesSetDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String sampleSetName){
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
     
@@ -201,7 +201,7 @@ public Object[] studySamplesSetDeActivate(GenomaStudyAPI.GenomaStudyAPIEndPoints
     return diagnosesProj;      
 }   
 
-public Object[] studySamplesSetUpdate(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String sampleSetName, String[] fieldsName, Object[] fieldsValue){
+public Object[] studySamplesSetUpdate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String sampleSetName, String[] fieldsName, Object[] fieldsValue){
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
@@ -219,7 +219,7 @@ public Object[] studySamplesSetUpdate(GenomaStudyAPI.GenomaStudyAPIEndPoints end
     return diagnosesProj;      
 } 
 
-public Object[] studySamplesSetAddSample(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String sampleSetName, String sampleId) {
+public Object[] studySamplesSetAddSample(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String sampleSetName, String sampleId) {
     Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;
     
@@ -236,7 +236,7 @@ public Object[] studySamplesSetAddSample(GenomaStudyAPI.GenomaStudyAPIEndPoints 
     return updateSamplesSetSamples;
 }
 
-public Object[] studySamplesSetRemoveSample(GenomaStudyAPI.GenomaStudyAPIEndPoints endpoint, String studyName, String sampleSetName, String sampleId) {
+public Object[] studySamplesSetRemoveSample(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String sampleSetName, String sampleId) {
     Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;
 

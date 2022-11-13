@@ -11,7 +11,7 @@ import functionaljavaa.testingscripts.LPTestingOutFormat;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
-import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIactionsEndpoints;
 import databases.Rdbms;
 import databases.TblsData;
 import functionaljavaa.businessrules.BusinessRules;
@@ -150,9 +150,9 @@ public class TstDataSample extends HttpServlet {
                     actionName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+3]);
                 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, procInstanceName, userName, userRole, actionName}));
-                SampleAPIEndpoints endPoint = null;
+                SampleAPIactionsEndpoints endPoint = null;
                 try{
-                    endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+                    endPoint = SampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
                 }catch(Exception e){
 //                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                     //return;                   
@@ -169,7 +169,7 @@ public class TstDataSample extends HttpServlet {
                         BusinessRules bi=new BusinessRules(procInstanceName, null);
                         Object[] actionEnabledForRole = LPPlatform.procUserRoleActionEnabled(procInstanceName, userRole, actionName, bi);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabledForRole[0].toString())){
-                            if (SampleAPIEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName)){                
+                            if (SampleAPIactionsEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName)){                
                                     dataSample2D[0][0] = actionEnabledForRole[0];
                                     dataSample2D[0][1] = actionEnabledForRole[1]; dataSample2D[0][2] = actionEnabledForRole[2]; 
                                     dataSample2D[0][3] = actionEnabledForRole[3]; dataSample2D[0][4] = actionEnabledForRole[4]; 
@@ -465,7 +465,7 @@ public class TstDataSample extends HttpServlet {
                         }
                     }
                 }                
-                if (SampleAPIEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName))  dataSample = LPArray.array2dTo1d(dataSample2D);
+                if (SampleAPIactionsEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName))  dataSample = LPArray.array2dTo1d(dataSample2D);
 
                 if (numEvaluationArguments==0){                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(dataSample)));                     

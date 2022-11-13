@@ -1,6 +1,6 @@
 package com.labplanet.servicios.moduledefinition;
 
-import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIEndpoints;
+import com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI.ModuleDefinitionAPIactionsEndpoints;
 import functionaljavaa.platform.doc.AuditEventsToRequirements;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.platform.doc.ErrorMessageCodesToRequirements;
@@ -24,7 +24,7 @@ public class ClassTrazitCodeDoc {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassTrazitCodeDoc(HttpServletRequest request, HttpServletResponse response, ModuleDefinitionAPIEndpoints endPoint){
+    public ClassTrazitCodeDoc(HttpServletRequest request, HttpServletResponse response, ModuleDefinitionAPIactionsEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         Object[] actionDiagnoses = null;
