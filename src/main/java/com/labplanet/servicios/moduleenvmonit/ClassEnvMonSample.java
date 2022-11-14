@@ -91,9 +91,8 @@ public class ClassEnvMonSample {
             //procReqSession.killIt();
             String language=procReqSession.getLanguage();
             this.isSuccess=false;           
-            this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
-                    argValues[1].toString(), new Object[]{argValues[2].toString()});
-            this.diagnostic=this.responseError;
+            this.diagnostic=(Object[]) argValues[1];
+            this.responseError=this.diagnostic;
             this.messageDynamicData=new Object[]{argValues[2].toString()};
             return;                        
         }
@@ -118,10 +117,15 @@ public class ClassEnvMonSample {
                     if (LPNulls.replaceNull(argValues[2]).toString().length()>0){
                         fieldNames=argValues[2].toString().split("\\|");
                         fieldValues=LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|"));
-                    }                   
-                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
-                        actionDiagnoses=fieldValues;
-                    else{
+                        if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                            actionDiagnoses=fieldValues;                        
+                    }                                       
+                    if (fieldNames!=null){
+                        Object[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(fieldNames, fieldValues);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkTwoArraysSameLength[0].toString()))
+                            actionDiagnoses=checkTwoArraysSameLength;
+                    }
+                    if (actionDiagnoses==null){
                         if (LPNulls.replaceNull(argValues[6]).toString().length()==0){
                             actionDiagnoses = prgSmp.logProgramSample(smpTmp, (Integer) smpTmpV, 
                                 fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);

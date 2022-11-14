@@ -42,7 +42,6 @@ import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ResponseMessages;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
-import trazit.enums.EnumIntMessages;
 /**
  *
  * @author User
@@ -89,10 +88,9 @@ public class ClassSample {
                 //procReqSession.killIt();
                 language=procReqSession.getLanguage();
                 this.isSuccess=false;           
-                this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
-                        (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
-                this.messageDynamicData=new Object[]{argValues[2].toString()};
-                this.diagnostic=this.responseError;
+                this.diagnostic=(Object[]) argValues[1];                
+                this.responseError=(Object[]) argValues[1];
+                this.messageDynamicData=new Object[]{argValues[2].toString()};                
                 return;                        
             }            
             for (LPAPIArguments currArg: endPoint.getArguments()){
@@ -131,23 +129,31 @@ public class ClassSample {
                     String fieldValue=argValues[6].toString();
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
+                    diagn=null;
                     if (fieldName!=null&&fieldName.length()>0) fieldNames = fieldName.split("\\|");
                     if (fieldValue!=null&&fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
                         diagn=fieldValues;
                         break;
                     }
-                    fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsData.Sample.SPEC_CODE.getName(), TblsData.Sample.SPEC_CODE_VERSION.getName(), TblsData.Sample.SPEC_VARIATION_NAME.getName()});
-                    fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{specName, specVersion, variationName});
-                    if (argValues[7]==null||argValues[7].toString().length()==0){
-                        diagn = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues);
-                    }else{
-                        Integer numSamplesToLog=(Integer) argValues[7];
-                        diagn = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
+                    if (fieldNames!=null){
+                        Object[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(fieldNames, fieldValues);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkTwoArraysSameLength[0].toString()))
+                            diagn=checkTwoArraysSameLength;                        
                     }
-                    Object[] dynamicDataObjects = new Object[]{diagn[diagn.length-1]};
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), diagn[diagn.length-1]);
-                    this.messageDynamicData=new Object[]{diagn[diagn.length-1]};
+                    if (diagn==null){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsData.Sample.SPEC_CODE.getName(), TblsData.Sample.SPEC_CODE_VERSION.getName(), TblsData.Sample.SPEC_VARIATION_NAME.getName()});
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{specName, specVersion, variationName});
+                        if (argValues[7]==null||argValues[7].toString().length()==0){
+                            diagn = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues);
+                        }else{
+                            Integer numSamplesToLog=(Integer) argValues[7];
+                            diagn = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
+                        }
+                        Object[] dynamicDataObjects = new Object[]{diagn[diagn.length-1]};
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), diagn[diagn.length-1]);
+                        this.messageDynamicData=new Object[]{diagn[diagn.length-1]};                    
+                    }
                     break;
                 case RECEIVESAMPLE:
                     sampleId = (Integer) argValues[0];

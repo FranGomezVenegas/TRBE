@@ -661,7 +661,7 @@ public class  LPArray {
  * @param arrayB Object[]
  * @return String[6]. Position 3 FALSE/TRUE is the diagnostic.
  */    
-    public static String[] checkTwoArraysSameLength(Object[] arrayA, Object[] arrayB){
+    public static Object[] checkTwoArraysSameLength(Object[] arrayA, Object[] arrayB){
     String errorCode = "";
     String[] errorDetailVariables = new String[0];
 
@@ -671,7 +671,7 @@ public class  LPArray {
         if (arrayA.length!=arrayB.length){
            errorDetailVariables = addValueToArray1D(errorDetailVariables, Arrays.toString(arrayA));
            errorDetailVariables = addValueToArray1D(errorDetailVariables, Arrays.toString(arrayB));
-           return (String[]) ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, errorDetailVariables);           
+           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, errorDetailVariables);           
         }else{
             diagnoses[0]=LPPlatform.LAB_TRUE;
         }    
