@@ -103,7 +103,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         LPPlatform.addJavaClassDoc(javaDocFieldsProj, javaDocValuesProj, elementsDev);
     }    
     if (!devMode){
-        String[] diagnosesProj = LPArray.checkTwoArraysSameLength(sampleFieldName, sampleFieldValue);
+        Object[] diagnosesProj = LPArray.checkTwoArraysSameLength(sampleFieldName, sampleFieldValue);
         if (sampleFieldName.length!=sampleFieldValue.length){
             StackTraceElement[] elements = Thread.currentThread().getStackTrace();
             diagnosesProj[0]= elements[1].getClassName() + "." + elements[1].getMethodName();

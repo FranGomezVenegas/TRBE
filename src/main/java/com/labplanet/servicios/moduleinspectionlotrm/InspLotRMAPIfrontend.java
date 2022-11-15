@@ -36,6 +36,7 @@ import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.queries.QueryUtilities;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
 /**
@@ -44,10 +45,10 @@ import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
  */
 public class InspLotRMAPIfrontend extends HttpServlet {
 
-    public enum EnvMonIncubBatchAPIqueriesEndpoints implements EnumIntEndpoints{
+    public enum InspLotRMAPIqueriesEndpoints implements EnumIntEndpoints{
         ACTIVE_BATCH_LIST("ACTIVE_BATCH_LIST", "", new LPAPIArguments[]{}),
         ;
-        private EnvMonIncubBatchAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private InspLotRMAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -62,27 +63,15 @@ public class InspLotRMAPIfrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public LPAPIArguments[] getArguments() {return arguments;} 
+        @Override        public String getApiUrl(){return ApiUrls.INSPLOT_RM_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
 
-        @Override
-        public JsonArray getOutputObjectTypes() {
-            return EndPointsToRequirements.endpointWithNoOutputObjects;
-        }
+        @Override        public JsonArray getOutputObjectTypes() {return EndPointsToRequirements.endpointWithNoOutputObjects;}
     }
     
     /**

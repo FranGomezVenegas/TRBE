@@ -59,6 +59,7 @@ public class AppHeaderAPI extends HttpServlet {
             return hm;
         }        
         @Override        public String getName(){return this.name;}
+        @Override        public String getApiUrl(){return this.name;}
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}

@@ -36,6 +36,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.queries.QueryUtilitiesEnums;
 /**
  *
@@ -195,6 +196,7 @@ public class EnvMonAPIStats extends HttpServlet {
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override public String getSuccessMessageCode() {return this.successMessageCode;}
+        @Override        public String getApiUrl(){return ApiUrls.ENVMON_STATS_QUERIES.getUrl();}
         private final String name;
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes; 

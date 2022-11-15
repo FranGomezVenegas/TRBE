@@ -489,6 +489,7 @@ public class ClassSample {
                             // sampleTemplate, sampleTemplateVersion,
                             fieldNames, fieldValues);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ALIQ.getTableName(), diagn[diagn.length-1]);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
                 case LOGSUBALIQUOT:
@@ -506,7 +507,8 @@ public class ClassSample {
                     diagn = smp.logSampleSubAliquot(aliquotId,
                             // sampleTemplate, sampleTemplateVersion,
                             fieldNames, fieldValues);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ALIQ.getTableName(), sampleId);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ALIQ_SUB.getTableName(), diagn[diagn.length-1]);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
                 case SAMPLESTAGE_MOVETOPREVIOUS:

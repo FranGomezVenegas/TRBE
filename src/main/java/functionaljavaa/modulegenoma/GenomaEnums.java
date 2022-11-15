@@ -61,6 +61,8 @@ public final class GenomaEnums {
         STUDY_ALREADY_INACTIVE("studyAlreadyInactive", "The study <*1*> is already inactive in procedure <*2*>", ""),
         VARIABLES_SET_NOT_FOUND("variablesSetNotFound", "The variables set <*1*> does not exist in procedure <*2*>",""),
         VARIABLE_NOT_FOUND("variableNotFound", "Variable <*1*> does not exist in procedure <*2*>",""),
+        STUDY_INDIVIDUAL_ALREADY_DEACTIVATED("studyIndividualAlreadyInactive", "",""),
+        STUDY_INDIVIDUAL_NOT_FOUND("studyIndividualNotFound", "Individual <*1*> does not exist in procedure <*2*>",""),
         
         ;
         private GenomaErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){

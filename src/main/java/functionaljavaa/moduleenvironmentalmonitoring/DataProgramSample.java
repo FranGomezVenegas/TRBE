@@ -16,6 +16,7 @@ import databases.SqlWhere;
 import databases.TblsData;
 import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
+import functionaljavaa.moduleenvironmentalmonitoring.EnvMonEnums.EnvMonitErrorTrapping;
 import functionaljavaa.parameter.Parameter;
 import trazit.session.ResponseMessages;
 import lbplanet.utilities.LPArray;
@@ -112,7 +113,7 @@ public class DataProgramSample{
                 new Object[]{programName, programLocation}, 
                 specFldNames, true);            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0][0].toString()))
-               return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Program <*1*> or location <*2*> not found for procedure <*3*>", new Object[]{programName, programLocation, procInstanceName});    
+               return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{programName, programLocation, procInstanceName});    
             for (int i=0;i<specFldNames.length;i++){
                 if (diagnosis[0][i]!=null && diagnosis[0][i].toString().length()>0){
                     Integer fieldPosic=LPArray.valuePosicInArray(fieldName, specFldNames[i]);
@@ -153,7 +154,7 @@ public class DataProgramSample{
         
         String samplerArea = programLocationPersonalInfo[0][1].toString();
         if ((samplerArea==null) || (samplerArea!=null && samplerArea.length()==0) ) 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Personal Analysis required but not defined", null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.PERSONAL_ANALYSIS_REQUIRED_NOT_DEFINED, null);
         String[] samplerAreas = samplerArea.split("\\|");
         Object[] newProjSample= new Object[0];
         for (String curArea: samplerAreas){
@@ -204,6 +205,8 @@ public class DataProgramSample{
                   sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
             }
         }
+        if (insertRecordInTable==null)
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "nothingToAdd", null);
         return insertRecordInTable.getApiMessage();
     }
     /**
@@ -224,7 +227,7 @@ public class DataProgramSample{
                 new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()},
                 new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()+" desc"});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgRow[0][0].toString())) 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "microorganismNotFound", new  Object[]{microorganismName, sampleId});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,  EnvMonitErrorTrapping.MICROORGANISM_FOUND, new  Object[]{microorganismName, sampleId});
         for (int i=0;i<items;i++){
             SqlWhere where =new SqlWhere();
             where.addConstraint(TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID, null, new Object[]{sampleId}, null);

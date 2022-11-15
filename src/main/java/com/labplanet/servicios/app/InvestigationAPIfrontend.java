@@ -11,9 +11,7 @@ import databases.Rdbms;
 import databases.TblsProcedure;
 import databases.features.Token;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
-import functionaljavaa.parameter.Parameter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -63,9 +61,9 @@ public class InvestigationAPIfrontend extends HttpServlet {
                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;          
         }             
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-        String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME); 
+        String actionName = instanceForQueries.getActionName(); 
+        String finalToken = instanceForQueries.getTokenString();
+        String procInstanceName = instanceForQueries.getProcedureInstance();
         
         Token token = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){

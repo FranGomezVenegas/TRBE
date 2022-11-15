@@ -6,9 +6,6 @@
 package trazit.session;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET;
-import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION;
-import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import static databases.features.DbEncryption.getEncryptFields;
 import databases.Rdbms;
 import databases.features.Token;
@@ -34,6 +31,10 @@ import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredOb
  * @author User
  */
 public class ProcedureRequestSession {
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET_QUERIES=GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
     /**
      * @return the isTransactional
@@ -97,7 +98,7 @@ public class ProcedureRequestSession {
         String finalToken = "";
         Token tokn = null;
         String dbName = "";
-        if (!isForDocumentation){
+        
             dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);            
             finalToken = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN); 
             if (finalToken==null || finalToken.length()==0)
@@ -108,6 +109,7 @@ public class ProcedureRequestSession {
                 return;            
             }
             tokn = new Token(finalToken);
+        if (!isForDocumentation){            
             if ( (!LPNulls.replaceNull(dbName).equalsIgnoreCase(LPNulls.replaceNull(tokn.getDbName()))) ){
                 this.hasErrors=true;
                 this.errorMessage="This dbName does not match the one in the token.";
@@ -121,17 +123,36 @@ public class ProcedureRequestSession {
                 areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
             else if (isForDocumentation)
                 areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION.split("\\|"));                                       
+            else if (isQuery)
+                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_QUERIES.split("\\|"));                                       
             else
                 areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 this.hasErrors=true;
                 this.errorMessage=LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode()+areMandatoryParamsInResponse[1].toString();                
                 return;          
-            }                 
-            String actionNm = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            if (actionNm==null || actionNm.length()==0)
-                actionNm = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);        
-            this.actionName=actionNm;
+            }  
+            if (isQuery){
+                String actionNm = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_VIEW_NAME);
+                if (actionNm==null || actionNm.length()==0)
+                    actionNm = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_VIEW_NAME);       
+                if (actionNm==null || actionNm.length()==0){
+                    actionNm = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+                    if (actionNm==null || actionNm.length()==0)
+                        actionNm = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);        
+                }
+                if (actionNm==null || actionNm.length()==0){
+                    this.hasErrors=true;
+                    this.errorMessage=LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode()+"viewName or actionName";                
+                    return;                              
+                }else
+                this.actionName=actionNm;                
+            }else{
+                String actionNm = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+                if (actionNm==null || actionNm.length()==0)
+                    actionNm = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);        
+                this.actionName=actionNm;
+            }
         }else
             this.actionName=theActionName;
         String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);     

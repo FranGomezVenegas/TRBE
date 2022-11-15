@@ -25,6 +25,7 @@ import lbplanet.utilities.TrazitUtiilitiesEnums;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
@@ -60,7 +61,7 @@ public class SopUserAPI extends HttpServlet {
         @Override        public String getName(){return this.name;}
         @Override public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-
+        @Override        public String getApiUrl(){return ApiUrls.SOPS_ACTIONS.getUrl();}
         /**
          * @return the arguments
          */

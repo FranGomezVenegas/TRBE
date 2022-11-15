@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app.platformadmin;
 
-import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import functionaljavaa.platformadmin.PlatformAdminEnums;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;

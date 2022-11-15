@@ -29,6 +29,7 @@ import lbplanet.utilities.LPArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 
 /**
  *
@@ -67,27 +68,16 @@ public class SavedQueriesAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
      
         private final String name;
         private final String successMessageCode;  
         private final  LPAPIArguments[] arguments;
 
-        public JsonArray getOutputObjectTypes() {
-            return EndPointsToRequirements.endpointWithNoOutputObjects;
-        }
+        @Override        public JsonArray getOutputObjectTypes() {return EndPointsToRequirements.endpointWithNoOutputObjects;}
+        @Override        public String getApiUrl(){return ApiUrls.SAVEDQUERIES_ACTIONS.getUrl();}
 
     }
 
@@ -114,26 +104,15 @@ public class SavedQueriesAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}     
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
 
-        public JsonArray getOutputObjectTypes() {
-            return EndPointsToRequirements.endpointWithNoOutputObjects;
-        }
+        @Override        public JsonArray getOutputObjectTypes() {return EndPointsToRequirements.endpointWithNoOutputObjects;}
+        @Override        public String getApiUrl(){return ApiUrls.SAVEDQUERIES_QUERIES.getUrl();}
     }
 
     public enum ParamsList{INVESTIGATION_ID("investigationId"), OBJECTS_TO_ADD("objectsToAdd"),    

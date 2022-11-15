@@ -45,14 +45,90 @@ public class GlobalVariables {
             this.attributeName=attr;
             this.servletName=svlt;
         }
-        public String getAttributeName() {
-            return attributeName;
-        }
-        public String getServletName() {
-            return servletName;
-        }     
+        public String getAttributeName() {return attributeName;}
+        public String getServletName() {return servletName;}     
         private final String servletName;        
         private final String attributeName;        
     }
     
+public enum ApiUrls{
+
+        APP_AUTHENTICATION_ACTIONS("/app/AuthenticationAPIactions"),
+        APP_USER_SESSIONS_QUERIES("/app/UserSessionAPIqueries"),
+        APP_INCIDENTS_ACTIONS("/app/IncidentAPIactions"),
+        APP_INCIDENTS_QUERIES("/app/IncidentAPIqueries"),
+        APP_CALENDAR_ACTIONS("/app/HolidayCalendarAPIactions"),
+        APP_CALENDAR_QUERIES("/app/HolidayCalendarAPIqueries"),
+        PLATFORM_ADMIN_ACTIONS("/app/PlatformAdminAPIactions"),
+        PLATFORM_ADMIN_QUERIES("/app/PlatformAdminAPIqueries"),
+        // /AppTrazitInitSession
+        // /app/VideoTutorialAPIqueries
+        PLATFORM_DEFINITION_ACTIONS("/PlatformDefinitionToInstance"),
+        MODULE_DEFINITION_ACTIONS("/app/ModuleDefinitionAPI"),
+        PROCEDURE_DEFINITION_ACTIONS("/appProcMgr/RequirementsProcedureDefinitionAPIActions"),
+        PROCEDURE_DEFINITION_QUERIES("/appProcMgr/RequirementsProcedureDefinitionAPIQueries"),
+        
+        CONFIG_MASTERDATA_ACTIONS("/modules/ConfigMasterDataAPI"),
+        
+        TESTING_ACTIONS(""),        
+        TESTING_LIMIT_AND_RESULT(""),
+        DOC_ENDPOINTS_QUERIES("/Doc/EndpointsDocAPIqueries"),
+        // /testing/platform/TestingCoverageRun
+        // /testing/platform/TestingRegressionUAT
+        
+        SAVEDQUERIES_ACTIONS("/app/SavedQueriesAPIactions"),
+        SAVEDQUERIES_QUERIES("/app/SavedQueriesAPIqueries"),
+
+        CERTIFY_QUERIES("/app/CertifyAPIqueries"),
+        CERTIFY_ANALYSISMETHODS_ACTIONS("/app/CertifyAnalysisMethodAPIactions"),
+        SOPS_QUERIES("/app/SopUserAPIqueries"),
+        SOPS_ACTIONS("/app/SopUserAPIactions"),
+        // /app/AnalysisMethodCertifUserAPIqueries 
+        
+        BATCH_ARRAY_ACTIONS("/modulebatch/BatchAPI"),
+        
+        INVESTIGATIONS_ACTIONS("/app/InvestigationAPIactions"),
+        INVESTIGATIONS_QUERIES("/app/InvestigationAPIqueries"),
+        
+        SAMPLES_ACTIONS("/modulesample/SampleAPIactions"),
+        SAMPLES_QUERIES("/modulesample/SampleAPIqueries"),
+        
+        ENVMON_ACTIONS("/moduleenvmon/EnvMonAPIactions"),        
+        ENVMON_QUERIES("EnvMonAPIqueries"), //2???
+        ENVMON_STATS_QUERIES("/moduleenvmon/EnvMonAPIstats"),
+        ENVMON_SAMPLE_ACTIONS("/moduleenvmon/EnvMonSampleAPIactions"),
+        ENVMON_SAMPLE_QUERIES("/moduleenvmon/EnvMonSampleAPIqueries"),
+        ENVMON_INCUB_BATCH_QUERIES("/moduleenvmon/EnvMonIncubBatchAPIqueries"),
+        
+        ENVMON_INCUBATOR_ACTIONS("/moduleenvmon/EnvMonIncubatorAPIactions"),
+        ENVMON_INCUBATOR_QUERIES("/moduleenvmon/EnvMonIncubatorAPIqueries"),
+        
+        ENVMON_PRODLOT_ACTIONS(""),
+        
+        INSTRUMENTS_ACTIONS("/app/procs/InstrumentsAPIactions"),
+        INSTRUMENTS_QUERIES("/app/procs/InstrumentsAPIqueries"),
+        // /testing/app/TestingPlatformInstruments
+        
+        GENOMA_PROJECT_ACTIONS("/modulegenoma/GenomaProjectAPIactions"),
+        GENOMA_PROJECT_QUERIES(""),
+        GENOMA_STUDY_ACTIONS("/modulegenoma/GenomaStudyAPIactions"),
+        GENOMA_STUDY_QUERIES("/modulegenoma/GenomaStudyAPIqueries"),
+        GENOMA_VARIABLE_ACTIONS("/modulegenoma/GenomaConfigVariableAPI"),
+        GENOMA_VARIABLE_QUERIES("/modulegenoma/GenomaConfigVariableAPIqueries"),
+        // /modulegenome/TablesDeployment
+        // /modulegenoma/GenomaStudyObjectsVariablesAPI
+        // /testing/moduleGenoma/TestingGenoma
+        
+        INSPLOT_RM_ACTIONS("/moduleinsplotrm/InspLotRMAPIactions"),
+        INSPLOT_RM_QUERIES("/moduleinsplotrm/InspLotRMAPIqueries"),
+        // /testing/moduleInspLotRM/TestingInspLotRM
+        
+        ;
+        private ApiUrls(String url){
+            this.url=url;
+        }
+        public String getUrl() {return url;}     
+        private final String url;    
+    }    
+    //@Override        public String getApiUrl(){return ApiUrls.INSTRUMENTS_QUERIES.getUrl();}
 }

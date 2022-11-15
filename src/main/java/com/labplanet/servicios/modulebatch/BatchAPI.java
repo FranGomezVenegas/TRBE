@@ -9,7 +9,6 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPHttp;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import databases.Rdbms;
 import databases.features.Token;
 import functionaljavaa.batch.BatchArray;
 import functionaljavaa.businessrules.BusinessRules;
@@ -30,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import trazit.enums.EnumIntEndpoints;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 
 /**
  *
@@ -59,27 +59,14 @@ public class BatchAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}  
+        @Override        public String getApiUrl(){return ApiUrls.BATCH_ARRAY_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
-
-        
-        public JsonArray getOutputObjectTypes() {
-            return EndPointsToRequirements.endpointWithNoOutputObjects;
-        }
+        @Override        public JsonArray getOutputObjectTypes() {return EndPointsToRequirements.endpointWithNoOutputObjects;}
     }
     
     
@@ -169,7 +156,7 @@ public class BatchAPI extends HttpServlet {
                 return;                   
             }
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
-            Rdbms.setTransactionId(procInstanceName);
+            //Rdbms.setTransactionId(procInstanceName);
             try (PrintWriter out = response.getWriter()) {
                 BusinessRules bi=new BusinessRules(procInstanceName, null);
                 Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName, bi);

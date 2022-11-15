@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
 import javax.json.JsonArray;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -28,6 +29,8 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.session.ProcedureRequestSession;
 import trazit.enums.EnumIntEndpoints;
+import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 /**
  *
  * @author User
@@ -41,117 +44,229 @@ public class GenomaStudyAPI extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9)}, null, DataGenomaStudyAuditEvents.NEW_STUDY),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).build(), DataGenomaStudyAuditEvents.NEW_STUDY),
         STUDY_ACTIVATE("STUDY_ACTIVATE", "studyActivated_success", 
-                new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, null, DataGenomaStudyAuditEvents.ACTIVATE_STUDY),
+                new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).build(), DataGenomaStudyAuditEvents.ACTIVATE_STUDY),
         STUDY_DEACTIVATE("STUDY_DEACTIVATE", "studyDeactivated_success", 
-                new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, null, DataGenomaStudyAuditEvents.DEACTIVATE_STUDY),
+                new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).build(), DataGenomaStudyAuditEvents.DEACTIVATE_STUDY),
         STUDY_UPDATE("STUDY_UPDATE", "studyUpdated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
-                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9)}, null, DataGenomaStudyAuditEvents.UPDATE_STUDY),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).build(), DataGenomaStudyAuditEvents.UPDATE_STUDY),
         STUDY_ADD_USER("STUDY_ADD_USER", "userAddedToStudy_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaStudyAuditEvents.STUDY_ADD_USER),
+                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_ADD_USER),
         STUDY_REMOVE_USER("STUDY_REMOVE_USER", "userRemovedToStudy_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaStudyAuditEvents.STUDY_REMOVE_USER),
+                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_REMOVE_USER),
         STUDY_CHANGE_USER_ROLE("STUDY_CHANGE_USER_ROLE", "userStudyChangedRole_sucess", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaStudyAuditEvents.STUDY_CHANGE_USER_ROLE),
+                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_CHANGE_USER_ROLE),
         STUDY_USER_ACTIVATE("STUDY_USER_ACTIVATE", "userStudyActivated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8)}, null, DataGenomaStudyAuditEvents.STUDY_USER_ACTIVATE),
+                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_USER_ACTIVATE),
         STUDY_USER_DEACTIVATE("STUDY_USER_DEACTIVATE", "userStudyDeactivated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaStudyAuditEvents.STUDY_USER_DEACTIVATE),
+                new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_USER_DEACTIVATE),
         STUDY_CREATE_INDIVIDUAL("STUDY_CREATE_INDIVIDUAL", "studyAddInvidividual_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),}, null, DataGenomaStudyAuditEvents.NEW_STUDY_INDIVIDUAL),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName()).build()).build(), DataGenomaStudyAuditEvents.NEW_STUDY_INDIVIDUAL),
         STUDY_INDIVIDUAL_ACTIVATE("STUDY_INDIVIDUAL_ACTIVATE", "studyActivateInvidividual_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
-                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, null, DataGenomaStudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL),
+                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName()).build()).build(), DataGenomaStudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL),
         STUDY_INDIVIDUAL_DEACTIVATE("STUDY_INDIVIDUAL_DEACTIVATE", "studyDeactivateInvidividual_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
-                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, null, DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL),
+                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName()).build()).build(), DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL),
         STUDY_CREATE_INDIVIDUAL_SAMPLE("STUDY_CREATE_INDIVIDUAL_SAMPLE", "studyAddInvidividualSample_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
-                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, null, DataGenomaStudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL_SAMPLE),
+                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName()).build()).build(), DataGenomaStudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL_SAMPLE),
         STUDY_INDIVIDUAL_SAMPLE_ACTIVATE("STUDY_INDIVIDUAL_SAMPLE_ACTIVATE", "studyActivateInvidividualSample_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLE_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8)}, null, DataGenomaStudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL_SAMPLE),
+                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLE_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName()).build()).build(), DataGenomaStudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL_SAMPLE),
         STUDY_INDIVIDUAL_SAMPLE_DEACTIVATE("STUDY_INDIVIDUAL_SAMPLE_DEACTIVATE", "studyDeactivateInvidividualSample_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLE_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL_SAMPLE),
+                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLE_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName()).build()).build(), DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL_SAMPLE),
         STUDY_CREATE_FAMILY("STUDY_CREATE_FAMILY", "studyAddFamily_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.FAMILY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
-                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUALS_LIST.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10)}, null, DataGenomaStudyAuditEvents.NEW_STUDY_FAMILY),
+                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUALS_LIST.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName()).build()).build(), DataGenomaStudyAuditEvents.NEW_STUDY_FAMILY),
         STUDY_FAMILY_ACTIVATE("STUDY_FAMILY_ACTIVATE", "studyActivateFamily_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
-                new LPAPIArguments(GenomaProjectAPIParamsList.FAMILY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, null, DataGenomaStudyAuditEvents.ACTIVATE_STUDY_FAMILY),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FAMILY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName()).build()).build(), DataGenomaStudyAuditEvents.ACTIVATE_STUDY_FAMILY),
         STUDY_FAMILY_DEACTIVATE("STUDY_FAMILY_DEACTIVATE", "studyDeactivateFamily_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
-                new LPAPIArguments(GenomaProjectAPIParamsList.FAMILY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, null, DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_FAMILY),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FAMILY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName()).build()).build(), DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_FAMILY),
         STUDY_FAMILY_ADD_INDIVIDUAL("STUDY_FAMILY_ADD_INDIVIDUAL", "studyFamilyAddIndividual_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.FAMILY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUALS_LIST.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
-                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10)}, null, DataGenomaStudyAuditEvents.STUDY_FAMILY_ADDED_INDIVIDUAL),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_FAMILY_ADDED_INDIVIDUAL),
         STUDY_FAMILY_REMOVE_INDIVIDUAL("STUDY_FAMILY_REMOVE_INDIVIDUAL", "studyFamilyRemoveIndividual_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.FAMILY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),}, null, DataGenomaStudyAuditEvents.STUDY_FAMILY_REMOVED_INDIVIDUAL),
+                new LPAPIArguments(GenomaProjectAPIParamsList.INDIVIDUAL_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_FAMILY_REMOVED_INDIVIDUAL),
         STUDY_CREATE_SAMPLES_SET("STUDY_CREATE_SAMPLES_SET", "studyAddSampleSet_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLES_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLES_LIST.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
-                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10)}, null, DataGenomaStudyAuditEvents.NEW_STUDY_SAMPLES_SET),
+                new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName()).build()).build(), DataGenomaStudyAuditEvents.NEW_STUDY_SAMPLES_SET),
         STUDY_SAMPLES_SET_ACTIVATE("STUDY_SAMPLES_SET_ACTIVATE", "studyActivateSampleSet_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
-                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLES_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, null, DataGenomaStudyAuditEvents.ACTIVATE_STUDY_SAMPLES_SET),
+                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLES_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName()).build()).build(), DataGenomaStudyAuditEvents.ACTIVATE_STUDY_SAMPLES_SET),
         STUDY_SAMPLES_SET_DEACTIVATE("STUDY_SAMPLES_SET_DEACTIVATE", "studyDeactivateSampleSet_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
-                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLES_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, null, DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_SAMPLES_SET),
+                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLES_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName()).build()).build(), DataGenomaStudyAuditEvents.DEACTIVATE_STUDY_SAMPLES_SET),
         STUDY_SAMPLES_SET_ADD_SAMPLE("STUDY_SAMPLES_SET_ADD_SAMPLE", "studySamplesSetAddSample_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLES_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLE_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaStudyAuditEvents.STUDY_SAMPLES_SET_ADDED_SAMPLE),
+                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLE_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_SAMPLES_SET_ADDED_SAMPLE),
         STUDY_SAMPLES_SET_REMOVE_SAMPLE("STUDY_SAMPLES_SET_REMOVE_SAMPLE", "studySamplesSetRemoveSample_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLES_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLE_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, null, DataGenomaStudyAuditEvents.STUDY_SAMPLES_SET_REMOVED_SAMPLE),
+                new LPAPIArguments(GenomaProjectAPIParamsList.SAMPLE_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_SAMPLES_SET_REMOVED_SAMPLE),
         ADD_VARIABLE_SET_TO_STUDY_OBJECT("ADD_VARIABLE_SET_TO_STUDY_OBJECT", "variablesSetAdded_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, null, null),
+                new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName()).build()).build(), DataGenomaStudyAuditEvents.ADD_VARIABLE_SET_TO_STUDY_OBJECT),
         ADD_VARIABLE_TO_STUDY_OBJECT("ADD_VARIABLE_TO_STUDY_OBJECT", "variableAdded_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, null, null),
+                new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName()).build()).build(), null),
         STUDY_OBJECT_SET_VARIABLE_VALUE("STUDY_OBJECT_SET_VARIABLE_VALUE", "variableValueEntered_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                 new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
                 new LPAPIArguments(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
-                new LPAPIArguments(GenomaProjectAPIParamsList.NEW_VALUE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 11)}, null, null),        
+                new LPAPIArguments(GenomaProjectAPIParamsList.NEW_VALUE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 11)}, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY.getTableName()).build()).
+                add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName()).build()).build(), DataGenomaStudyAuditEvents.STUDY_OBJECT_SET_VARIABLE_VALUE),        
 /*
           STUDY_SAMPLES_SET_ADD_SAMPLE("STUDY_SAMPLE_SET_ADD_SAMPLE", "studyName|samplesSetName|sampleId"), 
         STUDY_SAMPLES_SET_REMOVE_SAMPLE("STUDY_SAMPLE_SET_REMOVE_SAMPLE", "studyName|samplesSetName|sampleId"),
@@ -178,6 +293,7 @@ public class GenomaStudyAPI extends HttpServlet {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.GENOMA_STUDY_ACTIONS.getUrl();}
         public EnumIntAuditEvents getAuditEventObj() {return actionEventObj;}
         
         private final String name;

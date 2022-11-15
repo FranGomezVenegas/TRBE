@@ -23,6 +23,7 @@ import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -30,6 +31,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -48,43 +50,51 @@ public class InspLotRMAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_CONTAINERS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 14),
-            }, "NEW_LOT_CREATED", null),
+            }, "NEW_LOT_CREATED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         CREATE_LOT_CERTIFICATE("CREATE_LOT_CERTIFICATE", "createLotCertificate", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MATERIAL_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_TEMPLATE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9), 
-        }, "LOT_CERTIFICATE_CREATED", null),
+        }, "LOT_CERTIFICATE_CREATED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_TAKE_DECISION("LOT_TAKE_DECISION", "lotTakeDecision_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_DECISION, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
-            },"LOT_DECISION_TAKEN", null),
+            },"LOT_DECISION_TAKEN", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_RETAIN_UNLOCK("LOT_RETAIN_UNLOCK", "lotRetainUnlock_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
-            }, "LOT_RETAIN_UNLOCKED", null),
+            }, "LOT_RETAIN_UNLOCKED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_RETAIN_LOCK("LOT_RETAIN_LOCK", "lotRetainLock_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
-            }, "LOT_RETAIN_LOCKED", null),
+            }, "LOT_RETAIN_LOCKED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_RETAIN_RECEPTION("LOT_RETAIN_RECEPTION", "lotRetainReception_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
-            }, "LOT_RETAIN_RECEIVED", null),        
+            }, "LOT_RETAIN_RECEIVED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),        
         LOT_RETAIN_MOVEMENT("LOT_RETAIN_MOVEMENT", "lotRetainMoved_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_LOCATION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9),
-            }, "LOT_RETAIN_MOVED", null),
+            }, "LOT_RETAIN_MOVED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_RETAIN_EXTRACT("LOT_RETAIN_EXTRACT", "lotRetainMoved_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), true, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
-            }, "LOT_RETAIN_EXTRACTED", null),
+            }, "LOT_RETAIN_EXTRACTED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         ;
         private InspLotRMAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, String actNameForAudit, JsonArray outputObjectTypes){
             this.name=name;
@@ -107,6 +117,7 @@ public class InspLotRMAPI extends HttpServlet {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.INSPLOT_RM_ACTIONS.getUrl();}
         public String getAuditActionName(){return this.auditActionName;}           
         private final String name;
         private final String successMessageCode;  
@@ -116,9 +127,6 @@ public class InspLotRMAPI extends HttpServlet {
     }
     
     public enum InspLotRMQueriesAPIEndpoints implements EnumIntEndpoints{
-        /**
-         *
-         */
         GET_LOT_INFO("GET_LOT_INFO", "get_lot_info_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -152,18 +160,12 @@ public class InspLotRMAPI extends HttpServlet {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.INSPLOT_RM_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode; 
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
     }    
-    
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

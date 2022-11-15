@@ -13,10 +13,12 @@ import lbplanet.utilities.LPAPIArguments;
  * @author User
  */
 public interface EnumIntEndpoints {
+    String getApiUrl();
     String getName();
     String getSuccessMessageCode();
     JsonArray getOutputObjectTypes();
     LPAPIArguments[] getArguments();
 }
+
 
 

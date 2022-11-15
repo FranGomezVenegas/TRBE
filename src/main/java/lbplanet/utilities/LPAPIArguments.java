@@ -9,6 +9,8 @@ import functionaljavaa.analysis.ConfigAnalysisStructure.ConfigAnalysisErrorTrapp
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
+import trazit.session.ApiMessageReturn;
 /**
  *
  * @author User
@@ -55,7 +57,7 @@ public class LPAPIArguments {
             if (requestArgValue==null) requestArgValue=LPNulls.replaceNull(request.getParameter(currArg.getName()));
             if (LPNulls.replaceNull(requestArgValue).length()==0){
                 if (currArg.getMandatory())
-                    return new Object[]{LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, currArg.getName()};
+                    return new Object[]{LPPlatform.LAB_FALSE, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{currArg.getName()}), currArg.getName()};
                 else
                     returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, "");
             }else{
@@ -68,7 +70,11 @@ public class LPAPIArguments {
                             break;
                         case INTEGER:
                             Integer valueConverted=null;
-                            if (requestArgValue.length()>0) valueConverted = Integer.parseInt(requestArgValue);
+                            try{
+                                if (requestArgValue.length()>0) valueConverted = Integer.parseInt(requestArgValue);
+                            }catch(NumberFormatException e){
+                                return new Object[]{LPPlatform.LAB_FALSE, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, new Object[]{requestArgValue}), requestArgValue};
+                            }
                             returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConverted);
                             break;
                         case BIGDECIMAL:

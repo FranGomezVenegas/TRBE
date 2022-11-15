@@ -75,7 +75,7 @@ public class AuthenticationAPI extends HttpServlet {
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
             
-            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);                                    
+            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             AuthenticationAPIactionsEndpoints endPoint=null;
             try{
                 endPoint = AuthenticationAPIactionsEndpoints.valueOf(actionName.toUpperCase());

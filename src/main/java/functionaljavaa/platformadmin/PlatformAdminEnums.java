@@ -108,6 +108,7 @@ public class PlatformAdminEnums {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return GlobalVariables.ApiUrls.PLATFORM_ADMIN_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -141,6 +142,7 @@ public class PlatformAdminEnums {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return GlobalVariables.ApiUrls.PLATFORM_ADMIN_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;

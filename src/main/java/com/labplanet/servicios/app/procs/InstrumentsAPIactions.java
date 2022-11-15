@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app.procs;
 
-import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import databases.TblsAppProcData;
 import functionaljavaa.instruments.DataInstruments;
 import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;

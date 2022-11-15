@@ -13,6 +13,7 @@ import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.features.Token;
+import functionaljavaa.modulegenoma.GenomaEnums.GenomaErrorTrapping;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -73,7 +74,7 @@ public class GenomaDataStudyIndividuals {
             LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
         }    
         if (!devMode){
-            String[] diagnosesProj = LPArray.checkTwoArraysSameLength(fieldsName, fieldsValue);
+            Object[] diagnosesProj = LPArray.checkTwoArraysSameLength(fieldsName, fieldsValue);
             if (fieldsName.length!=fieldsValue.length){
                 StackTraceElement[] elements = Thread.currentThread().getStackTrace();
                 diagnosesProj[0]= elements[1].getClassName() + "." + elements[1].getMethodName();
@@ -242,7 +243,7 @@ public class GenomaDataStudyIndividuals {
         Object[][] studyIndivInfo = QueryUtilitiesEnums.getTableData(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL, TblsGenomaData.StudyIndividual.ACTIVE.getName()), sqlWhere, null);
         if ("false".equalsIgnoreCase(studyIndivInfo[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "individualAlreadyDeactivated", new Object[]{studyName, indivId});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.STUDY_INDIVIDUAL_ALREADY_DEACTIVATED, new Object[]{studyName, indivId});
         
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);    
         String[] fieldsName=new String[]{TblsGenomaData.StudyIndividual.ACTIVE.getName(), TblsGenomaData.StudyIndividual.DEACTIVATED_BY.getName(), TblsGenomaData.StudyIndividual.DEACTIVATED_ON.getName()};
@@ -277,9 +278,9 @@ public static Object[] isStudyIndividualOpenToChanges(String studyName, Integer 
     Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(),
         new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName()}, new Object[]{studyName, individualId}, new String[]{TblsGenomaData.StudyIndividual.ACTIVE.getName()});
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The study individual <*1*> does not exist in procedure <*2*>", new Object[]{studyName, procInstanceName});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.STUDY_INDIVIDUAL_NOT_FOUND, new Object[]{studyName, procInstanceName});
     if (!Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][0]).toString()))
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The study individual <*1*> is already inactive in procedure <*2*>", new Object[]{studyName, procInstanceName});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.STUDY_INDIVIDUAL_ALREADY_DEACTIVATED, new Object[]{studyName, procInstanceName});
     return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{studyName, procInstanceName});
 }    
 }

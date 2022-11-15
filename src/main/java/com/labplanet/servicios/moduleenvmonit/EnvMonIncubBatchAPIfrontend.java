@@ -73,6 +73,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return GlobalVariables.ApiUrls.ENVMON_INCUB_BATCH_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;

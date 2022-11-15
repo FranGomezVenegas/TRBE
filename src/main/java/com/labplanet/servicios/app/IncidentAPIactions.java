@@ -6,7 +6,7 @@
 package com.labplanet.servicios.app;
 
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
-import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import databases.RdbmsObject;
 import databases.TblsApp;
 import functionaljavaa.incident.AppIncident;
@@ -16,7 +16,6 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,14 +28,13 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
-import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 /**
@@ -83,6 +81,7 @@ public class IncidentAPIactions extends HttpServlet {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.APP_INCIDENTS_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;

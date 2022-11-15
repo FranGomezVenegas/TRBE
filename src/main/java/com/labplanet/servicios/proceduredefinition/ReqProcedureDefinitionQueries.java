@@ -65,9 +65,10 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;          
             }            
+            ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(request, response, false);
             
-            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
+            String actionName = procReqSession.getActionName();
+            String finalToken = procReqSession.getTokenString();
             
             ReqProcedureDefinitionAPIQueriesEndpoints endPoint = null;
             try{
@@ -76,11 +77,10 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;                   
             }
-            ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(request, response, false);
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
         try (PrintWriter out = response.getWriter()) {
-            String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);   
+            String procInstanceName = procReqSession.getProcedureInstance();
             switch (endPoint){
             case ALL_PROCEDURES_AND_INSTANCE_LIST:
                 String[] fieldsToRetrieveScripts=EnumIntTableFields.getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields());

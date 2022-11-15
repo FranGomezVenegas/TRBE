@@ -71,7 +71,7 @@ public class HolidaysCalendarEnums {
         public String getMandatoryParams(){return this.mandatoryParams;}
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override   public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-
+        @Override        public String getApiUrl(){return GlobalVariables.ApiUrls.APP_CALENDAR_ACTIONS.getUrl();}
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
             Object[] argValues=new Object[0];
@@ -123,6 +123,7 @@ public class HolidaysCalendarEnums {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return GlobalVariables.ApiUrls.APP_CALENDAR_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;

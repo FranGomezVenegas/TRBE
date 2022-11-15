@@ -51,15 +51,15 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
         response=LPHttp.responsePreparation(response);
 
         String language = LPFrontEnd.setLanguage(request); 
-        ProcedureRequestSession.getInstanceForQueries(request, response, Boolean.FALSE);
+        ProcedureRequestSession instanceForQueries = ProcedureRequestSession.getInstanceForQueries(request, response, Boolean.FALSE);
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;          
         }             
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
+        String actionName = instanceForQueries.getActionName();
+        String finalToken = instanceForQueries.getTokenString();
         Token token = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
                 LPFrontEnd.servletReturnResponseError(request, response, 

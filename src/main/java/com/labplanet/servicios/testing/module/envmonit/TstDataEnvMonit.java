@@ -133,7 +133,7 @@ public class TstDataEnvMonit extends HttpServlet {
             Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
         }*/
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
-        Rdbms.setTransactionId(schemaConfigName);
+        //Rdbms.setTransactionId(schemaConfigName);
         //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     

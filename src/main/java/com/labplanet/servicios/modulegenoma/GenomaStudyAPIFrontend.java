@@ -39,6 +39,7 @@ import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.queries.QueryUtilitiesEnums;
 /**
  *
@@ -106,6 +107,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         @Override        public String getName(){return this.name;}
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.GENOMA_STUDY_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode; 
         private final LPAPIArguments[] arguments;

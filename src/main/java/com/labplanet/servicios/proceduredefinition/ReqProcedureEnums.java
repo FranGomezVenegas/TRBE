@@ -14,6 +14,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 
 /**
  *
@@ -119,6 +120,7 @@ public class ReqProcedureEnums {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.PROCEDURE_DEFINITION_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -163,6 +165,7 @@ public class ReqProcedureEnums {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.PROCEDURE_DEFINITION_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;

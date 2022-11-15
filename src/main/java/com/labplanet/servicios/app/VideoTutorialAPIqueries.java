@@ -206,7 +206,7 @@ public class VideoTutorialAPIqueries extends HttpServlet {
                     LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;          
             }                  
-            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+            String actionName = procReqInstance.getActionName();
             
             VideoTutorialAPIqueriesEndpoints endPoint = null;
             try{
@@ -215,8 +215,6 @@ public class VideoTutorialAPIqueries extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
-//            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-             
             switch (endPoint){
             case ALL_ACTIVE_VIDEO_TUTORIALS:
                 JSONArray jArr=new JSONArray();
@@ -224,12 +222,6 @@ public class VideoTutorialAPIqueries extends HttpServlet {
                     new EnumIntTableFields[]{TblsApp.VideoTutorialJson.AREA, TblsApp.VideoTutorialJson.CONTENT},
                     new String[]{TblsApp.VideoTutorialJson.ACTIVE.getName()}, new Object[]{true},                     
                     new String[]{TblsApp.VideoTutorialJson.ORDER_NUMBER.getName()}); 
-/*                Object[][] videoTutorialsJson = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.VIDEO_TUTORIAL_JSON.getTableName(), 
-                    new String[]{TblsApp.VideoTutorialJson.ACTIVE.getName()},
-                    new Object[]{true}, 
-                    new String[]{TblsApp.VideoTutorialJson.AREA.getName(), TblsApp.VideoTutorialJson.CONTENT.getName()},
-                    new String[]{TblsApp.VideoTutorialJson.ORDER_NUMBER.getName()});
-*/                
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(videoTutorialsJson[0][0].toString())){
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;

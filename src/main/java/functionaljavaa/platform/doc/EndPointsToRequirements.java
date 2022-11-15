@@ -203,10 +203,18 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTrazitDocTrazit.EndpointsDeclaration.ID,
                     SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0]}, "");
+            String[] fldNames=new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName(), EndpointsDeclaration.NUM_ARGUMENTS.getName()};
+            Object[] fldValues=new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp(), numEndpointArguments};
+            fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName());
+            if (outputObjectTypes==null&&"ACTION".equalsIgnoreCase(apiName)) fldValues=LPArray.addValueToArray1D(fldValues, "TBD-To be defined");
+            else if (outputObjectTypes==null&&!"ACTION".equalsIgnoreCase(apiName)) fldValues=LPArray.addValueToArray1D(fldValues, "Not Applies for queries");
+            else
+                fldValues=LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());              
             Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
-                        new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName(), EndpointsDeclaration.NUM_ARGUMENTS.getName()}), 
-                        new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp(), numEndpointArguments}, sqlWhere, null);
+                        fldNames), 
+                        fldValues, 
+                        sqlWhere, null);
         }else{
             //String[] flds=(String[]) docInfoForEndPoint[0];
             String[] fldNames=new String[]{};
@@ -216,7 +224,8 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
                 fldValues=(Object[]) docInfoForEndPoint[1];
             }*/
             fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName());
-            if (outputObjectTypes==null) fldValues=LPArray.addValueToArray1D(fldValues, "TBD");
+            if (outputObjectTypes==null&&"ACTION".equalsIgnoreCase(apiName)) fldValues=LPArray.addValueToArray1D(fldValues, "TBD-To be defined");
+            else if (outputObjectTypes==null&&!"ACTION".equalsIgnoreCase(apiName)) fldValues=LPArray.addValueToArray1D(fldValues, "Not Applies for queries");
             else
                 fldValues=LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());                
             fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.NUM_ENDPOINTS_IN_API.getName());

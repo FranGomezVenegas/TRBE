@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import trazit.enums.EnumIntEndpoints;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 
 /**
  *
@@ -48,6 +49,7 @@ public class PlatformDefinition {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public LPAPIArguments[] getArguments() {return arguments;}     
         @Override        public JsonArray getOutputObjectTypes() {return EndPointsToRequirements.endpointWithNoOutputObjects;}
+        @Override        public String getApiUrl(){return ApiUrls.PLATFORM_DEFINITION_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;

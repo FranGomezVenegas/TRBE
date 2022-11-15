@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
-import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import databases.Rdbms;
 import databases.TblsTesting;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
@@ -35,6 +35,7 @@ import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
@@ -69,7 +70,7 @@ public class TestingAPIActions extends HttpServlet {
         @Override public String getName(){return this.name;}
         @Override public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-
+        @Override        public String getApiUrl(){return ApiUrls.TESTING_ACTIONS.getUrl();}
         /**
          * @return the arguments
          */

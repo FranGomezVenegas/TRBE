@@ -74,8 +74,7 @@ public class ClassInvestigation {
         this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
-                    (EnumIntMessages)argValues[1] , new Object[]{argValues[2].toString()});
+            this.diagnostic=(Object[]) argValues[1];
             this.messageDynamicData=new Object[]{argValues[2].toString()};
             return;                        
         }            

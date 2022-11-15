@@ -143,7 +143,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
 
         String[] errObject = new String[]{"Servlet Genoma StudyObjectsVariablesAPI at " + request.getServletPath()};   
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
-        Rdbms.setTransactionId(schemaConfigName);
+        //Rdbms.setTransactionId(schemaConfigName);
         //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
             Object[] diagnostic = null;

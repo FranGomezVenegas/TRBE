@@ -295,7 +295,7 @@ public final class TestingCoverage {
             if (curRule.getRuleName().contains("AuditReasonPhrase"))
                 procBusRulesTotal=procBusRulesTotal-1;
         }
-        double divisor = procBusRulesTotal-this.coverageBusRulesExcludeList.length-this.busRuleExcludedByExcludeEndpoint.length;
+        double divisor = procBusRulesTotal-this.coverageBusRulesExcludeList.length;//-this.busRuleExcludedByExcludeEndpoint.length;
         double divident = (double)this.busRuleVisitedTotal+(double) this.busRuleVisitedMissingInProcTotal;
         double operatedVal = (divident/divisor)*100;
         this.busRuleCovPerc = new BigDecimal(String.valueOf(operatedVal));
@@ -305,8 +305,8 @@ public final class TestingCoverage {
         if (this.coverageBusRulesExcludeList.length>0)
             busRulesPercExplStr=busRulesPercExplStr+" have on mind that the exclusions are "+this.coverageBusRulesExcludeList.length+
                 " what means that the divider is the total ("+procBusRulesTotal+") minus the excluded ("+this.coverageBusRulesExcludeList.length+")";
-        if(this.busRuleExcludedByExcludeEndpoint.length>0)
-            busRulesPercExplStr=busRulesPercExplStr+" minus the excluded by exclude the endpoint("+this.busRuleExcludedByExcludeEndpoint.length+")";
+//        if(this.busRuleExcludedByExcludeEndpoint.length>0)
+//            busRulesPercExplStr=busRulesPercExplStr+" minus the excluded by exclude the endpoint("+this.busRuleExcludedByExcludeEndpoint.length+")";
         JSONObject busRulesSummaryJObj=new JSONObject();
         busRulesSummaryJObj.put("percentage_explanation", busRulesPercExplStr);        
         busRulesSummaryJObj.put("procedure_total", procBusRulesTotal);

@@ -27,6 +27,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -44,9 +45,6 @@ public class InvestigationAPI extends HttpServlet {
     
     static final String COMMON_PARAMS="investigationId|note";
     public enum InvestigationAPIactionsEndpoints implements EnumIntEndpoints{
-        /**
-         *
-         */
         NEW_INVESTIGATION("NEW_INVESTIGATION", "investigationCreated_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 7 ),
@@ -95,6 +93,7 @@ public class InvestigationAPI extends HttpServlet {
         @Override public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.INVESTIGATIONS_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;       
         private final LPAPIArguments[] arguments;
@@ -130,6 +129,7 @@ public class InvestigationAPI extends HttpServlet {
         @Override public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.INVESTIGATIONS_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;

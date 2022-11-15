@@ -18,6 +18,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 
 /**
  *
@@ -84,10 +85,11 @@ public class AuthenticationAPIParams extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }
-        public String getName(){return this.name;}
-        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.APP_AUTHENTICATION_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final  LPAPIArguments[] arguments;

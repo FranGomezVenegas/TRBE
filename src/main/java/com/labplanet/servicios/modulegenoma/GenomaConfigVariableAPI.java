@@ -8,7 +8,6 @@ package com.labplanet.servicios.modulegenoma;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.modulegenoma.GenomaConfigVariableAPI.GenomaVariableAPIactionsEndpoints.VARIABLE_SET_ADD_VARIABLE;
 import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIParamsList;
-import databases.Rdbms;
 import functionaljavaa.modulegenoma.GenomaConfigVariables;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;
@@ -27,6 +26,7 @@ import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 /**
  *
  * @author User
@@ -49,6 +49,7 @@ public class GenomaConfigVariableAPI extends HttpServlet {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.GENOMA_VARIABLE_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -77,7 +78,7 @@ public class GenomaConfigVariableAPI extends HttpServlet {
         String language=procReqInstance.getLanguage();
         String[] errObject = new String[]{"Servlet Genoma VariableAPI at " + request.getServletPath()};   
         String schemaConfigName = LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());    
-        Rdbms.setTransactionId(schemaConfigName);
+        //Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
             Object[] dataSample = null;
                     GenomaVariableAPIactionsEndpoints endPoint = null;

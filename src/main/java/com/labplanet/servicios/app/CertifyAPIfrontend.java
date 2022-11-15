@@ -31,6 +31,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntEndpoints;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -80,6 +81,7 @@ public class CertifyAPIfrontend extends HttpServlet {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.CERTIFY_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
@@ -106,8 +108,8 @@ public class CertifyAPIfrontend extends HttpServlet {
             return;          
         }             */
         try (PrintWriter out = response.getWriter()) {
-            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
+            String actionName = procReqInstance.getActionName(); 
+            String finalToken = procReqInstance.getTokenString();               
 
             Token token = new Token(finalToken);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){

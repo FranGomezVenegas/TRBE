@@ -73,8 +73,8 @@ public class IncidentAPIqueries extends HttpServlet {
                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;          
         }             
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
+        String actionName = procReqInstance.getActionName();
+        String finalToken = procReqInstance.getTokenString();
         
         Token token = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){

@@ -26,6 +26,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -81,27 +82,15 @@ public class ModuleDefinitionAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        public String getName(){
-            return this.name;
-        }
-        public String getSuccessMessageCode(){
-            return this.successMessageCode;
-        }           
-
-        /**
-         * @return the arguments
-         */
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }     
+        @Override        public String getName(){return this.name;}
+        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
+        @Override        public LPAPIArguments[] getArguments() {return arguments;} 
+        @Override        public String getApiUrl(){return GlobalVariables.ApiUrls.MODULE_DEFINITION_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
 
-        @Override
-        public JsonArray getOutputObjectTypes() {
-            return EndPointsToRequirements.endpointWithNoOutputObjects;
-        }
+        @Override        public JsonArray getOutputObjectTypes() {return EndPointsToRequirements.endpointWithNoOutputObjects;}
     }
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     
@@ -124,18 +113,20 @@ public class ModuleDefinitionAPI extends HttpServlet {
 
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+            procReqInstance.killIt();            
             LPFrontEnd.servletReturnResponseError(request, response, 
                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;          
         }             
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
+        String actionName = procReqInstance.getActionName();
+        String finalToken = procReqInstance.getTokenString();
         
         Token token = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
-                return;                             
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, 
+                LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+            return;                             
         }
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
@@ -182,6 +173,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
+                procReqInstance.killIt();
                 //con.close();
                 // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

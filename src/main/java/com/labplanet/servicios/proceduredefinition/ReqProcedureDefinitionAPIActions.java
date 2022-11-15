@@ -45,7 +45,7 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
             return;
         }
         String language = LPFrontEnd.setLanguage(request); 
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+        String actionName = procReqInstance.getActionName();
         
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 

@@ -518,6 +518,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         if(getConnection()!=null){
             try {
+            if (getConnection().isClosed()) return;
             if (getConnection().getAutoCommit()) return;
                 if (dbLogSummary!=null){
                     Boolean hasAlters=dbLogSummary.hasDbAlterActions();

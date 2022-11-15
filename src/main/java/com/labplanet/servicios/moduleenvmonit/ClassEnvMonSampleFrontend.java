@@ -258,7 +258,8 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
         }        
         @Override        public String getName(){return this.name;}
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
-        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}  
+        @Override        public String getApiUrl(){return GlobalVariables.ApiUrls.ENVMON_SAMPLE_QUERIES.getUrl();}
         public JsonArray getReportInfo() {return reportInfo;}  
         private final String name;
         private final String successMessageCode; 
@@ -288,8 +289,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
             procReqInstance.killIt();
             this.isSuccess=false;           
-            this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
-                    argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.diagnostic=(Object[]) argValues[1];
             this.messageDynamicData=new Object[]{argValues[2].toString()};
             return;                        
         }

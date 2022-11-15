@@ -25,6 +25,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntEndpoints;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ProcedureRequestSession;
 /**
  *
@@ -59,6 +60,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return ApiUrls.GENOMA_VARIABLE_QUERIES.getUrl();}
         public EnumIntAuditEvents getAuditEventObj() {return actionEventObj;}
         
         private final String name;

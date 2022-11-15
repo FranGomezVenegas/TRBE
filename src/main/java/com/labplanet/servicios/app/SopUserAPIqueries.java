@@ -38,6 +38,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntViewFields;
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -171,6 +172,7 @@ public class SopUserAPIqueries extends HttpServlet {
         @Override public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override public LPAPIArguments[] getArguments() {return arguments;}
+        @Override        public String getApiUrl(){return GlobalVariables.ApiUrls.SOPS_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;

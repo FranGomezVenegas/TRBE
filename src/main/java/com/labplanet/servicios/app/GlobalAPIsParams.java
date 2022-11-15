@@ -28,6 +28,7 @@ public class GlobalAPIsParams extends HttpServlet {
      */
     public static final String REQUEST_PARAM_DB_NAME = "dbName";
     public static final String REQUEST_PARAM_IS_TESTING = "isForTesting";
+    public static final String REQUEST_PARAM_VIEW_NAME = "viewName";
     public static final String REQUEST_PARAM_ACTION_NAME = "actionName";
     public static final String REQUEST_PARAM_SIZE_VALUE = "sizeValue";
 

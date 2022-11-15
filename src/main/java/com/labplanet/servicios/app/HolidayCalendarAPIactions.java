@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.app;
 
-import static com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import databases.TblsApp;
 import functionaljavaa.holidayscalendar.HolidaysCalendar;
 import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;
@@ -28,6 +27,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
+import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 /**
  *
  * @author User
