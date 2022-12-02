@@ -89,7 +89,11 @@ public class PlatformDefinitionToInstance extends HttpServlet {
                 functionCr=functionCr+" AS $function$ DECLARE x NUMERIC; BEGIN x = $1::NUMERIC; RETURN TRUE; EXCEPTION WHEN others THEN RETURN FALSE; END; $function$ ";
                 Rdbms.prepRdQuery(functionCr, null);
 
-                String[] schemaNames = new String[]{GlobalVariables.Schemas.CONFIG.getName()};
+                String[] schemaNames = new String[]{GlobalVariables.Schemas.APP_AUDIT.getName(),
+                    GlobalVariables.Schemas.CONFIG.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), 
+                    GlobalVariables.Schemas.APP.getName(),
+                    GlobalVariables.Schemas.APP_BUSINESS_RULES.getName()};
+
                 String tblCreateScript="";
                 JSONObject jsonObj=new JSONObject();
                 JSONArray createSchemas = createSchemas(schemaNames, platfName);        

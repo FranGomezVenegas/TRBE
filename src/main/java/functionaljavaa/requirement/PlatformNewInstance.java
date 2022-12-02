@@ -13,6 +13,8 @@ import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsAppConfig;
 import databases.TblsProcedure;
+import java.time.LocalDateTime;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -36,6 +38,8 @@ public class PlatformNewInstance {
         jsonObj.put("create_schemas", createSchemas);
         tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PERSON_PROFILE, fakeProcName, false, true);        
         Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(TblsProcedure.TablesProcedure.PERSON_PROFILE.getRepositoryName(), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), tblCreateScript, new Object[]{});
+        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROCEDURE_INFO, fakeProcName, false, true);        
+        prepUpQuery = Rdbms.prepUpQueryWithDiagn(TblsProcedure.TablesProcedure.PROCEDURE_INFO.getRepositoryName(), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), tblCreateScript, new Object[]{});
         String actionLog="";
         
         RdbmsObject insertRecordInTable=Rdbms.insertRecord(TblsProcedure.TablesProcedure.PERSON_PROFILE, 
@@ -49,6 +53,19 @@ public class PlatformNewInstance {
             actionLog=trapMessage[trapMessage.length-1].toString();
         }
         jsonObj.put("insert_person_profile_record", actionLog);
+        LocalDateTime currentTimeStamp = LPDate.getCurrentTimeStamp();
+        int hashCode=currentTimeStamp.hashCode();
+        insertRecordInTable=Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, 
+            new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.LABEL_EN.getName(), 
+                TblsProcedure.ProcedureInfo.LABEL_ES.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()}, 
+            new Object[]{fakeProcName, fakeProcName, 1, fakeProcName, fakeProcName, String.valueOf(hashCode)}, fakeProcName);
+        if (insertRecordInTable.getRunSuccess())
+            actionLog="success";
+        else{
+            Object[] trapMessage = ApiMessageReturn.trapMessage("", insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());            
+            actionLog=trapMessage[trapMessage.length-1].toString();
+        }
+        jsonObj.put("insert_procedure_info_record", actionLog);
 
         insertRecordInTable = Rdbms.insertRecord(TblsApp.TablesApp.USERS, 
                 new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),

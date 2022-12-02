@@ -120,7 +120,7 @@ public class PlatformAdminEnums {
         GET_WHITE_IP_LIST("GET_WHITE_IP_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_BLACK_IP_LIST("GET_BLACK_IP_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         GET_PLATFORM_ADMIN_ALL_INFO("GET_PLATFORM_ADMIN_ALL_INFO", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        GET_PLATFORM_BUSINESS_RULES("GET_PLATFORM_BUSINESS_RULES", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        GET_PLATFORM_BUSINESS_RULES("GET_PLATFORM_BUSINESS_RULES", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects)
         ;
         private PlatformAdminAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
