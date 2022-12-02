@@ -508,7 +508,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GenomaConfigVariableAPI</servlet-name>
-        <url-pattern>/modulegenoma/GenomaConfigVariableAPI</url-pattern>
+        <url-pattern>/modulegenoma/GenomaConfigVariableAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GenomaConfigVariableAPIqueries</servlet-name>
