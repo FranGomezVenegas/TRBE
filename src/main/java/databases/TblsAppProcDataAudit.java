@@ -18,7 +18,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsAppProcDataAudit {
     
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName();
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA_AUDIT.getName();
     public enum TablesAppProcDataAudit implements EnumIntTables{
         INSTRUMENTS(null, "instruments", SCHEMA_NAME, true, Instruments.values(), Instruments.AUDIT_ID.getName(),
             new String[]{Instruments.AUDIT_ID.getName()}, null, "Audit for User Sessions"),

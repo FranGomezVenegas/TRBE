@@ -18,8 +18,8 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsAppProcConfig {
     
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_PROC_CONFIG.getName();
-    private static final Boolean IS_PRODEDURE_INSTANCE = false;
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesAppProcConfig implements EnumIntTables{
         
         INSTRUMENTS_FAMILY(null, "instruments_family", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, InstrumentsFamily.values(), null,

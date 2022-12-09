@@ -43,7 +43,8 @@ import trazit.session.ResponseMessages;
 public class DataInstrumentsEvents {
 
 public static Object[][] getVariableSetVariablesProperties(String variableSetName){
-    String appProcInstance=GlobalVariables.Schemas.APP_PROC_CONFIG.getName();
+    ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+    String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());
 
     Object[][] variableSetInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET.getTableName(), 
         new String[]{TblsAppProcConfig.VariablesSet.NAME.getName()}, new Object[]{variableSetName}, 
@@ -66,7 +67,8 @@ public static Object[][] getVariableSetVariablesProperties(String variableSetNam
 }
     
 public static Object[] isEventOpenToChanges(Integer insEventId){
-    String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();
+    ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+    String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[][] eventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(),
             new String[]{TblsAppProcData.InstrumentEvent.ID.getName()}, 
             new Object[]{insEventId}, 
@@ -79,7 +81,8 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
 }
     
     public static Object[] addVariableSetToObject(String instrName, Integer instrEventId, String variableSetName, String ownerId){
-        String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) return isStudyOpenToChanges;
@@ -118,7 +121,8 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         return diagn; //LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet!", null);
     }
     public static InternalMessage objectVariableSetValue(String instrName, Integer instrEventId, String variableName, String newValue){
-        String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) 
@@ -181,7 +185,8 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
     }
 
     public static InternalMessage objectVariableChangeValue(String instrName, Integer instrEventId, String variableName, String newValue){
-        String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) 
@@ -245,7 +250,8 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);        
     }
     public static InternalMessage eventHasNotEnteredVariables(String instrName, Integer instrEventId){
-        String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA.getName();
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())){ 
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();

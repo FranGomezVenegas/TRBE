@@ -21,15 +21,15 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class TblsAppProcData {
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.APP_PROC_DATA.getName();
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesAppProcData implements EnumIntTables{
-        INSTRUMENTS(null, "instruments", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Instruments.values(), Instruments.NAME.getName(),
-            new String[]{Instruments.NAME.getName()}, null, ""),
-        INSTRUMENT_EVENT(null, "instrument_event", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppProcData.InstrumentEvent.values(), TblsAppProcData.InstrumentEvent.ID.getName(),
-            new String[]{TblsAppProcData.InstrumentEvent.ID.getName()}, null, ""),
-        INSTR_EVENT_VARIABLE_VALUES(null, "instr_event_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppProcData.InstrEventVariableValues.values(), TblsAppProcData.InstrumentEvent.ID.getName(),
-            new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName()}, null, ""),
+        INSTRUMENTS(null, "instruments", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Instruments.values(), 
+            null, new String[]{Instruments.NAME.getName()}, null, ""),
+        INSTRUMENT_EVENT(null, "instrument_event", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppProcData.InstrumentEvent.values(), 
+            TblsAppProcData.InstrumentEvent.ID.getName(),new String[]{TblsAppProcData.InstrumentEvent.ID.getName()}, null, ""),
+        INSTR_EVENT_VARIABLE_VALUES(null, "instr_event_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppProcData.InstrEventVariableValues.values(), 
+            TblsAppProcData.InstrumentEvent.ID.getName(), new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName()}, null, ""),
         ;
         private TablesAppProcData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -123,12 +123,12 @@ public class TblsAppProcData {
         MANUFACTURER("manufacturer", LPDatabase.string(), null, null, null, null),
         SERIAL_NUMBER("serial_number", LPDatabase.string(), null, null, null, null),
         MODEL_NUMBER("model_number", LPDatabase.string(), null, null, null, null),
-        DECOMMISSIONED("decommissioned", LPDatabase.booleanFld(), null, null, null, null),
+        DECOMMISSIONED("decommissioned", LPDatabase.booleanFld(false), null, null, null, null),
         DECOMMISSIONED_BY("decommissioned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         DECOMMISSIONED_ON("decommissioned_on", LPDatabase.dateTime(), null, null, null, null),
         UNDECOMMISSIONED_BY("undecommissioned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         UNDECOMMISSIONED_ON("undecommissioned_on", LPDatabase.dateTime(), null, null, null, null),
-        ON_LINE("on_line", LPDatabase.booleanFld(), null, null, null, null),
+        ON_LINE("on_line", LPDatabase.booleanFld(false), null, null, null, null),
         IS_LOCKED("is_locked", LPDatabase.booleanFld(false), null, null, null, null),
         LOCKED_REASON("locked_reason", LPDatabase.string(), null, null, null, null),
         LAST_CALIBRATION("last_calibration",LPDatabase.dateTime(), null, null, null, null),
@@ -205,7 +205,7 @@ public class TblsAppProcData {
     public enum InstrEventVariableValues implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         INSTRUMENT("instrument", LPDatabase.string(), null, null, null, null),
-        EVENT_ID("event_id", LPDatabase.string(), null, null, null, null),
+        EVENT_ID("event_id", LPDatabase.integerNotNull(), null, null, null, null),
         CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
