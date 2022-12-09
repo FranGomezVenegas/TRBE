@@ -8,18 +8,25 @@ package databases;
 import com.labplanet.servicios.requirements.ProcDeployEnums;
 import static databases.DbObjects.SchemaActions.CREATE;
 import static databases.DbObjects.SchemaActions.DELETE;
+import static databases.Rdbms.insertRecordInTableFromTable;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp.TablesApp;
 import databases.TblsAppAudit.TablesAppAudit;
 import databases.TblsAppConfig.TablesAppConfig;
+import databases.TblsProcedure.TablesProcedure;
 import databases.TblsReqs.TablesReqs;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
+import java.util.Arrays;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import java.util.ResourceBundle;
+import lbplanet.utilities.LPArray;
+import trazit.enums.EnumIntTableFields;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 
@@ -102,13 +109,42 @@ public class DbObjects {
             jsonObj.put(curTbl.getTableName(), scriptLog);
         }
         schemasObj.put("config", jsonObj);
+
+        tblCreateScript = createTableScript(TablesProcedure.PROCEDURE_BUSINESS_RULE, "app", false, true);
+        tblCreateScript=tblCreateScript.replace("app-procedure", "app-business-rules");
+        Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(TablesProcedure.PROCEDURE_BUSINESS_RULE.getRepositoryName(), TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), tblCreateScript, new Object[]{});
+
+        JSONObject scriptLog=new JSONObject();
+        scriptLog.put("script", tblCreateScript);
+        if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))            
+            scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
+        if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
+            errorsOnlyObj.put("app."+TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), scriptLog);
+        jsonObj.put(TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), scriptLog);
+        
+        
+        String[] fields=new String[]{"area", "rule_name", "rule_value", "disabled"};
+        Object[][] values=new Object[][]{{"frontend_locksession", "enableLockSession", "true", false},
+            {"frontend_locksession", "enableLogoutSession", "true", false},
+            {"frontend_locksession", "minsLockSession", "2", false},
+            {"frontend_locksession", "minsLogoutSession", "5", false},
+            {"frontend_locksession", "secondsNextTimeChecker", "60", false},
+            {"procedure", "windowOpenableWhenNotSopCertifiedUserSopCertification", "NO", false}};
+        for (Object[] curRule: values){
+            RdbmsObject insertRecord = Rdbms.insertRecord(TablesApp.APP_BUSINESS_RULES, fields, curRule, "app-business_rules");
+            if (insertRecord.getRunSuccess())
+                jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put("app-business-rules", jsonObj);
         
         jsonObj=new JSONObject();
         TablesReqs[] tblsReqs = TablesReqs.values();
         for (TablesReqs curTbl: tblsReqs){
             tblCreateScript = createTableScript(curTbl, null, false, true);
-            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
-            JSONObject scriptLog=new JSONObject();
+            prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
+            scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
             if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))        
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
@@ -130,7 +166,7 @@ public class DbObjects {
         return schemasObj;
      }         
     
-    public static JSONObject createModuleSchemasAndBaseTables(String procInstanceName, String dbName){
+    public static JSONObject createModuleSchemasAndBaseTables(String procInstanceName){
         String tblCreateScript="";
         JSONObject schemasObj=new JSONObject();
         JSONObject jsonObj=new JSONObject();
@@ -142,7 +178,15 @@ public class DbObjects {
         jsonObj=new JSONObject();
         for (EnumIntTables curTbl: moduleBaseTables){
             tblCreateScript = createTableScript(curTbl, procInstanceName, false, true);
+            
+            tblCreateScript = createTableScript(curTbl, LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()), false, true);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
+            String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()), curTbl.getTableName());
+            if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()))){
+                String tblCreateScriptTesting = createTableScript(curTbl, schemaForTesting, false, true);
+                prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScriptTesting, new Object[]{});
+            }
+            //Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
             if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))            
@@ -206,6 +250,82 @@ public class DbObjects {
         }
         return mainLogArr;
      }    
+    
+    
+    public static final  JSONObject cloneProcModel(String procedure,  Integer procVersion, String procInstanceName){
+        SqlWhere sw = new SqlWhere();
+        sw.addConstraint(TblsProcedure.ProcedureEvents.NAME, WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, "");
+        RdbmsObject removeRecordInTable = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, sw, procInstanceName);
+        Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, 
+                getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableFields()),
+                    GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), 
+                new String[]{TblsReqs.ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.PROC_INSTANCE_NAME.getName()},
+                new Object[]{procedure, procVersion, procInstanceName},
+                LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), 
+                    TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableFields()));
+        JSONObject jsonObj = new JSONObject();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTableFromTable[0].toString())){
+            jsonObj.put("error_cloning_from_requirements_to_procedure", Arrays.toString(insertRecordInTableFromTable));
+            return jsonObj;
+        }     
+        jsonObj.put("success_cloning_from_requirements_to_procedure", insertRecordInTableFromTable[insertRecordInTableFromTable.length-2]+":"+insertRecordInTableFromTable[insertRecordInTableFromTable.length-1]);
+//        jsonObj.put("Diagnostic from createDBProcedureEvents", insertRecordInTableFromTable[0].toString());
+        String[] procEventFldNamesToGet=getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableFields());
+        Object[][] procEventRows = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
+                //new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsProcedure.ProcedureEvents.ROLE_NAME.getName()+" "+WHERECLAUSE_TYPES.LIKE}, 
+                //new Object[]{"ALL", "%|%"}, 
+                new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new Object[]{},
+                procEventFldNamesToGet);
+        JSONArray multiRolejArr=new JSONArray();
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventRows[0][0].toString())){
+            Object[][] procRoles = new Object[][]{{}};
+                Object[][] procRolesAllRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(), 
+                    new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},
+                    new Object[]{procedure, procVersion, procInstanceName},
+                    new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()});
+            
+            for (Object[] curProcEvent: procEventRows){
+                JSONObject multiRolCurEvent=new JSONObject();
+                multiRolCurEvent.put("event_name", 
+                    curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())]);
+                String multiRolesLog="";
+                if ("ALL".equalsIgnoreCase(curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())].toString())){
+                    procRoles=procRolesAllRoles;                    
+                    multiRolesLog=multiRolesLog+" as for all roles, trying addition for "+LPArray.convertArrayToString(LPArray.getColumnFromArray2D(procRoles, 0),", ", "", true);
+                }else{
+                    procRoles=LPArray.array1dTo2d(curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())].toString().split("\\|"), 1);
+                    multiRolesLog=multiRolesLog+" as for multiple roles, trying addition for "+LPArray.convertArrayToString(LPArray.getColumnFromArray2D(procRoles, 0),", ", "", true);                    
+                }
+                multiRolCurEvent.put("multirole_type", multiRolesLog);
+                for (int i=0;i<procRoles.length;i++){
+                    if (i==0){
+                        SqlWhere sqlWhere = new SqlWhere();
+                        sqlWhere.addConstraint(TblsProcedure.ProcedureEvents.ROLE_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())].toString()}, "");
+                        sqlWhere.addConstraint(TblsProcedure.ProcedureEvents.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())]}, "");
+                        Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS,
+                            EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName()}), new Object[]{procRoles[0][0].toString()}, sqlWhere, procInstanceName);
+                        multiRolCurEvent.put("updated?", !LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()));
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()))
+                            multiRolCurEvent.put("update error log", Arrays.toString(diagnoses));
+                    }else{
+                    
+                        curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())]=procRoles[i][0].toString();
+                        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, procEventFldNamesToGet, curProcEvent);
+                        multiRolCurEvent.put("inserted?", insertRecordInTable.getRunSuccess());
+                        if (!insertRecordInTable.getRunSuccess())
+                            multiRolCurEvent.put("insert error log", 
+                                insertRecordInTable.getErrorMessageCode()+" "+Arrays.toString(insertRecordInTable.getErrorMessageVariables()));
+                    }
+                }
+                if (procRoles.length>1)
+                    multiRolejArr.add(multiRolCurEvent);
+            }
+        }
+        if (!multiRolejArr.isEmpty())
+            jsonObj.put("multiroles_addition_log", multiRolejArr);
+        return jsonObj;
+    }
     
     /**
      *
