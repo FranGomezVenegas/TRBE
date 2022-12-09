@@ -440,9 +440,10 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     else 
                         fieldsToRetrieve = fieldsNameToRetrieve.split("\\|");
                     fieldsToRetrieve=LPArray.getUniquesArray(fieldsToRetrieve);
+                    SqlWhere wh=new SqlWhere(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, whereFieldsNameArr, whereFieldsValueArr);
                     list = QueryUtilitiesEnums.getViewData(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, 
                             EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, fieldsToRetrieve),
-                            new SqlWhere(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, whereFieldsNameArr, whereFieldsValueArr),
+                            wh,
                             new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.SAMPLE_ID.getName()} );
                     jArr=new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(list[0][0].toString())){
@@ -532,7 +533,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         Object[][] sampleStageInfo=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 
                             EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, sampleStageTimingCaptureAllFlds),
                             new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                            new String[]{TblsProcedure.SampleStageTimingCapture.ID.getName()});                    
+                            new String[]{TblsProcedure.SampleStageTimingCapture.ID.getName()}, null, false);                    
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleStageInfo[0][0].toString())){
                             this.isSuccess=false;
                             this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName()});
@@ -615,7 +616,20 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                                 }
                                 curTstGrpJObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testJsArr);
                             }
-                            tstGrpJsArr.add(curTstGrpJObj);
+                            Object[][] testWithSpecsInfo=QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, 
+                                EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL"),
+                                new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName(), 
+                                    TblsData.ViewSampleAnalysisResultWithSpecLimits.TESTING_GROUP.getName()}, new Object[]{sampleId, curTstGrpName}), 
+                                null);                    
+                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(testWithSpecsInfo[0][0].toString())){
+                                JSONArray testJsArr=new JSONArray();
+                                for (Object[] curTestWSpec: testWithSpecsInfo){
+                                    JSONObject curTestJsObj=LPJson.convertArrayRowToJSONObject(testFldsArr, curTestWSpec);
+                                    testJsArr.add(curTestJsObj);
+                                }
+                                curTstGrpJObj.put(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), testJsArr);
+                            }
+                            tstGrpJsArr.add(curTstGrpJObj);                            
                         }
                         jObjSampleInfo.put(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(), tstGrpJsArr);
                     }
@@ -1488,9 +1502,10 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
             return jArrMainObj;
         case "PLATEREADING":
         case "MICROORGANISMIDENTIFICATION":
-            String[] tblAllFlds=EnumIntViewFields.getAllFieldNames(TblsEnvMonitData.ViewSampleMicroorganismList.values());
+            EnumIntViewFields[] tblAllFldsObj=EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, "ALL");            
+            String[] tblAllFlds=EnumIntViewFields.getAllFieldNames(tblAllFldsObj);
             Object[][] sampleStageInfo=QueryUtilitiesEnums.getViewData(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW,
-                EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, "ALL"),
+                tblAllFldsObj,
                 new SqlWhere(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.SAMPLE_ID.getName()}, new Object[]{sampleId}), 
                 new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.TEST_ID.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.RESULT_ID.getName()});                    
             jObj= new JSONObject();
