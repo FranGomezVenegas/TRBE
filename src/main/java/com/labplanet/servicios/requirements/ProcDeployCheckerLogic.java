@@ -48,7 +48,7 @@ public class ProcDeployCheckerLogic {
         return mainObj;        
     }
     
-    public static JSONObject createModuleSchemasAndBaseTables(String procInstanceName, String dbName){
+    public static JSONObject createModuleSchemasAndBaseTables(String procInstanceName){
         Boolean anyMismatch=false;
         JSONObject detailsObj=new JSONObject();
         JSONObject mismatchesObj=new JSONObject();
