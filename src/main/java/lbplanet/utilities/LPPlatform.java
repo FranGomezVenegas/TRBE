@@ -279,7 +279,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.USRROLACTIONENABLED_ENABLED_BYALL, new Object[]{procInstanceName});
         }
         if ( (procedureActionsUserRoles.length==1 && "".equals(procedureActionsUserRoles[0])) ){
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER, new Object[]{procInstanceName, actionName});        
+            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER, new Object[]{actionName, procInstanceName});
         }else if(!LPArray.valueInArray(procedureActionsUserRoles, userRole)){    
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ROLENOTINCLUDED, new Object[]{procInstanceName, actionName, userRole, Arrays.toString(procedureActionsUserRoles)});        
         }else{
