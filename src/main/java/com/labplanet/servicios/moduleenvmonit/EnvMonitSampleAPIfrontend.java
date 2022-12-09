@@ -56,6 +56,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);      
         } finally {
+            procReqInstance.killIt();
             // release database resources
             try {
                 procReqInstance.killIt();
