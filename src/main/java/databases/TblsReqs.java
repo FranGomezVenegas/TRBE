@@ -348,8 +348,8 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-//        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
-        USER_NAME("user_name", LPDatabase.stringNotNull(), null, null, null, null)
+        USER_NAME("user_name", LPDatabase.stringNotNull(), null, null, null, null),
+        FULL_NAME("full_name", LPDatabase.stringNotNull(), null, null, null, null)
         ;
         private ProcedureUsers(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
