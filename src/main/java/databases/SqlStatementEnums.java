@@ -137,9 +137,9 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
 
         String queryWhere = "";
-        Object[] schemaDiag=getTableSchema(tblObj, null);
+        Object[] schemaDiag=getTableSchema(tblObj, alternativeProcInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaDiag[0].toString())) return null;
-        String schemaName=schemaDiag[0].toString();
+        String schemaName=schemaDiag[0].toString();        
         schemaName=LPPlatform.buildSchemaName(schemaName, "");
         String tableName=tblObj.getTableName();
 
@@ -525,14 +525,14 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                         alreadyAdded=true;
                     }
                     if (curFld.getFieldType().equals(LPDatabase.dateTime())){
-                        if (avoidMask!=null && avoidMask)
+                        if (avoidMask!=null && !avoidMask)
                             fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
                         else
                             fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
                             alreadyAdded=true;
                     }
                     if (curFld.getFieldType().equals(LPDatabase.dateTimeWithDefaultNow())){
-                        if (avoidMask!=null && avoidMask)
+                        if (avoidMask!=null && !avoidMask)
                             fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
                         else
                             fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
