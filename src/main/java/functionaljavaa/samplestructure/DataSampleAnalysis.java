@@ -585,23 +585,23 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             value = mandatoryFieldsValue[specialFieldIndex];
         }
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
-        String[] getResultFields = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
+        String[] getResultFieldsBeforeEach = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
             TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName()};
         Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), 
-                whereResultFieldName, whereResultFieldValue, getResultFields);
+                whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ANALYSISMETHOD_PARAMSNOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(whereResultFieldName, whereResultFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
         }
         resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, sampleId);
-        getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.SAMPLE_ID.getName());
+        getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.SAMPLE_ID.getName());
         resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, 0);
-        getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.TEST_ID.getName());
+        getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.TEST_ID.getName());
         // This is temporary !!!! ***************************************************************
-        specialFieldIndex = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.STATUS.getName());
+        specialFieldIndex = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.STATUS.getName());
         String firstStatusSampleAnalysisResult = SampleAnalysisResultStatuses.getStatusFirstCode();
         if (specialFieldIndex == -1) {
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, firstStatusSampleAnalysisResult);
-            getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.STATUS.getName());
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.STATUS.getName());
         }
         // This is temporary !!!! ***************************************************************
         String[] resultMandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel, actionName);
@@ -611,7 +611,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         StringBuilder resultMandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines = 0; inumLines < resultMandatoryFieldsValue.length; inumLines++) {
             String currField = resultMandatoryFields[inumLines];
-            boolean contains = Arrays.asList(getResultFields).contains(currField.toLowerCase());
+            boolean contains = Arrays.asList(getResultFieldsBeforeEach).contains(currField.toLowerCase());
             if (!contains) {
                 Integer valuePosic = Arrays.asList(resultDefaulFields).indexOf(currField.toLowerCase());
                 if (valuePosic == -1) {
@@ -621,7 +621,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 } else {
                     Object currFieldValue = resultDefaulFieldValue[valuePosic];
                     resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, currFieldValue);
-                    getResultFields = LPArray.addValueToArray1D(getResultFields, currField);
+                    getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, currField);
                 }
             }
         }
@@ -642,24 +642,25 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         SampleAudit smpAudit = new SampleAudit();
         smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ADDED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                 testId, sampleId, testId, null, fieldName, fieldValue);
-        Integer valuePosic = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.TEST_ID.getName());
+        Integer valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.TEST_ID.getName());
         if (valuePosic == -1) {
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, testId);
-            getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.TEST_ID.getName());
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.TEST_ID.getName());
         }else
             resultFieldRecords = LPArray.setColumnValueToArray2D(resultFieldRecords, valuePosic, testId);        
-        valuePosic = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName());
+        valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName());
         if (valuePosic == -1) {
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())]);
-            getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.METHOD_NAME.getName());
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_NAME.getName());
         }
-        valuePosic = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
+        valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
         if (valuePosic == -1) {
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())]);
-            getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
         }
         for (Object[] resultFieldRecord : resultFieldRecords) {
             Object[] fieldVal = new Object[0];
+            String[] getResultFields = getResultFieldsBeforeEach;
             for (int col = 0; col < resultFieldRecords[0].length; col++) {
                 fieldVal = LPArray.addValueToArray1D(fieldVal, resultFieldRecord[col]);
             }
