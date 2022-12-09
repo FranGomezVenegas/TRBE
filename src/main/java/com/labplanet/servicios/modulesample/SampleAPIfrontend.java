@@ -661,6 +661,12 @@ public class SampleAPIfrontend extends HttpServlet {
                         new String[]{TblsDataAudit.Sample.SAMPLE_ID.getName(), TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{sampleId}, 
                         new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
                    JSONArray jArr = new JSONArray();
+                   if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfo[0][0].toString())){
+                        //jArr.add(sampleAuditInfo[0]);
+                        //LPFrontEnd.responseError(sampleAuditInfo, language, procInstanceName);
+                        LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                        return;                       
+                   }
                    for (Object[] curRow: sampleAuditInfo){
                     JSONObject jObj=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRow,
                             new String[]{TblsDataAudit.Sample.FIELDS_UPDATED.getName()});
