@@ -59,6 +59,7 @@ public class TblsTrazitDocTrazit {
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         API_NAME("api_name", LPDatabase.stringNotNull(), null, null, null, null),
         API_VERSION("api_version", LPDatabase.integer(), null, null, null, null),
+        API_URL("api_url", LPDatabase.string(), null, null, null, null),
         ENDPOINT_NAME("endpoint_name", LPDatabase.stringNotNull(), null, null, null, null),
         ENDPOINT_VERSION("endpoint_version", LPDatabase.integer(), null, null, null, null),
         ARGUMENTS("arguments", LPDatabase.stringNotNull(), null, null, null, null),
