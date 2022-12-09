@@ -11,6 +11,8 @@ import com.google.gson.JsonObject;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
 import databases.RdbmsObject;
+import databases.TblsAppProcConfig;
+import databases.TblsAppProcData;
 import databases.TblsCnfg;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
 import functionaljavaa.materialspec.ConfigSpecRule;
@@ -51,6 +53,10 @@ public class ClassMasterData {
         MD_SAMPLES(new EnumIntTables[]{TblsCnfg.TablesConfig.SAMPLE}), 
         MD_SAMPLE_RULES(new EnumIntTables[]{TblsCnfg.TablesConfig.SAMPLE_RULES}), 
         MD_PERSONAL_AREAS(new EnumIntTables[]{}),
+        MD_INSTRUMENTS_FAMILIES(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY}), 
+        MD_INSTRUMENTS(new EnumIntTables[]{TblsAppProcData.TablesAppProcData.INSTRUMENTS}), 
+        MD_VARIABLES(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES}), 
+        MD_VARIABLES_SET(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET}), 
         ;
         private MasterDataObjectTypes(EnumIntTables[] tblsObj){
             this.tblsObj=tblsObj;
@@ -70,7 +76,7 @@ public class ClassMasterData {
             this.objectTypeExists=false;
             return;
         }        
-        Object[] objToJsonObj = convertToJsonObjectStringedObject(jsonObj);
+        Object[] objToJsonObj = convertToJsonObjectStringedObject(jsonObj, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, objToJsonObj[1].toString()+".Object: <*1*>", new Object[]{jsonObj});
            return;
@@ -358,7 +364,7 @@ public class ClassMasterData {
                                 else
                                     fldValue=LPArray.addValueToArray1D(fldValue, jO.getAsJsonObject().get(curFld).getAsString());
                             }
-                        }
+                        } 
                         if (!LPArray.valueInArray(fldName, TblsEnvMonitConfig.ProgramLocation.SPEC_CODE_VERSION.getName())){
                             fldName=LPArray.addValueToArray1D(fldName, TblsEnvMonitConfig.ProgramLocation.SPEC_CODE_VERSION.getName());
                             fldValue=LPArray.addValueToArray1D(fldValue, 1);                            
@@ -421,6 +427,69 @@ public class ClassMasterData {
                     parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
                         instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesActionAutoMoveToNext", stageWithAutoMoveToNext);
                     break;
+                case MD_INSTRUMENTS_FAMILIES:
+                    asJsonArray = jsonObject.get("values").getAsJsonArray();
+                    for (JsonElement jO: asJsonArray){
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY, jO);
+                        if (fldsInfo.length==3)
+                            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                        else{                    
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY, 
+                                (String[]) fldsInfo[0], (Object[])fldsInfo[1], instanceName);
+                            this.diagnostic=insertRecord.getApiMessage();
+                        }
+                    }                    
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new "+endPoint.name().toLowerCase(), null);
+                    break;   
+                case MD_INSTRUMENTS:
+                    asJsonArray = jsonObject.get("values").getAsJsonArray();
+                    for (JsonElement jO: asJsonArray){
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsAppProcData.TablesAppProcData.INSTRUMENTS, jO);
+                        if (fldsInfo.length==3)
+                            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                        else{                    
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsAppProcData.TablesAppProcData.INSTRUMENTS, 
+                                (String[]) fldsInfo[0], (Object[])fldsInfo[1], instanceName);
+                            this.diagnostic=insertRecord.getApiMessage();
+                        }
+                    }                    
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new "+endPoint.name().toLowerCase(), null);
+                    break;   
+                case MD_VARIABLES:
+                    asJsonArray = jsonObject.get("values").getAsJsonArray();
+                    for (JsonElement jO: asJsonArray){
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsAppProcConfig.TablesAppProcConfig.VARIABLES, jO);
+                        if (fldsInfo.length==3)
+                            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                        else{                    
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsAppProcConfig.TablesAppProcConfig.VARIABLES, 
+                                (String[]) fldsInfo[0], (Object[])fldsInfo[1], instanceName);
+                            this.diagnostic=insertRecord.getApiMessage();
+                        }
+                    }                    
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new "+endPoint.name().toLowerCase(), null);
+                    break;   
+                case MD_VARIABLES_SET:                    
+                    asJsonArray = jsonObject.get("values").getAsJsonArray();
+                    for (JsonElement jO: asJsonArray){
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET, jO);
+                        if (fldsInfo.length==3)
+                            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                        else{                    
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET, 
+                                (String[]) fldsInfo[0], (Object[])fldsInfo[1], instanceName);
+                            this.diagnostic=insertRecord.getApiMessage();
+                        }
+                    }                    
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new "+endPoint.name().toLowerCase(), null);
+                    break;   
+                    
+                    
+                    
+//        MD_INSTRUMENT_FAMILIES(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY}), 
+//        MD_INSTRUMENTS(new EnumIntTables[]{TblsAppProcData.TablesAppProcData.INSTRUMENTS}), 
+//        MD_VARIABLES(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES}), 
+//        MD_VARIABLE_SET(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET}),                     
                 default:
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "mdParserNotFound", new Object[]{endPoint.name()});
                     break;
@@ -440,5 +509,49 @@ public class ClassMasterData {
     public Object[] getDiagnostic() {
         return diagnostic;
     }
-    
+    private Object[] getFldsNamesAndValues(EnumIntTables tbl, JsonElement jO){        
+        String[] fldNames=new String[0];
+        Object[] fldValues=new Object[0];
+        String curFldName="";
+        try{
+            for (EnumIntTableFields curFld: tbl.getTableFields()){
+                curFldName=curFld.getName();
+                if (jO.getAsJsonObject().has(curFldName)){
+                    switch (EnumIntTableFields.getFldType(curFld).toUpperCase()){
+                        case "STRING":
+                            fldNames=LPArray.addValueToArray1D(fldNames, curFld.getName());
+                            fldValues=LPArray.addValueToArray1D(fldValues, jO.getAsJsonObject().get(curFld.getName()).getAsString());
+                            break;
+                        case "BOOLEAN":  
+                            fldNames=LPArray.addValueToArray1D(fldNames, curFld.getName());
+                            fldValues=LPArray.addValueToArray1D(fldValues, jO.getAsJsonObject().get(curFld.getName()).getAsBoolean());
+                            break;
+                        case "DATE":  
+                            fldNames=LPArray.addValueToArray1D(fldNames, curFld.getName());
+                            fldValues=LPArray.addValueToArray1D(fldValues, LPDate.stringFormatToDate(jO.getAsJsonObject().get(curFld.getName()).getAsString()));
+                            break;
+                        case "INTEGER":  
+                            fldNames=LPArray.addValueToArray1D(fldNames, curFld.getName());
+                            fldValues=LPArray.addValueToArray1D(fldValues, jO.getAsJsonObject().get(curFld.getName()).getAsInt());
+                            break;
+                        case "REAL":  
+                            fldNames=LPArray.addValueToArray1D(fldNames, curFld.getName());
+                            fldValues=LPArray.addValueToArray1D(fldValues, jO.getAsJsonObject().get(curFld.getName()).getAsFloat());
+                            break;
+                        default:
+                            String error= curFld.getFieldType()+" type not recognized for field "+curFld.getName();
+                            return new Object[]{fldNames, fldValues, error};                    
+                    }
+                }
+                //String[] fieldsToRetrieve = getAllFieldNames(tbl);
+                //for (String curFldName: getAllFieldNames(tbl)){            
+                //    jO.getAsJsonObject().get(curFldName).getAsString();
+                //}                
+            }
+            return new Object[]{fldNames, fldValues};            
+        }catch(Exception e){
+            return new Object[]{fldNames, fldValues, curFldName+" "+e.getMessage().toString()}; 
+        }        
+    }
 }
+

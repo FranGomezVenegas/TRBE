@@ -88,6 +88,15 @@ public interface EnumIntTableFields {
         }
         return -1;
     }
+    
+    public static String getFldType(EnumIntTableFields fld){
+        if (fld.getFieldType().toLowerCase().contains("char")) return "STRING";
+        if (fld.getFieldType().toLowerCase().contains("boolean")) return "BOOLEAN";
+        if (fld.getFieldType().toLowerCase().contains("timestamp")) return "DATE";
+        if (fld.getFieldType().toLowerCase().contains("real")) return "REAL";
+        if (fld.getFieldType().toLowerCase().contains("int")) return "INTEGER";
+        return "-";
+    }
 
 }
 
