@@ -55,8 +55,6 @@ public class TestingSamples extends HttpServlet {
         String table1Header = TestingServletsConfig.DB_SCHEMADATA_SAMPLES.getTablesHeaders();
         Integer table1NumArgs=13;
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
-        Object[] functionEvaluation=new Object[0];
-        JSONArray functionRelatedObjects=new JSONArray();        
         Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
 
         response = LPTestingOutFormat.responsePreparation(response);        
@@ -95,7 +93,8 @@ public class TestingSamples extends HttpServlet {
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
                 LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
                 LPTestingParams.handleAlternativeToken(tstOut, iLines);
-                
+                JSONArray functionRelatedObjects = new JSONArray();     
+                Object[] functionEvaluation=new Object[0];
                 tstAssertSummary.increaseTotalTests();                    
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
 
@@ -148,9 +147,18 @@ if (iLines==25){
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                             fileContentTable1Builder.append(clssInvestigationController.getRowArgsRows());                
                         }else{
-                            functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
-                            testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                            fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                            ClassSampleQueriesController clssSmpQueriesController=new ClassSampleQueriesController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                            if (clssSmpQueriesController.getFunctionFound()){
+                                functionRelatedObjects=clssSmpQueriesController.getFunctionRelatedObjects();
+                                functionEvaluation=(Object[]) clssSmpQueriesController.getFunctionDiagn();
+                                testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                fileContentTable1Builder.append(clssSmpQueriesController.getRowArgsRows());                
+                            }else{
+                                functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
+                                testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                            }
+                            clssSmpQueriesController = null;
                         }
                         clssInvestigationController=null;
                     }
