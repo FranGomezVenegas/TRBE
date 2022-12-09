@@ -489,12 +489,13 @@ GlobalAPIsParams.
                     rd.forward(request,response);   
             }
         }catch(Exception e){      
-            //procReqInstance.killIt();
+            procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
         } finally {
             // release database resources
+             procReqInstance.killIt();
             try {
                 // Rdbms.closeRdbms();                    
                 procReqInstance.killIt();
