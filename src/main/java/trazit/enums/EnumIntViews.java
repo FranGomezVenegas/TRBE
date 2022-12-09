@@ -70,6 +70,7 @@ public interface EnumIntViews {
         }
         if (vwDef.getExtraFilters()!=null)
                     vwScript=vwScript+" "+vwDef.getExtraFilters();
+        vwScript="create view "+LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), vwDef.getRepositoryName(), isForTesting, vwDef.getViewName())+"."+vwDef.getViewName()+" AS "+vwScript;
         return vwScript;
     }
     static StringBuilder getViewFldsList(EnumIntViews vwDef, String procInstanceName){
