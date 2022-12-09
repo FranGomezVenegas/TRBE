@@ -63,6 +63,8 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         String audEvObjStr="";
         String evName="";
         int i=0;
+        int totalEndpointsVisitedInjection=0;
+        String iStr="";
         Integer classesImplementingInt=-999;
         Integer totalEndpointsVisitedInt=0;
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
@@ -73,16 +75,21 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                 for (i=0;i<classesImplementing.size();i++){
                     ClassInfo getMine = classesImplementing.get(i); 
                     audEvObjStr=getMine.getSimpleName();
-                    if ("GenomaVariableAPIactionsEndpoints".equalsIgnoreCase(audEvObjStr) ||
+                    if ("ReqProcedureDefinitionAPIQueriesEndpoints".equalsIgnoreCase(audEvObjStr))
+                        iStr="1";
+/*                    if ("GenomaVariableAPIactionsEndpoints".equalsIgnoreCase(audEvObjStr) ||
                         "GenomaVariableAPIqueriesEndpoints".equalsIgnoreCase(audEvObjStr) ||
-                        i==34 || i==35 || i==36 || i==37|| i==38|| i==39|| i==40|| i==41
-                        || i==43    ){
-                        String iStr="1";
+                        i==34 || i==35 || i==36 || i==37|| i==38|| i==39|| i==40|| i==230
+                        || i==43    ){                        
+                            iStr="1";
                     }else{
+*/                    
                         List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
                         JSONArray enumsIncomplete = new JSONArray();
                         totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
                         for (int j=0;j<enumConstantObjects.size();j++) {
+                            if (totalEndpointsVisitedInjection==232)
+                                iStr="2";
                             EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);                        
                             evName=curEndpoint.getName();
                             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(),  EndpointsDeclaration.ENDPOINT_NAME.getName()});//,  EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
@@ -99,7 +106,7 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                                 AddCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
                                 try{
                                     declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName(), 
-                                            fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size(), numEndpointArguments);
+                                            fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size(), numEndpointArguments, curEndpoint.getApiUrl());
                                 }catch(Exception e){
                                     JSONObject jObj=new JSONObject();
                                     jObj.put("enum",getMine.getSimpleName());
@@ -108,6 +115,7 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                                     enumsIncomplete.add(jObj);
                                 }
                             }
+                            totalEndpointsVisitedInjection++;
                         }                    
                         if (enumsIncomplete.size()>0){
                             LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
@@ -118,12 +126,12 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                             jObj.put("messages",enumConstantObjects.size());
                             enumsCompleteSuccess.add(jObj);
                         }
-                    }
+//                    }
                 }
             }catch(Exception e){
                 ScanResult.closeAll();
                 JSONArray errorJArr = new JSONArray();
-                errorJArr.add("index:"+i+audEvObjStr+"_"+evName+":"+e.getMessage());
+                errorJArr.add("index:"+totalEndpointsVisitedInjection+audEvObjStr+"_"+evName+":"+e.getMessage());
 //                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());
                 LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                 return;
@@ -131,10 +139,16 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         // Rdbms.closeRdbms();
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
+        String summaryDiagnoses="";
         if (endpointsNotFound.isEmpty())
-            jMainObj.put("summary", "SUCCESS");
+            summaryDiagnoses="SUCCESS";
         else
-            jMainObj.put("summary", "WITH ERRORS");
+            summaryDiagnoses="WITH ERRORS";
+        JSONArray endpointsInDatabaseNoLongerInUse = endpointsInDatabaseNoLongerInUse(endpointsFound);
+        if (endpointsInDatabaseNoLongerInUse.size()>0)
+            summaryDiagnoses=summaryDiagnoses+" There are endpoints in db no longer in use";
+        
+        jMainObj.put("summary", summaryDiagnoses);
         jMainObj.put("00_total_in_db_before_running", this.endpointsFromDatabase.length);
         jMainObj.put("01_total_apis_in_db_before_running", this.apiName1d.length);
         jMainObj.put("02_total_enums",classesImplementingInt.toString());
@@ -145,6 +159,8 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         jMainObj.put("06_found_total", endpointsFound.size());
         jMainObj.put("07_not_found", endpointsNotFound);        
         jMainObj.put("07_not_found_total", endpointsNotFound.size());
+        if (endpointsInDatabaseNoLongerInUse.size()>0)
+            jMainObj.put("08_Endpoints_in_db_no_longer_in_use", endpointsInDatabaseNoLongerInUse);
         
         this.summaryInfo=jMainObj;
         //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
@@ -184,12 +200,23 @@ private void getEndPointsFromDatabase(){
     this.apiName1d = LPArray.getUniquesArray(apiName1d);
 }
 
+private JSONArray endpointsInDatabaseNoLongerInUse(JSONArray endpointsFound){
+    JSONArray jArr=new JSONArray();
+    for (String curEntry: this.endpointsApiAndEndpointNamesKey){
+        if (endpointsFound.indexOf(curEntry)==-1)
+            jArr.add(curEntry);
+    //curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName()
+    }
+    return jArr;
+}
+
+
 private Object[] existsEndPointInDatabase(String apiName, String endpointName){
     Integer valuePosicInArray = LPArray.valuePosicInArray(this.endpointsApiAndEndpointNamesKey, apiName+"-"+endpointName);
     if (valuePosicInArray==-1)return new Object[]{LPPlatform.LAB_FALSE};
     return this.endpointsFromDatabase[valuePosicInArray];    
 }
-public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi, Integer numEndpointArguments){
+public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi, Integer numEndpointArguments, String apiUrl){
 //if ("InspLotRMQueriesAPIEndpoints".equalsIgnoreCase(apiName) && "GET_LOT_INFO".equalsIgnoreCase(endpointName))
 //    apiName=apiName;
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
@@ -209,12 +236,12 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
             if (outputObjectTypes==null&&"ACTION".equalsIgnoreCase(apiName)) fldValues=LPArray.addValueToArray1D(fldValues, "TBD-To be defined");
             else if (outputObjectTypes==null&&!"ACTION".equalsIgnoreCase(apiName)) fldValues=LPArray.addValueToArray1D(fldValues, "Not Applies for queries");
             else
-                fldValues=LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());              
+                fldValues=LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());   
+            fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.API_URL.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, apiUrl);   
             Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
-                        fldNames), 
-                        fldValues, 
-                        sqlWhere, null);
+                        fldNames), fldValues, sqlWhere, null);
         }else{
             //String[] flds=(String[]) docInfoForEndPoint[0];
             String[] fldNames=new String[]{};
@@ -234,7 +261,9 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
             sqlWhere.addConstraint(TblsTrazitDocTrazit.EndpointsDeclaration.ID,
                     SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0]}, "");
             fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.NUM_ARGUMENTS.getName());
-            fieldValues=LPArray.addValueToArray1D(fieldValues, numEndpointArguments);            
+            fieldValues=LPArray.addValueToArray1D(fieldValues, numEndpointArguments); 
+            fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.API_URL.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, apiUrl);               
             Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
                 EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
                 fldNames), fldValues, sqlWhere, null);
