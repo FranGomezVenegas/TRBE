@@ -1808,7 +1808,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         else
             query=query+indexName;
         try{
-            String[] filter=new String[]{query, schema};
+            String[] filter=new String[]{};
             ResultSet res = Rdbms.prepRdQuery(query, filter);
             if (res==null){
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES+ Arrays.toString(filter)});
