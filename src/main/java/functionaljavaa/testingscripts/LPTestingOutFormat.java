@@ -291,12 +291,16 @@ public class LPTestingOutFormat {
         TestingAuditIds testingAuditObj = procReqInstance.getTestingAuditObj();
         
         if (testingAuditObj!=null){
-            JSONArray jsonContent = testingAuditObj.getJsonContent();
-            String auditIdRange=testingAuditObj.getMinAudit().toString()+"-"+testingAuditObj.getMaxAudit().toString();
-            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.AUDIT_ID_START.getName());
-            updFldValues=LPArray.addValueToArray1D(updFldValues, testingAuditObj.getMinAudit());
-            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.AUDIT_ID_END.getName());
-            updFldValues=LPArray.addValueToArray1D(updFldValues, testingAuditObj.getMaxAudit());
+            String auditIdRange="";
+            if (testingAuditObj.getMinAudit()!=null){
+                JSONArray jsonContent = testingAuditObj.getJsonContent();
+                auditIdRange=testingAuditObj.getMinAudit().toString()+"-"+testingAuditObj.getMaxAudit().toString();
+                updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.AUDIT_ID_START.getName());
+                updFldValues=LPArray.addValueToArray1D(updFldValues, testingAuditObj.getMinAudit());
+                updFldNames=LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.AUDIT_ID_END.getName());
+                updFldValues=LPArray.addValueToArray1D(updFldValues, testingAuditObj.getMaxAudit());
+            }else
+                auditIdRange="Check it, no audit records created?";
         }
         TestingBusinessRulesVisited testingBusinessRulesVisitedObj = procReqInstance.getTestingBusinessRulesVisitedObj();
         if (testingBusinessRulesVisitedObj!=null){
