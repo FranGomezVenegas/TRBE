@@ -54,7 +54,7 @@ public class RelatedObjects {
     }
     public void addSimpleNode(String schema, String objectType, Object object, String[] fldName, Object[] fldValue){
         JSONObject jObj=new JSONObject();
-        jObj.put(RelatedObjectsElementNames.SCHEMA.getLabelName(), schema);
+        //jObj.put(RelatedObjectsElementNames.SCHEMA.getLabelName(), schema);
         jObj.put(RelatedObjectsElementNames.OBJECT_TYPE.getLabelName(),  objectType);
         jObj.put(RelatedObjectsElementNames.OBJECT.getLabelName(),  object);   
         if ( (fldName!=null && fldValue!=null) && (LPPlatform.LAB_TRUE.equalsIgnoreCase(LPArray.checkTwoArraysSameLength(fldValue, fldValue)[0].toString())) )
