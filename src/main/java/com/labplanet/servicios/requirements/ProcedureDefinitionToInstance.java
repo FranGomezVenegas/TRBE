@@ -79,7 +79,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         Integer iSection=0;
         try (PrintWriter out = response.getWriter()) {
             if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
-                JSONObject createDBProcedureInfo = ProcDeployCheckerLogic.createModuleSchemasAndBaseTables(procInstanceName, null);
+                JSONObject createDBProcedureInfo = ProcDeployCheckerLogic.createModuleSchemasAndBaseTables(procInstanceName);
                 createDBProcedureInfo.put("section_name", "CREATE_REPOSITORIES_AND_PROC_TBLS");
                 createDBProcedureInfo.put("section_label_en", "Repositories and Base Procedure Tables creation");
                 createDBProcedureInfo.put("section_label_es", "Creación de Repositorios y Tablas Base del Proceso");
@@ -90,7 +90,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[5].toString()) || CREATE_REPOSITORIES_AND_PROC_TBLS;
                 sectionsSettingJobj.put("1) CREATE_REPOSITORIES_AND_PROC_TBLS", runSection);
                 if (runSection){            
-                    JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(procInstanceName, null);
+                    JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(procInstanceName);
                     sectionsDetailObj.put("CREATE_REPOSITORIES_AND_PROC_TBLS", createDBProcedureInfo);
                 }               
             }
