@@ -42,6 +42,8 @@ public class TblsApp {
             new String[]{VideoTutorial.ID.getName()}, null, "Video Tutorial entries table"),
         VIDEO_TUTORIAL_JSON(null, "video_tutorial_json", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, VideoTutorialJson.values(), null,
             new String[]{VideoTutorialJson.AREA.getName()}, null, "Video Tutorial JSON entries table"),
+        APP_BUSINESS_RULES(null, "business_rules", GlobalVariables.Schemas.APP_BUSINESS_RULES.getName(), IS_PRODEDURE_INSTANCE, TblsProcedure.ProcedureBusinessRules.values(), null,
+            new String[]{VideoTutorialJson.AREA.getName()}, null, "App business rules entries table"),
         ;
         private TablesApp(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
