@@ -587,10 +587,10 @@ public class TblsProcedure {
         SAMPLE_ID("sample_id", LPDatabase.integer(), null, null, null, null),
         STAGE_CURRENT("current_stage", LPDatabase.stringNotNull(), null, null, null, null),
         STAGE_PREVIOUS("stage_previous", LPDatabase.string(), null, null, null, null),
-        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTimeWithDefaultNow(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTimeWithDefaultNow(), "to_char("+LPDatabase.FIELDS_NAMES_CREATED_ON+",'YYYY-MM-DD HH:MI')", null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
-        STARTED_ON("started_on", dateTime(), null, null, null, null),
-        ENDED_ON("ended_on", dateTime(), null, null, null, null),
+        STARTED_ON("started_on", dateTime(), "to_char("+"started_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        ENDED_ON("ended_on", dateTime(), "to_char("+"ended_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
         ;
         private SampleStageTimingCapture(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
