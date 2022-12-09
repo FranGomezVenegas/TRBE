@@ -149,6 +149,11 @@ public class LPJson {
            jArr.add(e.getMessage());
            jArr.add(value);
            return jArr; 
+        } catch (Exception ex){
+           JsonArray jArr = new JsonArray();
+           jArr.add(ex.getMessage());
+           jArr.add(value);
+           return jArr;             
         }
     }
 
