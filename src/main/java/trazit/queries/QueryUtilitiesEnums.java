@@ -94,7 +94,7 @@ public class QueryUtilitiesEnums {
         SqlStatementEnums sql = new SqlStatementEnums(); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable(Rdbms.SQLSELECT, tblObj,
                 whereFieldNames, whereFieldValues,
-                fieldsToRetrieve,  null, null, orderBy, null, inforceDistinct, alternativeProcInstanceName);            
+                fieldsToRetrieve,  null, null, orderBy, null, inforceDistinct, alternativeProcInstanceName, avoidMask);            
         query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);
    
