@@ -24,6 +24,7 @@ public class ProcedureSampleStage {
         SAMPLEANALYSISRESULT_NOTFOUND("EnvMonSampleStageChecker_SampleAnalysisResultNotFound", "sample_analysis_result value not found", ""),
         SAMPLING_PREV_FIRSTSTAGE("EnvMonSampleStageChecker_SamplingPrevious_InFirstStage", "Sampling is the first stage, has no previous.", ""),
         SAMPLINGDATE_MANDATORY("EnvMonSampleStageChecker_SamplingNext_stagesCheckerSamplingDateIsMandatory", "", ""),
+        SAMPLINGDATEEND_MANDATORY("EnvMonSampleStageChecker_SamplingNext_stagesCheckerSamplingDateEndIsMandatory", "", ""),
         FIRSTINCUB_MANDATORY("EnvMonSampleStageChecker_IncubationNext_stagesCheckerPendingFirstIncubation", "", ""),
         SECONDINCUB_MANDATORY("EnvMonSampleStageChecker_IncubationNext_stagesCheckerPendingSecondIncubation", "", ""),
         INCUB_INPROGRESS("EnvMonSampleStageChecker_IncubationNext_stagesCheckerIncubationInProgress", "", ""),
@@ -67,7 +68,7 @@ public class ProcedureSampleStage {
             return "LABPLANET_TRUE";
         String samplingDateEnd=sampleStructure.get("sampling_date_end").toString();        
         if (samplingDateEnd==null || "null".equalsIgnoreCase(samplingDateEnd)) {
-            return LPPlatform.LAB_FALSE+"SAMPLINGDATE_MANDATORY"+"@"+sampleId;} // Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+            return LPPlatform.LAB_FALSE+"SAMPLINGDATEEND_MANDATORY"+"@"+sampleId;} // Fecha de muestreo es obligatoria para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
 

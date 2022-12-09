@@ -278,7 +278,10 @@ Object[][] firstStageData=new Object[0][0];
                 errorCodeArr[0] = smpStgErr.getErrorCode();
             }catch(Exception e){                
             }
-            messages.addMainForError(errorCodeArr[0], msgVariables, null);
+            if (messages.getMainMessage()==null)
+                messages.addMainForError(errorCodeArr[0], msgVariables, null);
+            else
+                messages.addMinorForError(errorCodeArr[0], msgVariables, null);
             
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{errorCode});
         }
