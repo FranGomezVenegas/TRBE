@@ -54,13 +54,11 @@ public class SampleAPIParams extends HttpServlet {
             add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName()).build()).build(), DataSampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED),
         REVIEWRESULT("REVIEWRESULT", "reviewResult_success",
-            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build(), DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED ),
         UNREVIEWRESULT("UNREVIEWRESULT", "unreviewResult_success",
-            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, 
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build(), DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNREVIEWED ),
         CANCELSAMPLE("CANCELSAMPLE", "cancelSample_success",
@@ -240,6 +238,10 @@ public class SampleAPIParams extends HttpServlet {
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build(), DataSampleAuditEvents.SAMPLE_REVIEWED ),
+        UNREVIEWSAMPLE("UNREVIEWSAMPLE", "unreviewSample_success",
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.TablesData.SAMPLE_ANALYSIS.getTableName()).build()).build(), DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_UNREVIEWED ),
         REVIEWTEST("REVIEWTEST", "reviewTest_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
