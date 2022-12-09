@@ -53,11 +53,11 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
     public enum GenomaStudyAPIqueriesEndpoints implements EnumIntEndpoints{
         ALL_ACTIVE_PROJECTS("ALL_ACTIVE_PROJECTS", "", new LPAPIArguments[]{
             new LPAPIArguments("get_only_active_objects", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 6),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
-            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
             //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
             }, EndPointsToRequirements.endpointWithNoOutputObjects),
         DEACTIVATED_PROJECT_USERS_LAST_N_DAYS("DEACTIVATED_PROJECT_USERS_LAST_N_DAYS","",
@@ -104,16 +104,21 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
-        @Override        public String getName(){return this.name;}
-        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        @Override        public LPAPIArguments[] getArguments() {return arguments;}
-        @Override        public String getApiUrl(){return ApiUrls.GENOMA_STUDY_QUERIES.getUrl();}
+        @Override        public String getName(){
+            return this.name;}
+        @Override        public JsonArray getOutputObjectTypes() {
+            return outputObjectTypes;}     
+        @Override        public LPAPIArguments[] getArguments() {
+            return arguments;}
+        @Override        public String getApiUrl(){
+            return ApiUrls.GENOMA_STUDY_QUERIES.getUrl();}
         private final String name;
         private final String successMessageCode; 
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
 
-        @Override        public String getSuccessMessageCode(){            return this.successMessageCode;        }           
+        @Override        public String getSuccessMessageCode(){  
+            return this.successMessageCode;        }           
     }
     
     
