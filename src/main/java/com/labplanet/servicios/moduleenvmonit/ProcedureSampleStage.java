@@ -72,7 +72,9 @@ public class ProcedureSampleStage {
         return LPPlatform.LAB_TRUE;
     }  
 
-    public String sampleStageIncubationPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
+    public String sampleStageIncubationPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) { 
+        if (1==1)
+            return LPPlatform.LAB_TRUE;
         Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
            return LPPlatform.LAB_FALSE;
@@ -121,6 +123,9 @@ public class ProcedureSampleStage {
     public String sampleStagePlateReadingPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
         return LPPlatform.LAB_TRUE;
     }
+    public String sampleStagePlateReadingSecondEntryPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) {   
+        return LPPlatform.LAB_TRUE;
+    }    
     public String sampleStagePlateReadingNextCheckerWithNoSecondEntry(String procInstanceName, Integer sampleId, String sampleData) { 
         try{
             Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
