@@ -580,14 +580,14 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
             }
             Object[] actionDiagnoses=null;
             RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SPEC, specFieldName, specFieldValue); // , schemaConfigName);
-            if (!insertDiagn.getRunSuccess())
+            if (!insertDiagn.getRunSuccess()){
                 return actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
             
 //            diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.TablesConfig.SPEC_RULES.getTableName(), 
 //                    new String[]{TblsCnfg.SpecRules.CODE.getName(), TblsCnfg.SpecRules.CONFIG_VERSION.getName(), 
 //                        TblsCnfg.SpecRules.ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.ALLOW_MULTI_SPEC.getName()}, 
 //                    new Object[]{specCode, specCodeVersion, false, false});       
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+            }else{
                 ConfigTablesAudit.specAuditAdd(ConfigSpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.TablesConfig.SPEC, specCode, 
                         specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
                 String[] specRulesFldNames=new String[]{TblsCnfg.SpecRules.CODE.getName(), TblsCnfg.SpecRules.CONFIG_VERSION.getName(),
@@ -610,11 +610,12 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
 
                 ConfigTablesAudit.specAuditAdd(ConfigSpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.TablesConfig.SPEC_RULES, specCode, 
                     specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specRulesFldNames, specRulesFldValues, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
-                errorCode = "specRecord_createdSuccessfully";
-                errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specCode);
-                errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);                   
-            }    
+            }
+            errorCode = "specRecord_createdSuccessfully";
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specCode);
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaConfigName);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);                   
+
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(ConfigSpecStructure.class.getName()).log(Level.SEVERE, null, ex);
         }                    

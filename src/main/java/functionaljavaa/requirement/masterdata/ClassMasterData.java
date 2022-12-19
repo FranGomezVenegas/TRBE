@@ -118,22 +118,29 @@ public class ClassMasterData {
                         Object[] existAnalysis = Rdbms.existsRecord(TblsCnfg.TablesConfig.ANALYSIS, new String[]{TblsCnfg.Analysis.CODE.getName()}, new Object[]{jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString()}, instanceName);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existAnalysis[0].toString())){
                             this.diagnostic = cAna.analysisNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString(), 1,fldNames, fldValues);
-                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                            //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                         }
                         
                         fldNames=new String[]{TblsCnfg.AnalysisMethod.CREATED_ON.getName(), TblsCnfg.AnalysisMethod.CREATED_BY.getName(),
-                            TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(),
+                            TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(),
                             TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName()};
                         fldValues=new Object[]{LPDate.getCurrentTimeStamp(), userCreator,
-                            jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.UOM.getName()).getAsString(),
+                            jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName()).getAsString(),
                             jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.MANDATORY.getName()).getAsBoolean(), jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName()).getAsInt()};
+                        
+                        if (jO.getAsJsonObject().has(TblsCnfg.AnalysisMethodParams.UOM.getName())){
+                            fldNames=LPArray.addValueToArray1D(fldNames,TblsCnfg.AnalysisMethodParams.UOM.getName());
+                            fldValues=LPArray.addValueToArray1D(fldValues, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.UOM.getName()).getAsString());
+                        }
+                        
                         this.diagnostic=cAna.analysisMethodParamsNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString(), 1, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()).getAsString(), fldNames, fldValues);
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
-
-                        String uom=jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.UOM.getName()).getAsString();
-                        String currFld="Tipo Importación";
-                        if (jO.getAsJsonObject().has(currFld) && uom.length()>0)
-                            actionDiagnoses=getUomFromConfig(uom, jO.getAsJsonObject().get(currFld).getAsString());
+                        //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
+                        if (jO.getAsJsonObject().has(TblsCnfg.AnalysisMethodParams.UOM.getName())){
+                            String uom=jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.UOM.getName()).getAsString();
+                            String currFld="Tipo Importación";
+                            if (jO.getAsJsonObject().has(currFld) && uom.length()>0)
+                                actionDiagnoses=getUomFromConfig(uom, jO.getAsJsonObject().get(currFld).getAsString());
+                        }
                     }   
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new analysis params", null);
                     break;
