@@ -111,5 +111,23 @@ public class ResponseMessages {
         mainStructureObject.mainMessageCode=messageCode;
         mainStructureObject.mainMessageVariables=msgCodeVariables;
     }
+
+    public void addMinorForError(String messageCode, Object[] msgCodeVariables, String className){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
+        String procName=procReqSession.getProcedureInstance();
+        if (testingMessageCodeVisitedObj!=null)
+            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode, messageCode, className);        
+        this.messages=LPArray.addColumnToArray2D(this.messages, LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3));
+    }
+    
+    public void addMinorForError(EnumIntMessages messageCode, Object[] msgCodeVariables){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
+        String procName=procReqSession.getProcedureInstance();
+        if (testingMessageCodeVisitedObj!=null)
+            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode.getErrorCode(), messageCode.getErrorCode(), messageCode.getClass().getSimpleName());        
+        this.messages=LPArray.addColumnToArray2D(this.messages, LPArray.array1dTo2d(new Object[]{messageCode.getErrorCode(), msgCodeVariables, new Object[]{}}, 3));
+    }    
     
 }

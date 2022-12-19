@@ -44,6 +44,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static lbplanet.utilities.LPSession.frontEndIpChecker;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.ProcedureRequestSession;
+import trazit.session.ResponseMessages;
 /**
  *
  * @author Administrator
@@ -288,7 +290,9 @@ public class AuthenticationAPI extends HttpServlet {
                     RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
                     jsonObj = new JSONObject();
-                    jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[0], rObj.getRelatedObject());                
+                    ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+                    messages.killInstance();
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, newPwDiagn, rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
                     rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
@@ -323,7 +327,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
                     jsonObj = new JSONObject();
-                    jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[0], rObj.getRelatedObject());                
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, newPwDiagn, rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
                     rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
@@ -352,7 +356,9 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                     rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
                     jsonObj = new JSONObject();
-                    jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[0], rObj.getRelatedObject());                
+                    messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+                    messages.killInstance();                    
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, newEsignDiagn, rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
                     rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
@@ -366,7 +372,9 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagn);   
                     else{
                         rObj=RelatedObjects.getInstanceForActions();
-                        jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[0], rObj.getRelatedObject());                                        
+                        messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+                        messages.killInstance();                        
+                        jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, diagn, rObj.getRelatedObject());                                        
                         rObj.killInstance();
                         LPFrontEnd.servletReturnSuccess(request, response, jsonObj);                        
                     }
