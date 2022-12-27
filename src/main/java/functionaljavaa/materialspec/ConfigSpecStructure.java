@@ -665,7 +665,6 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
-                          
         String errorCode="";
         Object[]  errorDetailVariables= new Object[0];
 
@@ -681,13 +680,28 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
         }                
         Integer fieldIndex = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.ANALYSIS.getName());
         String analysis = (String) specFieldValue[fieldIndex];
+        
+        String[] keyFieldNames=new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName()};
+        Object[] keyFieldValues=new Object[]{specCode, specCodeVersion, analysis};
+        keyFieldNames=LPArray.addValueToArray1D(keyFieldNames, TblsCnfg.SpecLimits.VARIATION_NAME.getName());
+        fieldIndex = Arrays.asList(specFieldName).indexOf(TblsCnfg.SpecLimits.VARIATION_NAME.getName());
+        keyFieldValues=LPArray.addValueToArray1D(keyFieldValues, (String) specFieldValue[fieldIndex]);
+
         Integer fieldIndexMethodName = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.METHOD_NAME.getName());
         Integer fieldIndexMethodVersion = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.METHOD_VERSION.getName());
         String methodName="";
         Integer methodVersion=-1;
         if (fieldIndexMethodName>-1 && fieldIndexMethodVersion>-1 && specFieldValue[fieldIndexMethodName].toString().length()>0){
-            if (fieldIndexMethodName>-1) methodName = (String) specFieldValue[fieldIndexMethodName];
-            if (fieldIndexMethodVersion>-1) methodVersion = (Integer) specFieldValue[fieldIndexMethodVersion];  
+            if (fieldIndexMethodName>-1){
+                methodName = (String) specFieldValue[fieldIndexMethodName];
+                keyFieldNames=LPArray.addValueToArray1D(keyFieldNames, TblsCnfg.SpecLimits.METHOD_NAME.getName());
+                keyFieldValues=LPArray.addValueToArray1D(keyFieldValues, methodName);
+            }
+            if (fieldIndexMethodVersion>-1){
+                methodVersion = (Integer) specFieldValue[fieldIndexMethodVersion];
+                keyFieldNames=LPArray.addValueToArray1D(keyFieldNames, TblsCnfg.SpecLimits.METHOD_VERSION.getName());
+                keyFieldValues=LPArray.addValueToArray1D(keyFieldValues, methodVersion);
+            }  
         }else{
             Object[][] analysisMethods = Rdbms.getRecordFieldsByFilter(schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), 
                 new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName()}, new Object[]{analysis}, 
@@ -712,7 +726,11 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
                 specFieldValue=LPArray.addValueToArray1D(specFieldValue, methodVersion);                
             }
         }
-
+        Object[] existsRecord = Rdbms.existsRecord(TblsCnfg.TablesConfig.SPEC_LIMITS, keyFieldNames, keyFieldValues, procInstanceName);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
+            existsRecord[0]=LPPlatform.LAB_FALSE;
+            return existsRecord;
+        }
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(specFieldName).contains(currField.toLowerCase());
