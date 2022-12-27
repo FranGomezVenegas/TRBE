@@ -6,6 +6,8 @@
 package com.labplanet.servicios.app;
 
 import databases.Rdbms;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsTesting;
 import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
@@ -36,6 +38,7 @@ import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -254,7 +257,16 @@ public class TestingRegressionUAT extends HttpServlet {
                         }                            
                     }
                     if (actionsList!=null){
-                        procReqInstance.killIt();                        
+                        SqlWhere sqlWhere = new SqlWhere();
+                        String[] updFldNames=new String[]{TblsTesting.Script.RUN_SUMMARY.getName()};
+                        Object[] trapMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getErrorCode(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList)});
+                        Object[] updFldValues=new Object[]{trapMessage[trapMessage.length-1]};
+                        
+                        sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+                        Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+                        EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldNames), updFldValues, sqlWhere, null);
+                        procReqInstance.killIt();  
+                        
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getErrorCode(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language, null);
                         return;
                     }
