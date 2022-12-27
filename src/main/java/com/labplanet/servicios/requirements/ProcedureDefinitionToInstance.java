@@ -236,7 +236,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsDetailCheckerArr.add(dataRepositoriesAreMirror);
             }
             
-            mainObj.put("endpoint_call_settings", sectionsSettingJobj);
+            mainObj.put("actions_to_perform_settings", sectionsSettingJobj);
             if (Boolean.valueOf(runAsCheckerAttrValue.toString()))
                 mainObj.put("sections_log", sectionsDetailCheckerArr);
             else
