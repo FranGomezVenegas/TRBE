@@ -8,6 +8,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
 /**
  *
@@ -49,6 +50,10 @@ public class CertifGlobalVariables {
         private final String[] fieldsName;
         private final Object[] fieldsValue;        
     }
+    
+    public enum UserCertifTrackAuditEvents implements EnumIntAuditEvents{ 
+        ASSIGNED_BY_USERROLE_ASSIGNMENT, 
+    }    
     
     public static String getScriptToAddCertifToAnyObject(String procInstanceName, String schemaGroupName, String tableName){
         return getScriptToAddCertifToAnyObjectPostgres(procInstanceName, schemaGroupName, tableName);

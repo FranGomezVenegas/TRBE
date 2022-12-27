@@ -13,6 +13,8 @@ import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsData;
 import functionaljavaa.businessrules.BusinessRules;
+import functionaljavaa.certification.CertifGlobalVariables.UserCertifTrackAuditEvents;
+import functionaljavaa.certification.UserCertificationTracking;
 import static functionaljavaa.intervals.IntervalsUtilities.applyExpiryInterval;
 import functionaljavaa.user.UserProfile;
 import lbplanet.utilities.LPArray;
@@ -31,6 +33,8 @@ import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.ProcedureRequestSession;
+import trazit.session.SessionAuditActions;
 
 /**
  *
@@ -431,15 +435,18 @@ public class UserSop {
         
         if (userSopInitialStatus.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getCode();
         if (userSopInitialLight.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getLightCode();
-        
+        String sopName="";
+        Integer sopId=-9;
         String[] insertFieldNames=new String[]{TblsData.UserSop.USER_ID.getName(), sopIdFieldName, TblsData.UserSop.STATUS.getName(), TblsData.UserSop.LIGHT.getName()};
         Object[] insertFieldValues=new Object[]{personName, sopIdFieldValue, userSopInitialStatus, userSopInitialLight};
         if ( (TblsCnfg.SopMetaData.SOP_NAME.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.SOP_NAME.getName())) ){
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.SOP_NAME.getName()); 
+            sopName=sopIdFieldValue.toString();
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopIdByName(procInstanceName, sopIdFieldValue.toString()));
         }
         if ( (TblsCnfg.SopMetaData.SOP_ID.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.SOP_ID.getName())) ){
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.SOP_ID.getName()); 
+            sopId=Integer.valueOf(sopIdFieldValue.toString());
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopNameById(procInstanceName, sopIdFieldValue));
         }     
         if (!LPArray.valueInArray(insertFieldNames, TblsData.UserSop.USER_NAME.getName())){
@@ -448,8 +455,12 @@ public class UserSop {
         
         RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsData.TablesData.USER_SOP, insertFieldNames, insertFieldValues);
         if (!insertDiagn.getRunSuccess()) return insertDiagn.getApiMessage();
-        else
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SopUserAPIactionsEndpoints.ADD_SOP_TO_USER.getSuccessMessageCode(), new Object[]{sopIdFieldValue, personName, schemaName});
+        
+        UserCertificationTracking.userCertificationTrackingAuditAdd(UserCertifTrackAuditEvents.ASSIGNED_BY_USERROLE_ASSIGNMENT,"SOP", UserAndRolesViews.getUserByPerson(personName), 
+                sopName, sopId, insertFieldNames, insertFieldValues);
+        SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();        
+        ProcedureRequestSession.getInstanceForActions(null, null, null).auditActionsKill();
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SopUserAPIactionsEndpoints.ADD_SOP_TO_USER.getSuccessMessageCode(), new Object[]{sopIdFieldValue, personName, schemaName});
     }    
     
     /**

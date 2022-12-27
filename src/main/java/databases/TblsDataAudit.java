@@ -45,6 +45,8 @@ public class TblsDataAudit {
     public enum TablesDataAudit implements EnumIntTables{
         SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Sample.values(), Sample.AUDIT_ID.getName(),
             new String[]{Sample.AUDIT_ID.getName()}, null, "Sample Audit Trial"),
+        USER_CERTIF_TRACK(null, "user_certification_track", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, UserCertifTrack.values(), UserCertifTrack.AUDIT_ID.getName(),
+            new String[]{UserCertifTrack.AUDIT_ID.getName()}, null, "UserCertifTrack Audit Trial"),
         CERTIF_USER_ANALYSIS_METHOD(null, "certif_user_analysis_method", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, CertifUserAnalysisMethod.values(), CertifUserAnalysisMethod.AUDIT_ID.getName(),
             new String[]{CertifUserAnalysisMethod.AUDIT_ID.getName()}, null, "certif_user_analysis_method Audit Trial"),
         SESSION(null, "session", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Session.values(), Session.SESSION_ID.getName(),
@@ -138,6 +140,43 @@ public class TblsDataAudit {
         ACTION_PRETTY_ES("action_pretty_es", LPDatabase.string(), null, null, null, null),
         ;
         private Sample(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+
+    public enum UserCertifTrack implements EnumIntTableFields{
+        AUDIT_ID("audit_id", LPDatabase.integer(), null, null, null, null),
+        TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
+        OBJECT_TYPE("object_type", " character varying COLLATE pg_catalog.\"default\"", null, null, null, null),
+        OBJECT_ID("object_id", LPDatabase.integer(), null, null, null, null),
+        OBJECT_NAME("object_name", " character varying COLLATE pg_catalog.\"default\"", null, null, null, null),
+        DATE("date", LPDatabase.dateTime(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
+        ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
+        FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null),
+        PROCEDURE("procedure", LPDatabase.string(), null, null, null, null),
+        PROCEDURE_VERSION("procedure_version", LPDatabase.integer(), null, null, null, null),
+        PROCEDURE_HASH_CODE("procedure_hash_code", LPDatabase.stringNotNull(), null, null, null, null),
+        APP_SESSION_ID("app_session_id", LPDatabase.integer(), null, null, null, null),
+        PICTURE_BEFORE("picture_before", "json", null, null, null, null),
+        PICTURE_AFTER("picture_after", "json", null, null, null, null),
+        REASON("reason", LPDatabase.string(), null, null, null, null),
+        ACTION_PRETTY_EN("action_pretty_en", LPDatabase.string(), null, null, null, null),
+        ACTION_PRETTY_ES("action_pretty_es", LPDatabase.string(), null, null, null, null),
+        ;
+        private UserCertifTrack(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
