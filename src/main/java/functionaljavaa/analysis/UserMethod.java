@@ -29,20 +29,22 @@ public class UserMethod {
    String classVersion = "0.1";
 
     public enum UserMethodBusinessRules  {     
-        CERTIFICATE_NOTASSIGNED ("userMethodCertificate_notAssigned", GlobalVariables.Schemas.CONFIG.getName()),
-        CERTIFICATE_INACTIVE("userMethodCertificate_inactive", GlobalVariables.Schemas.CONFIG.getName()),
-        CERTIFICATE_CERTIFIED("userMethodCertificate_certified", GlobalVariables.Schemas.CONFIG.getName()),
+        CERTIFICATE_NOTASSIGNED ("userMethodCertificate_notAssigned", GlobalVariables.Schemas.CONFIG.getName(), "NOT ASSIGNED"),
+        CERTIFICATE_INACTIVE("userMethodCertificate_inactive", GlobalVariables.Schemas.CONFIG.getName(), "INACTIVE"),
+        CERTIFICATE_CERTIFIED("userMethodCertificate_certified", GlobalVariables.Schemas.CONFIG.getName(), "CERTIFIED"),
         ;
-        private UserMethodBusinessRules(String tgName, String areaNm){
+        private UserMethodBusinessRules(String tgName, String areaNm, String defaultValue){
             this.tagName=tgName;
             this.areaName=areaNm;
+            this.defaultValue=defaultValue;
         }       
         public String getTagName(){return this.tagName;}
         public String getAreaName(){return this.areaName;}
+        public String getDefaultValue(){return this.defaultValue;}
         
         private final String tagName;
         private final String areaName;
-
+        private final String defaultValue;
     }
    
     /**
@@ -121,9 +123,15 @@ public class UserMethod {
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());  
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());   
         
-        String userMethodNotAssigned = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_NOTASSIGNED.getAreaName(), UserMethodBusinessRules.CERTIFICATE_NOTASSIGNED.getTagName());
-        String userMethodInactive = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_INACTIVE.getAreaName(), UserMethodBusinessRules.CERTIFICATE_INACTIVE.getTagName());
-        String userMethodCertified = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_CERTIFIED.getAreaName(), UserMethodBusinessRules.CERTIFICATE_CERTIFIED.getTagName());
+        String userMethodNotAssigned = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_NOTASSIGNED.getAreaName(), UserMethodBusinessRules.CERTIFICATE_NOTASSIGNED.getTagName(), true);
+        if (userMethodNotAssigned.length()==0)
+            userMethodNotAssigned=UserMethodBusinessRules.CERTIFICATE_NOTASSIGNED.getDefaultValue();
+        String userMethodInactive = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_INACTIVE.getAreaName(), UserMethodBusinessRules.CERTIFICATE_INACTIVE.getTagName(), true);
+        if (userMethodInactive.length()==0)
+            userMethodInactive=UserMethodBusinessRules.CERTIFICATE_INACTIVE.getDefaultValue();
+        String userMethodCertified = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_CERTIFIED.getAreaName(), UserMethodBusinessRules.CERTIFICATE_CERTIFIED.getTagName(), true);
+        if (userMethodCertified.length()==0)
+            userMethodCertified=UserMethodBusinessRules.CERTIFICATE_CERTIFIED.getDefaultValue();
         
         String[] whereFieldName = new String[]{FIELDNAME_DATA_USER_METHOD_USER_ID, FIELDNAME_DATA_USER_METHOD_ANALYSIS,
                 FIELDNAME_DATA_USER_METHOD_METHOD_NAME, FIELDNAME_DATA_USER_METHOD_METHOD_VERSION};
