@@ -260,7 +260,7 @@ public enum ChangeOfCustodyErrorTrapping implements EnumIntMessages{
     public Object[] isChangeOfCustodyEnable(String schemaName, String objectTable){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         // Este método no está implementado y es necesario.
-        String bundleProcedureCustodianFunctionalityMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, ChangeOfCustodyBusinessRules.CUSTODIAN_FUNCTIONALITY_MODE.getAreaName(), ChangeOfCustodyBusinessRules.CUSTODIAN_FUNCTIONALITY_MODE.getTagName());
+        String bundleProcedureCustodianFunctionalityMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, ChangeOfCustodyBusinessRules.CUSTODIAN_FUNCTIONALITY_MODE.getAreaName(), ChangeOfCustodyBusinessRules.CUSTODIAN_FUNCTIONALITY_MODE.getTagName(), true);
         if ("ENABLE".equalsIgnoreCase(bundleProcedureCustodianFunctionalityMode)){
           return new Object[]{LPPlatform.LAB_TRUE};
         }else{
