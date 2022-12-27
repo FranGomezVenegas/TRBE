@@ -546,7 +546,7 @@ public class TblsProcedure {
     public enum ProgramCorrectiveAction implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         STATUS("status", LPDatabase.stringNotNull(), null, null, null, null),
-        STATUS_PREVIOUS("status_previous", LPDatabase.stringNotNull(), null, null, null, null),
+        STATUS_PREVIOUS("status_previous", LPDatabase.string(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
         PROGRAM_NAME("program_name", LPDatabase.string(), null, null, null, null),

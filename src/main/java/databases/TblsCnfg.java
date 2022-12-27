@@ -564,7 +564,7 @@ public class TblsCnfg {
 
     public enum zzzPropertiesMissing implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
-        CREATION_DATE("creation_date", "date NOT NULL DEFAULT NOW()", null, null, null, null),
+        CREATION_DATE("creation_date", "timestamp NOT NULL DEFAULT NOW()", null, null, null, null),
         AREA("area", LPDatabase.string(), null, null, null, null),
         RULE_NAME("rule_name", LPDatabase.string(), null, null, null, null),
         PROCEDURE("procedure", LPDatabase.string(), null, null, null, null),

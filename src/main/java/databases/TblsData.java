@@ -30,8 +30,8 @@ public class TblsData {
             new String[]{CertifUserAnalysisMethod.ID.getName()}, null, "certif_user_analysis_method table, manage user analysis method certification tracking"),
         TRAINING(null, "training", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Training.values(), Training.ID.getName(),
             new String[]{Training.ID.getName()}, null, "Training table"),
-        USER_SOP(null, "user_sop", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, UserSop.values(), UserSop.SOP_ID.getName(),
-            new String[]{UserSop.SOP_ID.getName()}, null, "User SOPS table"),
+        USER_SOP(null, "user_sop", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, UserSop.values(), UserSop.USER_SOP_ID.getName(),
+            new String[]{UserSop.USER_SOP_ID.getName()}, null, "User SOPS table"),
         USER_ANALYSIS_METHOD(null, "user_analysis_method", SCHEMA_NAME, true, UserAnalysisMethod.values(), UserAnalysisMethod.USER_ANALYSIS_METHOD_ID.getName(),
             new String[]{UserAnalysisMethod.USER_ANALYSIS_METHOD_ID.getName()}, null, "Training table"),
         SAVED_QUERIES(null, "saved_queries", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SavedQueries.values(), SavedQueries.ID.getName(),
@@ -200,7 +200,7 @@ public class TblsData {
         @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
-        public String getExtraFilters() {return this.extraFilters;}
+        @Override        public String getExtraFilters() {return this.extraFilters;}
         
         private final FldBusinessRules[] getTblBusinessRules;      
         private final String viewName;             

@@ -191,6 +191,10 @@ public class TblsEnvMonitData {
         READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
         REQS_TRACKING_SAMPLING_END("requires_tracking_sampling_end", LPDatabase.booleanFld(), null, null, null, null),
         SAMPLING_DATE_END("sampling_date_end", dateTime(), null, null, null, null),
+        REVIEWER("reviewer",LPDatabase.string(), null, null, null, null),
+        REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null), 
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null), 
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null)        
         ;
         private Sample(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
