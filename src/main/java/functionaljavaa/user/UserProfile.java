@@ -9,8 +9,11 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPArray;
 import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
+import databases.SqlWhere;
 import databases.TblsProcedure;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 
 /**
@@ -104,7 +107,30 @@ public class UserProfile {
             }
         }            
             return totalProcUserProfiles;                         
-        }                
+    }
+
+    /**
+     *
+     * @param procInstanceName
+     * @param rolName
+     * @return
+     */
+    public static Object[] getProcedureUsers ( String procInstanceName, String rolName) {
+        SqlWhere where=new SqlWhere();
+        if (rolName==null)
+            where.addConstraint(TblsProcedure.PersonProfile.PERSON_NAME, WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+        else
+            where.addConstraint(TblsProcedure.PersonProfile.ROLE_NAME, WHERECLAUSE_TYPES.EQUAL, new Object[]{rolName}, null);
+        Object[][] tableData = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.PERSON_PROFILE, new EnumIntTableFields[]{TblsProcedure.PersonProfile.PERSON_NAME}, 
+                where, null, procInstanceName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tableData[0][0].toString()))
+            return tableData[0];
+        for (int i=0;i<tableData.length;i++){
+            tableData[i][0]=UserAndRolesViews.getUserByPerson(tableData[i][0].toString());
+        }
+        return LPArray.getUniquesArray((Object[])LPArray.getColumnFromArray2D(tableData, 0));        
+    }
+
     // Should not return any role from config and data schemas as those are considered specials, not for business users.
     
 }
