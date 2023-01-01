@@ -492,9 +492,9 @@ public class TblsEnvMonitConfig {
         STRUCT_TOTAL_POSITIONS("struct_total_positions", LPDatabase.integer(), null, null, null, null),
         STRUCT_ROWS_NAME("struct_rows_name", "character varying[] COLLATE pg_catalog.\"default\"", null, null, null, null),
         STRUCT_COLS_NAME("struct_cols_name", "character varying[] COLLATE pg_catalog.\"default\"", null, null, null, null),
-        STAGE("stage", LPDatabase.stringNotNull(), null, null, null, null),
-        //, SENT_FOR_APPROVAL("sent_for_approval", LPDatabase.Boolean())
-        // ...
+        // ** Not in use, it is present in the data repository, not in config
+            //STAGE("stage", LPDatabase.stringNotNull(), null, null, null, null),
+        // ** Not in use, it is present in the data repository, not in config
         ;        
         private IncubBatch(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
