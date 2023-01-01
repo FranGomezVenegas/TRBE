@@ -15,6 +15,7 @@ import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
 import databases.TblsCnfg;
 import databases.TblsData;
+import databases.TblsProcedureConfig;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.materialspec.ConfigSpecRule;
@@ -44,7 +45,9 @@ import trazit.session.ProcedureRequestSession;
 public class ClassMasterData {
     private Boolean objectTypeExists=true;
     private Object[] diagnostic=new Object[0];
-        
+    private String globalDiagn=LPPlatform.LAB_TRUE;
+    private Boolean singleRowDiagn=true; 
+    
     public enum MasterDataObjectTypes{
         MD_METHODS(new EnumIntTables[]{TblsCnfg.TablesConfig.METHODS}),
         MD_ANALYSIS_PARAMS(new EnumIntTables[]{TblsCnfg.TablesConfig.METHODS, TblsCnfg.TablesConfig.ANALYSIS, TblsCnfg.TablesConfig.ANALYSIS_METHOD, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS}), 
@@ -55,6 +58,7 @@ public class ClassMasterData {
         MD_INCUB_BATCHES(new EnumIntTables[]{TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH}), 
         MD_MICROORGANISMS(new EnumIntTables[]{TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM, TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM_ADHOC}), 
         MD_STAGES(new EnumIntTables[]{}), 
+        MD_STAGES_TIMING_INTERVAL(new EnumIntTables[]{TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL}), 
         MD_PROGRAMS(new EnumIntTables[]{TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM}), 
         MD_PROGRAM_LOCATIONS(new EnumIntTables[]{TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION}), 
         MD_SAMPLES(new EnumIntTables[]{TblsCnfg.TablesConfig.SAMPLE}), 
@@ -151,13 +155,7 @@ public class ClassMasterData {
                         jLog.put("diagnostic", diagn);
                         jLogArr.add(jLog);
                     }
-                    JSONObject jMainLogArr=new JSONObject();
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(globalDiagn))
-                        jMainLogArr.put("global_diagnostic", "Errors found");
-                    else
-                        jMainLogArr.put("global_diagnostic", "success");
-                    jMainLogArr.put("detail", jLogArr);
-                    this.diagnostic=new Object[]{globalDiagn, jMainLogArr};
+                    calculateDiagnostic(jLogArr);
                     break;
                 case MD_ANALYSIS_PARAMS:                    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -231,16 +229,16 @@ public class ClassMasterData {
                         JSONObject jLog=new JSONObject();
                         jLog.put(TblsCnfg.SpecLimits.ANALYSIS.getName(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.ANALYSIS.getName()).getAsString());                        
                          String[] fieldName=new String[]{//TblsCnfg.SpecLimits.CREATED_ON.getName(), TblsCnfg.SpecLimits.CREATED_BY.getName(),
-                            TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.TESTING_GROUP.getName(), 
+                            TblsCnfg.SpecLimits.VARIATION_NAME.getName(), 
                             TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(),
                             TblsCnfg.SpecLimits.PARAMETER.getName(), TblsCnfg.SpecLimits.RULE_TYPE.getName()};
                         Object[] fieldValue=new Object[]{//LPDate.getCurrentTimeStamp(), userCreator,
-                            jO.getAsJsonObject().get(TblsCnfg.SpecLimits.VARIATION_NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.TESTING_GROUP.getName()).getAsString(), 
+                            jO.getAsJsonObject().get(TblsCnfg.SpecLimits.VARIATION_NAME.getName()).getAsString(), //jO.getAsJsonObject().get(TblsCnfg.SpecLimits.TESTING_GROUP.getName()).getAsString(), 
                             jO.getAsJsonObject().get(TblsCnfg.SpecLimits.ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.METHOD_NAME.getName()).getAsString(),
                             jO.getAsJsonObject().get(TblsCnfg.SpecLimits.PARAMETER.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.RULE_TYPE.getName()).getAsString()};
                         
                         String[] fldsToAdd=new String[]{TblsCnfg.SpecLimits.MIN_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MIN_VAL_FOR_UNDETERMINED.getName(),
-                            TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MAX_VAL_FOR_UNDETERMINED.getName(),
+                            TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MAX_VAL_FOR_UNDETERMINED.getName(), TblsCnfg.SpecLimits.TESTING_GROUP.getName(),
                             };
                         for (String curFldName: fldsToAdd){
                             if (jO.getAsJsonObject().has(curFldName)){
@@ -315,7 +313,8 @@ public class ClassMasterData {
                         jLog.put("diagnostic", Arrays.toString(this.diagnostic));
                         jLogArr.add(jLog);                        
                     } 
-                    jMainLogArr=new JSONObject();
+                    calculateDiagnostic(jLogArr);
+/*                    jMainLogArr=new JSONObject();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(globalDiagn))
                         jMainLogArr.put("global_diagnostic", "Errors found");
                     else
@@ -323,32 +322,64 @@ public class ClassMasterData {
                     jMainLogArr.put("detail", jLogArr);
                     this.diagnostic=new Object[]{globalDiagn, jMainLogArr};                    
                     //this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new spec limits", null);
+                    */
                     break;
                 case MD_INCUBATORS:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
+                        String diagn="";
+                        JSONObject jLog=new JSONObject();
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, jO);
+                        if (fldsInfo.length==3)
+                            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                        else{   
+                            String[] fldsName=(String[]) fldsInfo[0];
+                            Object[] fldsValue=(Object[])fldsInfo[1];
+                            fldsName=LPArray.addValueToArray1D(fldsName, new String[]{TblsEnvMonitConfig.InstrIncubator.CREATED_BY.getName(), TblsEnvMonitConfig.InstrIncubator.CREATED_ON.getName()});
+                            fldsValue=LPArray.addValueToArray1D(fldsValue, new Object[]{userCreator, LPDate.getCurrentTimeStamp()});
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
+                                fldsName, fldsValue, instanceName);
+                            this.diagnostic=insertRecord.getApiMessage();
+                        }
+                        jLog.put("diagnostic", Arrays.toString(this.diagnostic));
+                        jLogArr.add(jLog);
+                    }
+                    calculateDiagnostic(jLogArr);
+/*                        
                     RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
-                    new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName(),
+                    new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName()
+                            , TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName(), TblsEnvMonitConfig.InstrIncubator.STAGE.getName(),
                         TblsEnvMonitConfig.InstrIncubator.CREATED_ON.getName(), TblsEnvMonitConfig.InstrIncubator.CREATED_BY.getName()},
-                    new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()).getAsBoolean(), LPDate.getCurrentTimeStamp(), userCreator},
+                    new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.DESCRIPTION.getName()).getAsString(), 
+                        jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()).getAsBoolean(), jO.getAsJsonObject().get(TblsEnvMonitConfig.InstrIncubator.STAGE.getName()).getAsBoolean(), LPDate.getCurrentTimeStamp(), userCreator},
                     instanceName);
                         this.diagnostic=insertRecord.getApiMessage();
                         if (!insertRecord.getRunSuccess()) return;
                     }                    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incubators", null);
+*/
                     break;   
                 case MD_INCUB_BATCHES:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH, 
-                            new String[]{TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_VERSION.getName(), TblsEnvMonitConfig.IncubBatch.NAME.getName(), TblsEnvMonitConfig.IncubBatch.TYPE.getName(), TblsEnvMonitConfig.IncubBatch.ACTIVE.getName(),
-                                TblsEnvMonitConfig.IncubBatch.CREATED_ON.getName(), TblsEnvMonitConfig.IncubBatch.CREATED_BY.getName()},
-                            new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_CONFIG_ID.getName()).getAsInt(), 1, jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.NAME.getName()).getAsString(), jO.getAsJsonObject().get(TblsEnvMonitConfig.IncubBatch.TYPE.getName()).getAsString(), true, LPDate.getCurrentTimeStamp(), userCreator},
-                            instanceName);
-                        this.diagnostic=insertRecord.getApiMessage();
-                        if (!insertRecord.getRunSuccess()) return;
-                    }    
-                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incub batch", null);
+                        String diagn="";
+                        JSONObject jLog=new JSONObject();
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH, jO);
+                        if (fldsInfo.length==3)
+                            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                        else{   
+                            String[] fldsName=(String[]) fldsInfo[0];
+                            Object[] fldsValue=(Object[])fldsInfo[1];
+                            fldsName=LPArray.addValueToArray1D(fldsName, new String[]{TblsEnvMonitConfig.IncubBatch.CREATED_BY.getName(), TblsEnvMonitConfig.IncubBatch.CREATED_ON.getName()});
+                            fldsValue=LPArray.addValueToArray1D(fldsValue, new Object[]{userCreator, LPDate.getCurrentTimeStamp()});
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH, 
+                                fldsName, fldsValue, instanceName);
+                            this.diagnostic=insertRecord.getApiMessage();
+                        }
+                        jLog.put("diagnostic", Arrays.toString(this.diagnostic));
+                        jLogArr.add(jLog);
+                    }
+                    calculateDiagnostic(jLogArr);
                     break;   
                 case MD_MICROORGANISMS: 
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -504,48 +535,48 @@ public class ClassMasterData {
                             if (firstStage.length()==0 && "START".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
                                     firstStage=curStage;
                             if (jO.getAsJsonObject().has(curFldName) && !"START".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
-                                parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                                    instanceName+"-"+GlobalVariables.Schemas.DATA.getName(),  
+                                parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(),  
                                     "sampleStage"+curStage+"Previous", jO.getAsJsonObject().get(curFldName).getAsString());
                             curFldName="NEXT STAGES";
                             if (jO.getAsJsonObject().has(curFldName) && !"START".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
-                                parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                                    instanceName+"-"+GlobalVariables.Schemas.DATA.getName(),  
+                                parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(),  
                                     "sampleStage"+curStage+"Next", jO.getAsJsonObject().get(curFldName).getAsString());
                         }
                         this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new stages", null);
                     }
-                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        instanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_en", allStages+"|END");
-                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        instanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_es", allStages+"|FIN");
-                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        instanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst", firstStage);
-                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        instanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_en", firstStage);
-                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        instanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage);
-                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        instanceName+"-"+GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage);
-                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesTimingCaptureStages", stageWithTimingCapture);
-                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesActionAutoMoveToNext", stageWithAutoMoveToNext);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_en", allStages+"|END");
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_es", allStages+"|FIN");
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst", firstStage);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_en", firstStage);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesTimingCaptureStages", stageWithTimingCapture);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesActionAutoMoveToNext", stageWithAutoMoveToNext);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesMode", "ENABLED");
+                    
                     break;
-                case MD_INSTRUMENTS_FAMILIES:
+                case MD_STAGES_TIMING_INTERVAL:    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        Object[] fldsInfo=getFldsNamesAndValues(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY, jO);
+                        String diagn="";
+                        JSONObject jLog=new JSONObject();
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, jO);
                         if (fldsInfo.length==3)
                             this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
-                        else{                    
-                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY, 
-                                (String[]) fldsInfo[0], (Object[])fldsInfo[1], instanceName);
+                        else{   
+                            String[] fldsName=(String[]) fldsInfo[0];
+                            Object[] fldsValue=(Object[])fldsInfo[1];
+                            //fldsName=LPArray.addValueToArray1D(fldsName, new String[]{TblsProcedureConfig.IncubBatch.CREATED_BY.getName(), TblsEnvMonitConfig.IncubBatch.CREATED_ON.getName()});
+                            //fldsValue=LPArray.addValueToArray1D(fldsValue, new Object[]{userCreator, LPDate.getCurrentTimeStamp()});
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
+                                fldsName, fldsValue, instanceName);
                             this.diagnostic=insertRecord.getApiMessage();
                         }
-                    }                    
-                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new "+endPoint.name().toLowerCase(), null);
-                    break;   
+                        jLog.put("diagnostic", Arrays.toString(this.diagnostic));
+                        jLogArr.add(jLog);
+                    }
+                    calculateDiagnostic(jLogArr);
+                    break;                       
                 case MD_INSTRUMENTS:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
@@ -588,13 +619,6 @@ public class ClassMasterData {
                     }                    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new "+endPoint.name().toLowerCase(), null);
                     break;   
-                    
-                    
-                    
-//        MD_INSTRUMENT_FAMILIES(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY}), 
-//        MD_INSTRUMENTS(new EnumIntTables[]{TblsAppProcData.TablesAppProcData.INSTRUMENTS}), 
-//        MD_VARIABLES(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES}), 
-//        MD_VARIABLE_SET(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET}),                     
                 default:
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "mdParserNotFound", new Object[]{endPoint.name()});
                     break;
@@ -657,6 +681,15 @@ public class ClassMasterData {
         }catch(Exception e){
             return new Object[]{fldNames, fldValues, curFldName+" "+e.getMessage().toString()}; 
         }        
+    }
+    private void calculateDiagnostic(JSONArray jLogArr){
+        JSONObject jMainLogArr=new JSONObject();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(globalDiagn))
+            jMainLogArr.put("global_diagnostic", "Errors found");
+        else
+            jMainLogArr.put("global_diagnostic", "success");
+        jMainLogArr.put("detail", jLogArr);
+        this.diagnostic=new Object[]{globalDiagn, jMainLogArr};        
     }
 }
 
