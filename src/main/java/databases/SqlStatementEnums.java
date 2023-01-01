@@ -495,7 +495,10 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         StringBuilder setFieldNamesArgStr = new StringBuilder(0);
         if (setFieldNames != null) {
             for (EnumIntTableFields setFieldName: setFieldNames) {
-                setFieldNamesArgStr.append("?, ");
+                if ("json".equalsIgnoreCase(setFieldName.getFieldType()))
+                    setFieldNamesArgStr.append("?::json, ");
+                else
+                    setFieldNamesArgStr.append("?, ");
             }
             setFieldNamesArgStr.deleteCharAt(setFieldNamesArgStr.length() - 1);
             setFieldNamesArgStr.deleteCharAt(setFieldNamesArgStr.length() - 1);
