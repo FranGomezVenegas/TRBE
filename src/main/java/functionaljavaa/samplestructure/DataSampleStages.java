@@ -109,7 +109,7 @@ Object[][] firstStageData=new Object[0][0];
         private final String preReqsBusRules;
     }
     public enum SampleStageTimingCapturePhases{START, END}
-    public static final String SAMPLE_STAGES_MODE_ENABLING_STATUSES="ENABLE";
+    public static final String SAMPLE_STAGES_MODE_ENABLING_STATUSES="ENABLE|ENABLED|SI|ACTIVADO|YES";
     public enum SampleStagesTypes{JAVA, JAVASCRIPT}
     public static final String LOD_JAVASCRIPT_FORMULA="procInstanceName-sample-stage.js"; // "WEB-INF/classes/JavaScript/"+"procInstanceName-sample-stage.js";
     public static final String LOD_JAVASCRIPT_LOCAL_FORMULA="D:\\LP\\LabPLANETAPI_20200113_beforeRefactoring\\src\\main\\resources\\JavaScript\\"+"procInstanceName-sample-stage.js";
