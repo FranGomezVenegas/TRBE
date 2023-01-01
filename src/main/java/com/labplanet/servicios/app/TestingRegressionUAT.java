@@ -5,6 +5,9 @@
  */
 package com.labplanet.servicios.app;
 
+import com.labplanet.servicios.moduleenvmonit.ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints;
+import com.labplanet.servicios.moduleenvmonit.EnvMonAPI;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -38,6 +41,7 @@ import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -245,7 +249,7 @@ public class TestingRegressionUAT extends HttpServlet {
                     for (Object[] curStep: scriptStepsTblInfo){
                         Object[] theProcActionEnabled = null;
                         theProcActionEnabled = isTheProcActionEnabled(token, procInstanceName, (String) LPNulls.replaceNull(curStep[1]), bi);
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())){
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString()) && !actionIsOneQuery(curStep[1].toString())){                            
                             actionsList=LPArray.addValueToArray1D(actionsList, "Step "+curStep[0].toString()+", Action:"+curStep[1].toString());
                             Logger.getLogger("In the script "+scriptId+" and step "+LPNulls.replaceNull(curStep[0]).toString()+"the action"+LPNulls.replaceNull(curStep[1]).toString()+" is not enabled"); 
     //                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getName(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language);              
@@ -391,6 +395,30 @@ public class TestingRegressionUAT extends HttpServlet {
         //summaryInfo[1]=allMismatches;
         return summaryInfo; //LPArray.addValueToArray1D(trapMessage, allMismatches);        
     }
+    public static Boolean actionIsOneQuery(String actionName){
+        Boolean found=false;
+        if (!found){
+            for (EnumIntEndpoints curEnvMonQ: EnvMonAPI.EnvMonQueriesAPIEndpoints.values()){
+                if (actionName.equalsIgnoreCase(curEnvMonQ.getName()))
+                    return true;
+            }
+        }
+        if (!found){
+            for (EnumIntEndpoints curEnvMonQ: EnvMonSampleAPIqueriesEndpoints.values()){
+                if (actionName.equalsIgnoreCase(curEnvMonQ.getName()))
+                    return true;
+            }
+        }
+        if (!found){
+            for (EnumIntEndpoints curEnvMonQ: SampleAPIqueriesEndpoints.values()){
+                if (actionName.equalsIgnoreCase(curEnvMonQ.getName()))
+                    return true;
+            }
+        }
+  
+        return found;
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
