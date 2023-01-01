@@ -284,7 +284,7 @@ public class TblsReqs {
         NAME("name", LPDatabase.string(), null, null, null, null),
         LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
         //PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),
-        POSITION("position", LPDatabase.integer(), null, null, null, null),
+        POSITION("position", LPDatabase.string(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.string(), null, null, null, null),
         MODE("mode", LPDatabase.string(), null, null, null, null),
         TYPE("type", LPDatabase.string(), null, null, null, null),
