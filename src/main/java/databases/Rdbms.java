@@ -1620,9 +1620,12 @@ if (1==1){Rdbms.transactionId=1; return;}
                         prepsta.setString(indexval, (String) jArr.toString()); 
                         break;
                     case "class org.json.simple.JSONObject":
-                        JSONObject jObj = (JSONObject)obj;
-                        
-                        prepsta.setString(indexval, jObj.toString()); 
+                        JSONObject jObj = (JSONObject)obj;                        
+                        prepsta.setString(indexval, jObj.toString());                        
+/*                        PGobject jsonObject = new PGobject();
+                        jsonObject.setType("json");
+                        jsonObject.setValue((JSONObject)obj);
+                        prepsta.setObject(indexval, jsonObject);*/
                         break;
 
                     default:
