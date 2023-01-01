@@ -63,7 +63,7 @@ public class TblsProcedureConfig {
 
     public enum StageTimingInterval implements EnumIntTableFields{
         SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull(), null, null, null, null),
-        SAMPLE_CONFIG_VERSION("sample_config_version", LPDatabase.stringNotNull(), null, null, null, null),
+        SAMPLE_CONFIG_VERSION("sample_config_version", LPDatabase.integer(), null, null, null, null),
         STAGE("stage", LPDatabase.stringNotNull(), null, null, null, null),
         ENABLED("enabled", LPDatabase.booleanFld(), null, null, null, null),
         INTERVAL_SECONDS("interval_seconds", LPDatabase.integer(), null, null, null, null),
