@@ -440,13 +440,15 @@ public class ProcedureRequestSession {
 //        }
 
         Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, tokn, actionNm, procBusinessRules);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) return actionEnabled;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) 
+            return actionEnabled;
 /*        {
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(req, resp, actionEnabled);
             return null;                             
         }            */
         actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, tokn.getUserRole(), actionNm, procBusinessRules);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) return actionEnabled;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) 
+            return actionEnabled;
 /*        {            
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(req, null, actionEnabled);
             return null;                             
