@@ -13,6 +13,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
+import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.TblsAppProcData.ViewsAppProcData;
 import databases.TblsAppProcDataAudit;
@@ -21,6 +22,7 @@ import databases.TblsData;
 import databases.TblsData.TablesData;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
+import databases.TblsReqs;
 import databases.TblsTesting;
 import databases.features.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
@@ -110,12 +112,18 @@ public class TestingServer extends HttpServlet {
             
             Rdbms.stablishDBConection("labplanet"); 
 
+            JSONObject jObj=new JSONObject();
+            jObj.put("hola", "adios");
+            String[] fieldNames=new String[]{"procedure_name", "procedure_version", "proc_instance_name", "model_json"};
+            Object[] fieldValues=new Object[]{"demo", 1, "demo", jObj};
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_FE_MODEL, fieldNames, fieldValues, PROC_NEW_EVENT_FLD_NAME);
+            out.println(Arrays.toString(insertRecord.getApiMessage()));
             Token token=null;
             //String myToken = "";
             //token = new Token(myToken);
             //JSONArray newProcedureDefinition = AppProcedureListAPI.newProcedureDefinition(token, "proc-deploy");
             //String[] scriptPublicFieldNames = TblsTesting.getScriptPublicFieldNames("em-demo-a");
-//if (1==1)return;           
+if (1==1)return;           
         JSONObject procedure=new JSONObject();
         JSONArray procEventsIconsDown = new JSONArray(); 
         JSONObject procEventJson = new JSONObject();

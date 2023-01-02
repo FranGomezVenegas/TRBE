@@ -1,5 +1,6 @@
 package functionaljavaa.requirement;
 
+import com.labplanet.servicios.app.AppProcedureListAPI.elementType;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig.TablesEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfigAudit.TablesEnvMonitConfigAudit;
@@ -35,6 +36,7 @@ import databases.TblsProcedure.TablesProcedure;
 import databases.TblsProcedure.ViewsProcedure;
 import databases.TblsProcedureAudit;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
+import databases.TblsProcedureConfig.TablesProcedureConfig;
 import databases.TblsReqs;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.masterdata.ClassMasterData;
@@ -121,6 +123,24 @@ public class ProcedureDefinitionToInstance {
         return jsonObj;
     }     
 
+    private static final JSONObject createProcEventParent(String procedure,  Integer procVersion, String procInstanceName, String role, String[] procEventFldNamesToGet, Object[] values){
+        JSONObject jsonObj = new JSONObject();
+        String type=values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.TYPE.getName())].toString();
+        String position=values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.POSITION.getName())].toString();
+        if (!elementType.TWOICONS.toString().equalsIgnoreCase(type)||!"1".equalsIgnoreCase(position))
+            return jsonObj;
+        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.POSITION.getName())]="0";
+        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())]="PARENT_"+values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())].toString();
+        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ESIGN_REQUIRED.getName())]=Boolean.valueOf(values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ESIGN_REQUIRED.getName())].toString());
+        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.USERCONFIRM_REQUIRED.getName())]=Boolean.valueOf(values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.USERCONFIRM_REQUIRED.getName())].toString());
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, procEventFldNamesToGet, values);
+        if (!insertRecordInTable.getRunSuccess())
+            jsonObj.put("insert error log", 
+                insertRecordInTable.getErrorMessageCode()+" "+Arrays.toString(insertRecordInTable.getErrorMessageVariables()));
+        else
+            jsonObj.put("parent_added", "success");
+        return jsonObj;   
+    }
     public static final  JSONObject createDBProcedureEvents(String procedure,  Integer procVersion, String procInstanceName){
         SqlWhere sw = new SqlWhere();
         sw.addConstraint(TblsProcedure.ProcedureEvents.NAME, WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, "");
@@ -177,6 +197,10 @@ public class ProcedureDefinitionToInstance {
                         multiRolCurEvent.put("updated?", !LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()));
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()))
                             multiRolCurEvent.put("update error log", Arrays.toString(diagnoses));
+                        else{                            
+                            JSONObject createProcEventParent = createProcEventParent(procedure, procVersion, procInstanceName, procRoles[i][0].toString(), procEventFldNamesToGet, curProcEvent);
+                            multiRolCurEvent.put("adding_parent", createProcEventParent);
+                        }
                     }else{
                     
                         curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())]=procRoles[i][0].toString();
@@ -185,6 +209,10 @@ public class ProcedureDefinitionToInstance {
                         if (!insertRecordInTable.getRunSuccess())
                             multiRolCurEvent.put("insert error log", 
                                 insertRecordInTable.getErrorMessageCode()+" "+Arrays.toString(insertRecordInTable.getErrorMessageVariables()));
+                        else{                            
+                            JSONObject createProcEventParent = createProcEventParent(procedure, procVersion, procInstanceName, procRoles[i][0].toString(), procEventFldNamesToGet, curProcEvent);
+                            multiRolCurEvent.put("adding_parent", createProcEventParent);
+                        }
                     }
                 }
                 if (procRoles.length>1)
@@ -595,6 +623,25 @@ public class ProcedureDefinitionToInstance {
                                         }                                        
                                     }
                                     break;
+                                case "procedure-config":
+                                    if (curIsView==null || !Boolean.valueOf(curIsView)){
+                                        tblCreateScript = createTableScript(TablesProcedureConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                        if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
+                                            tblCreateScriptTesting = createTableScript(TablesProcedureConfig.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                    }else{
+                                        //Commented out due to it does not exist any view yet.
+/*                                        try{
+                                            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsProcedureConfig.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
+                                            tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsProcedure.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
+                                            if (tblCreateScript.length()==0){
+                                                tblCreateScript = ViewsEnvMonData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
+                                                tblCreateScriptTesting = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                            }
+                                        }catch(Exception e){
+                                            tblCreateScript = ViewsData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
+                                        }                                        */
+                                    }
+                                    break;                                    
                                 case "procedure-audit":
                                     try{
                                         tblCreateScript = createTableScript(TablesProcedureAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
@@ -1345,85 +1392,93 @@ public class ProcedureDefinitionToInstance {
         return jsonObj;
      }        
     public static final  JSONArray createBusinessRules(String procedure,  Integer procVersion, String instanceName){
-        String[] fieldsRequired=new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
-        String diagnObjName="diagnostic";
-        String[] fildsToGet=new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(),
-        TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
-        for (String curFldReq: fieldsRequired){
-            if (!LPArray.valueInArray(fildsToGet, curFldReq)) LPArray.addValueToArray1D(fildsToGet, curFldReq);
-        }
-        JSONArray jsonArr = new JSONArray();
-        JSONObject jsonObj = new JSONObject();
-        Object[][] procBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), 
-                new String[]{TblsReqs.ProcedureBusinessRules.PROCEDURE_NAME.getName(), TblsReqs.ProcedureBusinessRules.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureBusinessRules.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureBusinessRules.ACTIVE.getName()}, 
-                new Object[]{procedure, procVersion, instanceName, true}, 
-                fildsToGet, new String[]{});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procBusRules[0][0].toString())){
-          jsonObj.put(JsonTags.ERROR.getTagValue(), RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode());
-          jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), 0); 
-          jsonArr.add(jsonObj);
-          return jsonArr;
-        }else{
-            jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procBusRules.length); 
-        }
-        jsonArr.add(jsonObj);
-        Parameter parm=new Parameter();
-       // Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName()));
-/*        String[] filesNames=LPArray.getUniquesArray(procBusRulesFiles);
-        for (String curFile: filesNames){
-            parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                    instanceName+"-"+curFile);  
-        }        */
-        for (Object[] curprocBusRules: procBusRules){
-            RdbmsObject diagn = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
-                    new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}, 
-                    curprocBusRules);
-            curprocBusRules=LPArray.addValueToArray1D(curprocBusRules, diagn.getApiMessage());
-            JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curprocBusRules);
-            //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.PROCEDURE_NAME.getName())];
-            jsonArr.add(convertArrayRowToJSONObject);
-        }
-        //Build procedureActions and actionEnabled properties
-        fildsToGet=new String[]{TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName(), TblsReqs.ProcedureUserRequirements.ROLES.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG_DETAIL.getName()};
-        Object[][] procActionsEnabledBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
-                new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRequirements.ACTIVE.getName(), TblsReqs.ProcedureUserRequirements.IN_SYSTEM.getName(), TblsReqs.ProcedureUserRequirements.IN_SCOPE.getName()}, 
-                new Object[]{procedure, procVersion, instanceName, true, true, true}, 
-                fildsToGet, new String[]{});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsEnabledBusRules[0][0].toString())){
-          jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procActionsEnabledBusRules[0]));
-          jsonArr.add(jsonObj);
-          return jsonArr;
-        }
-        String allEnabledActions="";
-        String allEsigReq="";
-        String allUserConfirmReq="";
-        for (Object[] curProcActionEnabled: procActionsEnabledBusRules){
-            String curAction=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString();
-            if (curAction.length()>0){
-                String confirmDialog=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName())]).toString();
-                String confirDialogDetail=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG_DETAIL.getName())]).toString();
-                if ("user_esign".equalsIgnoreCase(confirmDialog)) allEsigReq=allEsigReq+"|"+curAction;
-//                if ("true".equalsIgnoreCase(userConfirmReq)) allUserConfirmReq=allUserConfirmReq+"|"+curAction;
-
-                RdbmsObject diagn = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
+        try{
+            String[] fieldsRequired=new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
+            String diagnObjName="diagnostic";
+            String[] fildsToGet=new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(),
+            TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
+            for (String curFldReq: fieldsRequired){
+                if (!LPArray.valueInArray(fildsToGet, curFldReq)) LPArray.addValueToArray1D(fildsToGet, curFldReq);
+            }
+            JSONArray jsonArr = new JSONArray();
+            JSONObject jsonObj = new JSONObject();
+            Object[][] procBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), 
+                    new String[]{TblsReqs.ProcedureBusinessRules.PROCEDURE_NAME.getName(), TblsReqs.ProcedureBusinessRules.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureBusinessRules.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureBusinessRules.ACTIVE.getName()}, 
+                    new Object[]{procedure, procVersion, instanceName, true}, 
+                    fildsToGet, new String[]{});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procBusRules[0][0].toString())){
+              jsonObj.put(JsonTags.ERROR.getTagValue(), RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode());
+              jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), 0); 
+              jsonArr.add(jsonObj);
+              return jsonArr;
+            }else{
+                jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procBusRules.length); 
+            }
+            jsonArr.add(jsonObj);
+            Parameter parm=new Parameter();
+           // Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName()));
+    /*        String[] filesNames=LPArray.getUniquesArray(procBusRulesFiles);
+            for (String curFile: filesNames){
+                parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
+                        instanceName+"-"+curFile);  
+            }        */
+            for (Object[] curprocBusRules: procBusRules){
+                RdbmsObject diagn = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
                         new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}, 
-                        new Object[]{GlobalVariables.Schemas.PROCEDURE.getName(), LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+curAction, LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.ROLES.getName())]).toString()}, instanceName);
-                curProcActionEnabled=LPArray.addValueToArray1D(curProcActionEnabled, diagn.getApiMessage());
-                JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curProcActionEnabled);
+                        curprocBusRules);
+                curprocBusRules=LPArray.addValueToArray1D(curprocBusRules, diagn.getApiMessage());
+                JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curprocBusRules);
                 //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.PROCEDURE_NAME.getName())];
                 jsonArr.add(convertArrayRowToJSONObject);
-                if (allEnabledActions.length()>0)allEnabledActions=allEnabledActions+"|";
-                allEnabledActions=allEnabledActions+LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString();
             }
-        }        
-        String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
-                LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allEnabledActions);
-        diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
-                LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), allEsigReq);
-        diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
-                LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), allUserConfirmReq);
-        
-        return jsonArr;
+            //Build procedureActions and actionEnabled properties
+            fildsToGet=new String[]{TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName(), TblsReqs.ProcedureUserRequirements.ROLES.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG_DETAIL.getName()};
+            Object[][] procActionsEnabledBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
+                    new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRequirements.ACTIVE.getName(), TblsReqs.ProcedureUserRequirements.IN_SYSTEM.getName(), TblsReqs.ProcedureUserRequirements.IN_SCOPE.getName()}, 
+                    new Object[]{procedure, procVersion, instanceName, true, true, true}, 
+                    fildsToGet, new String[]{});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsEnabledBusRules[0][0].toString())){
+              jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procActionsEnabledBusRules[0]));
+              jsonArr.add(jsonObj);
+              return jsonArr;
+            }
+            String allEnabledActions="";
+            String allEsigReq="";
+            String allUserConfirmReq="";
+            for (Object[] curProcActionEnabled: procActionsEnabledBusRules){
+                String curAction=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString();
+                if (curAction.length()>0){
+                    curAction=curAction.trim();
+                    String confirmDialog=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName())]).toString();
+                    String confirDialogDetail=LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG_DETAIL.getName())]).toString();
+                    if ("user_esign".equalsIgnoreCase(confirmDialog)) allEsigReq=allEsigReq+"|"+curAction;
+    //                if ("true".equalsIgnoreCase(userConfirmReq)) allUserConfirmReq=allUserConfirmReq+"|"+curAction;
+
+                    RdbmsObject diagn = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
+                            new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}, 
+                            new Object[]{GlobalVariables.Schemas.PROCEDURE.getName(), LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+curAction, LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.ROLES.getName())]).toString()}, instanceName);
+                    curProcActionEnabled=LPArray.addValueToArray1D(curProcActionEnabled, diagn.getApiMessage());
+                    JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curProcActionEnabled);
+                    //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.PROCEDURE_NAME.getName())];
+                    jsonArr.add(convertArrayRowToJSONObject);
+                    if (allEnabledActions.length()>0)allEnabledActions=allEnabledActions+"|";
+                    allEnabledActions=allEnabledActions+LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString();
+                }
+            }        
+            String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
+                    LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allEnabledActions);
+            diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
+                    LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), allEsigReq);
+            diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
+                    LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), allUserConfirmReq);
+
+            return jsonArr;
+        }catch(Exception e){
+            JSONArray jsonArr = new JSONArray();
+            JSONObject jsonObj = new JSONObject();
+            jsonObj.put("error_exception", e.getMessage());
+            return jsonArr;
+        }
     }
 
     public static final  JSONObject deployMasterData(String procedure,  Integer procVersion, String instanceName){
@@ -1454,16 +1509,25 @@ public class ProcedureDefinitionToInstance {
             }else{
                 jsonArr.add(jsonObj);
                 for (Object[] curRow: procMasterDataObjs){
-                    ClassMasterData clssMD= new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString());
-                    JSONObject jsonRowObj = new JSONObject();
-                    jsonRowObj.put(curRow[0], clssMD.getDiagnostic()[clssMD.getDiagnostic().length-1]);
-                    jsonRowArr.add(jsonRowObj);
+                    try{
+                        ClassMasterData clssMD= new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString());
+                        JSONObject jsonRowObj = new JSONObject();
+                        jsonRowObj.put(curRow[0], clssMD.getDiagnostic()[clssMD.getDiagnostic().length-1]);
+                        jsonRowArr.add(jsonRowObj);
+                    }catch(Exception e){
+                        JSONObject jsonRowObj = new JSONObject();
+                        jsonRowObj.put("error_in_"+curRow[0].toString(), e.getMessage()+Arrays.toString(curRow));
+                        jsonRowArr.add(jsonRowObj);
+                        jsonObjSummary.put("summary_with_errors", jsonRowArr);
+                        return jsonObjSummary;
+                    }                        
                 }            
             }
             jsonObjSummary.put("summary", jsonRowArr);
             return jsonObjSummary;
         }catch(Exception e){
-            return (JSONObject) jsonObjSummary.put("error", e.getMessage());
+            jsonObjSummary.put("error", e.getMessage());
+            return jsonObjSummary;
         }
     }
     public static Boolean moduleExists(String moduleName){
