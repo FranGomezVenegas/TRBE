@@ -820,6 +820,11 @@ public class TblsData {
         USER_NAME(FIELDS_NAMES_USER_NAME, LPDatabase.string(), null, null, null, null),
         LIGHT(FIELDS_NAMES_LIGHT, LPDatabase.stringNotNull(), null, null, null, null),
         CERTIF_EXPIRY_DATE("certif_expiry_date", LPDatabase.dateTime(), null, null, null, null),
+                
+        REVIEWER_ID("reviewer_id", LPDatabase.string(), null, null, null, null),
+        PENDING_REVIEW("pending_review", LPDatabase.booleanFld(false), null, null, null, null),
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null),   
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),     
         ;
         private UserSop(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -929,8 +934,12 @@ public class TblsData {
         LIGHT(FIELDS_NAMES_LIGHT, "usr.light", UserSop.LIGHT, null, null, null),
         BRIEF_SUMMARY("brief_summary", "metadata.brief_summary", TblsCnfg.SopMetaData.BRIEF_SUMMARY, null, null, null),
         FILE_LINK("file_link", "metadata.file_link", TblsCnfg.SopMetaData.FILE_LINK, null, null, null),
-        AUTHOR("author", "metadata.author", TblsCnfg.SopMetaData.AUTHOR, null, null, null),
+        AUTHOR("author", "metadata.author", TblsCnfg.SopMetaData.AUTHOR, null, null, null),        
         CERTIFICATION_MODE("certification_mode", "metadata.certification_mode", TblsCnfg.SopMetaData.CERTIFICATION_MODE, null, null, null),        
+        REVIEWER_ID(UserSop.REVIEWER_ID.getName(), "usr.reviewer_id", UserSop.REVIEWER_ID, null, null, null),        
+        PENDING_REVIEW(UserSop.PENDING_REVIEW.getName(), "usr.pending_review", UserSop.PENDING_REVIEW, null, null, null),
+        REVIEWED_ON(UserSop.REVIEWED_ON.getName(), "usr.reviewed_on", UserSop.REVIEWED_ON, null, null, null),        
+        REVIEWED_BY(UserSop.REVIEWED_BY.getName(), "usr.reviewed_by", UserSop.REVIEWED_BY, null, null, null),        
         ;
         private ViewUserAndMetaDataSopView(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
