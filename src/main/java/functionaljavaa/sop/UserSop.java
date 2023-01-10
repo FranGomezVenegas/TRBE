@@ -26,6 +26,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
@@ -135,7 +137,7 @@ public class UserSop {
      * @param sopName
      * @return
      */
-    public static final Object[][] getUserSop(String procInstanceName, String userName, String sopName ){
+    public static final Object[][] getUserSop(String procInstanceName, String userName, String sopName, Boolean isForTesting ){
         Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return LPArray.array1dTo2d(procedureSopEnable, 1);        
         
@@ -148,7 +150,7 @@ public class UserSop {
         String[] fieldsToReturn = new String[]{TblsData.UserSop.SOP_NAME.getName(), TblsData.UserSop.SOP_ID.getName(), TblsData.UserSop.STATUS.getName(), TblsData.UserSop.LIGHT.getName()};
         String[] filterFieldName =new String[]{TblsData.UserSop.SOP_NAME.getName(), TblsData.UserSop.USER_NAME.getName()};
         Object[] filterFieldValue =new Object[]{sopName, userName};        
-        Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{procInstanceName});   
+        Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{procInstanceName}, isForTesting);   
         if (getUserProfileFieldValues==null || getUserProfileFieldValues.length<=0){
             Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER, new Object[]{sopName, userName, procInstanceName});
             return LPArray.array1dTo2d(diagnoses, diagnoses.length);
@@ -162,8 +164,8 @@ public class UserSop {
      * @param sopName
      * @return
      */
-    public Object[] userSopCertifiedBySopName( String procInstanceNameName, String userInfoId, String sopName ) {    
-        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.SOP_NAME.getName(), sopName);        
+    public Object[] userSopCertifiedBySopName( String procInstanceNameName, String userInfoId, String sopName, Boolean isForTesting ) {    
+        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.SOP_NAME.getName(), sopName, isForTesting);        
         }
 
     /**
@@ -173,11 +175,11 @@ public class UserSop {
      * @param sopId
      * @return
      */        
-    public Object[] userSopCertifiedBySopId( String procInstanceNameName, String userInfoId, String sopId ) {
-        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.SOP_ID.getName(), sopId);        
+    public Object[] userSopCertifiedBySopId( String procInstanceNameName, String userInfoId, String sopId, Boolean isForTesting ) {
+        return userSopCertifiedBySopInternalLogic(procInstanceNameName, userInfoId, TblsData.UserSop.SOP_ID.getName(), sopId, isForTesting);        
     }        
     
-    private Object[] userSopCertifiedBySopInternalLogic( String procInstanceName, String userInfoId, String sopIdFieldName, String sopIdFieldValue ) {
+    private Object[] userSopCertifiedBySopInternalLogic( String procInstanceName, String userInfoId, String sopIdFieldName, String sopIdFieldValue , Boolean isForTesting) {
         Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return LPArray.array1dTo2d(procedureSopEnable, 1);                        
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
@@ -212,7 +214,7 @@ public class UserSop {
         filterFieldValue[0]=userInfoId;        
         filterFieldName[1]=sopIdFieldName;
         filterFieldValue[1]=sopIdFieldValue;                
-        Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, userSchema);   
+        Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, userSchema, isForTesting);   
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(getUserProfileFieldValues[0][0].toString())){
             Object[] diagnoses = LPArray.array2dTo1d(getUserProfileFieldValues);
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
@@ -246,7 +248,7 @@ public class UserSop {
      * @param fieldsToRetrieve
      * @return
      */
-    public Object[][] getNotCompletedUserSOP( String userInfoId, String procInstanceName, String[] fieldsToRetrieve) {
+    public Object[][] getNotCompletedUserSOP( String userInfoId, String procInstanceName, String[] fieldsToRetrieve, Boolean isForTesting) {
         Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return LPArray.array1dTo2d(procedureSopEnable, 1);        
         Object[] userSchemas = null;
@@ -280,7 +282,7 @@ public class UserSop {
             fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.UserSop.SOP_ID.getName());
             fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, TblsData.UserSop.SOP_NAME.getName());
         }
-        return getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, (String[]) userSchemas);     
+        return getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, (String[]) userSchemas, isForTesting);     
     }
   
     // This function cannot be replaced by a single query through the rdbm because it run the query through the many procedures
@@ -295,7 +297,7 @@ public class UserSop {
      * @return
      */
         
-    public static final Object[][] getUserProfileFieldValues(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName){                
+    public static final Object[][] getUserProfileFieldValues(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName, Boolean isForTesting){                
         //String sopView = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName();
         String viewName = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName(); //"user_and_meta_data_sop_vw"; //sopView.getViewName();
         if (fieldsToReturn.length<=0){
@@ -315,7 +317,9 @@ public class UserSop {
         StringBuilder query = new StringBuilder(0);
         for(String currProcInstanceName: procInstanceName){ 
             Object[] viewExistInSchema= Rdbms.dbViewExists(currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName);
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())){
+            Object[] dbViewFieldExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(currProcInstanceName, TblsData.TablesData.USER_SOP.getRepositoryName()), 
+                    TblsData.TablesData.USER_SOP.getTableName(), filterFieldName[0]);            
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())&&LPPlatform.LAB_TRUE.equalsIgnoreCase(dbViewFieldExists[0].toString())){
                 correctProcess++;
                 query.append("(select ");
                 for(String fRet: fieldsToReturn){
@@ -327,11 +331,19 @@ public class UserSop {
                     }
                 }
                 query.deleteCharAt(query.length() - 1);
-
                 if (currProcInstanceName.contains(GlobalVariables.Schemas.DATA.getName())){
-                    query.append(" from \"").append(currProcInstanceName).append("\".").append(viewName).append(" where 1=1");}
+                    if (!isForTesting)
+                        query.append(" from \"").append(currProcInstanceName).append("\".").append(viewName).append(" where 1=1");
+                    else{
+                        if (currProcInstanceName.contains(GlobalVariables.Schemas.TESTING.getName()))
+                            query.append(" from \"").append(currProcInstanceName).append("\".").append(viewName).append(" where 1=1");
+                        else
+                            query.append(" from \"").append(currProcInstanceName).append("_").append(GlobalVariables.Schemas.TESTING.getName()).append("\".").append(viewName).append(" where 1=1");
+                    }
+                }
                 else{
-                    query.append(" from \"").append(currProcInstanceName.replace("\"", "")).append("-data\".").append(viewName).append(" where 1=1");}
+                    query.append(" from \"").append(currProcInstanceName.replace("\"", "")).append("-data\".").append(viewName).append(" where 1=1");
+                }
                 for(String fFN: filterFieldName){
                     query.append(" and ").append(fFN); 
                     if (!fFN.contains("null")){query.append("= ?");}
@@ -483,12 +495,12 @@ public class UserSop {
      * @param sopName
      * @return
      */
-    public static final Object[] userSopMarkedAsCompletedByUser( String procInstanceName, String userName, String sopName ) {
+    public static final Object[] userSopMarkedAsCompletedByUser( String procInstanceName, String userName, String sopName, Boolean isForTesting) {
         Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
             
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName);
+        Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName, isForTesting);
         if(LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())){return LPArray.array2dTo1d(sopInfo);}
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING, new Object[]{sopName, procInstanceName});
@@ -499,8 +511,10 @@ public class UserSop {
                 new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName()}, new Object[]{sopName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
         else{
-            updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
-            updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
+            if (expiryIntervalInfo.length>1&&LPNulls.replaceNull(expiryIntervalInfo[1]).toString().length()>0){
+                updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
+                updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
+            }
         }
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsData.UserSop.SOP_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sopName}, "");
@@ -512,4 +526,69 @@ public class UserSop {
         }
         return userSopDiagnostic; 
     }
+
+    public static final Object[] userSopMarkedAsCompletedByUserAndReviewerSignPending( String procInstanceName, String userName, String sopName, Boolean isForTesting) {
+        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
+
+        Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName, isForTesting);
+        if(LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())){return LPArray.array2dTo1d(sopInfo);}
+        if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING, new Object[]{sopName, procInstanceName});
+        }
+        String[] updFldNames=new String[]{TblsData.UserSop.READ_COMPLETED.getName(), TblsData.UserSop.PENDING_REVIEW.getName()}; 
+        Object[] updFldValues=new Object[]{true, true};
+        Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
+                new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName()}, new Object[]{sopName});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
+        else{
+            if (expiryIntervalInfo.length>1&&LPNulls.replaceNull(expiryIntervalInfo[1]).toString().length()>0){
+                updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
+                updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
+            }
+        }
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsData.UserSop.SOP_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sopName}, "");
+        sqlWhere.addConstraint(TblsData.UserSop.USER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, "");
+        Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.USER_SOP,
+            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.USER_SOP, updFldNames), updFldValues, sqlWhere, null);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userSopDiagnostic[0].toString())){
+            userSopDiagnostic[userSopDiagnostic.length-1]="Sop assigned";
+        }
+        return userSopDiagnostic; 
+    }
+
+    public static final Object[] userSopSignedByReviewer( String procInstanceName, String userName, String sopName, Boolean isForTesting) {
+        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
+            
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
+
+        Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName, isForTesting);
+        if(LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())){return LPArray.array2dTo1d(sopInfo);}
+        if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING, new Object[]{sopName, procInstanceName});
+        }
+        String[] updFldNames=new String[]{TblsData.UserSop.PENDING_REVIEW.getName(), TblsData.UserSop.STATUS.getName(), TblsData.UserSop.LIGHT.getName(), TblsData.UserSop.REVIEWED_BY.getName(), TblsData.UserSop.REVIEWED_ON.getName()}; 
+        Object[] updFldValues=new Object[]{false, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode(), procReqInstance.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
+        Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
+                new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName()}, new Object[]{sopName});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
+        else{
+            if (expiryIntervalInfo.length>1&&LPNulls.replaceNull(expiryIntervalInfo[1]).toString().length()>0){
+                updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
+                updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
+            }
+        }
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsData.UserSop.SOP_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sopName}, "");
+	sqlWhere.addConstraint(TblsData.UserSop.REVIEWER_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{procReqInstance.getToken().getPersonName()}, "");
+	Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.USER_SOP,
+            EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.USER_SOP, updFldNames), updFldValues, sqlWhere, null);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userSopDiagnostic[0].toString())){
+            userSopDiagnostic[userSopDiagnostic.length-1]="Sop assigned";
+        }
+        return userSopDiagnostic; 
+    }
+
 }

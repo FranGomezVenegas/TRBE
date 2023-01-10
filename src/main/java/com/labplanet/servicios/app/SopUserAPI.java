@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
@@ -39,6 +40,7 @@ public class SopUserAPI extends HttpServlet {
         CERTIFUSER_SOP_MARK_AS_COMPLETED("CERTIFUSER_SOP_MARK_AS_COMPLETED", "certifUser_markAsCompleted_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
         CERTIFUSER_READ_AND_UNDERSTOOD("CERTIFUSER_READ_AND_UNDERSTOOD", "certifUser_markAsReadAndUnderstood_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
         CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER("CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER", "certifUser_sendToReviewer_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        CERTIFUSER_REVIEWER_SIGN("CERTIFUSER_REVIEWER_SIGN", "certifUser_reviewerSigned_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),
         CERTIFUSER_TRAINING_REQUIRED("CERTIFUSER_TRAINING_REQUIRED", "certifUser_trainingRequired_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),         
         ADD_SOP_TO_USER("ADD_SOP_TO_USER", "UserSop_sopAddedToUser",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}, EndPointsToRequirements.endpointWithNoOutputObjects),         
         ;
@@ -116,7 +118,8 @@ public class SopUserAPI extends HttpServlet {
             case CERTIFUSER_SOP_MARK_AS_COMPLETED:
                 String sopName = argValues[0].toString();
                 String userName = token.getUserName();
-                userSopDiagnostic=UserSop.userSopMarkedAsCompletedByUser(procInstanceName, userName, sopName);
+                userSopDiagnostic=UserSop.userSopMarkedAsCompletedByUser(procInstanceName, userName, sopName,
+                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
                     messageDynamicData=new Object[]{sopName, userName, procInstanceName};
                 }else{
@@ -125,6 +128,29 @@ public class SopUserAPI extends HttpServlet {
                 rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.USER_SOP.getTableName(), sopName);
                 break;
             case CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER:
+                sopName = argValues[0].toString();
+                userName = token.getUserName();
+                userSopDiagnostic=UserSop.userSopMarkedAsCompletedByUserAndReviewerSignPending(procInstanceName, userName, sopName,
+                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
+                    messageDynamicData=new Object[]{sopName, userName, procInstanceName};
+                }else{
+                    messageDynamicData=new Object[]{sopName};                
+                }
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.USER_SOP.getTableName(), sopName);
+                break;
+            case CERTIFUSER_REVIEWER_SIGN:
+                sopName = argValues[0].toString();
+                userName = token.getUserName();
+                userSopDiagnostic=UserSop.userSopSignedByReviewer(procInstanceName, userName, sopName,
+                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
+                    messageDynamicData=new Object[]{sopName, userName, procInstanceName};
+                }else{
+                    messageDynamicData=new Object[]{sopName};                
+                }
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.USER_SOP.getTableName(), sopName);
+                break;
             case CERTIFUSER_TRAINING_REQUIRED:
                 userSopDiagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
                 break;
