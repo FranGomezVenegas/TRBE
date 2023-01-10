@@ -40,6 +40,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static lbplanet.utilities.LPSession.frontEndIpChecker;
@@ -201,13 +202,15 @@ public class AuthenticationAPI extends HttpServlet {
                                 jObj.put(curAttr[0], curAttr[1]);
                         }
                         jArr.add(jObj);
-                    }                    
+                    }         
+                    Boolean isForTesting=Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString())));
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_USER_TABS_ON_LOGIN, jArr);
                     request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put("header_info", AppHeaderAPI(request, response));
                     jsonObj.put("procedures_list", procedureListInfo(request, response));
                     jsonObj.put("all_my_sops", SopUserAPIqueries.AllMySops(request, response));
-                     jsonObj.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));
+                    jsonObj.put("all_my_pending_certif_approvals", SopUserAPIqueries.AllMyPendingSignSops(request, response));
+                    jsonObj.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));
                     jsonObj.put("sop_tree_list_element", SopUserAPIqueries.SopTreeListElements(request, response));                    
                     jsonObj.put("all_my_analysis_methods", CertifyAnalysisMethodAPIfrontend.AllMyAnalysisMethodCertif(request, response));
                     jsonObj.put("platform_business_rules", AllAppBusinessRules(request, response));
