@@ -283,6 +283,7 @@ public class TblsReqs {
         ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
         NAME("name", LPDatabase.string(), null, null, null, null),
         LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
+        LP_FRONTEND_PAGE_FILTER("lp_frontend_page_filter", LPDatabase.string(), null, null, null, null),
         //PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),
         POSITION("position", LPDatabase.string(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.string(), null, null, null, null),
