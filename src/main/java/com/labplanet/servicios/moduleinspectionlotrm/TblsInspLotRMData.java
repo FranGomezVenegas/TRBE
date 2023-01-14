@@ -119,6 +119,7 @@ public class TblsInspLotRMData {
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         
+        @Override
         public String getExtraFilters() {return this.extraFilters;}
         private final EnumIntTablesJoin[] tablesInTheView;
         @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}

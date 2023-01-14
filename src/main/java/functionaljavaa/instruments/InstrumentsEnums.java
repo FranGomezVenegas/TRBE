@@ -281,8 +281,6 @@ public class InstrumentsEnums {
         private final String requestName;
     }    
     public enum InstrumentsBusinessRules  implements EnumIntBusinessRules{
-        xSTART_MULTIPLE_BATCH_IN_PARALLEL("incubationBatch_startMultipleInParallelPerIncubator", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
-        xSTART_FOR_LOCKED_INCUBATOR_MODE("incubationBatch_startForLockedIncubatorMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         REVISION_MODE("instrumentAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         AUTHOR_CAN_REVIEW_AUDIT_TOO("instrumentAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         CHILD_REVISION_REQUIRED("instrumentAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null)

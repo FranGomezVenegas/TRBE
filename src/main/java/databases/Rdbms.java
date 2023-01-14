@@ -991,8 +991,6 @@ if (1==1){Rdbms.transactionId=1; return;}
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);             
         }                    
     }
-
-
     public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, SqlWhere sWhere, String[] orderBy, Boolean caseSensitive){
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName); 
         if (sWhere.getAllWhereEntries().isEmpty()){
@@ -1051,6 +1049,64 @@ if (1==1){Rdbms.transactionId=1; return;}
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);             
         }                    
     }
+    
+    //The query is for the main table but want to apply filters in linked tables, for example: samples where sample_analysis are assigned to the user X.
+    public static Object[][] getRecordFieldsByFilterAndSubfilters(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, Boolean excludeTestingSuffix,
+            String schemaNameChild, String tableNameChild, String[] whereFieldNamesChild, Object[] whereFieldValuesChild, String fieldInMainForLink, String fieldInChildForLink){
+        if ( (schemaName==null) || (schemaName.length()==0) ){
+           Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_NotschemaNameSpecified", new Object[]{tableName, schemaName});                         
+           return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }          
+        schemaName = LPPlatform.buildSchemaName(schemaName, "");
+        if (excludeTestingSuffix==null || !excludeTestingSuffix)
+            schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
+
+        if ( (whereFieldNames==null) || (whereFieldNames.length==0) ){
+           Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
+           return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }        
+        
+        SqlStatement sql = new SqlStatement(); 
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
+                whereFieldNames, whereFieldValues,
+                fieldsToRetrieve,  null, null, null, null);           
+        String query= hmQuery.keySet().iterator().next();   
+        Object[] keyFieldValueNew = hmQuery.get(query);        
+        try{
+            ResultSet res = null;            
+            res = Rdbms.prepRdQuery(query, keyFieldValueNew);
+            if (res==null){
+                Object[] errorLog = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES+ Arrays.toString(keyFieldValueNew)});
+                return LPArray.array1dTo2d(errorLog, 1);
+            }              
+            res.last();
+        if (res.getRow()>0){
+         Integer totalLines = res.getRow();
+         res.first();
+         Integer icurrLine = 0;                
+             Object[][] diagnoses2 = new Object[totalLines][fieldsToRetrieve.length];
+             while(icurrLine<=totalLines-1) {
+                for (Integer icurrCol=0;icurrCol<fieldsToRetrieve.length;icurrCol++){
+                    Object currValue = res.getObject(icurrCol+1);
+                    diagnoses2[icurrLine][icurrCol] =  LPNulls.replaceNull(currValue);
+                }        
+                res.next();
+                icurrLine++;
+             }         
+             diagnoses2 = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+             return diagnoses2;
+        }else{
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }                    
+    }
+
+
 
     /**
      *
