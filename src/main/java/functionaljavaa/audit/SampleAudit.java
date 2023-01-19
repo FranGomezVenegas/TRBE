@@ -138,7 +138,7 @@ public class SampleAudit {
             fileName=alternativeAuditClass;
             action=alternativeAuditEntry;
         }*/
-        GenericAuditFields gAuditFlds=new GenericAuditFields(action2, fldNames, fldValues);
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action2, TblsDataAudit.TablesDataAudit.SAMPLE, fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
@@ -231,7 +231,7 @@ public class SampleAudit {
           TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.TRANSACTION_ID.getName()};
 
         Object[] fldValues = new Object[]{LPDate.getCurrentTimeStamp(), action, tableName, tableId, Arrays.toString(auditlog), token.getUserRole(), token.getPersonName(), Rdbms.getTransactionId()};
-        GenericAuditFields gAuditFlds=new GenericAuditFields(action, fldNames, fldValues);
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsDataAudit.TablesDataAudit.SAMPLE, fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();

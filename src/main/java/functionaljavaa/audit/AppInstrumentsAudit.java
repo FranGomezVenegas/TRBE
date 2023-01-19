@@ -19,7 +19,7 @@ public final class AppInstrumentsAudit {
     
     public static Object[] instrumentsAuditAdd(EnumIntAuditEvents action, String instrName, String tableName, String tableId,
                         String[] fldNames, Object[] fldValues) {
-        GenericAuditFields gAuditFlds=new GenericAuditFields(action, fldNames, fldValues);
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();

@@ -17,7 +17,7 @@ public final class UserCertificationTracking {
     
     public static Object[] userCertificationTrackingAuditAdd(EnumIntAuditEvents action, String objectType, String userName, String objectName, Integer objectId,
                         String[] fldNames, Object[] fldValues) {
-        GenericAuditFields gAuditFlds=new GenericAuditFields(action, fldNames, fldValues, userName, false);
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsDataAudit.TablesDataAudit.USER_CERTIF_TRACK, fldNames, fldValues, userName, false);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
