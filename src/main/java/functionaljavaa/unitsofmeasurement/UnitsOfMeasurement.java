@@ -67,7 +67,7 @@ public class UnitsOfMeasurement {
         return conversionDetail;
     }
     private final BigDecimal origQuantity;
-    private String origQuantityUom;
+    private final String origQuantityUom;
     private BigDecimal convertedQuantity;
     private String convertedQuantityUom;
     private Boolean convertedFine;
@@ -87,9 +87,9 @@ public class UnitsOfMeasurement {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
