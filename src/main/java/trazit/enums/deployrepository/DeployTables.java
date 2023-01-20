@@ -7,6 +7,7 @@ package trazit.enums.deployrepository;
 
 import databases.DbObjects;
 import databases.Rdbms;
+import databases.TblsCnfg;
 import functionaljavaa.businessrules.BusinessRules;
 import java.util.HashMap;
 import lbplanet.utilities.LPArray;
@@ -17,6 +18,7 @@ import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ForeignkeyFld;
+import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -188,7 +190,10 @@ private static String fieldCommentScript(EnumIntTables tableObj, String procInst
     return script;
 }
 private static String createTableBeginScript(EnumIntTables tableObj, String procInstanceName){
-    BusinessRules bi=new BusinessRules(procInstanceName, null);
+    BusinessRules bi=null;
+    Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+        bi=new BusinessRules(procInstanceName, null);
     String script="";    
     script=LPDatabase.createTable() + " (";    
     String schemaName=tableObj.getRepositoryName();
@@ -219,12 +224,15 @@ private static String createTableEndScript(){
 
 private static String addFldToScript(EnumIntTableFields curFld, BusinessRules bi){
     String s="";
+    if (bi==null)
+        return CreateFldTypes.ADD.name();
     if ("incubation2_passed".equalsIgnoreCase(curFld.getName()))
         s="breakpoint";
     if (curFld.getFldBusinessRules()==null) return CreateFldTypes.ADD.name();
     FldBusinessRules[] fldBusinessRules = curFld.getFldBusinessRules();
     for (FldBusinessRules curBusRule: fldBusinessRules){
         String busRuleProcValue = "";
+        
         switch (curBusRule.getBusRuleRepository().toLowerCase()){
             case "procedure":
                 busRuleProcValue = bi.getProcedureBusinessRule(curBusRule.getBusinessRule());
