@@ -443,7 +443,7 @@ public class ProcDeployCheckerLogic {
         return publishJson(anyMismatch, mismatchesObj, detailsObj);
     }    
     
-    public static final  JSONObject deployMasterData(String procedure,  Integer procVersion, String instanceName){
+    public static final  JSONObject deployMasterData(String procedure,  Integer procVersion, String instanceName, String moduleName){
         if (1==1)
             return publishJson(null, null, null);        
         try{
@@ -461,7 +461,7 @@ public class ProcDeployCheckerLogic {
             }else{
                 jsonArr.add(jsonObj);
                 for (Object[] curRow: procMasterDataObjs){
-                    ClassMasterData clssMD= new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString());
+                    ClassMasterData clssMD= new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString(), moduleName);
                     JSONObject jsonRowObj = new JSONObject();
                     jsonRowObj.put(curRow[0], clssMD.getDiagnostic()[clssMD.getDiagnostic().length-1]);
                     jsonRowArr.add(jsonRowObj);

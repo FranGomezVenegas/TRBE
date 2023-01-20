@@ -211,7 +211,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 }
             }
             if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
-                JSONObject createDBModuleTablesAndFields = ProcDeployCheckerLogic.deployMasterData(procName, procVersion, procInstanceName);
+                JSONObject createDBModuleTablesAndFields = ProcDeployCheckerLogic.deployMasterData(procName, procVersion, procInstanceName, moduleName);
                 createDBModuleTablesAndFields.put("section_name", "PROCDEPL_MASTER_DATA");
                 createDBModuleTablesAndFields.put("section_label_en", "Master Data section creation");
                 createDBModuleTablesAndFields.put("section_label_es", "Sección de Creación de Data Maestra");
@@ -222,7 +222,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[13].toString()) || PROCDEPL_MASTER_DATA;
                 sectionsSettingJobj.put("9) PROCDEPL_MASTER_DATA", runSection);
                 if (runSection){
-                    JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.deployMasterData(procName, procVersion, procInstanceName);
+                    JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.deployMasterData(procName, procVersion, procInstanceName, moduleName);
                     sectionsDetailObj.put("PROCDEPL_MASTER_DATA", createDBModuleTablesAndFields);
                 }
             }

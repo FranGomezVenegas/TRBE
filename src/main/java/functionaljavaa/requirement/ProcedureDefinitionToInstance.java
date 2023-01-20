@@ -47,13 +47,17 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
-import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViews;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 
 public class ProcedureDefinitionToInstance {
     
+
+    public static EnumIntViews[] getModuleViewObj(String getModuleViewObj, String tblName){
+        return null;
+    }
+
     public static final String[] ProcedureAuditSchema_TablesWithNoTestingClone=new String[]{TblsProcedureAudit.TablesProcedureAudit.PROC_HASH_CODES.getTableName()};
     public static final String[] ProcedureSchema_TablesWithNoTestingClone=new String[]{TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
         TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName(), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName()};
@@ -954,8 +958,59 @@ public class ProcedureDefinitionToInstance {
     */                    break;
                     case "GENOME":
                         break;
+                    case "INVENTORY_TRACK": 
+                        ModuleTableOrViewGet tblDiagn=new ModuleTableOrViewGet(Boolean.valueOf(curIsView), moduleName, curSchemaName, curTableName.toUpperCase());
+                        if (curIsView==null || !Boolean.valueOf(curIsView)){
+                            //EnumIntTables moduleTableObj = getModuleTableObj(moduleName, curSchemaName, curTableName.toUpperCase());
+                            if (!tblDiagn.getFound()){
+                                curTblJsonObj.put("error", tblDiagn.getErrorMsg());
+                                //curTblJsonObj.put("error", tableCreationScriptTable);
+                            }else{
+                            tblCreateScript = createTableScript(tblDiagn.getTableObj(), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                            if (tblDiagn.getMirrorForTesting())
+                                tblCreateScriptTesting = createTableScript(tblDiagn.getTableObj(), schemaForTesting, false, true);
+                            }
+                        }else{
+                            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsProcedure.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
+                            tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
+                        }
+                        if (tblCreateScript.length()>0){
+                            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScript, new Object[]{});
+                            if ("-999".equalsIgnoreCase(prepUpQuery[0].toString()))
+                                diagn=diagn+" and not created, "+prepUpQuery[prepUpQuery.length-1];                                
+                            else
+                                diagn=diagn+" and created";
+                            curTblJsonObj.put("diagnostic", diagn);
+                            
+                            JSONObject scriptLog=new JSONObject();
+                            if (!(tblCreateScript.toLowerCase().startsWith("table")||tblCreateScript.toLowerCase().startsWith("view")) && !tblCreateScript.toLowerCase().contains("already"))
+                                scriptLog.put("1) creator_diagn", prepUpQuery[prepUpQuery.length-1]);
+                            scriptLog.put("1) script", tblCreateScript);                            
+                            if (tblDiagn.getMirrorForTesting()){
+                                schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
+                                curTblJsonObj.put("requires_testing_clone", true);
+                                Object[] prepUpQueryTesting = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScriptTesting, new Object[]{});
+                                scriptLog.put("2) script_testing", tblCreateScriptTesting);
+                                
+                                if (!(tblCreateScript.toLowerCase().startsWith("table")||tblCreateScript.toLowerCase().startsWith("view")) && !tblCreateScriptTesting.toLowerCase().contains("already"))
+                                scriptLog.put("2) creator_diagn_testing", prepUpQuery[prepUpQueryTesting.length-1]);
+                            }else
+                                curTblJsonObj.put("requires_testing_clone", false);
+
+                            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
+                                errorsOnlyObj.put(curSchemaName+"."+curTableName, scriptLog);
+                            curTblJsonObj.put("scripts_detail", scriptLog);                                
+                        }
+                        break;
+/*                        switch (curSchemaName.toLowerCase()){                            
+                        case "config":
+                            
+                            tblCreateScript = createTableScript(TablesConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                            break;                        
+                        break;*/
                     default: 
                         tableCreationScriptTable="The module "+moduleName+" is not recognized";
+                        curTblJsonObj.put("error", tableCreationScriptTable);
                         break;
                 }
             }
@@ -1481,7 +1536,7 @@ public class ProcedureDefinitionToInstance {
         }
     }
 
-    public static final  JSONObject deployMasterData(String procedure,  Integer procVersion, String instanceName){
+    public static final  JSONObject deployMasterData(String procedure,  Integer procVersion, String instanceName, String moduleName){
         JSONObject jsonObjSummary = new JSONObject();
         Object[] allMismatchesDiagnAll = TestingRegressionUAT.procedureRepositoryMirrors(instanceName);
         Object[] allMismatchesDiagn=(Object[]) allMismatchesDiagnAll[0];
@@ -1510,7 +1565,7 @@ public class ProcedureDefinitionToInstance {
                 jsonArr.add(jsonObj);
                 for (Object[] curRow: procMasterDataObjs){
                     try{
-                        ClassMasterData clssMD= new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString());
+                        ClassMasterData clssMD= new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString(), moduleName);
                         JSONObject jsonRowObj = new JSONObject();
                         jsonRowObj.put(curRow[0], clssMD.getDiagnostic()[clssMD.getDiagnostic().length-1]);
                         jsonRowArr.add(jsonRowObj);
@@ -1530,23 +1585,8 @@ public class ProcedureDefinitionToInstance {
             return jsonObjSummary;
         }
     }
-    public static Boolean moduleExists(String moduleName){
-        String[] modulesListArr=new String[]{"ENVIRONMENTAL_MONITORING","SAMPLES", "INSPECTION_LOT_RAW_MATERIAL",
-            "GENOMIC"};
-        return LPArray.valueInArray(modulesListArr, moduleName);
-    }
-    public static EnumIntTables[] getModuleTableObj(String moduleName, String curSchemaName, String tblName){
-        switch (moduleName){
-            case "ENVIRONMENTAL_MONITORING":
-            case "SAMPLES":
-                return null;
-            default:
-                    return null;
-        }        
-    }
-    public static EnumIntViews[] getModuleViewObj(String getModuleViewObj, String tblName){
-        return null;
-    }
+    
+        
     
 
 }
