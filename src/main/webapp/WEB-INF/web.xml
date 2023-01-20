@@ -282,6 +282,18 @@
         <servlet-class>com.labplanet.servicios.app.InvestigationAPIfrontend</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>InvTrackingAPIactions</servlet-name>
+        <servlet-class>module.inventorytrack.apis.InvTrackingAPIactions</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InvTrackingAPIqueries</servlet-name>
+        <servlet-class>module.inventorytrack.apis.InvTrackingAPIqueries</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TestingPlatformInvTracking</servlet-name>
+        <servlet-class>module.inventorytrack.apis.TestingPlatformInvTracking</servlet-class>
+    </servlet>    
+    <servlet>
         <description>This servlet sends file to client</description>
         <display-name>DownloadFileServlet</display-name>
         <servlet-name>DownloadFileServlet</servlet-name>
@@ -563,7 +575,21 @@
         <url-pattern>/testing/app/TestingPlatformInstruments</url-pattern>
     </servlet-mapping>
     <!-- Block 8.2 Instruments Module End. -->
-    <!-- Block 8.3 SOPs Module Begin. -->
+    <!-- Block 8.3 Instruments Module Begin. -->
+    <servlet-mapping>
+        <servlet-name>InvTrackingAPIactions</servlet-name>
+        <url-pattern>/app/procs/InvTrackingAPIactions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InvTrackingAPIqueries</servlet-name>
+        <url-pattern>/app/procs/InvTrackingAPIqueries</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingPlatformInvTracking</servlet-name>
+        <url-pattern>/testing/app/TestingPlatformInvTracking</url-pattern>
+    </servlet-mapping>
+    <!-- Block 8.3 Instruments Module End. -->
+    <!-- Block 8.4 SOPs Module Begin. -->
     <servlet-mapping>
         <servlet-name>SopUser</servlet-name>
         <url-pattern>/app/SopUserAPIactions</url-pattern>
@@ -584,8 +610,8 @@
         <servlet-name>AnalysisMethodCertifUserAPIqueries</servlet-name>
         <url-pattern>/app/AnalysisMethodCertifUserAPIqueries</url-pattern>
     </servlet-mapping>
-    <!-- Block 8.3 SOPs Module End. -->
-    <!-- Block 8.4 Holidays Calendar Module Begin. -->
+    <!-- Block 8.4 SOPs Module End. -->
+    <!-- Block 8.5 Holidays Calendar Module Begin. -->
     <servlet-mapping>
         <servlet-name>HolidayCalendarAPIactions</servlet-name>
         <url-pattern>/app/HolidayCalendarAPIactions</url-pattern>
@@ -594,8 +620,8 @@
         <servlet-name>HolidayCalendarAPIqueries</servlet-name>
         <url-pattern>/app/HolidayCalendarAPIqueries</url-pattern>
     </servlet-mapping>
-    <!-- Block 8.4 Holidays Calendar Module End. -->
-    <!-- Block 8.5 Incidents Module Begin. -->
+    <!-- Block 8.5 Holidays Calendar Module End. -->
+    <!-- Block 8.6 Incidents Module Begin. -->
     <servlet-mapping>
         <servlet-name>IncidentAPIactions</servlet-name>
         <url-pattern>/app/IncidentAPIactions</url-pattern>
@@ -604,7 +630,7 @@
         <servlet-name>IncidentAPIqueries</servlet-name>
         <url-pattern>/app/IncidentAPIqueries</url-pattern>
     </servlet-mapping>
-    <!-- Block 8.5 Incidents Module End -->
+    <!-- Block 8.6 Incidents Module End -->
     <!-- Block 8# Generic or Common Modules End -->
     <!-- Servlets not sorted yet -->
     <servlet-mapping>
